@@ -1,0 +1,109 @@
+server:
+  port: 8081
+spring:
+  jackson:
+    time-zone: GMT+8
+    default-property-inclusion: ALWAYS
+    date-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+  datasource:
+    initialization-mode: ALWAYS
+    type: com.alibaba.druid.pool.DruidDataSource
+    druidProperties:
+      username: root
+      password: 123456
+      url: jdbc:mysql://localhost:3306/boot-scaffold?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull
+      name: druid
+      initialSize: 3
+      minIdle: 3
+      maxActive: 15
+      maxWait: 5000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      filters: stat,wall,slf4j
+      logSlowSql: true
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+      asyncInit: true
+      connectionProperties:
+        druid.stat.slowSqlMillis: 3000
+  jpa:
+    show-sql: true
+    database: MYSQL
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  messages:
+    basename: exception/exception
+    use-code-as-default-message: true
+
+
+  mail:
+    username: 1041765757@qq.com                # 用来验证授权的邮件用户名
+    password: gotartrfwuytbcji                # 根据QQ邮箱设置-账户里生成的第三方登陆授权码，可用来代替密码登陆
+    host: smtp.qq.com                         # 邮件服务器类型
+    properties.mail.smtp.ssl.enable: true # 用以支持授权码登陆
+
+#  rabbitmq:
+#    addresses: localhost:5672
+#    username: root
+#    password: password
+#    virtual-host: / # 创建的虚拟主机，可以简单理解为一个实例，所有队列交换器路由等都是在它的基础上，默认为/，最好自己新建一个
+#    publisher-confirms: true # 消息被投递之后如何确保一定被正确投递或消费，开启conform模式
+#    listener:
+#      direct:
+#        acknowledge-mode: manual  # 开启手动ack
+#      simple:
+#        acknowledge-mode: manual # 开启手动ack
+#        retry:
+#          enabled: false
+#          max-attempts: 3
+#          initial-interval: 3000 # 第一次和第二次尝试传递消息之间的持续时间
+#        default-requeue-rejected: false
+
+
+customs:  # 自定义的属性最好都写在custom前缀下，方便辨认
+  global-config:
+    anonymousName: SYSTEM
+    initPassword: 123456
+    platformCompCode: 0
+
+  jwt:
+    refreshTokenMinute: 5
+    expiredMinute: 30
+    permitAllIgnores:
+      - path: /*.html
+      - path: /**/*.html
+      - path: /**/*.css
+      - path: /**/*.js
+      - path: /swagger-ui.html
+      - path: /swagger-resources/**
+      - path: /webjars/**
+      - path: /*/api-docs
+      - path: /druid/**
+      - httpMethod: OPTIONS
+        path: /**
+      - httpMethod: POST
+        path: /user/registry
+      - httpMethod: POST
+        path: /user/login
+      - path: /user/verifyCode
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations:
+    - com.ddf.common.security.mapper.impl
+
+
+logging:
+  level:
+    com.ddf.common.security.mapper: debug
