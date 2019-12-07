@@ -17,6 +17,7 @@ import com.ddf.common.websocket.model.ws.Message;
 import com.ddf.common.websocket.model.ws.MessageRequest;
 import com.ddf.common.websocket.model.ws.WebSocketSessionWrapper;
 import com.ddf.common.websocket.service.ChannelTransferService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,6 +47,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<Principal, WebSocketSessionWrapper> values,
                                                          MessageRequest messageRequest) {
         if (values == null || messageRequest.getCmd() == null) {
@@ -65,8 +67,31 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
             messageMap.put(authPrincipal, messageStr);
         }
-        saveBatch(channelTransfers);
+        Lists.partition(channelTransfers, 500).forEach(ls-> saveBatch(ls));
         return messageMap;
+    }
+
+    private ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message message, String request,
+                                                 WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest messageRequest) {
+        ChannelTransfer channelTransfer = new ChannelTransfer();
+        channelTransfer.setCmd(message.getCmd().name());
+        channelTransfer.setRequestId(message.getRequestId());
+        channelTransfer.setRequest(request);
+        channelTransfer.setFullRequestResponse(toJsonArr(request));
+        channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
+        channelTransfer.setDeviceNumber(authPrincipal.getIme());
+        channelTransfer.setToken(authPrincipal.getToken());
+        channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
+        if (messageRequest != null) {
+            channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
+            channelTransfer.setOperatorId(messageRequest.getOperatorId());
+            channelTransfer.setCreateBy(messageRequest.getOperatorId());
+            channelTransfer.setLogicPrimaryKey(messageRequest.getLogicPrimaryKey());
+
+        }
+        channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
+        channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
+        return channelTransfer;
     }
 
     /**
@@ -100,29 +125,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
                     messageRequest.getLogicPrimaryKey()));
         }
         return true;
-    }
-
-    private ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message message, String request,
-                                                 WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest messageRequest) {
-        ChannelTransfer channelTransfer = new ChannelTransfer();
-        channelTransfer.setCmd(message.getCmd().name());
-        channelTransfer.setRequestId(message.getRequestId());
-        channelTransfer.setRequest(request);
-        channelTransfer.setFullRequestResponse(toJsonArr(request));
-        channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
-        channelTransfer.setDeviceNumber(authPrincipal.getIme());
-        channelTransfer.setToken(authPrincipal.getToken());
-        channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
-        if (messageRequest != null) {
-            channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
-            channelTransfer.setOperatorId(messageRequest.getOperatorId());
-            channelTransfer.setCreateBy(messageRequest.getOperatorId());
-            channelTransfer.setLogicPrimaryKey(messageRequest.getLogicPrimaryKey());
-
-        }
-        channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
-        channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
-        return channelTransfer;
     }
 
     /**
@@ -163,6 +165,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
                 channelTransfer.setCmd(message.getCmd().name());
                 LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
                 queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+                queryWrapper.eq(ChannelTransfer::getRemoved, 0);
                 ChannelTransfer exist = getOne(queryWrapper);
                 if (exist != null) {
                     return 1;
@@ -178,6 +181,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         }
         LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+        queryWrapper.eq(ChannelTransfer::getRemoved, 0);
         ChannelTransfer exist = getOne(queryWrapper);
         if (exist == null) {
             return -1;
@@ -190,6 +194,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         updateWrapper.set(ChannelTransfer::getFullRequestResponse, appendJsonArr(exist.getFullRequestResponse(), response));
         updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_RECEIVED);
         updateWrapper.eq(ChannelTransfer::getId, exist.getId());
+        updateWrapper.eq(ChannelTransfer::getRemoved, 0);
         update(null, updateWrapper);
         return 0;
     }
@@ -224,6 +229,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         }
         updateWrapper.set(ChannelTransfer::getErrorMessage, errorMessage);
         updateWrapper.eq(ChannelTransfer::getRequestId, message.getRequestId());
+        updateWrapper.eq(ChannelTransfer::getRemoved, 0);
         if (response != null) {
             updateWrapper.set(ChannelTransfer::getResponse, response);
             ChannelTransfer exist = getByRequestId(message.getRequestId());
@@ -240,6 +246,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             return null;
         }
         LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(ChannelTransfer::getRemoved, 0);
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
         return getOne(queryWrapper);
     }
@@ -250,8 +257,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      *
      * @param requestId
      * @return
-     * @author dongfang.ding
-     * @date 2019/9/28 15:15
+
+
      */
     @Override
     public String getPayloadByRequestId(String requestId) {
@@ -269,6 +276,26 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             throw new GlobalCustomizeException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
         }
         return record.getBusinessData();
+    }
+
+    /**
+     * 获取指定设备该指定上一次下发指令的历史数据
+     *
+     * @param deviceNumber
+     * @param cmd
+     * @return
+     */
+    @Override
+    public ChannelTransfer getPreLog(String deviceNumber, String cmd) {
+        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+            return null;
+        }
+        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+        channelTransferWrapper.eq(ChannelTransfer::getDeviceNumber, deviceNumber);
+        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+        channelTransferWrapper.last("limit 1");
+        return getOne(channelTransferWrapper);
     }
 
     /**

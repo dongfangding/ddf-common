@@ -17,7 +17,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class MerchantMessageInfo extends BaseDomain implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3468335226341769206L;
 
     /**
      * 消息来源，默认未知，即未解析成功，无法判别数据
@@ -71,7 +71,10 @@ public class MerchantMessageInfo extends BaseDomain implements Serializable {
      */
     public static final Byte SOURCE_TYPE_UNION_PAY_VERIFY_CODE = 11;
 
-
+    /**
+     * 消息来源，安全认证短信
+     */
+    public static final Byte SOURCE_TYPE_SAFETY_CERTIFICATION_SMS = 12;
     /**
      * 状态 未处理
      */
@@ -102,12 +105,27 @@ public class MerchantMessageInfo extends BaseDomain implements Serializable {
     public static final Byte STATUS_ORDER_REPEAT_MATCH = 6;
 
     /**
-     * 伪造发件方
+     * 伪造认证方式（如短信发件方和系统配置不一致）
      */
     public static final Byte STATUS_ERROR_CREDIT = 7;
 
+
+    /**
+     * 收款订单
+     */
+    public static final Byte ORDER_TYPE_RECEIVE = 1;
+    /**
+     * 付款订单
+     */
+    public static final Byte ORDER_TYPE_PAYMENT = 2;
+
+
+
     @ApiModelProperty(value = "商户id")
     private String merchantId;
+
+    @ApiModelProperty("商户名")
+    private String merchantName;
 
     @ApiModelProperty(value = "报文中的request_id")
     private String requestId;
@@ -120,6 +138,9 @@ public class MerchantMessageInfo extends BaseDomain implements Serializable {
 
     @ApiModelProperty(value = "设备号")
     private String deviceNumber;
+
+    @ApiModelProperty(value = "设备序列号")
+    private String sequence;
 
     @ApiModelProperty("哪个指令码收到的数据")
     private String cmd;
@@ -159,5 +180,8 @@ public class MerchantMessageInfo extends BaseDomain implements Serializable {
 
     @ApiModelProperty("自己系统的订单id,用以维系该表记录匹配到了哪条订单。merchant_order_info的id")
     private String orderId;
+
+    @ApiModelProperty("订单类型 0 数据错误 1 收款 2 转账")
+    private Byte orderType;
 
 }

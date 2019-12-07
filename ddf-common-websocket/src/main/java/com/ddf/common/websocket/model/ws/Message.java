@@ -26,8 +26,6 @@ import java.util.Objects;
  * 2.
  *
  *
- * @author dongfang.ding
- * @date 2019/8/20 15:29
  */
 @Data
 @NoArgsConstructor

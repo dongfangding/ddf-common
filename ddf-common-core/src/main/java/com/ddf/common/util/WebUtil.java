@@ -7,9 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
-import java.net.URLDecoder;
 import java.net.UnknownHostException;
 
 /**
@@ -38,43 +36,6 @@ public class WebUtil {
         return getCurServletRequestAttributes().getResponse();
     }
 
-
-    /**
-     * 获取请求头中的用户信息
-     *
-     * @return
-     */
-    public static UserClaim getUserClaim() {
-        HttpServletRequest curRequest;
-        UserClaim userClaim = UserClaim.defaultUser();
-        try {
-            curRequest = getCurRequest();
-        } catch (Exception e) {
-            // 非web环境返回默认用户信息
-            return userClaim;
-        }
-        UserClaim newUserClaim = new UserClaim();
-        boolean isDefault = true;
-        String userId = curRequest.getHeader(UserClaim.CLAIM_USER_ID);
-        if (userId != null) {
-            isDefault = false;
-            newUserClaim.setUserId(Long.parseLong(userId));
-        }
-        String userName = curRequest.getHeader(UserClaim.CLAIM_USER_NAME);
-        if (StringUtils.isNotBlank(userName)) {
-            try {
-                isDefault = false;
-                userName = URLDecoder.decode(curRequest.getHeader(UserClaim.CLAIM_USER_NAME), "UTF-8");
-                newUserClaim.setUsername(userName);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        if (isDefault) {
-            return userClaim;
-        }
-        return newUserClaim;
-    }
 
     /**
      * 获取客户端IP

@@ -84,8 +84,8 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
     @Transactional(readOnly = true)
     public boolean isValid(String ime, String token) {
         LambdaQueryWrapper<MerchantBaseDevice> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(MerchantBaseDevice::getRandomCode, token);
         queryWrapper.eq(MerchantBaseDevice::getNumber, ime);
+        queryWrapper.eq(MerchantBaseDevice::getRandomCode, token);
         queryWrapper.eq(MerchantBaseDevice::getBindingType, 1);
         queryWrapper.eq(MerchantBaseDevice::getIsDel, 0);
         return count(queryWrapper) > 0;

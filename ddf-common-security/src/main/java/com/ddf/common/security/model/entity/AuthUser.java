@@ -22,8 +22,6 @@ import java.util.Date;
 @Accessors(chain = true)
 public class AuthUser extends BaseDomain {
 
-    private String id;
-
     /** 姓名*/
     @ApiModelProperty("姓名")
     private String userName;

@@ -31,7 +31,7 @@ public class CustomizeWebSocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("[{}]建立连接成功.....", session.getPrincipal());
         WebsocketSessionStorage.active(session.getPrincipal(), session);
-        session.sendMessage(Message.wrapper(Message.echo("现在开始可以和服务器通讯了")));
+        WebsocketSessionStorage.sendMessage((AuthPrincipal) session.getPrincipal(), Message.echo("现在开始可以和服务器通讯了"));
     }
 
     /**

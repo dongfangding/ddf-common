@@ -1,5 +1,6 @@
 package com.ddf.common.security.service.impl;
 
+import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -46,7 +47,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, AuthUser> implement
         }
 
         UserClaim userClaim = new UserClaim();
-        userClaim.setUserId(authUser.getId()).setUsername(authUser.getUserName()).setLastModifyPasswordTime(
+        userClaim.setUserId(Convert.toStr(authUser.getId())).setUsername(authUser.getUserName()).setLastModifyPasswordTime(
                 // 默认注册时间
                 authUser.getLastModifyPassword()).setCredit(WebUtil.getHost());
         return JwtUtil.defaultJws(userClaim);
