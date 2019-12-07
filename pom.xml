@@ -8,7 +8,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <durid-version>1.1.12</durid-version>
-        <mybatis.version>3.1.2</mybatis.version>
+        <mybatis.version>3.3.0</mybatis.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
@@ -121,6 +121,12 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
 
@@ -243,7 +249,6 @@
                 <artifactId>httpcore</artifactId>
                 <version>${http-core.version}</version>
             </dependency>
-
 
         </dependencies>
     </dependencyManagement>

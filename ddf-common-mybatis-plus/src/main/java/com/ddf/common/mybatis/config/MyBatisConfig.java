@@ -1,19 +1,15 @@
 package com.ddf.common.mybatis.config;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.ddf.common.constant.GlobalConstants;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,19 +73,8 @@ import java.util.List;
  * @date 2019/5/22 17:14
  */
 @Configuration
-@MapperScan(basePackages = {GlobalConstants.FW_TCP_MAPPER_SCAN, GlobalConstants.LOGIC_MAPPER_SCAN})
+@MapperScan(basePackages = {GlobalConstants.BASE_PACKAGE})
 public class MyBatisConfig {
-
-
-    /**
-     * 3.1.1版本存在父子关系的实体类使用lambda查询表达式会存在不能识别列名的问题，测试用例却不存在。回退版本，
-     * 如果需要逻辑删除，3.1.1版本之前都需要注入该组件
-     * @return
-     */
-    @Bean
-    public ISqlInjector sqlInjector() {
-        return new LogicSqlInjector();
-    }
 
     /**
      * 分页与攻击 SQL 阻断解析器
@@ -115,20 +100,6 @@ public class MyBatisConfig {
         return new OptimisticLockerInterceptor();
     }
 
-    /**
-     * SQL执行效率插件
-     * 参数：maxTime SQL 执行最大时长，超过自动停止运行，有助于发现问题。
-     * 参数：format SQL SQL是否格式化，默认false。
-     * 该插件只用于开发环境，不建议生产环境使用。
-     */
-    @Bean
-    @Profile({"default", "dev", "test"})
-    public PerformanceInterceptor performanceInterceptor() {
-        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
-        performanceInterceptor.setMaxTime(500);
-        performanceInterceptor.setFormat(true);
-        return performanceInterceptor;
-    }
 }
 
 

@@ -17,7 +17,8 @@ public class GlobalConstants {
     /**
      * 基础包
      */
-    public static final String BASE_PACKAGE = "com.ddf.scaffold";
+    public static final String BASE_PACKAGE = "com.ddf.boot";
+
     /**
      * mybatis mapper服务包扫描包路径
      */
