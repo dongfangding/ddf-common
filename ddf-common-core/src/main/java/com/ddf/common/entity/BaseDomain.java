@@ -9,6 +9,7 @@ import java.util.Date;
  */
 @Data
 public class BaseDomain {
+
     @TableId(type = IdType.AUTO)
     protected Long id;
 

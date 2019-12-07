@@ -7,18 +7,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 /**
- * 
+ * 认证用户实体
  */
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor 
 @Data
 @ApiModel("用户")
-public class BootUser extends BaseDomain {
+@Accessors(chain = true)
+public class AuthUser extends BaseDomain {
+
+    private String id;
 
     /** 姓名*/
     @ApiModelProperty("姓名")
@@ -38,6 +42,9 @@ public class BootUser extends BaseDomain {
 
     @ApiModelProperty("最后一次修改密码的时间")
     private Long lastModifyPassword;
+
+    @ApiModelProperty("上次登录密码的时间")
+    private Long lastLoginTime;
 
     @ApiModelProperty("用户是否有效 0 否 1 是")
     private Byte isEnable;

@@ -2,7 +2,6 @@ package com.ddf.common.mybatis;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ddf.common.entity.BaseDomain;
-import com.ddf.common.security.config.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.reflection.MetaObject;

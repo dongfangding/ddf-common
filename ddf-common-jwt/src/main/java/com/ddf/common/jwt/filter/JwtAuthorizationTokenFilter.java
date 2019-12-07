@@ -1,21 +1,23 @@
-package com.ddf.common.security.config;
+package com.ddf.common.jwt.filter;
 
-import com.ddf.common.util.WebUtil;
+import com.ddf.common.jwt.util.JwtUtil;
 import com.google.common.base.Preconditions;
+import com.company.pay.core.common.utils.JsonUtil;
+import com.company.pay.core.common.utils.WebUtil;
+import com.company.pay.core.constant.GlobalConsts;
+import com.ddf.common.jwt.config.JwtProperties;
+import com.ddf.common.jwt.interfaces.UserClaimService;
+import com.ddf.common.jwt.model.UserClaim;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.KeyException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.rpc.RpcContext;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -26,11 +28,13 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * @author xujinquan
+ * 拦截请求处理用户信息
+ *
  */
 @Slf4j
-@Component
 public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
+
+    public static final String BEAN_NAME = "jwtAuthorizationTokenFilter";
 
     /**
      * 认证请求头字段
@@ -44,10 +48,9 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
      */
     private static final String TOKEN_PREFIX = "Bearer ";
 
+    @Autowired(required = false)
+    private UserClaimService userClaimService;
 
-    @Autowired
-    @Qualifier("userDetailsServiceImpl")
-    private UserDetailsService userDetailsService;
     @Autowired
     private JwtProperties jwtProperties;
 
@@ -55,6 +58,10 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String path = request.getServletPath();
+        String host = WebUtil.getHost();
+        request.setAttribute(GlobalConsts.CLIENT_IP, host);
+        userClaimService.storeRequest(request, host);
+        RpcContext.getContext().setAttachment(GlobalConsts.CLIENT_IP, WebUtil.getHost());
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
             chain.doFilter(request, response);
@@ -62,7 +69,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         }
         final String tokenHeader = request.getHeader(AUTH_HEADER);
         if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token格式错误！");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), String.format("token必须以【%s】开头！", TOKEN_PREFIX));
             return;
         }
 
@@ -83,27 +90,31 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
         UserClaim userClaim = JwtUtil.getUserClaim(claimsJws);
         Preconditions.checkNotNull(userClaim, "解析用户为空!");
-        Preconditions.checkArgument(!StringUtils.isAnyBlank(userClaim.getUsername(), userClaim.getCredit(),
-                userClaim.getLastModifyPasswordTime().toString()), "用户关键信息缺失！");
+        Preconditions.checkArgument(!StringUtils.isAnyBlank(userClaim.getUsername(), userClaim.getCredit()),
+                "用户关键信息缺失！");
 
-        // FIXME 是否需要判断
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserClaim bootUser = (UserClaim) userDetailsService.loadUserByUsername(userClaim.getUsername());
-            // 也可以维护一个列表
-            if (!Objects.equals(userClaim.getCredit(), WebUtil.getHost())) {
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), "token无效！");
-                return;
-            }
-            if (!Objects.equals(userClaim.getLastModifyPasswordTime(), bootUser.getLastModifyPasswordTime())) {
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), "密码已经修改，请重新登录！");
-                return;
-            }
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(bootUser,
-                    null, bootUser.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (userClaimService == null) {
+            throw new NoSuchBeanDefinitionException(UserClaimService.class);
         }
 
+        // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
+        if (!Objects.equals(userClaim.getCredit(), WebUtil.getHost()) && !JwtUtil.DEFAULT_CLIENT_IP.equals(WebUtil.getHost())) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "更换登录地址，需要重新登录！");
+            return;
+        }
+
+        UserClaim storeUser = userClaimService.getStoreUserInfo(userClaim);
+
+        if (!Objects.equals(userClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "密码已经修改，请重新登录！");
+            return;
+        }
+        if (!Objects.equals(userClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token已刷新，请重新登录！");
+            return;
+        }
+
+        userClaimService.afterVerifySuccess(userClaim);
 
         // 如果token即将失效，服务端主动用原来token中的信息重新生成token返回给客户端
         long oldExpiredMinute = claimsJws.getBody().getExpiration().getTime();
@@ -112,10 +123,14 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
         synchronized (token.intern()) {
             if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
-                token = JwtUtil.defaultJws(userClaim, jwtProperties.getExpiredMinute());
+                token = JwtUtil.defaultJws(userClaim);
                 response.setHeader(AUTH_HEADER, token);
             }
         }
+        String userInfo = JsonUtil.asString(storeUser);
+        request.setAttribute(GlobalConsts.HEADER_USER, userInfo);
+        RpcContext.getContext().setAttachment(GlobalConsts.HEADER_USER, userInfo);
+
         chain.doFilter(request, response);
     }
 }
