@@ -37,4 +37,15 @@ public class GlobalConstants {
      */
     public static final Byte BYTE_FALSE = 0;
 
+
+    /**
+     * byte类型的true,适用于所有Byte类型是否的判断
+     */
+    public static final Integer INTEGER_TRUE = 1;
+
+    /**
+     * byte类型的false,适用于所有Byte类型是否的判断
+     */
+    public static final Integer INTEGER_FALSE = 0;
+
 }
