@@ -1,4 +1,4 @@
-package com.ddf.common.security.config;
+package com.ddf.common.jwt.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,8 +6,6 @@ import lombok.Setter;
 /**
  * 路径匹配类
  *
- * @author dongfang.ding
- * @date 2019/8/30 15:03
  */
 @Setter
 @Getter

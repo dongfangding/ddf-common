@@ -2,17 +2,14 @@ package com.ddf.common.security.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ddf.common.security.model.bo.UserRegistryBO;
-import com.ddf.common.security.model.entity.BootUser;
-import com.ddf.common.security.model.vo.BootUserVo;
-import org.springframework.transaction.annotation.Transactional;
+import com.ddf.common.security.model.entity.AuthUser;
 
 import javax.validation.constraints.NotNull;
 
 /**
  * @author dongfang.ding on 2018/12/1
  */
-public interface UserService extends IService<BootUser> {
+public interface AuthService extends IService<AuthUser> {
     /**
      * 登录
      *
@@ -23,16 +20,13 @@ public interface UserService extends IService<BootUser> {
     String login(String userName, String password);
 
 
-    @Transactional(rollbackFor = Exception.class)
-    BootUserVo registry(UserRegistryBO userRegistryBo);
-
     /**
      * 根据用户名查找用户
      *
      * @param userName
      * @return
      */
-    BootUser findByName(String userName);
+    AuthUser findByName(String userName);
 
 
     /**
@@ -42,6 +36,6 @@ public interface UserService extends IService<BootUser> {
      * @param password
      * @return
      */
-    BootUser getByUserNameAndPassword(@NotNull String userName, @NotNull String password);
+    AuthUser getByUserNameAndPassword(@NotNull String userName, @NotNull String password);
 
 }

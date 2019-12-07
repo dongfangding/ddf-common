@@ -1,7 +1,6 @@
 package com.ddf.common.util;
 
 import com.ddf.common.constant.GlobalConstants;
-import com.ddf.common.security.config.UserClaim;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

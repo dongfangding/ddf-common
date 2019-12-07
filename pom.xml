@@ -236,6 +236,7 @@
         <module>ddf-common-core</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
-        <module>ddf-core-jwt</module>
+        <module>ddf-common-jwt</module>
+        <module>ddf-common-security</module>
     </modules>
 </project>

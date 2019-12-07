@@ -2,6 +2,7 @@ package com.ddf.common.security.config;
 
 import com.ddf.common.exception.GlobalCustomizeException;
 import com.ddf.common.exception.GlobalExceptionEnum;
+import com.ddf.common.jwt.model.UserClaim;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @date 2019/9/17 10:02
  */
 public class SecurityUtils {
+
     public static UserClaim getUserDetails(boolean throwException) {
         UserClaim userClaim;
         try {
@@ -51,7 +53,7 @@ public class SecurityUtils {
      *
      * @return 系统用户id
      */
-    public static Long getUserId() {
+    public static String getUserId() {
         UserClaim userClaim = getUserDetails(true);
         return userClaim.getUserId();
     }
@@ -61,19 +63,8 @@ public class SecurityUtils {
      *
      * @return 系统用户id
      */
-    public static Long getDefaultUserId() {
+    public static String getDefaultUserId() {
         UserClaim userClaim = getUserDetails(false);
         return userClaim.getUserId();
-    }
-
-
-    /**
-     * 获取当前用户所属组织代码
-     *
-     * @return 当前用户所属组织代码
-     */
-    public static String getUserOrgCode() {
-        UserClaim userClaim = getUserDetails(true);
-        return userClaim.getOrgCode();
     }
 }
