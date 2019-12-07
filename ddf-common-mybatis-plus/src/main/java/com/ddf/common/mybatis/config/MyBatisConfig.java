@@ -1,4 +1,4 @@
-package com.ddf.common.mybatis;
+package com.ddf.common.mybatis.config;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;

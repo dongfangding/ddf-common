@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 /**
  * 云闪付账单数据
  *
- * @author dongfang.ding
- * @date 2019/9/23 11:24
+
+
  */
 @Data
 @AllArgsConstructor
@@ -75,10 +75,8 @@ public class UPayBill implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sbl = new StringBuilder();
-        if (StringUtils.isNotBlank(tradeNo)) {
-            sbl.append("订单[").append(tradeNo).append("]");
-        }
+        StringBuilder sbl = new StringBuilder(100);
+        sbl.append("订单");
         if (StringUtils.isNotBlank(orderTime)) {
             sbl.append("于").append(orderTime);
         }

@@ -58,14 +58,23 @@ public interface ChannelTransferService extends IService<ChannelTransfer> {
      * @return
      */
     boolean updateToComplete(Message message, boolean isSuccess, String errorMessage, String response, String serverSend);
-    
+
     /**
      * 根据requestId获取报文请求时的业务对象记录
-     * 
+     *
      * @param requestId
      * @return
-     * @author dongfang.ding
-     * @date 2019/9/28 15:15 
+
+
      */
     String getPayloadByRequestId(String requestId);
+
+
+    /**
+     * 获取指定设备该指定上一次下发指令的历史数据
+     * @param deviceNumber
+     * @param cmd
+     * @return
+     */
+    ChannelTransfer getPreLog(String deviceNumber, String cmd);
 }

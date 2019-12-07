@@ -12,8 +12,8 @@ import java.io.Serializable;
 /**
  * 短信内容类
  *
- * @author dongfang.ding
- * @date 2019/9/19 14:08
+
+
  */
 @Data
 @AllArgsConstructor

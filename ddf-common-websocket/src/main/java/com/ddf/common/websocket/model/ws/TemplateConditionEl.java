@@ -4,8 +4,8 @@ import lombok.Data;
 
 /**
  * 模板表达式
- * @author dongfang.ding
- * @date 2019/9/19 14:44
+
+
  */
 @Data
 public class TemplateConditionEl {

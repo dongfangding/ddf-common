@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
  * 报文类夹杂业务数据，
  * 适用于处理类如果需要返回自定义报文数据，并且还需要返回业务数据
  *
- * @author dongfang.ding
- * @date 2019/9/20 14:13
  */
 @Data
 @NoArgsConstructor

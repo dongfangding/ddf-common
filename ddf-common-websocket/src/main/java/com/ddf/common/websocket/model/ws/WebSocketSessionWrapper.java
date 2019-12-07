@@ -11,8 +11,8 @@ import java.security.Principal;
 /**
  * 包装WebsocketSession
  *
- * @author dongfang.ding
- * @date 2019/8/20 18:57
+
+
  */
 @Data
 @NoArgsConstructor

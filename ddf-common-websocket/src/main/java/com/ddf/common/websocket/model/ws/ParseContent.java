@@ -1,6 +1,6 @@
 package com.ddf.common.websocket.model.ws;
 
-import com.ddf.common.exception.GlobalCustomizeException;
+import com.company.pay.core.exception.BusinessException;
 import com.ddf.common.websocket.enumerate.BillTypeEnum;
 import com.ddf.common.websocket.enumerate.CmdEnum;
 import com.ddf.common.websocket.enumerate.OutQRCodeTypeEnum;
@@ -25,8 +25,8 @@ import java.util.GregorianCalendar;
  *
  * 存入解析后的短信内容
  *
- * @author dongfang.ding
- * @date 2019/9/6 18:00
+
+
  */
 @Data
 @NoArgsConstructor
@@ -39,48 +39,57 @@ public class ParseContent {
 
     /**
      * 付款人
+     * ${payName}
      */
     private String payName;
 
     /**
      * 付款卡号
+     * ${payNo}
      */
     private String payNo;
 
     /**
      * 入账方式
      * 如 银联入账、转账存入
+     * ${payType}
      */
     private String payType;
 
     /**
      * 付款银行
+     * ${payBankName}
      */
     private String payBankName;
 
     /**
      * 收款银行名称
+     * ${bankName}
      */
     private String bankName;
 
     /**
      * 收款银行卡号
+     * ${bankCardNo}
      */
     private String bankCardNo;
 
     /**
      * 收款人
+     * ${receiverName}
      */
     private String receiverName;
 
     /**
      * 收款金额
+     * ${amount}
      */
     @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal amount;
 
     /**
      * 可用余额
+     * ${balance}
      */
     private BigDecimal balance;
 
@@ -128,6 +137,7 @@ public class ParseContent {
 
     /**
      * 验证码
+     * ${verifyCode}
      */
     private String verifyCode;
 
@@ -152,17 +162,35 @@ public class ParseContent {
      */
     private Byte sourceType;
 
-
+    /**
+     *  时间格式  年
+     *  ${year}
+     */
     private String year;
-
+    /**
+     *  时间格式  月
+     *  ${month}
+     */
     private String month;
-
+    /**
+     *  时间格式  日
+     *  ${day}
+     */
     private String day;
-
+    /**
+     *  时间格式  时
+     *  ${hour}
+     */
     private String hour;
-
+    /**
+     *  时间格式  分
+     *  ${minute}
+     */
     private String minute;
-
+    /**
+     *  时间格式  秒
+     *  ${seconds}
+     */
     private String seconds;
 
     /**
@@ -170,37 +198,19 @@ public class ParseContent {
      */
     private BillTypeEnum billTypeEnum;
 
-    /**
-     * 将短信解析到解析对象中
-     *
-     * @param smsContent
-     * @return
-     * @author dongfang.ding
-     * @date 2019/9/27 18:15
-     */
-    public ParseContent byBankSms(SmsContent smsContent, CmdEnum cmd) {
-        this.setTradeNo(smsContent.getPrimaryKey()).setCmd(cmd);
-        fixedOrderTime(smsContent.getReceiveTime());
-        if (PlatformMessageTemplate.Type.BANK_INCOME_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
-            this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_INCOME_BANK_SMS);
-            this.billTypeEnum = BillTypeEnum.INCOME;
-        } else if (PlatformMessageTemplate.Type.BANK_PAY_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
-            this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_BANK_SMS);
-            this.billTypeEnum = BillTypeEnum.PAY;
-        }
-        return this;
-    }
+
 
     /**
      * 解析云闪付账单构建匹配订单业务类
      *
      * @param uPayMessage
      * @return
-     * @author dongfang.ding
-     * @date 2019/9/27 14:19
+
+
      */
     public void byUPayMessage(UPayMessage uPayMessage, CmdEnum cmd) {
-        this.setTradeNo(uPayMessage.getOrderId()).setCmd(cmd).setOrderTime(new Date(uPayMessage.getOrderTime()));
+        this.setTradeNo(uPayMessage.getOrderId()).setCmd(cmd);
+        fixedOrderTime(uPayMessage.getOrderTime());
         if (PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.getValue().equals(platformMessageTemplate.getType())) {
             setSourceType(MerchantMessageInfo.SOURCE_TYPE_NORMAL_INCOME_UPAY_MESSAGE);
             setBillTypeEnum(BillTypeEnum.INCOME);
@@ -215,11 +225,11 @@ public class ParseContent {
 
     /**
      * 根据账单构建解析对象
-     *
+     * 
      * @param uPayBill
      * @return
-     * @author dongfang.ding
-     * @date 2019/9/27 14:24
+
+
      */
     public static ParseContent byUPayBill(UPayBill uPayBill, CmdEnum cmd) {
         ParseContent parseContent = new ParseContent();
@@ -239,24 +249,49 @@ public class ParseContent {
     }
 
     /**
+     * 将短信解析到解析对象中
+     * 
+     * @param smsContent
+     * @return
+
+
+     */
+    public ParseContent byBankSms(SmsContent smsContent, CmdEnum cmd) {
+        this.setTradeNo(smsContent.getPrimaryKey()).setCmd(cmd);
+        fixedOrderTime(smsContent.getReceiveTime());
+        if (PlatformMessageTemplate.Type.BANK_INCOME_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
+            this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_INCOME_BANK_SMS);
+            this.billTypeEnum = BillTypeEnum.INCOME;
+        } else if (PlatformMessageTemplate.Type.BANK_PAY_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
+            this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_BANK_SMS);
+            this.billTypeEnum = BillTypeEnum.PAY;
+        }
+        return this;
+    }
+
+    /**
      * 校验必须包含信息
      */
     public void checkRequired() {
         if (cmd == null) {
-            throw new GlobalCustomizeException("解析后需要将指令码放入解析对象！");
+            throw new BusinessException("解析后需要将指令码放入解析对象！");
         }
         if (StringUtils.isBlank(tradeNo)) {
-            throw new GlobalCustomizeException("数据主键tradeNo不能为空！");
+            throw new BusinessException("数据主键tradeNo不能为空！");
         }
 
         if (CmdEnum.UPAY_MESSAGE.equals(cmd) || CmdEnum.BANK_SMS.equals(cmd)) {
             if (platformMessageTemplate == null) {
-                throw new GlobalCustomizeException("解析过程未将模板返回！");
+                throw new BusinessException("解析过程未将模板返回！");
             }
         }
 
+        if (billTypeEnum == null) {
+            throw new BusinessException("无法判断是收款还是付款订单！！");
+        }
+
         if (sourceType == null) {
-            throw new GlobalCustomizeException("数据来源不能为空！");
+            throw new BusinessException("数据来源不能为空！");
         }
     }
 
@@ -268,7 +303,7 @@ public class ParseContent {
      */
     public void fixedOrderTime(Long receiverTime) {
         if (receiverTime == null) {
-            throw new GlobalCustomizeException("收件时间为空，不能修正时间！");
+            throw new BusinessException("收件时间为空，不能修正时间！");
         }
         Calendar receiverCalendar = new GregorianCalendar();
         receiverCalendar.setTimeInMillis(receiverTime);
@@ -328,11 +363,14 @@ public class ParseContent {
             setOrderTime(simpleDateFormat.parse(timeStr));
         } catch (Exception e) {
             log.error("时间解析转换失败！timeStr=>{}", timeStr);
-            throw new GlobalCustomizeException("时间解析失败！");
+            throw new BusinessException("时间解析失败！");
         }
-        // 给定一个误差值
+        // 给定一个误差值,如果给0的话，这个时间可能会早于订单时间，会匹配不到订单；如果现在是59，那么理论上如果当前
+        // 服务器时间是02分1秒，而短信是03分，那么补了03分59秒，就会造成时间差的拉大。因此这里保险起见，只能给120秒、
+        // 需要注意的是，订单那边需要兼容这个逻辑。本来订单在一个小时内 的金额不能重复，现在就得是62分钟金额不能重复；
+        // 否则根据时间去找，到时候可能会出现找到两个相同金额的订单
         long currTime = System.currentTimeMillis();
-        if (getOrderTime().getTime() - currTime > 59 * 1000) {
+        if (getOrderTime().getTime() - currTime > 120 * 1000) {
             throw new InvalidFutureTimeException(String.format("时间解析出错，出现未来时间！当前时间: %s, " +
                     "解析后的时间: %s", currTime, getOrderTime().getTime()));
         }
@@ -341,8 +379,8 @@ public class ParseContent {
     /**
      * 拼接到账消息， 包含云闪付到账消息，账单消息， 短信消息
      * 
-     * @author dongfang.ding
-     * @date 2019/9/7 14:25 
+
+
      */
     public String buildMessage() {
         if (StringUtils.isNotBlank(parseContent)) {

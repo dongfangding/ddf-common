@@ -12,8 +12,8 @@ import java.io.Serializable;
 /**
  * 云闪付到账消息报文主体内容
  *
- * @author dongfang.ding
- * @date 2019/9/21 15:28
+
+
  */
 @Data
 @AllArgsConstructor

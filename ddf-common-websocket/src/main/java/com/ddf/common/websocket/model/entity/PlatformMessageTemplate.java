@@ -39,6 +39,7 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
     private Integer sort;
 
     public enum Type {
+
         /** 云闪付个人码到账通知  */
         UNION_PAY_NORMAL_INCOME_MESSAGE(0),
         /** 系统模板 */

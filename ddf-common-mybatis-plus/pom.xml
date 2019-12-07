@@ -9,9 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ddf-common-security</artifactId>
-    <description>结合jwt完成后面的上下文授权</description>
-
+    <artifactId>ddf-common-mybatis-plus</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,9 +17,10 @@
             <artifactId>ddf-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
+
         <dependency>
-            <groupId>com.company.pay</groupId>
-            <artifactId>ddf-common-jwt</artifactId>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-security</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -42,4 +41,5 @@
             </exclusions>
         </dependency>
     </dependencies>
+
 </project>

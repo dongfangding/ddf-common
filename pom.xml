@@ -23,6 +23,8 @@
         <lombok.version>1.18.10</lombok.version>
         <mysql.version>8.0.15</mysql.version>
         <guava.version>28.1-jre</guava.version>
+        <http-client.version>4.5.10</http-client.version>
+        <http-core.version>4.4.12</http-core.version>
     </properties>
 
     <parent>
@@ -228,6 +230,20 @@
                 <version>${guava.version}</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http-client.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${http-core.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
@@ -238,5 +254,6 @@
         <module>ddf-common-websocket</module>
         <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
+        <module>ddf-common-mybatis-plus</module>
     </modules>
 </project>
