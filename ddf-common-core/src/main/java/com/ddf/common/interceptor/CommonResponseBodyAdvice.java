@@ -19,11 +19,12 @@ import java.util.List;
 /**
  * 允许在执行一个@ResponseBody 或一个ResponseEntity控制器方法之后但在使用一个主体写入正文之前自定义响应HttpMessageConverter。
  *
+ * 如果不想要自己的返回值生效，可以在控制器类上使用@Controller代替@RestController或者{@link CommonResponseBodyAdviceProperties}
+ *
  * @author dongfang.ding
  * @date 2019/6/27 11:15
  */
 @RestControllerAdvice(basePackages = {GlobalConstants.BASE_PACKAGE})
-@ControllerAdvice(basePackages = {GlobalConstants.BASE_PACKAGE})
 @Order
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 

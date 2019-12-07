@@ -3,6 +3,7 @@ package com.ddf.common.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
@@ -22,6 +23,7 @@ import java.util.Map;
  */
 @Component
 @Order(value = Ordered.HIGHEST_PRECEDENCE + 10)
+@ConditionalOnMissingBean
 public class ErrorAttributesHandler extends DefaultErrorAttributes {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
