@@ -1,13 +1,13 @@
 package com.ddf.common.jwt.filter;
 
-import com.ddf.common.jwt.util.JwtUtil;
-import com.google.common.base.Preconditions;
-import com.company.pay.core.common.utils.JsonUtil;
-import com.company.pay.core.common.utils.WebUtil;
-import com.company.pay.core.constant.GlobalConsts;
 import com.ddf.common.jwt.config.JwtProperties;
+import com.ddf.common.jwt.consts.JwtConstant;
 import com.ddf.common.jwt.interfaces.UserClaimService;
 import com.ddf.common.jwt.model.UserClaim;
+import com.ddf.common.jwt.util.JwtUtil;
+import com.ddf.common.util.JsonUtil;
+import com.ddf.common.util.WebUtil;
+import com.google.common.base.Preconditions;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -59,9 +59,9 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String path = request.getServletPath();
         String host = WebUtil.getHost();
-        request.setAttribute(GlobalConsts.CLIENT_IP, host);
+        request.setAttribute(JwtConstant.CLIENT_IP, host);
         userClaimService.storeRequest(request, host);
-        RpcContext.getContext().setAttachment(GlobalConsts.CLIENT_IP, WebUtil.getHost());
+        RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
             chain.doFilter(request, response);
@@ -128,8 +128,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             }
         }
         String userInfo = JsonUtil.asString(storeUser);
-        request.setAttribute(GlobalConsts.HEADER_USER, userInfo);
-        RpcContext.getContext().setAttachment(GlobalConsts.HEADER_USER, userInfo);
+        request.setAttribute(JwtConstant.HEADER_USER, userInfo);
+        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
 
         chain.doFilter(request, response);
     }

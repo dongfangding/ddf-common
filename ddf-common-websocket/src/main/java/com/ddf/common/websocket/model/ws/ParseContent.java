@@ -1,6 +1,6 @@
 package com.ddf.common.websocket.model.ws;
 
-import com.company.pay.core.exception.BusinessException;
+import com.ddf.common.exception.GlobalCustomizeException;
 import com.ddf.common.websocket.enumerate.BillTypeEnum;
 import com.ddf.common.websocket.enumerate.CmdEnum;
 import com.ddf.common.websocket.enumerate.OutQRCodeTypeEnum;
@@ -274,24 +274,24 @@ public class ParseContent {
      */
     public void checkRequired() {
         if (cmd == null) {
-            throw new BusinessException("解析后需要将指令码放入解析对象！");
+            throw new GlobalCustomizeException("解析后需要将指令码放入解析对象！");
         }
         if (StringUtils.isBlank(tradeNo)) {
-            throw new BusinessException("数据主键tradeNo不能为空！");
+            throw new GlobalCustomizeException("数据主键tradeNo不能为空！");
         }
 
         if (CmdEnum.UPAY_MESSAGE.equals(cmd) || CmdEnum.BANK_SMS.equals(cmd)) {
             if (platformMessageTemplate == null) {
-                throw new BusinessException("解析过程未将模板返回！");
+                throw new GlobalCustomizeException("解析过程未将模板返回！");
             }
         }
 
         if (billTypeEnum == null) {
-            throw new BusinessException("无法判断是收款还是付款订单！！");
+            throw new GlobalCustomizeException("无法判断是收款还是付款订单！！");
         }
 
         if (sourceType == null) {
-            throw new BusinessException("数据来源不能为空！");
+            throw new GlobalCustomizeException("数据来源不能为空！");
         }
     }
 
@@ -303,7 +303,7 @@ public class ParseContent {
      */
     public void fixedOrderTime(Long receiverTime) {
         if (receiverTime == null) {
-            throw new BusinessException("收件时间为空，不能修正时间！");
+            throw new GlobalCustomizeException("收件时间为空，不能修正时间！");
         }
         Calendar receiverCalendar = new GregorianCalendar();
         receiverCalendar.setTimeInMillis(receiverTime);
@@ -363,7 +363,7 @@ public class ParseContent {
             setOrderTime(simpleDateFormat.parse(timeStr));
         } catch (Exception e) {
             log.error("时间解析转换失败！timeStr=>{}", timeStr);
-            throw new BusinessException("时间解析失败！");
+            throw new GlobalCustomizeException("时间解析失败！");
         }
         // 给定一个误差值,如果给0的话，这个时间可能会早于订单时间，会匹配不到订单；如果现在是59，那么理论上如果当前
         // 服务器时间是02分1秒，而短信是03分，那么补了03分59秒，就会造成时间差的拉大。因此这里保险起见，只能给120秒、

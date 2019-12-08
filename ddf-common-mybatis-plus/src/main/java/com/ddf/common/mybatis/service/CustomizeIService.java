@@ -2,8 +2,8 @@ package com.ddf.common.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.company.pay.core.exception.BusinessException;
 import com.ddf.common.entity.BaseDomain;
+import com.ddf.common.exception.GlobalCustomizeException;
 
 
 /**
@@ -34,7 +34,7 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
      * @date 2019/12/7 0007 22:34
      **/
     default boolean saveCheckDuplicateKey(T entity) {
-        return saveCheckDuplicateKey(entity, new BusinessException(entity.getClass().getSimpleName() + "违反数据库唯一约束"));
+        return saveCheckDuplicateKey(entity, new GlobalCustomizeException(entity.getClass().getSimpleName() + "违反数据库唯一约束"));
     }
     
     /**

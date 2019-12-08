@@ -3,9 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>provider-common-b2c</artifactId>
-        <groupId>com.company.pay</groupId>
+        <groupId>com.ddf.common</groupId>
+        <artifactId>ddf-common</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,8 +18,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.company.pay</groupId>
-            <artifactId>common-core-b2c</artifactId>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
@@ -41,6 +42,11 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jwt.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
         <dependency>

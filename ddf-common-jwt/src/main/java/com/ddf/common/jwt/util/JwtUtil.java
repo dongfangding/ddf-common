@@ -1,12 +1,12 @@
 package com.ddf.common.jwt.util;
 
-import com.company.pay.core.common.helper.SpringContextCoreHolder;
-import com.company.pay.core.common.utils.JsonUtil;
-import com.company.pay.core.common.utils.WebUtil;
-import com.company.pay.core.constant.GlobalConsts;
 import com.ddf.common.jwt.config.JwtProperties;
+import com.ddf.common.jwt.consts.JwtConstant;
 import com.ddf.common.jwt.exception.UserClaimMissionException;
 import com.ddf.common.jwt.model.UserClaim;
+import com.ddf.common.util.JsonUtil;
+import com.ddf.common.util.SpringContextHolder;
+import com.ddf.common.util.WebUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.KeyException;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class JwtUtil {
 
-    private static JwtProperties jwtProperties = SpringContextCoreHolder.getBean(JwtProperties.class);
+    private static JwtProperties jwtProperties = SpringContextHolder.getBean(JwtProperties.class);
 
     /**
      * 生成与解析jws如果不是同一台机器可能会存在时钟差的问题
@@ -130,12 +130,12 @@ public class JwtUtil {
     public static UserClaim getByContext() throws UserClaimMissionException {
         String headerUser;
         try {
-            headerUser = String.valueOf(WebUtil.getCurRequest().getAttribute(GlobalConsts.HEADER_USER));
+            headerUser = String.valueOf(WebUtil.getCurRequest().getAttribute(JwtConstant.HEADER_USER));
             if (StringUtils.isBlank(headerUser)) {
-                headerUser = RpcContext.getContext().getAttachment(GlobalConsts.HEADER_USER);
+                headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
             }
         } catch (Exception e) {
-            headerUser = RpcContext.getContext().getAttachment(GlobalConsts.HEADER_USER);
+            headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
         }
         if (StringUtils.isBlank(headerUser)) {
             throw new UserClaimMissionException("无法获取当前用户信息！");
@@ -151,7 +151,7 @@ public class JwtUtil {
         try {
             return WebUtil.getHost();
         } catch (Exception e) {
-            String clientIp = RpcContext.getContext().getAttachment(GlobalConsts.CLIENT_IP);
+            String clientIp = RpcContext.getContext().getAttachment(JwtConstant.CLIENT_IP);
             if (clientIp == null) {
                 return DEFAULT_CLIENT_IP;
             }

@@ -1,6 +1,6 @@
 package com.ddf.common.websocket.biz.impl;
 
-import com.company.pay.core.common.utils.JsonUtil;
+import com.ddf.common.util.JsonUtil;
 import com.ddf.common.util.StringUtil;
 import com.ddf.common.websocket.biz.HandlerTemplateType;
 import com.ddf.common.websocket.enumerate.CmdEnum;
