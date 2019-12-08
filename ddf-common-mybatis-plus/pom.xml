@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.ddf.common</groupId>
-            <artifactId>ddf-common-security</artifactId>
+            <artifactId>ddf-common-jwt</artifactId>
             <version>1.0.0</version>
         </dependency>
 

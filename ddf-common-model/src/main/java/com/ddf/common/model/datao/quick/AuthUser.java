@@ -1,4 +1,4 @@
-package com.ddf.common.security.model.entity;
+package com.ddf.common.model.datao.quick;
 
 import com.ddf.common.entity.BaseDomain;
 import io.swagger.annotations.ApiModel;
@@ -22,19 +22,18 @@ import java.util.Date;
 @Accessors(chain = true)
 public class AuthUser extends BaseDomain {
 
-    /** 姓名*/
     @ApiModelProperty("姓名")
     private String userName;
 
-    /** 密码*/
+    @ApiModelProperty("用户随机码，生成密码的盐，注册时生成且不可变！")
+	private String userToken;
+
     @ApiModelProperty("密码")
     private String password;
 
-    /** 邮箱*/
     @ApiModelProperty("邮箱")
     private String email;
 
-    /** 生日*/
     @ApiModelProperty("生日")
     private Date birthday;
 
