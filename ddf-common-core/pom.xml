@@ -178,13 +178,6 @@
             <artifactId>httpclient</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.company.pay</groupId>
-            <artifactId>ddf-common-jwt</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- 引入mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>

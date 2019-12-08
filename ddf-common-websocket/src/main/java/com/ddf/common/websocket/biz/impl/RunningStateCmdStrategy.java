@@ -2,8 +2,8 @@ package com.ddf.common.websocket.biz.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.company.pay.core.common.utils.JsonUtil;
-import com.company.pay.core.exception.BusinessException;
+import com.ddf.common.exception.GlobalCustomizeException;
+import com.ddf.common.util.JsonUtil;
 import com.ddf.common.websocket.biz.CmdStrategy;
 import com.ddf.common.websocket.model.entity.MerchantBaseDevice;
 import com.ddf.common.websocket.model.ws.AuthPrincipal;
@@ -44,7 +44,7 @@ public class RunningStateCmdStrategy implements CmdStrategy {
         RunningState runningState = JsonUtil.toBean(stateStr, RunningState.class);
         MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
         if (baseDevice == null) {
-            throw new BusinessException("设备信息不存在！");
+            throw new GlobalCustomizeException("设备信息不存在！");
         }
         LambdaUpdateWrapper<MerchantBaseDevice> updateWrapper = Wrappers.lambdaUpdate();
         updateWrapper.eq(MerchantBaseDevice::getId, baseDevice.getId());
@@ -52,7 +52,7 @@ public class RunningStateCmdStrategy implements CmdStrategy {
         updateWrapper.set(MerchantBaseDevice::getAppRunningState, stateStr);
         RunningState.UnionPay unionPay = runningState.getUnionPay();
         if (unionPay == null) {
-            throw new BusinessException("云闪付应用状态相关数据为空!");
+            throw new GlobalCustomizeException("云闪付应用状态相关数据为空!");
         }
         boolean isUpdate = false;
         // 为空或与数据库中一致时不更新状态

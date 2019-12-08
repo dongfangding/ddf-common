@@ -26,7 +26,7 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
         if (metaObject.getOriginalObject() instanceof BaseDomain) {
             log.info("start insert fill ....");
             // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-            setInsertFieldValByName("createBy", SecurityUtils.getDefaultUserId(), metaObject);
+	        setInsertFieldValByName("createBy", SecurityUtils.getDefaultUserId(), metaObject);
             setInsertFieldValByName("createTime", new Date(), metaObject);
             setInsertFieldValByName("modifyBy", SecurityUtils.getDefaultUserId(), metaObject);
             setInsertFieldValByName("modifyTime", new Date(), metaObject);

@@ -1,6 +1,6 @@
 package com.ddf.common.security.service.impl;
 
-import com.company.pay.core.constant.GlobalConsts;
+import com.ddf.common.jwt.consts.JwtConstant;
 import com.ddf.common.jwt.interfaces.UserClaimService;
 import com.ddf.common.jwt.model.UserClaim;
 import com.ddf.common.util.WebUtil;
@@ -36,7 +36,7 @@ public class UserClaimServiceImpl implements UserClaimService {
     @Override
     public void storeRequest(HttpServletRequest request, String host) {
         RpcContext.getContext().setRequest(request);
-        RpcContext.getContext().setAttachment(GlobalConsts.CLIENT_IP, com.company.pay.core.common.utils.WebUtil.getHost());
+        RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
     }
 
     /**

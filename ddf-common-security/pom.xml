@@ -20,9 +20,14 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.company.pay</groupId>
+            <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-jwt</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
         <!-- 引入mybatis-plus -->
@@ -40,6 +45,12 @@
                     <artifactId>spring-boot-starter-jdbc</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-jwt</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
