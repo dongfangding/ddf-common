@@ -260,5 +260,6 @@
         <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
         <module>ddf-common-mybatis-plus</module>
+        <module>ddf-common-model</module>
     </modules>
 </project>
