@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -20,7 +21,9 @@ import java.util.Date;
 @Data
 @ApiModel("用户")
 @Accessors(chain = true)
-public class AuthUser extends BaseDomain {
+public class AuthUser extends BaseDomain implements Serializable {
+
+    static final long serialVersionUID = -5091699981026819031L;
 
     @ApiModelProperty("姓名")
     private String userName;
