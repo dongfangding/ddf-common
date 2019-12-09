@@ -70,12 +70,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-        </dependency>
-
-
         <!-- 引入对缓存的支持 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

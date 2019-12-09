@@ -1,5 +1,9 @@
 server:
-  port: 8081
+  port: 8080
+  tomcat:
+    max-connections: 20000
+    max-threads: 400
+    min-spare-threads: 20
 spring:
   jackson:
     time-zone: GMT+8
@@ -9,40 +13,45 @@ spring:
   datasource:
     initialization-mode: ALWAYS
     type: com.alibaba.druid.pool.DruidDataSource
-    druidProperties:
+    druid:
+      driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+      url: jdbc:p6spy:mysql://localhost:3306/boot-quick?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull
       username: root
       password: 123456
-      url: jdbc:mysql://localhost:3306/boot-scaffold?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull
-      name: druid
-      initialSize: 3
-      minIdle: 3
-      maxActive: 15
-      maxWait: 5000
-      timeBetweenEvictionRunsMillis: 60000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      filters: stat,wall,slf4j
-      logSlowSql: true
+      initial-size: 3
+      max-active: 15
+      min-idle: 3
+      max-wait: 5000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
       poolPreparedStatements: true
-      maxOpenPreparedStatements: 20
-      asyncInit: true
-      connectionProperties:
-        druid.stat.slowSqlMillis: 3000
-  jpa:
-    show-sql: true
-    database: MYSQL
-    generate-ddl: false
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 3000
+      max-open-prepared-statements: 20
+      async-init: true
+
   messages:
     basename: exception/exception
     use-code-as-default-message: true
+
+  #  redis:
+  #    cluster:
+  #      max-redirects: 3
+  #      nodes: localhost:6601,localhost:6602,localhost:6603
+  #    database: 0
+  #    jedis:
+  #      pool:
+  #        max-active: 100
+  #        max-idle: 10
+  #        min-idle: 0
+  #        max-wait: 800ms
+  #    timeout: 1000ms
 
 
   mail:
@@ -70,40 +79,43 @@ spring:
 
 
 customs:  # 自定义的属性最好都写在custom前缀下，方便辨认
-  global-config:
-    anonymousName: SYSTEM
-    initPassword: 123456
-    platformCompCode: 0
-
+  global-properties:
+    snowflakeWorkerId: 1      # worker Id can't be greater than 31 or less than 0
+    snowflakeDataCenterId: 1  # dataCenterId Id can't be greater than 31 or less than 0
   jwt:
-    refreshTokenMinute: 5
-    expiredMinute: 30
-    permitAllIgnores:
-      - path: /*.html
-      - path: /**/*.html
-      - path: /**/*.css
-      - path: /**/*.js
-      - path: /swagger-ui.html
-      - path: /swagger-resources/**
-      - path: /webjars/**
-      - path: /*/api-docs
-      - path: /druid/**
-      - httpMethod: OPTIONS
-        path: /**
-      - httpMethod: POST
-        path: /user/registry
-      - httpMethod: POST
-        path: /user/login
-      - path: /user/verifyCode
+    secret: woshiyigefenshuajiangfenshuabenlingqiang
+    expiredMinute: 1080
+    refreshTokenMinute: 10
+    ignores:
+      - path: /**
 
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-  mapper-locations:
-    - com.ddf.common.security.mapper.impl
+    cache-enabled: false
+  mapper-locations: classpath:mapper/*.xml
 
 
 logging:
   level:
-    com.ddf.common.security.mapper: debug
+    com.ddf.boot.quick.mapper: debug
+
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    jmx:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+    jolokia:
+      enabled: true
