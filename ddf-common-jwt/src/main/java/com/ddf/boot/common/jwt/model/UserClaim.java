@@ -16,6 +16,10 @@ import java.util.Map;
  * 自定义jws的payload部分的用户信息类
  * 生成Jwt的时候调用参数为该类的方法即可，会把这个类中的所有有get方法的字段都生成到payload中
  *
+ * Jwt本身虽然是无状态的，不能直接将某个用户T掉过期掉，但是我们可以通过另外一种方式去实现；
+ * 由于我们在生成token的时候会去校验最后登录时间是否和token中的一致，如果要过期某个用户的token,则我们直接修改该用户的最后登录时间即可
+ *
+ *
  */
 @Data
 @NoArgsConstructor
@@ -65,7 +69,8 @@ public class UserClaim<T> implements Serializable {
     private Long lastModifyPasswordTime;
 
     /**
-     * 最后一次登录的时间，每次登录使用新值，老的token不允许再登录
+     * 最后一次登录的时间，生成token时将该值放入其中，然后认证的时候判断是否和数据库中一致；不一致不允许再登录；
+     * 通过该字段，如果我们想要过期某个用户的token,可以将该用户在数据库中的该字段的值修改掉即可
      */
     private Long lastLoginTime;
 

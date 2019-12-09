@@ -11,6 +11,7 @@
 
     <artifactId>ddf-common-mq</artifactId>
     <version>1.0.0</version>
+    <name>ddf-common-mq</name>
 
     <dependencies>
         <dependency>
