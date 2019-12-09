@@ -29,16 +29,15 @@ public class QueueBuilder {
     public enum QueueDefinition {
 
         /**
-         * 网关日志队列
+         * 自动ack队列绑定
          */
-        TEST_QUEUE(BindingConst.QueueName.TEST_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.TEST_ROUTE_KEY),
+        TEST_AUTO_ACK(BindingConst.QueueName.TEST_AUTO_ACK_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.TEST_AUTO_ACK_KEY),
 
-        GATEWAY_LOG_QUEUE(BindingConst.QueueName.GATEWAY_LOG, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.GATEWAY_LOG),
-        BANK_SMS_PARSE_QUEUE(BindingConst.QueueName.BANK_SMS_PARSE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.BANK_SMS_PARSE),
-        ORDER_NOTIFY_QRCODE_USER_STATUS_QUEUE(BindingConst.QueueName.ORDER_NOTIFY_QRCODE_USER_STATUS, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.ORDER_NOTIFY_QRCODE_USER_STATUS),
-        ORDER_NOTIFY_QRCODE_MEDIATOR_STATUS_QUEUE(BindingConst.QueueName.ORDER_NOTIFY_QRCODE_MEDIATOR_STATUS, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.ORDER_NOTIFY_QRCODE_MEDIATOR_STATUS),
-        ORDER_NOTIFY_ACCOUNT_FROZEN_OR_UNFROZEN_QUEUE(BindingConst.QueueName.ORDER_NOTIFY_ACCOUNT_FROZEN_OR_UNFROZEN, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.ORDER_NOTIFY_ACCOUNT_FROZEN_OR_UNFROZEN),
-        ACCOUNT_NOTIFY_ORDER_UPDATE_ORDER_STATUS_QUEUE(BindingConst.QueueName.ACCOUNT_NOTIFY_ORDER_UPDATE_ORDER_STATUS, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.ACCOUNT_NOTIFY_ORDER_UPDATE_ORDER_STATUS),
+        /**
+         * 用户token
+         */
+        TEST_QUEUE(BindingConst.QueueName.USER_LOGIN_TOKEN_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_TOKEN_KEY),
+
 
 
         ;

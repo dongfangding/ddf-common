@@ -32,14 +32,14 @@ public class ContextRefreshListener implements ApplicationListener<ContextRefres
      * @date 2019/7/31 19:20 
      */
     private void buildQueueDefinition() {
-        com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition[] values = com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition.values();
+        QueueBuilder.QueueDefinition[] values = QueueBuilder.QueueDefinition.values();
         if (values.length > 0) {
-            for (com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition value : values) {
+            for (QueueBuilder.QueueDefinition value : values) {
                 Queue queue = new Queue(value.getQueueName(), true, false, false, value.getQueueArguments());
                 Exchange exchange;
-                if (com.ddf.boot.common.mq.definition.QueueBuilder.ExchangeType.DIRECT.equals(value.getExchangeType())) {
+                if (QueueBuilder.ExchangeType.DIRECT.equals(value.getExchangeType())) {
                     exchange = new DirectExchange(value.getExchangeName(), true, false, value.getExchangeArguments());
-                } else if (com.ddf.boot.common.mq.definition.QueueBuilder.ExchangeType.FANOUT.equals(value.getExchangeType())) {
+                } else if (QueueBuilder.ExchangeType.FANOUT.equals(value.getExchangeType())) {
                     exchange = new FanoutExchange(value.getExchangeName(), true, false, value.getExchangeArguments());
                 } else if (QueueBuilder.ExchangeType.TOPIC.equals(value.getExchangeType())) {
                     exchange = new TopicExchange(value.getExchangeName(), true, false, value.getExchangeArguments());
