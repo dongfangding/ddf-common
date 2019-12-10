@@ -1,6 +1,5 @@
 package com.ddf.boot.common.mq.definition;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MqMessageBO<T> implements Serializable {
+public class MqMessageWrapper<T> implements Serializable {
     private static final long serialVersionUID = -8328345290360094049L;
 
     /** 创建人 */
@@ -27,15 +26,11 @@ public class MqMessageBO<T> implements Serializable {
 
     /** 消息的唯一标识符 */
     private String messageId;
-
-    /** 队列名称 */
-    private String queueName;
+    /**
+     * 当前重试次数
+     */
+    private int retryTimes;
 
     /** 序列化后的消息正文 */
-    private String body;
-
-    /** 反序列化之后的消息正文 */
-    @JsonIgnore
-    private transient T bodyObj;
-
+    private T body;
 }

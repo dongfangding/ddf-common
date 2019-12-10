@@ -4,6 +4,8 @@ import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,40 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MqConfig {
+    
+    
+    /**
+     * 设置RabbitTemplate属性
+     *
+     * FIXME
+     * Description:
+     *
+     * The dependencies of some of the beans in the application context form a cycle:
+     *
+     * ┌─────┐
+     * |  rabbitTemplate defined in class path resource [com/ddf/boot/common/mq/config/MqConfig.class]
+     * └─────┘
+     *
+     * @param rabbitTemplate
+     * @return org.springframework.amqp.rabbit.core.RabbitTemplate
+     * @author dongfang.ding
+     * @date 2019/12/10 0010 14:24
+     **/
+//    @Bean
+//    public RabbitTemplate rabbitTemplate(RabbitTemplate rabbitTemplate, CustomizeMessagePostProcessor messagePostProcessor) {
+//        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+//        rabbitTemplate.addBeforePublishPostProcessors(messagePostProcessor);
+//        return rabbitTemplate;
+//    }
+
+    /**
+     * 设置rabbitmq的序列化机制为application/json
+     * @return
+     */
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
 
     /**
      * 配置消费端的策略，消息确认机制为AUTO，注意与{@link AcknowledgeMode#NONE}的区别
@@ -50,7 +86,7 @@ public class MqConfig {
      * 			channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
      * 			// 开启了手动确认之后，要自己编码确认消息已收到,如果有自己的业务逻辑，则处理完业务逻辑之后再手动确认
      * 			logger.info("receiveFromQueue队列消费到消息.....{}", msg);
-     *                } catch (Exception e) {
+     *       } catch (Exception e) {
      * 			logger.error("消息消费异常: {}", new String(message.getBody(), StandardCharsets.UTF_8), e);
      * 			// deliveryTag 可以认为是消息的唯一身份标识符，multiple如果为true，则将此消息和此消息之前的所有数据都执行当前当前方法，
      * 			channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
@@ -70,6 +106,7 @@ public class MqConfig {
         SimpleRabbitListenerContainerFactory manualRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         manualRabbitListenerContainerFactory.setConnectionFactory(rabbitConnectionFactory);
         manualRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        // 手动ack最好设置为1
         manualRabbitListenerContainerFactory.setPrefetchCount(1);
         return manualRabbitListenerContainerFactory;
     }
@@ -87,9 +124,19 @@ public class MqConfig {
     public RabbitListenerContainerFactory noneAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
         SimpleRabbitListenerContainerFactory manualRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         manualRabbitListenerContainerFactory.setConnectionFactory(rabbitConnectionFactory);
+        manualRabbitListenerContainerFactory.setConcurrentConsumers(1);
+        manualRabbitListenerContainerFactory.setMaxConcurrentConsumers(3);
+        manualRabbitListenerContainerFactory.setStartConsumerMinInterval(2000L);
+        manualRabbitListenerContainerFactory.setStopConsumerMinInterval(5000L);
         manualRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.NONE);
         manualRabbitListenerContainerFactory.setPrefetchCount(1);
         return manualRabbitListenerContainerFactory;
+    }
+
+
+
+    private void setDefaultConcurrentConsumerProperties() {
+
     }
 
 }

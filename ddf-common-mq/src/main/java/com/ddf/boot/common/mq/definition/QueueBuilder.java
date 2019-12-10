@@ -13,6 +13,17 @@ import java.util.Map;
 public class QueueBuilder {
 
     /**
+     * 交换器类型类
+     */
+    public enum ExchangeType {
+        /**
+         * 交换器类型
+         */
+        DIRECT, TOPIC, FANOUT
+
+    }
+
+    /**
      * 队列的配置
      * 暂不支持复杂的队列配置
      * <p>
@@ -27,20 +38,14 @@ public class QueueBuilder {
      */
     @Getter
     public enum QueueDefinition {
-
         /**
-         * 自动ack队列绑定
+         * 用户登录日志
          */
-        TEST_AUTO_ACK(BindingConst.QueueName.TEST_AUTO_ACK_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.TEST_AUTO_ACK_KEY),
-
-        /**
-         * 用户token
-         */
-        TEST_QUEUE(BindingConst.QueueName.USER_LOGIN_TOKEN_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_TOKEN_KEY),
-
+        USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY)
 
 
         ;
+
         /**
          * 队列名称
          */
@@ -83,7 +88,7 @@ public class QueueBuilder {
             this.exchangeName = exchangeName;
             this.exchangeType = exchangeType;
             this.routeKey = routeKey;
-            checkPrefix(this.queueName);
+            checkPrefix(queueName);
         }
 
         /**
@@ -107,9 +112,64 @@ public class QueueBuilder {
             this.queueArguments = queueArguments;
             this.exchangeArguments = exchangeArguments;
             this.bindingArguments = bindingArguments;
-            checkPrefix(this.queueName);
         }
 
+
+        public String getQueueName() {
+            return queueName;
+        }
+
+        public void setQueueName(String queueName) {
+            this.queueName = queueName;
+        }
+
+        public String getExchangeName() {
+            return exchangeName;
+        }
+
+        public void setExchangeName(String exchangeName) {
+            this.exchangeName = exchangeName;
+        }
+
+        public ExchangeType getExchangeType() {
+            return exchangeType;
+        }
+
+        public void setExchangeType(ExchangeType exchangeType) {
+            this.exchangeType = exchangeType;
+        }
+
+        public String getRouteKey() {
+            return routeKey;
+        }
+
+        public void setRouteKey(String routeKey) {
+            this.routeKey = routeKey;
+        }
+
+        public Map<String, Object> getQueueArguments() {
+            return queueArguments;
+        }
+
+        public void setQueueArguments(Map<String, Object> queueArguments) {
+            this.queueArguments = queueArguments;
+        }
+
+        public Map<String, Object> getExchangeArguments() {
+            return exchangeArguments;
+        }
+
+        public void setExchangeArguments(Map<String, Object> exchangeArguments) {
+            this.exchangeArguments = exchangeArguments;
+        }
+
+        public Map<String, Object> getBindingArguments() {
+            return bindingArguments;
+        }
+
+        public void setBindingArguments(Map<String, Object> bindingArguments) {
+            this.bindingArguments = bindingArguments;
+        }
     }
 
 
@@ -128,17 +188,6 @@ public class QueueBuilder {
                 throw new RuntimeException(msg);
             }
         }
-    }
-
-    /**
-     * 交换器类型类
-     */
-    public enum ExchangeType {
-        /**
-         * 交换器类型
-         */
-        DIRECT, TOPIC, FANOUT
-
     }
 
 }

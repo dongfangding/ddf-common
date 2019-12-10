@@ -1,14 +1,12 @@
 package com.ddf.boot.common.mq.util;
 
-import com.ddf.boot.common.mq.definition.MqMessageBO;
+import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.util.JsonUtil;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Data;
 import org.springframework.amqp.core.Message;
-import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -22,20 +20,16 @@ public class MqMessageUtil {
     /**
      * 封装发送消息的统一类
      *
-     * @param queueName
-     * @param bodyObj
+     * @param body
      * @param <T>
      * @return
      */
-    public static <T> MqMessageBO<T> wrapper(String queueName, T bodyObj) {
-        Assert.notNull(queueName, "queueName is not allowed to be null");
-        MqMessageBO<T> message = new MqMessageBO<>();
+    public static <T> MqMessageWrapper<T> wrapper(T body) {
+        MqMessageWrapper<T> message = new MqMessageWrapper<>();
         // todo 消息创建人
         message.setCreator(0L);
         message.setCreateTime(System.currentTimeMillis());
-        message.setQueueName(queueName);
-        message.setBodyObj(bodyObj);
-        message.setBody(JsonUtil.asString(bodyObj));
+        message.setBody(body);
         message.setMessageId(UUID.randomUUID().toString());
         return message;
     }
@@ -43,17 +37,16 @@ public class MqMessageUtil {
     /**
      * 封装发送消息的统一类
      *
-     * @param queueName
      * @param bodyObj
      * @param <T>
      * @return
      */
-    public static <T> String wrapperToString(String queueName, T bodyObj) {
-        return JsonUtil.asString(wrapper(queueName, bodyObj));
+    public static <T> String wrapperToString(T bodyObj) {
+        return JsonUtil.asString(wrapper(bodyObj));
     }
 
     /**
-     * 将序列化后发送的消息反序列化为{@link MqMessageBO}，
+     * 将序列化后发送的消息反序列化为{@link MqMessageWrapper}，
      *
      * @param messageStr 序列化后的消息json字符串
      * @param clazz      消息中的body的对象类型
@@ -61,15 +54,27 @@ public class MqMessageUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> MqMessageBO<T> parse(String messageStr, Class<T> clazz) {
-        MqMessageBO<T> message = JsonUtil.toBean(messageStr, MqMessageBO.class);
-        String body = message.getBody();
-        if (StringUtils.isAnyBlank(body)) {
+    public static <T> MqMessageWrapper<T> parse(@NotNull String messageStr, @NotNull Class<T> clazz) {
+        MqMessageWrapper<T> message = JsonUtil.toBean(messageStr, MqMessageWrapper.class);
+        T body = message.getBody();
+        if (body == null) {
             return message;
         }
-        T t = JsonUtil.toBean(message.getBody(), clazz);
-        message.setBodyObj(t);
+        message.setBody(JsonUtil.toBean(JsonUtil.asString(message.getBody()), clazz));
         return message;
+    }
+    
+    /**
+     * 将消息中的byte数组转换为统一对象
+     * @param message
+     * @param clazz
+     * @return com.ddf.boot.common.mq.definition.MqMessageWrapper<T>
+     * @author dongfang.ding
+     * @date 2019/12/10 0010 22:58
+     **/
+    public static <T> MqMessageWrapper<T> parse(@NotNull Message message, @NotNull Class<T> clazz) {
+        if (message == null || clazz == null) return null;
+        return parse(getBodyAsString(message.getBody()), clazz);
     }
 
     /**
@@ -83,20 +88,21 @@ public class MqMessageUtil {
     }
 
     public static void main(String[] args) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("xixi", "haha");
-        MqMessageBO<Map> hehe = MqMessageUtil.wrapper("hehe", map);
+        Test test = new Test();
+        test.setUserId("userId");
+        test.setUserName("userName");
+        MqMessageWrapper<Test> hehe = MqMessageUtil.wrapper(test);
 
-        String str = JsonUtil.asString(hehe);
-        System.out.println(str);
+        String string = JsonUtil.asString(hehe);
 
-        MqMessageBO<Map> parse = MqMessageUtil.parse(str, Map.class);
-        System.out.println(parse.getBody());
-        System.out.println(parse.getQueueName());
-        System.out.println(parse.getBodyObj());
+        MqMessageWrapper<Test> parse = parse(string, Test.class);
+        System.out.println(parse);
 
-        System.out.println(parse.getBodyObj().get("xixi"));
+    }
 
-
+    @Data
+    static class Test {
+        private String userId;
+        private String userName;
     }
 }
