@@ -3,8 +3,8 @@ package com.ddf.boot.common.mq.definition;
 /**
  * 队列、交换器、路由键的常量类
  *
- * @author dongfang.ding
- * @date 2019/8/5 13:35
+
+company
  */
 public class BindingConst {
 
@@ -16,10 +16,24 @@ public class BindingConst {
     /**
      * 交换器名称
      */
+
     public class ExchangeName {
+
+        /**
+         * 默认的交换器名称
+         */
         public static final String DIRECT = "amqp.direct";
+
+        /**
+         * 默认的交换器名称
+         */
         public static final String FANOUT = "amqp.fanout";
+
+        /**
+         * 默认的交换器名称
+         */
         public static final String TOPIC = "amqp.topic";
+
     }
 
     /**
@@ -28,12 +42,9 @@ public class BindingConst {
     public class QueueName {
 
         /**
-         * 测试自动ack的队列
+         * 用户登录日志
          */
-        public static final String TEST_AUTO_ACK_QUEUE = PREFIX + "test.auto.ack.queue";
-
-
-        public static final String USER_LOGIN_TOKEN_QUEUE = PREFIX + "user.login.token.queue";
+        public static final String USER_LOGIN_HISTORY_QUEUE = PREFIX + "user.login.token.queue";
     }
 
     /**
@@ -42,11 +53,10 @@ public class BindingConst {
     public class RouteKey {
 
         /**
-         * 测试自动ack的路由键
+         * 收款订单路由
          */
-        public static final String TEST_AUTO_ACK_KEY = PREFIX + "test.auto.ack.key";
+        public static final String USER_LOGIN_HISTORY_KEY = "user.login.token.key";
 
-        public static final String USER_LOGIN_TOKEN_KEY = PREFIX + "user.login.token.key";
     }
 
 }
