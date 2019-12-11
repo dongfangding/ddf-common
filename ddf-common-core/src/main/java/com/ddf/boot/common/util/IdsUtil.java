@@ -3,8 +3,6 @@ package com.ddf.boot.common.util;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.config.GlobalProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * ID生成器$
@@ -12,11 +10,9 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @date 2019/12/9 0009 11:35
  */
-@Component
 public class IdsUtil {
 
-    @Autowired
-    private GlobalProperties globalProperties;
+    private static GlobalProperties globalProperties = SpringContextHolder.getBean(GlobalProperties.class);
 
     /**
      * 获取string格式的id
@@ -25,7 +21,7 @@ public class IdsUtil {
      * @author dongfang.ding
      * @date 2019/12/9 0009 11:38
      **/
-    public String getNextStrId() {
+    public static String getNextStrId() {
         Snowflake snowflake = IdUtil.getSnowflake(globalProperties.getSnowflakeWorkerId(),
                 globalProperties.getSnowflakeDataCenterId());
         return snowflake.nextIdStr();
@@ -37,7 +33,7 @@ public class IdsUtil {
      * @author dongfang.ding
      * @date 2019/12/9 0009 11:39
      **/
-    public long getNextLongId() {
+    public static long getNextLongId() {
         Snowflake snowflake = IdUtil.getSnowflake(globalProperties.getSnowflakeWorkerId(),
                 globalProperties.getSnowflakeDataCenterId());
         return snowflake.nextId();

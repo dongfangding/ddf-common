@@ -1,13 +1,13 @@
 package com.ddf.boot.common.mq.util;
 
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
+import com.ddf.boot.common.util.IdsUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import lombok.Data;
 import org.springframework.amqp.core.Message;
 
 import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * mq发送消息格式类的工具类
@@ -30,7 +30,7 @@ public class MqMessageUtil {
         message.setCreator(0L);
         message.setCreateTime(System.currentTimeMillis());
         message.setBody(body);
-        message.setMessageId(UUID.randomUUID().toString());
+        message.setMessageId(IdsUtil.getNextStrId());
         return message;
     }
 

@@ -1,10 +1,13 @@
 package com.ddf.boot.common.mq.definition;
 
+import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.amqp.core.Message;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 
 /**
  * mq发送消息的统一格式类
@@ -27,9 +30,11 @@ public class MqMessageWrapper<T> implements Serializable {
     /** 消息的唯一标识符 */
     private String messageId;
     /**
-     * 当前重试次数
+     * 当前重投次数， 消息消费失败后提供一种重投机制，会将消息重新发送到队尾，如此往复；
+     *
+     * @see com.ddf.boot.common.mq.helper.RabbitTemplateHelper#nackAndRequeueIfFailure(Channel, Message, QueueBuilder.QueueDefinition, MqMessageWrapper, Consumer)
      */
-    private int retryTimes;
+    private int requeueTimes;
 
     /** 序列化后的消息正文 */
     private T body;
