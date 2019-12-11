@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * mq的配置类
  *
+ * https://www.docs4dev.com/docs/zh/spring-amqp/2.1.2.RELEASE/reference/_reference.html
+ *
  * @author dongfang.ding
  * @date 2019/8/1 18:28
  */
@@ -22,6 +24,7 @@ public class MqConfig {
     
     /**
      * 设置RabbitTemplate属性
+     *
      *
      * FIXME
      * Description:
@@ -65,8 +68,12 @@ public class MqConfig {
     public RabbitListenerContainerFactory autoAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
         SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         simpleRabbitListenerContainerFactory.setConnectionFactory(rabbitConnectionFactory);
+        // 决定了在一个请求中可以发送给消费者多少条消息，通常可以设置很高以提高吞吐量；2.0版本好像默认250
         simpleRabbitListenerContainerFactory.setPrefetchCount(1);
         simpleRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.AUTO);
+
+        // 要小于或等于prefetchCount,一个事务中要处理的消息数
+        simpleRabbitListenerContainerFactory.setTxSize(1);
         return simpleRabbitListenerContainerFactory;
     }
 
@@ -129,6 +136,7 @@ public class MqConfig {
         manualRabbitListenerContainerFactory.setStartConsumerMinInterval(2000L);
         manualRabbitListenerContainerFactory.setStopConsumerMinInterval(5000L);
         manualRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.NONE);
+        // 如果acknowledgeMode是 NONE，则忽略
         manualRabbitListenerContainerFactory.setPrefetchCount(1);
         return manualRabbitListenerContainerFactory;
     }
