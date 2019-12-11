@@ -1,6 +1,6 @@
 customs:
   jwt:
-    secret: Hello world, Hello everyone!
+    secret: WoshiyigefenshuajiangfenshuabenlingqiangwoyaobanaxinfangzishuadegengpiaoliangshualefangziyoushuangqiangaiyawodexiaobizibianyabianleYang
     permitAllIgnores:
       - path: /v2/*
       - path: /swagger-ui.html
@@ -10,4 +10,10 @@ customs:
       - path: /webjars/**
       - path: /druid/**
       - path: /csrf
+      - path: /app.js
+      - path: /index.html
+      - path: /websocket.html
       - path: /js/*
+      - path: /ws/*
+      - path: /pay-ws/*
+      - path: /heartCheck.txt
