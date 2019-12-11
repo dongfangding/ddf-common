@@ -1,0 +1,79 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>index</h1>
+<p>用户：<div><input id="toUserId" name="toUserId" type="text" value="3"></div>
+<p>token：<div><input id="token" name="token" type="text" value="Bearer "></div>
+<p>host：<div><input id="host" name="host" type="text" value="192.168.3.155"></div>
+<p>内容：<div><input id="contentText" name="contentText" type="text" value="嗷嗷嗷"></div>
+<p>系统：<div><input id="system" name="system" type="text" value="boss"></div>
+<p>【操作】：<div><a onclick="openSocket()">开启socket</a></div>
+<p>【操作】：<div><a onclick="sendMessage()">发送消息</a></div>
+<p>收到消息：<div id="resMsg"></div>
+
+<script type="text/javascript" src="js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var socket;
+    function openSocket() {
+        if(typeof(WebSocket) == "undefined") {
+            console.log("您的浏览器不支持WebSocket");
+        }else{
+            console.log("您的浏览器支持WebSocket");
+            //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+            //console.log('[[${cid}]]');
+            //var token = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJpZFwiOlwiMTE3NjA4OTE5ODc1NTU3NzkwMFwiLFwidXNlcm5hbWVcIjpcInRlc3RhXCIsXCJhdmF0YXJcIjpudWxsLFwiZW1haWxcIjpudWxsLFwicGhvbmVcIjpudWxsLFwibGFzdFBhc3N3b3JkUmVzZXRUaW1lXCI6MTU2OTIzNjU2MDAwMCxcImlwXCI6XCIwOjA6MDowOjA6MDowOjFcIixcImVuYWJsZWRcIjp0cnVlLFwiY3JlYXRlVGltZVwiOlwiMjAxOS0wOS0yMyAxOTowMTozMFwiLFwibWVyY2hhbnRJZFwiOlwiMTE3NjA4OTE5ODczNDYwNjM3NFwiLFwicm9sZUlkc1wiOltcIjExNzYwODkxOTg3NjgxNjA4NjBcIl0sXCJmaXJzdExvZ2luXCI6dHJ1ZX0iLCJleHAiOjE1NjkzNjQzMzksImlhdCI6MTU2OTI5MjMzOX0.-Dezgseagc34fej6t9R5xzClhFdvCMMdys5Z8Ty0nKGHLlhDMhDk9D6uoH45suRJs2Z_Pa3z9K2wKOF33FT2yw";
+            var uid = $("#toUserId").val(),
+                token = $("#token").val(),
+                system = $("#system").val(),
+                host = $("#host").val();//localhost:8302
+            socket = new WebSocket("ws://"+host+"/msg/ws/"+system+"/cmd/"+uid+"/"+token);
+            //socket = new WebSocket("${basePath}websocket/${cid}".replace("http","ws"));
+            //打开事件
+            socket.onopen = function() {
+                console.log("Socket 已打开");
+                //socket.send("这是来自客户端的消息" + location.href + new Date());
+                setInterval(function () {
+                    socket.send("ws_" + new Date());
+                },30000);
+            };
+            //获得消息事件
+            socket.onmessage = function(msg) {
+                $("#resMsg").text(msg.data);
+                //console.log(msg.data);
+                //发现消息进入    开始处理前端触发逻辑
+            };
+            //关闭事件
+            socket.onclose = function() {
+                console.log("Socket已关闭");
+            };
+            //发生了错误事件
+            socket.onerror = function() {
+                alert("Socket发生了错误");
+                //此时可以尝试刷新页面
+            }
+            //离开页面时，关闭socket
+            //jquery1.8中已经被废弃，3.0中已经移除
+            // $(window).unload(function(){
+            //     socket.close();
+            //});
+        }
+    }
+
+    function sendMessage() {
+        if(typeof(WebSocket) == "undefined") {
+            console.log("您的浏览器不支持WebSocket");
+        }else {
+            console.log("您的浏览器支持WebSocket");
+            console.log('[{"toUserId":"'+$("#toUserId").val()+'","contentText":"'+$("#contentText").val()+'"}]');
+            socket.send('[{"toUserId":"'+$("#toUserId").val()+'","contentText":"'+$("#contentText").val()+'"}]');
+        }
+    }
+
+</script>
+</body>
+</html>-->

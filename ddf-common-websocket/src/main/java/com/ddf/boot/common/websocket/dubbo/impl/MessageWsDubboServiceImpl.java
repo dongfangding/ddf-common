@@ -13,11 +13,11 @@ import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 
@@ -35,8 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author dongfang.ding
  * @date 2019/10/26 18:02
  */
-@Service(version = WebsocketConst.DUBBO_VERSION, group = "${spring.profiles.active:local}")
+//@Service(version = WebsocketConst.DUBBO_VERSION, group = "${spring.profiles.active:local}")
 @Slf4j
+@Service
 public class MessageWsDubboServiceImpl implements MessageWsDubboService {
 
     @Autowired

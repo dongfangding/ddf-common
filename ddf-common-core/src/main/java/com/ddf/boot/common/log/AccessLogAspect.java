@@ -36,7 +36,7 @@ public class AccessLogAspect {
     private SlowEventAction slowEventAction;
 
     @Autowired
-    private ThreadPoolTaskExecutor taskExecutor;
+    private ThreadPoolTaskExecutor defaultThreadPool;
 
     private ThreadLocal<Long> beforeTime = new ThreadLocal<>();
 
@@ -83,7 +83,7 @@ public class AccessLogAspect {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制
             SlowEventAction.SlowEvent slowEvent = new SlowEventAction.SlowEvent(className, methodName, consumerTime, slowTime);
             logger.info("{}-{}耗时{}，准备执行处理回调。。。。", className, methodName, consumerTime);
-            taskExecutor.execute(() -> slowEventAction.doAction(slowEvent));
+            defaultThreadPool.execute(() -> slowEventAction.doAction(slowEvent));
         }
     }
 

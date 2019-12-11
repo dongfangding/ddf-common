@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.StringUtil;
-import com.ddf.boot.common.websocket.biz.HandlerTemplateType;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.exception.InvalidFutureTimeException;
 import com.ddf.boot.common.websocket.exception.MessageFormatInvalid;
@@ -49,9 +48,6 @@ public class CmdStrategyHelper {
     private MerchantBaseDeviceService merchantBaseDeviceService;
     @Autowired(required = false)
     private SmsParseProcessor smsParseProcessor;
-    @Autowired
-    @Qualifier("handlerMatchOrder")
-    private HandlerTemplateType handlerMatchOrder;
     @Autowired
     private ChannelTransferService channelTransferService;
     @Autowired
