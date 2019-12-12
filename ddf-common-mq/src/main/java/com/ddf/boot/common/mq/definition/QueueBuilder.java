@@ -7,6 +7,27 @@ import java.util.Map;
 /**
  * 队列配置生成类模板
  *
+ * _ooOoo_
+ * o8888888o
+ * 88" . "88
+ * (| -_- |)
+ * O\ = /O
+ * ___/`---'\____
+ * .   ' \\| |// `.
+ * / \\||| : |||// \
+ * / _||||| -:- |||||- \
+ * | | \\\ - /// | |
+ * | \_| ''\---/'' | |
+ * \ .-\__ `-` ___/-. /
+ * ___`. .' /--.--\ `. . __
+ * ."" '< `.___\_<|>_/___.' >'"".
+ * | | : `- \`.;`\ _ /`;.`/ - ` : | |
+ * \ \ `-. \_ __\ /__ _/ .-` / /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ * `=---='
+ * .............................................
+ * 佛曰：bug泛滥，我已瘫痪！
+ *
  * @author dongfang.ding
  * @date 2019/7/31 16:32
  */
@@ -41,8 +62,12 @@ public class QueueBuilder {
         /**
          * 用户登录日志
          */
-        USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY)
+        USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT,
+                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY, ArgumentDefinition.deadArgs()),
 
+
+        DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE,
+                BindingConst.ExchangeName.DEFAULT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY);
 
         ;
 
@@ -91,6 +116,48 @@ public class QueueBuilder {
             checkPrefix(queueName);
         }
 
+
+        /**
+         * 可以给队列、交换器、绑定类附加参数
+         *
+         * @param queueName
+         * @param exchangeName
+         * @param exchangeType
+         * @param routeKey
+         * @param queueArgument
+         */
+        QueueDefinition(String queueName, String exchangeName, ExchangeType exchangeType, String routeKey,
+                        Map<String, Object> queueArgument) {
+            this.queueName = queueName;
+            this.exchangeName = exchangeName;
+            this.exchangeType = exchangeType;
+            this.routeKey = routeKey;
+            this.queueArguments = queueArgument;
+            checkPrefix(queueName);
+        }
+
+
+        /**
+         * 可以给队列、交换器、绑定类附加参数
+         *
+         * @param queueName
+         * @param exchangeName
+         * @param exchangeType
+         * @param routeKey
+         * @param queueArguments
+         * @param exchangeArguments
+         */
+        QueueDefinition(String queueName, String exchangeName, ExchangeType exchangeType, String routeKey,
+                        Map<String, Object> queueArguments, Map<String, Object> exchangeArguments) {
+            this.queueName = queueName;
+            this.exchangeName = exchangeName;
+            this.exchangeType = exchangeType;
+            this.routeKey = routeKey;
+            this.queueArguments = queueArguments;
+            this.exchangeArguments = exchangeArguments;
+            checkPrefix(queueName);
+        }
+
         /**
          * 可以给队列、交换器、绑定类附加参数
          *
@@ -112,6 +179,7 @@ public class QueueBuilder {
             this.queueArguments = queueArguments;
             this.exchangeArguments = exchangeArguments;
             this.bindingArguments = bindingArguments;
+            checkPrefix(queueName);
         }
 
 

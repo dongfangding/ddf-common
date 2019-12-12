@@ -3,8 +3,31 @@ package com.ddf.boot.common.exception;
 import org.springframework.core.NestedRuntimeException;
 
 /**
- * @author dongfang.ding on 2018/8/18
  * 自定义异常类
+ *
+ * _ooOoo_
+ * o8888888o
+ * 88" . "88
+ * (| -_- |)
+ * O\ = /O
+ * ___/`---'\____
+ * .   ' \\| |// `.
+ * / \\||| : |||// \
+ * / _||||| -:- |||||- \
+ * | | \\\ - /// | |
+ * | \_| ''\---/'' | |
+ * \ .-\__ `-` ___/-. /
+ * ___`. .' /--.--\ `. . __
+ * ."" '< `.___\_<|>_/___.' >'"".
+ * | | : `- \`.;`\ _ /`;.`/ - ` : | |
+ * \ \ `-. \_ __\ /__ _/ .-` / /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ * `=---='
+ * .............................................
+ * 佛曰：bug泛滥，我已瘫痪！
+ *
+ * @author dongfang.ding on 2018/8/18
+ *
  */
 public class GlobalCustomizeException extends NestedRuntimeException {
 	private static final long serialVersionUID = 1L;

@@ -4,8 +4,31 @@
 package com.ddf.boot.common.exception;
 
 /**
- * 定义异常消息的代码，get方法返回实际值，这个值需要在exception.properties、exception_zh_CN.properties、
- * exception_en_US中配置，请根据实际情况在对应的Locale资源文件中配置，至少配置exception.properties
+ *
+ *  定义异常消息的代码，get方法返回实际值，这个值需要在exception.properties、exception_zh_CN.properties、
+ *  exception_en_US中配置，请根据实际情况在对应的Locale资源文件中配置，至少配置exception.properties
+ *
+ * _ooOoo_
+ * o8888888o
+ * 88" . "88
+ * (| -_- |)
+ * O\ = /O
+ * ___/`---'\____
+ * .   ' \\| |// `.
+ * / \\||| : |||// \
+ * / _||||| -:- |||||- \
+ * | | \\\ - /// | |
+ * | \_| ''\---/'' | |
+ * \ .-\__ `-` ___/-. /
+ * ___`. .' /--.--\ `. . __
+ * ."" '< `.___\_<|>_/___.' >'"".
+ * | | : `- \`.;`\ _ /`;.`/ - ` : | |
+ * \ \ `-. \_ __\ /__ _/ .-` / /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ * `=---='
+ * .............................................
+ * 佛曰：bug泛滥，我已瘫痪！
+ *
  * @author dongfang.ding 2017年12月1日
  *
  */
