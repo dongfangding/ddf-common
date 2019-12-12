@@ -1,8 +1,7 @@
-package com.ddf.boot.common.exception;
+package com.ddf.boot.common.mq.exception;
 
 /**
- *
- * 为自定义异常类消息代码定义统一接口，所以定义消息代码的类必须实现这个接口
+ * 发送Mq消息异常
  *
  * _ooOoo_
  * o8888888o
@@ -25,10 +24,12 @@ package com.ddf.boot.common.exception;
  * .............................................
  * 佛曰：bug泛滥，我已瘫痪！
  *
- * @author dongfang.ding on 2018/8/18
- *
+ * @author dongfang.ding
+ * @date 2019/12/12 0012 11:36
  */
-public interface GlobalExceptionCodeResolver {
-    /** 返回消息代码 */
-    String get();
+public class MqSendException extends Exception {
+
+    public MqSendException(String message) {
+        super(message);
+    }
 }
