@@ -59,7 +59,7 @@ public class ArgumentDefinition {
      * @date 2019/12/12 0012 17:18
      **/
     public static Map<String, Object> testDeadLetterQueueArgs() {
-        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_DEAD_LETTER_KEY);
+        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ArgumentDefinition {
      * @date 2019/12/12 0012 17:18
      **/
     public static Map<String, Object> testTtlQueue() {
-        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_TTL_KEY, 5000);
+        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY, 10000);
     }
 
     /**
@@ -140,10 +140,10 @@ public class ArgumentDefinition {
             , long ttl) {
         Map<String, Object> argumentMap = new HashMap<>(3);
         if (StringUtils.isNotBlank(deadLetterExchange)) {
-            argumentMap.put("x-dead-letter-exchange", BindingConst.ExchangeName.DEFAULT);
+            argumentMap.put("x-dead-letter-exchange", deadLetterExchange);
         }
         if (StringUtils.isNotBlank(deadLetterRouteKey)) {
-            argumentMap.put("x-dead-letter-routing-key", BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY);
+            argumentMap.put("x-dead-letter-routing-key", deadLetterRouteKey);
         }
         if (ttl != 0) {
             argumentMap.put("x-message-ttl", ttl);
@@ -152,6 +152,6 @@ public class ArgumentDefinition {
     }
 
     private static Map<String, Object> buildQueueArgument(String deadLetterExchange, String deadLetterRouteKey) {
-        return buildQueueArgument(deadLetterExchange, deadLetterRouteKey);
+        return buildQueueArgument(deadLetterExchange, deadLetterRouteKey, 0);
     }
 }
