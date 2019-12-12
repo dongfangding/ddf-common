@@ -51,7 +51,7 @@ public class AmqpDeclareBean implements InitializingBean {
      * @date 2019/7/31 19:20 
      */
     private void buildQueueDefinition() {
-        log.info("start buildQueueDefinition>>>>>>>>>>>>>");
+        log.debug("start buildQueueDefinition>>>>>>>>>>>>>");
         QueueBuilder.QueueDefinition[] values = QueueBuilder.QueueDefinition.values();
         if (values.length > 0) {
             for (QueueBuilder.QueueDefinition value : values) {

@@ -63,6 +63,7 @@ public class RabbitTemplateHelper {
     public static <T> void wrapperAndSend(QueueBuilder.QueueDefinition queueDefinition, T body) throws MqSendException {
         try {
             MqMessageWrapper<T> wrapper = MqMessageUtil.wrapper(body);
+            log.debug("开始发送消息>>>>: {}", wrapper);
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), wrapper);
         } catch (Exception e) {
             log.error("消息发送异常！ {}", body, e);
@@ -109,7 +110,8 @@ public class RabbitTemplateHelper {
 
     /**
      *
-     * 该方法坑非常多！！！！一定要注意看注释！！！！！！！！
+     * 该方法坑非常多！！！！一定要注意看注释！！！！！！！！他么的写的时候没想到后面会有那么多问题！目前保留看是否后面能否用到吧
+     *
      *
      * 由于MQ自实现的重投会放到队列头部，如果数据有问题，会循环消费影响后面的数据；因此不使用；
      * <p>
@@ -141,7 +143,7 @@ public class RabbitTemplateHelper {
             , @NotNull MqMessageWrapper<T> messageWrapper, Consumer<MqMessageWrapper> consumer) {
         if (queueDefinition == null || messageWrapper == null || messageWrapper.getRequeueTimes() >= mqMessageProperties.getMaxRequeueTimes())
             return;
-        log.info("重投消息: {}", messageWrapper);
+        log.debug("重投消息: {}", messageWrapper);
         messageWrapper.setRequeueTimes(messageWrapper.getRequeueTimes() + 1);
         boolean isSuccess = sendNotNecessary(queueDefinition, messageWrapper);
         if (!isSuccess) {
@@ -171,8 +173,8 @@ public class RabbitTemplateHelper {
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
             isNack = true;
         } catch (Exception e) {
-            // 如果消息拒绝异常会发生什么？经测试，拒绝时如果出现异常（IDEA断点，然后停掉mq服务再执行拒绝操作），消息此时会变为unack状态，待服务
-            // 回复后，消息状态会重回ready状态
+            // 如果消息拒绝异常会发生什么？经测试，拒绝时如果出现异常（IDEA断点，然后停掉mq服务再执行拒绝操作），消息此时会变为unacked状态，待服务
+            // 回恢复，消息状态会重回ready状态
             log.error("消息拒绝异常，无法重投！！{}", MqMessageUtil.getBodyAsString(message.getBody()), e);
         }
         // 拒绝成功执行重投
