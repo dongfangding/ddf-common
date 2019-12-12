@@ -6,6 +6,12 @@ import java.util.Map;
 
 /**
  * 队列配置生成类模板
+ * 该方式是在容器初始化的时候调用预定义的模板来进行队列与交换器和路由的声明以及绑定；
+ * 目的是为了集中管理队列相关配置信息；
+ * 但是带来的劣势是，如果使用这种方式，那么在项目运行过程中，如果有人把队列删掉了，那么与之对应的
+ * 相关消费就会出现问题；
+ *
+ * 除非消费端使用auth declare（在消费配置上使用declare能够在队列不存在的时候创建队列）功能，但是那种方式与该类的初衷是相悖的。
  *
  * _ooOoo_
  * o8888888o
@@ -72,13 +78,13 @@ public class QueueBuilder {
          * 测试基本死信队列
          */
         TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                          BindingConst.RouteKey.TEST_DEAD_LETTER_KEY, ArgumentDefinition.testDeadLetterQueueArgs()),
+                          BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY, ArgumentDefinition.testDeadLetterQueueArgs()),
 
         /**
-         * 测试基本死信队列的接收队列，该队列是一个正常队列，上述死信队列出现死信数据后，消息将被转发到该队列
+         * 测试基本死信队列的接收队列，该队列是一个正常队列，上述死信队列出现死信数据后，消息将被转发到该队列,后续消息消费该队列
          */
-        TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY),
+        TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
+                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY),
 
         // ------------------------------------------------------------------------------------------------------
 
@@ -92,8 +98,8 @@ public class QueueBuilder {
         /**
          * 测试延时队列，延时队列依赖与死信队列
          */
-        TEST_TTL_RECEIVE_QUEUE(BindingConst.QueueName.TEST_TTL_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY),
+        TEST_TTL_RECEIVE_QUEUE(BindingConst.QueueName.TEST_TTL_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
+                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY),
 
         // ------------------------------------------------------------------------------------------------------
 
