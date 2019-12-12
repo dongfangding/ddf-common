@@ -33,7 +33,15 @@ public class BindingConst {
      */
     public static final String PREFIX = "com.ddf.boot.common.";
 
+    /**
+     * 死信队列的前缀
+     */
     public static final String DEAD_LETTER_PREFIX = PREFIX + "dead.letter.";
+
+    /**
+     * 延时队列的前缀
+     */
+    public static final String TTL_PREFIX = PREFIX + "ttl.";
 
     /**
      * 交换器名称
@@ -66,6 +74,38 @@ public class BindingConst {
      * 队列名称
      */
     public class QueueName {
+        // -----------------------------------------------------------------------------------------
+        /**
+         * 测试正常队列
+         */
+        public static final String TEST_NORMAL_QUEUE = PREFIX + "test.normal.queue";
+
+
+        // ---------------------------------------------------------------------------------------
+        /**
+         * 测试基本死信队列, 该队列调用nack或reject方法，并且requeue设置为false，之后消息会根据死信路由转发到另外一个队列
+         */
+        public static final String TEST_DEAD_LETTER_QUEUE = DEAD_LETTER_PREFIX + "test.dead.letter.queue";
+
+        /**
+         * 测试基本死信队列的接收队列， 上述死信队列出现死信数据后，消息将被转发到该队列
+         */
+        public static final String TEST_DEAD_LETTER_RECEIVE_QUEUE = DEAD_LETTER_PREFIX + "test.dead.letter.receive.queue";
+
+        // ----------------------------------------------------------------------------------------
+
+        /**
+         * 测试延时队列，延时队列依赖与死信队列
+         */
+        public static final String TEST_TTL_QUEUE = TTL_PREFIX + "test.ttl.queue";
+
+        /**
+         * 测试延时队列，延时队列依赖与死信队列
+         */
+        public static final String TEST_TTL_RECEIVE_QUEUE = TTL_PREFIX + "test.ttl.receive.queue";
+
+
+        // ----------------------------------------------------------------------------------------
 
         /**
          * 用户登录日志
@@ -84,7 +124,37 @@ public class BindingConst {
     public class RouteKey {
 
         /**
-         * 收款订单路由
+         * 测试正常队列路由键
+         */
+        public static final String TEST_NORMAL_KEY = PREFIX + "test.normal.queue";
+
+        // --------------------------------------------------------------------------------------------
+
+        /**
+         * 测试基本死信队列路由键
+         */
+        public static final String TEST_DEAD_LETTER_KEY = DEAD_LETTER_PREFIX + "test.dead.letter.key";
+
+        /**
+         * 测试基本死信队列的接收队列路由键
+         */
+        public static final String TEST_DEAD_LETTER_RECEIVE_KEY = DEAD_LETTER_PREFIX + "test.dead.letter.receive.queue";
+
+        // ------------------------------------------------------------------------------------------------
+
+        /**
+         * 测试延时队列路由键
+         */
+        public static final String TEST_TTL_KEY = TTL_PREFIX + "test.ttl.key";
+        /**
+         * 测试延时队列接收队列的路由键
+         */
+        public static final String TEST_TTL_RECEIVE_KEY = TTL_PREFIX + "test.ttl.receive_key";
+
+        // ----------------------------------------------------------------------------------------
+
+
+        /**
          */
         public static final String USER_LOGIN_HISTORY_KEY = "user.login.token.key";
 

@@ -83,12 +83,15 @@ public class MqConfig {
      * 配置消费端的策略，消息确认机制为AUTO，注意与{@link AcknowledgeMode#NONE}的区别
      * 该模式的消息确认会根据容器是否抛出异常来决定是调用ack还是nack， 如果消费正常，则消息被删除；
      * 如果消费过程中出现异常，那么消息状态会转为Unacked， 然后如果有消费这，消息会再次变为Ready等待消费；重复这个过程；
+     * 类似与手动模式开启requeue
      *
      *
      * @param rabbitConnectionFactory 该项目为基本配置包，因此IDE会提示没有这个类，必须将该项目依赖到有rabbitmq的连接信息项目中
      * @return
      * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
      * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
+     * @author dongfang.ding
+     * @date 2019/12/12 0012 15:40
      */
     @Bean
     public RabbitListenerContainerFactory autoAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
@@ -103,6 +106,8 @@ public class MqConfig {
 
     /**
      * 配置消费端的策略，消息确认机制为手动ack
+     *
+     * 默认最小和最大消费者数量都为1
      * <p>
      * 开启手动ack之后，如果消费端不调用basicAck方法，则消息会一直处理Unacked状态，而如果处理失败之后调用basicNack或basicReject将requeue的值设置为
      * true之后消息会被自动设置回队列，而且是队列头部，如果数据本身有问题，这样就会导致该条消息会一直报错，那么就会造成无限重投和失败，而如果设置为false，则该条消息会直接删除;
@@ -129,9 +134,26 @@ public class MqConfig {
      * @return
      * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
      * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
+     * @author dongfang.ding
+     * @date 2019/12/12 0012 15:40
      */
     @Bean
-    public RabbitListenerContainerFactory manualAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+    public RabbitListenerContainerFactory singleManualAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+        return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 1,
+                1, 10000L, 60000L);
+    }
+
+
+    /**
+     * 配置并发消费端的策略，消息确认机制为手动ack
+     *
+     * @param rabbitConnectionFactory
+     * @return org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
+     * @author dongfang.ding
+     * @date 2019/12/12 0012 15:40
+     **/
+    @Bean
+    public RabbitListenerContainerFactory concurrentManualAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 2,
                 Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
     }
@@ -146,6 +168,8 @@ public class MqConfig {
      * @return
      * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
      * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
+     * @author dongfang.ding
+     * @date 2019/12/12 0012 15:40
      */
     @Bean
     public RabbitListenerContainerFactory noneAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {

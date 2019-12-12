@@ -50,7 +50,7 @@ public class CustomizeMessagePostProcessor implements MessagePostProcessor {
         String encoding = message.getMessageProperties().getContentEncoding();
         try {
             String body = new String(message.getBody(), encoding);
-            log.info("读取到要发送的消息内容为: {}", body);
+            log.debug("读取到要发送的消息内容为: {}", body);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

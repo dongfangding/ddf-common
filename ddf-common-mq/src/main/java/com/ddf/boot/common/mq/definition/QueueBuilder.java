@@ -59,11 +59,50 @@ public class QueueBuilder {
      */
     @Getter
     public enum QueueDefinition {
+
+        /**
+         * 正常队列， 发送和消费都针对这个队列操作即可
+         */
+        TEST_NORMAL_QUEUE(BindingConst.QueueName.TEST_NORMAL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_NORMAL_KEY),
+
+        // ------------------------------------------------------------------------------------------------------
+
+        /**
+         * 测试基本死信队列
+         */
+        TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                          BindingConst.RouteKey.TEST_DEAD_LETTER_KEY, ArgumentDefinition.testDeadLetterQueueArgs()),
+
+        /**
+         * 测试基本死信队列的接收队列，该队列是一个正常队列，上述死信队列出现死信数据后，消息将被转发到该队列
+         */
+        TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY),
+
+        // ------------------------------------------------------------------------------------------------------
+
+
+        /**
+         * 测试延时队列，延时队列依赖与死信队列
+         */
+        TEST_TTL_QUEUE(BindingConst.QueueName.TEST_TTL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_TTL_KEY, ArgumentDefinition.testTtlQueue()),
+
+        /**
+         * 测试延时队列，延时队列依赖与死信队列
+         */
+        TEST_TTL_RECEIVE_QUEUE(BindingConst.QueueName.TEST_TTL_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY),
+
+        // ------------------------------------------------------------------------------------------------------
+
+
         /**
          * 用户登录日志
          */
         USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT,
-                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY, ArgumentDefinition.deadArgs()),
+                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY, ArgumentDefinition.userLoginHistoryQueueArgs()),
 
 
         DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE,
