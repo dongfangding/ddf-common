@@ -48,4 +48,11 @@ public class MqMessageProperties {
      * @see com.ddf.boot.common.mq.helper.RabbitTemplateHelper#nackAndRequeue(Channel, Message, QueueBuilder.QueueDefinition, MqMessageWrapper, Consumer)
      */
     private int maxRequeueTimes = 5;
+
+    /**
+     * 针对发送事件异步消息落库实现的一个内存队列的最大值
+     *
+     * @see com.ddf.boot.common.mq.listener.DefaultMqEventListener#MESSAGE_QUEUE
+     */
+    private int messageQueueSize = 10000;
 }
