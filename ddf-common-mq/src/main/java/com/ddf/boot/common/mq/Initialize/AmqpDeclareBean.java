@@ -66,6 +66,8 @@ public class AmqpDeclareBean implements InitializingBean {
                 } else {
                     throw new RuntimeException("暂不支持的交换器类型!");
                 }
+                // TODO remove it 为了方便调试参数构建队列的参数
+                amqpAdmin.deleteQueue(value.getQueueName());
                 amqpAdmin.declareQueue(queue);
                 amqpAdmin.declareExchange(exchange);
                 if (value.getBindingArguments() != null && !value.getBindingArguments().isEmpty()) {
