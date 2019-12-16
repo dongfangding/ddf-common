@@ -1,5 +1,7 @@
 package com.ddf.boot.common.mq.definition;
 
+import com.ddf.boot.common.mq.config.MqConfig;
+
 /**
  * 队列、交换器、路由键的常量类
  *
@@ -44,6 +46,42 @@ public class BindingConst {
     public static final String TTL_PREFIX = PREFIX + "ttl.";
 
     /**
+     * 消费端消息确认模式 Bean Name>>> 单消费者AutoAck
+     * @see MqConfig#singleAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_SINGLE_AUTO_ACK = "singleAutoAck";
+
+    /**
+     * 消费端消息确认模式 Bean Name>>> 多消费者AutoAck
+     * @see MqConfig#concurrentAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_CONCURRENT_AUTO_ACK = "concurrentAutoAck";
+
+    /**
+     * 消费端消息确认模式 Bean Name>>> 单消费者手动ack
+     * @see MqConfig#singleManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_SINGLE_MANUAL_ACK = "singleManualAck";
+
+    /**
+     * 消费端消息确认模式 Bean Name>>> 多消费者手动ack
+     * @see MqConfig#concurrentManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_CONCURRENT_MANUAL_ACK = "concurrentManualAck";
+
+    /**
+     * 消费端消息确认模式 Bean Name>>> 单消费者none ack
+     * @see MqConfig#noneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_NONE_ACK = "noneAck";
+
+    /**
+     * 消费端消息确认模式 Bean Name>>> 多消费者none ack
+     * @see MqConfig#concurrentNoneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     */
+    public static final String ACK_MODE_CONCURRENT_NONE_ACK = "concurrentNoneAck";
+
+    /**
      * 交换器名称
      */
     public class ExchangeName {
@@ -64,9 +102,9 @@ public class BindingConst {
         public static final String TOPIC = "amqp.topic";
 
         /**
-         * 默认的死信交换器
+         * 默认的DIRECT类型的死信交换器名称
          */
-        public static final String DEFAULT = DEAD_LETTER_PREFIX + "default";
+        public static final String DEFAULT = DEAD_LETTER_PREFIX + "direct.default";
 
     }
 
@@ -112,10 +150,6 @@ public class BindingConst {
          */
         public static final String USER_LOGIN_HISTORY_QUEUE = PREFIX + "user.login.token.queue";
 
-        /**
-         * 用户登录日志的死信消费队列
-         */
-        public static final String DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE = DEAD_LETTER_PREFIX + "user.login.token.queue";
     }
 
     /**

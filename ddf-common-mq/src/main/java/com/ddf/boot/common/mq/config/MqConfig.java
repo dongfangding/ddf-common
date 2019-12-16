@@ -1,5 +1,6 @@
 package com.ddf.boot.common.mq.config;
 
+import com.ddf.boot.common.mq.definition.BindingConst;
 import com.ddf.boot.common.mq.helper.RabbitTemplateHelper;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -93,14 +94,27 @@ public class MqConfig {
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
      */
-    @Bean
-    public RabbitListenerContainerFactory autoAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+    @Bean(BindingConst.ACK_MODE_SINGLE_AUTO_ACK)
+    public RabbitListenerContainerFactory singleAutoAck(CachingConnectionFactory rabbitConnectionFactory) {
         SimpleRabbitListenerContainerFactory rabbitListener = buildRabbitListener(rabbitConnectionFactory,
-                AcknowledgeMode.AUTO, 250, 2, Runtime.getRuntime().availableProcessors(),
-                5000L, 60000L);
-        // 要小于或等于prefetchCount,一个事务中要处理的消息数
+                AcknowledgeMode.AUTO, 250, 1, 1, 0L, 0L);
+        // 要小于或等于prefetchCount,一个事务中要处理的消息数,这个值暂未理解影响程度
         rabbitListener.setTxSize(100);
         return rabbitListener;
+    }
+
+    /**
+     * 配置并发消费端的策略，消息确认机制为auto
+     *
+     * @param rabbitConnectionFactory
+     * @return org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
+     * @author dongfang.ding
+     * @date 2019/12/12 0012 15:40
+     **/
+    @Bean(BindingConst.ACK_MODE_CONCURRENT_AUTO_ACK)
+    public RabbitListenerContainerFactory concurrentAutoAck(CachingConnectionFactory rabbitConnectionFactory) {
+        return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.AUTO, 250, 2,
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
     }
 
 
@@ -137,10 +151,10 @@ public class MqConfig {
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
      */
-    @Bean
-    public RabbitListenerContainerFactory singleManualAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+    @Bean(BindingConst.ACK_MODE_SINGLE_MANUAL_ACK)
+    public RabbitListenerContainerFactory singleManualAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 1,
-                1, 10000L, 60000L);
+                1, 0L, 0L);
     }
 
 
@@ -152,8 +166,8 @@ public class MqConfig {
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
      **/
-    @Bean
-    public RabbitListenerContainerFactory concurrentManualAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+    @Bean(BindingConst.ACK_MODE_CONCURRENT_MANUAL_ACK)
+    public RabbitListenerContainerFactory concurrentManualAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 2,
                 Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
     }
@@ -171,8 +185,21 @@ public class MqConfig {
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
      */
-    @Bean
-    public RabbitListenerContainerFactory noneAckRabbitListenerContainerFactory(CachingConnectionFactory rabbitConnectionFactory) {
+    @Bean(BindingConst.ACK_MODE_NONE_ACK)
+    public RabbitListenerContainerFactory noneAck(CachingConnectionFactory rabbitConnectionFactory) {
+        return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.NONE, 1, 1,
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
+    }   
+
+    /**
+     * 并发AcknowledgeMode.NONE
+     * @param rabbitConnectionFactory
+     * @return org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
+     * @author dongfang.ding
+     * @date 2019/12/16 0016 16:10
+     **/
+    @Bean(BindingConst.ACK_MODE_CONCURRENT_NONE_ACK)
+    public RabbitListenerContainerFactory concurrentNoneAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.NONE, 1, 1,
                 Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
     }
@@ -205,10 +232,12 @@ public class MqConfig {
         simpleRabbitListenerContainerFactory.setConcurrentConsumers(concurrency);
         // 最大并发消费者数量
         simpleRabbitListenerContainerFactory.setMaxConcurrentConsumers(maxConcurrency);
-        // 如果最大消费者大于最小消费者数量，且当前未达到最大消费者，那么最小启动一个新的消费者的时间
-        simpleRabbitListenerContainerFactory.setStartConsumerMinInterval(minStartInterval);
-        // 如果最大消费者数量超过最小，那么消费者空闲多久会被回收掉
-        simpleRabbitListenerContainerFactory.setStopConsumerMinInterval(minStopInterval);
+        if (!concurrency.equals(maxConcurrency)) {
+            // 如果最大消费者大于最小消费者数量，且当前未达到最大消费者，那么最小启动一个新的消费者的时间
+            simpleRabbitListenerContainerFactory.setStartConsumerMinInterval(minStartInterval);
+            // 如果最大消费者数量超过最小，那么消费者空闲多久会被回收掉
+            simpleRabbitListenerContainerFactory.setStopConsumerMinInterval(minStopInterval);
+        }
         return simpleRabbitListenerContainerFactory;
     }
 
