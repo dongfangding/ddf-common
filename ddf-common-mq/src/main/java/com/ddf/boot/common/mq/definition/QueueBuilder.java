@@ -75,31 +75,36 @@ public class QueueBuilder {
         // ------------------------------------------------------------------------------------------------------
 
         /**
-         * 测试基本死信队列
-         */
-        TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                          BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY, ArgumentDefinition.testDeadLetterQueueArgs()),
-
-        /**
          * 测试基本死信队列的接收队列，该队列是一个正常队列，上述死信队列出现死信数据后，消息将被转发到该队列,后续消息消费该队列
          */
         TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
                 ExchangeType.DIRECT, BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY),
 
+
+        /**
+         * 测试基本死信队列
+         */
+        TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                          BindingConst.RouteKey.TEST_DEAD_LETTER_KEY, ArgumentDefinition.deadLetterRedirectTo(TEST_DEAD_LETTER_RECEIVE_QUEUE)),
+
+
         // ------------------------------------------------------------------------------------------------------
 
 
-        /**
-         * 测试延时队列，延时队列依赖与死信队列
-         */
-        TEST_TTL_QUEUE(BindingConst.QueueName.TEST_TTL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.TEST_TTL_KEY, ArgumentDefinition.testTtlQueue()),
 
         /**
-         * 测试延时队列，延时队列依赖与死信队列
+         * 测试延时队列的接收队列，延时队列依赖与死信队列
          */
         TEST_TTL_RECEIVE_QUEUE(BindingConst.QueueName.TEST_TTL_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
                 ExchangeType.DIRECT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY),
+
+
+        /**
+         * 测试延时队列，其实是一个死信队列，然后设置ttl，不消费该队列，等待消息过期，然后转发到另外一个接收队列上，从而实现延时队列
+         */
+        TEST_TTL_QUEUE(BindingConst.QueueName.TEST_TTL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_TTL_KEY, ArgumentDefinition.deadLetterRedirectTo(TEST_TTL_RECEIVE_QUEUE, 10000)),
+
 
         // ------------------------------------------------------------------------------------------------------
 
@@ -108,11 +113,7 @@ public class QueueBuilder {
          * 用户登录日志
          */
         USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT,
-                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY, ArgumentDefinition.userLoginHistoryQueueArgs()),
-
-
-        DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.DEAD_LETTER_USER_LOGIN_HISTORY_QUEUE,
-                BindingConst.ExchangeName.DEFAULT, ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY);
+                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY),
 
         ;
 

@@ -49,68 +49,10 @@ import java.util.Map;
  */
 public class ArgumentDefinition {
 
-    
-    /**
-     * 测试基本死信队列的参数
-     *
-     * @see com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition#TEST_DEAD_LETTER_QUEUE
-     * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author dongfang.ding
-     * @date 2019/12/12 0012 17:18
-     **/
-    public static Map<String, Object> testDeadLetterQueueArgs() {
-        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY);
-    }
-
-    /**
-     * 测试基本延时队列的参数
-     *
-     * @see com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition#TEST_TTL_QUEUE
-     * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author dongfang.ding
-     * @date 2019/12/12 0012 17:18
-     **/
-    public static Map<String, Object> testTtlQueue() {
-        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY, 10000);
-    }
-
-    /**
-     * Time-To-Live Extensions
-     * RabbitMQ允许我们为消息或者队列设置TTL（time to live），也就是过期时间。TTL表明了一条消息可在队列中存活的最大时间，单位为毫秒。
-     * 也就是说，当某条消息被设置了TTL或者当某条消息进入了设置了TTL的队列时，这条消息会在经过TTL秒后“死亡”，成为Dead Letter。
-     * 如果既配置了消息的TTL，又配置了队列的TTL，那么较小的那个值会被取用。
-     *
-     * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author dongfang.ding
-     * @date 2019/12/12 0012 13:32
-     **/
-    public static Map<String, Object> userLoginHistoryQueueArgs() {
-        return buildQueueArgument(BindingConst.ExchangeName.DEFAULT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY, 5000);
-    }
-
-
-    /**
-     * 被设置了TTL的消息在过期后会成为Dead Letter。其实在RabbitMQ中，一共有三种消息的“死亡”形式：
-     *
-     * 1. 消息被拒绝。通过调用basic.reject或者basic.nack并且设置的requeue参数为false。
-     * 2. 消息因为设置了TTL而过期。
-     * 3. 消息进入了一条已经达到最大长度的队列。
-     *
-     * Dead Letter Exchange
-     * @param null
-     * @return null
-     * @author dongfang.ding
-     * @date 2019/12/12 0012 13:32
-     **/
-
-
     /**
      * 构建队列参数
-     * <p>
-     * 声明的死信交换器的类型是什么？和死信队列保持一致吗？
-     * <p>
      * 1. x-dead-letter-exchange 给当前队列声明一个死信交换器，与普通交换器定义方式并没有不同；只是消息消费失败之后，
-     * 会根据交换器，将消息转发到与这里声明的交换器绑定的队列中
+     * 会根据交换器和路由键，将消息转发到与这里声明的交换器绑定的队列中
      * <p>
      * 2. x-dead-letter-routing-key 死信交换路由键
      * <p>
@@ -130,20 +72,18 @@ public class ArgumentDefinition {
      * 2. 消息因为设置了TTL而过期。
      * 3. 消息进入了一条已经达到最大长度的队列。
      *
-     * @param deadLetterExchange
-     * @param deadLetterRouteKey
+     * @param redirectTo
      * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
      * @date 2019/12/12 0012 16:23
      **/
-    private static Map<String, Object> buildQueueArgument(String deadLetterExchange, String deadLetterRouteKey
-            , long ttl) {
+    public static Map<String, Object> deadLetterRedirectTo(QueueBuilder.QueueDefinition redirectTo, long ttl) {
         Map<String, Object> argumentMap = new HashMap<>(3);
-        if (StringUtils.isNotBlank(deadLetterExchange)) {
-            argumentMap.put("x-dead-letter-exchange", deadLetterExchange);
+        if (StringUtils.isNotBlank(redirectTo.getExchangeName())) {
+            argumentMap.put("x-dead-letter-exchange", redirectTo.getExchangeName());
         }
-        if (StringUtils.isNotBlank(deadLetterRouteKey)) {
-            argumentMap.put("x-dead-letter-routing-key", deadLetterRouteKey);
+        if (StringUtils.isNotBlank(redirectTo.getRouteKey())) {
+            argumentMap.put("x-dead-letter-routing-key", redirectTo.getRouteKey());
         }
         if (ttl != 0) {
             argumentMap.put("x-message-ttl", ttl);
@@ -151,7 +91,15 @@ public class ArgumentDefinition {
         return argumentMap;
     }
 
-    private static Map<String, Object> buildQueueArgument(String deadLetterExchange, String deadLetterRouteKey) {
-        return buildQueueArgument(deadLetterExchange, deadLetterRouteKey, 0);
+    /**
+     * 只包含死信队列的定义参数
+     *
+     * @param redirectTo
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @author dongfang.ding
+     * @date 2019/12/16 0016 13:30
+     **/
+    public static Map<String, Object> deadLetterRedirectTo(QueueBuilder.QueueDefinition redirectTo) {
+        return deadLetterRedirectTo(redirectTo, 0);
     }
 }
