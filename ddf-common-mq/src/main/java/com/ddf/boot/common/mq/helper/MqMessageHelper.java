@@ -1,10 +1,12 @@
-package com.ddf.boot.common.mq.util;
+package com.ddf.boot.common.mq.helper;
 
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
+import com.ddf.boot.common.mq.interfaces.AuditorAware;
 import com.ddf.boot.common.util.IdsUtil;
 import com.ddf.boot.common.util.JsonUtil;
-import lombok.Data;
 import org.springframework.amqp.core.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +38,11 @@ import java.nio.charset.StandardCharsets;
  * @author dongfang.ding
  * @date 2019/8/1 16:41
  */
-public class MqMessageUtil {
+@Component
+public class MqMessageHelper {
+
+    @Autowired(required = false)
+    private AuditorAware auditorAware;
 
     /**
      * 封装发送消息的统一类
@@ -45,10 +51,10 @@ public class MqMessageUtil {
      * @param <T>
      * @return
      */
-    public static <T> MqMessageWrapper<T> wrapper(T body) {
+    public <T> MqMessageWrapper<T> wrapper(T body) {
         MqMessageWrapper<T> message = new MqMessageWrapper<>();
         // todo 消息创建人
-        message.setCreator(0L);
+        message.setCreator(getCurrentAuditor());
         message.setCreateTime(System.currentTimeMillis());
         message.setBody(body);
         message.setMessageId(IdsUtil.getNextStrId());
@@ -62,7 +68,7 @@ public class MqMessageUtil {
      * @param <T>
      * @return
      */
-    public static <T> String wrapperToString(T bodyObj) {
+    public <T> String wrapperToString(T bodyObj) {
         return JsonUtil.asString(wrapper(bodyObj));
     }
 
@@ -75,7 +81,7 @@ public class MqMessageUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> MqMessageWrapper<T> parse(@NotNull String messageStr, @NotNull Class<T> clazz) {
+    public <T> MqMessageWrapper<T> parse(@NotNull String messageStr, @NotNull Class<T> clazz) {
         MqMessageWrapper<T> message = JsonUtil.toBean(messageStr, MqMessageWrapper.class);
         T body = message.getBody();
         if (body == null) {
@@ -84,7 +90,8 @@ public class MqMessageUtil {
         message.setBody(JsonUtil.toBean(JsonUtil.asString(message.getBody()), clazz));
         return message;
     }
-    
+
+
     /**
      * 将消息中的byte数组转换为统一对象
      * @param message
@@ -93,9 +100,20 @@ public class MqMessageUtil {
      * @author dongfang.ding
      * @date 2019/12/10 0010 22:58
      **/
-    public static <T> MqMessageWrapper<T> parse(@NotNull Message message, @NotNull Class<T> clazz) {
+    public <T> MqMessageWrapper<T> parse(@NotNull Message message, @NotNull Class<T> clazz) {
         if (message == null || clazz == null) return null;
         return parse(getBodyAsString(message.getBody()), clazz);
+    }
+
+    /**
+     * 将消息体中的字节数组转换为包装对象，但是不关注包装对象中包含的业务数据
+     * @param message
+     * @return com.ddf.boot.common.mq.definition.MqMessageWrapper
+     * @author dongfang.ding
+     * @date 2019/12/20 0020 11:35
+     **/
+    public MqMessageWrapper<?> parseNoBody(@NotNull Message message) {
+        return JsonUtil.toBean(getBodyAsString(message.getBody()), MqMessageWrapper.class);
     }
 
     /**
@@ -104,26 +122,20 @@ public class MqMessageUtil {
      * @return
      * @see Message#getBody()
      */
-    public static String getBodyAsString(byte[] body) {
+    public String getBodyAsString(byte[] body) {
         return new String(body, StandardCharsets.UTF_8);
     }
 
-    public static void main(String[] args) {
-        Test test = new Test();
-        test.setUserId("userId");
-        test.setUserName("userName");
-        MqMessageWrapper<Test> hehe = MqMessageUtil.wrapper(test);
 
-        String string = JsonUtil.asString(hehe);
-
-        MqMessageWrapper<Test> parse = parse(string, Test.class);
-        System.out.println(parse);
-
-    }
-
-    @Data
-    static class Test {
-        private String userId;
-        private String userName;
+    /**
+     * 获取当前操作人
+     *
+     * @return java.lang.String
+     * @author dongfang.ding
+     * @date 2019/12/19 0019 18:18
+     **/
+    public String getCurrentAuditor() {
+        String defaultName = "ddf-common-mq";
+        return auditorAware == null ? defaultName : auditorAware.getAuditor().orElse(defaultName);
     }
 }

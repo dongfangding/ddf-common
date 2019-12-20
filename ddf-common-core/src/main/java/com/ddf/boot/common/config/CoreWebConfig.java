@@ -10,10 +10,11 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.SpringDataWebConfiguration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -21,8 +22,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 
 /**
  *
@@ -134,11 +133,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
 	 */
 	@Bean
 	@Primary
-	public ScheduledThreadPoolExecutor scheduledExecutorService() {
-		ThreadFactory namedThreadFactory = new CustomizableThreadFactory("scheduledExecutorService-");
-		ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-				namedThreadFactory);
-		scheduledExecutorService.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1);
-		return scheduledExecutorService;
+	public TaskScheduler scheduledExecutorService() {
+		ThreadPoolTaskScheduler threadPoolScheduler = new ThreadPoolTaskScheduler();
+		threadPoolScheduler.setThreadNamePrefix("scheduledExecutorService-");
+		threadPoolScheduler.setPoolSize(Runtime.getRuntime().availableProcessors());
+		threadPoolScheduler.setRemoveOnCancelPolicy(true);
+		return threadPoolScheduler;
 	}
 }

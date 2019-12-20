@@ -42,16 +42,16 @@ public class EntityGenerateUtil {
     private static Set<String> ignoreColumn = new HashSet<>();
 
     static {
-        ignoreColumn.add("ID");
-        ignoreColumn.add("CREATE_BY");
-        ignoreColumn.add("CREATE_TIME");
-        ignoreColumn.add("MODIFY_BY");
-        ignoreColumn.add("MODIFY_TIME");
-        ignoreColumn.add("REMOVED");
-        ignoreColumn.add("VERSION");
+        ignoreColumn.add("id");
+        ignoreColumn.add("create_by");
+        ignoreColumn.add("create_time");
+        ignoreColumn.add("modify_by");
+        ignoreColumn.add("modify_time");
+        ignoreColumn.add("removed");
+        ignoreColumn.add("version");
     }
 
-    private static final String CATLOG = "boot-scaffold";
+    private static final String CATLOG = "boot-quick";
 
     /**
      * 初始化数据库连接对象
@@ -60,7 +60,8 @@ public class EntityGenerateUtil {
      */
     private static Connection getConnection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-scaffold?bootUser=root&password=123456&characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding" +
+                "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
     }
 
 

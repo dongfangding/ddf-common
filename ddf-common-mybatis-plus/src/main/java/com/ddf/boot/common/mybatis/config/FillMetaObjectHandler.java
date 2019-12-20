@@ -62,12 +62,14 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        Object mapperMethod = ((MapperMethod.ParamMap) metaObject.getOriginalObject()).get("param1");
-        if (mapperMethod instanceof BaseDomain) {
-            log.info("start update fill ....");
-            // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-            setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
-            setFieldValByName("modifyTime", new Date(), metaObject);
-        }
+        try {
+            if (metaObject.getOriginalObject() instanceof BaseDomain ||
+                    ((MapperMethod.ParamMap) metaObject.getOriginalObject()).get("param1") instanceof BaseDomain) {
+                log.info("start update fill ....");
+                // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
+                setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
+                setFieldValByName("modifyTime", new Date(), metaObject);
+            }
+        } catch (Exception ignored) {}
     }
 }

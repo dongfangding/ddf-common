@@ -37,16 +37,16 @@ public class BaseDomain {
     @TableId(type = IdType.AUTO)
     protected Long id;
 
-    @TableField(value = "CREATE_BY", fill = FieldFill.INSERT)
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
     protected String createBy;
 
-    @TableField(value = "CREATE_TIME", fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     protected Date createTime;
 
-    @TableField(value = "MODIFY_BY", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "modify_by", fill = FieldFill.INSERT_UPDATE)
     protected String modifyBy;
 
-    @TableField(value = "MODIFY_TIME", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "modify_time", fill = FieldFill.INSERT_UPDATE)
     protected Date modifyTime;
 
     /**
