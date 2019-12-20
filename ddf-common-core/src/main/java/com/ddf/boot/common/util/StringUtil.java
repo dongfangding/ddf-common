@@ -151,7 +151,7 @@ public class StringUtil {
 	 * @param e
 	 * @return
 	 */
-	public static String exceptionToString(Exception e) {
+	public static String exceptionToString(Throwable e) {
 		return exceptionToString(e, 2000);
 	}
 
@@ -160,7 +160,8 @@ public class StringUtil {
 	 * @param e
 	 * @return
 	 */
-	public static String exceptionToString(Exception e, int allowLength) {
+	public static String exceptionToString(Throwable e, int allowLength) {
+		if (e == null) return "";
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);

@@ -4,12 +4,13 @@ import com.ddf.boot.common.mq.config.MqMessageProperties;
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
 import com.ddf.boot.common.mq.exception.MqSendException;
-import com.ddf.boot.common.mq.util.MqMessageUtil;
-import com.ddf.boot.common.util.SpringContextHolder;
+import com.ddf.boot.common.mq.listener.MqEventListener;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.function.Consumer;
@@ -42,14 +43,20 @@ import java.util.function.Consumer;
  * @date 2019/12/10 0010 20:23
  */
 @Slf4j
+@Component
 public class RabbitTemplateHelper {
 
-    private RabbitTemplateHelper() {
-    }
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
-    private static RabbitTemplate rabbitTemplate = SpringContextHolder.getBean(RabbitTemplate.class);
+    @Autowired
+    private MqMessageProperties mqMessageProperties;
 
-    private static MqMessageProperties mqMessageProperties = SpringContextHolder.getBean(MqMessageProperties.class);
+    @Autowired
+    private MqEventListener mqEventListener;
+
+    @Autowired
+    private MqMessageHelper mqMessageHelper;
 
     /**
      * 简化发送操作和统一封装消息体
@@ -60,13 +67,16 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 20:28
      **/
-    public static <T> void wrapperAndSend(QueueBuilder.QueueDefinition queueDefinition, T body) throws MqSendException {
+    public <T> void wrapperAndSend(QueueBuilder.QueueDefinition queueDefinition, T body) throws MqSendException {
+        MqMessageWrapper<T> wrapper = null;
         try {
-            MqMessageWrapper<T> wrapper = MqMessageUtil.wrapper(body);
+            wrapper = mqMessageHelper.wrapper(body);
             log.debug("开始发送消息>>>>: {}", wrapper);
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), wrapper);
+            mqEventListener.sendSuccess(queueDefinition, wrapper);
         } catch (Exception e) {
             log.error("消息发送异常！ {}", body, e);
+            mqEventListener.sendFailure(queueDefinition, wrapper, e);
             throw new MqSendException(e.getMessage());
         }
     }
@@ -80,11 +90,13 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 22:48
      **/
-    public static <T> void send(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) throws MqSendException {
+    public <T> void send(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) throws MqSendException {
         try {
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
+            mqEventListener.sendSuccess(queueDefinition, messageWrapper);
         } catch (Exception e) {
             log.error("消息发送异常！ {}", messageWrapper, e);
+            mqEventListener.sendFailure(queueDefinition, messageWrapper, e);
             throw new MqSendException(e.getMessage());
         }
     }
@@ -98,11 +110,13 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 22:50
      **/
-    public static <T> boolean sendNotNecessary(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
+    public <T> boolean sendNotNecessary(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
         try {
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
+            mqEventListener.sendSuccess(queueDefinition, messageWrapper);
             return true;
         } catch (Exception exception) {
+            mqEventListener.sendFailure(queueDefinition, messageWrapper, exception);
             log.warn("sendNotNecessary发送消息失败！{}", messageWrapper, exception);
         }
         return false;
@@ -139,7 +153,7 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 23:06
      **/
-    public static <T> void requeue(@NotNull QueueBuilder.QueueDefinition queueDefinition
+    public  <T> void requeue(@NotNull QueueBuilder.QueueDefinition queueDefinition
             , @NotNull MqMessageWrapper<T> messageWrapper, Consumer<MqMessageWrapper> consumer) {
         if (queueDefinition == null || messageWrapper == null || messageWrapper.getRequeueTimes() >= mqMessageProperties.getMaxRequeueTimes())
             return;
@@ -165,7 +179,7 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/11 0011 10:19
      **/
-    public static <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
+    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
             , @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper
             , Consumer<MqMessageWrapper> consumer) {
         boolean isNack = false;
@@ -175,7 +189,7 @@ public class RabbitTemplateHelper {
         } catch (Exception e) {
             // 如果消息拒绝异常会发生什么？经测试，拒绝时如果出现异常（IDEA断点，然后停掉mq服务再执行拒绝操作），消息此时会变为unacked状态，待服务
             // 回恢复，消息状态会重回ready状态
-            log.error("消息拒绝异常，无法重投！！{}", MqMessageUtil.getBodyAsString(message.getBody()), e);
+            log.error("消息拒绝异常，无法重投！！{}", mqMessageHelper.getBodyAsString(message.getBody()), e);
         }
         // 拒绝成功执行重投
         if (isNack) {
@@ -194,7 +208,7 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/11 0011 10:19
      **/
-    public static <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
+    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
             , @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper) {
         nackAndRequeue(channel, message, queueDefinition, messageWrapper, (data) -> log.error("消息重投失败: {}", data));
     }

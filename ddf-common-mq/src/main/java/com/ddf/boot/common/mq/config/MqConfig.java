@@ -1,7 +1,9 @@
 package com.ddf.boot.common.mq.config;
 
+import com.ddf.boot.common.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.mq.definition.BindingConst;
 import com.ddf.boot.common.mq.helper.RabbitTemplateHelper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -11,11 +13,16 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * mq的配置类
  * <p>
  * https://www.docs4dev.com/docs/zh/spring-amqp/2.1.2.RELEASE/reference/_reference.html
+ *
+ * TODO
+ * 1. 持久化和发送是否同步提供参数，对于想要保证数据库和实际发送保持一致的使用者来说，可以使用同步模式，先持久化后发送
+ * 2. 存储消息的队列分开，每个事件使用单独的队列，否则持久化的速度有点感人
  *
  * _ooOoo_
  * o8888888o
@@ -42,7 +49,18 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/8/1 18:28
  */
 @Configuration
+@MapperScan(basePackages = {"com.ddf.boot.common.mq.mapper"})
 public class MqConfig {
+
+
+    /**
+     * 默认出现mq事件的线程池
+     * @return
+     */
+    @Bean
+    public ThreadPoolTaskExecutor defaultEventListenerPool() {
+        return ThreadBuilderHelper.buildThreadExecutor("default-event-listener-pool-", 60, 1000);
+    }
 
 
     /**

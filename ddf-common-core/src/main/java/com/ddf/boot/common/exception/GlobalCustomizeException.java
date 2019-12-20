@@ -39,7 +39,7 @@ public class GlobalCustomizeException extends NestedRuntimeException {
 
 
 	public GlobalCustomizeException(Throwable e) {
-		super(e.getMessage());
+		super(e.getMessage(), e);
 	}
 
 	/**

@@ -43,13 +43,14 @@ public class MqMessageWrapper<T> implements Serializable {
     private static final long serialVersionUID = -8328345290360094049L;
 
     /** 创建人 */
-    private Long creator;
+    private String creator;
 
     /** 创建时间 */
     private Long createTime;
 
     /** 消息的唯一标识符 */
     private String messageId;
+
     /**
      * 当前重投次数， 消息消费失败后提供一种重投机制，会将消息重新发送到队尾，如此往复；
      *

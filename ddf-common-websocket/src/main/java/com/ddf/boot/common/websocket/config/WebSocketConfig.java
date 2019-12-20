@@ -3,6 +3,7 @@ package com.ddf.boot.common.websocket.config;
 
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.interceptor.CustomizeHandshakeInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketHandler;
@@ -25,6 +26,7 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
  */
 @Configuration
 @EnableWebSocket
+@MapperScan(basePackages = {"com.ddf.boot.common.websocket.mapper"})
 public class WebSocketConfig implements WebSocketConfigurer {
 
 

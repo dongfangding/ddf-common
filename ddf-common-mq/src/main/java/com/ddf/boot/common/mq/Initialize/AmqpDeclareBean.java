@@ -1,6 +1,17 @@
 package com.ddf.boot.common.mq.Initialize;
 
+import cn.hutool.core.thread.ThreadFactoryBuilder;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
+import com.ddf.boot.common.mq.entity.LogMqListener;
+import com.ddf.boot.common.mq.listener.DefaultMqEventListener;
+import com.ddf.boot.common.mq.listener.ListenerQueueEntity;
+import com.ddf.boot.common.mq.listener.MqEventListener;
+import com.ddf.boot.common.mq.mapper.LogMqListenerMapper;
+import com.ddf.boot.common.util.JsonUtil;
+import com.ddf.boot.common.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.concurrent.Executors;
 
 /**
  * 根据预定义的队列/交换器/路由键信息声明队列
@@ -43,12 +57,25 @@ public class AmqpDeclareBean implements InitializingBean {
 
     @Autowired
     private AmqpAdmin amqpAdmin;
+    @Autowired(required = false)
+    private MqEventListener mqEventListener;
+    @Autowired
+    private LogMqListenerMapper logMqListenerMapper;
+
+    /**
+     * Bean初始化后的调用
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        buildQueueDefinition();
+        initListenerQueue();
+    }
 
     /**
      * 根据预定义的队列配置自动创建队列和交换器以及绑定他们的关系
-     * 
+     *
      * @author dongfang.ding
-     * @date 2019/7/31 19:20 
+     * @date 2019/7/31 19:20
      */
     private void buildQueueDefinition() {
         log.debug("start buildQueueDefinition>>>>>>>>>>>>>");
@@ -79,17 +106,73 @@ public class AmqpDeclareBean implements InitializingBean {
         }
     }
 
+
     /**
-     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
-     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
-     * <p>This method allows the bean instance to perform validation of its overall
-     * configuration and final initialization when all bean properties have been set.
+     * 监听mq事件产生的数据队列，进行持久化！
      *
-     * @throws Exception in the event of misconfiguration (such as failure to set an
-     *                   essential property) or if initialization fails for any other reason
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        buildQueueDefinition();
+     * @return void
+     * @author dongfang.ding
+     * @date 2019/12/20 0020 15:43
+     **/
+    private void initListenerQueue() {
+        if (mqEventListener != null) {
+            Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create().setDaemon(true).setNamePrefix("consumer-listener-queue").build()).execute(() -> {
+                while (true) {
+                    try {
+                        ListenerQueueEntity poll = DefaultMqEventListener.MESSAGE_QUEUE.poll();
+                        if (poll == null) {
+                            try {
+                                // 做一个延迟,其实更好的方式是使用等待唤醒，目前既要支持读和写，而又不互斥，还没想到好的方案
+                                Thread.sleep(200);
+                            } catch (Exception ignored) {}
+                        } else {
+                            LogMqListener logMqListener = new LogMqListener();
+                            if (poll.getMessageWrapper() == null) {
+                                log.error("数据缺失！！{}", poll);
+                                return;
+                            }
+                            logMqListener.setMessageId(poll.getMessageWrapper().getMessageId());
+                            logMqListener.setCreator(poll.getMessageWrapper().getCreator());
+                            logMqListener.setRequeueTimes(poll.getMessageWrapper().getRequeueTimes());
+                            logMqListener.setMessageJson(JsonUtil.asString(poll.getMessageWrapper()));
+                            logMqListener.setEvent(poll.getMqEvent().name());
+                            logMqListener.setTimestamp(poll.getTimestamp());
+                            if (poll.getQueueDefinition() != null) {
+                                logMqListener.setExchangeName(poll.getQueueDefinition().getExchangeName());
+                                logMqListener.setExchangeType(poll.getQueueDefinition().getExchangeType().name());
+                                logMqListener.setRouteKey(poll.getQueueDefinition().getRouteKey());
+                                logMqListener.setTargetQueue(poll.getQueueDefinition().getQueueName());
+                            }
+                            if (poll.getRabbitListener() != null) {
+                                logMqListener.setActualQueue(Arrays.toString(poll.getRabbitListener().queues()));
+                                logMqListener.setContainerFactory(poll.getRabbitListener().containerFactory());
+                            }
+                            logMqListener.setCurrentThreadName(Thread.currentThread().getName());
+                            logMqListener.setErrorMessage(poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
+                            logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringUtil.exceptionToString(poll.getThrowable()));
+                            // fixme 使用insertOrUpdate
+                            LambdaQueryWrapper<LogMqListener> queryWrapper = Wrappers.lambdaQuery();
+                            queryWrapper.eq(LogMqListener::getMessageId, poll.getMessageWrapper().getMessageId());
+                            LogMqListener exist = logMqListenerMapper.selectOne(queryWrapper);
+                            if (exist == null) {
+                                log.info("保存");
+                                logMqListenerMapper.insert(logMqListener);
+                            } else {
+                                logMqListener.setId(exist.getId());
+                                if (logMqListener.getTimestamp() < exist.getTimestamp()) {
+                                    log.error("当前数据小于数据库中发生时间，不予更新！ {}===>{}", logMqListener, exist);
+                                }
+                                LambdaUpdateWrapper<LogMqListener> updateWrapper = Wrappers.lambdaUpdate();
+                                updateWrapper.eq(LogMqListener::getId, exist.getId());
+                                updateWrapper.le(LogMqListener::getTimestamp, logMqListener.getTimestamp());
+                                logMqListenerMapper.update(logMqListener, updateWrapper);
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error("持久化mq队列失败!", e);
+                    }
+                }
+            });
+        }
     }
 }

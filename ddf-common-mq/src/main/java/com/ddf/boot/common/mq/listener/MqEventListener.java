@@ -1,10 +1,8 @@
 package com.ddf.boot.common.mq.listener;
 
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
-import com.rabbitmq.client.Channel;
-import org.springframework.amqp.core.Message;
-
-import javax.validation.constraints.NotNull;
+import com.ddf.boot.common.mq.definition.QueueBuilder;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 /**
  * 消息在发送或者消费期间的事件
@@ -42,14 +40,13 @@ public interface MqEventListener {
     /**
      * 消息发送成功的回调事件
      *
-     * @param channel
-     * @param message
+     * @param queueDefinition
      * @param messageWrapper
      * @return void
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void sendSuccess(@NotNull Channel channel, @NotNull Message message, MqMessageWrapper<T> messageWrapper) {
+    default <T> void sendSuccess(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
 
     }
 
@@ -57,14 +54,14 @@ public interface MqEventListener {
     /**
      * 消息发送失败时的回调事件
      *
-     * @param channel
-     * @param message
+     * @param queueDefinition
      * @param messageWrapper
+     * @param throwable
      * @return void
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void sendFailure(@NotNull Channel channel, @NotNull Message message, MqMessageWrapper<T> messageWrapper) {
+    default <T> void sendFailure(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper, Throwable throwable) {
 
     }
 
@@ -72,14 +69,13 @@ public interface MqEventListener {
     /**
      * 消息消费成功时的回调事件
      *
-     * @param channel
-     * @param message
+     * @param rabbitListener
      * @param messageWrapper
      * @return void
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void consumerSuccess(@NotNull Channel channel, @NotNull Message message, MqMessageWrapper<T> messageWrapper) {
+    default <T> void consumerSuccess(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper) {
 
     }
 
@@ -88,14 +84,14 @@ public interface MqEventListener {
     /**
      * 消息消息失败时的回调事件
      *
-     * @param channel
-     * @param message
+     * @param rabbitListener
      * @param messageWrapper
+     * @param throwable
      * @return void
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void consumerFailure(@NotNull Channel channel, @NotNull Message message, MqMessageWrapper<T> messageWrapper) {
+    default <T> void consumerFailure(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper, Throwable throwable) {
 
     }
 }
