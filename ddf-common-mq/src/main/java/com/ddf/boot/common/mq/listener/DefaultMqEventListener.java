@@ -44,6 +44,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 @Component
 public class DefaultMqEventListener implements MqEventListener {
+
+
     private static MqMessageProperties messageProperties;
     @Autowired
     @Qualifier("defaultEventListenerPool")

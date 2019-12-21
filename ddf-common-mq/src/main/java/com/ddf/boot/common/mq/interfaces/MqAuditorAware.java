@@ -30,7 +30,7 @@ import java.util.Optional;
  * @author dongfang.ding
  * @date 2019/12/19 0019 18:11
  */
-public interface AuditorAware {
+public interface MqAuditorAware {
 
     Optional<String> getAuditor();
 }

@@ -36,7 +36,7 @@ public class HttpUtil {
         HttpPost httpPost = new HttpPost(url);
 
         StringEntity entity = new StringEntity(body, "UTF-8");
-        log.info("发送数据内容: {}", body);
+        log.debug("发送数据内容: {}", body);
         httpPost.setEntity(entity);
 
         httpPost.setConfig(RequestConfig.custom().setSocketTimeout(6000).setConnectTimeout(6000).build());
@@ -47,11 +47,11 @@ public class HttpUtil {
         try {
             response = httpClient.execute(httpPost);
             HttpEntity responseEntity = response.getEntity();
-            log.info("响应状态为: {}", response.getStatusLine());
+            log.debug("响应状态为: {}", response.getStatusLine());
             if (responseEntity != null) {
                 String returnStr = EntityUtils.toString(responseEntity);
-                log.info("响应内容长度为: {}", responseEntity.getContentLength());
-                log.info("响应内容为: {}", returnStr);
+                log.debug("响应内容长度为: {}", responseEntity.getContentLength());
+                log.debug("响应内容为: {}", returnStr);
                 return JsonUtil.toBean(returnStr, callbackResult);
             }
             return null;
