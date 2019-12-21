@@ -22,7 +22,6 @@ import java.util.Map;
  * 由于本身消费端在消费的时候会使用{@link org.springframework.amqp.rabbit.annotation.RabbitListener}注解来指定消费的队列和
  * 消费模式等信息，因此不再额外定义注解，再让消费端再重新指定这几个属性；
  *
- * 但这样的话，也对消费者提供了一个要求，即{@code RabbitListener} 不要在类上定义了，要定义在方法上！！！！！！！！！！
  *
  *
  * <p>

@@ -1,9 +1,9 @@
 package com.ddf.boot.common.jwt.filter;
 
 import com.ddf.boot.common.jwt.config.JwtProperties;
-import com.ddf.boot.common.jwt.model.UserClaim;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
+import com.ddf.boot.common.jwt.model.UserClaim;
 import com.ddf.boot.common.jwt.util.JwtUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.WebUtil;
@@ -122,7 +122,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         }
 
         // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
-        if (!Objects.equals(userClaim.getCredit(), WebUtil.getHost()) && !JwtUtil.DEFAULT_CLIENT_IP.equals(WebUtil.getHost())) {
+        if (!Objects.equals(userClaim.getCredit(), host) && !JwtUtil.DEFAULT_CLIENT_IP.equals(host)) {
+            log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, userClaim);
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "更换登录地址，需要重新登录！");
             return;
         }
@@ -130,10 +131,12 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         UserClaim storeUser = userClaimService.getStoreUserInfo(userClaim);
 
         if (!Objects.equals(userClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
+            log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "密码已经修改，请重新登录！");
             return;
         }
         if (!Objects.equals(userClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
+            log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "token已刷新，请重新登录！");
             return;
         }

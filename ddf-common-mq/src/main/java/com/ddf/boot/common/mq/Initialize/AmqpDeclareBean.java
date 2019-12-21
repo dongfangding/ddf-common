@@ -115,7 +115,7 @@ public class AmqpDeclareBean implements InitializingBean {
      * @date 2019/12/20 0020 15:43
      **/
     private void initListenerQueue() {
-        if (mqEventListener != null) {
+        if (mqEventListener != null && mqEventListener instanceof DefaultMqEventListener) {
             Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create().setDaemon(true).setNamePrefix("consumer-listener-queue").build()).execute(() -> {
                 while (true) {
                     try {
@@ -129,7 +129,7 @@ public class AmqpDeclareBean implements InitializingBean {
                             LogMqListener logMqListener = new LogMqListener();
                             if (poll.getMessageWrapper() == null) {
                                 log.error("数据缺失！！{}", poll);
-                                return;
+                                continue;
                             }
                             logMqListener.setMessageId(poll.getMessageWrapper().getMessageId());
                             logMqListener.setCreator(poll.getMessageWrapper().getCreator());
@@ -150,12 +150,12 @@ public class AmqpDeclareBean implements InitializingBean {
                             logMqListener.setCurrentThreadName(Thread.currentThread().getName());
                             logMqListener.setErrorMessage(poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
                             logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringUtil.exceptionToString(poll.getThrowable()));
-                            // fixme 使用insertOrUpdate
+                            // fixme 使用INSERT ... ON DUPLICATE KEY UPDATE，但是这样的话就要写mapper.xml，又要配置mapper-location,目前
+                            // 未找到注解可以支持配置，而使用配置文件的话，本包是个工具包，
                             LambdaQueryWrapper<LogMqListener> queryWrapper = Wrappers.lambdaQuery();
                             queryWrapper.eq(LogMqListener::getMessageId, poll.getMessageWrapper().getMessageId());
                             LogMqListener exist = logMqListenerMapper.selectOne(queryWrapper);
                             if (exist == null) {
-                                log.info("保存");
                                 logMqListenerMapper.insert(logMqListener);
                             } else {
                                 logMqListener.setId(exist.getId());

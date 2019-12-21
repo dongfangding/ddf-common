@@ -1,7 +1,7 @@
 package com.ddf.boot.common.mq.helper;
 
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
-import com.ddf.boot.common.mq.interfaces.AuditorAware;
+import com.ddf.boot.common.mq.interfaces.MqAuditorAware;
 import com.ddf.boot.common.util.IdsUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import org.springframework.amqp.core.Message;
@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
 public class MqMessageHelper {
 
     @Autowired(required = false)
-    private AuditorAware auditorAware;
+    private MqAuditorAware mqAuditorAware;
 
     /**
      * 封装发送消息的统一类
@@ -136,6 +136,6 @@ public class MqMessageHelper {
      **/
     public String getCurrentAuditor() {
         String defaultName = "ddf-common-mq";
-        return auditorAware == null ? defaultName : auditorAware.getAuditor().orElse(defaultName);
+        return mqAuditorAware == null ? defaultName : mqAuditorAware.getAuditor().orElse(defaultName);
     }
 }

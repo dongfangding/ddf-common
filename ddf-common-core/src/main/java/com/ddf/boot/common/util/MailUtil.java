@@ -61,7 +61,7 @@ public class MailUtil {
     @Async
     public void sendMimeMail(String[] sendTo, String[] cc, String subject, String content, Map<String, File> attachment)
             throws MessagingException {
-        log.info("sendSimpleMail.....to [{}]...............", String.join(",", sendTo));
+        log.debug("sendSimpleMail.....to [{}]...............", String.join(",", sendTo));
         //1、创建一个复杂的消息邮件
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
