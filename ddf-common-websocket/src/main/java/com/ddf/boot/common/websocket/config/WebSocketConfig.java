@@ -6,7 +6,6 @@ import com.ddf.boot.common.websocket.interceptor.CustomizeHandshakeInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -47,12 +46,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*");
     }
 
-    @Bean
-    public WebSocketHandler customizeWebSocketHandler() {
-        return new CustomizeWebSocketHandler();
-    }
-
-
     /**
      * 每个底层WebSocket引擎都公开控制运行时特征的配置属性，例如消息缓冲区大小，空闲超时等。
      *
@@ -63,10 +56,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
         // 设置消息缓冲区大小(经测试可以控制消息通讯时的传输数据大小，如果超过大小，会关闭链接)
         // CloseStatus: CloseStatus[code=1009, reason=The decoded text message was too big for the output buffer and the endpoint does not support partial messages]
-        container.setMaxTextMessageBufferSize(8192);
-        container.setMaxBinaryMessageBufferSize(8192);
+        container.setMaxTextMessageBufferSize(8192 * 2);
+        container.setMaxBinaryMessageBufferSize(8192 * 2);
         // 如果是session的最大空闲时间，那么后面开发心跳包的时候这里就要让心跳包小于这个时间
-        container.setMaxSessionIdleTimeout(120000L);
+        container.setMaxSessionIdleTimeout(60000L);
         return container;
     }
 

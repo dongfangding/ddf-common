@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 
 import java.io.Serializable;
-import java.security.Principal;
 
 /**
  * 包装WebsocketSession
@@ -27,7 +26,7 @@ public class WebSocketSessionWrapper implements Serializable {
     /**
      * 连接认证对象
      */
-    private Principal authPrincipal;
+    private AuthPrincipal authPrincipal;
 
     /**
      * ws的底层不允许并发发送消息，所以要么发送消息的方法是同步的，要么使用这个类来保证只有一个线程在发送消息

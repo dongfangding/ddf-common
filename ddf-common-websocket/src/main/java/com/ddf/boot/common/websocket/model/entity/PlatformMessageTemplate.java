@@ -12,6 +12,9 @@ import java.util.Map;
 
 /**
  * 收款短信模板
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -39,7 +42,6 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
     private Integer sort;
 
     public enum Type {
-
         /** 云闪付个人码到账通知  */
         UNION_PAY_NORMAL_INCOME_MESSAGE(0),
         /** 系统模板 */
@@ -57,7 +59,14 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
         /** 云闪付商户码到账通知 */
         UNION_PAY_MERCHANT_INCOME_MESSAGE(7),
         /** 云闪付转账通知 */
-        UNION_PAY_PAY_MESSAGE(8);
+        UNION_PAY_PAY_MESSAGE(8),
+        /** 安全认证短信 */
+        SAFETY_CERTIFICATION_SMS(9),
+        /** 忽略处理 */
+        IGNORE_MESSAGE(10)
+
+
+        ;
 
 
 

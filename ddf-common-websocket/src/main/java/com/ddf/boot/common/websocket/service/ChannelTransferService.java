@@ -3,12 +3,11 @@ package com.ddf.boot.common.websocket.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
-import com.ddf.boot.common.websocket.model.ws.MessageRequest;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.Message;
+import com.ddf.boot.common.websocket.model.ws.MessageRequest;
 import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
 
-import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,7 +25,7 @@ public interface ChannelTransferService extends IService<ChannelTransfer> {
      * @param request
      * @return
      */
-    Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<Principal, WebSocketSessionWrapper> values, MessageRequest request);
+    Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values, MessageRequest request);
 
     /**
      * 记录请求数据

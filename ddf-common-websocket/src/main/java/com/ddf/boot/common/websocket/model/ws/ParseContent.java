@@ -316,6 +316,9 @@ public class ParseContent {
             } else {
                 setYear(calendar.get(Calendar.YEAR) + "");
             }
+        } else if (getYear().length() != 4) {
+            // 使用当前日期的前缀+模板中的位数 如 20 + 19 = 2019
+            setYear(String.valueOf(calendar.get(Calendar.YEAR)).substring(0, getYear().length()).concat(getYear()));
         }
         if (getMonth() == null) {
             if (receiverCalendar.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
@@ -379,8 +382,6 @@ public class ParseContent {
     /**
      * 拼接到账消息， 包含云闪付到账消息，账单消息， 短信消息
      * 
-
-
      */
     public String buildMessage() {
         if (StringUtils.isNotBlank(parseContent)) {

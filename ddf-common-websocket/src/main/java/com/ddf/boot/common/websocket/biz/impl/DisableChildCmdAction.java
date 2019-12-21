@@ -18,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 禁用子命令码处理类
  *
-
-
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service("DISABLE")
 @Slf4j
@@ -34,8 +35,6 @@ public class DisableChildCmdAction implements ChildCmdAction {
      * @param authPrincipal
      * @param message
      * @return
-
-
      */
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -1,6 +1,7 @@
 package com.ddf.boot.common.websocket.biz.impl;
 
 import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.util.SpringContextHolder;
 import com.ddf.boot.common.util.StringUtil;
 import com.ddf.boot.common.websocket.biz.HandlerTemplateType;
 import com.ddf.boot.common.websocket.interceptor.SmsParseProcessor;
@@ -37,6 +38,24 @@ public class DefaultSmsParseProcessor implements SmsParseProcessor {
      * @date 2019/9/27 11:48
      */
     public static HandlerTemplateType getHandler(PlatformMessageTemplate.Type type) {
+        if (PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.equals(type)
+                || PlatformMessageTemplate.Type.UNION_PAY_MERCHANT_INCOME_MESSAGE.equals(type)
+                || PlatformMessageTemplate.Type.UNION_PAY_PAY_MESSAGE.equals(type)
+                ||  PlatformMessageTemplate.Type.BANK_INCOME_SMS.equals(type)
+                || PlatformMessageTemplate.Type.BANK_PAY_SMS.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerMatchOrder");
+        } else if (PlatformMessageTemplate.Type.GARBAGE_SMS.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerGarbageSms");
+        } else if (PlatformMessageTemplate.Type.UNION_PAY_LOGIN.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerUPayVerifyCode");
+        } else if (PlatformMessageTemplate.Type.UNION_PAY_VERIFY_CODE.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerUnionPayVerifyCode");
+        } else if (PlatformMessageTemplate.Type.SAFETY_CERTIFICATION_SMS.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerSafetyCertificationSms");
+        } else if (PlatformMessageTemplate.Type.IGNORE_MESSAGE.equals(type)) {
+            return (HandlerTemplateType) SpringContextHolder.getBean("handlerIgnoreMessage");
+        }
+        log.warn("没有找到{}对应的处理类", type.getValue());
         return null;
     }
 

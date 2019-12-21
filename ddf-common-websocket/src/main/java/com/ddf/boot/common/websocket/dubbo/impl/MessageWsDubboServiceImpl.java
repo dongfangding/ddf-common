@@ -23,7 +23,6 @@ import org.springframework.web.socket.TextMessage;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,7 +103,7 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
                 return null;
             }
             if (isAll) {
-                ConcurrentHashMap<Principal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
+                ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
                 Map<AuthPrincipal, String> messageMap = channelTransferService.batchRecordRequest(all, request);
                 if (messageMap != null) {
                     messageMap.forEach((k, v) -> {
@@ -132,7 +131,7 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
                         imeArr = request.getIme().split(",");
                         tokenArr = request.getToken().split(",");
                         if (imeArr.length != tokenArr.length) {
-                            return MessageResponse.failure("ime token 批量格式有误");
+                            return MessageResponse.failure("ime randomCode 批量格式有误");
                         }
                     } catch (Exception e) {
                         return MessageResponse.failure("批量指令的设备参数不合法！必须使用逗号分隔，且一一对应");
@@ -194,7 +193,7 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
         } else {
             // 该台机器并不能处理这个请求
             if (!localAddress.equals(request.getSocketSessionOn())) {
-                log.info("连接不在本机，无法处理转发接口!【{}】", localAddress);
+                log.debug("连接不在本机，无法处理转发接口!【{}】", localAddress);
                 return null;
             }
             messageStr = request.getMessage();
@@ -215,14 +214,14 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
                 return MessageResponse.failure("设备不在线！");
             }
             if (!request.isRedirect()) {
-                log.info("设备连接在本机不存在，指令下发请求被转发..............");
+                log.debug("设备连接在本机不存在，指令下发请求被转发..............");
                 // 转发
                 request.setRedirect(true);
                 request.setRedirectFrom(localAddress);
                 request.setSocketSessionOn(baseDevice.getConnectServerAddress());
                 // 必须在接口的源头出生成请求对象，这样实际能处理业务的机器返回的数据才能使用request_id和这里对应起来
                 request.setMessage(messageStr);
-                log.info("广播指令下发数据: {}", request);
+                log.debug("广播指令下发数据: {}", request);
                 redisTemplate.convertAndSend(WebsocketConst.REDIRECT_CMD_TOPIC, request);
                 return blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
                         request.getBlockMilliSeconds());
@@ -232,13 +231,13 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
         }
         // 日志必须记录成功，才能发送消息；接收消息时如果没有对应的请求，则不会做业务处理
         channelTransferService.recordRequest(authPrincipal, messageStr, message, request);
-        log.info("对设备[{}]下发指令: {}", ime, messageStr);
+        log.debug("对设备[{}]下发指令: {}", ime, messageStr);
         WebsocketSessionStorage.sendMessage(authPrincipal, message);
 
         MessageResponse messageResponse = blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
                 request.getBlockMilliSeconds());
         if (request.isRedirect()) {
-            log.info("本次接口请求为{}转发过来，数据处理完成，广播返回数据: {}", request.getRedirectFrom(), messageResponse);
+            log.debug("本次接口请求为{}转发过来，数据处理完成，广播返回数据: {}", request.getRedirectFrom(), messageResponse);
             messageResponse.setRequestId(message.getRequestId());
             redisTemplate.convertAndSend(WebsocketConst.RETURN_MESSAGE_TOPIC, messageResponse);
         }

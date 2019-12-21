@@ -75,6 +75,13 @@ public class MerchantMessageInfo extends BaseDomain implements Serializable {
      * 消息来源，安全认证短信
      */
     public static final Byte SOURCE_TYPE_SAFETY_CERTIFICATION_SMS = 12;
+
+    /**
+     * 消息为忽略类型的数据，如云闪付每笔交易都会固定发送一个消息，但这个消息却无法分辨是收入还是支出；因此不能作为支付模板使用，
+     * 但是如果不配置模板，就一直报错模板不匹配。因此需要配置一个特殊模板
+     */
+    public static final Byte SOURCE_TYPE_IGNORE_MESSAGE = 13;
+
     /**
      * 状态 未处理
      */

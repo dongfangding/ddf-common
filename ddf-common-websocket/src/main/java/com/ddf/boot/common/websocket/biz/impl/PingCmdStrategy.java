@@ -1,8 +1,6 @@
 package com.ddf.boot.common.websocket.biz.impl;
 
 import com.ddf.boot.common.websocket.biz.CmdStrategy;
-import com.ddf.boot.common.websocket.dubbo.MessageWsDubboService;
-import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
@@ -12,7 +10,6 @@ import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -25,10 +22,9 @@ import java.util.Date;
 /**
  * 响应客户端发送的心跳包指令.
  *
- * 由于该指令与其它指令的类型不再一致，因此这个类不能再实现接口{@link CmdStrategy}
  *
-
-
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service("PING")
 @Slf4j
@@ -39,8 +35,6 @@ public class PingCmdStrategy implements CmdStrategy {
     private ThreadPoolTaskExecutor channelTransferPool;
     @Autowired
     private ChannelTransferService channelTransferService;
-    @Reference(version = WebsocketConst.DUBBO_VERSION, group = "${spring.profiles.active:local}")
-    private MessageWsDubboService messageWsDubboService;
 
     /**
      * 由于该指令与其它指令的类型不再一致。因此该方法逻辑被剥离，不要在调用了，

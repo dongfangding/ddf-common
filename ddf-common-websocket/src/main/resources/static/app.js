@@ -13,7 +13,7 @@ function setConnected(connected) {
 
 function connect() {
     let url = $("#url").val();
-    // ws://localhost:8302/msg/pay-ws?ime=huawei-1aac7aa5-d1e9-43f6-a139-4e6fe1e6f15b&token=13542612549&loginType=ANDROID
+    // ws://localhost:8302/msg/pay-ws?ime=huawei-1aac7aa5-d1e9-43f6-a139-4e6fe1e6f15b&randomCode=13542612549&loginType=ANDROID
     ws = new WebSocket(url);
 
     ws.onmessage = function(evt) {

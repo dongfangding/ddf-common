@@ -13,8 +13,8 @@ import java.util.*;
 /**
  * 银行短信解析工具类
  *
- * @author dongfang.ding
- * @date 2019/8/6 12:32
+
+
  */
 @Slf4j
 public class SmsParseUtil {
@@ -54,7 +54,7 @@ public class SmsParseUtil {
         Map<String, String> rtnMap = new HashMap<>();
         int pointLeft, pointRight;
         String leftVal, rightVal;
-        int contentLeft, contentRight;
+        int contentLeft, contentRight = 0;
         String tempStr, parseVal, key, parseContent = template;
         // 一直找到字符串中没有需要解析的标识位数据
         while (template.contains(LEFT) && template.contains(RIGHT)) {
@@ -70,23 +70,37 @@ public class SmsParseUtil {
             // 舍弃右边元素左边的所有数据
             tempStr = template.substring(pointRight);
 
-            // 判断}右边元素的内容，一直到下个${，如果没有，则右边元素的内容为剩余所有字符
-            if (tempStr.contains(LEFT)) {
-                rightVal = template.substring(pointRight, pointRight + tempStr.indexOf(LEFT));
-            } else {
-                rightVal = template.substring(pointRight);
-            }
 
             // 获取模板中左边元素内容对应在原始数据中的角标
             contentLeft = content.indexOf(leftVal) + leftVal.length();
-            // 获取模板中右边元素内容对应在原始数据中的角标
-            contentRight = content.indexOf(rightVal, contentLeft);
-            // 截取左右两个临界点，获取中间值，即为解析内容
-            parseVal = content.substring(contentLeft, contentRight);
+
+            // 判断}右边元素的内容，一直到下个${，如果没有，则右边元素的内容为剩余所有字符
+            if (tempStr.contains(LEFT)) {
+                rightVal = template.substring(pointRight, pointRight + tempStr.indexOf(LEFT));
+                // 获取模板中右边元素内容对应在原始数据中的角标
+                contentRight = content.indexOf(rightVal, contentLeft);
+                // 截取左右两个临界点，获取中间值，即为解析内容
+                parseVal = content.substring(contentLeft, contentRight);
+            } else if ("".equals(tempStr)) {
+                // 如果是以变量结尾的，说明已经解析到最后，变量的内容就是剩余部分
+                parseVal = content.substring(contentLeft);
+            } else {
+                rightVal = template.substring(pointRight);
+                // 获取模板中右边元素内容对应在原始数据中的角标
+                contentRight = content.indexOf(rightVal, contentLeft);
+                // 截取左右两个临界点，获取中间值，即为解析内容
+                parseVal = content.substring(contentLeft, contentRight);
+            }
+
+
             // 将解析后的内容填充到模板中，最后将填充后的完整值返回，方便判断是否和content一致
             rtnMap.put(key, fixedValue(key, parseVal));
             parseContent = parseContent.replace(LEFT + key + RIGHT, parseVal);
             rtnMap.put("parseContent", parseContent);
+
+            if ("".equals(tempStr)) {
+                break;
+            }
             // 每次解析之后，要把之前已经解析过字符串从原始字符中截取掉，否则indexOf无法处理
             content = content.substring(contentRight);
             template = template.substring(pointRight);
@@ -182,7 +196,6 @@ public class SmsParseUtil {
         }
         String templateContext;
         TemplateConditionEl.ConditionKey conditionKey;
-        List<String> conditionValue;
         for (PlatformMessageTemplate template : templates) {
             templateContext = template.getTemplateContext();
             if (StringUtils.isBlank(templateContext)) {
@@ -198,12 +211,16 @@ public class SmsParseUtil {
                 continue;
             }
             conditionKey = conditionEl.getCondition();
-            conditionValue = JsonUtil.toBean(conditionEl.getValue(), List.class);
-            if (conditionKey == null || conditionValue == null || conditionValue.isEmpty()) {
+            if (conditionKey == null) {
                 continue;
             }
+            String[] conditionValue;
             switch (conditionKey) {
                 case CONTAINS:
+                    conditionValue = conditionEl.getValue().split("[,，]");
+                    if (conditionValue.length == 0) {
+                        return false;
+                    }
                     for (String value : conditionValue) {
                         if (content.contains(value)) {
                             return true;
@@ -211,6 +228,10 @@ public class SmsParseUtil {
                     }
                     break;
                 case NOT_CONTAINS:
+                    conditionValue = conditionEl.getValue().split("[,，]");
+                    if (conditionValue.length == 0) {
+                        return false;
+                    }
                     for (String value : conditionValue) {
                         if (!content.contains(value)) {
                             return true;
@@ -218,7 +239,8 @@ public class SmsParseUtil {
                     }
                     break;
                 case EQUALS:
-                    if (Objects.equals(conditionValue, content)) {
+                    String conditionValueString = conditionEl.getValue();
+                    if (Objects.equals(conditionValueString, content)) {
                         return true;
                     }
                     break;
@@ -231,6 +253,13 @@ public class SmsParseUtil {
 
 
     public static void main(String[] args) {
+        String content = "您的借记卡账户2134，于12月12日POS收入人民币10.86元，交易后余额58.37";
+        String template = "您的借记卡账户${bankCardNo}，于${month}月${day}日POS收入人民币${amount}元，交易后余额${balance}";
+        ParseContent parseContent = parseToObj(content, template);
+        System.out.println("parseContent = " + parseContent);
+        System.out.println(content.equals(parseContent.getParseContent()));
+
+
         parseInAmount();
         parseOutAmount();
     }
