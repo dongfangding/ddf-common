@@ -32,8 +32,8 @@ public class TestController {
     @RequestMapping("getWebSocketSession")
     public Map<Principal, Map<String, Object>> getWebSocketSession(@RequestBody AuthPrincipal authPrincipal) {
         Map<Principal, Map<String, Object>> rtnMap = new HashMap<>();
-        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getIme(), authPrincipal.getToken())) {
-            ConcurrentHashMap<Principal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
+        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getIme(), authPrincipal.getRandomCode())) {
+            ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
             all.forEach((k, v) -> rtnMap.put(k, toMap(v)));
         } else {
             WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
@@ -46,7 +46,7 @@ public class TestController {
 
     @RequestMapping("getNotSync")
     public Map<Principal, Map<String, Object>> getNotSync() {
-        ConcurrentHashMap<Principal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
+        ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
         Map<Principal, Map<String, Object>> rtnMap = new HashMap<>();
         all.forEach((k, v) -> {
             if (!v.isSync()) {
@@ -75,7 +75,7 @@ public class TestController {
 
     @RequestMapping("count")
     public int count() {
-        ConcurrentHashMap<Principal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
+        ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> all = WebsocketSessionStorage.getAll();
         AtomicInteger count = new AtomicInteger();
         all.forEach((k, v) -> {
             if (v.getStatus() == 1) {

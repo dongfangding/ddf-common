@@ -1,15 +1,15 @@
 package com.ddf.boot.common.websocket.biz.impl;
 
-import com.ddf.boot.common.websocket.biz.CmdStrategy;
-import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.biz.ChildCmdAction;
+import com.ddf.boot.common.websocket.biz.CmdStrategy;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.ChildCmdPayload;
 import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -19,14 +19,17 @@ import org.springframework.stereotype.Service;
 /**
  * 简单指令响应处理
  *
-
-
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service("SIMPLE")
 @Slf4j
 public class SimpleCmdStrategy implements CmdStrategy {
     @Autowired
     private MerchantBaseDeviceService merchantBaseDeviceService;
+    @Autowired
+    private ChannelTransferService channelTransferService;
 
     /**
      * 响应Cmd命令码
@@ -37,13 +40,8 @@ public class SimpleCmdStrategy implements CmdStrategy {
      */
     @Override
     public Message responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal, Message message) {
-        ChildCmdPayload childCmdPayload;
-        try {
-            childCmdPayload = JsonUtil.toBean(JsonUtil.asString(message.getBody()), ChildCmdPayload.class);
-        } catch (Exception e) {
-            throw new GlobalCustomizeException("客户端响应数据没有包含子指令码，无法处理！！");
-        }
-
+        String businessData = channelTransferService.getPayloadByRequestId(message.getRequestId());
+        ChildCmdPayload childCmdPayload = JsonUtil.toBean(businessData, ChildCmdPayload.class);
         MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
         if (baseDevice == null) {
             log.warn("未找到设备！！【{}】", authPrincipal);

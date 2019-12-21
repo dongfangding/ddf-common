@@ -21,8 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 处理云闪付验证码
  *
-
-
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service
 @Slf4j
@@ -41,8 +42,6 @@ public class HandlerUPayVerifyCode implements HandlerTemplateType {
      * @param baseDevice
      * @param merchantMessageInfo
      * @return
-
-
      */
     @Override
     @Transactional(rollbackFor = Exception.class)

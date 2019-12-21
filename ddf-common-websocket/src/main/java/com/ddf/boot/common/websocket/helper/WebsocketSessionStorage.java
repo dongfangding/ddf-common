@@ -1,10 +1,10 @@
 package com.ddf.boot.common.websocket.helper;
 
+import com.ddf.boot.common.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientMessageCodeException;
 import com.ddf.boot.common.websocket.exception.SocketSendException;
-import com.ddf.boot.common.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.model.ws.MessageResponse;
@@ -19,7 +19,6 @@ import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorato
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,7 +38,7 @@ public class WebsocketSessionStorage {
     /**
      * 连接对象
      */
-    public static final ConcurrentHashMap<Principal, WebSocketSessionWrapper> WEB_SOCKET_SESSION_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> WEB_SOCKET_SESSION_MAP = new ConcurrentHashMap<>();
 
 
     /**
@@ -55,7 +54,7 @@ public class WebsocketSessionStorage {
      * @return
      * @author dongfang.ding
      */
-    public static WebSocketSessionWrapper get(Principal authPrincipal) {
+    public static WebSocketSessionWrapper get(AuthPrincipal authPrincipal) {
         return WEB_SOCKET_SESSION_MAP.get(authPrincipal);
     }
 
@@ -66,22 +65,14 @@ public class WebsocketSessionStorage {
      * @param webSocketSession
      * @author dongfang.ding
      */
-    public static void active(Principal authPrincipal, WebSocketSession webSocketSession) {
-        synchronized (environment){
-            AuthPrincipal auth = (AuthPrincipal) authPrincipal;
-            if (AuthPrincipal.LoginType.ANDROID.equals(auth.getLoginType())) {
-                WebSocketSessionWrapper webSocketSessionWrapper = new WebSocketSessionWrapper(authPrincipal, new ConcurrentWebSocketSessionDecorator(
-                        webSocketSession, WebsocketConst.SEND_TIME_LIMIT, WebsocketConst.BUFFER_SIZE_LIMIT),
-                        WebSocketSessionWrapper.STATUS_ON_LINE, false, System.nanoTime(),
-                        webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + ":" +
-                                environment.getProperty("server.port"),
-                        webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
-                synchronized (WEB_SOCKET_SESSION_MAP){
-                    WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
-                }
-                merchantBaseDeviceService.sync((AuthPrincipal) authPrincipal, webSocketSessionWrapper);
-            }
-        }
+    public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) {
+        WebSocketSessionWrapper webSocketSessionWrapper = new WebSocketSessionWrapper(authPrincipal, new ConcurrentWebSocketSessionDecorator(
+                webSocketSession, WebsocketConst.SEND_TIME_LIMIT, WebsocketConst.BUFFER_SIZE_LIMIT),
+                WebSocketSessionWrapper.STATUS_ON_LINE, false, System.nanoTime(),
+                webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + ":" +
+                        environment.getProperty("server.port"),
+                webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
+        merchantBaseDeviceService.sync(authPrincipal, webSocketSessionWrapper);
     }
 
     /**
@@ -90,13 +81,10 @@ public class WebsocketSessionStorage {
      * @param authPrincipal
      * @author dongfang.ding
      */
-    public static void inactive(Principal authPrincipal, WebSocketSession webSocketSession) {
-        synchronized (environment){
-            AuthPrincipal auth = (AuthPrincipal) authPrincipal;
-            if (AuthPrincipal.LoginType.ANDROID.equals(auth.getLoginType())) {
-                modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
-                merchantBaseDeviceService.sync((AuthPrincipal) authPrincipal, get(authPrincipal));
-            }
+    public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) {
+        if (AuthPrincipal.LoginType.ANDROID.equals(authPrincipal.getLoginType())) {
+            modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
+            merchantBaseDeviceService.sync(authPrincipal, get(authPrincipal));
         }
     }
 
@@ -106,7 +94,7 @@ public class WebsocketSessionStorage {
      * @param authPrincipal
      * @author dongfang.ding
      */
-    public static void remove(Principal authPrincipal) {
+    public static void remove(AuthPrincipal authPrincipal) {
         WEB_SOCKET_SESSION_MAP.remove(authPrincipal);
     }
 
@@ -116,20 +104,20 @@ public class WebsocketSessionStorage {
      * @return
      * @author dongfang.ding
      */
-    public static ConcurrentHashMap<Principal, WebSocketSessionWrapper> getAll() {
+    public static ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> getAll() {
         return WEB_SOCKET_SESSION_MAP;
     }
-    
-    
+
+
     /**
      * 判断指定认证的可用连接是否在本机
-     * 
+     *
      * @param authPrincipal
      * @return
      * @author dongfang.ding
-     * @date 2019/9/24 15:17 
+     * @date 2019/9/24 15:17
      */
-    public static boolean isSocketSessionOn(Principal authPrincipal) {
+    public static boolean isSocketSessionOn(AuthPrincipal authPrincipal) {
         return WEB_SOCKET_SESSION_MAP.containsKey(authPrincipal);
     }
 
@@ -142,20 +130,18 @@ public class WebsocketSessionStorage {
      * @return
      * @author dongfang.ding
      */
-    public static boolean modifyStatus(Principal authPrincipal, Integer status, WebSocketSession webSocketSession) {
-        synchronized (WEB_SOCKET_SESSION_MAP){
-            WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
-            // 由于服务端对客户端下线感知的延迟性，如果在感知之前重新上线，依然会触发服务端的下线时间
-            if (webSocketSessionWrapper != null && webSocketSessionWrapper.getWebSocketSession().getDelegate() == webSocketSession) {
-                webSocketSessionWrapper.setStatus(status);
-                webSocketSessionWrapper.setStatusChangeTime(System.nanoTime());
-                webSocketSessionWrapper.setSync(false);
-                if (WebSocketSessionWrapper.STATUS_OFF_LINE.equals(status)) {
-                    webSocketSessionWrapper.setServerAddress(null);
-                }
-                WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
-                return true;
+    public static boolean modifyStatus(AuthPrincipal authPrincipal, Integer status, WebSocketSession webSocketSession) {
+        WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
+        // 由于服务端对客户端下线感知的延迟性，如果在感知之前重新上线，依然会触发服务端的下线时间
+        if (webSocketSessionWrapper != null && webSocketSessionWrapper.getWebSocketSession().getDelegate() == webSocketSession) {
+            webSocketSessionWrapper.setStatus(status);
+            webSocketSessionWrapper.setStatusChangeTime(System.nanoTime());
+            webSocketSessionWrapper.setSync(false);
+            if (WebSocketSessionWrapper.STATUS_OFF_LINE.equals(status)) {
+                webSocketSessionWrapper.setServerAddress(null);
             }
+            WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
+            return true;
         }
         return false;
     }
@@ -168,7 +154,7 @@ public class WebsocketSessionStorage {
      * @return
      * @author dongfang.ding
      */
-    public static boolean modifySync(Principal authPrincipal, boolean sync) {
+    public static boolean modifySync(AuthPrincipal authPrincipal, boolean sync) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
         if (webSocketSessionWrapper != null) {
             webSocketSessionWrapper.setSync(sync);
@@ -193,14 +179,14 @@ public class WebsocketSessionStorage {
 
     /**
      * 业务处理类如果没有放入响应，则放入默认的响应
-     * 
+     *
      * @param message
      * @param response
      * @return
      * @author dongfang.ding
-     * @date 2019/9/26 21:21 
+     * @date 2019/9/26 21:21
      */
-    public static void putDefaultResponse( @NotNull Message message, @NotNull MessageResponse response) {
+    public static void putDefaultResponse(@NotNull Message message, @NotNull MessageResponse response) {
         if (!CmdEnum.PING.equals(message.getCmd()) && WebsocketSessionStorage.isNone(message.getRequestId())) {
             putResponse(message.getRequestId(), response);
         }
@@ -283,10 +269,10 @@ public class WebsocketSessionStorage {
         REQUEST_CONNECT_RESPONSE_MAP.remove(requestId);
         return response;
     }
-    
+
     /**
      * 判断响应值是否已经被取走
-     * 
+     *
      * @param requestId
      * @return
      * @author dongfang.ding
@@ -298,11 +284,11 @@ public class WebsocketSessionStorage {
 
     /**
      * 是否没有放入过数据
-     * 
+     *
      * @param requestId
      * @return
      * @author dongfang.ding
-     * @date 2019/9/26 20:35 
+     * @date 2019/9/26 20:35
      */
     public static boolean isNone(String requestId) {
         return REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == MessageResponse.none();
@@ -334,7 +320,7 @@ public class WebsocketSessionStorage {
 
     /**
      * 发送数据
-     *
+     * <p>
      * FIXME 一个连接发送过来数据，如果还没来得及处理给响应，这时候客户端断线了，那么下次重连的时候，
      * 连到另外一台机器，就会出现问题
      *
@@ -348,11 +334,11 @@ public class WebsocketSessionStorage {
             throw new SocketSendException("连接不可用！！");
         }
         try {
-            AuthPrincipal authPrincipal = (AuthPrincipal) webSocketSessionWrapper.getAuthPrincipal();
+            AuthPrincipal authPrincipal = webSocketSessionWrapper.getAuthPrincipal();
             TextMessage textMessage = Message.wrapper(message);
-            log.info("向[{}]-[{}]发送数据：{}", authPrincipal.getIme(), authPrincipal.getToken(), textMessage.getPayload());
+            log.info("向[{}]-[{}]发送数据：{}", authPrincipal.getIme(), authPrincipal.getRandomCode(), textMessage.getPayload());
             TextMessage secretMessage = Message.wrapperWithSign(message);
-            log.info("向[{}]-[{}]发送加密数据：{}", authPrincipal.getIme(), authPrincipal.getToken(), secretMessage.getPayload());
+            log.info("向[{}]-[{}]发送加密数据：{}", authPrincipal.getIme(), authPrincipal.getRandomCode(), secretMessage.getPayload());
             webSocketSessionWrapper.getWebSocketSession().sendMessage(textMessage);
         } catch (IOException e) {
             log.error("socket发送数据失败", e);

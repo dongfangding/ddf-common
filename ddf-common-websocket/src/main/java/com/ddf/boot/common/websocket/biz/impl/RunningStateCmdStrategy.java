@@ -21,8 +21,9 @@ import java.util.Objects;
 /**
  * 客户端向服务端报备设备应用运行状态
  *
-
-
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service("RUNNING_STATE")
 @Slf4j

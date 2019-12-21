@@ -14,8 +14,9 @@ import java.util.Date;
 /**
  * 设备基础管理表
  *
- * @author
- * @create 2019-09-03
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

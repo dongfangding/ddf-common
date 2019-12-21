@@ -10,17 +10,18 @@ import java.util.Objects;
 /**
  * 认证用户
  *
-
-
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Data
 @NoArgsConstructor
 public class AuthPrincipal implements Principal {
 
     /**
-     * token
+     * randomCode,服务端对设备号生成的随机码
      */
-    private String token;
+    private String randomCode;
 
     /**
      * 设备号
@@ -32,8 +33,8 @@ public class AuthPrincipal implements Principal {
      */
     private LoginType loginType;
 
-    public AuthPrincipal(String token, String ime, LoginType loginType) {
-        this.token = token;
+    public AuthPrincipal(String randomCode, String ime, LoginType loginType) {
+        this.randomCode = randomCode;
         this.ime = ime;
         this.loginType = loginType;
     }
@@ -55,7 +56,7 @@ public class AuthPrincipal implements Principal {
      */
     @Override
     public String getName() {
-        return token;
+        return ime;
     }
 
 
@@ -64,20 +65,24 @@ public class AuthPrincipal implements Principal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuthPrincipal that = (AuthPrincipal) o;
-        return Objects.equals(token, that.token) &&
+        return Objects.equals(randomCode, that.randomCode) &&
                 Objects.equals(ime, that.ime) &&
                 loginType == that.loginType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token, ime);
+        return Objects.hash(randomCode, ime);
     }
 
     public enum LoginType {
         /** 安卓认证 */
         ANDROID,
         /** APP id认证 */
-        APP_ID;
+        APP_ID
+
+
+
+        ;
     }
 }

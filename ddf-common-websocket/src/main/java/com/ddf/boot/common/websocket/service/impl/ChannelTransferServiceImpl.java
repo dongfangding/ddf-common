@@ -4,26 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
 import com.ddf.boot.common.websocket.helper.CmdAction;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.mapper.ChannelTransferMapper;
 import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
-import com.ddf.boot.common.websocket.model.ws.MessageRequest;
-import com.ddf.boot.common.websocket.service.ChannelTransferService;
-import com.ddf.boot.common.exception.GlobalCustomizeException;
-import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.Message;
+import com.ddf.boot.common.websocket.model.ws.MessageRequest;
 import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,19 +47,19 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<Principal, WebSocketSessionWrapper> values,
-                                                         MessageRequest messageRequest) {
+    public Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values
+            ,MessageRequest messageRequest) {
         if (values == null || messageRequest.getCmd() == null) {
             return null;
         }
         Map<AuthPrincipal, String> messageMap = new HashMap<>(values.size());
         List<ChannelTransfer> channelTransfers = new ArrayList<>(values.size());
-        for (Map.Entry<Principal, WebSocketSessionWrapper> entry : values.entrySet()) {
+        for (Map.Entry<AuthPrincipal, WebSocketSessionWrapper> entry : values.entrySet()) {
             WebSocketSessionWrapper value = entry.getValue();
             if (WebSocketSessionWrapper.STATUS_OFF_LINE.equals(value.getStatus())) {
                 continue;
             }
-            AuthPrincipal authPrincipal = (AuthPrincipal) entry.getKey();
+            AuthPrincipal authPrincipal = entry.getKey();
             CmdAction cmdAction = new CmdAction();
             Message message = cmdAction.push(messageRequest.getCmd(), messageRequest.getPayload());
             String messageStr = JsonUtil.asString(message);
@@ -71,8 +70,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         return messageMap;
     }
 
-    private ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message message, String request,
-                                                 WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest messageRequest) {
+    private ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message message, String request
+            ,WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest messageRequest) {
         ChannelTransfer channelTransfer = new ChannelTransfer();
         channelTransfer.setCmd(message.getCmd().name());
         channelTransfer.setRequestId(message.getRequestId());
@@ -80,7 +79,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         channelTransfer.setFullRequestResponse(toJsonArr(request));
         channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
         channelTransfer.setDeviceNumber(authPrincipal.getIme());
-        channelTransfer.setToken(authPrincipal.getToken());
+        channelTransfer.setToken(authPrincipal.getRandomCode());
         channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
         if (messageRequest != null) {
             channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
@@ -117,8 +116,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             return false;
         }
         try {
-            // FIXME 由一个业务主键来维系唯一索引保证针对同一个业务数据的命令不能重复发送，然后手写sql使用insert ignore如果插入
-            // 返回行数为0说明索引重复了，则可以明确知道是重复请求。这里后面再改，只要保存出错，都先认为是重复请求。
             save(buildChannelTransfer(authPrincipal, message, request, webSocketSessionWrapper, messageRequest));
         } catch (Exception e) {
             throw new ClientRepeatRequestException(String.format("客户端重复对同一数据[%s]发送相同指令！",
@@ -156,7 +153,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfer.setFullRequestResponse(toJsonArr(response));
             channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
             channelTransfer.setDeviceNumber(authPrincipal.getIme());
-            channelTransfer.setToken(authPrincipal.getToken());
+            channelTransfer.setToken(authPrincipal.getRandomCode());
             channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
             if (message == null) {
                 channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);

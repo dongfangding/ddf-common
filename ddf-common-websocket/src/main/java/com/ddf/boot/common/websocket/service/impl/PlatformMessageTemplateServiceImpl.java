@@ -13,6 +13,9 @@ import java.util.List;
 
 /**
  * 收款短信模板 服务实现类
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service
 public class PlatformMessageTemplateServiceImpl extends ServiceImpl<PlatformMessageTemplateMapper, PlatformMessageTemplate>

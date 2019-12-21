@@ -19,19 +19,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 响应客户端推送的银行收款短信
+ * 响应客户端传送的短信数据报文
  *
-
-
- */
+ * @author dongfang.ding
+ * @date 2019/12/21 0021 17:51
+ **/
 @Slf4j
-@Service("BANK_SMS")
+@Service("SMS")
 public class BankSmsCmdStrategy implements CmdStrategy {
     @Autowired
     private MerchantMessageInfoService merchantMessageInfoService;
     @Autowired
     private CmdStrategyHelper cmdStrategyHelper;
-
 
 
     /**
@@ -44,13 +43,10 @@ public class BankSmsCmdStrategy implements CmdStrategy {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Message responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal, Message message) {
-        log.info("====================响应客户端推送的银行收款短信============================");
-        log.info("银行收款短信响应数据: {}", message);
+        log.debug("接收到短信数据: {}", message);
         if (authPrincipal == null || message == null) {
             throw new MessageFormatInvalid("系统异常，报文数据丢失！！");
         }
-
-        // DingTalkClientHelper.sendMarkdownMsg(null, dingTalkBOHelper.buildDingTalkBO("BANK_INCOME_SMS 银行收款短信响应数据", message.toString()));
 
         // 获取报文主体数据
         List<Map<String, Object>> payload = CmdStrategyHelper.getListPayload(message, "银行短信响应报文格式有误！");

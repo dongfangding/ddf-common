@@ -13,7 +13,6 @@ import com.ddf.boot.common.websocket.mapper.MerchantMessageInfoMapper;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
 import com.ddf.boot.common.websocket.model.entity.MerchantMessageInfo;
 import com.ddf.boot.common.websocket.model.ws.*;
-import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
 import com.ddf.boot.common.websocket.service.MerchantMessageInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,45 +26,15 @@ import java.util.*;
 
 /**
  * 云闪付收款到账消息 服务实现类
+ *
+ * @author dongfang.ding
+ * @date 2019/12/21
  */
 @Service
 @Slf4j
 public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageInfoMapper, MerchantMessageInfo> implements MerchantMessageInfoService {
-
-    @Autowired
-    private MerchantBaseDeviceService merchantBaseDeviceService;
     @Autowired
     private MerchantMessageInfoMapper merchantMessageInfoMapper;
-
-    /**
-     * 插入云闪付到账消息，包含云闪付到账消息，账单消息， 短信消息
-     *
-     * @param authPrincipal
-     * @param parseContent
-     * @return
-     * @author dongfang.ding
-     * @date 2019/9/7 14:24
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insertByParseContent(AuthPrincipal authPrincipal, ParseContent parseContent, CmdEnum cmd) {
-        if (authPrincipal == null || parseContent == null) {
-            return 0;
-        }
-        MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
-        if (baseDevice == null) {
-            return 0;
-        }
-        MerchantMessageInfo merchantMessageInfo = new MerchantMessageInfo();
-        merchantMessageInfo.setMerchantId(baseDevice.getMerchantId());
-        merchantMessageInfo.setDeviceId(baseDevice.getId());
-        merchantMessageInfo.setDeviceNumber(baseDevice.getNumber());
-        merchantMessageInfo.setCmd(cmd.name());
-        merchantMessageInfo.setTradeNo(parseContent.getTradeNo());
-        merchantMessageInfo.setDescription(parseContent.buildMessage());
-        merchantMessageInfo.setReceiveTime(parseContent.getOrderTime());
-        return merchantMessageInfoMapper.ignoreSave(merchantMessageInfo);
-    }
 
     /**
      * 根据tradeNo获取消息记录
@@ -155,135 +124,6 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
                 MessageResponse.SERVER_CODE_RECEIVED), validBusinessData);
     }
 
-    /**
-     * 接收短信数据保存到message_info中，对报文中的列表数据进行分开存储，除了需要解析trade_no去重，其它任何非报文数据
-     * 都不进行处理直接保存。
-     * 根据trade_no去重，只向调用方返回真正插入的数据
-     *
-     * @param message
-     * @param payload
-     * @param authPrincipal
-     * @return
-     * @author dongfang.ding
-     */
-    @Override
-    public MessageWrapper<String, MerchantMessageInfo> insertMessageInfoByUPayMessage(Message message,
-            Map<String, Object> payload, AuthPrincipal authPrincipal) {
-        if (message == null || payload == null || authPrincipal == null) {
-            return null;
-        }
-        MerchantMessageInfo merchantMessageInfo = initMessageInfo(message, authPrincipal, payload);
-        boolean isError = false;
-        UPayMessage uPayMessage = null;
-        try {
-            try {
-                uPayMessage = JsonUtil.toBean(JsonUtil.asString(payload), UPayMessage.class);
-            } catch (Exception e) {
-                log.error("报文格式有误！", e);
-                throw new MessageFormatInvalid("报文格式有误！");
-            }
-            if (StringUtils.isAnyBlank(uPayMessage.getContent(), uPayMessage.getOrderId())) {
-                throw new MessageFormatInvalid("云闪付通知内容、订单号不能为空!");
-            }
-            if (uPayMessage.getOrderTime() == null) {
-                throw new MessageFormatInvalid("云闪付通知时间不能为空!");
-            }
-            merchantMessageInfo.setTradeNo(uPayMessage.getOrderId());
-            merchantMessageInfo.setDescription(uPayMessage.getContent());
-        } catch (MessageFormatInvalid messageFormatInvalid) {
-            isError = true;
-            log.error("解析报文出错！", messageFormatInvalid);
-            merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_DATA_INVALID);
-            merchantMessageInfo.setErrorMessage(messageFormatInvalid.getMessage());
-            merchantMessageInfo.setErrorStack(StringUtil.exceptionToString(messageFormatInvalid));
-        }
-        merchantMessageInfoMapper.ignoreSave(merchantMessageInfo);
-        if (isError) {
-            return MessageWrapper.withBusiness(Message.buildMessage(message, merchantMessageInfo.getErrorMessage(),
-                    MessageResponse.SERVER_CODE_ERROR), null);
-        }
-        MerchantMessageInfo validBusinessData = getValidBusinessData(merchantMessageInfo, uPayMessage.getOrderId(),
-                message.getCmd());
-        return MessageWrapper.withBusiness(Message.success(message), validBusinessData);
-    }
-
-    /**
-     * 接收短信数据保存到message_info中，对报文中的列表数据进行分开存储，除了需要解析trade_no去重，其它任何非报文数据
-     * 都不进行处理直接保存。
-     * 根据trade_no去重，只向调用方返回真正插入的数据
-     *
-     * @param message
-     * @param payload
-     * @param authPrincipal
-     * @return
-     * @author dongfang.ding
-     */
-    @Override
-    public MessageWrapper<List<Map<String, Object>>, List<MerchantMessageInfo>> insertMessageInfoByUPayBillOrder(Message message,
-            List<Map<String, Object>> payload, AuthPrincipal authPrincipal) {
-        if (message == null || payload == null || payload.isEmpty() || authPrincipal == null) {
-            return null;
-        }
-        List<MerchantMessageInfo> infoList = new ArrayList<>();
-        UPayBill uPayBill;
-        List<String> tradeNoList = new ArrayList<>(payload.size());
-        List<Map<String, Object>> returnClientMap = new ArrayList<>(payload.size());
-        String tradeNo = null;
-        String billType;
-        Integer qrCodeType;
-        for (Map<String, Object> item : payload) {
-            MerchantMessageInfo merchantMessageInfo = initMessageInfo(message, authPrincipal, item);
-            try {
-                if (item == null) {
-                    log.error("传输数据不能为空!! requestId: [{}]", message.getRequestId());
-                    continue;
-                }
-                // 必须有云闪付的订单号才能保证后面的数据能够对应上，没有的数据不落此表，从报文日志中查
-                tradeNo = item.get("tradeno") + "";
-                if (StringUtils.isBlank(tradeNo)) {
-                    log.error("报文中的订单号不能为空!! requestId: [{}]", message.getRequestId());
-                    throw new MessageFormatInvalid("报文中的订单号不能为空!");
-                }
-                if (item.get("billType") == null || StringUtils.isBlank(item.get("billType") + "")) {
-                    log.error("报文中的billType不能为空!! requestId: [{}]", message.getRequestId());
-                    throw new MessageFormatInvalid("报文中的billType不能为空!!");
-                }
-                billType = item.get("billType") + "";
-                if (item.get("qrCodeType") == null || StringUtils.isBlank(item.get("qrCodeType") + "")) {
-                    log.error("报文中的qrCodeType不能为空!! requestId: [{}]", message.getRequestId());
-                    throw new MessageFormatInvalid("报文中的qrCodeType不能为空!! ");
-                }
-                qrCodeType = Integer.parseInt(item.get("qrCodeType") + "");
-                tradeNoList.add(tradeNo);
-                infoList.add(merchantMessageInfo);
-                merchantMessageInfo.setTradeNo(tradeNo);
-                try {
-                    uPayBill = JsonUtil.toBean(JsonUtil.asString(item), UPayBill.class);
-                } catch (Exception e) {
-                    throw new MessageFormatInvalid("报文格式有误！");
-                }
-                if (uPayBill.getAmount() == null) {
-                    throw new MessageFormatInvalid(String.format("订单号[%s]的金额不能为空", tradeNo));
-                }
-                CmdStrategyHelper.checkTimeFormat(uPayBill.getOrderTime());
-                returnClientMap.add(CmdStrategyHelper.buildUPayBillOrderSuccessMap(tradeNo, billType, qrCodeType));
-            } catch (Exception messageFormatInvalid) {
-                log.error("解析报文出错！", messageFormatInvalid);
-                merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_DATA_INVALID);
-                merchantMessageInfo.setErrorMessage(messageFormatInvalid.getMessage());
-                merchantMessageInfo.setErrorStack(StringUtil.exceptionToString(messageFormatInvalid, 100));
-                returnClientMap.add(CmdStrategyHelper.buildUPayBillOrderErrorMap(tradeNo, messageFormatInvalid.getMessage()));
-            }
-        }
-        if (infoList.isEmpty()) {
-            return MessageWrapper.withBusiness(Message.buildMessage(message, returnClientMap,
-                    MessageResponse.SERVER_CODE_RECEIVED), null);
-        }
-        merchantMessageInfoMapper.batchIgnoreSave(infoList);
-        List<MerchantMessageInfo> validBusinessData = getValidBusinessData(infoList, tradeNoList);
-        return MessageWrapper.withBusiness(Message.buildMessage(message, returnClientMap,
-                MessageResponse.SERVER_CODE_RECEIVED), validBusinessData);
-    }
 
     /**
      * 处理接收到的短信，填充业务数据和状态
