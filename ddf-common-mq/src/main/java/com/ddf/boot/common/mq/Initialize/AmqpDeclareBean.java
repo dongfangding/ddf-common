@@ -136,7 +136,15 @@ public class AmqpDeclareBean implements InitializingBean {
                             logMqListener.setRequeueTimes(poll.getMessageWrapper().getRequeueTimes());
                             logMqListener.setMessageJson(JsonUtil.asString(poll.getMessageWrapper()));
                             logMqListener.setEvent(poll.getMqEvent().name());
-                            logMqListener.setTimestamp(poll.getTimestamp());
+                            logMqListener.setEventTimestamp(poll.getTimestamp());
+                            if (ListenerQueueEntity.MqEvent.SEND_SUCCESS.equals(poll.getMqEvent()) ||
+                                    ListenerQueueEntity.MqEvent.SEND_FAILURE.equals(poll.getMqEvent())) {
+                                logMqListener.setSendTimestamp(poll.getTimestamp());
+                            } else {
+                                logMqListener.setConsumerTimestamp(poll.getTimestamp());
+                            }
+
+
                             if (poll.getQueueDefinition() != null) {
                                 logMqListener.setExchangeName(poll.getQueueDefinition().getExchangeName());
                                 logMqListener.setExchangeType(poll.getQueueDefinition().getExchangeType().name());
@@ -159,12 +167,12 @@ public class AmqpDeclareBean implements InitializingBean {
                                 logMqListenerMapper.insert(logMqListener);
                             } else {
                                 logMqListener.setId(exist.getId());
-                                if (logMqListener.getTimestamp() < exist.getTimestamp()) {
+                                if (logMqListener.getEventTimestamp() < exist.getEventTimestamp()) {
                                     log.error("当前数据小于数据库中发生时间，不予更新！ {}===>{}", logMqListener, exist);
                                 }
                                 LambdaUpdateWrapper<LogMqListener> updateWrapper = Wrappers.lambdaUpdate();
                                 updateWrapper.eq(LogMqListener::getId, exist.getId());
-                                updateWrapper.le(LogMqListener::getTimestamp, logMqListener.getTimestamp());
+                                updateWrapper.le(LogMqListener::getEventTimestamp, logMqListener.getEventTimestamp());
                                 logMqListenerMapper.update(logMqListener, updateWrapper);
                             }
                         }
