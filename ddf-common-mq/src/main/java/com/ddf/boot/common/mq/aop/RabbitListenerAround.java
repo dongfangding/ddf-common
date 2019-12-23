@@ -1,18 +1,19 @@
 package com.ddf.boot.common.mq.aop;
 
 import com.ddf.boot.common.mq.helper.MqMessageHelper;
-import com.ddf.boot.common.mq.listener.DefaultMqEventListener;
+import com.ddf.boot.common.mq.listener.MqEventListener;
 import com.ddf.boot.common.util.AopUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.amqp.core.Message;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,7 +57,7 @@ import java.util.Map;
 public class RabbitListenerAround {
 
     @Autowired
-    private DefaultMqEventListener defaultMqEventListener;
+    private List<MqEventListener> mqEventListenerList;
 
     @Autowired
     private MqMessageHelper mqMessageHelper;
@@ -81,17 +82,22 @@ public class RabbitListenerAround {
         } catch (Exception e) {
             log.error("没有获取到Message对象,无法进行消费情况捕捉！{}", args);
         }
+        Message finalMessage = message;
         try {
             joinPoint.proceed();
         } catch (Throwable throwable) {
             log.error("[{}#{}]消费失败！", className, methodName);
             if (message != null) {
-                defaultMqEventListener.consumerFailure(rabbitListener, mqMessageHelper.parseNoBody(message), throwable);
+                if (mqEventListenerList != null && !mqEventListenerList.isEmpty()) {
+                    mqEventListenerList.forEach((listener) -> listener.consumerFailure(rabbitListener, mqMessageHelper.parseNoBody(finalMessage), throwable));
+                }
             }
             throw throwable;
         }
         if (message != null) {
-            defaultMqEventListener.consumerSuccess(rabbitListener, mqMessageHelper.parseNoBody(message));
+            if (mqEventListenerList != null && !mqEventListenerList.isEmpty()) {
+                mqEventListenerList.forEach((listener) -> listener.consumerSuccess(rabbitListener, mqMessageHelper.parseNoBody(finalMessage)));
+            }
         }
     }
 }

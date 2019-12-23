@@ -159,6 +159,8 @@ public class MqConfig {
      * 			logger.error("消息消费异常: {}", new String(message.getBody(), StandardCharsets.UTF_8), e);
      * 			// deliveryTag 可以认为是消息的唯一身份标识符，multiple如果为true，则将此消息和此消息之前的所有数据都执行当前当前方法，
      * 			channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+     * 		    // catch是为了做异常处理，但还是要将异常抛出去，让容器感知到消费失败
+     * 		    throw new RuntimeException(e.getMessage());
      *        }
      *  </pre>
      *

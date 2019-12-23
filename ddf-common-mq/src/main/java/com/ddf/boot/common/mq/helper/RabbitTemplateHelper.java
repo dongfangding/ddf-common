@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -52,8 +53,8 @@ public class RabbitTemplateHelper {
     @Autowired
     private MqMessageProperties mqMessageProperties;
 
-    @Autowired
-    private MqEventListener mqEventListener;
+    @Autowired(required = false)
+    private List<MqEventListener> mqEventListeners;
 
     @Autowired
     private MqMessageHelper mqMessageHelper;
@@ -73,10 +74,18 @@ public class RabbitTemplateHelper {
             wrapper = mqMessageHelper.wrapper(body);
             log.debug("开始发送消息>>>>: {}", wrapper);
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), wrapper);
-            mqEventListener.sendSuccess(queueDefinition, wrapper);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                MqMessageWrapper<T> finalWrapper = wrapper;
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, finalWrapper));
+            }
         } catch (Exception e) {
             log.error("消息发送异常！ {}", body, e);
-            mqEventListener.sendFailure(queueDefinition, wrapper, e);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                MqMessageWrapper<T> finalWrapper1 = wrapper;
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, finalWrapper1));
+            }
             throw new MqSendException(e.getMessage());
         }
     }
@@ -93,10 +102,16 @@ public class RabbitTemplateHelper {
     public <T> void send(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) throws MqSendException {
         try {
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
-            mqEventListener.sendSuccess(queueDefinition, messageWrapper);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, messageWrapper));
+            }
         } catch (Exception e) {
             log.error("消息发送异常！ {}", messageWrapper, e);
-            mqEventListener.sendFailure(queueDefinition, messageWrapper, e);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendFailure(queueDefinition, messageWrapper, e));
+            }
             throw new MqSendException(e.getMessage());
         }
     }
@@ -113,10 +128,16 @@ public class RabbitTemplateHelper {
     public <T> boolean sendNotNecessary(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
         try {
             rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
-            mqEventListener.sendSuccess(queueDefinition, messageWrapper);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, messageWrapper));
+            }
             return true;
         } catch (Exception exception) {
-            mqEventListener.sendFailure(queueDefinition, messageWrapper, exception);
+            if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
+                // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
+                mqEventListeners.forEach(listener -> listener.sendFailure(queueDefinition, messageWrapper, exception));
+            }
             log.warn("sendNotNecessary发送消息失败！{}", messageWrapper, exception);
         }
         return false;

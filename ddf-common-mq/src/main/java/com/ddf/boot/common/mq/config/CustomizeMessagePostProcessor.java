@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 
 /**
- * 消息发送前可以更改消息，暂时还没想到用处
+ * fixme
+ * 消息发送前可以更改消息，现在自定义RabbitTemplate会报错，暂未解决。如果解决可以在这里统一拦截处理记录发送的数据，这样就不用
+ * 在RabbitTemplateHelper中的每个发送方法中都去调用发送事件了
  *
  * _ooOoo_
  * o8888888o
@@ -52,9 +54,8 @@ public class CustomizeMessagePostProcessor implements MessagePostProcessor {
             String body = new String(message.getBody(), encoding);
             log.debug("读取到要发送的消息内容为: {}", body);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("消息发送前置处理器处理失败", e);
         }
-
         return message;
     }
 }

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -57,8 +58,9 @@ public class AmqpDeclareBean implements InitializingBean {
 
     @Autowired
     private AmqpAdmin amqpAdmin;
-    @Autowired(required = false)
-    private MqEventListener mqEventListener;
+    @Autowired
+    @Qualifier("defaultMqEventListener")
+    private MqEventListener defaultMqEventListener;
     @Autowired
     private LogMqListenerMapper logMqListenerMapper;
 
@@ -115,7 +117,7 @@ public class AmqpDeclareBean implements InitializingBean {
      * @date 2019/12/20 0020 15:43
      **/
     private void initListenerQueue() {
-        if (mqEventListener != null && mqEventListener instanceof DefaultMqEventListener) {
+        if (defaultMqEventListener != null && defaultMqEventListener instanceof DefaultMqEventListener) {
             Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create().setDaemon(true).setNamePrefix("consumer-listener-queue").build()).execute(() -> {
                 while (true) {
                     try {
