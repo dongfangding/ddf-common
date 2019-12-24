@@ -80,11 +80,11 @@ public class RabbitTemplateHelper {
                 mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, finalWrapper));
             }
         } catch (Exception e) {
-            log.error("消息发送异常！ {}", body, e);
+            log.error("消息发送异常>>>>: {}", body, e);
             if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
                 MqMessageWrapper<T> finalWrapper1 = wrapper;
                 // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
-                mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, finalWrapper1));
+                mqEventListeners.forEach(listener -> listener.sendFailure(queueDefinition, finalWrapper1, e));
             }
             throw new MqSendException(e.getMessage());
         }
