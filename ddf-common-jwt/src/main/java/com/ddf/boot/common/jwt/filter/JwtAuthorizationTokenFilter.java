@@ -1,5 +1,6 @@
 package com.ddf.boot.common.jwt.filter;
 
+import com.ddf.boot.common.exception.AccessDeniedException;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -93,8 +93,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         }
         final String tokenHeader = request.getHeader(AUTH_HEADER);
         if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), String.format("token必须以【%s】开头！", TOKEN_PREFIX));
-            return;
+            throw new AccessDeniedException("token格式不合法！");
         }
 
         String token = tokenHeader.split(TOKEN_PREFIX)[1];
@@ -102,14 +101,11 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         try {
             claimsJws = JwtUtil.parseJws(token, 0);
         } catch (KeyException e) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token无效！");
-            return;
+            throw new AccessDeniedException("token无效！");
         } catch (ExpiredJwtException e) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token已过期！");
-            return;
+            throw new AccessDeniedException("token已过期！");
         } catch (Exception e) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token解析失败！");
-            return;
+            throw new AccessDeniedException("token解析失败！");
         }
 
         UserClaim userClaim = JwtUtil.getUserClaim(claimsJws);
@@ -124,21 +120,18 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
         if (!Objects.equals(userClaim.getCredit(), host) && !JwtUtil.DEFAULT_CLIENT_IP.equals(host)) {
             log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, userClaim);
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "更换登录地址，需要重新登录！");
-            return;
+            throw new AccessDeniedException("更换登录地址，需要重新登录！");
         }
 
         UserClaim storeUser = userClaimService.getStoreUserInfo(userClaim);
 
         if (!Objects.equals(userClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
             log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "密码已经修改，请重新登录！");
-            return;
+            throw new AccessDeniedException("密码已经修改，请重新登录！");
         }
         if (!Objects.equals(userClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
             log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "token已刷新，请重新登录！");
-            return;
+            throw new AccessDeniedException("token已刷新，请重新登录！");
         }
 
         userClaimService.afterVerifySuccess(userClaim);
