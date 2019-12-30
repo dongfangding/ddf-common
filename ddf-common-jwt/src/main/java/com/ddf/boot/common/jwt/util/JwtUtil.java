@@ -47,7 +47,7 @@ public class JwtUtil {
 
     private static JwtProperties jwtProperties = SpringContextHolder.getBean(JwtProperties.class);
 
-    private static AntPathMatcher antPathMatcher;
+    private static volatile AntPathMatcher antPathMatcher;
 
     /**
      * 生成与解析jws如果不是同一台机器可能会存在时钟差的问题
