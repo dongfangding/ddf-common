@@ -11,6 +11,7 @@ import com.ddf.boot.common.util.WebUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.KeyException;
 import org.apache.dubbo.rpc.RpcContext;
+import org.springframework.util.AntPathMatcher;
 
 import java.util.*;
 
@@ -45,6 +46,8 @@ import java.util.*;
 public class JwtUtil {
 
     private static JwtProperties jwtProperties = SpringContextHolder.getBean(JwtProperties.class);
+
+    private static AntPathMatcher antPathMatcher;
 
     /**
      * 生成与解析jws如果不是同一台机器可能会存在时钟差的问题
@@ -201,5 +204,24 @@ public class JwtUtil {
             }
             return clientIp;
         }
+    }
+
+
+    /**
+     * 返回一个单例的ant风格匹配器
+     *
+     * @return org.springframework.util.AntPathMatcher
+     * @author dongfang.ding
+     * @date 2019/12/30 0030 17:43
+     **/
+    public static AntPathMatcher getAntPathMatcher() {
+        if (antPathMatcher == null) {
+            synchronized (JwtUtil.class) {
+                if (antPathMatcher == null) {
+                    antPathMatcher = new AntPathMatcher();
+                }
+            }
+        }
+        return antPathMatcher;
     }
 }

@@ -53,18 +53,6 @@ public class JwtFilterRegistrar implements ImportBeanDefinitionRegistrar {
                         genericBeanDefinition(JwtAuthorizationTokenFilter.class);
                 registry.registerBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME,
                         requestContextDefinition.getBeanDefinition());
-
-                BeanDefinitionBuilder ignorePathMatchPropertiesBean = BeanDefinitionBuilder.
-                        genericBeanDefinition(IgnorePathMatchProperties.class);
-
-                registry.registerBeanDefinition(IgnorePathMatchProperties.BEAN_NAME,
-                        ignorePathMatchPropertiesBean.getBeanDefinition());
-
-                BeanDefinitionBuilder jwtPropertiesBean = BeanDefinitionBuilder.
-                        genericBeanDefinition(JwtProperties.class);
-
-                registry.registerBeanDefinition(JwtProperties.BEAN_NAME,
-                        jwtPropertiesBean.getBeanDefinition());
             }
         }
     }
