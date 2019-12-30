@@ -1,9 +1,11 @@
 package com.ddf.boot.common.jwt.config;
 
+import com.ddf.boot.common.jwt.util.JwtUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(prefix = "customs.jwt")
 @Data
 @NoArgsConstructor
+@Component
 public class JwtProperties {
 
     public static final String BEAN_NAME = "jwtProperties";
@@ -90,26 +93,11 @@ public class JwtProperties {
         // 当前请求地址是否需要跳过认证
         if (!pathList.isEmpty()) {
             for (String ignore : pathList) {
-                if (ignore.equals(path) || ignore.equals("/*") || ignore.equals("/**")) {
+                if (JwtUtil.getAntPathMatcher().match(ignore, path)) {
                     return true;
-                }
-                // 粗略实现ant风格匹配
-                if (ignore.contains("**")) {
-                    ignore = ignore.substring(0, ignore.indexOf("**") - 1);
-                    if (StringUtils.isNotBlank(ignore) && path.startsWith(ignore)) {
-                        return true;
-                    }
-                }
-                // 粗略实现ant风格匹配
-                if (ignore.contains("*")) {
-                    ignore = ignore.substring(0, ignore.indexOf("*") - 1);
-                    if (StringUtils.isNotBlank(ignore) && path.startsWith(ignore)) {
-                        return true;
-                    }
                 }
             }
         }
         return false;
     }
-
 }

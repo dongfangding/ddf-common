@@ -3,6 +3,7 @@ package com.ddf.boot.common.jwt.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.List;
 @ConfigurationProperties("jwt.auth")
 @Getter
 @Setter
+@Component
 public class IgnorePathMatchProperties {
 
     public static final String BEAN_NAME = "ignorePathMatchProperties";
