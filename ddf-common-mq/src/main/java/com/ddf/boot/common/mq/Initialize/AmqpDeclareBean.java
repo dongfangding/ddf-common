@@ -10,6 +10,7 @@ import com.ddf.boot.common.mq.listener.DefaultMqEventListener;
 import com.ddf.boot.common.mq.listener.ListenerQueueEntity;
 import com.ddf.boot.common.mq.listener.MqEventListener;
 import com.ddf.boot.common.mq.mapper.LogMqListenerMapper;
+import com.ddf.boot.common.util.IdsUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -146,7 +147,6 @@ public class AmqpDeclareBean implements InitializingBean {
                                 logMqListener.setConsumerTimestamp(poll.getTimestamp());
                             }
 
-
                             if (poll.getQueueDefinition() != null) {
                                 logMqListener.setExchangeName(poll.getQueueDefinition().getExchangeName());
                                 logMqListener.setExchangeType(poll.getQueueDefinition().getExchangeType().name());
@@ -166,6 +166,7 @@ public class AmqpDeclareBean implements InitializingBean {
                             queryWrapper.eq(LogMqListener::getMessageId, poll.getMessageWrapper().getMessageId());
                             LogMqListener exist = logMqListenerMapper.selectOne(queryWrapper);
                             if (exist == null) {
+                                logMqListener.setId(IdsUtil.getNextLongId());
                                 logMqListenerMapper.insert(logMqListener);
                             } else {
                                 logMqListener.setId(exist.getId());
