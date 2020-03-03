@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import org.springframework.core.env.Environment;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -39,7 +40,7 @@ public class SecureUtil {
 
     private SecureUtil() {}
 
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     private static RSA privateRsa;
 

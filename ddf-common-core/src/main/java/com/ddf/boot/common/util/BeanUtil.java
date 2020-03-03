@@ -14,11 +14,12 @@ import java.util.Map;
 /**
  * 属性拷贝工具类
  *
+ * @author 佚名
  * @create 2019年07月24日
  */
 public class BeanUtil {
 
-    private static final Mapper mapper = newInstance();
+    private static final Mapper MAPPER = newInstance();
 
     /**
      * 拷贝对象
@@ -47,7 +48,7 @@ public class BeanUtil {
         if (ObjectUtil.anyNull(source, target)) {
             return;
         }
-        mapper.map(source, target);
+        MAPPER.map(source, target);
     }
 
     /**
@@ -62,7 +63,7 @@ public class BeanUtil {
         if (ObjectUtil.anyNull(source, target)) {
             return null;
         }
-        return mapper.map(source, target);
+        return MAPPER.map(source, target);
     }
 
     /**
