@@ -166,12 +166,12 @@ public class EntityGenerateUtil {
      * @return
      */
     private static String castSqlType(int type, String columnName) {
-        if (Types.TINYINT == type) {
+        if (Types.TINYINT == type || Types.SMALLINT == type || Types.BIT == type) {
             return " Byte ";
         } else if (Types.INTEGER == type) {
             return " Integer ";
         } else if (Types.FLOAT == type || Types.DOUBLE == type || Types.NUMERIC == type ||Types.DECIMAL == type ) {
-            return " Double ";
+            return " BigDecimal ";
         } else if (Types.VARCHAR == type || Types.CHAR == type || Types.CLOB == type || Types.NVARCHAR == type
                 || Types.LONGVARCHAR == type) {
             return " String ";

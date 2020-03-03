@@ -80,8 +80,8 @@ public class AopUtil {
             return Collections.emptyMap();
         }
         Map<Class<?>, Object> argsMap = new HashMap<>(args.length);
-        for (int i = 0; i < args.length; i++) {
-            argsMap.put(args[i].getClass(), args[i]);
+        for (Object arg : args) {
+            argsMap.put(arg.getClass(), arg);
         }
         return argsMap;
     }
