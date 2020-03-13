@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ddf.boot.common.entity.BaseDomain;
 import com.ddf.boot.common.exception.GlobalCustomizeException;
 
+import java.util.Collection;
+
 
 /**
  * 自定义接口查询
@@ -57,7 +59,17 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
     default boolean saveCheckDuplicateKey(T entity) {
         return saveCheckDuplicateKey(entity, new GlobalCustomizeException(entity.getClass().getSimpleName() + "违反数据库唯一约束"));
     }
-    
+
+    /**
+     * 保存的时候捕获唯一数据库唯一约束异常，并抛出自定义异常消息（运行时异常）
+     *
+     * @param entityList
+     * @param exception
+     * @return company
+     */
+    boolean saveBatchCheckDuplicateKey(Collection<T> entityList, RuntimeException exception);
+
+
     /**
      * 更新时检查返回结果，如果为false,则抛出运行时异常
      * 
@@ -81,5 +93,42 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
      **/
     default boolean updateCheckBool(Wrapper<T> updateWrapper, RuntimeException exception) {
         return updateCheckBool(null, updateWrapper, exception);
+    }
+
+
+    /**
+     * 更新时检查返回结果，如果为false,则抛出运行时异常
+     * 如果更新时导致唯一索引异常，提供一个接收异常
+     *
+     * @param entity
+     * @param updateWrapper
+     * @param updateFalseException  更新结果为false的异常
+     * @param duplicateKeyException 更新导致唯一索引异常
+     * @return
+     */
+    boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException updateFalseException, RuntimeException duplicateKeyException);
+
+
+    /**
+     * 更新时检查返回结果，如果为false,则抛出运行时异常
+     * 如果更新时导致唯一索引异常，提供一个接收异常
+     *
+     * @param entity
+     * @param updateFalseException  更新结果为false的异常
+     * @param duplicateKeyException 更新导致唯一索引异常
+     * @return
+     */
+    boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException, RuntimeException duplicateKeyException);
+
+    /**
+     * 更新时检查返回结果，如果为false,则抛出运行时异常
+     * 如果更新时导致唯一索引异常，提供一个接收异常
+     *
+     * @param entity
+     * @param updateFalseException  更新结果为false的异常
+     * @return
+     */
+    default boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException) {
+        return updateByIdCheckBool(entity, updateFalseException, new RuntimeException("违反数据库唯一索引！"));
     }
 }

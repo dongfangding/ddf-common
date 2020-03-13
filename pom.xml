@@ -261,5 +261,6 @@
         <module>ddf-common-security</module>
         <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-model</module>
+        <module>ddf-common-distributed-lock</module>
     </modules>
 </project>
