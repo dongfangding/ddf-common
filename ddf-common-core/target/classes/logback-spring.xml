@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true">
+    <springProperty scope="context" name="projectName" source="spring.application.name"/>
+    <property name="log.directory" value="./logs/" />
+    <property name="log.charset" value="UTF-8" />
+    <property name="log.maxHistory" value="30" />
+    <property name="log.error.log.level" value="WARN" />
+    <property name="log.maxFileSize" value="50MB"/>
+    <property name="log.async.queue.size" value="1024" />
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr[zuul] %highlight(%-5level) PID:%clr(${PID:- }){magenta} -- %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                [%t]-[%d{yyyy-MM-dd HH:mm:ss:SSS}][${projectName}][%highlight(%-5level)] %clr(${PID:- }) [%c.%M]\(%L\) : &#45;&#45; %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}${projectName}-log.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>
+                [%t]-[%d{yyyy-MM-dd HH:mm:ss:SSS}][${projectName}][%-5level] ${PID:- } [%c.%M]\(%L\) : &#45;&#45; %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name ="ASYNC_FILE" class= "ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold >0</discardingThreshold>
+        <queueSize>${log.async.queue.size}</queueSize>
+        <appender-ref ref = "FILE"/>
+    </appender>
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.error.log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}${projectName}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>
+                [%t]-[%d{yyyy-MM-dd HH:mm:ss:SSS}][${projectName}][%-5level] ${PID:- } [%c.%M]\(%L\) : &#45;&#45; %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}
+            </pattern>
+        </encoder>
+    </appender>
+    <root>
+        <level value="INFO" />
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="ASYNC_FILE" />
+        <appender-ref ref="ERROR" />
+    </root>
+</configuration>
