@@ -1,0 +1,15 @@
+spring:
+  rabbitmq:
+    addresses: 192.168.3.152:5672
+    username: root
+    password: password
+    virtualHost: /
+    cache:
+      channel:
+        size: 100
+      connection:
+        mode: connection
+    template:
+      retry:
+        enabled: true
+        initialInterval: 2000
