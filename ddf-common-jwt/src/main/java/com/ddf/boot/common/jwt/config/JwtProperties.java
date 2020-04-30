@@ -80,7 +80,6 @@ public class JwtProperties {
     /**
      * 判断路径是否跳过
      *
-     * FIXME 能不能知道ant风格的解析工具类，下面自己写的太简单，问题很多
      * @param path
      * @return
      */

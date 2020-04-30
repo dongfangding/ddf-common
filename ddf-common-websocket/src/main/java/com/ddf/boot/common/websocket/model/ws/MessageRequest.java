@@ -1,7 +1,8 @@
 package com.ddf.boot.common.websocket.model.ws;
 
-import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.websocket.enumerate.CmdEnum;
+import com.ddf.boot.common.websocket.model.payload.ChildCmdPayload;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,9 @@ public class MessageRequest<T> implements Serializable {
     @ApiModelProperty(value = "设备号", required = true)
     private String ime;
 
+    @ApiModelProperty(value = "客户端渠道，想要upay在哪个应用上执行业务，默认upay,但是为了防止错误，服务端不会给默认值，而是让客户端明确", required = true)
+    private ClientChannel clientChannel;
+
     @ApiModelProperty(required = true, value = "发送指令的模式，为了防止通过token和ime参数的判断来确定是群发还是单发" +
             "还是批量发的误传，因此需要参数和模式互相对应")
     private SendMode sendMode;
@@ -54,11 +58,24 @@ public class MessageRequest<T> implements Serializable {
     @ApiModelProperty(value = "操作人id")
     private String operatorId;
 
+    @ApiModelProperty(value = "是否需要检测最后一次发送时间")
+    private boolean checkLastTime;
+
+    @ApiModelProperty(value = "发送间隔，单位为分钟。如果上次发送(指令处理结果为成功的才计入)时间距离现在没有达到间隔，则不会实际发送指令")
+    private int sendMinutesInterval;
+
+    @ApiModelProperty(value = "每天发送最大次数，如果满足了发送间隔，但次数已经达到了（指令处理结果为成功的才计入）依然不会发送，如果为0，则是不显示次数")
+    private int dailyMaxTimes;
+
     @ApiModelProperty(value = "是否需要异步处理该接口，默认同步；群发指令或批量指令该参数无效，服务端会强制只能异步")
     private boolean async;
 
-    @ApiModelProperty(value = "同步的阻塞时间, 单位毫秒，默认8000，服务端控制最大15000")
-    private long blockMilliSeconds = 8000;
+    @ApiModelProperty(value = "同步的阻塞时间, 单位毫秒，默认10000，服务端控制最大30000")
+    private long blockMilliSeconds = 10000;
+
+    @ApiModelProperty("是否需要附加支付方式的账号信息到请求头，这么做调用方想自定义传参就很麻烦了；单现在系统多个地方都有，" +
+            "因此简单方便想定义参数统一处理，额外再提供一个自定义请求头的方法")
+    private boolean appendAccountInfo;
 
     /**
      * 不需要调用方处理这个参数
@@ -110,7 +127,7 @@ public class MessageRequest<T> implements Serializable {
      *
      * @param childEnum
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/24 18:57
      */
     public static void userSimple(MessageRequest<ChildCmdPayload> messageRequest
@@ -132,7 +149,7 @@ public class MessageRequest<T> implements Serializable {
      *
      * @param
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/25 10:25
      */
     public MessageRequest<T> toSingle() {
@@ -144,7 +161,7 @@ public class MessageRequest<T> implements Serializable {
      *
      * @param
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/25 10:25
      */
     public MessageRequest<T> toBatch() {
@@ -156,7 +173,7 @@ public class MessageRequest<T> implements Serializable {
      *
      * @param
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/25 10:25
      */
     public MessageRequest<T> toAll() {

@@ -143,7 +143,7 @@ public class SmsParseUtil {
             if ("建设银行".equals(bankName)) {
                 for (int i = 0; i < payNameContactMonth.length(); i++) {
                     if (Character.isDigit(payNameContactMonth.charAt(i))) {
-                        parseContent.setPayName(payNameContactMonth.substring(0, i));
+                        parseContent.setTargetAccountName(payNameContactMonth.substring(0, i));
                         parseContent.setMonth(payNameContactMonth.substring(i));
                         break;
                     }

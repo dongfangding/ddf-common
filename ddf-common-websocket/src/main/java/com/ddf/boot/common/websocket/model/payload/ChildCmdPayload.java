@@ -1,4 +1,4 @@
-package com.ddf.boot.common.websocket.model.ws;
+package com.ddf.boot.common.websocket.model.payload;
 
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import io.swagger.annotations.ApiModel;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 /**
  * 子命令码业务数据类
  *
- * @author dongfang.ding
+ * @author dongfaong.ding
  * @date 2019/9/25 10:00
  */
 @Data

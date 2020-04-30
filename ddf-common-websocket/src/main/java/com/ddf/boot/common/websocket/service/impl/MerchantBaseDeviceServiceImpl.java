@@ -40,9 +40,9 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
             return;
         }
         LambdaUpdateWrapper<MerchantBaseDevice> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getIme());
-        updateWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getRandomCode());
-        updateWrapper.eq(MerchantBaseDevice::getIsDel, 0);
+        updateWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getDeviceNumber());
+        updateWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getToken());
+        updateWrapper.eq(MerchantBaseDevice::getRemoved, 0);
         updateWrapper.and((sql) -> sql.le(MerchantBaseDevice::getOnlineChangeTime, webSocketSessionWrapper
                 .getStatusChangeTime()).or().isNull(MerchantBaseDevice::getOnlineChangeTime)
                 // FIXME 多台设备的纳秒时间没有一个相对时间，同一台机器上的纳秒时间有先后
@@ -54,7 +54,7 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
         boolean update = update(updateWrapper);
         // 上线状态即使未更新成功，也说明同步过了，这条数据并不能保证覆盖状态，下次也没必要再覆盖
         if (webSocketSessionWrapper.getStatus().equals(WebSocketSessionWrapper.STATUS_ON_LINE)) {
-            WebsocketSessionStorage.modifySync(AuthPrincipal.buildAndroidAuthPrincipal(authPrincipal.getRandomCode(), authPrincipal.getIme()), true);
+            WebsocketSessionStorage.modifySync(AuthPrincipal.buildAndroidAuthPrincipal(authPrincipal.getToken(), authPrincipal.getDeviceNumber()), true);
         }
         // 下线状态必须更新成功才说明是真的下线，才能把数据移除
         if (update && webSocketSessionWrapper.getStatus().equals(WebSocketSessionWrapper.STATUS_OFF_LINE)) {
@@ -81,7 +81,7 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
         queryWrapper.eq(MerchantBaseDevice::getNumber, ime);
         queryWrapper.eq(MerchantBaseDevice::getRandomCode, token);
         queryWrapper.eq(MerchantBaseDevice::getBindingType, 1);
-        queryWrapper.eq(MerchantBaseDevice::getIsDel, 0);
+        queryWrapper.eq(MerchantBaseDevice::getRemoved, 0);
         return count(queryWrapper) > 0;
     }
 
@@ -98,7 +98,7 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
         updateWrapper.set(MerchantBaseDevice::getIsOnline, WebSocketSessionWrapper.STATUS_OFF_LINE);
         updateWrapper.set(MerchantBaseDevice::getOnlineChangeTime, System.nanoTime());
         updateWrapper.eq(MerchantBaseDevice::getIsOnline, WebSocketSessionWrapper.STATUS_ON_LINE);
-        updateWrapper.eq(MerchantBaseDevice::getIsDel, 0);
+        updateWrapper.eq(MerchantBaseDevice::getRemoved, 0);
 
         if (!isAll) {
             if (StringUtils.isBlank(serverAddress)) {
@@ -118,13 +118,13 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
      */
     @Override
     public MerchantBaseDevice getByAuthPrincipal(AuthPrincipal authPrincipal) {
-        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getIme(), authPrincipal.getRandomCode())) {
+        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getDeviceNumber(), authPrincipal.getToken())) {
             return null;
         }
         LambdaQueryWrapper<MerchantBaseDevice> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(MerchantBaseDevice::getIsDel, 0);
-        queryWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getIme());
-        queryWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getRandomCode());
+        queryWrapper.eq(MerchantBaseDevice::getRemoved, 0);
+        queryWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getDeviceNumber());
+        queryWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getToken());
         return getOne(queryWrapper);
     }
 }

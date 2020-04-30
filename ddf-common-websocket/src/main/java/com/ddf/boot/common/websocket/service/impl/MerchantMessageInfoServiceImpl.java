@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.StringUtil;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
@@ -16,6 +17,7 @@ import com.ddf.boot.common.websocket.model.ws.*;
 import com.ddf.boot.common.websocket.service.MerchantMessageInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,8 +69,8 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MessageWrapper<List<Map<String, Object>>, List<MerchantMessageInfo>> insertMessageInfoByBankSms(Message message,
-                                                                                                           List<Map<String, Object>> payload, AuthPrincipal authPrincipal) {
+    public MessageWrapper<List<Map<String, Object>>, List<MerchantMessageInfo>> insertMessageInfoByBankSms(Message message
+            , List<Map<String, Object>> payload, AuthPrincipal authPrincipal) {
         if (message == null || payload == null || authPrincipal == null) {
             return null;
         }
@@ -96,7 +98,7 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
                 try {
                     smsContent = JsonUtil.toBean(JsonUtil.asString(sms), SmsContent.class);
                 } catch (Exception e) {
-                    throw new MessageFormatInvalid("报文格式有误！");
+                    throw new MessageFormatInvalid("报文格式有误！" + ExceptionUtils.getStackTrace(e));
                 }
                 if (StringUtils.isBlank(smsContent.getPrimaryKey())) {
                     throw new MessageFormatInvalid("短信唯一标识符不能为空!");
@@ -120,7 +122,7 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
         }
         merchantMessageInfoMapper.batchIgnoreSave(infoList);
         List<MerchantMessageInfo> validBusinessData = getValidBusinessData(infoList, tradeNoList);
-        return MessageWrapper.withBusiness(Message.buildMessage(message, returnClientMap,
+        return MessageWrapper.withBusiness(Message.buildResponseMessage(message, returnClientMap,
                 MessageResponse.SERVER_CODE_RECEIVED), validBusinessData);
     }
 
@@ -153,29 +155,51 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
         if (messageInfo == null || merchantBaseDevice == null) {
             return false;
         }
-        LambdaUpdateWrapper<MerchantMessageInfo> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(MerchantMessageInfo::getId, messageInfo.getId());
-        // 乐观锁控制只有状态为未处理、模板未匹配、业务处理出错的才处理
-        updateWrapper.in(MerchantMessageInfo::getStatus, MerchantMessageInfo.STATUS_NOT_DEAL,
-                MerchantMessageInfo.STATUS_NOT_MATCH_TEMPLATE, MerchantMessageInfo.STATUS_LOGIC_ERROR);
-        updateWrapper.set(MerchantMessageInfo::getStatus, messageInfo.getStatus());
-        updateWrapper.set(MerchantMessageInfo::getErrorMessage, messageInfo.getErrorMessage() == null ? "" :
-                messageInfo.getErrorMessage().length() > 2000 ? messageInfo.getErrorMessage().substring(0, 2000) : messageInfo.getErrorMessage());
-        updateWrapper.set(MerchantMessageInfo::getErrorStack, messageInfo.getErrorStack());
-        updateWrapper.set(MerchantMessageInfo::getDeviceId, merchantBaseDevice.getId());
-        updateWrapper.set(MerchantMessageInfo::getMerchantId, merchantBaseDevice.getMerchantId());
-        updateWrapper.set(MerchantMessageInfo::getDescription, messageInfo.getDescription());
-        updateWrapper.set(MerchantMessageInfo::getOrderId, messageInfo.getOrderId());
-        if (messageInfo.getSourceType() == null) {
-            messageInfo.setSourceType(MerchantMessageInfo.SOURCE_TYPE_UNKNOWN);
-        } else {
-            updateWrapper.set(MerchantMessageInfo::getSourceType, messageInfo.getSourceType());
+        try {
+            LambdaUpdateWrapper<MerchantMessageInfo> updateWrapper = Wrappers.lambdaUpdate();
+            updateWrapper.eq(MerchantMessageInfo::getId, messageInfo.getId());
+            // 乐观锁控制只有状态为未处理、模板未匹配、业务处理出错的才处理
+            updateWrapper.in(MerchantMessageInfo::getStatus, MerchantMessageInfo.STATUS_NOT_DEAL,
+                    MerchantMessageInfo.STATUS_NOT_MATCH_TEMPLATE, MerchantMessageInfo.STATUS_LOGIC_ERROR);
+            updateWrapper.set(MerchantMessageInfo::getStatus, messageInfo.getStatus());
+            updateWrapper.set(MerchantMessageInfo::getErrorMessage, messageInfo.getErrorMessage() == null ? "" :
+                    messageInfo.getErrorMessage().length() > 2000 ? messageInfo.getErrorMessage().substring(0, 2000) : messageInfo.getErrorMessage());
+            updateWrapper.set(MerchantMessageInfo::getErrorStack, messageInfo.getErrorStack());
+            updateWrapper.set(MerchantMessageInfo::getDeviceId, merchantBaseDevice.getId());
+            updateWrapper.set(MerchantMessageInfo::getSequence, merchantBaseDevice.getSequence());
+            updateWrapper.set(MerchantMessageInfo::getMerchantId, merchantBaseDevice.getMerchantId());
+            updateWrapper.set(MerchantMessageInfo::getDescription, messageInfo.getDescription());
+            updateWrapper.set(MerchantMessageInfo::getOrderId, messageInfo.getOrderId());
+            updateWrapper.set(MerchantMessageInfo::getParseContent, messageInfo.getParseContent());
+            updateWrapper.set(MerchantMessageInfo::getBillTime, messageInfo.getBillTime());
+            updateWrapper.set(MerchantMessageInfo::getMatchById, messageInfo.getMatchById() );
+            updateWrapper.set(MerchantMessageInfo::getMatchByName, messageInfo.getMatchByName());
+            updateWrapper.set(MerchantMessageInfo::getClientChannel, messageInfo.getClientChannel());
+
+            if (messageInfo.getOrderType() == null) {
+                messageInfo.setOrderType(MerchantMessageInfo.STATUS_NOT_DEAL);
+            }
+            updateWrapper.set(MerchantMessageInfo::getOrderType, messageInfo.getOrderType());
+
+            if (messageInfo.getSourceType() == null) {
+                updateWrapper.set(MerchantMessageInfo::getSourceType, MerchantMessageInfo.SOURCE_TYPE_UNKNOWN);
+            } else {
+                updateWrapper.set(MerchantMessageInfo::getSourceType, messageInfo.getSourceType());
+            }
+            if (StringUtils.isNotBlank(messageInfo.getTradeNo()) && messageInfo.getReceiveTime() != null) {
+                updateWrapper.set(MerchantMessageInfo::getTradeNo, messageInfo.getTradeNo());
+                updateWrapper.set(MerchantMessageInfo::getReceiveTime, messageInfo.getReceiveTime());
+            }
+
+            if (!update(updateWrapper)) {
+                log.error("消息更新失败！{}", messageInfo);
+            }
+            return true;
+        } catch (Exception e) {
+            // 没有控制器调用的方法，异常必须手动error才能看到异常消息
+            log.error("更新消息表状态失败！", e);
+            throw new GlobalCustomizeException(ExceptionUtils.getStackTrace(e));
         }
-        if (tradeNo != null && receiveTime != null) {
-            updateWrapper.set(MerchantMessageInfo::getTradeNo, tradeNo);
-            updateWrapper.set(MerchantMessageInfo::getReceiveTime, receiveTime);
-        }
-        return update(updateWrapper);
     }
 
     /**
@@ -255,7 +279,7 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
     private MerchantMessageInfo initMessageInfo(Message message, AuthPrincipal authPrincipal, Map<String, Object> payload) {
         MerchantMessageInfo merchantMessageInfo = new MerchantMessageInfo();
         merchantMessageInfo.setRequestId(message.getRequestId());
-        merchantMessageInfo.setDeviceNumber(authPrincipal.getIme());
+        merchantMessageInfo.setDeviceNumber(authPrincipal.getDeviceNumber());
         merchantMessageInfo.setCmd(message.getCmd().name());
         merchantMessageInfo.setSourceType(MerchantMessageInfo.SOURCE_TYPE_UNKNOWN);
         merchantMessageInfo.setSingleMessagePayload(JsonUtil.asString(payload));
@@ -275,7 +299,7 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean fastFailure(List<MerchantMessageInfo> messageInfos, Byte status, String errorMessage) {
+    public boolean fastFailure(List<MerchantMessageInfo> messageInfos, Integer status, String errorMessage) {
         if (messageInfos == null || messageInfos.isEmpty() || status == null) {
             return false;
         }

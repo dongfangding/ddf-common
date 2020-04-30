@@ -14,17 +14,12 @@ import java.util.List;
 public interface PlatformMessageTemplateService extends IService<PlatformMessageTemplate> {
 
     /**
-     * 获取云闪付到账消息模板
+     * 获取对应支付方式应用到账消息模板, 同时额外查询出忽略模板
+     * @param clientChannel 客户端应用类型
      * @return
      */
-    List<PlatformMessageTemplate> getUPayMessageTemplate();
+    List<PlatformMessageTemplate> getTopicMessageTemplate(String clientChannel);
 
-
-    /**
-     * 获取银行短信模板列表
-     * @return
-     */
-    List<PlatformMessageTemplate> getBankSmsTemplates(String credit);
 
     /**
      * 获取垃圾短信模板,数据过来后必须先经过垃圾短信模板的拦截，确认不是垃圾短信再进入业务匹配
@@ -38,7 +33,7 @@ public interface PlatformMessageTemplateService extends IService<PlatformMessage
      *
      * @param
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/26 15:17
      */
     List<PlatformMessageTemplate> getAllTemplateOrderBySort();

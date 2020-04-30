@@ -3,16 +3,18 @@ package com.ddf.boot.common.websocket.helper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.mq.definition.QueueBuilder;
+import com.ddf.boot.common.mq.exception.MqSendException;
+import com.ddf.boot.common.mq.helper.RabbitTemplateHelper;
+import com.ddf.boot.common.util.IdsUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.StringUtil;
+import com.ddf.boot.common.websocket.enumerate.BillTypeEnum;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.exception.InvalidFutureTimeException;
 import com.ddf.boot.common.websocket.exception.MessageFormatInvalid;
 import com.ddf.boot.common.websocket.interceptor.SmsParseProcessor;
-import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
-import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
-import com.ddf.boot.common.websocket.model.entity.MerchantMessageInfo;
-import com.ddf.boot.common.websocket.model.entity.PlatformMessageTemplate;
+import com.ddf.boot.common.websocket.model.entity.*;
 import com.ddf.boot.common.websocket.model.ws.*;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -56,6 +59,10 @@ public class CmdStrategyHelper {
     @Autowired
     @Qualifier("handlerMessageBusiness")
     private ThreadPoolTaskExecutor handlerMessageBusiness;
+    @Autowired
+    private ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool;
+    @Autowired
+    private RabbitTemplateHelper rabbitTemplateHelper;
 
     /**
      * 针对批次的报文，对单个报文响应
@@ -235,7 +242,7 @@ public class CmdStrategyHelper {
      * @date 2019/9/20 10:56
      */
     @Transactional(rollbackFor = Exception.class)
-    public void doBankSmsBusiness(AuthPrincipal authPrincipal, Message message, List<MerchantMessageInfo> infoList) {
+    public void doSmsUploadBusiness(AuthPrincipal authPrincipal, Message message, List<MerchantMessageInfo> infoList) {
         handlerMessageBusiness.execute(() -> {
             MerchantBaseDevice baseDevice = checkDevice(authPrincipal, infoList);
 
@@ -317,9 +324,9 @@ public class CmdStrategyHelper {
                 merchantMessageInfoService.fillStatus(merchantMessageInfo, baseDevice);
                 return;
             }
+
             // 验证来源如果为空，则不验证
-            if (StringUtils.isNotBlank(matchTemplate.getCredit()) && !parseContent.isGarbage()
-                    && !Objects.equals(matchTemplate.getCredit(), smsContent.getCredit())) {
+            if (StringUtils.isNotBlank(matchTemplate.getCredit()) && !parseContent.isGarbage() && !Objects.equals(matchTemplate.getCredit(), smsContent.getCredit())) {
                 log.error("短信发送方未通过认证.短信中发件人: {}, 模板中认证标识: {}, ！！！{}",
                         smsContent.getCredit(), matchTemplate.getCredit(), matchTemplate);
                 merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_ERROR_CREDIT);
@@ -329,10 +336,12 @@ public class CmdStrategyHelper {
                 return;
             }
             try {
-                parseContent.byBankSms(smsContent, message.getCmd());
-                merchantMessageInfo.setReceiveTime(parseContent.getOrderTime());
-                merchantMessageInfo.setTradeNo(parseContent.getTradeNo());
-
+                parseContent.bySmsLoad(smsContent, message.getCmd(), merchantMessageInfo);
+                if (BillTypeEnum.INCOME.equals(parseContent.getBillTypeEnum())) {
+                    merchantMessageInfo.setOrderType(MerchantMessageInfo.ORDER_TYPE_RECEIVE);
+                } else {
+                    merchantMessageInfo.setOrderType(MerchantMessageInfo.ORDER_TYPE_PAYMENT);
+                }
             } catch (InvalidFutureTimeException e) {
                 log.error("未来的时间异常！", e);
                 merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_LOGIC_ERROR);
@@ -479,6 +488,54 @@ public class CmdStrategyHelper {
                         .toBean(channelTransfer.getRequest(), Message.class), templates, info);
             }
         }
+    }
+
+
+
+    /**
+     * 发送设备指令码运行状态数据
+     * @param authPrincipal
+     * @param message
+     * @param isResponse 是否时响应数据
+     */
+    public void buildDeviceCmdRunningState(AuthPrincipal authPrincipal, Message<?> message, boolean isResponse) {
+        deviceCmdRunningStatePersistencePool.execute(() -> {
+            if (message == null || authPrincipal == null || CmdEnum.PONG.equals(message.getCmd())
+                    || CmdEnum.PING.equals(message.getCmd())) {
+                return;
+            }
+            MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
+            MerchantBaseDeviceRunningState runningState = new MerchantBaseDeviceRunningState();
+            runningState.setDeviceId(baseDevice.getId()).setCmd(message.getCmd().name()).setRequestId(message.getRequestId())
+                    .setRequestTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.RUNNING.getStatus())
+                    .setResponseFlag(isResponse).setId(IdsUtil.getNextLongId());
+
+            if (isResponse) {
+                runningState.setResponseTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.OVER.getStatus());
+            }
+
+            try {
+                rabbitTemplateHelper.wrapperAndSend(QueueBuilder.QueueDefinition.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_QUEUE, runningState);
+            } catch (MqSendException e) {
+                log.error("发送设备状态数据监控报错！数据为： {}", JsonUtil.asString(runningState), e);
+            }
+        });
+    }
+
+    /**
+     * 记录日志并发送消息
+     *
+     * @param authPrincipal
+     * @param payload
+     * @param message
+     * @param <T>
+     */
+    public <T> void recordAndSend(AuthPrincipal authPrincipal, T payload, Message<T> message) {
+        TextMessage textMessage = Message.wrapper(message);
+        MessageRequest messageRequest = new MessageRequest();
+        messageRequest.setBusinessData(JsonUtil.asString(payload));
+        channelTransferService.recordRequest(authPrincipal, textMessage.getPayload(), message, messageRequest);
+        WebsocketSessionStorage.sendMessage(authPrincipal, message);
     }
 }
 

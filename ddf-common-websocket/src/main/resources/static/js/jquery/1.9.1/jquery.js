@@ -1279,7 +1279,7 @@ jQuery.extend({
 
 			progressValues, progressContexts, resolveContexts;
 
-		// add Initialize to Deferred subordinates; treat others as resolved
+		// add listeners to Deferred subordinates; treat others as resolved
 		if ( length > 1 ) {
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
@@ -3355,7 +3355,7 @@ jQuery.Event = function( src, props ) {
 		jQuery.extend( this, props );
 	}
 
-	// Create a eventTimestamp if incoming event doesn't have one
+	// Create a timestamp if incoming event doesn't have one
 	this.timeStamp = src && src.timeStamp || jQuery.now();
 
 	// Mark it as fixed
@@ -8673,7 +8673,7 @@ var fxNow, timerId,
 
 				tween.unit = unit;
 				tween.start = start;
-				// If a +=/-= randomCode was provided, we're doing a relative animation
+				// If a +=/-= token was provided, we're doing a relative animation
 				tween.end = parts[1] ? start + ( parts[1] + 1 ) * end : end;
 			}
 			return tween;

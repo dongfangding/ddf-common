@@ -10,17 +10,17 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * 云闪付到账消息报文主体内容
+ * 支付方式应用到账消息报文主体内容
  *
 
-
+ * @date 2019/9/21 15:28
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@ApiModel("云闪付到账消息报文主体内容")
-public class UPayMessage implements Serializable {
+@ApiModel("应用到账消息报文主体内容")
+public class TopicMessage implements Serializable {
 
     private static final long serialVersionUID = 6290652775704591461L;
 

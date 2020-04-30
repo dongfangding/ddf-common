@@ -119,6 +119,13 @@ public class QueueBuilder {
         USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT,
                 ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY),
 
+        /**
+         * 设备指令运行状态监控数据持久化
+         */
+        DEVICE_CMD_RUNNING_STATE_PERSISTENCE_QUEUE(BindingConst.QueueName.DEVICE_CMD_RUNNING_STATE_PERSISTENCE,
+                BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY),
+
         ;
 
         /**

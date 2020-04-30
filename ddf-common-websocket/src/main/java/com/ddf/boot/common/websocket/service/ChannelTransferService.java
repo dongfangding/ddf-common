@@ -8,6 +8,7 @@ import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.model.ws.MessageRequest;
 import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,4 +77,14 @@ public interface ChannelTransferService extends IService<ChannelTransfer> {
      * @return
      */
     ChannelTransfer getPreLog(String deviceNumber, String cmd);
+
+
+    /**
+     * 获取指定设备今天发送的某个指令的历史数据列表
+     * @param deviceNumber
+     * @param cmd
+     * @param successCount  是否只查询成功的才计数
+     * @return
+     */
+    List<ChannelTransfer> getTodayLog(String deviceNumber, String cmd, boolean successCount);
 }

@@ -1,9 +1,10 @@
 package com.ddf.boot.common.websocket.model.ws;
 
+import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
-import com.ddf.boot.common.util.SecureUtil;
-import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.util.StringUtil;
+import com.ddf.boot.common.util.WsSecureUtil;
+import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
@@ -45,7 +46,13 @@ public class Message<T> {
      */
     private transient static final String SPLIT_KEY_VALUE = ": ";
 
-    private transient static final String SEND_MODEL_SERVER = "server";
+    private transient static final String SEND_MODEL_SERVER = "SERVER";
+
+    public transient static final String ID_CARD_NO = "idCardNo";
+    public transient static final String MOBILE = "mobile";
+    public transient static final String ACCOUNT = "account";
+    public transient static final String LOGIN_PASSWORD = "loginPassword";
+    public transient static final String PAY_PASSWORD = "payPassword";
 
     @ApiModelProperty(value = "标识请求还是响应", allowableValues = "REQUEST, RESPONSE")
     private Type type;
@@ -64,6 +71,9 @@ public class Message<T> {
 
     @ApiModelProperty("业务主键的唯一id")
     private String logicPrimaryKey;
+
+    @ApiModelProperty("客户端应用通道")
+    private ClientChannel clientChannel;
 
     /**
      * 发送方标识
@@ -85,16 +95,17 @@ public class Message<T> {
     @ApiModelProperty(value = "主体数据内容")
     private T body;
 
-    public Message(Type type, String requestId, String sendModel, CmdEnum cmd, T body) {
+    public Message(Type type, String requestId, String sendModel, CmdEnum cmd, T body, ClientChannel clientChannel) {
         this.type = type;
         this.requestId = requestId;
         this.sendModel = sendModel;
         this.cmd = cmd;
         this.body = body;
         this.timestamp = System.currentTimeMillis();
+        this.clientChannel = clientChannel;
     }
 
-    public Message(Type type, String requestId, String sendModel, CmdEnum cmd, T body, Integer code) {
+    public Message(Type type, String requestId, String sendModel, CmdEnum cmd, T body, Integer code, ClientChannel clientChannel) {
         this.type = type;
         this.requestId = requestId;
         this.sendModel = sendModel;
@@ -102,6 +113,7 @@ public class Message<T> {
         this.code = code;
         this.body = body;
         this.timestamp = System.currentTimeMillis();
+        this.clientChannel = clientChannel;
     }
 
     public enum Type {
@@ -121,7 +133,8 @@ public class Message<T> {
      * @return
      */
     public static Message<String> echo(String payload) {
-        return new Message<>(Type.RESPONSE, StringUtil.randomString(64), SEND_MODEL_SERVER, CmdEnum.PONG, payload);
+        return new Message<>(Type.RESPONSE, StringUtil.randomString(64), SEND_MODEL_SERVER, CmdEnum.PONG,
+                payload, ClientChannel.UPAY);
     }
 
     /**
@@ -135,7 +148,7 @@ public class Message<T> {
         String payload = (String) message.getPayload();
         Message message1 = JsonUtil.toBean(payload, Message.class);
         return new Message<>(Type.RESPONSE, message1.getRequestId(), SEND_MODEL_SERVER, message1.getCmd(), "未登录",
-                MessageResponse.SERVER_CODE_NOT_LOGIN);
+                MessageResponse.SERVER_CODE_NOT_LOGIN, ClientChannel.UPAY);
     }
 
     /**
@@ -146,8 +159,7 @@ public class Message<T> {
         if (message == null) {
             return null;
         }
-        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(),
-                "没有找到对应的请求", MessageResponse.SERVER_CODE_ERROR);
+        return buildResponseMessage(message, "没有找到对应的请求", MessageResponse.SERVER_CODE_ERROR);
     }
 
 
@@ -159,8 +171,7 @@ public class Message<T> {
         if (message == null) {
             return null;
         }
-        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(),
-                "重复请求", MessageResponse.SERVER_CODE_ERROR);
+        return buildResponseMessage(message, "重复请求", MessageResponse.SERVER_CODE_ERROR);
     }
 
     /**
@@ -186,9 +197,9 @@ public class Message<T> {
             return null;
         }
         String body = JsonUtil.asString(message.getBody());
-        String sign = SecureUtil.signWithHMac(body, message.getCmd().name());
+        String sign = WsSecureUtil.signWithHMac(body, message.getCmd().name());
         message.addExtra("sign", sign);
-        return new TextMessage(SecureUtil.privateEncryptBcd(JsonUtil.asString(message)));
+        return new TextMessage(WsSecureUtil.privateEncryptBcd(JsonUtil.asString(message)));
     }
 
     /**
@@ -198,7 +209,17 @@ public class Message<T> {
      * @return
      */
     public static <T> Message<T> request(CmdEnum cmd, T body) {
-        return new Message<>(Message.Type.REQUEST, StringUtil.randomString(64), SEND_MODEL_SERVER, cmd, body);
+        return new Message<>(Message.Type.REQUEST, StringUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, ClientChannel.UPAY);
+    }
+
+    /**
+     * 服务端请求数据
+     * @param cmd
+     * @param body
+     * @return
+     */
+    public static <T> Message<T> request(CmdEnum cmd, T body, ClientChannel clientChannel) {
+        return new Message<>(Message.Type.REQUEST, StringUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
     }
 
     /**
@@ -209,7 +230,7 @@ public class Message<T> {
      */
     public static <T> Message<T> responseReceived(Message message, T body, Integer code) {
         if (message != null) {
-            return buildMessage(message, body, code);
+            return buildResponseMessage(message, body, code);
         }
         return null;
     }
@@ -219,31 +240,24 @@ public class Message<T> {
      * @param message
      * @return
      */
-    public static Message responseSuccess(Message message) {
+    public static Message<String> responseSuccess(Message<?> message) {
         return responseReceived(message, "处理成功", MessageResponse.SERVER_CODE_COMPLETE);
-    }
-
-
-    /**
-     *
-     * @param message
-     * @return
-     */
-    public static Message<String> success(Message message) {
-        return buildMessage(message, "处理成功", MessageResponse.SERVER_CODE_COMPLETE);
     }
 
     /**
      * 根据客户端数据构建响应数据
      * @param message
+     * @param body
+     * @param code
      * @param <T>
      * @return
      */
-    public static <T> Message<T> buildMessage(Message message, T body, Integer code) {
+    public static <T> Message<T> buildResponseMessage(Message<?> message, T body, Integer code) {
         if (message == null) {
             return null;
         }
-        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(), body, code);
+        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(), body,
+                code, message.getClientChannel());
     }
 
     /**
@@ -300,22 +314,25 @@ public class Message<T> {
      * @return
      */
     public static Message unSign(String textMessagePayload) {
-        log.info("待解密数据: {}", textMessagePayload);
+        log.debug("待解密数据: {}", textMessagePayload);
         if (StringUtils.isBlank(textMessagePayload)) {
             return null;
         }
-        String decrypt = SecureUtil.privateDecryptFromBcd(textMessagePayload);
-        log.info("解密后数据: {}", decrypt);
+        String decrypt = WsSecureUtil.privateDecryptFromBcd(textMessagePayload);
+        log.debug("解密后数据: {}", decrypt);
         Message<?> message = JsonUtil.toBean(decrypt, Message.class);
         String signStr = message.getExtraMap().get("sign");
-        log.info("报文中加签值: {}", signStr);
-        String dataSign = SecureUtil.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd().name());
-        log.info("对数据解密后重新加签: {}", dataSign);
+        log.debug("报文中加签值: {}", signStr);
+        String dataSign = WsSecureUtil.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd().name());
+        log.debug("对数据解密后重新加签: {}", dataSign);
         if (!Objects.equals(signStr, dataSign)) {
             log.error("验签不通过！！报文中加签值: {}, 实际加签值: {}", signStr, dataSign);
             return null;
         }
-        log.info("验签通过");
+        log.debug("验签通过");
+        if (message.getClientChannel() == null) {
+            message.setClientChannel(ClientChannel.UPAY);
+        }
         return message;
     }
 
@@ -326,6 +343,24 @@ public class Message<T> {
      */
     public static Message toMessage(TextMessage textMessage) {
         String payload = textMessage.getPayload();
-        return JsonUtil.toBean(payload, Message.class);
+        Message message = JsonUtil.toBean(payload, Message.class);
+        if (message.getClientChannel() == null) {
+            throw new GlobalCustomizeException("请必须传入客户端应用类型");
+        }
+        return message;
+    }
+
+
+    /**
+     * 在请求头上附加账号信息
+     * @param idCardNo
+     * @param mobile
+     * @param account
+     * @param loginPassword
+     * @param payPassword
+     */
+    public void addAccount(String idCardNo, String mobile, String account, String loginPassword, String payPassword) {
+        this.addExtra(ID_CARD_NO, idCardNo).addExtra(MOBILE, mobile).addExtra(ACCOUNT, account)
+                .addExtra(LOGIN_PASSWORD, loginPassword).addExtra(PAY_PASSWORD, payPassword);
     }
 }

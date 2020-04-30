@@ -76,4 +76,14 @@ public class WebsocketThreadConfig {
     public ThreadPoolTaskExecutor wsSendMessagePool() {
         return ThreadBuilderHelper.buildThreadExecutor("ws-send-msg-pool-", 60, 2000);
     }
+
+    /**
+     * 设备指令监控持久化发送数据的线程池
+     *
+     * @return
+     */
+    @Bean("deviceCmdRunningStatePersistencePool")
+    public ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool() {
+        return ThreadBuilderHelper.buildThreadExecutor("running-state-persistence-pool-", 60, 2000);
+    }
 }

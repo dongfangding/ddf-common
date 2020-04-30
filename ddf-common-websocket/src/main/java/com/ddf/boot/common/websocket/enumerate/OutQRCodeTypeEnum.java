@@ -7,17 +7,21 @@ import java.util.Map;
 
 /**
  * 第三方二维码枚举类
- * @author honglin.jiang
- * @create 2019年09月19日
+
+
  */
 public enum OutQRCodeTypeEnum {
 
     /**
-     * 二维码类型
+     * 二维码类型个人码
      */
-    NORMAL_QRCODE(0, "个人码"),
+    NORMAL_QRCODE(0),
 
-    MERCHANT_QRCODE(1, "商户码"),
+
+    /**
+     * 商户码
+     */
+    MERCHANT_QRCODE(1),
 
 
     ;
@@ -41,17 +45,12 @@ public enum OutQRCodeTypeEnum {
         }
     }
 
-    OutQRCodeTypeEnum(Integer value, String intro) {
+    OutQRCodeTypeEnum(Integer value) {
         this.value = value;
-        this.intro = intro;
     }
 
     public Integer getValue() {
         return value;
-    }
-
-    public String getIntro() {
-        return intro;
     }
 
     public static OutQRCodeTypeEnum getByValue(Integer value) {

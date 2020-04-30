@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -78,8 +75,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         channelTransfer.setRequest(request);
         channelTransfer.setFullRequestResponse(toJsonArr(request));
         channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
-        channelTransfer.setDeviceNumber(authPrincipal.getIme());
-        channelTransfer.setToken(authPrincipal.getRandomCode());
+        channelTransfer.setDeviceNumber(authPrincipal.getDeviceNumber());
+        channelTransfer.setToken(authPrincipal.getToken());
         channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
         if (messageRequest != null) {
             channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
@@ -152,8 +149,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfer.setRequest(response);
             channelTransfer.setFullRequestResponse(toJsonArr(response));
             channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
-            channelTransfer.setDeviceNumber(authPrincipal.getIme());
-            channelTransfer.setToken(authPrincipal.getRandomCode());
+            channelTransfer.setDeviceNumber(authPrincipal.getDeviceNumber());
+            channelTransfer.setToken(authPrincipal.getToken());
             channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
             if (message == null) {
                 channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);
@@ -293,6 +290,40 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
         channelTransferWrapper.last("limit 1");
         return getOne(channelTransferWrapper);
+    }
+
+
+    /**
+     * 获取指定设备该指定上一次下发指令的历史数据,这里固定只查今天的数据，
+     * 这样只要查一次就能满足今天的发送次数和最新的一次；如果今天没有，那么也需要知道上次的发送时间；肯定是要发送的，
+     * 这里如果是牵扯到第一天和第二天短时间内时间跨度不满足发送间隔的话，我觉得这个问题可以忽略
+     *
+     * @param deviceNumber
+     * @param cmd
+     * @param successCount 是否只有成功的才计数
+     * @return
+     */
+    @Override
+    public List<ChannelTransfer> getTodayLog(String deviceNumber, String cmd, boolean successCount) {
+        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+            return null;
+        }
+        Date date = new Date();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+        channelTransferWrapper.eq(ChannelTransfer::getDeviceNumber, deviceNumber);
+        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+        if (successCount) {
+            // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
+            channelTransferWrapper.eq(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
+        }
+        channelTransferWrapper.ge(ChannelTransfer::getCreateTime, calendar.getTime());
+        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+        return list(channelTransferWrapper);
     }
 
     /**

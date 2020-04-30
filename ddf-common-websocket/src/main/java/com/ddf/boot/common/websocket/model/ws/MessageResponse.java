@@ -38,6 +38,11 @@ public class MessageResponse<T> implements Serializable {
     /** 客户端针对同一个业务主键数据重复下达指令 */
     public static final Integer SERVER_CODE_CLIENT_REPEAT_REQUEST = 400;
 
+    /**
+     * 客户端响应账号已注册
+     */
+    public static final Integer CLIENT_CODE_ACCOUNT_HAD_REGISTRY = 100;
+
 
     private static final MessageResponse NONE = new MessageResponse();
 
@@ -71,29 +76,36 @@ public class MessageResponse<T> implements Serializable {
      * 代表没有返回值的空对象
      * @return
      */
-    public static MessageResponse none() {
+    public static <T> MessageResponse<T> none() {
         return NONE;
     }
 
-
-    public static MessageResponse success() {
-        return new MessageResponse<>(SERVER_CODE_COMPLETE, "操作成功", null);
+    public static <T> MessageResponse<T> successWithNoneRequestId() {
+        return success(null, null);
     }
 
-    public static <T> MessageResponse<T> success(T payload) {
-        return new MessageResponse<>(SERVER_CODE_COMPLETE, "操作成功", payload);
+    public static <T> MessageResponse<T> success(String requestId) {
+        return success(requestId, null);
     }
 
-    public static MessageResponse<String> failure(Integer code, String message) {
-        return new MessageResponse<>(code, message, null);
+    public static <T> MessageResponse<T> success(String requestId, T payload) {
+        return new MessageResponse<>(SERVER_CODE_COMPLETE, "操作成功", requestId, payload);
     }
 
-    public static MessageResponse<String> failure(String message) {
-        return new MessageResponse<>(SERVER_CODE_ERROR, message, null);
+    public static MessageResponse<String> failure(String requestId, String message) {
+        return failure(requestId, SERVER_CODE_ERROR, message);
     }
 
-    public static <T> MessageResponse<T> failure(String message, T payload) {
-        return new MessageResponse<>(SERVER_CODE_ERROR, message, payload);
+    public static MessageResponse<String> fastFailure(String message) {
+        return failure(null, SERVER_CODE_ERROR, message);
+    }
+
+    public static MessageResponse<String> failure(String requestId, Integer code, String message) {
+        return new MessageResponse<>(code, message, requestId, null);
+    }
+
+    public static <T> MessageResponse<T> failure(String requestId, String message, T payload) {
+        return new MessageResponse<>(SERVER_CODE_ERROR, message, requestId, payload);
     }
 
 
