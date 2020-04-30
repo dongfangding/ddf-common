@@ -5,6 +5,7 @@ import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.helper.CmdAction;
+import com.ddf.boot.common.websocket.helper.CmdStrategyHelper;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.Message;
@@ -13,6 +14,7 @@ import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -35,6 +37,10 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
     private ChannelTransferService channelTransferService;
     @Autowired
     private PingCmdStrategy pingCmdStrategy;
+    @Value("${customs.message_secret}")
+    private boolean messageSecret;
+    @Autowired
+    private CmdStrategyHelper cmdStrategyHelper;
 
     /**
      * 处理接收到的消息
@@ -65,12 +71,14 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
             Message message = null;
             String messageStr = textMessage.getPayload();
             try {
-                // fixme 上加密的时候这块要放开替代下面的代码
-                message = Message.unSign(textMessage.getPayload());
-                if (message == null) {
-                    throw new GlobalCustomizeException("验签不通过!");
+                if (messageSecret) {
+                    message = Message.unSign(textMessage.getPayload());
+                    if (message == null) {
+                        throw new GlobalCustomizeException("验签不通过!");
+                    }
+                } else {
+                    message = Message.toMessage(textMessage);
                 }
-//                message = Message.toMessage(textMessage);
                 messageStr = JsonUtil.asString(message);
             } catch (Exception e) {
                 log.error("客户端发送数据格式有误或验签不通过！ 数据内容：{} ", textMessage.getPayload(), e);
@@ -81,6 +89,10 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
             try {
                 if (message == null) {
                     return;
+                }
+                // 记录指令码响应状态
+                if (Message.Type.RESPONSE.equals(message.getType())) {
+                    cmdStrategyHelper.buildDeviceCmdRunningState(authPrincipal, message, true);
                 }
                 int code = channelTransferService.recordResponse(authPrincipal, message.getRequestId(),
                         messageStr, message);

@@ -15,17 +15,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 云闪付账单数据
+ * 支付方式账单数据
  *
-
-
+ * @author dongfang.ding
+ * @date 2019/9/23 11:24
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@ApiModel("云闪付账单数据")
-public class UPayBill implements Serializable {
+@ApiModel("支付方式账单数据")
+public class BillMatchOrder implements Serializable {
 
     private static final long serialVersionUID = 6290652775704591461L;
 
@@ -40,7 +40,6 @@ public class UPayBill implements Serializable {
     public static final Integer STATUS_SUCCESS = 1;
 
     @ApiModelProperty("订单号")
-    @JsonProperty("tradeno")
     private String tradeNo;
 
     @ApiModelProperty("订单金额")
@@ -52,15 +51,12 @@ public class UPayBill implements Serializable {
     private String mark;
 
     @ApiModelProperty("付款卡号")
-    @JsonProperty("payaccountno")
-    private String payNo;
+    private String targetAccountNo;
 
     @ApiModelProperty("付款人")
-    @JsonProperty("payaccountname")
-    private String payName;
+    private String targetAccountName;
 
     @ApiModelProperty("订单时间")
-    @JsonProperty("ordertime")
     private String orderTime;
 
     @ApiModelProperty("状态， 0 失败 1 成功， 只有成功的数据才有效")
@@ -83,11 +79,11 @@ public class UPayBill implements Serializable {
         if (amount != null) {
             sbl.append("收入金额").append(amount).append("元。");
         }
-        if (StringUtils.isNotBlank(payName)) {
-            sbl.append("付款人[").append(payName).append("],");
+        if (StringUtils.isNotBlank(targetAccountName)) {
+            sbl.append("对方姓名[").append(targetAccountName).append("],");
         }
-        if (StringUtils.isNotBlank(payNo)) {
-            sbl.append("付款卡号[").append(payNo).append("]。");
+        if (StringUtils.isNotBlank(targetAccountNo)) {
+            sbl.append("对方账号[").append(targetAccountNo).append("]。");
         }
         if (StringUtils.isNotBlank(mark)) {
             sbl.append("备注: ").append(mark).append("。");

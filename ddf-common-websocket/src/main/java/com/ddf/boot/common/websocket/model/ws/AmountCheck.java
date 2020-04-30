@@ -1,6 +1,5 @@
 package com.ddf.boot.common.websocket.model.ws;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,6 +14,8 @@ import java.util.List;
 /**
  * 金额校准数据
  *
+
+ * @date 2019/10/17 13:45
  */
 @Data
 @AllArgsConstructor
@@ -25,22 +26,21 @@ public class AmountCheck implements Serializable {
 
     private static final long serialVersionUID = 42L;
 
-    @JsonProperty("UNIONPAY")
-    private UnionPay unionPay;
+    private App app;
 
     private List<BankCard> bankCardList;
 
 
     /**
-     * 云闪付相关金额数据
+     * 支付方式相关限额信息
      */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("云闪付相关金额数据")
-    public static class UnionPay {
+    @ApiModel("支付方式相关限额信息")
+    public static class App {
 
-        @ApiModelProperty("云闪付账号")
+        @ApiModelProperty("支付方式账号")
         private String accountName;
 
         @ApiModelProperty("单笔限额")
@@ -48,6 +48,9 @@ public class AmountCheck implements Serializable {
 
         @ApiModelProperty("单日限额")
         private BigDecimal dailyQuota;
+
+        @ApiModelProperty("支付方式钱包余额")
+        private BigDecimal balance;
     }
 
 

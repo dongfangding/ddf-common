@@ -13,8 +13,12 @@ import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.model.ws.ParseContent;
 import com.ddf.boot.common.websocket.service.MerchantMessageInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 默认模板解析前置后置处理器实现
@@ -24,10 +28,32 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class DefaultSmsParseProcessor implements SmsParseProcessor {
+public class DefaultSmsParseProcessor implements SmsParseProcessor, InitializingBean {
 
     @Autowired
     private MerchantMessageInfoService merchantMessageInfoService;
+
+
+    private static Map<String, HandlerTemplateType> typeStrategyMap;
+
+    /**
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Map<String, HandlerTemplateType> beansOfType = SpringContextHolder.getBeansOfType(HandlerTemplateType.class);
+        if (!beansOfType.isEmpty()) {
+            typeStrategyMap = new HashMap<>(beansOfType.size());
+            beansOfType.forEach((beanName, beanType) -> {
+                for (PlatformMessageTemplate.Type type : beanType.getType()) {
+                    typeStrategyMap.put(type.name(), beanType);
+                }
+            });
+        }
+    }
+
 
     /**
      * 获得模板对应的处理类
@@ -38,25 +64,14 @@ public class DefaultSmsParseProcessor implements SmsParseProcessor {
      * @date 2019/9/27 11:48
      */
     public static HandlerTemplateType getHandler(PlatformMessageTemplate.Type type) {
-        if (PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.equals(type)
-                || PlatformMessageTemplate.Type.UNION_PAY_MERCHANT_INCOME_MESSAGE.equals(type)
-                || PlatformMessageTemplate.Type.UNION_PAY_PAY_MESSAGE.equals(type)
-                ||  PlatformMessageTemplate.Type.BANK_INCOME_SMS.equals(type)
-                || PlatformMessageTemplate.Type.BANK_PAY_SMS.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerMatchOrder");
-        } else if (PlatformMessageTemplate.Type.GARBAGE_SMS.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerGarbageSms");
-        } else if (PlatformMessageTemplate.Type.UNION_PAY_LOGIN.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerUPayVerifyCode");
-        } else if (PlatformMessageTemplate.Type.UNION_PAY_VERIFY_CODE.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerUnionPayVerifyCode");
-        } else if (PlatformMessageTemplate.Type.SAFETY_CERTIFICATION_SMS.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerSafetyCertificationSms");
-        } else if (PlatformMessageTemplate.Type.IGNORE_MESSAGE.equals(type)) {
-            return (HandlerTemplateType) SpringContextHolder.getBean("handlerIgnoreMessage");
+        HandlerTemplateType handlerTemplateType = null;
+        if (typeStrategyMap != null && !typeStrategyMap.isEmpty()) {
+            handlerTemplateType = typeStrategyMap.get(type.name());
         }
-        log.warn("没有找到{}对应的处理类", type.getValue());
-        return null;
+        if (handlerTemplateType == null) {
+            log.warn("没有找到{}对应的处理类", type.name());
+        }
+        return handlerTemplateType;
     }
 
 
@@ -92,9 +107,14 @@ public class DefaultSmsParseProcessor implements SmsParseProcessor {
     public void after(AuthPrincipal authPrincipal, ParseContent parseContent, Message message, MerchantBaseDevice baseDevice
             , MerchantMessageInfo merchantMessageInfo) {
         try {
-            HandlerTemplateType handler = getHandler(convertToType(parseContent.getPlatformMessageTemplate().getType()));
+            HandlerTemplateType handler = getHandler(convertToType(parseContent.getPlatformMessageTemplate().getTemplateType()));
             if (handler != null) {
-                handler.handler(authPrincipal, parseContent, baseDevice, merchantMessageInfo);
+                handler.handler(authPrincipal, parseContent, baseDevice, merchantMessageInfo, message);
+            } else {
+                merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_LOGIC_ERROR);
+                merchantMessageInfo.setErrorMessage(String.format("没有找到模板类型为%s对应的处理类",
+                        parseContent.getPlatformMessageTemplate().getTemplateType()));
+                merchantMessageInfoService.fillStatus(merchantMessageInfo, baseDevice);
             }
         } catch (Exception e) {
             log.error("DefaultSmsParseProcessor执行业务出错！", e);

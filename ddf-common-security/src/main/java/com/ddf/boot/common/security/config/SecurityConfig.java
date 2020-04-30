@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author xujinquan
+ * 无效用户访问需要认证的资源时响应401，如果前后端未分离，可以转发到登录界面
+ *
+ * @author dongfang.ding
+ * @date 2019/9/16 9:42
  */
 @Configuration
 @EnableWebSecurity

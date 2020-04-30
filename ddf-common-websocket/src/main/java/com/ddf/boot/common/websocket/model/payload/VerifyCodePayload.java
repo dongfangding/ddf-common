@@ -1,4 +1,4 @@
-package com.ddf.boot.common.websocket.model.ws;
+package com.ddf.boot.common.websocket.model.payload;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,18 +7,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * 验证码推送主体数据
  *
  * @author dongfang.ding
- * @date 2019/12/7 0007 21:09
+ * @date 2019/9/27 20:41
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("验证码推送主体数据")
 @Accessors(chain = true)
-public class VerifyCodePayload {
+public class VerifyCodePayload implements Serializable {
 
     private static final long serialVersionUID = -8069195136127549902L;
 
@@ -29,10 +31,16 @@ public class VerifyCodePayload {
     private String verifyCode;
 
     public enum Type {
-        /** 云闪付登录验证码 */
-        union_pay_login,
+        /** 登录验证码 */
+        LOGIN,
 
-        /** 云闪付转账验证码 */
-        uinion_pay
+        /** 转账验证码 */
+        PAY,
+
+        /**
+         * 注册验证码
+         */
+        REGISTRY
     }
+
 }

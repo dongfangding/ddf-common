@@ -23,10 +23,6 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "模板类型 0：云闪付个人码到账通知  1：系统消息 2 到账短信模板 3 垃圾信息模板" +
-            " 4 云闪付登录验证码 5 支出短信模板 6 云闪付转账验证码 7 云闪付商户码到账通知 8 云闪付转账通知")
-    private Integer type;
-
     /** 模板机构名称 */
     @ApiModelProperty(value = "模板标题")
     private String title;
@@ -35,6 +31,15 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
     @ApiModelProperty(value = "模板内容")
     private String templateContext;
 
+    @ApiModelProperty("模板类型")
+    private Integer templateType;
+
+    @ApiModelProperty("模板描述")
+    private String templateRemark;
+
+    @ApiModelProperty("应用类型代码")
+    private String clientChannel;
+
     @ApiModelProperty(value = "模板所属方标识，如发件号码")
     private String credit;
 
@@ -42,33 +47,35 @@ public class PlatformMessageTemplate extends BaseDomain implements Serializable 
     private Integer sort;
 
     public enum Type {
-        /** 云闪付个人码到账通知  */
-        UNION_PAY_NORMAL_INCOME_MESSAGE(0),
-        /** 系统模板 */
-        SYSTEM(1),
-        /** 收入短信模板 */
-        BANK_INCOME_SMS(2),
-        /** 垃圾短信模板 */
-        GARBAGE_SMS(3),
-        /** 云闪付登录验证码 */
-        UNION_PAY_LOGIN(4),
-        /** 支出短信模板 */
-        BANK_PAY_SMS(5),
-        /** 云闪付转账验证码 */
-        UNION_PAY_VERIFY_CODE(6),
-        /** 云闪付商户码到账通知 */
-        UNION_PAY_MERCHANT_INCOME_MESSAGE(7),
-        /** 云闪付转账通知 */
-        UNION_PAY_PAY_MESSAGE(8),
-        /** 安全认证短信 */
-        SAFETY_CERTIFICATION_SMS(9),
+        /** 个人码到账消息  */
+        NORMAL_INCOME_TOPIC_MESSAGE(1),
+        /** 商户码到账通知 */
+        MERCHANT_INCOME_TOPIC_MESSAGE(2),
+        /** 转账通知 */
+        PAY_TOPIC_MESSAGE(3),
+        /** 登录验证码 */
+        LOGIN_VERIFY_CODE(4),
+        /** 转账验证码 */
+        PAY_VERIFY_CODE(5),
         /** 忽略处理 */
-        IGNORE_MESSAGE(10)
-
-
+        IGNORE_MESSAGE(6),
+        /** 收入短信模板 */
+        BANK_INCOME_SMS(7),
+        /** 支出短信模板 */
+        BANK_PAY_SMS(8),
+        /** 垃圾短信模板 */
+        GARBAGE_SMS(9),
+        /** 安全认证短信 */
+        SAFETY_CERTIFICATION_SMS(10),
+        /**
+         * 短信回复确认
+         */
+        CONFIRM_SMG(11),
+        /**
+         * 注册验证码
+         */
+        REGISTRY_VERIFY_CODE(12)
         ;
-
-
 
 
         Integer value;

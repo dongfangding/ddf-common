@@ -1,6 +1,7 @@
 package com.ddf.boot.common.websocket.model.ws;
 
 import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.websocket.enumerate.BillTypeEnum;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.enumerate.OutQRCodeTypeEnum;
@@ -15,6 +16,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,70 +28,63 @@ import java.util.GregorianCalendar;
  * 存入解析后的短信内容
  *
 
-
+ * @date 2019/9/6 18:00
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
 @Slf4j
-public class ParseContent {
+public class ParseContent implements Serializable {
 
     private static final BigDecimal DEFAULT_AMOUNT = new BigDecimal("0.00");
 
-    /**
-     * 付款人
-     * ${payName}
-     */
-    private String payName;
+    private ClientChannel clientChannel;
 
     /**
-     * 付款卡号
-     * ${payNo}
+     * 对方账号名
      */
-    private String payNo;
+    private String targetAccountName;
+
+    /**
+     * 对方账号
+     */
+    private String targetAccountNo;
 
     /**
      * 入账方式
      * 如 银联入账、转账存入
-     * ${payType}
      */
     private String payType;
 
     /**
      * 付款银行
-     * ${payBankName}
      */
     private String payBankName;
 
     /**
      * 收款银行名称
-     * ${bankName}
      */
     private String bankName;
 
     /**
      * 收款银行卡号
-     * ${bankCardNo}
      */
     private String bankCardNo;
 
     /**
      * 收款人
-     * ${receiverName}
      */
     private String receiverName;
 
     /**
      * 收款金额
-     * ${amount}
      */
     @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal amount;
 
     /**
      * 可用余额
-     * ${balance}
      */
     private BigDecimal balance;
 
@@ -137,7 +132,6 @@ public class ParseContent {
 
     /**
      * 验证码
-     * ${verifyCode}
      */
     private String verifyCode;
 
@@ -158,39 +152,21 @@ public class ParseContent {
 
     /**
      * 数据来源
-     * @see MerchantMessageInfo#getSourceType()
+     * @see MerchantMessageInfo#getSourceType() ()
      */
-    private Byte sourceType;
+    private Integer sourceType;
 
-    /**
-     *  时间格式  年
-     *  ${year}
-     */
+
     private String year;
-    /**
-     *  时间格式  月
-     *  ${month}
-     */
+
     private String month;
-    /**
-     *  时间格式  日
-     *  ${day}
-     */
+
     private String day;
-    /**
-     *  时间格式  时
-     *  ${hour}
-     */
+
     private String hour;
-    /**
-     *  时间格式  分
-     *  ${minute}
-     */
+
     private String minute;
-    /**
-     *  时间格式  秒
-     *  ${seconds}
-     */
+
     private String seconds;
 
     /**
@@ -198,53 +174,77 @@ public class ParseContent {
      */
     private BillTypeEnum billTypeEnum;
 
-
+    /**
+     * 标题
+     */
+    private String title;
 
     /**
-     * 解析云闪付账单构建匹配订单业务类
+     * 收件号码
+     */
+    private String receiveMobile;
+
+    /**
+     * 临时变量，针对某些变量，但本身没有意义，如果不关注，可以使用该字段代替
+     */
+    private String temp;
+
+    /**
+     * 解析支付方式账单构建匹配订单业务类
      *
-     * @param uPayMessage
+     * @param topicMessage
      * @return
 
-
+     * @date 2019/9/27 14:19
      */
-    public void byUPayMessage(UPayMessage uPayMessage, CmdEnum cmd) {
-        this.setTradeNo(uPayMessage.getOrderId()).setCmd(cmd);
-        fixedOrderTime(uPayMessage.getOrderTime());
-        if (PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.getValue().equals(platformMessageTemplate.getType())) {
-            setSourceType(MerchantMessageInfo.SOURCE_TYPE_NORMAL_INCOME_UPAY_MESSAGE);
+    public void byTopicMessage(ClientChannel clientChannel, TopicMessage topicMessage, CmdEnum cmd
+            , MerchantMessageInfo merchantMessageInfo) {
+        this.setTradeNo(topicMessage.getOrderId()).setCmd(cmd).setClientChannel(clientChannel);
+        fixedOrderTime(topicMessage.getOrderTime());
+        if (PlatformMessageTemplate.Type.IGNORE_MESSAGE.getValue().equals(platformMessageTemplate.getTemplateType())) {
+            setSourceType(MerchantMessageInfo.SOURCE_TYPE_IGNORE_MESSAGE);
+        } else if (PlatformMessageTemplate.Type.NORMAL_INCOME_TOPIC_MESSAGE.getValue().equals(platformMessageTemplate.getTemplateType())) {
+            setSourceType(MerchantMessageInfo.SOURCE_TYPE_NORMAL_INCOME_TOPIC_MESSAGE);
             setBillTypeEnum(BillTypeEnum.INCOME);
-        } else if (PlatformMessageTemplate.Type.UNION_PAY_MERCHANT_INCOME_MESSAGE.getValue().equals(platformMessageTemplate.getType())) {
-            setSourceType(MerchantMessageInfo.SOURCE_TYPE_MERCHANT_INCOME_UPAY_MESSAGE);
+        } else if (PlatformMessageTemplate.Type.MERCHANT_INCOME_TOPIC_MESSAGE.getValue().equals(platformMessageTemplate.getTemplateType())) {
+            setSourceType(MerchantMessageInfo.SOURCE_TYPE_MERCHANT_INCOME_TOPIC_MESSAGE);
             setBillTypeEnum(BillTypeEnum.INCOME);
-        } else if (PlatformMessageTemplate.Type.UNION_PAY_PAY_MESSAGE.getValue().equals(platformMessageTemplate.getType())) {
-            setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_UPAY_MESSAGE);
+        } else if (PlatformMessageTemplate.Type.PAY_TOPIC_MESSAGE.getValue().equals(platformMessageTemplate.getTemplateType())) {
+            setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_TOPIC_MESSAGE);
             setBillTypeEnum(BillTypeEnum.PAY);
         }
+        merchantMessageInfo.setParseContent(JsonUtil.asString(parseContent));
+        merchantMessageInfo.setBillTime(getOrderTime());
+        merchantMessageInfo.setReceiveTime(getOrderTime());
+        merchantMessageInfo.setTradeNo(getTradeNo());
     }
 
     /**
      * 根据账单构建解析对象
      * 
-     * @param uPayBill
+     * @param billMatchOrder
      * @return
 
-
+     * @date 2019/9/27 14:24 
      */
-    public static ParseContent byUPayBill(UPayBill uPayBill, CmdEnum cmd) {
-        ParseContent parseContent = new ParseContent();
-        parseContent.setTradeNo(uPayBill.getTradeNo()).setPayNo(uPayBill.getPayNo()).setPayName(uPayBill
-                .getPayName()).setMark(uPayBill.getMark()).setAmount(uPayBill.getAmount()).setCmd(cmd)
-                .setParseContent(uPayBill.toString()).setBillTypeEnum(uPayBill.getBillType());
-        if (BillTypeEnum.INCOME.equals(uPayBill.getBillType())) {
-            if (OutQRCodeTypeEnum.NORMAL_QRCODE.equals(uPayBill.getQrCodeType())) {
-                parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_NORMAL_INCOME_UPAY_BILL_ORDER);
-            } else if (OutQRCodeTypeEnum.MERCHANT_QRCODE.equals(uPayBill.getQrCodeType())) {
-                parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_MERCHANT_INCOME_UPAY_BILL_ORDER);
+    public static ParseContent byBillMatchOrder(ClientChannel clientChannel, BillMatchOrder billMatchOrder
+            , CmdEnum cmd, MerchantMessageInfo merchantMessageInfo) {
+        ParseContent parseContent = new ParseContent().setClientChannel(clientChannel);
+        parseContent.setTradeNo(billMatchOrder.getTradeNo()).setTargetAccountNo(billMatchOrder.getTargetAccountNo()).setTargetAccountName(billMatchOrder
+                .getTargetAccountName()).setMark(billMatchOrder.getMark()).setAmount(billMatchOrder.getAmount()).setCmd(cmd)
+                .setParseContent(billMatchOrder.toString()).setBillTypeEnum(billMatchOrder.getBillType());
+        if (BillTypeEnum.INCOME.equals(billMatchOrder.getBillType())) {
+            if (OutQRCodeTypeEnum.NORMAL_QRCODE.equals(billMatchOrder.getQrCodeType())) {
+                parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_NORMAL_INCOME_BILL_MATCH_ORDER);
+            } else if (OutQRCodeTypeEnum.MERCHANT_QRCODE.equals(billMatchOrder.getQrCodeType())) {
+                parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_MERCHANT_INCOME_BILL_MATCH_ORDER);
             }
-        } else if (BillTypeEnum.PAY.equals(uPayBill.getBillType())) {
-            parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_UPAY_BILL_ORDER);
+        } else if (BillTypeEnum.PAY.equals(billMatchOrder.getBillType())) {
+            parseContent.setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_BILL_MATCH_ORDER);
         }
+        merchantMessageInfo.setParseContent(JsonUtil.asString(parseContent));
+        merchantMessageInfo.setBillTime(parseContent.getOrderTime());
+        merchantMessageInfo.setTradeNo(parseContent.getTradeNo());
         return parseContent;
     }
 
@@ -254,18 +254,29 @@ public class ParseContent {
      * @param smsContent
      * @return
 
-
+     * @date 2019/9/27 18:15 
      */
-    public ParseContent byBankSms(SmsContent smsContent, CmdEnum cmd) {
-        this.setTradeNo(smsContent.getPrimaryKey()).setCmd(cmd);
+    public ParseContent bySmsLoad(SmsContent smsContent, CmdEnum cmd
+            , MerchantMessageInfo merchantMessageInfo) {
+        this.setTradeNo(smsContent.getPrimaryKey()).setCmd(cmd)
+                // 短信的应用类型是从模板上反推的
+                .setClientChannel(StringUtils.isNotBlank(platformMessageTemplate.getClientChannel()) ?
+                        ClientChannel.valueOf(platformMessageTemplate.getClientChannel()) : ClientChannel.PAY_MAIN);
         fixedOrderTime(smsContent.getReceiveTime());
-        if (PlatformMessageTemplate.Type.BANK_INCOME_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
+        if (PlatformMessageTemplate.Type.IGNORE_MESSAGE.getValue().equals(platformMessageTemplate.getTemplateType())) {
+            setSourceType(MerchantMessageInfo.SOURCE_TYPE_IGNORE_MESSAGE);
+        } else if (PlatformMessageTemplate.Type.BANK_INCOME_SMS.getValue().equals(this.getPlatformMessageTemplate().getTemplateType())) {
             this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_INCOME_BANK_SMS);
             this.billTypeEnum = BillTypeEnum.INCOME;
-        } else if (PlatformMessageTemplate.Type.BANK_PAY_SMS.getValue().equals(this.getPlatformMessageTemplate().getType())) {
+        } else if (PlatformMessageTemplate.Type.BANK_PAY_SMS.getValue().equals(this.getPlatformMessageTemplate().getTemplateType())) {
             this.setSourceType(MerchantMessageInfo.SOURCE_TYPE_PAY_BANK_SMS);
             this.billTypeEnum = BillTypeEnum.PAY;
         }
+        merchantMessageInfo.setParseContent(JsonUtil.asString(parseContent));
+        merchantMessageInfo.setBillTime(getOrderTime());
+        merchantMessageInfo.setReceiveTime(getOrderTime());
+        merchantMessageInfo.setTradeNo(getTradeNo());
+        merchantMessageInfo.setClientChannel(getClientChannel().name());
         return this;
     }
 
@@ -298,7 +309,7 @@ public class ParseContent {
     /**
      * 修正订单时间
      * 由于从短信中取出的时间格式不一致，因此进行修正，将缺失的部分用当前时间填充。
-     * 但是如果短信解析如果跨天跨月跨年而内容本身又没有这个时间部分的数据时，使用当前时间填充就会出现问题。
+     * 但是如果短信解析  而内容本身又没有这个时间部分的数据时，使用当前时间填充就会出现问题。
      * 因为再使用客户端传过来的数据进行验证，如果自己填充的时间存在跨天跨月跨年，则使用客户端传送的时间
      */
     public void fixedOrderTime(Long receiverTime) {
@@ -382,6 +393,8 @@ public class ParseContent {
     /**
      * 拼接到账消息， 包含云闪付到账消息，账单消息， 短信消息
      * 
+
+     * @date 2019/9/7 14:25 
      */
     public String buildMessage() {
         if (StringUtils.isNotBlank(parseContent)) {
@@ -393,11 +406,11 @@ public class ParseContent {
             stringBuilder.append("[").append(bankCardNo).append("]");
         }
         stringBuilder.append("于").append(orderTimeStr).append("收入金额").append(amount).append("元 ");
-        if (StringUtils.isNotBlank(payName)) {
-            stringBuilder.append("付款人").append(payName).append(" ");
+        if (StringUtils.isNotBlank(targetAccountName)) {
+            stringBuilder.append("付款人").append(targetAccountName).append(" ");
         }
-        if (StringUtils.isNotBlank(payNo)) {
-            stringBuilder.append("付款卡号").append(payNo).append(" ");
+        if (StringUtils.isNotBlank(targetAccountNo)) {
+            stringBuilder.append("付款卡号").append(targetAccountNo).append(" ");
         }
         if (StringUtils.isNotBlank(payBankName)) {
             stringBuilder.append("付款银行").append(payBankName).append(" ");

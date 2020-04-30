@@ -22,34 +22,21 @@ public class PlatformMessageTemplateServiceImpl extends ServiceImpl<PlatformMess
         implements PlatformMessageTemplateService {
 
     /**
-     * 获取云闪付到账消息模板
+     * 获取对应支付方式应用到账消息模板, 同时额外查询出忽略模板
      *
+     * @param clientChannel
      * @returnW
      */
     @Override
-    public List<PlatformMessageTemplate> getUPayMessageTemplate() {
+    public List<PlatformMessageTemplate> getTopicMessageTemplate(String clientChannel) {
         LambdaQueryWrapper<PlatformMessageTemplate> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.in(PlatformMessageTemplate::getType,
-                PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.getValue(),
-                PlatformMessageTemplate.Type.UNION_PAY_MERCHANT_INCOME_MESSAGE.getValue(),
-                PlatformMessageTemplate.Type.UNION_PAY_PAY_MESSAGE.getValue());
-        return list(queryWrapper);
-    }
-
-
-    /**
-     * 获取银行收款短信模板
-     *
-     * @return
-     */
-    @Override
-    public List<PlatformMessageTemplate> getBankSmsTemplates(String credit) {
-        if (StringUtils.isBlank(credit)) {
-            return null;
-        }
-        LambdaQueryWrapper<PlatformMessageTemplate> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.BANK_INCOME_SMS.getValue());
-        queryWrapper.eq(PlatformMessageTemplate::getCredit, credit);
+        queryWrapper.eq(PlatformMessageTemplate::getRemoved, 0);
+        queryWrapper.and((wrapper) -> wrapper.eq(PlatformMessageTemplate::getClientChannel, clientChannel)
+                .in(PlatformMessageTemplate::getTemplateType,
+                        PlatformMessageTemplate.Type.NORMAL_INCOME_TOPIC_MESSAGE.getValue(),
+                        PlatformMessageTemplate.Type.MERCHANT_INCOME_TOPIC_MESSAGE.getValue(),
+                        PlatformMessageTemplate.Type.PAY_TOPIC_MESSAGE.getValue())
+                .or().eq(PlatformMessageTemplate::getTemplateType, PlatformMessageTemplate.Type.IGNORE_MESSAGE));
         return list(queryWrapper);
     }
 
@@ -62,7 +49,8 @@ public class PlatformMessageTemplateServiceImpl extends ServiceImpl<PlatformMess
     @Override
     public List<PlatformMessageTemplate> getGarbageSmsTemplate() {
         LambdaQueryWrapper<PlatformMessageTemplate> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.GARBAGE_SMS.getValue());
+        queryWrapper.eq(PlatformMessageTemplate::getRemoved, 0);
+        queryWrapper.eq(PlatformMessageTemplate::getTemplateType, PlatformMessageTemplate.Type.GARBAGE_SMS.getValue());
         return list(queryWrapper);
     }
 
@@ -70,18 +58,20 @@ public class PlatformMessageTemplateServiceImpl extends ServiceImpl<PlatformMess
     /**
      * 获得所有参与短信模板匹配的模板
      *
+     * fixme 短信类型的模板，一个字段标识
+     *
      * @param
      * @return
-     * @author dongfang.ding
+
      * @date 2019/9/26 15:17
      */
     @Override
     public List<PlatformMessageTemplate> getAllTemplateOrderBySort() {
         LambdaQueryWrapper<PlatformMessageTemplate> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.ne(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.UNION_PAY_NORMAL_INCOME_MESSAGE.getValue());
-        queryWrapper.ne(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.UNION_PAY_MERCHANT_INCOME_MESSAGE.getValue());
-        queryWrapper.ne(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.UNION_PAY_PAY_MESSAGE.getValue());
-        queryWrapper.ne(PlatformMessageTemplate::getType, PlatformMessageTemplate.Type.SYSTEM.getValue());
+        queryWrapper.ne(PlatformMessageTemplate::getTemplateType, PlatformMessageTemplate.Type.NORMAL_INCOME_TOPIC_MESSAGE.getValue());
+        queryWrapper.ne(PlatformMessageTemplate::getTemplateType, PlatformMessageTemplate.Type.MERCHANT_INCOME_TOPIC_MESSAGE.getValue());
+        queryWrapper.ne(PlatformMessageTemplate::getTemplateType, PlatformMessageTemplate.Type.PAY_TOPIC_MESSAGE.getValue());
+        queryWrapper.eq(PlatformMessageTemplate::getRemoved, 0);
         queryWrapper.orderByAsc(PlatformMessageTemplate::getSort);
         return list(queryWrapper);
     }

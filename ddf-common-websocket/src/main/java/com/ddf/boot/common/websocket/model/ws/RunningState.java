@@ -1,6 +1,5 @@
 package com.ddf.boot.common.websocket.model.ws;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -25,10 +24,12 @@ public class RunningState implements Serializable {
 
     private static final long serialVersionUID = 1226849750814326104L;
 
-    @JsonProperty("UNIONPAY")
-    @ApiModelProperty("云闪付应用相关状态")
-    private UnionPay unionPay;
+    @ApiModelProperty("支付方式应用相关状态")
+    private App app;
 
+
+    @ApiModelProperty("指令码运行状态")
+    private CmdState cmdState;
 
     /**
      * 云闪付运行状态
@@ -36,11 +37,28 @@ public class RunningState implements Serializable {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("云闪付应用相关状态")
-    public static class UnionPay {
+    @ApiModel("支付方式应用相关状态")
+    public static class App implements Serializable {
+        private static final long serialVersionUID = 7875158127229269039L;
+
         @ApiModelProperty("运行状态")
         private Integer runningState;
         @ApiModelProperty("登录状态")
         private Integer loginState;
+    }
+
+    /**
+     * 指令码运行状态
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("指令码运行状态")
+    public static class CmdState implements Serializable  {
+
+        private static final long serialVersionUID = 668373605225693998L;
+
+        @ApiModelProperty("转账脚本运行状态")
+        private Integer cmdPayState;
     }
 }

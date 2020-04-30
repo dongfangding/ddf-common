@@ -70,7 +70,7 @@ public interface MerchantMessageInfoService extends IService<MerchantMessageInfo
      * @return
      * @author dongfang.ding
      */
-    boolean fastFailure(List<MerchantMessageInfo> messageInfos, Byte status, String errorMessage);
+    boolean fastFailure(List<MerchantMessageInfo> messageInfos, Integer status, String errorMessage);
 
     /**
      *  获取需要重试的数据

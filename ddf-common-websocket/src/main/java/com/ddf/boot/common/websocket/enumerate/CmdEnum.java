@@ -10,8 +10,9 @@ import java.io.Serializable;
  * 提供一个命令码SIMPLE,通过子命令码来确定具体含义
  *
  *
- *
  * @author dongfang.ding
+ * @date 2020/3/11 0011 15:59
+ *
  */
 public enum CmdEnum implements Serializable {
     //----------------------------------------------服务端指令
@@ -40,14 +41,31 @@ public enum CmdEnum implements Serializable {
 
     /**
      * 查看云闪付账单
+     *
+     *
+     * replace by {@link CmdEnum#FETCH_BILL}
      */
+    @Deprecated
     UPAY_BILL,
+
+    /**
+     * 查看账单
+     */
+    FETCH_BILL,
 
 
     /**
      * 云闪付到账消息不一定能够收到，因此服务端会主动去请求一次
+     *
+     * replace by {@link CmdEnum#BILL_MATCH_ORDER}
      */
+    @Deprecated
     UPAY_BILL_ORDER,
+
+    /**
+     * 账单匹配订单
+     */
+    BILL_MATCH_ORDER,
 
     /**
      * 登录云闪付
@@ -82,6 +100,19 @@ public enum CmdEnum implements Serializable {
      */
     PAY,
 
+
+    /**
+     * 与设备进行资料信息同步，如设备所属人个人信息， 银行卡信息
+     */
+    DATA_SYNC,
+
+
+    /**
+     * 服务端委托客户端发送一些数据的通道
+     */
+    SEND_MSG,
+
+
     //----------------------------------------------客户端指令
 
     /**
@@ -96,24 +127,65 @@ public enum CmdEnum implements Serializable {
 
     /**
      * 云闪付到账消息
+     *
+     * replace by {@link CmdEnum#TOPIC_MESSAGE}
      */
+    @Deprecated
     UPAY_MESSAGE,
 
     /**
-     * 银行收款短信
+     * 到账通知消息
      */
+    TOPIC_MESSAGE,
+
+    /**
+     * 银行收款短信
+     *
+     * replace by {@link CmdEnum#SMS_UPLOAD}
+     *
+     */
+    @Deprecated
     BANK_SMS,
 
     /**
-     * 获取设备对应的云闪付账号信息（账号，密码）
+     * 设备短信上传
      */
-    UPAY_ACCOUNT,
+    SMS_UPLOAD,
 
 
     /**
      * 运行状态报备，客户端对服务端所需的应用状态进行监听，当状态变化时要向服务端报备最新状态
      */
-    RUNNING_STATE;
+    RUNNING_STATE,
+
+    /**
+     * 客户端异常上报
+     */
+    CLIENT_ERROR_UPLOAD,
+
+    /**
+     * 银行卡绑定
+     */
+    BINDING_CARD,
+
+    /**
+     * 支付方式注册
+     */
+    REGISTRY,
+
+    /**
+     * 设置支付密码
+     */
+    SET_PAY_PASSWORD,
+
+    /**
+     * 设置商户码
+     */
+    SET_MERCHANT_QRCODE
+
+    ;
+
+
 
 
     /**

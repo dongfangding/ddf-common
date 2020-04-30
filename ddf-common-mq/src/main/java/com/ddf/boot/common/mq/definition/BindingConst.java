@@ -150,6 +150,12 @@ public class BindingConst {
          */
         public static final String USER_LOGIN_HISTORY_QUEUE = PREFIX + "user.login.token.queue";
 
+
+        /**
+         * 设备指令运行状态监控数据持久化
+         */
+        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE = PREFIX + "device.cmd.running.state.persistence";
+
     }
 
     /**
@@ -191,6 +197,11 @@ public class BindingConst {
         /**
          */
         public static final String USER_LOGIN_HISTORY_KEY = "user.login.token.key";
+
+        /**
+         * 设备指令运行状态监控数据持久化
+         */
+        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY = PREFIX + "device.cmd.running.state.persistence.key";
 
     }
 
