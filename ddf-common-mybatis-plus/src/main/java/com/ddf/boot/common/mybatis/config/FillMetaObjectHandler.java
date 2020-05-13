@@ -63,8 +63,10 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         try {
-            if (metaObject.getOriginalObject() instanceof BaseDomain ||
-                    ((MapperMethod.ParamMap) metaObject.getOriginalObject()).get("param1") instanceof BaseDomain) {
+            String bindingParamKey = "param1";
+            MapperMethod.ParamMap mapperMethod = (MapperMethod.ParamMap) metaObject.getOriginalObject();
+            boolean isMapperMethod = mapperMethod.containsKey(bindingParamKey) && mapperMethod.get(bindingParamKey) instanceof BaseDomain;
+            if (metaObject.getOriginalObject() instanceof BaseDomain || isMapperMethod) {
                 log.info("start update fill ....");
                 // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
                 setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
