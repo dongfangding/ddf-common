@@ -1,5 +1,6 @@
 package com.ddf.boot.common.util;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -64,6 +65,25 @@ public class AopUtil {
 
 
     /**
+     * 获取当前拦截的类
+     * @param joinPoint
+     * @return
+     */
+    public static Class<?> getJoinPointClass(JoinPoint joinPoint) {
+        return joinPoint.getSignature().getDeclaringType();
+    }
+
+    /**
+     * 获取当前拦截的方法
+     * @param joinPoint
+     * @return
+     */
+    public static MethodSignature getJoinPointMethod(JoinPoint joinPoint) {
+        return (MethodSignature) joinPoint.getSignature();
+    }
+
+
+    /**
      * 获取指定类型的参数
      *
      * @param joinPoint
@@ -84,5 +104,26 @@ public class AopUtil {
             argsMap.put(arg.getClass(), arg);
         }
         return argsMap;
+    }
+
+
+    /**
+     * 返回当前方法的参数map
+     *
+     * @param joinPoint
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @author dongfang.ding
+     * @date 2020/6/12 0012 18:46
+     **/
+    public static Map<String, Object> getParamMap(JoinPoint joinPoint) {
+        Map<String, Object> paramsMap = new HashMap<>(16);
+        String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
+        if (parameterNames.length > 0) {
+            for (int i = 0; i < parameterNames.length; i++) {
+                Object value = joinPoint.getArgs()[i];
+                paramsMap.put(parameterNames[i], value);
+            }
+        }
+        return paramsMap;
     }
 }
