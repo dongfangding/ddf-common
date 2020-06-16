@@ -118,7 +118,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         }
 
         // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
-        if (!Objects.equals(userClaim.getCredit(), host) && !JwtUtil.DEFAULT_CLIENT_IP.equals(host)) {
+        if (!Objects.equals(userClaim.getCredit(), host) && !JwtUtil.DEFAULT_CLIENT_IP.contains(host)) {
             log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, userClaim);
             throw new AccessDeniedException("更换登录地址，需要重新登录！");
         }

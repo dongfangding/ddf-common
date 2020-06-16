@@ -1,5 +1,6 @@
 package com.ddf.boot.common.exception;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.http.HttpStatus;
 import com.ddf.boot.common.config.GlobalProperties;
 import com.ddf.boot.common.helper.EnvironmentHelper;
@@ -47,7 +48,7 @@ import java.util.Map;
  *
  */
 @Component
-@Order(value = Ordered.HIGHEST_PRECEDENCE + 10)
+@Order(value = Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class ErrorAttributesHandler extends DefaultErrorAttributes {
 
@@ -74,14 +75,8 @@ public class ErrorAttributesHandler extends DefaultErrorAttributes {
 		log.error(sw.toString());
 
         // 为了定义自己的字段返回顺序，所以重新写了一个map
-        Map<String, Object> errorOverrideMap = new LinkedHashMap<>();
-		errorOverrideMap.put("path", errorAttributes.get("path"));
-		errorOverrideMap.put("status", errorAttributes.get("status"));
-		errorOverrideMap.put("code", errorAttributes.get("message"));
-		errorOverrideMap.put("message", errorAttributes.get("message"));
-		errorOverrideMap.put("timestamp", System.currentTimeMillis());
-		errorOverrideMap.put("error", errorAttributes.get("error"));
-		errorOverrideMap.put("trace", "");
+		Map<String, Object> errorOverrideMap = initErrorMap(errorAttributes);
+
 		// 假如当前环境允许设置trace，则将详细错误堆栈信息返回
 		if (!environmentHelper.checkIsExistOr(globalProperties.getIgnoreErrorTraceProfile())) {
 			errorOverrideMap.put("trace", errorAttributes.get("trace"));
@@ -105,12 +100,14 @@ public class ErrorAttributesHandler extends DefaultErrorAttributes {
 			exception = (GlobalCustomizeException) error;
 		} else {
 			exception = new GlobalCustomizeException(error.getMessage());
-			exception.setCode(error.getMessage());
+			// 没有定义异常code的异常使用http状态码标识
+			exception.setCode(Convert.toStr(httpStatus));
 		}
 		// 解析异常类消息代码，并根据当前Local格式化资源文件
 		Locale locale = webRequest.getLocale();
+		// 没有定义资源文件的使用直接使用异常消息
 		exception.setMessage(messageSource.getMessage(exception.getCode(), exception.getParams(),
-				exception.getCode(), locale));
+				exception.getMessage(), locale));
 
 		// org.springframework.web.context.request.RequestAttributes.REFERENCE_REQUEST
 		HttpServletRequest httpServletRequest = (HttpServletRequest) webRequest.resolveReference(WebRequest.REFERENCE_REQUEST);
@@ -124,6 +121,24 @@ public class ErrorAttributesHandler extends DefaultErrorAttributes {
         errorOverrideMap.put("status", httpStatus);
 		errorOverrideMap.put("code", exception.getCode());
 		errorOverrideMap.put("message", exception.getMessage());
+		return errorOverrideMap;
+	}
+
+
+	/**
+	 * 自定义错误返回字段顺序
+	 * @param errorAttributes
+	 * @return
+	 */
+	private Map<String, Object> initErrorMap(Map<String, Object> errorAttributes) {
+		Map<String, Object> errorOverrideMap = new LinkedHashMap<>();
+		errorOverrideMap.put("path", errorAttributes.get("path"));
+		errorOverrideMap.put("status", errorAttributes.get("status"));
+		errorOverrideMap.put("code", errorAttributes.get("message"));
+		errorOverrideMap.put("message", errorAttributes.get("message"));
+		errorOverrideMap.put("timestamp", System.currentTimeMillis());
+		errorOverrideMap.put("error", errorAttributes.get("error"));
+		errorOverrideMap.put("trace", "");
 		return errorOverrideMap;
 	}
 }

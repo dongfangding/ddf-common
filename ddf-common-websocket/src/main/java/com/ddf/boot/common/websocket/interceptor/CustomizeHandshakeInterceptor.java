@@ -3,7 +3,7 @@ package com.ddf.boot.common.websocket.interceptor;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.SpringContextHolder;
 import com.ddf.boot.common.util.WebUtil;
-import com.ddf.boot.common.util.WsSecureUtil;
+import com.ddf.boot.common.util.SecureUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
@@ -66,7 +66,7 @@ public class CustomizeHandshakeInterceptor implements HandshakeInterceptor {
         String header = servletRequest.getHeader(WebsocketConst.TOKEN_PARAMETER);
         if (StringUtils.isNotBlank(header)) {
             try {
-                header = WsSecureUtil.privateDecryptFromBcd(header);
+                header = SecureUtil.privateDecryptFromBcd(header);
                 HandshakeParam handshakeParam = JsonUtil.toBean(header, HandshakeParam.class);
                 validArgument(handshakeParam);
 

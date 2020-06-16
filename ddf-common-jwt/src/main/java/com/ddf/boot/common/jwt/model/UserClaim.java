@@ -48,7 +48,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserClaim<T> implements Serializable {
+public class  UserClaim<T> implements Serializable {
     private static final long serialVersionUID = -6557510720376811244L;
 
     public static final String CLAIM_USER_ID = "userId";
