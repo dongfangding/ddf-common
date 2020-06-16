@@ -69,6 +69,11 @@ public interface SlowEventAction {
         /** 超时的方法名 */
         private String methodName;
 
+        /**
+         * 方法入参json串
+         */
+        private String params;
+
         /** 实际耗时，单位毫秒 */
         private Long consumerTime;
 
