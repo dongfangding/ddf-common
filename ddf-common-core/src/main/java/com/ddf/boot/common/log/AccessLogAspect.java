@@ -1,16 +1,18 @@
 package com.ddf.boot.common.log;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.util.AopUtil;
+import com.ddf.boot.common.util.JsonUtil;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,10 +47,9 @@ import java.util.Map;
  */
 @Aspect
 public class AccessLogAspect {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final String BEAN_NAME = "accessLogAspect";
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private LogAspectConfiguration logAspectConfiguration;
@@ -59,37 +60,45 @@ public class AccessLogAspect {
     @Autowired
     private ThreadPoolTaskExecutor defaultThreadPool;
 
-    private ThreadLocal<Long> beforeTime = new ThreadLocal<>();
-
     @Pointcut(value = "execution(public * com..controller..*(..))")
     public void pointCut() {}
 
-    /**
-     * before处理日志和封装用户信息
-     * @param joinPoint
-     */
-    @Before("pointCut()")
-    public void before(JoinPoint joinPoint) {
-        beforeTime.set(System.currentTimeMillis());
-        logBefore(joinPoint);
-    }
 
     /**
-     * 请求成功执行并返回值后后打印日志
+     * 打印方法调用参数和执行结果，对接口耗时进行统计，本拦截类只关心用户自定义的慢接口捕捉和处理；
+     * 不提供操作日志的持久化
+     *
+     * 因为操作日志如果不做到对请求前和请求后的数据获取的话，仅仅记录调用本身意义也不大
      * @param joinPoint
-     * @param result
+     * @return
      */
-    @AfterReturning(pointcut = "pointCut()", returning = "result")
-    public void afterReturning(JoinPoint joinPoint, Object result) {
-        if (!logAspectConfiguration.isEnableLogAspect()) {
-            return;
+    @Around("pointCut()")
+    public Object handler(ProceedingJoinPoint joinPoint) {
+        // 获取当前类名
+        Class<?> pointClass = AopUtil.getJoinPointClass(joinPoint);
+        // 获取当前方法名
+        MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
+        // 获取请求参数
+        Map<String, Object> paramMap = AopUtil.getParamMap(joinPoint);
+        String paramJson = JsonUtil.asString(paramMap);
+        // 调用起始时间
+        long beforeTime = System.currentTimeMillis();
+        // 执行方法
+        try {
+            Object proceed = joinPoint.proceed();
+            long consumerTime = System.currentTimeMillis() - beforeTime;
+            // 打印返回值和接口耗时
+            logger.debug("[{}]-[{}]请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(), pointMethod.getName(),
+                    paramJson, JsonUtil.asString(proceed), consumerTime);
+            // 执行慢接口逻辑判断
+            dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
+            return proceed;
+        } catch (Throwable throwable) {
+            logger.debug("[{}]-[{}]请求参数: {}, 执行出现异常！", pointClass.getName(), pointMethod.getName(),
+                    JsonUtil.asString(paramMap), throwable);
+            // fixme 本意是想拦截到异常之类打印出来，或者做些别的处理，但是catch之后怎么抛出原来的异常呢？
+            throw new GlobalCustomizeException(throwable);
         }
-        String className = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
-        long consumerTime = System.currentTimeMillis() - beforeTime.get();
-        logger.info("[{}.{}]{}..........: ({})", className, methodName, "方法执行结束，成功返回值,共耗时(" + consumerTime + "ms)", result != null ? result.toString() : "");
-        beforeTime.remove();
-        dealSlowTimeHandler(className, methodName, consumerTime);
     }
 
     /**
@@ -98,11 +107,11 @@ public class AccessLogAspect {
      * @param methodName
      * @param consumerTime
      */
-    private void  dealSlowTimeHandler(String className, String methodName, long consumerTime) {
+    private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
         long slowTime = logAspectConfiguration.getSlowTime();
         if (consumerTime > slowTime && slowEventAction != null && !checkIgnore(className)) {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制
-            SlowEventAction.SlowEvent slowEvent = new SlowEventAction.SlowEvent(className, methodName, consumerTime, slowTime);
+            SlowEventAction.SlowEvent slowEvent = new SlowEventAction.SlowEvent(className, methodName, params, consumerTime, slowTime);
             logger.info("{}-{}耗时{}，准备执行处理回调。。。。", className, methodName, consumerTime);
             defaultThreadPool.execute(() -> slowEventAction.doAction(slowEvent));
         }
@@ -110,6 +119,7 @@ public class AccessLogAspect {
 
     /**
      * 判断是否忽略处理当前类
+     * 这个功能的意义是有些接口天生就是慢接口的，但是又不想统计这个接口，因为开发时已经知道了，所以要跳过这个接口处理
      * @param className
      * @return
      */
@@ -124,52 +134,5 @@ public class AccessLogAspect {
         }
         return false;
     }
-
-
-    /**
-     * 请求出现异常打印日志
-     * @param joinPoint
-     * @param exception
-     */
-    @AfterThrowing(pointcut = "pointCut()", throwing = "exception")
-    public void afterThrowing(JoinPoint joinPoint, Exception exception) {
-        if (!logAspectConfiguration.isEnableLogAspect()) {
-            return;
-        }
-        String className = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
-        logger.info("[{}.{}]{}..........: ({})", className, methodName, "方法执行出现异常",
-                exception.toString()  == null ? "" : exception.toString());
-    }
-
-
-
-    /**
-     * 记录方法入参
-     * @param joinPoint {@link JoinPoint}
-     */
-    private void logBefore(JoinPoint joinPoint) {
-        if (!logAspectConfiguration.isEnableLogAspect()) {
-            return;
-        }
-        Map<String, Object> paramsMap = new HashMap<>();
-        String className = joinPoint.getSignature().getDeclaringType().getName();
-        String methodName = joinPoint.getSignature().getName();
-        String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-        String str = "";
-        if (parameterNames.length > 0) {
-            for (int i = 0; i < parameterNames.length; i++) {
-                String value = joinPoint.getArgs()[i] != null ? joinPoint.getArgs()[i].toString() : "null";
-                paramsMap.put(parameterNames[i], value);
-            }
-            try {
-                str = objectMapper.writeValueAsString(paramsMap);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-        logger.info("[{}.{}方法执行，参数列表===>({})]", className, methodName, str);
-    }
-
 
 }
