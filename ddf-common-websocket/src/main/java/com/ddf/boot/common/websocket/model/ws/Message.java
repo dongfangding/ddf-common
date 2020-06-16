@@ -3,7 +3,7 @@ package com.ddf.boot.common.websocket.model.ws;
 import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.JsonUtil;
 import com.ddf.boot.common.util.StringUtil;
-import com.ddf.boot.common.util.WsSecureUtil;
+import com.ddf.boot.common.util.SecureUtil;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -197,9 +197,9 @@ public class Message<T> {
             return null;
         }
         String body = JsonUtil.asString(message.getBody());
-        String sign = WsSecureUtil.signWithHMac(body, message.getCmd().name());
+        String sign = SecureUtil.signWithHMac(body, message.getCmd().name());
         message.addExtra("sign", sign);
-        return new TextMessage(WsSecureUtil.privateEncryptBcd(JsonUtil.asString(message)));
+        return new TextMessage(SecureUtil.privateEncryptBcd(JsonUtil.asString(message)));
     }
 
     /**
@@ -318,12 +318,12 @@ public class Message<T> {
         if (StringUtils.isBlank(textMessagePayload)) {
             return null;
         }
-        String decrypt = WsSecureUtil.privateDecryptFromBcd(textMessagePayload);
+        String decrypt = SecureUtil.privateDecryptFromBcd(textMessagePayload);
         log.debug("解密后数据: {}", decrypt);
         Message<?> message = JsonUtil.toBean(decrypt, Message.class);
         String signStr = message.getExtraMap().get("sign");
         log.debug("报文中加签值: {}", signStr);
-        String dataSign = WsSecureUtil.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd().name());
+        String dataSign = SecureUtil.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd().name());
         log.debug("对数据解密后重新加签: {}", dataSign);
         if (!Objects.equals(signStr, dataSign)) {
             log.error("验签不通过！！报文中加签值: {}, 实际加签值: {}", signStr, dataSign);

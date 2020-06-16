@@ -1,19 +1,18 @@
 package com.ddf.boot.common.util;
 
 import com.ddf.boot.common.constant.GlobalConstants;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Web层辅助工具类
  */
 public class WebUtil {
+
+    public static final String UNKNOWN = "unknown";
 
     /**
      * 获取当前ServletRequestAttributes
@@ -42,32 +41,30 @@ public class WebUtil {
      */
     public static final String getHost() {
         HttpServletRequest request = getCurRequest();
-        String ip = request.getHeader("X-Forwarded-For");
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip != null && ip.length() != 0 && !UNKNOWN.equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个ip值，第一个ip才是真实ip
+            if (ip.contains(GlobalConstants.COMMA)) {
+                ip = ip.split(",")[0];
+            }
+        }
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
-        }
-        if (GlobalConstants.LOCALHOST.equals(ip)) {
-            InetAddress inet;
-            try {
-                inet = InetAddress.getLocalHost();
-                ip = inet.getHostAddress();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }
-        if (ip != null && ip.length() > 15) {
-            if (ip.indexOf(GlobalConstants.COMMA) > 0) {
-                ip = ip.substring(0, ip.indexOf(GlobalConstants.COMMA));
-            }
         }
         return ip;
     }

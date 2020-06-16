@@ -96,3 +96,14 @@ Icon
 *_copy.htm
 *_copy.html
 *.pdb
+ddf-common-core/src/main/java/com/ddf/boot/common/exception/EntityGenerateUtil.java
+ddf-common-distributed-lock/src/main/resources/
+ddf-common-distributed-lock/src/test/
+ddf-common-jwt/src/test/
+ddf-common-mq/src/main/java/com/ddf/boot/common/mq/util/
+ddf-common-mybatis-plus/src/main/java/com/ddf/boot/common/mybatis/model/
+ddf-common-mybatis-plus/src/main/resources/
+ddf-common-mybatis-plus/src/test/
+ddf-common-security/src/test/
+ddf-common-websocket/src/main/java/com/ddf/boot/common/websocket/controller/
+ddf-common-websocket/src/main/java/com/ddf/boot/common/websocket/mapper/impl/MqttPublishSubscribeEvent.xml

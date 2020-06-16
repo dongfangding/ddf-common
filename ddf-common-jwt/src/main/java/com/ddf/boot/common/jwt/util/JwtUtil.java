@@ -60,7 +60,7 @@ public class JwtUtil {
      * 由于Jwt要判断客户端的IP，但是在RpcContext中有可能会获取不到（不知道为啥，就是有一次没有获取到），现在为了
      * 保险，如果没有获取到给个默认值；如果是默认值也算IP 匹配
      */
-    public static final String DEFAULT_CLIENT_IP = "127.0.0.1";
+    public static final List<String> DEFAULT_CLIENT_IP = Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 
 
     /**
@@ -200,7 +200,7 @@ public class JwtUtil {
         } catch (Exception e) {
             String clientIp = RpcContext.getContext().getAttachment(JwtConstant.CLIENT_IP);
             if (clientIp == null) {
-                return DEFAULT_CLIENT_IP;
+                return DEFAULT_CLIENT_IP.get(0);
             }
             return clientIp;
         }

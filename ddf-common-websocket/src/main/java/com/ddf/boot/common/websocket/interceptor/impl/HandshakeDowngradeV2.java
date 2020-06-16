@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.interceptor.impl;
 
-import com.ddf.boot.common.util.WsSecureUtil;
+import com.ddf.boot.common.util.SecureUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.interceptor.HandshakeDowngrade;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
@@ -57,7 +57,7 @@ public class HandshakeDowngradeV2 implements HandshakeDowngrade {
         }
         String encryptToken;
         try {
-            encryptToken = WsSecureUtil.privateDecryptFromBcd(token);
+            encryptToken = SecureUtil.privateDecryptFromBcd(token);
         } catch (Exception e) {
             log.error("{}=>解密出错，不允许认证！", token, e);
             return null;

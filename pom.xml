@@ -11,6 +11,7 @@
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
+        <swagger-annotation-models-version>1.5.21</swagger-annotation-models-version>
         <netty.version>4.1.37.Final</netty.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <dozer.version>6.4.1</dozer.version>
@@ -196,11 +197,34 @@
                 <version>${p6spy.version}</version>
             </dependency>
 
+            <!--  -->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotation-models-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger-annotation-models-version}</version>
+            </dependency>
+
             <!-- 引入swagger -->
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${swagger.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-models</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- 引入swagger-ui -->
@@ -209,6 +233,7 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger-ui.version}</version>
             </dependency>
+
 
             <dependency>
                 <groupId>io.netty</groupId>

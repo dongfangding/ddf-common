@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class RedirectCmdListener extends MessageListenerAdapter {
 
-    @Autowired
+    @Autowired(required = false)
     private MessageWsDubboService messageWsDubboService;
 
     /**

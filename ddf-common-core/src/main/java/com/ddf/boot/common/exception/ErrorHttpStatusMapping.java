@@ -35,6 +35,8 @@ public interface ErrorHttpStatusMapping {
      *
      * 实现该接口，返回自定义异常对应的http状态码，{@link ErrorAttributesHandler}会去执行这个接口判断，然后获取
      * 实现方自己的状态码
+      *
+      * 处理异常与http状态码的对应映射关系
      *
      * @see ErrorAttributesHandler
      * @return java.lang.Integer

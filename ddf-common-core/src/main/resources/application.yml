@@ -82,6 +82,9 @@ customs:  # 自定义的属性最好都写在custom前缀下，方便辨认
   global-properties:
     snowflakeWorkerId: 1      # worker Id can't be greater than 31 or less than 0
     snowflakeDataCenterId: 1  # dataCenterId Id can't be greater than 31 or less than 0
+    ignoreErrorTraceProfile:  # 过滤将异常堆栈信息输出打前端接口返回值的环境
+      - local
+      - default
   jwt:
     secret: woshiyigefenshuajiangfenshuabenlingqiang
     expiredMinute: 1080

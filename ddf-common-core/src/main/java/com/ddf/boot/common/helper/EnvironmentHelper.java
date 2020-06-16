@@ -50,8 +50,13 @@ public class EnvironmentHelper {
      * @date 2019/12/24 0024 13:52
      **/
     public boolean checkIsExistOr(List<String> targetProfile) {
-        String[] activeProfiles = environment.getActiveProfiles();
-        for (String activeProfile : activeProfiles) {
+        String[] profileList;
+        if (environment.getActiveProfiles().length > 0) {
+            profileList = environment.getActiveProfiles();
+        } else {
+            profileList = environment.getDefaultProfiles();
+        }
+        for (String activeProfile : profileList) {
             for (String target : targetProfile) {
                 if (activeProfile.equals(target)) {
                     return true;
