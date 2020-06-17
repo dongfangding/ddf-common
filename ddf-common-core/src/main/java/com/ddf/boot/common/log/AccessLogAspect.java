@@ -1,6 +1,5 @@
 package com.ddf.boot.common.log;
 
-import com.ddf.boot.common.exception.GlobalCustomizeException;
 import com.ddf.boot.common.util.AopUtil;
 import com.ddf.boot.common.util.JsonUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -73,7 +72,7 @@ public class AccessLogAspect {
      * @return
      */
     @Around("pointCut()")
-    public Object handler(ProceedingJoinPoint joinPoint) {
+    public Object handler(ProceedingJoinPoint joinPoint) throws Throwable {
         // 获取当前类名
         Class<?> pointClass = AopUtil.getJoinPointClass(joinPoint);
         // 获取当前方法名
@@ -84,7 +83,7 @@ public class AccessLogAspect {
         // 调用起始时间
         long beforeTime = System.currentTimeMillis();
         // 执行方法
-        try {
+//        try {
             Object proceed = joinPoint.proceed();
             long consumerTime = System.currentTimeMillis() - beforeTime;
             // 打印返回值和接口耗时
@@ -93,12 +92,14 @@ public class AccessLogAspect {
             // 执行慢接口逻辑判断
             dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
             return proceed;
-        } catch (Throwable throwable) {
+/*        } catch (Throwable throwable) {
             logger.debug("[{}]-[{}]请求参数: {}, 执行出现异常！", pointClass.getName(), pointMethod.getName(),
                     JsonUtil.asString(paramMap), throwable);
             // fixme 本意是想拦截到异常之类打印出来，或者做些别的处理，但是catch之后怎么抛出原来的异常呢？
-            throw new GlobalCustomizeException(throwable);
-        }
+            // 这里不能抛出原来的异常会影响很多异常对应的状态码处理，只能暂时不catch了
+            // 不能丢失自定义异常的code码
+            throw new GlobalCustomizeException(throwable.getMessage());
+        }*/
     }
 
     /**

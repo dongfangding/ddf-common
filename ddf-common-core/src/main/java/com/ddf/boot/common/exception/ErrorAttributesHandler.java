@@ -115,6 +115,7 @@ public class ErrorAttributesHandler extends DefaultErrorAttributes {
 			// 返回response状态码的时候会去判断这个属性里有没有值，如果有就用这个，如果没有，用默认的500
 			// 看这个方法。org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error
 			httpServletRequest.setAttribute("javax.servlet.error.status_code", httpStatus);
+//			httpServletRequest.setAttribute("javax.servlet.error.status_code", HttpStatus.HTTP_OK);
 		}
 		// 接口响应一直都有两种不同的方式，一种是使用标准的Http状态码，还有一种是保持接口请求为200，使用自定义的状态字段来标识
 		// 目前是使用http状态码，但这个字段保留，如果需要切换的话，把http状态码赋值为200即可
