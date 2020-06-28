@@ -33,6 +33,12 @@ package com.ddf.boot.common.exception;
  *
  */
 public enum GlobalExceptionEnum implements GlobalExceptionCodeResolver {
+
+	/**
+	 * 请求正常
+	 */
+	CODE_COMPLETE("200"),
+
 	/**
 	 * 账户无效
 	 */

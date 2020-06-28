@@ -62,4 +62,14 @@ public class GlobalProperties {
      * @see ErrorAttributesHandler#getErrorAttributes(org.springframework.web.context.request.WebRequest, boolean)
      */
     private List<String> ignoreErrorTraceProfile;
+
+
+    /**
+     * 针对系统的异常是使用http200状态码保证为200，还是使用通用http状态码来标识异常
+     * @see com.ddf.boot.common.exception 使用http状态码和自定义code码来标识异常，只要异常code码就不是200
+     * @see com.ddf.boot.common.exception200 发生异常后会保证接口http相应状态码为200，使用自定义code码来标识异常
+     *
+     * 默认采用http状态码为200
+     */
+    private boolean exception200 = true;
 }

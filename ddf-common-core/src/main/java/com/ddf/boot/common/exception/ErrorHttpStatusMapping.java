@@ -37,7 +37,7 @@ public interface ErrorHttpStatusMapping {
      * 实现方自己的状态码
       *
       * 处理异常与http状态码的对应映射关系
-     *
+     * @param error
      * @see ErrorAttributesHandler
      * @return java.lang.Integer
      * @author dongfang.ding

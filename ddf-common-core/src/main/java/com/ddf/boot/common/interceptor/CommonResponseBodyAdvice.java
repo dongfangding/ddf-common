@@ -79,6 +79,6 @@ public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     public ResponseData<Object> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType
             , Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request
             , ServerHttpResponse response) {
-        return ResponseData.success(body, request.getURI().getPath());
+        return ResponseData.success(body);
     }
 }
