@@ -6,6 +6,7 @@ import com.ddf.boot.common.config.GlobalProperties;
 import com.ddf.boot.common.helper.EnvironmentHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
@@ -22,6 +23,16 @@ import java.util.Map;
 
 /**
  * 处理全局异常，支持异常类占位符解析和国际化
+ *
+ *
+ *
+ * 这里的实现方式是通过返回http错误码来决定异常的，
+ * 即只要发生异常，接口是不会返回200的，然后可能会有401什么的，
+ * 还有一些通用错误码如400，500，然后http状态码下的异常也会有自己的异常code码来标识当前异常类型。
+ * 但是目前太多样例都不再采用这种方式了，都是使用200的http状态码，然后请求是正确还是异常时通过返回的数据接口的
+ * code来实现的，
+ *
+ * 这种实现方式参考{@link com.ddf.boot.common.exception200}
  *
  * _ooOoo_
  * o8888888o
@@ -50,6 +61,7 @@ import java.util.Map;
 @Component
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
+@ConditionalOnProperty(prefix = "customs.global-properties", name = "exception200", havingValue = "false")
 public class ErrorAttributesHandler extends DefaultErrorAttributes {
 
 	@Autowired
