@@ -1,4 +1,4 @@
-package com.ddf.boot.common.log;
+package com.ddf.boot.common.logaccess;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

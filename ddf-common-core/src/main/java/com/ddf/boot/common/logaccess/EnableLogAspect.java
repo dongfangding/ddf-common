@@ -1,4 +1,4 @@
-package com.ddf.boot.common.log;
+package com.ddf.boot.common.logaccess;
 
 import org.springframework.context.annotation.Import;
 
