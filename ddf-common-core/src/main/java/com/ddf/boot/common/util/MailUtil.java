@@ -45,9 +45,9 @@ import java.util.Map;
 public class MailUtil {
     private Logger log = LoggerFactory.getLogger(MailUtil.class);
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSenderImpl mailSender;
-    @Autowired
+    @Autowired(required = false)
     private MailProperties mailProperties;
 
     /**
