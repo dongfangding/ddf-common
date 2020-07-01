@@ -141,8 +141,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         long now = System.currentTimeMillis();
         // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
         // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
-        synchronized (token.intern()) {
-            if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
+        if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
+            synchronized (token.intern()) {
                 token = JwtUtil.defaultJws(userClaim);
                 response.setHeader(AUTH_HEADER, token);
             }

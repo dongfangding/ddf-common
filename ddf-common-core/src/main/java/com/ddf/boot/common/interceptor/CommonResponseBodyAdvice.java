@@ -1,7 +1,7 @@
 package com.ddf.boot.common.interceptor;
 
-import com.ddf.boot.common.constant.GlobalConstants;
 import com.ddf.boot.common.response.ResponseData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
@@ -45,9 +45,12 @@ import java.util.List;
  * @author dongfang.ding
  * @date 2019/6/27 11:15
  */
-@RestControllerAdvice(basePackages = {GlobalConstants.BASE_PACKAGE})
+@RestControllerAdvice(basePackages = {"com"}) // fixme 如何能够接受配置参数呢？如${basePackages}
 @Order
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+
+    private final CommonResponseBodyAdviceProperties commonResponseBodyAdviceProperties;
 
     private static final Class[] ANNOTATIONS = {
             RequestMapping.class,
@@ -56,9 +59,6 @@ public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             DeleteMapping.class,
             PutMapping.class
     };
-
-    @Autowired
-    private CommonResponseBodyAdviceProperties commonResponseBodyAdviceProperties;
 
     /**
      * @param returnType

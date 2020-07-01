@@ -79,7 +79,6 @@ public class JwtUtil {
         calendar.add(Calendar.MINUTE, jwtProperties.getExpiredMinute());
         calendar.getTime();
 
-
         return Jwts.builder()
                 .addClaims(userClaim.toMap())
                 .setId(UUID.randomUUID().toString())
