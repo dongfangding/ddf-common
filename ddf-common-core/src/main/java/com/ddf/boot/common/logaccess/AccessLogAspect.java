@@ -1,4 +1,4 @@
-package com.ddf.boot.common.log;
+package com.ddf.boot.common.logaccess;
 
 import com.ddf.boot.common.util.AopUtil;
 import com.ddf.boot.common.util.JsonUtil;
