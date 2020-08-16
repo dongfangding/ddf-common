@@ -34,7 +34,7 @@ import java.util.Date;
 @Data
 public class BaseDomain {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     protected Long id;
 
     @TableField(value = "create_by", fill = FieldFill.INSERT)
