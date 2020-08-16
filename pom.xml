@@ -22,10 +22,12 @@
         <dubbo.version>2.7.3</dubbo.version>
         <lombok.version>1.18.10</lombok.version>
         <mysql.version>8.0.15</mysql.version>
-        <guava.version>28.1-jre</guava.version>
+<!--        <guava.version>28.1-jre</guava.version>-->
+        <guava.version>20.0</guava.version>
         <http-client.version>4.5.10</http-client.version>
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.17</druid.version>
+        <curator.version>2.10.0</curator.version>
     </properties>
 
     <parent>
@@ -43,6 +45,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
@@ -102,6 +105,24 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-client</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
             </dependency>
 
 
@@ -275,6 +296,8 @@
                 <version>${http-core.version}</version>
             </dependency>
 
+
+
         </dependencies>
     </dependencyManagement>
 
@@ -287,5 +310,6 @@
         <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-model</module>
         <module>ddf-common-distributed-lock</module>
+        <module>ddf-common-ids</module>
     </modules>
 </project>

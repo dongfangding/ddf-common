@@ -2,7 +2,7 @@ package com.ddf.boot.common.websocket.biz.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.ddf.boot.common.constant.GlobalConstants;
+import com.ddf.boot.common.core.constant.GlobalConstants;
 import com.ddf.boot.common.websocket.biz.ChildCmdAction;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;

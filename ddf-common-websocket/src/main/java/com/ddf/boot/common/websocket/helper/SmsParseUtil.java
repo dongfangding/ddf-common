@@ -1,7 +1,7 @@
 package com.ddf.boot.common.websocket.helper;
 
-import com.ddf.boot.common.exception.GlobalCustomizeException;
-import com.ddf.boot.common.util.JsonUtil;
+import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.entity.PlatformMessageTemplate;
 import com.ddf.boot.common.websocket.model.ws.ParseContent;
 import com.ddf.boot.common.websocket.model.ws.TemplateConditionEl;

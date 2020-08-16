@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ import java.util.List;
  * @date 2019/5/22 17:14
  */
 @Configuration
+@ComponentScan(basePackages = "com.ddf.boot.common.mybatis")
 public class MyBatisConfig {
 
     /**

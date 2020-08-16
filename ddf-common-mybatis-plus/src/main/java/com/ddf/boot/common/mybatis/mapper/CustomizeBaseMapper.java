@@ -1,7 +1,7 @@
 package com.ddf.boot.common.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ddf.boot.common.entity.BaseDomain;
+import com.ddf.boot.common.core.entity.BaseDomain;
 
 /**
  * 自定义的基础mapper,实体必须继承BaseDomain，方便封装一些统一操作

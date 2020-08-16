@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.helper;
 
-import com.ddf.boot.common.util.SpringContextHolder;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientMessageCodeException;

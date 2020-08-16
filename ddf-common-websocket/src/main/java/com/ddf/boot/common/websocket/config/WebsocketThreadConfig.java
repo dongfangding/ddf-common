@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.config;
 
-import com.ddf.boot.common.helper.ThreadBuilderHelper;
+import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

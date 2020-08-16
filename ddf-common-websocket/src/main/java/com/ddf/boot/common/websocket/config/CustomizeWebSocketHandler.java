@@ -1,7 +1,7 @@
 package com.ddf.boot.common.websocket.config;
 
 
-import com.ddf.boot.common.util.SpringContextHolder;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.biz.HandlerMessageService;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;

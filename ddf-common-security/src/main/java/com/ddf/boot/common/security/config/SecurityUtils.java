@@ -1,8 +1,8 @@
 package com.ddf.boot.common.security.config;
 
 import com.ddf.boot.common.jwt.model.UserClaim;
-import com.ddf.boot.common.exception.GlobalCustomizeException;
-import com.ddf.boot.common.exception.GlobalExceptionEnum;
+import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception.GlobalExceptionEnum;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**

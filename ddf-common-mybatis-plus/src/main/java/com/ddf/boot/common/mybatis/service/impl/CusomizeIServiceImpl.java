@@ -2,7 +2,7 @@ package com.ddf.boot.common.mybatis.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ddf.boot.common.entity.BaseDomain;
+import com.ddf.boot.common.core.entity.BaseDomain;
 import com.ddf.boot.common.mybatis.mapper.CustomizeBaseMapper;
 import com.ddf.boot.common.mybatis.service.CustomizeIService;
 import org.springframework.dao.DuplicateKeyException;

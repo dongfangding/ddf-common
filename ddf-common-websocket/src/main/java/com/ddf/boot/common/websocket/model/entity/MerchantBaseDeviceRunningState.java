@@ -1,7 +1,7 @@
 package com.ddf.boot.common.websocket.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.ddf.boot.common.entity.BaseDomain;
+import com.ddf.boot.common.core.entity.BaseDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
