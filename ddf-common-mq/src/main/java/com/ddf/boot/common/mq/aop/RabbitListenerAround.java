@@ -2,7 +2,7 @@ package com.ddf.boot.common.mq.aop;
 
 import com.ddf.boot.common.mq.helper.MqMessageHelper;
 import com.ddf.boot.common.mq.listener.MqEventListener;
-import com.ddf.boot.common.util.AopUtil;
+import com.ddf.boot.common.core.util.AopUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

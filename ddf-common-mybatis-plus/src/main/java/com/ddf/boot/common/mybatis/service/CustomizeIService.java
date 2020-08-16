@@ -2,8 +2,8 @@ package com.ddf.boot.common.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ddf.boot.common.entity.BaseDomain;
-import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.entity.BaseDomain;
+import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 
 import java.util.Collection;
 

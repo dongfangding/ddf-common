@@ -1,13 +1,13 @@
 package com.ddf.boot.common.jwt.filter;
 
-import com.ddf.boot.common.exception.AccessDeniedException;
+import com.ddf.boot.common.core.exception.AccessDeniedException;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
 import com.ddf.boot.common.jwt.model.UserClaim;
 import com.ddf.boot.common.jwt.util.JwtUtil;
-import com.ddf.boot.common.util.JsonUtil;
-import com.ddf.boot.common.util.WebUtil;
+import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.WebUtil;
 import com.google.common.base.Preconditions;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.exception;
 
-import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 
 /**
  * socket发送数据异常

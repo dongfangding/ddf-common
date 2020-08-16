@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.exception;
 
-import com.ddf.boot.common.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 
 /**
  * 无效状态数据异常，非成功状态皆为无效数据

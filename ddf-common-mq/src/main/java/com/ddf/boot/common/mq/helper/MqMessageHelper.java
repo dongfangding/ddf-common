@@ -2,8 +2,8 @@ package com.ddf.boot.common.mq.helper;
 
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.mq.interfaces.MqAuditorAware;
-import com.ddf.boot.common.util.IdsUtil;
-import com.ddf.boot.common.util.JsonUtil;
+import com.ddf.boot.common.core.util.IdsUtil;
+import com.ddf.boot.common.core.util.JsonUtil;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

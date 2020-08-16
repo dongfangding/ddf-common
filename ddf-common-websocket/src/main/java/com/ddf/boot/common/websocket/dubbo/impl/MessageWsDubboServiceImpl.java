@@ -1,8 +1,8 @@
 package com.ddf.boot.common.websocket.dubbo.impl;
 
-import com.ddf.boot.common.util.BeanUtil;
-import com.ddf.boot.common.util.JsonUtil;
-import com.ddf.boot.common.util.WebUtil;
+import com.ddf.boot.common.core.util.BeanUtil;
+import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.dubbo.MessageWsDubboService;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;

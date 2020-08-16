@@ -3,7 +3,7 @@ package com.ddf.boot.common.websocket.listeners;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.dubbo.MessageWsDubboService;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
-import com.ddf.boot.common.util.JsonUtil;
+import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.ws.MessageRequest;
 import com.ddf.boot.common.websocket.model.ws.MessageResponse;
 import lombok.extern.slf4j.Slf4j;

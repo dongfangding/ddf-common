@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.interceptor.impl;
 
-import com.ddf.boot.common.util.SecureUtil;
+import com.ddf.boot.common.core.util.SecureUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.interceptor.HandshakeDowngrade;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;

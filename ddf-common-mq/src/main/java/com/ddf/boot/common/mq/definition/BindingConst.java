@@ -1,6 +1,6 @@
 package com.ddf.boot.common.mq.definition;
 
-import com.ddf.boot.common.mq.config.MqConfig;
+import com.ddf.boot.common.mq.config.MqAutoConfiguration;
 
 /**
  * 队列、交换器、路由键的常量类
@@ -47,37 +47,37 @@ public class BindingConst {
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者AutoAck
-     * @see MqConfig#singleAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#singleAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_SINGLE_AUTO_ACK = "singleAutoAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者AutoAck
-     * @see MqConfig#concurrentAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#concurrentAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_AUTO_ACK = "concurrentAutoAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者手动ack
-     * @see MqConfig#singleManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#singleManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_SINGLE_MANUAL_ACK = "singleManualAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者手动ack
-     * @see MqConfig#concurrentManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#concurrentManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_MANUAL_ACK = "concurrentManualAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者none ack
-     * @see MqConfig#noneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#noneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_NONE_ACK = "noneAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者none ack
-     * @see MqConfig#concurrentNoneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
+     * @see MqAutoConfiguration#concurrentNoneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_NONE_ACK = "concurrentNoneAck";
 
