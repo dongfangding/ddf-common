@@ -1,9 +1,9 @@
 package com.ddf.boot.common.core.helper;
 
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  * 创建线程
@@ -88,5 +88,34 @@ public class ThreadBuilderHelper {
         threadPoolTaskExecutor.setQueueCapacity(queueCapacity);
         threadPoolTaskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler);
         return threadPoolTaskExecutor;
+    }
+
+
+
+    /**
+     * 构建定时任务线程池
+     * @param prefix
+     * @param keepAliveSeconds
+     * @return
+     */
+    public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int keepAliveSeconds) {
+        return buildScheduledExecutorService(prefix, Runtime.getRuntime().availableProcessors(),
+                Runtime.getRuntime().availableProcessors() * 2 + 1, keepAliveSeconds);
+    }
+
+    /**
+     * 构建定时任务线程池
+     * @param prefix
+     * @param corePoolSize
+     * @param maxPoolSize
+     * @return
+     */
+    public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int corePoolSize, int maxPoolSize
+            , int keepAliveSeconds) {
+        ThreadFactory namedThreadFactory = new CustomizableThreadFactory(prefix);
+        ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(corePoolSize, namedThreadFactory);
+        scheduledExecutorService.setMaximumPoolSize(maxPoolSize);
+        scheduledExecutorService.setKeepAliveTime(keepAliveSeconds, TimeUnit.SECONDS);
+        return scheduledExecutorService;
     }
 }
