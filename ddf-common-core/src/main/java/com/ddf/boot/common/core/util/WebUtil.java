@@ -39,7 +39,7 @@ public class WebUtil {
     /**
      * 获取客户端IP
      */
-    public static final String getHost() {
+    public static String getHost() {
         HttpServletRequest request = getCurRequest();
         String ip = request.getHeader("x-forwarded-for");
         if (ip != null && ip.length() != 0 && !UNKNOWN.equalsIgnoreCase(ip)) {
