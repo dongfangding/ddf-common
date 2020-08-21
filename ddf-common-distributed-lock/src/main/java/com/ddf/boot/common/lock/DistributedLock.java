@@ -45,11 +45,14 @@ public interface DistributedLock {
     TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
 
     /**
-     * 尝试获取锁
+     * 尝试获取锁并执行业务
      * @param lockPath
+     * @param time
+     * @param timeUnit
+     * @param handleData
      * @return
      */
-    boolean tryLock(String lockPath) ;
+    Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) throws LockingReleaseException;
 
     /**
      * 加锁并执行业务

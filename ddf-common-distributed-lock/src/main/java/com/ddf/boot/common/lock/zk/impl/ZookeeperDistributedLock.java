@@ -58,20 +58,38 @@ public class ZookeeperDistributedLock implements DistributedLock {
     /**
      * 尝试获取锁
      *
-     * fixme 如果不返回当前锁对象，调用方如何释放锁呢？
      * @param lockPath
      * @return
      */
     @Override
-    public boolean tryLock(String lockPath) {
+    public Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) throws LockingReleaseException {
         String formatLockPath = formatLockPath(lockPath);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockPath);
         try {
-            return lock.acquire(DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT);
+            if (!lock.acquire(time, timeUnit)) {
+                return Boolean.FALSE;
+            }
         } catch (Exception e) {
             log.error("尝试获取锁路径[{}]时出错！", formatLockPath);
             return false;
         }
+
+        try {
+            handleData.handle();
+        } catch (Exception e) {
+            log.error("在锁[{}]执行业务时出错！",formatLockPath);
+            throw new LockingBusinessException(e);
+        } finally {
+            if (lock.isAcquiredInThisProcess()) {
+                try {
+                    lock.release();
+                } catch (Exception e) {
+                    log.error("释放锁[{}]异常", formatLockPath);
+                    throw new LockingReleaseException(e);
+                }
+            }
+        }
+        return Boolean.TRUE;
     }
 
     /**
