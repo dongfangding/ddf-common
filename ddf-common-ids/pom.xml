@@ -16,9 +16,11 @@
     </properties>
 
     <dependencies>
+
+        <!-- https://github.com/Meituan-Dianping/Leaf/blob/feature/spring-boot-starter/README_CN.md -->
         <dependency>
-            <artifactId>leaf-boot-starter</artifactId>
             <groupId>com.sankuai.inf.leaf</groupId>
+            <artifactId>leaf-boot-starter</artifactId>
             <version>${leaf.version}</version>
             <scope>compile</scope>
             <exclusions>
