@@ -19,7 +19,7 @@ public class SnowflakeServiceHelper {
     @Autowired
     private SnowflakeService snowflakeService;
 
-    private ThreadLocal<Integer> tryTimes = ThreadLocal.withInitial(() -> 0);
+    private final ThreadLocal<Integer> tryTimes = ThreadLocal.withInitial(() -> 0);
 
     private final Integer MAX_TRY_TIMES = 3;
 
@@ -37,6 +37,7 @@ public class SnowflakeServiceHelper {
             tryTimes.set(tryTimes.get() + 1);
             return getLongId();
         }
+        tryTimes.remove();
         return result.getId();
     }
 

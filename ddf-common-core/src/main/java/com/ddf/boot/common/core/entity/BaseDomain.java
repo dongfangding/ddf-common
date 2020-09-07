@@ -60,6 +60,6 @@ public class BaseDomain {
 
     @Version
     @TableField(fill = FieldFill.INSERT)
-    protected Integer version;
+    protected Integer version = 1;
 
 }
