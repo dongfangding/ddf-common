@@ -38,7 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>4.12</junit.version>
-        <leaf.spring.version>5.0.5.RELEASE</leaf.spring.version>
+        <leaf.spring.version>5.2.8.RELEASE</leaf.spring.version>
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <mybatis.version>3.3.0</mybatis.version>
         <perf4j.version>0.9.16</perf4j.version>
