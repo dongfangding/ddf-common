@@ -40,8 +40,8 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
             return;
         }
         LambdaUpdateWrapper<MerchantBaseDevice> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getDeviceNumber());
-        updateWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getToken());
+        updateWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getAccessKeyId());
+        updateWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getRandomCode());
         updateWrapper.eq(MerchantBaseDevice::getRemoved, 0);
         updateWrapper.and((sql) -> sql.le(MerchantBaseDevice::getOnlineChangeTime, webSocketSessionWrapper
                 .getStatusChangeTime()).or().isNull(MerchantBaseDevice::getOnlineChangeTime)
@@ -54,7 +54,7 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
         boolean update = update(updateWrapper);
         // 上线状态即使未更新成功，也说明同步过了，这条数据并不能保证覆盖状态，下次也没必要再覆盖
         if (webSocketSessionWrapper.getStatus().equals(WebSocketSessionWrapper.STATUS_ON_LINE)) {
-            WebsocketSessionStorage.modifySync(AuthPrincipal.buildAndroidAuthPrincipal(authPrincipal.getToken(), authPrincipal.getDeviceNumber()), true);
+            WebsocketSessionStorage.modifySync(AuthPrincipal.buildAndroidAuthPrincipal(authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode()), true);
         }
         // 下线状态必须更新成功才说明是真的下线，才能把数据移除
         if (update && webSocketSessionWrapper.getStatus().equals(WebSocketSessionWrapper.STATUS_OFF_LINE)) {
@@ -118,13 +118,13 @@ public class MerchantBaseDeviceServiceImpl extends ServiceImpl<MerchantBaseDevic
      */
     @Override
     public MerchantBaseDevice getByAuthPrincipal(AuthPrincipal authPrincipal) {
-        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getDeviceNumber(), authPrincipal.getToken())) {
+        if (authPrincipal == null || StringUtils.isAnyBlank(authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode())) {
             return null;
         }
         LambdaQueryWrapper<MerchantBaseDevice> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(MerchantBaseDevice::getRemoved, 0);
-        queryWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getDeviceNumber());
-        queryWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getToken());
+        queryWrapper.eq(MerchantBaseDevice::getNumber, authPrincipal.getAccessKeyId());
+        queryWrapper.eq(MerchantBaseDevice::getRandomCode, authPrincipal.getRandomCode());
         return getOne(queryWrapper);
     }
 }

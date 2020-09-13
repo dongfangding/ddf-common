@@ -92,7 +92,7 @@ public class CmdAction implements CmdStrategy {
             // 但是日志不需要再记录服务端响应成功的日志了，主要还是要记录关键数据
             String logResponse = Message.Type.REQUEST.equals(message.getType()) ? textMessageStr : messageStr;
             channelTransferService.updateToComplete(message, true, null, logResponse, textMessageStr);
-            log.info("响应[{}]-[{}]数据: {}", authPrincipal.getDeviceNumber(), authPrincipal.getToken(), textMessageStr);
+            log.info("响应[{}]-[{}]数据: {}", authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode(), textMessageStr);
             // 日志记录了一个请求的完整链，服务端发出的某些请求客户端会给予响应，服务端拿到响应后会去做做一些业务处理，
             // 服务端有没有收到这个数据，客户端并不知道，日志了记录了服务端收到数据之后会给予响应，但是在最后发送的时候
             // 这里做了一个判断，没有把这个响应返回给客户端。仁者见仁吧

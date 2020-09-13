@@ -39,14 +39,11 @@ import java.io.Serializable;
 public class HandshakeParam implements Serializable {
 
     /**
-     * 设备号
+     * 认证token
+     * token中包含信息，需要根据loginType进行约定
+     * 如web登录，可以使用用户的token
      */
-    private String deviceNumber;
-
-    /**
-     * 设备绑定时的随机码
-     */
-    private String randomCode;
+    private String token;
 
     /**
      * 登录类型
@@ -57,9 +54,4 @@ public class HandshakeParam implements Serializable {
      * 当前时间戳
      */
     private long currentTimeStamp;
-
-    /**
-     * 版本号
-     */
-    private String version;
 }

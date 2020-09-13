@@ -33,19 +33,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class WebsocketSessionStorage {
 
-    private static MerchantBaseDeviceService merchantBaseDeviceService = SpringContextHolder.getBean(MerchantBaseDeviceService.class);
-    private static Environment environment = SpringContextHolder.getBean(Environment.class);
-    private static CmdStrategyHelper cmdStrategyHelper = SpringContextHolder.getBean(CmdStrategyHelper.class);
+    private static final MerchantBaseDeviceService merchantBaseDeviceService = SpringContextHolder.getBean(MerchantBaseDeviceService.class);
+    private static final Environment environment = SpringContextHolder.getBean(Environment.class);
+    private static final CmdStrategyHelper cmdStrategyHelper = SpringContextHolder.getBean(CmdStrategyHelper.class);
     /**
      * 是否开启加密通道传输数据
      */
-    private static boolean messageSecret = Boolean.parseBoolean(environment.getProperty("customs.message_secret"));
+    private static final boolean messageSecret = Boolean.parseBoolean(environment.getProperty("customs.message_secret"));
 
     /**
      * 连接对象
      */
     public static final ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> WEB_SOCKET_SESSION_MAP = new ConcurrentHashMap<>();
-
 
     /**
      * 由于下发指令和实际上的数据响应时异步的，因此提供一个阻塞的实现，两个线程来操作同一个对象来实现阻塞至数据到达
@@ -349,9 +348,9 @@ public class WebsocketSessionStorage {
         try {
             AuthPrincipal authPrincipal = webSocketSessionWrapper.getAuthPrincipal();
             TextMessage textMessage = Message.wrapper(message);
-            log.info("向[{}]-[{}]发送数据：{}", authPrincipal.getDeviceNumber(), authPrincipal.getToken(), textMessage.getPayload());
+            log.info("向[{}]-[{}]发送数据：{}", authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode(), textMessage.getPayload());
             TextMessage secretMessage = Message.wrapperWithSign(message);
-            log.info("向[{}]-[{}]发送加密数据：{}", authPrincipal.getDeviceNumber(), authPrincipal.getToken(), secretMessage.getPayload());
+            log.info("向[{}]-[{}]发送加密数据：{}", authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode(), secretMessage.getPayload());
             if (messageSecret) {
                 webSocketSessionWrapper.getWebSocketSession().sendMessage(secretMessage);
             } else {

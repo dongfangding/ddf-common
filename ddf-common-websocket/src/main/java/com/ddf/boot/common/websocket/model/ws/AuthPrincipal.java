@@ -18,14 +18,17 @@ import java.util.Objects;
 public class AuthPrincipal implements Principal {
 
     /**
-     * token
+     * 访问身份，
+     * 如用户id
      */
-    private String token;
+    private String accessKeyId;
 
     /**
-     * 设备号
+     * 随机码
+     * 可能需要，也可能不需要，看实际连接的客户端
+     * 如果是敏感客户端，可以提供一个绑定操作，让客户端先到服务端申请randomCode，然后才能进行连接
      */
-    private String deviceNumber;
+    private String randomCode = "000000";
 
     /**
      * 登录类型
@@ -43,28 +46,28 @@ public class AuthPrincipal implements Principal {
      */
     private Long timeStamp;
 
-    public AuthPrincipal(String token, String deviceNumber, LoginType loginType) {
-        this.token = token;
-        this.deviceNumber = deviceNumber;
+    public AuthPrincipal(String accessKeyId, String randomCode, LoginType loginType) {
+        this.accessKeyId = accessKeyId;
+        this.randomCode = randomCode;
         this.loginType = loginType;
     }
 
-    public AuthPrincipal(String token, String deviceNumber, LoginType loginType, String version, long timeStamp) {
-        this.token = token;
-        this.deviceNumber = deviceNumber;
+    public AuthPrincipal(String accessKeyId, String randomCode, LoginType loginType, String version, long timeStamp) {
+        this.accessKeyId = accessKeyId;
+        this.randomCode = randomCode;
         this.loginType = loginType;
         this.version = version;
         this.timeStamp = timeStamp;
     }
 
     /**
-     * 构建安卓认证类型
-     * @param token
-     * @param deviceNumber
+     * 构建WEB认证类型
+     * @param accessKeyId
+     * @param randomCode
      * @return
      */
-    public static AuthPrincipal buildAndroidAuthPrincipal(String token, String deviceNumber) {
-        return new AuthPrincipal(token, deviceNumber, LoginType.ANDROID);
+    public static AuthPrincipal buildAndroidAuthPrincipal(String accessKeyId, String randomCode) {
+        return new AuthPrincipal(accessKeyId, randomCode, LoginType.ANDROID);
     }
 
     /**
@@ -84,7 +87,7 @@ public class AuthPrincipal implements Principal {
      */
     @Override
     public String getName() {
-        return token;
+        return accessKeyId;
     }
 
 
@@ -97,20 +100,20 @@ public class AuthPrincipal implements Principal {
             return false;
         }
         AuthPrincipal that = (AuthPrincipal) o;
-        return Objects.equals(token, that.token) &&
-                Objects.equals(deviceNumber, that.deviceNumber) &&
+        return Objects.equals(accessKeyId, that.accessKeyId) &&
+                Objects.equals(randomCode, that.randomCode) &&
                 loginType == that.loginType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token, deviceNumber);
+        return Objects.hash(accessKeyId, randomCode);
     }
 
     public enum LoginType {
         /** 安卓认证 */
         ANDROID,
-        /** APP id认证 */
-        APP_ID;
+        /** WEB端 认证 */
+        WEB;
     }
 }

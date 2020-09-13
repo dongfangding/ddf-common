@@ -1,15 +1,11 @@
 package com.ddf.boot.common.websocket.biz.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ddf.boot.common.websocket.biz.CmdStrategy;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.helper.CmdStrategyHelper;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
-import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
-import com.ddf.boot.common.websocket.model.payload.DataSyncPayload;
 import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
@@ -27,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -145,7 +140,7 @@ public class PingCmdStrategy implements CmdStrategy {
                 return;
             }
             // 短期内不重复发送的判断
-            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getDeviceNumber(), CmdEnum.DATA_SYNC.name(), false);
+            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getAccessKeyId(), CmdEnum.DATA_SYNC.name(), false);
             if (preLogs != null && !preLogs.isEmpty()) {
                 Date lastDate = preLogs.get(0).getCreateTime();
                 // 短期内不要多次发送
@@ -155,14 +150,6 @@ public class PingCmdStrategy implements CmdStrategy {
                     return;
                 }
             }
-
-            DataSyncPayload dataSyncPayload = new DataSyncPayload();
-
-
-            MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
-
-            Message<DataSyncPayload> message = Message.request(CmdEnum.DATA_SYNC, dataSyncPayload);
-            cmdStrategyHelper.recordAndSend(authPrincipal, dataSyncPayload, message);
         });
     }
 }

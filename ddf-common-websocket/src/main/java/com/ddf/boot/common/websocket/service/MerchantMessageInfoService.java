@@ -5,14 +5,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
 import com.ddf.boot.common.websocket.model.entity.MerchantMessageInfo;
-import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
-import com.ddf.boot.common.websocket.model.ws.Message;
-import com.ddf.boot.common.websocket.model.ws.MessageWrapper;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 云闪付收款到账消息服务类
@@ -26,20 +22,6 @@ public interface MerchantMessageInfoService extends IService<MerchantMessageInfo
      * @return
      */
     MerchantMessageInfo getByTradeNo(String tradeNo, CmdEnum cmd);
-
-
-    /**
-     * 接收短信数据保存到message_info中，对报文中的列表数据进行分开存储，除了需要解析trade_no去重，其它任何非报文数据
-     * 都不进行处理直接保存。
-     * 根据trade_no去重，只向调用方返回真正插入的数据
-     * @param message
-     * @param payload
-     * @param authPrincipal
-     * @return
-     * @author dongfang.ding
-     */
-    MessageWrapper<?, List<MerchantMessageInfo>> insertMessageInfoByBankSms(Message message
-            ,List<Map<String, Object>> payload, AuthPrincipal authPrincipal);
 
     /**
      * 处理接收到的短信，填充业务数据和状态

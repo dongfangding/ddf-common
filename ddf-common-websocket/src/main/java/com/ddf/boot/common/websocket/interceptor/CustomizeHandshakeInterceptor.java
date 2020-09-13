@@ -35,9 +35,9 @@ import java.util.Map;
 @Slf4j
 public class CustomizeHandshakeInterceptor implements HandshakeInterceptor {
 
-    private Map<String, HandshakeDowngrade> handshakeDowngradeMap = SpringContextHolder.getApplicationContext().getBeansOfType(HandshakeDowngrade.class);
+    private final Map<String, HandshakeDowngrade> handshakeDowngradeMap = SpringContextHolder.getApplicationContext().getBeansOfType(HandshakeDowngrade.class);
 
-    private MerchantBaseDeviceService merchantBaseDeviceService = SpringContextHolder.getBean(MerchantBaseDeviceService.class);
+    private final MerchantBaseDeviceService merchantBaseDeviceService = SpringContextHolder.getBean(MerchantBaseDeviceService.class);
 
     private static final String REAL_IP_HEADER = "X-Real-IP";
 
@@ -69,13 +69,6 @@ public class CustomizeHandshakeInterceptor implements HandshakeInterceptor {
                 header = SecureUtil.privateDecryptFromBcd(header);
                 HandshakeParam handshakeParam = JsonUtil.toBean(header, HandshakeParam.class);
                 validArgument(handshakeParam);
-
-                if (AuthPrincipal.LoginType.ANDROID.equals(handshakeParam.getLoginType())) {
-                    if (merchantBaseDeviceService.isValid(handshakeParam.getDeviceNumber(), handshakeParam.getRandomCode())) {
-                        authPrincipal = AuthPrincipal.buildAndroidAuthPrincipal(handshakeParam.getRandomCode(),
-                                handshakeParam.getDeviceNumber(), handshakeParam.getVersion(), handshakeParam.getCurrentTimeStamp());
-                    }
-                }
             } catch (Exception e) {
                 log.error("认证参数反序列化失败！参数为: " + ExceptionUtils.getStackTrace(e), header);
             }
@@ -143,8 +136,8 @@ public class CustomizeHandshakeInterceptor implements HandshakeInterceptor {
 
 
     private static boolean validArgument(HandshakeParam handshakeParam) {
-        if (StringUtils.isAnyBlank(handshakeParam.getDeviceNumber(), handshakeParam.getRandomCode())) {
-            log.error("设备号和随机码都不能为空！, {}, {}", handshakeParam.getDeviceNumber(), handshakeParam.getRandomCode());
+        if (StringUtils.isAnyBlank(handshakeParam.getToken())) {
+            log.error("身份token不能为空！, {}", handshakeParam.getToken());
             return false;
         }
 

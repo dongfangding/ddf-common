@@ -25,7 +25,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 public class CustomizeWebSocketHandler extends AbstractWebSocketHandler {
 
 
-    private HandlerMessageService handlerMessageService = SpringContextHolder.getBean(HandlerMessageService.class);
+    private final HandlerMessageService handlerMessageService = SpringContextHolder.getBean(HandlerMessageService.class);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -44,12 +44,12 @@ public class CustomizeWebSocketHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
         log.info("-----------------handleTextMessage------------------");
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
-        if (principal == null || StringUtils.isAnyBlank(principal.getDeviceNumber(), principal.getToken())) {
+        if (principal == null || StringUtils.isAnyBlank(principal.getAccessKeyId(), principal.getRandomCode())) {
             session.sendMessage(Message.wrapper(Message.responseNotLogin(textMessage)));
             session.close();
             return;
         }
-        log.info("[{}-{}]收到消息: {}]", principal.getDeviceNumber(), principal.getToken(), textMessage.getPayload());
+        log.info("[{}-{}]收到消息: {}]", principal.getAccessKeyId(), principal.getRandomCode(), textMessage.getPayload());
         handlerMessageService.handlerMessage(principal, WebsocketSessionStorage.get(principal), textMessage);
     }
 

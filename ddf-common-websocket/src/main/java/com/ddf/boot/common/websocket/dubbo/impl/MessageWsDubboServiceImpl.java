@@ -5,11 +5,9 @@ import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.dubbo.MessageWsDubboService;
-import com.ddf.boot.common.websocket.enumerate.CmdEnum;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
-import com.ddf.boot.common.websocket.model.payload.QrCreatePayload;
 import com.ddf.boot.common.websocket.model.ws.*;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
@@ -170,10 +168,6 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
      */
     private MessageResponse<?> tryLoadByLocalCache(MessageRequest request, AuthPrincipal authPrincipal) {
         try {
-            if (CmdEnum.QRCODE_CREATE.equals(request.getCmd())) {
-                MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
-                QrCreatePayload qrCreatePayload = JsonUtil.toBean(JsonUtil.asString(request.getPayload()), QrCreatePayload.class);
-            }
         } catch (Exception e) {
             log.error("处理指令[{}]发送前检查失败！", request);
         }
@@ -207,7 +201,7 @@ public class MessageWsDubboServiceImpl implements MessageWsDubboService {
     private boolean canSend(MessageRequest request, AuthPrincipal authPrincipal) {
         if (request.isCheckLastTime()) {
             // 如果需要检查上次发送时间，则必须在指定的间隔时间之后
-            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getDeviceNumber(), request.getCmd().name(), true);
+            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getAccessKeyId(), request.getCmd().name(), true);
             if (preLogs != null && !preLogs.isEmpty()) {
                 // 小于等于0，代表不限制；如果限制了的话，今日次数如果已大于参数，则不可以发送指令
                 if (request.getDailyMaxTimes() > 0 && preLogs.size() > request.getDailyMaxTimes()) {

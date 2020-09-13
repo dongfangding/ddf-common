@@ -6,14 +6,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.StringUtil;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
-import com.ddf.boot.common.websocket.exception.MessageFormatInvalid;
-import com.ddf.boot.common.websocket.helper.CmdStrategyHelper;
 import com.ddf.boot.common.websocket.mapper.MerchantMessageInfoMapper;
 import com.ddf.boot.common.websocket.model.entity.MerchantBaseDevice;
 import com.ddf.boot.common.websocket.model.entity.MerchantMessageInfo;
-import com.ddf.boot.common.websocket.model.ws.*;
+import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.ws.Message;
 import com.ddf.boot.common.websocket.service.MerchantMessageInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,78 +52,6 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
         queryWrapper.eq(MerchantMessageInfo::getCmd, cmd);
         return getOne(queryWrapper);
     }
-
-    /**
-     * 接收短信数据保存到message_info中，对报文中的列表数据进行分开存储。除了需要解析trade_no去重，其它任何非报文数据
-     * 都不进行处理直接保存。
-     * 根据trade_no去重，只向调用方返回真正插入的数据
-     *
-     * @param message
-     * @param payload
-     * @param authPrincipal
-     * @return
-     * @author dongfang.ding
-     * @date 2019/9/20 10:55
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public MessageWrapper<List<Map<String, Object>>, List<MerchantMessageInfo>> insertMessageInfoByBankSms(Message message
-            , List<Map<String, Object>> payload, AuthPrincipal authPrincipal) {
-        if (message == null || payload == null || authPrincipal == null) {
-            return null;
-        }
-        List<MerchantMessageInfo> infoList = new ArrayList<>();
-        List<String> tradeNoList = new ArrayList<>(payload.size());
-        SmsContent smsContent;
-        String primaryKey = "";
-        List<Map<String, Object>> returnClientMap = new ArrayList<>(payload.size());
-        for (Map<String, Object> sms : payload) {
-            MerchantMessageInfo merchantMessageInfo = initMessageInfo(message, authPrincipal, sms);
-            try {
-                if (sms == null) {
-                    log.error("传输数据不能为空!! requestId: [{}]", message.getRequestId());
-                    continue;
-                }
-                // 必须有短信id才能保证后面的数据能够对应上，没有短信id的数据不落此表，从报文日志中查
-                primaryKey = sms.get("primaryKey") + "";
-                if (StringUtils.isBlank(primaryKey)) {
-                    log.error("报文中短信id不能为空!! requestId: [{}]", message.getRequestId());
-                    continue;
-                }
-                tradeNoList.add(primaryKey);
-                merchantMessageInfo.setTradeNo(primaryKey);
-                infoList.add(merchantMessageInfo);
-                try {
-                    smsContent = JsonUtil.toBean(JsonUtil.asString(sms), SmsContent.class);
-                } catch (Exception e) {
-                    throw new MessageFormatInvalid("报文格式有误！" + ExceptionUtils.getStackTrace(e));
-                }
-                if (StringUtils.isBlank(smsContent.getPrimaryKey())) {
-                    throw new MessageFormatInvalid("短信唯一标识符不能为空!");
-                }
-                if (smsContent.getReceiveTime() == null) {
-                    throw new MessageFormatInvalid("收件时间格式有误！");
-                }
-                if (StringUtils.isAnyBlank(smsContent.getCredit(), smsContent.getPrimaryKey(),
-                        smsContent.getContent(), smsContent.getReceiveTime() + "")) {
-                    throw new MessageFormatInvalid("短信发送方标识，短信id, 短信内容, 收件时间不能为空!");
-                }
-                merchantMessageInfo.setDescription(smsContent.getContent());
-                returnClientMap.add(CmdStrategyHelper.buildSmsSuccessMap(primaryKey));
-            } catch (MessageFormatInvalid messageFormatInvalid) {
-                log.error("解析报文出错！", messageFormatInvalid);
-                merchantMessageInfo.setStatus(MerchantMessageInfo.STATUS_DATA_INVALID);
-                merchantMessageInfo.setErrorMessage(messageFormatInvalid.getMessage());
-                merchantMessageInfo.setErrorStack(StringUtil.exceptionToString(messageFormatInvalid));
-                returnClientMap.add(CmdStrategyHelper.buildSmsErrorMap(primaryKey, messageFormatInvalid.getMessage()));
-            }
-        }
-        merchantMessageInfoMapper.batchIgnoreSave(infoList);
-        List<MerchantMessageInfo> validBusinessData = getValidBusinessData(infoList, tradeNoList);
-        return MessageWrapper.withBusiness(Message.buildResponseMessage(message, returnClientMap,
-                MessageResponse.SERVER_CODE_RECEIVED), validBusinessData);
-    }
-
 
     /**
      * 处理接收到的短信，填充业务数据和状态
@@ -279,7 +205,7 @@ public class MerchantMessageInfoServiceImpl extends ServiceImpl<MerchantMessageI
     private MerchantMessageInfo initMessageInfo(Message message, AuthPrincipal authPrincipal, Map<String, Object> payload) {
         MerchantMessageInfo merchantMessageInfo = new MerchantMessageInfo();
         merchantMessageInfo.setRequestId(message.getRequestId());
-        merchantMessageInfo.setDeviceNumber(authPrincipal.getDeviceNumber());
+        merchantMessageInfo.setDeviceNumber(authPrincipal.getAccessKeyId());
         merchantMessageInfo.setCmd(message.getCmd().name());
         merchantMessageInfo.setSourceType(MerchantMessageInfo.SOURCE_TYPE_UNKNOWN);
         merchantMessageInfo.setSingleMessagePayload(JsonUtil.asString(payload));

@@ -75,8 +75,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         channelTransfer.setRequest(request);
         channelTransfer.setFullRequestResponse(toJsonArr(request));
         channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
-        channelTransfer.setDeviceNumber(authPrincipal.getDeviceNumber());
-        channelTransfer.setToken(authPrincipal.getToken());
+        channelTransfer.setDeviceNumber(authPrincipal.getAccessKeyId());
+        channelTransfer.setToken(authPrincipal.getRandomCode());
         channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
         if (messageRequest != null) {
             channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
@@ -149,8 +149,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfer.setRequest(response);
             channelTransfer.setFullRequestResponse(toJsonArr(response));
             channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
-            channelTransfer.setDeviceNumber(authPrincipal.getDeviceNumber());
-            channelTransfer.setToken(authPrincipal.getToken());
+            channelTransfer.setDeviceNumber(authPrincipal.getAccessKeyId());
+            channelTransfer.setToken(authPrincipal.getRandomCode());
             channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
             if (message == null) {
                 channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);

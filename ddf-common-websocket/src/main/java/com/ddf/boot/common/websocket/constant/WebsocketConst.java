@@ -11,7 +11,7 @@ import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorato
 public class WebsocketConst {
 
     /** ws的默认处理器入门映射地址 */
-    public static final String DEFAULT_ENDPOINT = "/pay-ws";
+    public static final String DEFAULT_ENDPOINT = "/ddf-ws";
 
     /** 认证的token参数名称，放在header中 */
     public static final String TOKEN_PARAMETER = "token";

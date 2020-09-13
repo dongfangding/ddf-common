@@ -1,8 +1,6 @@
 package com.ddf.boot.common.websocket.model.ws;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 import com.ddf.boot.common.websocket.enumerate.CmdEnum;
-import com.ddf.boot.common.websocket.model.payload.ChildCmdPayload;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -119,29 +117,6 @@ public class MessageRequest<T> implements Serializable {
         BATCH,
         /** 全部 */
         ALL
-    }
-
-
-    /**
-     * 提供一个方法方便调用方处理处理子命令码
-     *
-     * @param childEnum
-     * @return
-
-     * @date 2019/9/24 18:57
-     */
-    public static void userSimple(MessageRequest<ChildCmdPayload> messageRequest
-            , CmdEnum.ChildEnum childEnum) {
-        if (!CmdEnum.SIMPLE.equals(messageRequest.getCmd())) {
-            throw new GlobalCustomizeException("非SIMPLE指令码，不允许使用子命令码功能!");
-        }
-        messageRequest.setCmd(CmdEnum.SIMPLE);
-        if (childEnum == null) {
-            throw new GlobalCustomizeException("子命令码不能为空!");
-        }
-        ChildCmdPayload childCmdPayload = new ChildCmdPayload();
-        childCmdPayload.setChildCmd(childEnum);
-        messageRequest.setPayload(childCmdPayload);
     }
 
     /**
