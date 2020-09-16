@@ -6,35 +6,32 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for log_channel_transfer
 -- ----------------------------
 DROP TABLE IF EXISTS `log_channel_transfer`;
-CREATE TABLE `log_channel_transfer`  (
-`id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-`logic_primary_key` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '针对某些指令根据业务主键发送，需要记录业务主键，服务端根据这个字段来判断客户端是否发起过该业务主键的某个指令。如果没有发送成功，服务端需要重试',
-`operator_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '下发指令的操作人',
-`request_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '请求id，用来响应和判断客户端是否重复请求;如果消息解析失败那个这个值为空，照样保存，以便排错',
-`device_number` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '安卓设备号',
-`cmd` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指令码',
-`client_channel` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指令想要在哪个应用上执行\r\n1. UPAY 云闪付\r\n2. ALIPAY 支付宝\r\n3. WECHAT_PAY 微信\r\n4. ICBC_APP 工行app\r\n5. CCB_APP 建行app',
-`token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '安卓绑定的随机码',
-`server_address` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '服务端地址',
-`client_address` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '客户端地址',
-`business_data` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务端用来存储发送时携带的业务主键，方便数据回传时，不依赖于客户端将业务数据回传',
-`send_flag` tinyint(255) NOT NULL DEFAULT 0 COMMENT '主动发送方标识 0 服务端  1 客户端',
-`request` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '传输内容',
-`response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '响应内容',
-`status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0 已发送 1 已接收 2 已响应 3 已处理 4 处理失败',
-`error_message` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '失败消息',
-`full_request_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '交互的完整报文，使用json数组包裹原始报文',
-`is_enable` tinyint(2) NOT NULL DEFAULT 1 COMMENT '0-禁用 1-启用',
-create_by VARCHAR(32) NULL,
-create_time TIMESTAMP NULL,
-modify_by VARCHAR(32) NULL,
-modify_time TIMESTAMP NULL,
-removed INT NOT NULL DEFAULT 0,
-version INT NOT NULL DEFAULT 1,
-PRIMARY KEY (`id`) USING BTREE,
-UNIQUE INDEX `request_id`(`request_id`) USING BTREE
+CREATE TABLE `boot-quick`.`log_channel_transfer`  (
+  `id` bigint(0) NOT NULL AUTO_INCREMENT,
+  `logic_primary_key` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '针对某些指令根据业务主键发送，需要记录业务主键，服务端根据这个字段来判断客户端是否发起过该业务主键的某个指令。如果没有发送成功，服务端需要重试',
+  `operator_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'SYSTEM' COMMENT '下发指令的操作人',
+  `request_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '请求id，用来响应和判断客户端是否重复请求;如果消息解析失败那个这个值为空，照样保存，以便排错',
+  `login_type` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '登录类型',
+  `access_key_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端连接身份唯一标识符',
+  `access_key_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '客户端连接身份',
+  `auth_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端授权码',
+  `cmd` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指令码',
+  `client_channel` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指令想要在哪个应用上执行',
+  `server_address` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '服务端地址',
+  `client_address` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '客户端地址',
+  `business_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '服务端用来存储发送时携带的业务主键，方便数据回传时，不依赖于客户端将业务数据回传',
+  `send_flag` tinyint(0) NOT NULL DEFAULT 0 COMMENT '主动发送方标识 0 服务端  1 客户端',
+  `request` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '传输内容',
+  `response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '响应内容',
+  `status` tinyint(0) NOT NULL DEFAULT 0 COMMENT '0 已发送 1 已接收 2 已响应 3 已处理 4 处理失败',
+  `error_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '失败消息',
+  `full_request_response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '交互的完整报文，使用json数组包裹原始报文',
+  `create_date` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_date` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `request_id`(`request_id`) USING BTREE,
+  INDEX `idx_access`(`login_type`, `access_key_id`, `auth_code`) USING BTREE COMMENT '用来确定客户端唯一身份'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '通道传输报文日志记录' ROW_FORMAT = Dynamic;
-
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
