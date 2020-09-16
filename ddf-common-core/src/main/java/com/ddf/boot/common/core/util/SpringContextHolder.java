@@ -49,18 +49,18 @@ public class SpringContextHolder implements ApplicationContextAware {
 	}
 
 	public static <T> T getBean(Class<T> requiredType) throws BeansException {
-		return applicationContext.getBean(requiredType);
+		return applicationContext == null ? null : applicationContext.getBean(requiredType);
 	}
 
 	public static Object getBean(String name) throws BeansException {
-		return applicationContext.getBean(name);
+		return applicationContext == null ? null : applicationContext.getBean(name);
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-		return applicationContext.getBean(name, requiredType);
+		return applicationContext == null ? null : applicationContext.getBean(name, requiredType);
 	}
 
 	public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {
-		return applicationContext.getBeansOfType(type);
+		return applicationContext == null ? null : applicationContext.getBeansOfType(type);
 	}
 }
