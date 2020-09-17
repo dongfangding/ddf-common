@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
@@ -252,17 +252,17 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
     @Override
     public String getPayloadByRequestId(String requestId) {
         if (StringUtils.isBlank(requestId)) {
-            throw new GlobalCustomizeException("requestId不存在，无法处理业务!");
+            throw new BusinessException("requestId不存在，无法处理业务!");
         }
 
         LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
         ChannelTransfer record = getOne(queryWrapper);
         if (record == null) {
-            throw new GlobalCustomizeException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
+            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
         }
         if (StringUtils.isBlank(record.getBusinessData())) {
-            throw new GlobalCustomizeException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
+            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
         }
         return record.getBusinessData();
     }

@@ -10,11 +10,14 @@ package com.ddf.boot.common.core.exception200;
 public class BusinessException extends BaseException {
 
     /**
-     * 仅提供预定义的消息状态码构造函数，是希望不要使用默认的状态码，要给每个异常都定义状态码
      * @param baseCallbackCode
      */
     public BusinessException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
+    }
+
+    public BusinessException(String description) {
+        super(description);
     }
 
 

@@ -19,6 +19,11 @@ public abstract class BaseException extends RuntimeException implements BaseCall
      */
     private String description;
 
+    /**
+     * 如果使用国际化的话，由于消息会提前定义在资源文件中， 某些消息需要提供占位符希望运行时填充数据，这里可以传入占位符对应的参数
+     */
+    private Object[] params;
+
     public BaseException() {
 
     }
@@ -44,6 +49,11 @@ public abstract class BaseException extends RuntimeException implements BaseCall
         initCallback(code, description);
     }
 
+    public BaseException(String code, String description, Object... params) {
+        super(description);
+        initCallback(code, description, params);
+    }
+
 
     private void initCallback(BaseCallbackCode baseCallbackCode) {
         initCallback(baseCallbackCode.getCode(), baseCallbackCode.getDescription());
@@ -55,9 +65,10 @@ public abstract class BaseException extends RuntimeException implements BaseCall
      * @param code
      * @param description
      */
-    private void initCallback(String code, String description) {
+    private void initCallback(String code, String description, Object... params) {
         this.code = code;
         this.description = description;
+        this.params = params;
     }
 
 
@@ -87,4 +98,7 @@ public abstract class BaseException extends RuntimeException implements BaseCall
         return description;
     }
 
+    public Object[] getParams() {
+        return params;
+    }
 }

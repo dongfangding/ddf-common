@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.exception;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception200.ServerErrorException;
 
 /**
  * 客户端重复请求异常
@@ -8,7 +8,7 @@ import com.ddf.boot.common.core.exception.GlobalCustomizeException;
  * @author dongfang.ding
  * @date 2019/9/20 16:11
  */
-public class ClientRepeatRequestException extends GlobalCustomizeException {
+public class ClientRepeatRequestException extends ServerErrorException {
 
     public ClientRepeatRequestException(String message) {
         super(message);

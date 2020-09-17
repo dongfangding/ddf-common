@@ -7,12 +7,15 @@ import com.ddf.boot.common.core.response.ResponseData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <p>description</p >
@@ -23,30 +26,16 @@ import java.util.List;
  */
 @RestControllerAdvice(basePackages = "com")
 @Slf4j
-@ConditionalOnProperty(prefix = "customs", name = "global-properties.exception200", havingValue = "true")
 public class ExceptionHandlerAdvice {
 
+    @Autowired
     private GlobalProperties globalProperties;
-
-    private ExceptionHandlerMapping exceptionHandlerMapping;
-
-    private EnvironmentHelper environmentHelper;
-
-    @Autowired
-    public void setGlobalProperties(GlobalProperties globalProperties) {
-        this.globalProperties = globalProperties;
-    }
-
     @Autowired(required = false)
-    public void setExceptionHandlerMapping(ExceptionHandlerMapping exceptionHandlerMapping) {
-        this.exceptionHandlerMapping = exceptionHandlerMapping;
-    }
-
+    private ExceptionHandlerMapping exceptionHandlerMapping;
     @Autowired
-    public void setEnvironmentHelper(EnvironmentHelper environmentHelper) {
-        this.environmentHelper = environmentHelper;
-    }
-
+    private EnvironmentHelper environmentHelper;
+    @Autowired(required = false)
+    private MessageSource messageSource;
 
     /**
      * 处理异常类，某些异常类需要特殊处理，在具体根据当前异常去判断是否是期望的异常类型,
@@ -56,7 +45,8 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ResponseData<?> handlerException(Exception exception) {
+    public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        log.error("异常信息: ", exception);
         if (exceptionHandlerMapping != null) {
             ResponseData<?> responseData = exceptionHandlerMapping.handlerException(exception);
             if (responseData != null) {
@@ -71,16 +61,33 @@ public class ExceptionHandlerAdvice {
             ignoreErrorStack = true;
         }
 
+        String exceptionCode;
+        String message;
         if (exception instanceof BaseException) {
             BaseException baseException = (BaseException) exception;
-            return ResponseData.failure(baseException.getCode(), baseException.getMessage(),
-                    ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));
+            exceptionCode = baseException.getCode();
+            // 解析异常类消息代码，并根据当前Local格式化资源文件
+            Locale locale = httpServletRequest.getLocale();
+            // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
+            message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
+                    exception.getMessage(), locale);
+            response.setStatus(Integer.parseInt(baseException.getCode()));
         } else if (exception instanceof IllegalArgumentException) {
-            return ResponseData.failure(BaseErrorCallbackCode.BAD_REQUEST.getCode(), exception.getMessage(),
-                    ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));
+            exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
+            message = exception.getMessage();
+        } else {
+            exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
+            message = exception.getMessage();
         }
-        return ResponseData.failure(BaseErrorCallbackCode.SERVER_ERROR.getCode(), exception.getMessage(),
-                ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));
+
+        if (globalProperties.isExceptionCodeToResponseStatus()) {
+            String numberRegex = "\\d+";
+            // 可能会出现超过int最大值的问题，暂时不管
+            if (exceptionCode.matches(numberRegex)) {
+                response.setStatus(Integer.parseInt(exceptionCode));
+            }
+        }
+        return ResponseData.failure(exceptionCode, message, ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));
     }
 
 }

@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception200.ServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
@@ -57,7 +57,7 @@ public class HttpUtil {
             return null;
         } catch (ParseException | IOException e) {
             log.error("{}接口发送失败！", url, e);
-            throw new GlobalCustomizeException("处理失败！");
+            throw new ServerErrorException("处理失败！");
         } finally {
             try {
                 if (httpClient != null) {

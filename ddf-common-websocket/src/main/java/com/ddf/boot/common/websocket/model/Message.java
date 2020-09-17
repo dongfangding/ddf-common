@@ -1,6 +1,5 @@
 package com.ddf.boot.common.websocket.model;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.ddf.boot.common.core.util.StringUtil;
@@ -330,13 +329,9 @@ public class Message<T> {
      * @param textMessage
      * @return
      */
-    public static Message toMessage(TextMessage textMessage) {
+    public static Message<?> toMessage(TextMessage textMessage) {
         String payload = textMessage.getPayload();
-        Message message = JsonUtil.toBean(payload, Message.class);
-        if (message.getClientChannel() == null) {
-            throw new GlobalCustomizeException("请必须传入客户端应用类型");
-        }
-        return message;
+        return JsonUtil.toBean(payload, Message.class);
     }
 
 

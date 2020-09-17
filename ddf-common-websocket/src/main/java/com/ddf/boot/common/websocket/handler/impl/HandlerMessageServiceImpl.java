@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.handler.impl;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception200.BadRequestException;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.ddf.boot.common.websocket.handler.HandlerMessageService;
@@ -76,7 +76,7 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
                 if (messageSecret) {
                     message = Message.unSign(textMessage.getPayload());
                     if (message == null) {
-                        throw new GlobalCustomizeException("验签不通过!");
+                        throw new BadRequestException("验签不通过!");
                     }
                 } else {
                     message = Message.toMessage(textMessage);

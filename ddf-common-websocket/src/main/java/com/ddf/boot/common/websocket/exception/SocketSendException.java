@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.exception;
 
-import com.ddf.boot.common.core.exception.GlobalCustomizeException;
+import com.ddf.boot.common.core.exception200.ServerErrorException;
 
 /**
  * socket发送数据异常
@@ -8,7 +8,7 @@ import com.ddf.boot.common.core.exception.GlobalCustomizeException;
  * @author dongfang.ding
  * @date 2019/9/21 12:00
  */
-public class SocketSendException extends GlobalCustomizeException {
+public class SocketSendException extends ServerErrorException {
 
     public SocketSendException(String message) {
         super(message);
