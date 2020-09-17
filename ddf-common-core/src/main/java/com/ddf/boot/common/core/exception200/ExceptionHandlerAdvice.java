@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -85,6 +86,8 @@ public class ExceptionHandlerAdvice {
             // 可能会出现超过int最大值的问题，暂时不管
             if (exceptionCode.matches(numberRegex)) {
                 response.setStatus(Integer.parseInt(exceptionCode));
+            } else {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
         }
         return ResponseData.failure(exceptionCode, message, ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));

@@ -27,8 +27,4 @@ public class WebsocketConst {
     /** cmd命令转发后机器处理完成后返回的数据 */
     public static final String RETURN_MESSAGE_TOPIC = "return_message";
 
-    /**
-     * 客户端端点信息缓存到redis中的key
-     */
-    public static final String AUTH_PRINCIPAL_MONITOR = "auth_principal_monitor";
 }

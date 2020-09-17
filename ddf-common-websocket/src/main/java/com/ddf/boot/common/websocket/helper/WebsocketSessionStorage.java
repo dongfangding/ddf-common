@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 维护建立到服务端的websocket连接
  * <p>
  *
-
+ * @author dongfang.ding
  * @date 2019/8/20 18:38
  */
 @Slf4j
@@ -82,7 +82,7 @@ public class WebsocketSessionStorage {
      */
     public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession){
         synchronized (ENVIRONMENT){
-            WebSocketSessionWrapper webSocketSessionWrapper = new WebSocketSessionWrapper(
+            WebSocketSessionWrapper wrapper = new WebSocketSessionWrapper(
                     authPrincipal,
                     new ConcurrentWebSocketSessionDecorator(
                         webSocketSession, WEB_SOCKET_PROPERTIES.getSendTimeLimit(), WEB_SOCKET_PROPERTIES.getBufferSizeLimit()
@@ -90,12 +90,13 @@ public class WebsocketSessionStorage {
                     WebSocketSessionWrapper.STATUS_ON_LINE, false, System.currentTimeMillis(),
         webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + ":" +
                             ENVIRONMENT.getProperty("server.port"), webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
-            WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
+            WEB_SOCKET_SESSION_MAP.put(authPrincipal, wrapper);
             // todo 同步狀態
-
-            REDIS_TEMPLATE.opsForHash().put(WebsocketConst.AUTH_PRINCIPAL_MONITOR,
+            // 同步节点
+            String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), wrapper.getServerAddress());
+            REDIS_TEMPLATE.opsForHash().put(key,
                     MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), authPrincipal.getLoginType(),
-                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
+                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
 
         }
     }
@@ -166,9 +167,10 @@ public class WebsocketSessionStorage {
             webSocketSessionWrapper.setSync(false);
             WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
 
-            REDIS_TEMPLATE.opsForHash().put(WebsocketConst.AUTH_PRINCIPAL_MONITOR,
-                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), authPrincipal.getLoginType(),
-                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
+            // 删除节点
+            String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), webSocketSessionWrapper.getServerAddress());
+            REDIS_TEMPLATE.opsForHash().delete(key, MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), authPrincipal.getLoginType(),
+                    authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
             return true;
         }
         return false;
