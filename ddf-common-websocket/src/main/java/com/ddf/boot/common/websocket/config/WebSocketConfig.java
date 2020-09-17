@@ -1,17 +1,28 @@
 package com.ddf.boot.common.websocket.config;
 
 
-import com.ddf.boot.common.websocket.constant.WebsocketConst;
-import com.ddf.boot.common.websocket.interceptor.CustomizeHandshakeInterceptor;
+import cn.hutool.core.collection.CollUtil;
+import com.ddf.boot.common.websocket.handler.CustomizeHandshakeHandler;
+import com.ddf.boot.common.websocket.handler.DefaultWebSocketHandler;
+import com.ddf.boot.common.websocket.handler.HandlerMessageService;
+import com.ddf.boot.common.websocket.interceptor.DefaultHandshakeInterceptor;
+import com.ddf.boot.common.websocket.interceptor.HandshakeAuth;
+import com.ddf.boot.common.websocket.listeners.WebSocketHandlerListener;
+import com.ddf.boot.common.websocket.properties.WebSocketProperties;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+
+import java.util.List;
 
 
 /**
@@ -26,9 +37,18 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
  */
 @Configuration
 @EnableWebSocket
-@MapperScan(basePackages = {"com.ddf.boot.common.websocket.mapper"})
+@MapperScan(basePackages = "com.ddf.boot.common.websocket.mapper")
 @ComponentScan(basePackages = "com.ddf.boot.common.websocket")
 public class WebSocketConfig implements WebSocketConfigurer {
+
+    @Autowired
+    private WebSocketProperties webSocketProperties;
+    @Autowired(required = false)
+    private List<HandshakeAuth> handshakeAuthList;
+    @Autowired(required = false)
+    private HandlerMessageService handlerMessageService;
+    @Autowired(required = false)
+    private WebSocketHandlerListener webSocketHandlerListener;
 
 
     /**
@@ -42,10 +62,15 @@ public class WebSocketConfig implements WebSocketConfigurer {
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new CustomizeWebSocketHandler(), WebsocketConst.DEFAULT_ENDPOINT)
+        WebSocketHandlerRegistration registration = registry.addHandler(
+                new DefaultWebSocketHandler(handlerMessageService, webSocketHandlerListener), webSocketProperties.getEndPoint())
                 .setHandshakeHandler(new CustomizeHandshakeHandler())
-                .addInterceptors(new CustomizeHandshakeInterceptor())
                 .setAllowedOrigins("*");
+        if (CollUtil.isNotEmpty(webSocketProperties.getHandshakeInterceptors())) {
+            registration.addInterceptors(webSocketProperties.getHandshakeInterceptors().toArray(new HandshakeInterceptor[0]));
+        } else {
+            registration.addInterceptors(new DefaultHandshakeInterceptor(webSocketProperties, handshakeAuthList));
+        }
     }
 
     /**
@@ -58,10 +83,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
         // 设置消息缓冲区大小(经测试可以控制消息通讯时的传输数据大小，如果超过大小，会关闭链接)
         // CloseStatus: CloseStatus[code=1009, reason=The decoded text message was too big for the output buffer and the endpoint does not support partial messages]
-        container.setMaxTextMessageBufferSize(8192 * 2);
-        container.setMaxBinaryMessageBufferSize(8192 * 2);
+        container.setMaxTextMessageBufferSize(webSocketProperties.getMaxTextMessageBufferSize());
+        container.setMaxBinaryMessageBufferSize(webSocketProperties.getMaxBinaryMessageBufferSize());
         // 如果是session的最大空闲时间，那么后面开发心跳包的时候这里就要让心跳包小于这个时间
-        container.setMaxSessionIdleTimeout(60000L);
+        container.setMaxSessionIdleTimeout(webSocketProperties.getMaxSessionIdleTimeout());
         return container;
     }
 

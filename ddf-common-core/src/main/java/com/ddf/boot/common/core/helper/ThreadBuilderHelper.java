@@ -65,6 +65,21 @@ public class ThreadBuilderHelper {
         return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, corePoolSize, maxPoolSize, new ThreadPoolExecutor.AbortPolicy());
     }
 
+
+    /**
+     * 构建线程池参数
+     *
+     * @param prefix           线程池名称前缀
+     * @param keepAliveSeconds 保持空闲时间
+     * @param queueCapacity    队列大小
+     * @return
+     */
+    public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int keepAliveSeconds, int queueCapacity
+            , RejectedExecutionHandler rejectedExecutionHandler) {
+        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors(),
+                Runtime.getRuntime().availableProcessors() * 2 + 1, rejectedExecutionHandler);
+    }
+
     /**
      * 构建线程池参数
      *

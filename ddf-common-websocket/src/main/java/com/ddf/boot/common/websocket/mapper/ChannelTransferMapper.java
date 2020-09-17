@@ -2,7 +2,7 @@ package com.ddf.boot.common.websocket.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
+import com.ddf.boot.common.websocket.model.ChannelTransfer;
 
 /**
  * 通道传输mapper

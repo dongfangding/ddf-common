@@ -13,6 +13,7 @@ public class SocketSendException extends GlobalCustomizeException {
     public SocketSendException(String message) {
         super(message);
     }
+
     public SocketSendException(Exception e) {
         super(e.getMessage());
     }

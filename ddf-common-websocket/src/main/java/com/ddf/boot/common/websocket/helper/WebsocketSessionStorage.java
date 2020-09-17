@@ -1,25 +1,32 @@
 package com.ddf.boot.common.websocket.helper;
 
+import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
-import com.ddf.boot.common.websocket.enumerate.CmdEnum;
+import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;
+import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientMessageCodeException;
 import com.ddf.boot.common.websocket.exception.SocketSendException;
-import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
-import com.ddf.boot.common.websocket.model.ws.Message;
-import com.ddf.boot.common.websocket.model.ws.MessageResponse;
-import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
-import com.ddf.boot.common.websocket.service.MerchantBaseDeviceService;
+import com.ddf.boot.common.websocket.interceptor.EncryptProcessor;
+import com.ddf.boot.common.websocket.model.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.Message;
+import com.ddf.boot.common.websocket.model.MessageResponse;
+import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.properties.WebSocketProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,23 +40,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class WebsocketSessionStorage {
 
-    private static final MerchantBaseDeviceService merchantBaseDeviceService = SpringContextHolder.getBean(MerchantBaseDeviceService.class);
-    private static final Environment environment = SpringContextHolder.getBean(Environment.class);
-    private static final CmdStrategyHelper cmdStrategyHelper = SpringContextHolder.getBean(CmdStrategyHelper.class);
-    /**
-     * 是否开启加密通道传输数据
-     */
-    private static final boolean messageSecret = Boolean.parseBoolean(environment.getProperty("customs.message_secret"));
+    private static final Environment ENVIRONMENT = SpringContextHolder.getBean(Environment.class);
+
+    private static final CmdStrategyHelper CMD_STRATEGY_HELPER = SpringContextHolder.getBean(CmdStrategyHelper.class);
+
+    private static final WebSocketProperties WEB_SOCKET_PROPERTIES = SpringContextHolder.getBean(WebSocketProperties.class);
+
+    private static final StringRedisTemplate REDIS_TEMPLATE = SpringContextHolder.getBean(StringRedisTemplate.class);
+
+    private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(EncryptProcessor.class);
 
     /**
      * 连接对象
      */
     public static final ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> WEB_SOCKET_SESSION_MAP = new ConcurrentHashMap<>();
 
+
     /**
      * 由于下发指令和实际上的数据响应时异步的，因此提供一个阻塞的实现，两个线程来操作同一个对象来实现阻塞至数据到达
      */
-    private static final ConcurrentHashMap<String, MessageResponse> REQUEST_CONNECT_RESPONSE_MAP = new ConcurrentHashMap<>(1000);
+    private static final ConcurrentHashMap<String, MessageResponse<?>> REQUEST_CONNECT_RESPONSE_MAP = new ConcurrentHashMap<>(1000);
 
 
     /**
@@ -71,16 +81,22 @@ public class WebsocketSessionStorage {
 
      */
     public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession){
-        synchronized (environment){
-            if (AuthPrincipal.LoginType.ANDROID.equals(authPrincipal.getLoginType())) {
-                WebSocketSessionWrapper webSocketSessionWrapper = new WebSocketSessionWrapper(authPrincipal, new ConcurrentWebSocketSessionDecorator(
-                        webSocketSession, WebsocketConst.SEND_TIME_LIMIT, WebsocketConst.BUFFER_SIZE_LIMIT),
-                        WebSocketSessionWrapper.STATUS_ON_LINE, false, System.currentTimeMillis(),
-                        webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + ":" +
-                                environment.getProperty("server.port"), webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
-                WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
-                merchantBaseDeviceService.sync(authPrincipal, webSocketSessionWrapper);
-            }
+        synchronized (ENVIRONMENT){
+            WebSocketSessionWrapper webSocketSessionWrapper = new WebSocketSessionWrapper(
+                    authPrincipal,
+                    new ConcurrentWebSocketSessionDecorator(
+                        webSocketSession, WEB_SOCKET_PROPERTIES.getSendTimeLimit(), WEB_SOCKET_PROPERTIES.getBufferSizeLimit()
+                    ),
+                    WebSocketSessionWrapper.STATUS_ON_LINE, false, System.currentTimeMillis(),
+        webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + ":" +
+                            ENVIRONMENT.getProperty("server.port"), webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
+            WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
+            // todo 同步狀態
+
+            REDIS_TEMPLATE.opsForHash().put(WebsocketConst.AUTH_PRINCIPAL_MONITOR,
+                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), authPrincipal.getLoginType(),
+                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
+
         }
     }
 
@@ -94,11 +110,8 @@ public class WebsocketSessionStorage {
 
      */
     public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession){
-        synchronized (environment){
-            if (AuthPrincipal.LoginType.ANDROID.equals(authPrincipal.getLoginType())) {
-                modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
-                merchantBaseDeviceService.sync(authPrincipal, get(authPrincipal));
-            }
+        synchronized (ENVIRONMENT){
+            modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
         }
     }
 
@@ -152,6 +165,10 @@ public class WebsocketSessionStorage {
             webSocketSessionWrapper.setStatusChangeTime(System.currentTimeMillis());
             webSocketSessionWrapper.setSync(false);
             WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
+
+            REDIS_TEMPLATE.opsForHash().put(WebsocketConst.AUTH_PRINCIPAL_MONITOR,
+                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), authPrincipal.getLoginType(),
+                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
             return true;
         }
         return false;
@@ -197,8 +214,8 @@ public class WebsocketSessionStorage {
 
      * @date 2019/9/26 21:21 
      */
-    public static void putDefaultResponse( @NotNull Message message, @NotNull MessageResponse response) {
-        if (!CmdEnum.PING.equals(message.getCmd()) && WebsocketSessionStorage.isNone(message.getRequestId())) {
+    public static void putDefaultResponse( @NotNull Message<?> message, @NotNull MessageResponse<?> response) {
+        if (!InternalCmdEnum.PING.equals(message.getCmd()) && WebsocketSessionStorage.isNone(message.getRequestId())) {
             putResponse(message.getRequestId(), response);
         }
     }
@@ -211,7 +228,7 @@ public class WebsocketSessionStorage {
      * @param response
 
      */
-    public static void putResponse(@NotNull String requestId, @NotNull MessageResponse response) {
+    public static void putResponse(@NotNull String requestId, @NotNull MessageResponse<?> response) {
         Objects.requireNonNull(requestId, "请求id不能为空!");
         if (responseIsTake(requestId)) {
             return;
@@ -229,14 +246,14 @@ public class WebsocketSessionStorage {
      * @return
 
      */
-    public static boolean checkResponseIsSuccess(@NotNull Message message) {
+    public static boolean checkResponseIsSuccess(@NotNull Message<?> message) {
         Objects.requireNonNull(message, "message不能为空!");
         Objects.requireNonNull(message.getRequestId(), "请求id不能为空!");
         if (Message.Type.REQUEST.equals(message.getType())) {
             return true;
         }
         if (!MessageResponse.SERVER_CODE_COMPLETE.equals(message.getCode())) {
-            MessageResponse messageResponse;
+            MessageResponse<?> messageResponse;
             if (message.getBody() != null && StringUtils.isNotBlank(message.getBody().toString())) {
                 messageResponse = MessageResponse.failure(message.getRequestId(), MessageResponse.SERVER_CODE_ERROR,
                         message.getBody().toString());
@@ -260,10 +277,10 @@ public class WebsocketSessionStorage {
      * @return
 
      */
-    public static MessageResponse getResponse(@NotNull String requestId, long blockMilliSeconds) {
+    public static <T> MessageResponse<T> getResponse(@NotNull String requestId, long blockMilliSeconds) {
         long initTime = System.currentTimeMillis();
-        if (blockMilliSeconds > 30000) {
-            blockMilliSeconds = 30000;
+        if (blockMilliSeconds > WEB_SOCKET_PROPERTIES.getMaxSyncBlockMillions()) {
+            blockMilliSeconds = WEB_SOCKET_PROPERTIES.getMaxSyncBlockMillions();
         }
         while (REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == MessageResponse.none()) {
             try {
@@ -273,7 +290,6 @@ public class WebsocketSessionStorage {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 log.error(ExceptionUtils.getStackTrace(e));
-                //e.printStackTrace();
             }
         }
         MessageResponse response = REQUEST_CONNECT_RESPONSE_MAP.get(requestId);
@@ -314,18 +330,15 @@ public class WebsocketSessionStorage {
      * @return
 
      */
-    public static MessageResponse getResponse(@NotNull String requestId) {
+    public static <T> MessageResponse<T> getResponse(@NotNull String requestId) {
         return getResponse(requestId, 10000);
     }
 
 
     /**
      * 返回存放请求对象
-     *
-     * @return
-
      */
-    public static ConcurrentHashMap<String, MessageResponse> getRequestConnectResponseMap() {
+    public static ConcurrentHashMap<String, MessageResponse<?>> getRequestConnectResponseMap() {
         return REQUEST_CONNECT_RESPONSE_MAP;
     }
 
@@ -340,7 +353,7 @@ public class WebsocketSessionStorage {
      * @param webSocketSessionWrapper
      * @param message
      */
-    public static WebSocketSessionWrapper sendMessage(WebSocketSessionWrapper webSocketSessionWrapper, Message message) {
+    public static WebSocketSessionWrapper sendMessage(WebSocketSessionWrapper webSocketSessionWrapper, Message<?> message) {
         if (webSocketSessionWrapper == null || webSocketSessionWrapper.getWebSocketSession() == null
                 || !webSocketSessionWrapper.getWebSocketSession().isOpen()) {
             throw new SocketSendException("连接不可用！！");
@@ -348,16 +361,23 @@ public class WebsocketSessionStorage {
         try {
             AuthPrincipal authPrincipal = webSocketSessionWrapper.getAuthPrincipal();
             TextMessage textMessage = Message.wrapper(message);
-            log.info("向[{}]-[{}]发送数据：{}", authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode(), textMessage.getPayload());
-            TextMessage secretMessage = Message.wrapperWithSign(message);
-            log.info("向[{}]-[{}]发送加密数据：{}", authPrincipal.getAccessKeyId(), authPrincipal.getRandomCode(), secretMessage.getPayload());
-            if (messageSecret) {
+            log.info("向[{}-{}-{}]发送数据：{}", authPrincipal.getLoginType(),authPrincipal.getAccessKeyId(),
+                    authPrincipal.getAuthCode(), textMessage.getPayload());
+            if (WEB_SOCKET_PROPERTIES.isMessageSecret()) {
+                // 执行加密接口
+                EncryptProcessor encryptProcessor = ENCRYPT_PROCESSORS.get(WEB_SOCKET_PROPERTIES.getSecretBeanName());
+                if (encryptProcessor == null) {
+                    throw new NoSuchBeanDefinitionException(WEB_SOCKET_PROPERTIES.getSecretBeanName());
+                }
+                TextMessage secretMessage = new TextMessage(encryptProcessor.encryptMessage(message));
+                log.info("向[{}-{}-{}]发送加密数据：{}", authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
+                        authPrincipal.getAuthCode(), secretMessage.getPayload());
                 webSocketSessionWrapper.getWebSocketSession().sendMessage(secretMessage);
             } else {
                 webSocketSessionWrapper.getWebSocketSession().sendMessage(textMessage);
             }
             // 记录指令码监控数据
-            cmdStrategyHelper.buildDeviceCmdRunningState(authPrincipal, message, false);
+            CMD_STRATEGY_HELPER.buildDeviceCmdRunningState(authPrincipal, message, false);
         } catch (IOException e) {
             log.error("socket发送数据失败", e);
             throw new SocketSendException(e);
@@ -381,7 +401,7 @@ public class WebsocketSessionStorage {
      * @param message
 
      */
-    public static WebSocketSessionWrapper sendMessage(AuthPrincipal authPrincipal, Message message) {
+    public static WebSocketSessionWrapper sendMessage(AuthPrincipal authPrincipal, Message<?> message) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
         return sendMessage(webSocketSessionWrapper, message);
     }
@@ -394,7 +414,7 @@ public class WebsocketSessionStorage {
      * @param message
 
      */
-    public static void sendMessageAndClose(WebSocketSessionWrapper webSocketSessionWrapper, Message message) {
+    public static void sendMessageAndClose(WebSocketSessionWrapper webSocketSessionWrapper, Message<?> message) {
         try {
             sendMessage(webSocketSessionWrapper, message).getWebSocketSession().close();
         } catch (IOException e) {
@@ -411,7 +431,7 @@ public class WebsocketSessionStorage {
      * @param message
 
      */
-    public static void sendMessageAndClose(AuthPrincipal authPrincipal, Message message) {
+    public static void sendMessageAndClose(AuthPrincipal authPrincipal, Message<?> message) {
         sendMessageAndClose(get(authPrincipal), message);
     }
 

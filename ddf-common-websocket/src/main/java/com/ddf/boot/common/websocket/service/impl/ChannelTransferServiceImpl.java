@@ -6,16 +6,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ddf.boot.common.core.exception.GlobalCustomizeException;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.websocket.enumerate.CmdEnum;
+import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
 import com.ddf.boot.common.websocket.helper.CmdAction;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.mapper.ChannelTransferMapper;
-import com.ddf.boot.common.websocket.model.entity.ChannelTransfer;
-import com.ddf.boot.common.websocket.model.ws.AuthPrincipal;
-import com.ddf.boot.common.websocket.model.ws.Message;
-import com.ddf.boot.common.websocket.model.ws.MessageRequest;
-import com.ddf.boot.common.websocket.model.ws.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.model.*;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +40,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values
-            ,MessageRequest messageRequest) {
+    public <T> Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values
+            , MessageRequest<T> messageRequest) {
         if (values == null || messageRequest.getCmd() == null) {
             return null;
         }
@@ -58,7 +54,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             }
             AuthPrincipal authPrincipal = entry.getKey();
             CmdAction cmdAction = new CmdAction();
-            Message message = cmdAction.push(messageRequest.getCmd(), messageRequest.getPayload());
+            Message<T> message = cmdAction.push(messageRequest.getCmd(), messageRequest.getClientChannel(), messageRequest.getPayload());
             String messageStr = JsonUtil.asString(message);
             channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
             messageMap.put(authPrincipal, messageStr);
@@ -67,21 +63,23 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         return messageMap;
     }
 
-    private ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message message, String request
-            ,WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest messageRequest) {
+    private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request
+            ,WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
         ChannelTransfer channelTransfer = new ChannelTransfer();
-        channelTransfer.setCmd(message.getCmd().name());
+        channelTransfer.setCmd(message.getCmd());
         channelTransfer.setRequestId(message.getRequestId());
         channelTransfer.setRequest(request);
         channelTransfer.setFullRequestResponse(toJsonArr(request));
         channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
-        channelTransfer.setDeviceNumber(authPrincipal.getAccessKeyId());
-        channelTransfer.setToken(authPrincipal.getRandomCode());
+        channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
+        channelTransfer.setAccessKeyName(authPrincipal.getAccessKeyName());
+        channelTransfer.setAuthCode(authPrincipal.getAuthCode());
+        channelTransfer.setClientChannel(message.getClientChannel());
+        channelTransfer.setLoginType(authPrincipal.getLoginType().name());
         channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
         if (messageRequest != null) {
             channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
             channelTransfer.setOperatorId(messageRequest.getOperatorId());
-            channelTransfer.setCreateBy(messageRequest.getOperatorId());
             channelTransfer.setLogicPrimaryKey(messageRequest.getLogicPrimaryKey());
 
         }
@@ -101,8 +99,9 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public boolean recordRequest(AuthPrincipal authPrincipal, String request, Message message, MessageRequest messageRequest) {
-        if (CmdEnum.PING.equals(message.getCmd())) {
+    public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message
+            , MessageRequest<Q> messageRequest) {
+        if (InternalCmdEnum.PING.equals(message.getCmd())) {
             return true;
         }
         if (authPrincipal == null || StringUtils.isAnyBlank(request, message.getRequestId())) {
@@ -131,8 +130,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message message) {
-        if (message != null && (CmdEnum.PING.equals(message.getCmd()) || CmdEnum.PONG.equals(message.getCmd()))) {
+    public <T> int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message<T> message) {
+        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(message.getCmd()))) {
             // ignore
             return 0;
         }
@@ -149,17 +148,17 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfer.setRequest(response);
             channelTransfer.setFullRequestResponse(toJsonArr(response));
             channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
-            channelTransfer.setDeviceNumber(authPrincipal.getAccessKeyId());
-            channelTransfer.setToken(authPrincipal.getRandomCode());
+            channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
+            channelTransfer.setAuthCode(authPrincipal.getAuthCode());
+            channelTransfer.setLoginType(authPrincipal.getLoginType().name());
             channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
             if (message == null) {
                 channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);
             } else {
                 channelTransfer.setRequestId(requestId);
-                channelTransfer.setCmd(message.getCmd().name());
+                channelTransfer.setCmd(message.getCmd());
                 LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
                 queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-                queryWrapper.eq(ChannelTransfer::getRemoved, 0);
                 ChannelTransfer exist = getOne(queryWrapper);
                 if (exist != null) {
                     return 1;
@@ -175,7 +174,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         }
         LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-        queryWrapper.eq(ChannelTransfer::getRemoved, 0);
         ChannelTransfer exist = getOne(queryWrapper);
         if (exist == null) {
             return -1;
@@ -188,7 +186,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         updateWrapper.set(ChannelTransfer::getFullRequestResponse, appendJsonArr(exist.getFullRequestResponse(), response));
         updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_RECEIVED);
         updateWrapper.eq(ChannelTransfer::getId, exist.getId());
-        updateWrapper.eq(ChannelTransfer::getRemoved, 0);
         update(null, updateWrapper);
         return 0;
     }
@@ -204,12 +201,12 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateToComplete(Message message, boolean isSuccess, String errorMessage, String response
+    public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response
             , String serverSend) {
         if (message == null || StringUtils.isBlank(message.getRequestId())) {
             return false;
         }
-        if (CmdEnum.PING.equals(message.getCmd())) {
+        if (InternalCmdEnum.PING.equals(message.getCmd())) {
             return true;
         }
         LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
@@ -223,7 +220,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         }
         updateWrapper.set(ChannelTransfer::getErrorMessage, errorMessage);
         updateWrapper.eq(ChannelTransfer::getRequestId, message.getRequestId());
-        updateWrapper.eq(ChannelTransfer::getRemoved, 0);
         if (response != null) {
             updateWrapper.set(ChannelTransfer::getResponse, response);
             ChannelTransfer exist = getByRequestId(message.getRequestId());
@@ -240,7 +236,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             return null;
         }
         LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(ChannelTransfer::getRemoved, 0);
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
         return getOne(queryWrapper);
     }
@@ -285,7 +280,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             return null;
         }
         LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-        channelTransferWrapper.eq(ChannelTransfer::getDeviceNumber, deviceNumber);
+        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
         channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
         channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
         channelTransferWrapper.last("limit 1");
@@ -315,7 +310,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-        channelTransferWrapper.eq(ChannelTransfer::getDeviceNumber, deviceNumber);
+        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
         channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
         if (successCount) {
             // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
