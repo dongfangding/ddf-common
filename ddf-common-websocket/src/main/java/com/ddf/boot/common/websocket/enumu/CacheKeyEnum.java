@@ -16,15 +16,22 @@ public enum CacheKeyEnum {
      *              单机重启的时的数据不一致不影响业务，因为服务挂了，不会执行任何请求
      *
      */
-    AUTH_PRINCIPAL_SERVER_MONITOR("auth_principal_server_monitor:{0}:{1}"),
+    AUTH_PRINCIPAL_SERVER_MONITOR("auth_principal_server_monitor"),
 
     /**
      * redis上下线的hash key
-     * {0} loginType
-     * {1} accessKeyId
-     * {2} authCode
+     *
+     * 批量下线的时候获取AUTH_PRINCIPAL_SERVER_MONITOR节点下的所有key，然后便利符合对应host和port的key,最后批量删除掉key
+     *
+     * 要么就是不同的host和port维护着各自的在线列表， 但是用的地方又麻烦了
+     *
+     * {0} server host
+     * {1} server port
+     * {2} loginType
+     * {3} accessKeyId
+     * {4} authCode
      */
-    AUTH_PRINCIPAL_MONITOR("{0}:{1}:{2}")
+    AUTH_PRINCIPAL_MONITOR("{0}:{1}:{2}:{3}:{4}")
 
     ;
 

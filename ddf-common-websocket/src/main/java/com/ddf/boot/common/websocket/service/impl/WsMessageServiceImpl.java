@@ -261,7 +261,8 @@ public class WsMessageServiceImpl implements WsMessageService {
         WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
         if (webSocketSessionWrapper == null || WebSocketSessionWrapper.STATUS_OFF_LINE
                 .equals(webSocketSessionWrapper.getStatus())) {
-            String monitorJson = (String) redisTemplate.opsForHash().get(WebsocketConst.AUTH_PRINCIPAL_MONITOR,
+
+            String monitorJson = (String) redisTemplate.opsForHash().get(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
                     MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
                             request.getLoginType(), request.getAccessKeyId(), request.getAuthCode()));
             if (StringUtils.isBlank(monitorJson)) {
