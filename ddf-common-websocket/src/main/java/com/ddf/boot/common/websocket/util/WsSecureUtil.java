@@ -4,11 +4,13 @@ import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
+import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
+import com.ddf.boot.common.websocket.model.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.HandshakeParam;
 import com.ddf.boot.common.websocket.properties.WebSocketProperties;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -108,22 +110,17 @@ public class WsSecureUtil {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String str = "{\"accessKeyId\":\"1\",\"accessKeyName\":\"ddf\",\"loginType\":\"USER\"}";
-
-
-        String encryptBcd = WsSecureUtil.publicEncryptBcd(str);
-
-        String token = URLEncoder.encode(encryptBcd, "utf-8");
-
-        System.out.println(token);
-
-
-
-        String decode = URLDecoder.decode(token, "utf-8");
-
-        String decryptFromBcd = WsSecureUtil.privateDecryptFromBcd(decode);
-        System.out.println(decryptFromBcd);
-
+        String handShakeParamToken;
+        for (int i = 0; i < 15; i++) {
+            HandshakeParam param = new HandshakeParam();
+            param.setAccessKeyId(i + "");
+            param.setAccessKeyName("ddf" + i);
+            param.setLoginType(AuthPrincipal.LoginType.USER);
+            handShakeParamToken = JsonUtil.asString(param);
+            handShakeParamToken= WsSecureUtil.publicEncryptBcd(handShakeParamToken);
+            handShakeParamToken = URLEncoder.encode(handShakeParamToken, "utf-8");
+            System.out.println(handShakeParamToken);
+        }
     }
 
 }

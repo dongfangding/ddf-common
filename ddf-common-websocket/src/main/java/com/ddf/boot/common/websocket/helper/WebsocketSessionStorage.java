@@ -97,8 +97,7 @@ public class WebsocketSessionStorage {
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), wrapper.getServerAddress());
             REDIS_TEMPLATE.opsForHash().put(key,
                     MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
-                            wrapper.getServerAddress().split(":")[0],
-                            wrapper.getServerAddress().split(":")[1], authPrincipal.getLoginType(),
+                            serverHost, port, authPrincipal.getLoginType(),
                             authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
 
         }

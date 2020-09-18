@@ -47,7 +47,7 @@ public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefr
             list.add(v.getKey());
         });
         if (CollUtil.isNotEmpty(list)) {
-            stringRedisTemplate.opsForHash().delete(key, list);
+            stringRedisTemplate.opsForHash().delete(key, list.toArray());
         }
     }
 }
