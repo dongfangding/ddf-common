@@ -35,7 +35,7 @@ import java.util.concurrent.*;
 public class ThreadBuilderHelper {
 
     /**
-     * 构建线程池参数
+     * 构建线程池参数, 默认拒绝策略是将请求打回给调用线程使用
      *
      * @param prefix           线程池名称前缀
      * @param keepAliveSeconds 保持空闲时间
@@ -44,12 +44,12 @@ public class ThreadBuilderHelper {
      */
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int keepAliveSeconds, int queueCapacity) {
         return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors() * 2 + 1, new ThreadPoolExecutor.AbortPolicy());
+                Runtime.getRuntime().availableProcessors() * 2 + 1, new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
 
     /**
-     * 构建线程池参数
+     * 构建线程池参数, 默认拒绝策略是将请求打回给调用线程使用
      *
      * @param prefix                   线程池名称前缀
      * @param keepAliveSeconds         保持空闲时间
@@ -62,7 +62,7 @@ public class ThreadBuilderHelper {
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int keepAliveSeconds, int queueCapacity
             , int corePoolSize, int maxPoolSize) {
-        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, corePoolSize, maxPoolSize, new ThreadPoolExecutor.AbortPolicy());
+        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, corePoolSize, maxPoolSize, new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
 

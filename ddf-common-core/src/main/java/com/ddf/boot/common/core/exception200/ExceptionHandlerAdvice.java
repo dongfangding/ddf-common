@@ -9,6 +9,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * <p>description</p >
@@ -73,9 +76,13 @@ public class ExceptionHandlerAdvice {
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
                     exception.getMessage(), locale);
             response.setStatus(Integer.parseInt(baseException.getCode()));
-        } else if (exception instanceof IllegalArgumentException) {
+        } else if (exception instanceof IllegalArgumentException ) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
             message = exception.getMessage();
+        } else if (exception instanceof MethodArgumentNotValidException) {
+            exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
+            MethodArgumentNotValidException exception1  = (MethodArgumentNotValidException) exception;
+            message = exception1.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
         } else {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
             message = exception.getMessage();

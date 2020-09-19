@@ -26,7 +26,7 @@ public class AuthUser extends BaseDomain implements Serializable {
     static final long serialVersionUID = -5091699981026819031L;
 
     @ApiModelProperty("姓名")
-    private String userName;
+    private String username;
 
     @ApiModelProperty("用户随机码，生成密码的盐，注册时生成且不可变！")
 	private String userToken;
