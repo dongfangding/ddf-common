@@ -291,5 +291,6 @@
         <module>ddf-common-model</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-ids</module>
+        <module>ddf-common-netty-broker</module>
     </modules>
 </project>
