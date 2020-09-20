@@ -31,5 +31,8 @@ public class LogBoolReturnResult {
      */
     private String methodName;
 
+    /**
+     * 参数json格式
+     */
     private String param;
 }

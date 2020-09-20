@@ -65,7 +65,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .select()
                 // todo 配置属性
-                .apis(RequestHandlerSelectors.basePackage("com.ddf.boot"))
+                .apis(RequestHandlerSelectors.basePackage("com"))
                 .paths(PathSelectors.any())
                 .build().globalOperationParameters(pars);
     }
