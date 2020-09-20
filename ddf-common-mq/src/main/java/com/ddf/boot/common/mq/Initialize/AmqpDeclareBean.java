@@ -1,18 +1,17 @@
 package com.ddf.boot.common.mq.Initialize;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadFactoryBuilder;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.SpringContextHolder;
+import com.ddf.boot.common.core.util.StringUtil;
+import com.ddf.boot.common.mq.config.MqMessageProperties;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
 import com.ddf.boot.common.mq.entity.LogMqListener;
 import com.ddf.boot.common.mq.listener.DefaultMqEventListener;
 import com.ddf.boot.common.mq.listener.ListenerQueueEntity;
 import com.ddf.boot.common.mq.listener.MqEventListener;
-import com.ddf.boot.common.mq.mapper.LogMqListenerMapper;
-import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.StringUtil;
+import com.ddf.boot.common.mq.persistence.LogMqPersistenceProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,6 +22,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
@@ -63,7 +63,7 @@ public class AmqpDeclareBean implements InitializingBean {
     @Qualifier("defaultMqEventListener")
     private MqEventListener defaultMqEventListener;
     @Autowired
-    private LogMqListenerMapper logMqListenerMapper;
+    private MqMessageProperties mqMessageProperties;
 
     /**
      * Bean初始化后的调用
@@ -122,7 +122,7 @@ public class AmqpDeclareBean implements InitializingBean {
             Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create().setDaemon(true).setNamePrefix("consumer-listener-queue").build()).execute(() -> {
                 while (true) {
                     try {
-                        ListenerQueueEntity poll = DefaultMqEventListener.MESSAGE_QUEUE.poll();
+                        ListenerQueueEntity<?> poll = DefaultMqEventListener.MESSAGE_QUEUE.poll();
                         if (poll == null) {
                             try {
                                 // 做一个延迟,其实更好的方式是使用等待唤醒，目前既要支持读和写，而又不互斥，还没想到好的方案
@@ -160,23 +160,12 @@ public class AmqpDeclareBean implements InitializingBean {
                             logMqListener.setCurrentThreadName(Thread.currentThread().getName());
                             logMqListener.setErrorMessage(poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
                             logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringUtil.exceptionToString(poll.getThrowable()));
-                            // fixme 使用INSERT ... ON DUPLICATE KEY UPDATE，但是这样的话就要写mapper.xml，又要配置mapper-location,目前
-                            // 未找到注解可以支持配置，而使用配置文件的话，本包是个工具包，
-                            LambdaQueryWrapper<LogMqListener> queryWrapper = Wrappers.lambdaQuery();
-                            queryWrapper.eq(LogMqListener::getMessageId, poll.getMessageWrapper().getMessageId());
-                            LogMqListener exist = logMqListenerMapper.selectOne(queryWrapper);
-                            if (exist == null) {
-                                logMqListener.setId(IdsUtil.getNextLongId());
-                                logMqListenerMapper.insert(logMqListener);
+
+                            Map<String, LogMqPersistenceProcessor> processorMap = SpringContextHolder.getBeansOfType(LogMqPersistenceProcessor.class);
+                            if (CollUtil.isNotEmpty(processorMap) && processorMap.containsKey(mqMessageProperties.getLogMqPersistenceProcessorBeanName())) {
+                                processorMap.get(mqMessageProperties.getLogMqPersistenceProcessorBeanName()).persistence(poll, logMqListener);
                             } else {
-                                logMqListener.setId(exist.getId());
-                                if (logMqListener.getEventTimestamp() < exist.getEventTimestamp()) {
-                                    log.error("当前数据小于数据库中发生时间，不予更新！ {}===>{}", logMqListener, exist);
-                                }
-                                LambdaUpdateWrapper<LogMqListener> updateWrapper = Wrappers.lambdaUpdate();
-                                updateWrapper.eq(LogMqListener::getId, exist.getId());
-                                updateWrapper.le(LogMqListener::getEventTimestamp, logMqListener.getEventTimestamp());
-                                logMqListenerMapper.update(logMqListener, updateWrapper);
+                                log.warn("没有配置mq监听消费持久化方案");
                             }
                         }
                     } catch (Exception e) {

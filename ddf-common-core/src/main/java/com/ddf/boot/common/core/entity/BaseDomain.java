@@ -2,6 +2,9 @@ package com.ddf.boot.common.core.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
@@ -35,18 +38,21 @@ import java.util.Date;
 public class BaseDomain {
 
     @TableId(type = IdType.INPUT)
+    @Id
     protected Long id;
 
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     protected String createBy;
 
     @TableField(value = "create_time", fill = FieldFill.INSERT)
+    @CreatedDate
     protected Date createTime;
 
     @TableField(value = "modify_by", fill = FieldFill.INSERT_UPDATE)
     protected String modifyBy;
 
     @TableField(value = "modify_time", fill = FieldFill.INSERT_UPDATE)
+    @LastModifiedDate
     protected Date modifyTime;
 
     /**
@@ -60,6 +66,7 @@ public class BaseDomain {
 
     @Version
     @TableField(fill = FieldFill.INSERT)
+    @org.springframework.data.annotation.Version
     protected Integer version = 1;
 
 }

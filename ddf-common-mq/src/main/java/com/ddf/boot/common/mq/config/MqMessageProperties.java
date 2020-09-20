@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 @Data
 @Component
 @ConfigurationProperties(prefix = "customs.mq-message-properties")
-public class MqMessageProperties {
+public class MqMessageProperties/* implements InitializingBean*/ {
 
     /**
      * 最大重投次数
@@ -55,4 +55,19 @@ public class MqMessageProperties {
      * @see com.ddf.boot.common.mq.listener.DefaultMqEventListener#MESSAGE_QUEUE
      */
     private int messageQueueSize = 10000;
+
+    /**
+     * 落库监听日志的实现类的beanName
+     * 默认使用Mongo落库，可切换为数据库
+     * @see com.ddf.boot.common.mq.persistence.LogMqPersistenceProcessor
+     */
+    private String logMqPersistenceProcessorBeanName = "mongoLogMqPersistenceProcessor";
+
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        Object bean = SpringContextHolder.getBean(logMqPersistenceProcessorBeanName);
+//        if (!(bean instanceof LogMqPersistenceProcessor)) {
+//            throw new NoSuchBeanDefinitionException(logMqPersistenceProcessorBeanName);
+//        }
+//    }
 }

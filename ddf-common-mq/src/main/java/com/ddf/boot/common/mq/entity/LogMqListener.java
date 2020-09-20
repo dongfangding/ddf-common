@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
@@ -59,9 +61,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @ApiModel("消息发送和消费的记录实体")
+@Document
 public class LogMqListener extends BaseDomain implements Serializable {
 
     @ApiModelProperty("消息的唯一标识符")
+    @Indexed(unique = true)
     private String messageId;
 
     @ApiModelProperty("消息的创建人")
@@ -86,6 +90,7 @@ public class LogMqListener extends BaseDomain implements Serializable {
     private String event;
 
     @ApiModelProperty("交换器名称")
+    @Indexed
     private String exchangeName;
 
     @ApiModelProperty("交换器类型")
@@ -98,6 +103,7 @@ public class LogMqListener extends BaseDomain implements Serializable {
     private String targetQueue;
 
     @ApiModelProperty("实际消费队列名称（根据@RabbitListener获取）")
+    @Indexed
     private String actualQueue;
 
     @ApiModelProperty("消息消费容器工厂beanName")
