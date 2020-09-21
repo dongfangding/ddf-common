@@ -54,7 +54,7 @@ public class ChannelStoreSyncTask implements Runnable {
                             while (queue.peek() != null) {
                                 RequestContent content = queue.poll();
                                 // FIXME 与数据库同步的时候需要数据库写入成功，再返回
-                                v.getChannel().writeAndFlush(RequestContent.responseOK(content));
+                                v.getChannel().writeAndFlush(RequestContent.responseSuccess(content, null));
                                 file.write(objectMapper.writeValueAsBytes(content));
                                 file.write(System.lineSeparator().getBytes());
                             }

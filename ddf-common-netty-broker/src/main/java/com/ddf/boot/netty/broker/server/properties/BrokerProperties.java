@@ -19,7 +19,7 @@ public class BrokerProperties {
     /**
      * 服务端端口号
      */
-    private int port = 9999;
+    private int port = 8888;
 
     /**
      * 是否使用ssl连接

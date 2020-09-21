@@ -37,7 +37,7 @@ public class BrokerServer {
     private EventLoopGroup boss;
     private EventLoopGroup worker;
 
-    private BrokerServer(BrokerProperties brokerProperties) {
+    public BrokerServer(BrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }
 

@@ -11,6 +11,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLEngine;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @author dongfang.ding
  * @date 2019/7/5 10:49
  */
+@Slf4j
 public class ServerChannelInit extends ChannelInitializer<Channel> {
 
     private final SslContext context;
@@ -73,7 +75,7 @@ public class ServerChannelInit extends ChannelInitializer<Channel> {
                         ctx.writeAndFlush(RequestContent.heart())
                                 .addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
                     } catch (Exception e) {
-                        System.out.println("向客户端发送心跳包失败===================================");
+                        log.error("向客户端发送心跳包失败>>>>>>>>>>>>>>>>>>>");
                     }
                 }
             } else {

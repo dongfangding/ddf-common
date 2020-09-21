@@ -1,4 +1,4 @@
-package com.ddf.boot.common.websocket.enumu;
+package com.ddf.boot.netty.broker.message;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2020/05/11 19:07
  */
-public enum MessageResponseCodeEnum {
+public enum ResponseCodeEnum {
 
     /**
      * 成功
@@ -58,19 +58,19 @@ public enum MessageResponseCodeEnum {
 
     ;
 
-    private static Map<Integer, MessageResponseCodeEnum> mappingMap;
+    private static final Map<Integer, ResponseCodeEnum> MAPPING_MAP;
 
     static {
-        mappingMap = new HashMap<>(MessageResponseCodeEnum.values().length);
-        for (MessageResponseCodeEnum value : MessageResponseCodeEnum.values()) {
-            mappingMap.put(value.code, value);
+        MAPPING_MAP = new HashMap<>(ResponseCodeEnum.values().length);
+        for (ResponseCodeEnum value : ResponseCodeEnum.values()) {
+            MAPPING_MAP.put(value.code, value);
         }
     }
 
 
     private final Integer code;
 
-    MessageResponseCodeEnum(Integer code) {
+    ResponseCodeEnum(Integer code) {
         this.code = code;
     }
 
@@ -80,11 +80,11 @@ public enum MessageResponseCodeEnum {
 
     /**
      * 根据状态码构建枚举对象
-     * @param code
+     * @param code code码
      * @return
      */
-    public MessageResponseCodeEnum getByCode(Integer code) {
-        return mappingMap.get(code);
+    public ResponseCodeEnum getByCode(Integer code) {
+        return MAPPING_MAP.get(code);
     }
 
 }

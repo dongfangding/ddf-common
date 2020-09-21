@@ -47,12 +47,6 @@ public class Message<T> {
 
     private transient static final String SEND_MODEL_SERVER = "SERVER";
 
-    public transient static final String ID_CARD_NO = "idCardNo";
-    public transient static final String MOBILE = "mobile";
-    public transient static final String ACCOUNT = "account";
-    public transient static final String LOGIN_PASSWORD = "loginPassword";
-    public transient static final String PAY_PASSWORD = "payPassword";
-
     @ApiModelProperty(value = "标识请求还是响应", allowableValues = "REQUEST, RESPONSE")
     private Type type;
 
@@ -258,7 +252,7 @@ public class Message<T> {
      * @param value
      * @return
      */
-    public Message addExtra(String key, String value) {
+    public Message<T> addExtra(String key, String value) {
         if (extra == null) {
             extra = "";
         } else if (extra.length() > 0) {
@@ -278,7 +272,7 @@ public class Message<T> {
     /**
      * 解析扩展字段,注意空格
      */
-    private Message parseExtra() {
+    private Message<T> parseExtra() {
         if (null != extra && !"".equals(extra)) {
             try {
                 String[] keyValueArr = extra.split(SPLIT_LINE);
@@ -334,17 +328,4 @@ public class Message<T> {
         return JsonUtil.toBean(payload, Message.class);
     }
 
-
-    /**
-     * 在请求头上附加账号信息
-     * @param idCardNo
-     * @param mobile
-     * @param account
-     * @param loginPassword
-     * @param payPassword
-     */
-    public void addAccount(String idCardNo, String mobile, String account, String loginPassword, String payPassword) {
-        this.addExtra(ID_CARD_NO, idCardNo).addExtra(MOBILE, mobile).addExtra(ACCOUNT, account)
-                .addExtra(LOGIN_PASSWORD, loginPassword).addExtra(PAY_PASSWORD, payPassword);
-    }
 }

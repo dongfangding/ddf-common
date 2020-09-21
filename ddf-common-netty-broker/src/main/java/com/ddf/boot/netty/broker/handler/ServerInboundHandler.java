@@ -10,6 +10,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2019/7/5 15:52
  */
 @ChannelHandler.Sharable
-public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestContent> {
+@Slf4j
+public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestContent<?>> {
 
     public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
@@ -27,22 +29,21 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) {
-        channels.add(ctx.channel());
-        channelStore.put(ctx.channel().remoteAddress().toString(), ChannelInfo.registry(ctx.channel()));
-        System.out.println("客户端[" + ctx.channel().remoteAddress() + "]注册成功.........");
+        log.debug("客户端[{}]注册成功>>>>>", ctx.channel().remoteAddress());
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        System.out.println("客户端[" + ctx.channel().remoteAddress() + "]在线.........");
-        ChannelInfo.active(ctx.channel());
+        log.debug("客户端[{}]在线>>>>>", ctx.channel().remoteAddress());
+        channels.add(ctx.channel());
+        channelStore.put(ctx.channel().remoteAddress().toString(), ChannelInfo.registry(ctx.channel()));
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("客户端[" + ctx.channel().remoteAddress() + "]掉线");
-        ChannelInfo.inactive(ctx.channel());
+        log.debug("客户端[{}]掉线>>>>>", ctx.channel().remoteAddress());
         channels.remove(ctx.channel());
+        ChannelInfo.inactive(ctx.channel());
     }
 
 
@@ -53,16 +54,18 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
      * @throws JsonProcessingException
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RequestContent msg) throws JsonProcessingException {
+    protected void channelRead0(ChannelHandlerContext ctx, RequestContent<?> msg) throws JsonProcessingException {
         putMessage(ctx.channel(), msg);
-        System.out.println("接收到客户端[" + ctx.channel().remoteAddress() + "]发送的数据: " + RequestContent.serial(msg));
+        log.debug("接收到客户端[{}]发送的数据: {}", ctx.channel().remoteAddress(), msg.serial());
         ctx.writeAndFlush(RequestContent.responseAccept(msg));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        System.out.println("客户端[" + ctx.channel() + "]出现异常，关闭连接");
+        log.error("连接出现异常>>>>>", cause);
+        log.debug("客户端[{}]出现异常，关闭连接>>>>>>", ctx.channel());
+        channels.remove(ctx.channel());
+        ChannelInfo.inactive(ctx.channel());
         ctx.close();
     }
 
@@ -72,7 +75,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
      * @param channel
      * @param requestContent
      */
-    private void putMessage(Channel channel, RequestContent requestContent) {
+    private void putMessage(Channel channel, RequestContent<?> requestContent) {
         String key = channel.remoteAddress().toString();
         ChannelInfo channelInfo = ServerInboundHandler.channelStore.get(key);
         // 可能永远也不会出现这种情况

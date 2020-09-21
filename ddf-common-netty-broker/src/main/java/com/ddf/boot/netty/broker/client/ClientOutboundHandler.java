@@ -1,8 +1,6 @@
-package com.ddf.boot.netty.broker.handler;
-
+package com.ddf.boot.netty.broker.client;
 
 import com.ddf.boot.netty.broker.message.RequestContent;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -10,21 +8,20 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author dongfang.ding
- * @date 2019/7/5 15:16
+ * @date 2019/7/5 17:38
  */
-@ChannelHandler.Sharable
 @Slf4j
-public class ServerOutboundHandler extends ChannelOutboundHandlerAdapter {
+public class ClientOutboundHandler extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
-        log.info("向客户端[{}]发送数据: {}", ctx.channel().remoteAddress(), ((RequestContent<?>) msg).serial());
-        ctx.writeAndFlush(msg);
+        log.debug("向服务端发送数据: {}", ((RequestContent<?>) msg).serial());
+        ctx.writeAndFlush((msg));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("连接出现异常", cause);
+        cause.printStackTrace();
         ctx.close();
     }
 }

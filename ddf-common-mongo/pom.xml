@@ -17,6 +17,7 @@
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
             <version>${project.parent.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

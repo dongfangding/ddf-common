@@ -7,22 +7,24 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.util.CharsetUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * 编解码器
+ * 编解码器，用于解析和传输对象{@link RequestContent}
  * @author dongfang.ding
  * @date 2019/7/5 15:01
  */
+@Slf4j
 public class RequestContentCodec extends ByteToMessageCodec<Object> {
 
     private final Charset charset;
 
     public RequestContentCodec(Charset charset) {
         if (charset == null) {
-            throw new NullPointerException("charset");
+            charset = CharsetUtil.UTF_8;
         }
         this.charset = charset;
     }
@@ -58,16 +60,15 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         try {
-            System.out.println("开始解码=========================");
-            System.out.println(in.toString(charset));
+            log.debug(">>>>>>>>>>>>>> 开始解码, 内容为: {}", in.toString(charset));
             ObjectMapper objectMapper = new ObjectMapper();
             byte[] content = new byte[in.readableBytes()];
             in.readBytes(content);
-            RequestContent requestContent = objectMapper.readValue(content, RequestContent.class);
+            RequestContent<?> requestContent = objectMapper.readValue(content, RequestContent.class);
             out.add(requestContent);
             // TODO 对RequestContent参数进行校验
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("解码失败", e);
         }
     }
 }
