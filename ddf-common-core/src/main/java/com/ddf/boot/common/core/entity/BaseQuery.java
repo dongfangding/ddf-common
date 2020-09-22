@@ -30,15 +30,18 @@ import java.util.List;
 @NoArgsConstructor
 public class BaseQuery {
 
+    public static long DEFAULT_PAGE_NUM = 1;
+    public static long DEFAULT_PAGE_SIZE = 10;
+
     /**
      * 页数, 从1开始
      */
-    private int page = 1;
+    private long page = DEFAULT_PAGE_NUM;
 
     /**
      * 每页显示条数
      */
-    private int size = 10;
+    private long pageSize = DEFAULT_PAGE_SIZE;
 
     /**
      * 不分页查询， 默认false
@@ -54,12 +57,12 @@ public class BaseQuery {
      * 构造基于spring-data基本分页对象
      * @return
      */
-    public Pageable ofSpringData() {
+    public Pageable toSpringData() {
         if (unPaged) {
             return Pageable.unpaged();
         }
         // spring-data的分页从0开始
-        return PageRequest.of(page - 1, size);
+        return PageRequest.of((int) page - 1, (int) pageSize);
     }
 
     /**
@@ -67,14 +70,14 @@ public class BaseQuery {
      * @param <T>
      * @return
      */
-    public <T> Page<T> ofMybatis() {
+    public <T> Page<T> toMybatis() {
         if (unPaged) {
             page = 0;
-            size = 0;
+            pageSize = 0;
         }
-        Page<T> objectPage = new Page<>(page, size);
+        Page<T> objectPage = new Page<>(page, pageSize);
         if (CollUtil.isNotEmpty(orders)) {
-            objectPage.addOrder(ofMybatisOrder());
+            objectPage.addOrder(toMybatisOrder());
         }
         return objectPage;
     }
@@ -95,7 +98,7 @@ public class BaseQuery {
      * FIXME 经测试，排序方式，会被最后一条记录给覆盖。所以并没有如现在数据格式设计的如此，可以为每个字段都定义排序类型，所以现在写这么复杂并没有什么卵用
      * @return
      */
-    public List<OrderItem> ofMybatisOrder() {
+    public List<OrderItem> toMybatisOrder() {
         if (CollUtil.isEmpty(orders)) {
             return Collections.emptyList();
         }
