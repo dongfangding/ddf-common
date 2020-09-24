@@ -1,7 +1,9 @@
 package com.ddf.boot.common.core.entity;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
  * @date 2020/09/22 09:45
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PageResult<E> implements Serializable {
 	private static final long serialVersionUID = 9056411043515781783L;
 
@@ -57,6 +61,9 @@ public class PageResult<E> implements Serializable {
 	 * @return
 	 */
 	public static <E> PageResult<E> ofBaseQuery(BaseQuery baseQuery, long total, List<E> content) {
+		if (baseQuery.isUnPaged()) {
+			return new PageResult<>(baseQuery.getPage(), total, total, content);
+		}
 		return new PageResult<>(baseQuery.getPage(), baseQuery.getPageSize(), total, content);
 	}
 

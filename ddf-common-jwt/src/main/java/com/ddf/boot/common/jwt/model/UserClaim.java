@@ -1,13 +1,13 @@
 package com.ddf.boot.common.jwt.model;
 
 
+import cn.hutool.core.util.ReflectUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,17 +137,19 @@ public class  UserClaim<T> implements Serializable {
      * @return
      */
     public Map<String, Object> toMap() {
-        Map<String, Object> claimMap = new HashMap<>();
+        Map<String, Object> claimMap = new HashMap<>(16);
         Class<? extends UserClaim> aClass = this.getClass();
-        Field[] fields = aClass.getDeclaredFields();
+        Field[] fields = ReflectUtil.getFields(aClass);
         if (fields.length > 0) {
             for (Field field : fields) {
                 try {
-                    Method method = aClass.getDeclaredMethod("get" + field.getName().substring(0, 1)
+                    Method method = ReflectUtil.getMethod(aClass, "get" + field.getName().substring(0, 1)
                             .toUpperCase() + field.getName().substring(1));
-                    // 如果能找到方法就设置
-                    claimMap.put(field.getName(), method.invoke(this));
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    if (method != null) {
+                        // 如果能找到方法就设置
+                        claimMap.put(field.getName(), method.invoke(this));
+                    }
+                } catch (Exception ignored) {
                     // 没有方法的直接忽略掉
                 }
             }

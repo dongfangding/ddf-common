@@ -49,8 +49,10 @@ public class MongoTemplateHelper {
         if (count <= 0) {
             return PageResult.empty();
         }
-        Pageable pageable = baseQuery.toSpringData();
-        query.with(pageable);
+        if (!baseQuery.isUnPaged()) {
+            Pageable pageable = baseQuery.toSpringData();
+            query.with(pageable);
+        }
         List<T> dbList = mongoTemplate.find(query, poClazz);
         if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
             List<R> rtnList = (List<R>) dbList;
