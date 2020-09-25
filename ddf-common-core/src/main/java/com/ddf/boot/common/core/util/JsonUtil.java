@@ -156,7 +156,7 @@ public final class JsonUtil {
             mapper.setSerializationInclusion(strategy);
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.error("对象转换Json失败", e.getMessage());
+            logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
     }

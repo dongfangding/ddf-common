@@ -1,8 +1,8 @@
 package com.ddf.boot.common.websocket.helper;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
-import com.ddf.boot.common.core.util.StringUtil;
 import com.ddf.boot.common.websocket.exception.ClientMessageCodeException;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.Message;
@@ -74,7 +74,7 @@ public class CmdAction implements CmdStrategy {
             log.error("指令码处理失败", e);
             e.printStackTrace();
             Message<String> errorMessage = Message.responseReceived(message, e.getMessage(), MessageResponse.SERVER_CODE_ERROR);
-            channelTransferService.updateToComplete(message, false, StringUtil.exceptionToString(e),
+            channelTransferService.updateToComplete(message, false, ExceptionUtil.stacktraceToString(e),
                     JsonUtil.asString(message), JsonUtil.asString(errorMessage));
             WebsocketSessionStorage.putDefaultResponse(message, MessageResponse.failure(message.getRequestId(), e.getMessage()));
             WebsocketSessionStorage.sendMessage(authPrincipal, errorMessage);

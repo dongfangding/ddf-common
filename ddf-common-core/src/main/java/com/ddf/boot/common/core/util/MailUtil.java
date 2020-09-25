@@ -43,7 +43,8 @@ import java.util.Map;
  */
 @Component
 public class MailUtil {
-    private Logger log = LoggerFactory.getLogger(MailUtil.class);
+
+    private final Logger log = LoggerFactory.getLogger(MailUtil.class);
 
     @Autowired(required = false)
     private JavaMailSenderImpl mailSender;

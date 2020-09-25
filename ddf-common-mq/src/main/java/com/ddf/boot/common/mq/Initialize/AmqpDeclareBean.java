@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadFactoryBuilder;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
-import com.ddf.boot.common.core.util.StringUtil;
+import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.mq.config.MqMessageProperties;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
 import com.ddf.boot.common.mq.entity.LogMqListener;
@@ -159,7 +159,7 @@ public class AmqpDeclareBean implements InitializingBean {
                             }
                             logMqListener.setCurrentThreadName(Thread.currentThread().getName());
                             logMqListener.setErrorMessage(poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
-                            logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringUtil.exceptionToString(poll.getThrowable()));
+                            logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringExtUtil.exceptionToStringNoLimit(poll.getThrowable()));
 
                             Map<String, LogMqPersistenceProcessor> processorMap = SpringContextHolder.getBeansOfType(LogMqPersistenceProcessor.class);
                             if (CollUtil.isNotEmpty(processorMap) && processorMap.containsKey(mqMessageProperties.getLogMqPersistenceProcessorBeanName())) {

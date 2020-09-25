@@ -1,16 +1,19 @@
 package com.ddf.boot.common.core.util;
 
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ *
+ *
+ * 聚合String功能
+ *
  *
  * _ooOoo_
  * o8888888o
@@ -33,9 +36,11 @@ import java.util.regex.Pattern;
  * .............................................
  * 佛曰：bug泛滥，我已瘫痪！
  *
+ * @author dongfang.ding on 2018/12/31
+ *
  */
 @Slf4j
-public class StringUtil {
+public class StringExtUtil {
 
 	private static final String UNION_PAY_LOGIN_PASSWORD_POOL = "abcdefghijklmnopqrstuvwxyz";
 	private static final String UNION_PAY_LOGIN_PASSWORD_CHAR = "@#*";
@@ -59,15 +64,15 @@ public class StringUtil {
 	}
 
 	/**
-	 * 随机生成云闪付登录密码
+	 * 随机生成登录密码
 	 *
 	 * @param
 	 * @return
 	 * @author dongfang.ding
 	 * @date 2019/9/25 17:51
 	 */
-	public static String randomUnionPayLoginPassword() {
-		return randomUnionPayLoginPassword(MIN, MAX);
+	public static String randomLoginPassword() {
+		return randomLoginPassword(MIN, MAX);
 	}
 
 	/**
@@ -78,7 +83,7 @@ public class StringUtil {
 	 * @author dongfang.ding
 	 * @date 2019/9/25 17:51
 	 */
-	public static String randomUnionPayLoginPassword(int minLength, int maxLength) {
+	public static String randomLoginPassword(int minLength, int maxLength) {
 		if (minLength < MIN) {
 			minLength = MIN;
 		}
@@ -104,14 +109,14 @@ public class StringUtil {
 	}
 
 	/**
-	 * 生成云闪付6位支付密码
+	 * 生成6位支付密码
 	 *
 	 * @param
 	 * @return
 	 * @author dongfang.ding
 	 * @date 2019/9/25 17:59
 	 */
-	public static String randomUnionPayPassword() {
+	public static String randomPayPassword() {
 		Random random = new Random();
 		String pool = UNION_PAY_PASSWORD_NUMBER;
 		int length = 6;
@@ -151,28 +156,7 @@ public class StringUtil {
 	 * @param e
 	 * @return
 	 */
-	public static String exceptionToString(Throwable e) {
-		return exceptionToString(e, 2000);
+	public static String exceptionToStringNoLimit(Throwable e) {
+		return ExceptionUtil.stacktraceToString(e, -1);
 	}
-
-	/**
-	 * 将异常栈输出为字符串
-	 * @param e
-	 * @return
-	 */
-	public static String exceptionToString(Throwable e, int allowLength) {
-		if (e == null) return "";
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		String errorMessage = sw.toString();
-		if (allowLength == -1) {
-			return errorMessage;
-		}
-		if (errorMessage.length() > allowLength) {
-			errorMessage = errorMessage.substring(0, allowLength);
-		}
-		return errorMessage;
-	}
-
 }

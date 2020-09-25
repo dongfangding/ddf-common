@@ -2,7 +2,7 @@ package com.ddf.boot.common.websocket.model;
 
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
-import com.ddf.boot.common.core.util.StringUtil;
+import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -126,7 +126,7 @@ public class Message<T> {
      * @return
      */
     public static Message<String> echo(String payload) {
-        return new Message<>(Type.RESPONSE, StringUtil.randomString(64), SEND_MODEL_SERVER, InternalCmdEnum.PONG.name(),
+        return new Message<>(Type.RESPONSE, StringExtUtil.randomString(64), SEND_MODEL_SERVER, InternalCmdEnum.PONG.name(),
                 payload, null);
     }
 
@@ -204,7 +204,7 @@ public class Message<T> {
      * @return
      */
     public static <T> Message<T> request(String cmd, String clientChannel, T body) {
-        return new Message<>(Type.REQUEST, StringUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
+        return new Message<>(Type.REQUEST, StringExtUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
     }
 
     /**

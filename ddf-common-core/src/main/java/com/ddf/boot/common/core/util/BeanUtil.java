@@ -1,15 +1,14 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 属性拷贝工具类
@@ -30,7 +29,7 @@ public class BeanUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T copy(T source) {
-        if (ObjectUtil.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         }
         return (T) copy(source, source.getClass());
@@ -45,7 +44,7 @@ public class BeanUtil {
      * @since 2019年07月24日
      */
     public static void copy(Object source, Object target) {
-        if (ObjectUtil.anyNull(source, target)) {
+        if (ObjectUtil.isAllEmpty(source, target)) {
             return;
         }
         MAPPER.map(source, target);
@@ -60,7 +59,7 @@ public class BeanUtil {
      * @since 2019年07月24日
      */
     public static <T> T copy(Object source, Class<T> target) {
-        if (ObjectUtil.anyNull(source, target)) {
+        if (ObjectUtil.isAllEmpty(source, target)) {
             return null;
         }
         return MAPPER.map(source, target);
@@ -74,7 +73,7 @@ public class BeanUtil {
      * @since 2019年07月24日
      */
     public static <T> List<T> copy(List<T> source) {
-        if (CollectionUtil.isBlank(source)) {
+        if (CollUtil.isEmpty(source)) {
             return null;
         }
         return new ArrayList<T>(source.size()) {
@@ -98,7 +97,7 @@ public class BeanUtil {
      * @since 2019年07月24日
      */
     public static <E> List<E> copy(List<?> source, Class<E> target) {
-        if (CollectionUtil.isBlank(source)) {
+        if (CollUtil.isEmpty(source)) {
             return new ArrayList<>(0);
         }
         return new ArrayList<E>(source.size()) {
@@ -124,7 +123,7 @@ public class BeanUtil {
         if (ObjectUtil.isNull(obj)) {
             return null;
         }
-        Map<String, Object> retMap = new LinkedHashMap<String, Object>();
+        Map<String, Object> retMap = new LinkedHashMap<>();
         for (Class<?> clazz = obj.getClass(); !clazz.isAssignableFrom(Object.class); ) {
             for (Field field : clazz.getDeclaredFields()) {
                 if (!Modifier.isStatic(field.getModifiers())) {
