@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,12 +37,12 @@ public class PageResult<E> implements Serializable {
 	/**
 	 * 总数
 	 */
-	private long total;
+	private long total = 0;
 
 	/**
 	 * 数据
 	 */
-	private List<E> content;
+	private List<E> content = Collections.emptyList();
 
 	/**
 	 * 空分页
