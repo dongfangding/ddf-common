@@ -5,6 +5,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 系统环境变量帮助类$
@@ -64,5 +65,13 @@ public class EnvironmentHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取当前应用使用的端口号
+     * @return
+     */
+    public int getPort() {
+        return Integer.parseInt(Objects.requireNonNull(environment.getProperty("server.port")));
     }
 }
