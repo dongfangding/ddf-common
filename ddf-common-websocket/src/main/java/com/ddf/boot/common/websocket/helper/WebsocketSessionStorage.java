@@ -95,11 +95,24 @@ public class WebsocketSessionStorage {
             // todo 同步狀態
             // 同步节点
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), wrapper.getServerAddress());
-            REDIS_TEMPLATE.opsForHash().put(key,
-                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
-                            serverHost, port, authPrincipal.getLoginType(),
-                            authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
-
+            String hashKey = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
+                    serverHost, port, authPrincipal.getLoginType(),
+                    authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode());
+            Object val = REDIS_TEMPLATE.opsForHash().get(key, hashKey);
+            boolean isOverride = true;
+            // 判断当前状态变化时间要大于已存储的数据的时间，才允许覆盖
+            if (val != null) {
+                WebSocketSessionWrapper oldVal = JsonUtil.toBean((String) val, WebSocketSessionWrapper.class);
+                if (wrapper.getStatusChangeTime() < oldVal.getStatusChangeTime()) {
+                    isOverride = false;
+                }
+            }
+            if (isOverride) {
+                REDIS_TEMPLATE.opsForHash().put(key,
+                        MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
+                                serverHost, port, authPrincipal.getLoginType(),
+                                authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
+            }
         }
     }
 
@@ -107,7 +120,6 @@ public class WebsocketSessionStorage {
      * 认证身份用户对应的WebSocketSession离线
      *
      *
-     * TODO 设备离线之后云闪付的状态需要处理吗？
      *
      * @param authPrincipal
 
@@ -169,15 +181,30 @@ public class WebsocketSessionStorage {
             webSocketSessionWrapper.setSync(false);
             WEB_SOCKET_SESSION_MAP.put(authPrincipal, webSocketSessionWrapper);
 
-            // 删除节点
+
             String serverHost = webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + "";
             String port = ENVIRONMENT.getProperty("server.port");
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), webSocketSessionWrapper.getServerAddress());
-            REDIS_TEMPLATE.opsForHash().delete(key, MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
-                    serverHost, port,
-                    authPrincipal.getLoginType(),
-                    authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
-            return true;
+            String hashKey = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
+                    serverHost, port, authPrincipal.getLoginType(),
+                    authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode());
+            Object val = REDIS_TEMPLATE.opsForHash().get(key, hashKey);
+            boolean isOverride = true;
+            // 判断当前状态变化时间要大于已存储的数据的时间，才允许覆盖
+            if (val != null) {
+                WebSocketSessionWrapper oldVal = JsonUtil.toBean((String) val, WebSocketSessionWrapper.class);
+                if (webSocketSessionWrapper.getStatusChangeTime() < oldVal.getStatusChangeTime()) {
+                    isOverride = false;
+                }
+            }
+            if (isOverride) {
+                // 删除节点
+                REDIS_TEMPLATE.opsForHash().delete(key,
+                        MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
+                                serverHost, port, authPrincipal.getLoginType(),
+                                authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
+                return true;
+            }
         }
         return false;
     }
