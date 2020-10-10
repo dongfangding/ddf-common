@@ -1,6 +1,8 @@
 package com.ddf.boot.zookeeper.monitor.properties;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>description</p >
@@ -10,6 +12,8 @@ import lombok.Data;
  * @date 2020/10/09 13:06
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MonitorNode {
 
     public static final String HOST_MODE_AUTO = "AUTO";

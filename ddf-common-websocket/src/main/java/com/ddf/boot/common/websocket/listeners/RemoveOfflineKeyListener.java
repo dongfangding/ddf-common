@@ -30,6 +30,8 @@ public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefr
     @Autowired
     private Environment environment;
 
+
+
     /**
      * Handle an application event.
      *
@@ -37,6 +39,14 @@ public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefr
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        // 删除当前服务节点在线客户端
+        clearOnline();
+    }
+
+    /**
+     * 清空当前服务的在线设备
+     */
+    public void clearOnline() {
         String host = NetUtil.getLocalhostStr();
         String port = environment.getProperty("server.port");
         String key = CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate();

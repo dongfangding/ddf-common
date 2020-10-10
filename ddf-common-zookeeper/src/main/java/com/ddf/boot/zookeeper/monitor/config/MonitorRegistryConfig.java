@@ -28,9 +28,11 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <p>description</p >
@@ -50,7 +52,7 @@ public class MonitorRegistryConfig implements InitializingBean {
     @Autowired
     private EnvironmentHelper environmentHelper;
     @Autowired(required = false)
-    private NodeEventListener nodeEventListener;
+    private List<NodeEventListener> nodeEventListeners;
     @Autowired
     @Qualifier("zookeeperDistributedLock")
     private DistributedLock zookeeperDistributedLock;
@@ -126,20 +128,29 @@ public class MonitorRegistryConfig implements InitializingBean {
             switch (type) {
                 case NODE_CREATED:
                     log.info("[{}]节点创建成功...........", path);
-                    if (nodeEventListener != null) {
-                        nodeEventListener.nodeCreate(client, path, oldData, data);
+                    if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                            nodeEventListener.nodeCreate(client, path, oldData, data);
+                        }
                     }
                     break;
                 case NODE_CHANGED:
                     log.info("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(), data.toString());
-                    if (nodeEventListener != null) {
-                        nodeEventListener.nodeChange(client, path, oldData, data);
+                    if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                            nodeEventListener.nodeChange(client, path, oldData, data);
+                        }
                     }
                     break;
                 case NODE_DELETED:
                     log.info("[{}]节点被删除...........", path);
-                    if (nodeEventListener != null) {
-                        nodeEventListener.nodeDeleted(client, path, oldData, data);
+                    if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                            nodeEventListener.nodeDeleted(client, path, oldData, data);
+                        }
                     }
                     break;
                 default:
@@ -257,7 +268,7 @@ public class MonitorRegistryConfig implements InitializingBean {
      * 检查节点是否存在
      *
      */
-    private void checkNodeExist() throws Exception {
+    private void checkNodeExist() {
         zookeeperDistributedLock.lockWorkOnce(DistributedLock.formatPath(CHECK_NODE_LOCK_PATH), () -> {
             List<MonitorNode> monitors = monitorProperties.getMonitors();
             if (CollUtil.isEmpty(monitors)) {
@@ -274,13 +285,18 @@ public class MonitorRegistryConfig implements InitializingBean {
                 // 监听节点创建的所有节点历史记录
                 String[] allNodes = data.split(DATA_SPLIT_CHAR);
                 List<String> nodes = client.getChildren().forPath(monitor.getMonitorPath());
-                if (nodeEventListener != null) {
+                if (CollUtil.isNotEmpty(nodeEventListeners)) {
                     if (CollUtil.isEmpty(nodes)) {
                         // 回调所有节点的监听事件
                         for (String currNode : allNodes) {
                             childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
                             log.info("节点检查时发现[{}]被删除", childData.getPath());
-                            nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
+                            if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                                nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                                for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                                    nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
+                                }
+                            }
                         }
                         // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
                         client.setData().forPath(monitor.getMonitorPath(), null);
@@ -292,7 +308,12 @@ public class MonitorRegistryConfig implements InitializingBean {
                         for (String currNode : disjunction) {
                             childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
                             log.info("节点检查时发现[{}]被删除", childData.getPath());
-                            nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
+                            if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                                nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                                for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                                    nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
+                                }
+                            }
                         }
                         // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
                         client.setData().forPath(monitor.getMonitorPath(), StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8));
