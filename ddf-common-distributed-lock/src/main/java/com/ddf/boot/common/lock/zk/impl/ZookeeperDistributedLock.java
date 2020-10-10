@@ -3,9 +3,9 @@ package com.ddf.boot.common.lock.zk.impl;
 import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.common.lock.exception.LockingAcquireException;
 import com.ddf.boot.common.lock.exception.LockingBusinessException;
-import com.ddf.boot.common.lock.exception.LockingReleaseException;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
@@ -61,12 +61,14 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param lockPath
      * @return
      */
+    @SneakyThrows
     @Override
-    public Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) throws LockingReleaseException {
+    public Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) {
         String formatLockPath = formatLockPath(lockPath);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockPath);
         try {
             if (!lock.acquire(time, timeUnit)) {
+                log.warn("{}等待[{}{}]后未获取到锁", lockPath, time, timeUnit);
                 return Boolean.FALSE;
             }
         } catch (Exception e) {
@@ -81,15 +83,23 @@ public class ZookeeperDistributedLock implements DistributedLock {
             throw new LockingBusinessException(e);
         } finally {
             if (lock.isAcquiredInThisProcess()) {
-                try {
-                    lock.release();
-                } catch (Exception e) {
-                    log.error("释放锁[{}]异常", formatLockPath);
-                    throw new LockingReleaseException(e);
-                }
+                lock.release();
             }
         }
         return Boolean.TRUE;
+    }
+
+    /**
+     * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
+     * fixme 但这种方式显然是不准确的， 更不准的一种情况是获取了分布式锁但是还没释放之后的那台机器掉线了，由于zk对客户端感知的延迟性，再未删除节点前另外一太机器会多次内无法获取到锁，影响
+     * 业务流程执行
+     * @param lockPath
+     * @param handleData
+     * @return
+     */
+    @Override
+    public boolean lockWorkOnce(String lockPath, HandlerBusiness handleData) {
+        return tryLock(lockPath, 10, TimeUnit.MILLISECONDS, handleData);
     }
 
     /**
@@ -99,12 +109,10 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param time       等待获取锁的时间
      * @param timeUnit   单位
      * @param handleData 具体业务
-     * @throws LockingAcquireException  获取锁异常
-     * @throws LockingReleaseException  释放锁异常
      */
+    @SneakyThrows
     @Override
-    public void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData)
-            throws LockingAcquireException, LockingReleaseException {
+    public void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) {
         String formatLockPath = formatLockPath(lockPath);
         InterProcessMutex lock;
         try {
@@ -124,12 +132,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
             throw new LockingBusinessException(e);
         } finally {
             if (lock.isAcquiredInThisProcess()) {
-                try {
-                    lock.release();
-                } catch (Exception e) {
-                    log.error("释放锁[{}]异常", formatLockPath);
-                    throw new LockingReleaseException(e);
-                }
+                lock.release();
             }
         }
     }
@@ -140,12 +143,9 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param lockPath   zk节点路径
      * @param handleData 具体业务
      * @return
-     * @throws LockingAcquireException  获取锁异常
-     * @throws LockingReleaseException  释放锁异常
      */
     @Override
-    public void lockWork(String lockPath, HandlerBusiness handleData) throws LockingAcquireException
-            , LockingReleaseException {
+    public void lockWork(String lockPath, HandlerBusiness handleData) {
         lockWork(lockPath, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, handleData);
     }
 

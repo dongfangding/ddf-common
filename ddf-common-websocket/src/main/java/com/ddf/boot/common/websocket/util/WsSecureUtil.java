@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class WsSecureUtil {
 
-    private static final WebSocketProperties WEB_SOCKET_PROPERTIES = SpringContextHolder.getBean(WebSocketProperties.class);
+    private static final WebSocketProperties WEB_SOCKET_PROPERTIES = SpringContextHolder.getBeanWithStatic(WebSocketProperties.class);
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 

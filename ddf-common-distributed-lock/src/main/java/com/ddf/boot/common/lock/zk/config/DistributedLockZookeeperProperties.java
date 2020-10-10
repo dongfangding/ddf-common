@@ -17,7 +17,7 @@ public class DistributedLockZookeeperProperties {
     /**
      * 根默认
      */
-    private String root = "/ddf";
+    private String root = "/distributed_lock";
 
     /**
      * zookeeper的连接地址

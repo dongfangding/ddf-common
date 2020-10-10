@@ -56,20 +56,23 @@ public class SpringContextHolder implements ApplicationContextAware {
 	// 需要获取系统配置类然后使用这个类获取， 但是我又希望这个类，可以提供在spring环境中的调试，
 	// 如果满足这样的话， 属性初始化就必须写在静态代码块中，而这样的话工具类中使用这个类的时候applicationContext就会为空，然后空指针影响调试
 	// 可参考该类 com.ddf.boot.common.websocket.util.WsSecureUtil
-
-	public static <T> T getBean(Class<T> requiredType) throws BeansException {
+	public static <T> T getBeanWithStatic(Class<T> requiredType) throws BeansException {
 		return applicationContext == null ? null : applicationContext.getBean(requiredType);
 	}
 
+	public static <T> T getBean(Class<T> requiredType) throws BeansException {
+		return applicationContext.getBean(requiredType);
+	}
+
 	public static Object getBean(String name) throws BeansException {
-		return applicationContext == null ? null : applicationContext.getBean(name);
+		return applicationContext.getBean(name);
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-		return applicationContext == null ? null : applicationContext.getBean(name, requiredType);
+		return applicationContext.getBean(name, requiredType);
 	}
 
 	public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {
-		return applicationContext == null ? null : applicationContext.getBeansOfType(type);
+		return applicationContext.getBeansOfType(type);
 	}
 }

@@ -1,7 +1,6 @@
 package com.ddf.boot.common.lock;
 
-import com.ddf.boot.common.lock.exception.LockingAcquireException;
-import com.ddf.boot.common.lock.exception.LockingReleaseException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +35,15 @@ import java.util.concurrent.TimeUnit;
 public interface DistributedLock {
 
     /**
+     * 针对多个路径进行格式化，用以符合zk node格式
+     * @param path
+     * @return
+     */
+    static String formatPath(String... path) {
+        return StringUtils.join(path, "/");
+    }
+
+    /**
      * 默认等待时间 10s
      */
     Integer DEFAULT_ACQUIRE_TIME = 10;
@@ -52,7 +60,15 @@ public interface DistributedLock {
      * @param handleData
      * @return
      */
-    Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData) throws LockingReleaseException;
+    Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
+
+    /**
+     * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
+     * @param lockPath
+     * @param handleData
+     * @return
+     */
+    boolean lockWorkOnce(String lockPath, HandlerBusiness handleData);
 
     /**
      * 加锁并执行业务
@@ -61,11 +77,8 @@ public interface DistributedLock {
      * @param time       等待获取锁的时间
      * @param timeUnit   单位
      * @param handleData 具体业务
-     * @throws LockingAcquireException  获取锁异常
-     * @throws LockingReleaseException  释放锁异常
      */
-    void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData)
-            throws LockingAcquireException, LockingReleaseException;
+    void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
 
     /**
      * 加锁并执行业务- 加锁默认等待10s获取不到锁抛出异常IllegalStateException
@@ -73,10 +86,8 @@ public interface DistributedLock {
      * @param lockPath   zk节点路径
      * @param handleData 具体业务
      * @return
-     * @throws LockingAcquireException  获取锁异常
-     * @throws LockingReleaseException  释放锁异常
      */
-    void lockWork(String lockPath, HandlerBusiness handleData) throws LockingAcquireException, LockingReleaseException;
+    void lockWork(String lockPath, HandlerBusiness handleData);
 
     /**
      * 上锁路径格式化
@@ -93,6 +104,6 @@ public interface DistributedLock {
         /**
          * 执行业务
          */
-        void handle();
+        void handle() throws Exception;
     }
 }

@@ -1,7 +1,12 @@
 package com.ddf.boot.common.websocket.helper;
 
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
+import com.ddf.boot.common.lock.DistributedLock;
+import com.ddf.boot.common.lock.exception.LockingAcquireException;
+import com.ddf.boot.common.lock.exception.LockingReleaseException;
+import com.ddf.boot.common.lock.zk.impl.ZookeeperDistributedLock;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
@@ -13,6 +18,7 @@ import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.MessageResponse;
 import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.properties.WebSocketProperties;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -42,6 +48,8 @@ public class WebsocketSessionStorage {
 
     private static final Environment ENVIRONMENT = SpringContextHolder.getBean(Environment.class);
 
+    private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBean(EnvironmentHelper.class);
+
     private static final CmdStrategyHelper CMD_STRATEGY_HELPER = SpringContextHolder.getBean(CmdStrategyHelper.class);
 
     private static final WebSocketProperties WEB_SOCKET_PROPERTIES = SpringContextHolder.getBean(WebSocketProperties.class);
@@ -49,6 +57,10 @@ public class WebsocketSessionStorage {
     private static final StringRedisTemplate REDIS_TEMPLATE = SpringContextHolder.getBean(StringRedisTemplate.class);
 
     private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(EncryptProcessor.class);
+
+    private static final DistributedLock DISTRIBUTED_LOCK = SpringContextHolder.getBean(ZookeeperDistributedLock.class);
+
+    private static final String LOCK_PATH = "/online_status";
 
     /**
      * 连接对象
@@ -78,21 +90,21 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      * @param webSocketSession
-
      */
-    public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession){
-        synchronized (ENVIRONMENT) {
+    @SneakyThrows
+    public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) {
+        DISTRIBUTED_LOCK.lockWorkOnce(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
             String serverHost = webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + "";
-            String port = ENVIRONMENT.getProperty("server.port");
+            int port = ENVIRONMENT_HELPER.getPort();
             WebSocketSessionWrapper wrapper = new WebSocketSessionWrapper(
                     authPrincipal,
                     new ConcurrentWebSocketSessionDecorator(
-                        webSocketSession, WEB_SOCKET_PROPERTIES.getSendTimeLimit(), WEB_SOCKET_PROPERTIES.getBufferSizeLimit()
+                            webSocketSession, WEB_SOCKET_PROPERTIES.getSendTimeLimit(), WEB_SOCKET_PROPERTIES.getBufferSizeLimit()
                     ),
                     WebSocketSessionWrapper.STATUS_ON_LINE, false, System.currentTimeMillis(),
                     serverHost + ":" + port , webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
             WEB_SOCKET_SESSION_MAP.put(authPrincipal, wrapper);
-            // todo 同步狀態
+
             // 同步节点
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(), wrapper.getServerAddress());
             String hashKey = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
@@ -113,7 +125,7 @@ public class WebsocketSessionStorage {
                                 serverHost, port, authPrincipal.getLoginType(),
                                 authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
             }
-        }
+        });
     }
 
     /**
@@ -122,12 +134,11 @@ public class WebsocketSessionStorage {
      *
      *
      * @param authPrincipal
-
      */
-    public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession){
-        synchronized (ENVIRONMENT){
+    public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) throws LockingReleaseException, LockingAcquireException {
+        DISTRIBUTED_LOCK.lockWorkOnce(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
             modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
-        }
+        });
     }
 
     /**
@@ -144,7 +155,6 @@ public class WebsocketSessionStorage {
      * 获取所有连接信息
      *
      * @return
-
      */
     public static ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> getAll() {
         return WEB_SOCKET_SESSION_MAP;
@@ -156,8 +166,7 @@ public class WebsocketSessionStorage {
      * 
      * @param authPrincipal
      * @return
-
-     * @date 2019/9/24 15:17 
+     * @date 2019/9/24 15:17
      */
     public static boolean isSocketSessionOn(AuthPrincipal authPrincipal) {
         return WEB_SOCKET_SESSION_MAP.containsKey(authPrincipal);
@@ -170,7 +179,6 @@ public class WebsocketSessionStorage {
      * @param authPrincipal
      * @param status
      * @return
-
      */
     public static boolean modifyStatus(AuthPrincipal authPrincipal, Integer status, WebSocketSession webSocketSession) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -215,7 +223,6 @@ public class WebsocketSessionStorage {
      * @param authPrincipal
      * @param sync
      * @return
-
      */
     public static boolean modifySync(AuthPrincipal authPrincipal, boolean sync) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -232,7 +239,6 @@ public class WebsocketSessionStorage {
      * 将请求id放入对象中，等待填充
      *
      * @param requestId
-
      */
     public static void put(@NotNull String requestId) {
         Objects.requireNonNull(requestId, "请求id不能为空!");
@@ -246,8 +252,7 @@ public class WebsocketSessionStorage {
      * @param message
      * @param response
      * @return
-
-     * @date 2019/9/26 21:21 
+     * @date 2019/9/26 21:21
      */
     public static void putDefaultResponse( @NotNull Message<?> message, @NotNull MessageResponse<?> response) {
         if (!InternalCmdEnum.PING.equals(message.getCmd()) && WebsocketSessionStorage.isNone(message.getRequestId())) {
@@ -261,7 +266,6 @@ public class WebsocketSessionStorage {
      *
      * @param requestId
      * @param response
-
      */
     public static void putResponse(@NotNull String requestId, @NotNull MessageResponse<?> response) {
         Objects.requireNonNull(requestId, "请求id不能为空!");
@@ -279,7 +283,6 @@ public class WebsocketSessionStorage {
      *
      * @param message
      * @return
-
      */
     public static boolean checkResponseIsSuccess(@NotNull Message<?> message) {
         Objects.requireNonNull(message, "message不能为空!");
@@ -310,7 +313,6 @@ public class WebsocketSessionStorage {
      * @param requestId
      * @param blockMilliSeconds
      * @return
-
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId, long blockMilliSeconds) {
         long initTime = System.currentTimeMillis();
@@ -338,7 +340,6 @@ public class WebsocketSessionStorage {
      * 
      * @param requestId
      * @return
-
      * @date 2019/9/26 18:39
      */
     public static boolean responseIsTake(String requestId) {
@@ -350,8 +351,7 @@ public class WebsocketSessionStorage {
      * 
      * @param requestId
      * @return
-
-     * @date 2019/9/26 20:35 
+     * @date 2019/9/26 20:35
      */
     public static boolean isNone(String requestId) {
         return REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == MessageResponse.none();
@@ -363,7 +363,6 @@ public class WebsocketSessionStorage {
      *
      * @param requestId
      * @return
-
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId) {
         return getResponse(requestId, 10000);
@@ -434,7 +433,6 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      * @param message
-
      */
     public static WebSocketSessionWrapper sendMessage(AuthPrincipal authPrincipal, Message<?> message) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -447,7 +445,6 @@ public class WebsocketSessionStorage {
      *
      * @param webSocketSessionWrapper
      * @param message
-
      */
     public static void sendMessageAndClose(WebSocketSessionWrapper webSocketSessionWrapper, Message<?> message) {
         try {
@@ -464,7 +461,6 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      * @param message
-
      */
     public static void sendMessageAndClose(AuthPrincipal authPrincipal, Message<?> message) {
         sendMessageAndClose(get(authPrincipal), message);
