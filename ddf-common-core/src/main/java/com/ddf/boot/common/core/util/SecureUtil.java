@@ -197,16 +197,6 @@ public class SecureUtil {
 
         String aesStr = "哈哈我非叫我二纺机我饿";
 
-        /**
-         *         - bucketName: ddf-private
-         *           bucketEndpoint: oss-cn-shanghai.aliyuncs.com
-         *           accessKeyId: LTAI4GKSTV8xkCD476q7TSmQ
-         *           accessKeySecret: zRRlU4Rw8EmZ8KM5rGNx9jN9IcAq3G
-         */
-        System.out.println(AES.encryptHex("ddf-private"));
-        System.out.println(AES.encryptHex("oss-cn-shanghai.aliyuncs.com"));
-        System.out.println(AES.encryptHex("LTAI4GKSTV8xkCD476q7TSmQ"));
-        System.out.println(AES.encryptHex("zRRlU4Rw8EmZ8KM5rGNx9jN9IcAq3G"));
     }
 }
 
