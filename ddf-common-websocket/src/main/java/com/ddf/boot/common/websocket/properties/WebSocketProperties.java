@@ -1,5 +1,12 @@
 package com.ddf.boot.common.websocket.properties;
 
+import com.ddf.boot.common.websocket.config.WebSocketConfig;
+import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
+import com.ddf.boot.common.websocket.interceptor.DefaultHandshakeInterceptor;
+import com.ddf.boot.common.websocket.interceptor.EncryptProcessor;
+import com.ddf.boot.common.websocket.interceptor.RSAEncryptProcessor;
+import com.ddf.boot.common.websocket.model.MessageRequest;
+import com.ddf.boot.common.websocket.util.WsSecureUtil;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -83,15 +90,15 @@ public class WebSocketProperties {
 
     /**
      * 是否加密传输消息
-     * @see WebsocketSessionStorage#sendMessage(com.ddf.boot.quick.websocket.model.WebSocketSessionWrapper, com.ddf.boot.quick.websocket.model.Message)
+     * @see WebsocketSessionStorage#sendMessage(com.ddf.boot.common.websocket.model.WebSocketSessionWrapper, com.ddf.boot.common.websocket.model.Message)
      */
     private boolean messageSecret;
 
     /**
      * 同messageSecret和handshakeTokenSecret参数一起使用，如果要加密的话，提供了一个接口允许实现加解密算法
      * 提供了也给默认基于RSA的实现，也可以直接配置密钥即可， 如果要基于系统默认的RSA实现的话，私钥必须提供
-     * @see com.ddf.boot.quick.websocket.util.WsSecureUtil
-     * @see com.ddf.boot.quick.websocket.interceptor.EncryptProcessor
+     * @see WsSecureUtil
+     * @see EncryptProcessor
      * @see RSAEncryptProcessor
      */
     private String rsaPrivateKey;
@@ -114,7 +121,7 @@ public class WebSocketProperties {
      * 有时候服务端向客户端发送数据时会希望得到一些响应，而这个响应当前这个请求希望是可以同步得到的，这里提供一个默认最大阻塞时间.
      * 更为一种常见的场景是，服务端提供接口允许第三方发送数据给客户端， 然后索要数据，而这个时候第三方是希望同步的。
      * 当然具体请求可以自定义阻塞时间，但自定义的阻塞时间不能大于这个默认的最大阻塞时间，这是为了对应用的一个保护
-     * @see com.ddf.boot.quick.websocket.model.MessageRequest
+     * @see MessageRequest
      * @see WebsocketSessionStorage#getResponse(String, long)
      */
     private long maxSyncBlockMillions = 600000;

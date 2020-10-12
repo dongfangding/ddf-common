@@ -294,5 +294,6 @@
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
         <module>ddf-common-zookeeper</module>
+        <module>ddf-common-third-party</module>
     </modules>
 </project>

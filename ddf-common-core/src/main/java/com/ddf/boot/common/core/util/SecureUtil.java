@@ -4,6 +4,10 @@ import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import com.ddf.boot.common.core.config.GlobalProperties;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 public class SecureUtil {
 
     private SecureUtil() {}
+
+
+    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(GlobalProperties.class);
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -21,6 +28,8 @@ public class SecureUtil {
     private final static RSA LOCAL_PRIVATE_RSA;
 
     private final static RSA LOCAL_PUBLIC_RSA;
+
+    private final static SymmetricCrypto AES;
 
     /**
      * 本地公钥私钥
@@ -38,6 +47,12 @@ public class SecureUtil {
 
         LOCAL_PRIVATE_RSA = new RSA(LOCAL_PRIVATE_KEY, null);
         LOCAL_PUBLIC_RSA = new RSA(null, LOCAL_PUBLIC_KEY);
+
+        if (GLOBAL_PROPERTIES != null && StringUtils.isNotBlank(GLOBAL_PROPERTIES.getAesSecret())) {
+            AES = new SymmetricCrypto(SymmetricAlgorithm.AES, GLOBAL_PROPERTIES.getAesSecret().getBytes(UTF_8));
+        } else {
+            AES = new SymmetricCrypto(SymmetricAlgorithm.AES, "Java is the best language.......".getBytes(UTF_8));
+        }
     }
 
     /**
@@ -152,12 +167,46 @@ public class SecureUtil {
         return LOCAL_PUBLIC_RSA.decryptStrFromBcd(data, KeyType.PublicKey, UTF_8);
     }
 
+    /**
+     * 获取AES实例
+     * @return
+     */
+    public static SymmetricCrypto getAES() {
+        return AES;
+    }
+
+    /**
+     * 使用AES加密成十六进制
+     * @param str
+     * @return
+     */
+    public static String encryptHexByAES(String str) {
+        return AES.encryptHex(str);
+    }
+
+    public static String decryptFromHexByAES(String str) {
+        return AES.decryptStr(str);
+    }
+
     public static void main(String[] args) {
 
         String str = "{\"accessKeyId\":\"1\",\"accessKeyName\":\"ddf\",\"loginType\":\"USER\",\"currentTimeStamp\":1600229897375}";
 
         String s = SecureUtil.localPublicEncryptBcd(str);
         System.out.println("s = " + s);
+
+        String aesStr = "哈哈我非叫我二纺机我饿";
+
+        /**
+         *         - bucketName: ddf-private
+         *           bucketEndpoint: oss-cn-shanghai.aliyuncs.com
+         *           accessKeyId: LTAI4GKSTV8xkCD476q7TSmQ
+         *           accessKeySecret: zRRlU4Rw8EmZ8KM5rGNx9jN9IcAq3G
+         */
+        System.out.println(AES.encryptHex("ddf-private"));
+        System.out.println(AES.encryptHex("oss-cn-shanghai.aliyuncs.com"));
+        System.out.println(AES.encryptHex("LTAI4GKSTV8xkCD476q7TSmQ"));
+        System.out.println(AES.encryptHex("zRRlU4Rw8EmZ8KM5rGNx9jN9IcAq3G"));
     }
 }
 

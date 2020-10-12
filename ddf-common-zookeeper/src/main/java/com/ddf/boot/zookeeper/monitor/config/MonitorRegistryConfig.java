@@ -127,7 +127,7 @@ public class MonitorRegistryConfig implements InitializingBean {
         cache.listenable().addListener((type, oldData, data) -> {
             switch (type) {
                 case NODE_CREATED:
-                    log.info("[{}]节点创建成功...........", path);
+                    log.debug("[{}]节点创建成功...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
                         nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
@@ -136,7 +136,7 @@ public class MonitorRegistryConfig implements InitializingBean {
                     }
                     break;
                 case NODE_CHANGED:
-                    log.info("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(), data.toString());
+                    log.debug("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(), data.toString());
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
                         nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
@@ -145,7 +145,7 @@ public class MonitorRegistryConfig implements InitializingBean {
                     }
                     break;
                 case NODE_DELETED:
-                    log.info("[{}]节点被删除...........", path);
+                    log.debug("[{}]节点被删除...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
                         nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
@@ -220,16 +220,16 @@ public class MonitorRegistryConfig implements InitializingBean {
             monitorPath = getMonitorPath(monitor);
             try {
                 data = String.valueOf(System.currentTimeMillis());
-                log.info("【{}】上报数据{}", monitor, data);
+                log.debug("【{}】上报数据{}", monitor, data);
                 client.setData().forPath(monitorPath, data.getBytes(StandardCharsets.UTF_8));
             } catch (Exception exception) {
                 // 节点被误删除, 重新建立节点
                 if (exception instanceof KeeperException.NoNodeException) {
                     try {
-                        log.info("更新节点[{}]时不存在， 重新建立节点", monitorPath);
+                        log.debug("更新节点[{}]时不存在， 重新建立节点", monitorPath);
                         createNode(monitorPath, monitor);
                     } catch (Exception e1) {
-                        log.info("节点[{}]被误删除重建节点异常 {}", monitorPath, exception);
+                        log.debug("节点[{}]被误删除重建节点异常 {}", monitorPath, exception);
                     }
                 } else {
                     log.error("节点[{}]更新失败", monitorPath, exception);
@@ -289,8 +289,12 @@ public class MonitorRegistryConfig implements InitializingBean {
                     if (CollUtil.isEmpty(nodes)) {
                         // 回调所有节点的监听事件
                         for (String currNode : allNodes) {
-                            childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
-                            log.info("节点检查时发现[{}]被删除", childData.getPath());
+                            try {
+                                childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
+                            } catch (KeeperException.NoNodeException exception) {
+                                continue;
+                            }
+                            log.debug("节点检查时发现[{}]被删除", childData.getPath());
                             if (CollUtil.isNotEmpty(nodeEventListeners)) {
                                 nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                                 for (NodeEventListener nodeEventListener : nodeEventListeners) {
@@ -307,7 +311,7 @@ public class MonitorRegistryConfig implements InitializingBean {
                         }
                         for (String currNode : disjunction) {
                             childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
-                            log.info("节点检查时发现[{}]被删除", childData.getPath());
+                            log.debug("节点检查时发现[{}]被删除", childData.getPath());
                             if (CollUtil.isNotEmpty(nodeEventListeners)) {
                                 nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                                 for (NodeEventListener nodeEventListener : nodeEventListeners) {

@@ -9,17 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ddf-common-zookeeper</artifactId>
-    <description>zk使用相关工具</description>
+    <artifactId>ddf-common-third-party</artifactId>
+    <description>第三方扩展工具包</description>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <curator.version>5.1.0</curator.version>
+        <aliyun-oss.version>3.8.0</aliyun-oss.version>
     </properties>
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${aliyun-oss.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
@@ -27,15 +32,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ddf.common</groupId>
-            <artifactId>ddf-common-distributed-lock</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
     </dependencies>
 </project>

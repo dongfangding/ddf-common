@@ -67,4 +67,24 @@ public class GlobalProperties {
      */
     private boolean exceptionCodeToResponseStatus;
 
+
+    /**
+     * rsa 通用秘钥
+     * @see com.ddf.boot.common.core.util.SecureUtil
+     */
+    private String rsaPrivateKey;
+
+
+    /**
+     * rsa rsa通用公钥
+     * @see com.ddf.boot.common.core.util.SecureUtil
+     */
+    private String rsaPublicKey;
+
+    /**
+     * AES 秘钥
+     * @see com.ddf.boot.common.core.util.SecureUtil
+     */
+    private String aesSecret;
+
 }
