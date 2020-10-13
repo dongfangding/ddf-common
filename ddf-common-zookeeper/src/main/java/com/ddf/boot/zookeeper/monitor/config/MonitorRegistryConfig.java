@@ -175,7 +175,11 @@ public class MonitorRegistryConfig implements InitializingBean {
         }
 
         // 处理父节点的数据
-        String data = new String(client.getData().forPath(monitor.getMonitorPath()), StandardCharsets.UTF_8);
+        String data = null;
+        byte[] bytes = client.getData().forPath(monitor.getMonitorPath());
+        if (bytes != null && bytes.length > 0) {
+            data = new String(bytes, StandardCharsets.UTF_8);
+        }
         if (StringUtils.isNotBlank(data)) {
             // 附加当前主机信息
             if (!data.contains(hostPath)) {
