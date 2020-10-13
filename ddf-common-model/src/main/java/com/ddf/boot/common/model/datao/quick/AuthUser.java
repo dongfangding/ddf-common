@@ -40,6 +40,12 @@ public class AuthUser extends BaseDomain implements Serializable {
     @ApiModelProperty("生日")
     private Date birthday;
 
+    @ApiModelProperty("头像地址， 非全路径")
+    private String avatar;
+
+    @ApiModelProperty("头像缩略地址， 非全路径")
+    private String shortAvatar;
+
     @ApiModelProperty("最后一次修改密码的时间")
     private Long lastModifyPassword;
 
