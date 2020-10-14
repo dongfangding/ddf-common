@@ -18,6 +18,7 @@ public class SmsProperties {
 
     public static final String DEFAULT_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";
 
+
     /**
      * 服务地址
      * https://help.aliyun.com/document_detail/101511.html?spm=a2c4g.11186623.6.614.663b2b76TIhK9Q
@@ -27,7 +28,7 @@ public class SmsProperties {
     /**
      * 请求通信协议 http或https
      */
-    private String protocol = "http://";
+    private String protocol = "HTTP";
 
     /**
      * 是否加密accessKeyId、accessKeySecret
