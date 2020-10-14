@@ -14,6 +14,7 @@
 
     <properties>
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
+        <aliyun-sms.version>4.5.3</aliyun-sms.version>
     </properties>
 
 
@@ -23,6 +24,12 @@
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>${aliyun-oss.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>${aliyun-sms.version}</version>
         </dependency>
 
         <dependency>
