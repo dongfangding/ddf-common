@@ -36,7 +36,6 @@ public class ChannelStoreSyncTask implements Runnable {
      */
     @Override
     public synchronized void run() {
-        System.out.println("===========================同步连接信息========================");
         // 防止处理的时候数据又有变化，每个任务只处理当前已有处理
         ConcurrentHashMap<String, ChannelInfo> channelStore = new ConcurrentHashMap<>(ServerInboundHandler.channelStore);
         if (channelStore != null && !channelStore.isEmpty()) {

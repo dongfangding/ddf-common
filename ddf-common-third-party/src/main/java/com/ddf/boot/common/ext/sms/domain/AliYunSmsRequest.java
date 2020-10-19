@@ -39,6 +39,13 @@ public class AliYunSmsRequest {
      */
     private String phoneNumbers;
 
+
+    /**
+     * 是否使用基于验证码的随机短信模板参数， 该参数仅针对基于验证码模板的短信模板有效，且变量名必须为code
+     * 然后会随机生成验证码，处理模板参数
+     */
+    private boolean useRandomCode;
+
     /**
      * 短信模板变量对应的实际值，JSON格式
      * 模板：您的验证码${code}，该验证码5分钟内有效，请勿泄漏于他人！

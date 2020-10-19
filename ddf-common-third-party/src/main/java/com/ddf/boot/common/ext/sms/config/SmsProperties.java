@@ -1,6 +1,10 @@
 package com.ddf.boot.common.ext.sms.config;
 
+import com.ddf.boot.common.core.util.SecureUtil;
+import com.google.common.base.Preconditions;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "customs.ext.sms")
-public class SmsProperties {
+public class SmsProperties implements InitializingBean {
 
     public static final String DEFAULT_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";
 
@@ -47,6 +51,8 @@ public class SmsProperties {
      */
     private String accessKeySecret;
 
+    // todo 支持多个短信模板
+
     /**
      * 短信签名名称
      * 请在控制台签名管理页面签名名称一列查看。
@@ -59,6 +65,23 @@ public class SmsProperties {
      * 必须是已添加、并通过审核的短信签名；且发送国际/港澳台消息时，请使用国际/港澳台短信模版。
      */
     private String templateCode;
+
+    /**
+     * 接收上行消息, 未实现
+     * https://dysms.console.aliyun.com/dysms.htm?spm=5176.broadband-accelerate-account.products-recent.ddysms.308068afopt6gX#/system/general
+     * @throws Exception
+     */
+    private String queueName;
+
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()), "请检查oss配置属性");
+        if (secretAccessKey) {
+            this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
+            this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
+        }
+    }
 
 
 }
