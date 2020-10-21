@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class SecurityUtils {
 
-    public static <T> UserClaim<T> getUserDetails(boolean throwException) {
-        UserClaim<T> userClaim;
+    public static UserClaim getUserDetails(boolean throwException) {
+        UserClaim userClaim;
         try {
             userClaim = (UserClaim) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
@@ -30,8 +30,8 @@ public class SecurityUtils {
      *
      * @return 系统用户名称
      */
-    public static <T> String getUsername() {
-        UserClaim<T> userClaim = getUserDetails(true);
+    public static String getUsername() {
+        UserClaim userClaim = getUserDetails(true);
         return userClaim.getUsername();
     }
 
@@ -40,8 +40,8 @@ public class SecurityUtils {
      *
      * @return 系统用户id
      */
-    public static <T> String getDefaultUserName() {
-        UserClaim<T> userClaim = getUserDetails(false);
+    public static String getDefaultUserName() {
+        UserClaim userClaim = getUserDetails(false);
         return userClaim.getUsername();
     }
 
@@ -52,8 +52,8 @@ public class SecurityUtils {
      *
      * @return 系统用户id
      */
-    public static <T> String getUserId() {
-        UserClaim<T> userClaim = getUserDetails(true);
+    public static String getUserId() {
+        UserClaim userClaim = getUserDetails(true);
         return userClaim.getUserId();
     }
 
@@ -62,8 +62,8 @@ public class SecurityUtils {
      *
      * @return 系统用户id
      */
-    public static <T> String getDefaultUserId() {
-        UserClaim<T> userClaim = getUserDetails(false);
+    public static String getDefaultUserId() {
+        UserClaim userClaim = getUserDetails(false);
         return userClaim.getUserId();
     }
 }

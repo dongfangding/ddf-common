@@ -10,9 +10,11 @@ import com.ddf.boot.common.jwt.exception.UserClaimMissionException;
 import com.ddf.boot.common.jwt.model.UserClaim;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.KeyException;
+import io.jsonwebtoken.security.Keys;
 import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.util.AntPathMatcher;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -72,13 +74,12 @@ public class JwtUtil {
      * @return
 
      */
-    public static String defaultJws(UserClaim<?> userClaim) {
+    public static String defaultJws(UserClaim userClaim) {
         Date now = new Date();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(now);
         calendar.add(Calendar.MINUTE, JWT_PROPERTIES.getExpiredMinute());
         calendar.getTime();
-
         return Jwts.builder()
                 .addClaims(userClaim.toMap())
                 .setId(UUID.randomUUID().toString())
@@ -86,7 +87,8 @@ public class JwtUtil {
                 .setSubject(JsonUtil.asString(userClaim))
                 .setExpiration(calendar.getTime())
                 .setIssuedAt(now)
-                .signWith(SignatureAlgorithm.HS512, JWT_PROPERTIES.getSecret()).compact();
+                .signWith(Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     /**
@@ -99,7 +101,8 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, JWT_PROPERTIES.getSecret()).compact();
+                .signWith(Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     /**
@@ -137,9 +140,9 @@ public class JwtUtil {
      * @param claimsJws
      * @return
      */
-    public static <T> UserClaim<T> getUserClaim(Jws<Claims> claimsJws) {
+    public static UserClaim getUserClaim(Jws<Claims> claimsJws) {
         if (claimsJws.getBody() == null) {
-            return new UserClaim<>();
+            return new UserClaim();
         }
         Claims body = claimsJws.getBody();
         return JsonUtil.toBean(body.getSubject(), UserClaim.class);
@@ -152,12 +155,12 @@ public class JwtUtil {
      * @return
      * @throws UserClaimMissionException
      */
-    public static <T> UserClaim<T> getByContext() throws UserClaimMissionException {
+    public static UserClaim getByContext() throws UserClaimMissionException {
         return getByContext(true);
     }
 
 
-    private static <T> UserClaim<T> getByContext(boolean necessary) throws UserClaimMissionException {
+    private static UserClaim getByContext(boolean necessary) throws UserClaimMissionException {
         Object headerUser;
         try {
             headerUser = WebUtil.getCurRequest().getAttribute(JwtConstant.HEADER_USER);
@@ -181,7 +184,7 @@ public class JwtUtil {
      * @author dongfang.ding
      * @date 2019/12/9 0009 16:23
      **/
-    public static <T> UserClaim<T> getByContextNotNecessary() {
+    public static UserClaim getByContextNotNecessary() {
         try {
            return getByContext(false); 
         } catch (Exception e) {

@@ -48,7 +48,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class  UserClaim<T> implements Serializable {
+public class UserClaim implements Serializable {
     private static final long serialVersionUID = -6557510720376811244L;
 
     public static final String CLAIM_USER_ID = "userId";
@@ -105,8 +105,9 @@ public class  UserClaim<T> implements Serializable {
 
     /**
      * 预留的详细信息字段，使用方可以将自己想要放置的数据放到这个字段中；到时候想使用的时候可以自行解析回来
+     * 仅支持字符格式，如果要放入复杂对象，请自行序列化
      */
-    private T detail;
+    private String detail;
 
     public UserClaim(String userId, String username) {
         this.userId = userId;

@@ -181,7 +181,7 @@ public class SecureUtil {
      * @return
      */
     public static String encryptHexByAES(String str) {
-        return AES.encryptHex(str);
+        return AES.encryptHex(str, StandardCharsets.UTF_8);
     }
 
     public static String decryptFromHexByAES(String str) {
