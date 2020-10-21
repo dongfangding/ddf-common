@@ -75,13 +75,29 @@ public class JwtUtil {
 
      */
     public static String defaultJws(UserClaim userClaim) {
+        return defaultJws(userClaim, Collections.emptyMap());
+    }
+
+    /**
+     *
+     * 创建默认的Jws payload
+     * 会将传入的UserClaim里的有get方法的所有属性附加到payload中;
+     *
+     * @param userClaim
+     * @return
+
+     */
+    public static String defaultJws(UserClaim userClaim, Map<String, Object> claims) {
         Date now = new Date();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(now);
         calendar.add(Calendar.MINUTE, JWT_PROPERTIES.getExpiredMinute());
-        calendar.getTime();
+        final Map<String, Object> finalClaimMap = userClaim.toMap();
+        if (!io.jsonwebtoken.lang.Collections.isEmpty(claims)) {
+            finalClaimMap.putAll(claims);
+        }
         return Jwts.builder()
-                .addClaims(userClaim.toMap())
+                .addClaims(finalClaimMap)
                 .setId(UUID.randomUUID().toString())
                 .setIssuer(userClaim.getUsername())
                 .setSubject(JsonUtil.asString(userClaim))
@@ -100,7 +116,7 @@ public class JwtUtil {
     public static String createJws(Map<String, Object> claims) {
 
         return Jwts.builder()
-                .setClaims(claims)
+                .addClaims(claims)
                 .signWith(Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
                 .compact();
     }
