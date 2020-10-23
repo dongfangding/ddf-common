@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * <p>阿里云sms配置属性类</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/14 10:54
  */

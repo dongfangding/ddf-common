@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.exception200;
 /**
  * <p>错误请求，通常用于处理接口请求</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/28 13:14
  */

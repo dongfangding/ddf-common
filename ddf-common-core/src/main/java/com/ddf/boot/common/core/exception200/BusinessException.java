@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.exception200;
 /**
  * <p>通用业务异常，只提供预定义的消息状态码构造函数</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/28 15:13
  */

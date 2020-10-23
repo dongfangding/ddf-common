@@ -5,7 +5,7 @@ import com.ddf.boot.common.core.response.ResponseData;
 /**
  * <p>将捕获的异常暴露出去，允许实现方实现接口根据这个异常自定义返回数据</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/28 10:33
  */

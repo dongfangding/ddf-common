@@ -3,7 +3,7 @@ package com.ddf.boot.common.websocket.constant;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/09/15 20:34
  */

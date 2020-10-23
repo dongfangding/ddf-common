@@ -6,7 +6,7 @@ import com.ddf.boot.common.core.exception200.BusinessException;
 /**
  * <p>提供断言，抛出系统自定义异常信息</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/23 18:38
  */

@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.exception200;
 /**
  * <p>访问被拒绝，通常用于权限判断</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/28 13:28
  */

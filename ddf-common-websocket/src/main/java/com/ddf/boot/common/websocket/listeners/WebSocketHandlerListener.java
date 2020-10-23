@@ -9,7 +9,7 @@ import org.springframework.web.socket.WebSocketSession;
 /**
  * <p>给{@link DefaultWebSocketHandler} 暴露的允许使用方额外根据事件执行逻辑 </p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/09/17 09:52
  */

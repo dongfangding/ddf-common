@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * <p>通用逻辑状态</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/23 11:24
  */

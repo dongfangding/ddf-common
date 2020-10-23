@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.exception200;
 /**
  * <p>未通过认证异常，通常用于登录认证</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/28 13:30
  */

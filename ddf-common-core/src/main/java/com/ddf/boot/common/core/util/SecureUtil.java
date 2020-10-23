@@ -197,6 +197,11 @@ public class SecureUtil {
 
         String aesStr = "哈哈我非叫我二纺机我饿";
 
+        final SymmetricCrypto aes = getAES();
+        System.out.println(encryptHexByAES("LTAI4GETbRG3dBH4amqNsybi"));
+        System.out.println(encryptHexByAES("8guyIgZF17VP9h3laMW3HFg8SuGMI2"));
+
+
     }
 }
 

@@ -11,7 +11,7 @@ import lombok.Data;
  *
  * 这个不是发送给阿里云供应商的，而是给自己内部提供的发送短信的传递参数
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/14 10:59
  */

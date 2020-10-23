@@ -3,7 +3,7 @@ package com.ddf.boot.common.websocket.enumu;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/09/16 16:23
  */

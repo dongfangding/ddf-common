@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.exception200;
 /**
  * <p>基准异常类</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/06/17 15:55
  */

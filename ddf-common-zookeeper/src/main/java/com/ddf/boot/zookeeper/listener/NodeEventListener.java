@@ -6,7 +6,7 @@ import org.apache.curator.framework.recipes.cache.ChildData;
 /**
  * <p>节点事件监听器回调</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/09 14:02
  */

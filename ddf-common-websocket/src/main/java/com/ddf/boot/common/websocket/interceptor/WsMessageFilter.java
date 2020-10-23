@@ -7,7 +7,7 @@ import com.ddf.boot.common.websocket.model.MessageRequest;
  * <p>消息发送过滤器</p >
  *
  * 可以统一在发送消息前，对消息的目标进行一些类似权限校验或者什么之类的，决定目标客户端是否可以接受数据
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/09/16 15:29
  */

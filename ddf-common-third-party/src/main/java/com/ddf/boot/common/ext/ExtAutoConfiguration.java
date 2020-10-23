@@ -5,7 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * <p>ext包的自动配置类</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/12 13:35
  */

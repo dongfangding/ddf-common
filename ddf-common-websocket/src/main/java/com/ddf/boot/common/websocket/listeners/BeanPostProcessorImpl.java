@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * <p>初始化bean时提供一些额外功能</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/10 16:24
  */
