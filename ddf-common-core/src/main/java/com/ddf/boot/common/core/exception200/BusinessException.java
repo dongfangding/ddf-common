@@ -16,10 +16,14 @@ public class BusinessException extends BaseException {
         super(baseCallbackCode);
     }
 
+
     public BusinessException(String description) {
         super(description);
     }
 
+    public BusinessException(String code, String description) {
+        super(code, description);
+    }
 
     /**
      * 当前异常默认响应状态码
