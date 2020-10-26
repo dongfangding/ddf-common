@@ -2,7 +2,7 @@ package com.ddf.boot.common.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ddf.boot.common.core.entity.BaseDomain;
+import com.ddf.boot.common.core.model.BaseDomain;
 import com.ddf.boot.common.core.exception200.ServerErrorException;
 
 import java.util.Collection;

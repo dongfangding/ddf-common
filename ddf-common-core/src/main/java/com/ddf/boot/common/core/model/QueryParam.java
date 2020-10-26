@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.entity;
+package com.ddf.boot.common.core.model;
 
 import lombok.*;
 

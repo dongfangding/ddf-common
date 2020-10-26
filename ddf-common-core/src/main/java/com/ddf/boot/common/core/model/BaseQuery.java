@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.entity;
+package com.ddf.boot.common.core.model;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;

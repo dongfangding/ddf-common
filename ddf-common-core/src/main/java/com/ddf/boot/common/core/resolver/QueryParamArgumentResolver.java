@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.resolver;
 
-import com.ddf.boot.common.core.entity.QueryParam;
+import com.ddf.boot.common.core.model.QueryParam;
 import com.ddf.boot.common.core.util.ContextKey;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.MethodParameter;

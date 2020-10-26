@@ -1,8 +1,8 @@
 package com.ddf.boot.mongo.helper;
 
 import cn.hutool.core.convert.Convert;
-import com.ddf.boot.common.core.entity.BaseQuery;
-import com.ddf.boot.common.core.entity.PageResult;
+import com.ddf.boot.common.core.model.BaseQuery;
+import com.ddf.boot.common.core.model.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

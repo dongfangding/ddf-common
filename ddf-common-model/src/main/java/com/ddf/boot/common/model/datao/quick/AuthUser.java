@@ -1,6 +1,6 @@
 package com.ddf.boot.common.model.datao.quick;
 
-import com.ddf.boot.common.core.entity.BaseDomain;
+import com.ddf.boot.common.core.model.BaseDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

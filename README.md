@@ -53,11 +53,11 @@ TODO
 
 ### 基类实体
 
-* com.ddf.boot.common.core.entity.BaseDomain
+* com.ddf.boot.common.core.model.BaseDomain
 
   提供了一个实体层的基类，并使用了mybatis和spring-data等注解进行修饰， **id必须自己生成**
 
-* com.ddf.boot.common.core.entity.BaseQuery
+* com.ddf.boot.common.core.model.BaseQuery
 
   提供了所有查询对象的基类，提供了分页和排序参数， 查询对象继承该对象，根据自己使用框架，该对象提供了
 
