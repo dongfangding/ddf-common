@@ -33,6 +33,7 @@ import java.util.Date;
  * .............................................
  * 佛曰：bug泛滥，我已瘫痪！
  *
+ * @author dongfang.ding
  */
 @Data
 public class BaseDomain {
