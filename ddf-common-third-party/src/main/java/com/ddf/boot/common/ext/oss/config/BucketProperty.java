@@ -24,4 +24,12 @@ public class BucketProperty {
     private String bucketEndpoint;
 
 
+    /**
+     * 是否为主oss存储桶， 如果是的话，这个bucket会作为sts方式返回给前端， 让前端来操控这个bucket进行操作，
+     * 如果需要前端上传对象， 一定要开放一个bucket给前端使用，这个属性必须为true, 注意为了实现的简单性， 只允许一个为true
+     */
+    private boolean primary;
+
+
+
 }
