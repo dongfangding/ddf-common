@@ -2,6 +2,7 @@ package com.ddf.boot.common.ext.oss.helper;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyuncs.DefaultAcsClient;
@@ -11,10 +12,8 @@ import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.ddf.boot.common.core.exception200.ServerErrorException;
 import com.ddf.boot.common.core.util.BeanUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
-import com.ddf.boot.common.ext.oss.config.BucketProperty;
-import com.ddf.boot.common.ext.oss.config.OssProperties;
-import com.ddf.boot.common.ext.oss.config.StsTokenRequest;
-import com.ddf.boot.common.ext.oss.config.StsTokenResponse;
+import com.ddf.boot.common.ext.oss.config.*;
+import com.google.common.collect.Lists;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -134,5 +133,26 @@ public class OssHelper {
      */
     public static String getOssPrefix(String bucketName, String endPoint) {
         return StrUtil.format("{}{}.{}", "https://", bucketName, endPoint);
+    }
+
+    /**
+     * todo 完善
+     * @param path
+     * @param bucketName
+     * @return
+     */
+    private static String getPolicy(String path, String bucketName) {
+        AliOssPolicyDTO.StatementBean statementBean = new AliOssPolicyDTO.StatementBean();
+        statementBean.setEffect("Allow");
+        statementBean.setAction(Lists.newArrayList("oss:GetObject", "oss:PutObject", "oss:HeadObject"));
+        statementBean.setResource(Lists.newArrayList("acs:oss:*:*:" + bucketName + "/" + path + "*"));
+
+        AliOssPolicyDTO aliOssPolicy = new AliOssPolicyDTO();
+        aliOssPolicy.setBucket(bucketName);
+        aliOssPolicy.setPath(path);
+        aliOssPolicy.setVersion("1");
+        aliOssPolicy.setStatement(Lists.newArrayList(statementBean));
+        String result = JSONUtil.toJsonStr(aliOssPolicy);
+        return result;
     }
 }
