@@ -195,11 +195,8 @@ public class SecureUtil {
         String s = SecureUtil.localPublicEncryptBcd(str);
         System.out.println("s = " + s);
 
-        String aesStr = "哈哈我非叫我二纺机我饿";
-
-        final SymmetricCrypto aes = getAES();
-        System.out.println(encryptHexByAES("LTAI4GETbRG3dBH4amqNsybi"));
-        System.out.println(encryptHexByAES("8guyIgZF17VP9h3laMW3HFg8SuGMI2"));
+        System.out.println(encryptHexByAES("sssss"));
+        System.out.println(encryptHexByAES("bbbbb"));
 
 
     }

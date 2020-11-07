@@ -5,7 +5,6 @@ import com.ddf.boot.zookeeper.monitor.properties.MonitorProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>初始化bean时提供一些额外功能</p >
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2020/10/10 16:24
  */
-@Component
+//@Component
 public class BeanPostProcessorImpl implements BeanPostProcessor {
 
     public static final String WEBSOCKET_ONLINE_SERVER_PATH = "/websocket_online_server_path";
@@ -30,6 +29,7 @@ public class BeanPostProcessorImpl implements BeanPostProcessor {
     @Nullable
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        // todo 完善服务下线功能
         if (MonitorProperties.class.equals(bean.getClass())) {
             // 注册当前服务需要的监听节点
             ((MonitorProperties) bean).getMonitors().add(new MonitorNode(MonitorNode.HOST_MODE_AUTO, WEBSOCKET_ONLINE_SERVER_PATH, true));

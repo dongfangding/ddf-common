@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,11 @@ public class MonitorProperties {
     /**
      * 监控端点对象集合
      */
-    private List<MonitorNode> monitors;
+    private List<MonitorNode> monitors = new ArrayList<>();
+
+/*    public List<MonitorNode> getMonitors() {
+        this.monitors = monitors == null ? Collections.emptyList() : monitors;
+        return monitors;
+    }*/
 
 }

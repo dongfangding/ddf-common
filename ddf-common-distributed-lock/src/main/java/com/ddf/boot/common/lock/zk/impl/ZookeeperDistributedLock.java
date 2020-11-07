@@ -99,7 +99,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      */
     @Override
     public boolean lockWorkOnce(String lockPath, HandlerBusiness handleData) {
-        return tryLock(lockPath, 5000, TimeUnit.MILLISECONDS, handleData);
+        return tryLock(lockPath, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, handleData);
     }
 
     /**
