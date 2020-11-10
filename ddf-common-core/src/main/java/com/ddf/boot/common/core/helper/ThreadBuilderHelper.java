@@ -43,8 +43,8 @@ public class ThreadBuilderHelper {
      * @return
      */
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int keepAliveSeconds, int queueCapacity) {
-        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors() * 2 + 1, new ThreadPoolExecutor.CallerRunsPolicy());
+        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors() + 1,
+                Runtime.getRuntime().availableProcessors() * 2, new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
 
