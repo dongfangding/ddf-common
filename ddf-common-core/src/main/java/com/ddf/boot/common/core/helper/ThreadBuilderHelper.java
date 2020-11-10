@@ -76,8 +76,8 @@ public class ThreadBuilderHelper {
      */
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int keepAliveSeconds, int queueCapacity
             , RejectedExecutionHandler rejectedExecutionHandler) {
-        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors() * 2 + 1, rejectedExecutionHandler);
+        return buildThreadExecutor(prefix, keepAliveSeconds, queueCapacity, Runtime.getRuntime().availableProcessors() + 1,
+                Runtime.getRuntime().availableProcessors() * 2, rejectedExecutionHandler);
     }
 
     /**
@@ -114,8 +114,8 @@ public class ThreadBuilderHelper {
      * @return
      */
     public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int keepAliveSeconds) {
-        return buildScheduledExecutorService(prefix, Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors() * 2 + 1, keepAliveSeconds);
+        return buildScheduledExecutorService(prefix, Runtime.getRuntime().availableProcessors() + 1,
+                Runtime.getRuntime().availableProcessors() * 2, keepAliveSeconds);
     }
 
     /**
