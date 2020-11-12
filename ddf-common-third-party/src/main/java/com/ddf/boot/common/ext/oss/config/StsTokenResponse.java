@@ -13,16 +13,48 @@ import java.io.Serializable;
  * @see AssumeRoleResponse.Credentials
  **/
 @Data
-public class StsCredentials implements Serializable {
+public class StsTokenResponse implements Serializable {
 
 	static final long serialVersionUID = 8603542924461775912L;
 
+	/**
+	 * STS临时授权信息
+	 */
 	private String securityToken;
 
+	/**
+	 * STS临时授权信息
+	 */
 	private String accessKeySecret;
 
+	/**
+	 * STS临时授权信息
+	 */
 	private String accessKeyId;
 
+	/**
+	 * STS临时授权信息
+	 */
 	private String expiration;
+
+	/**
+	 * 存储桶名称
+	 */
+	private String bucketName;
+
+	/**
+	 * 存储桶域名
+	 */
+	private String endPoint;
+
+	/**
+	 * oss访问前缀
+	 */
+	private String ossPrefix;
+
+	/**
+	 * 上传对象的前缀
+	 */
+	private String objectPrefix;
 
 }

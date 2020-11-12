@@ -74,4 +74,12 @@ public class EnvironmentHelper {
     public int getPort() {
         return Integer.parseInt(Objects.requireNonNull(environment.getProperty("server.port")));
     }
+
+    /**
+     * 获取当前应用名称
+     * @return
+     */
+    public String getApplicationName() {
+        return environment.getProperty("spring.application.name");
+    }
 }

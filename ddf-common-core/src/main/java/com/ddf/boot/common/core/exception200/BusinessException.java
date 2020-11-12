@@ -25,6 +25,19 @@ public class BusinessException extends BaseException {
         super(code, description);
     }
 
+    public BusinessException(String code, String description, Object... params) {
+        super(code, description, params);
+    }
+
+    /**
+     * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     * @param baseCallbackCode
+     * @param params
+     */
+    public BusinessException(BaseCallbackCode baseCallbackCode, Object... params) {
+        super(baseCallbackCode, params);
+    }
+
     /**
      * 当前异常默认响应状态码
      *

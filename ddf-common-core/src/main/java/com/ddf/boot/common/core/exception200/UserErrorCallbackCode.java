@@ -9,6 +9,8 @@ package com.ddf.boot.common.core.exception200;
  */
 public enum UserErrorCallbackCode implements BaseCallbackCode {
 
+    // 枚举定义里也可以不指定状态码，这样就会使用每个自定义异常内的通用状态码 com.ddf.boot.common.core.exception200.BaseException.defaultCallback
+
     /**
      * 用户异常体系状态码定义
      */
@@ -29,11 +31,17 @@ public enum UserErrorCallbackCode implements BaseCallbackCode {
      */
     private final String description;
 
+
+
+    UserErrorCallbackCode(String description) {
+        this.code = null;
+        this.description = description;
+    }
+
     UserErrorCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;
     }
-
     /**
      * 响应状态码
      *

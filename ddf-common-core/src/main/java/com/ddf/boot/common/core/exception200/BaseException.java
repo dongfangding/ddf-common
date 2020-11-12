@@ -1,5 +1,7 @@
 package com.ddf.boot.common.core.exception200;
 
+import java.text.MessageFormat;
+
 /**
  * <p>基准异常类</p >
  *
@@ -50,13 +52,23 @@ public abstract class BaseException extends RuntimeException implements BaseCall
     }
 
     public BaseException(String code, String description, Object... params) {
-        super(description);
+        super(MessageFormat.format(description, params));
         initCallback(code, description, params);
+    }
+
+    /**
+     * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     * @param baseCallbackCode
+     * @param params
+     */
+    public BaseException(BaseCallbackCode baseCallbackCode, Object... params) {
+        super(MessageFormat.format(baseCallbackCode.getDescription(), params));
+        initCallback(baseCallbackCode.getCode(), baseCallbackCode.getDescription(), params);
     }
 
 
     private void initCallback(BaseCallbackCode baseCallbackCode) {
-        initCallback(baseCallbackCode.getCode(), baseCallbackCode.getDescription());
+        initCallback(baseCallbackCode.getCode() == null ? defaultCallback().getCode() : baseCallbackCode.getCode(), baseCallbackCode.getDescription());
     }
 
 
@@ -66,9 +78,9 @@ public abstract class BaseException extends RuntimeException implements BaseCall
      * @param description
      */
     private void initCallback(String code, String description, Object... params) {
-        this.code = code;
-        this.description = description;
+        this.code = code == null ? defaultCallback().getCode() : code;
         this.params = params;
+        this.description = MessageFormat.format(description, params);
     }
 
 
@@ -100,5 +112,9 @@ public abstract class BaseException extends RuntimeException implements BaseCall
 
     public Object[] getParams() {
         return params;
+    }
+
+    public static void main(String[] args) {
+
     }
 }
