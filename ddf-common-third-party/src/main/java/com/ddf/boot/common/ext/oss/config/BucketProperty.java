@@ -18,8 +18,8 @@ public class BucketProperty {
     private String bucketName;
 
     /**
-     * 构建OSS对象的属性
-     * @see com.aliyun.oss.OSSClientBuilder#build(java.lang.String, java.lang.String, java.lang.String)
+     * Bucket 域名
+     * 一般用于访问的时候是需要的，每个bucket的访问域名是不一致的
      */
     private String bucketEndpoint;
 

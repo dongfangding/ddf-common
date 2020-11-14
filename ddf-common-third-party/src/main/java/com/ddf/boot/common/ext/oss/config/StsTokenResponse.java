@@ -1,6 +1,7 @@
 package com.ddf.boot.common.ext.oss.config;
 
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,9 +14,10 @@ import java.io.Serializable;
  * @see AssumeRoleResponse.Credentials
  **/
 @Data
+@Builder
 public class StsTokenResponse implements Serializable {
 
-	static final long serialVersionUID = 8603542924461775912L;
+	private static final long serialVersionUID = 8603542924461775912L;
 
 	/**
 	 * STS临时授权信息

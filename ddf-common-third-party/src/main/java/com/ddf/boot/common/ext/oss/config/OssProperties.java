@@ -1,7 +1,6 @@
 package com.ddf.boot.common.ext.oss.config;
 
 import cn.hutool.core.collection.CollUtil;
-import com.aliyun.oss.OSSClientBuilder;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
@@ -9,7 +8,6 @@ import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.ddf.boot.common.core.util.SecureUtil;
-import com.ddf.boot.common.ext.oss.helper.OssHelper;
 import com.google.common.base.Preconditions;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +47,7 @@ public class OssProperties implements InitializingBean {
     private String accessKeySecret;
 
     /**
-     * Endpoint（地域节点）
+     * Endpoint（地域节点） SDK中需要的，和bucket无关，和OSS所在地域有关
      */
     private String endpoint;
 
@@ -91,6 +89,8 @@ public class OssProperties implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()), "请检查oss配置属性");
         Preconditions.checkArgument(CollUtil.isNotEmpty(this.getBuckets()), "请检查bucket列表配置");
+        Preconditions.checkArgument(StringUtils.isNotBlank(stsEndpoint), "sts的接入地址不能为空");
+        Preconditions.checkArgument(StringUtils.isNotBlank(roleArn), "roleArn不能为空");
         boolean isDecrypt = false;
         for (BucketProperty property : this.getBuckets()) {
             Preconditions.checkArgument(StringUtils.isNotBlank(property.getBucketName()), "请检查bucket配置");
@@ -102,28 +102,22 @@ public class OssProperties implements InitializingBean {
                     isDecrypt = true;
                 }
             }
-            OssHelper.putOss(property.getBucketName(), new OSSClientBuilder().build(this.getEndpoint(),
-                    this.getAccessKeyId(), this.getAccessKeySecret()));
         }
 
         // 配置STS访问
         if (!StringUtils.isAnyBlank(this.getStsEndpoint(), this.getRoleArn())) {
-            DefaultProfile.addEndpoint("", "", "Sts", this.getStsEndpoint());
+            DefaultProfile.addEndpoint("", "Sts", this.getStsEndpoint());
             IClientProfile profile = DefaultProfile.getProfile("", this.getAccessKeyId(), this.getAccessKeySecret());
             // 用profile构造client
             DefaultAcsClient client = new DefaultAcsClient(profile);
             final AssumeRoleRequest request = new AssumeRoleRequest();
-            request.setMethod(MethodType.POST);
+            request.setSysMethod(MethodType.POST);
             request.setRoleArn(this.getRoleArn());
             request.setRoleSessionName(this.getRoleSessionName());
             // 若policy为空，则用户将获得该角色下所有权限
             request.setPolicy(this.getPolicy());
             // 设置凭证有效时间
             request.setDurationSeconds(this.getDurationSeconds());
-
-            OssHelper.defaultAcsClient = client;
-            OssHelper.assumeRoleRequest = request;
-            OssHelper.ossProperties = this;
 
             final AssumeRoleResponse response = client.getAcsResponse(request);
             System.out.println("Expiration: " + response.getCredentials().getExpiration());
