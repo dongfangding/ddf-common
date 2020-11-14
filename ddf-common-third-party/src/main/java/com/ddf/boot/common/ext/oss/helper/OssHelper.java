@@ -7,20 +7,24 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.ddf.boot.common.core.exception200.ServerErrorException;
-import com.ddf.boot.common.core.util.BeanUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.ext.oss.config.*;
+import com.ddf.boot.common.ext.oss.dto.StsOssTransfer;
 import com.google.common.collect.Lists;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * <p>description</p >
@@ -29,86 +33,110 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0
  * @date 2020/10/12 13:33
  */
-public class OssHelper {
+@Component
+@AllArgsConstructor(onConstructor_={@Autowired})
+@Slf4j
+public class OssHelper implements SmartInitializingSingleton {
 
-    public static DefaultAcsClient defaultAcsClient;
+    /**
+     * @see OssBeanDefinitionRegistrar
+     */
+    private final DefaultAcsClient defaultAcsClient;
 
-    public static AssumeRoleRequest assumeRoleRequest;
+    private OssProperties primaryOssProperties;
 
-    public static OssProperties ossProperties;
+    /**
+     * @see OssBeanDefinitionRegistrar
+     */
+    private final OSS defaultOssClient;
+
 
     /**
      * 主存储桶配置
      */
-    public static BucketProperty primaryBucketProperty;
-
-    /**
-     * 存储OSS实例的map, key为bucket name
-     */
-    private final static Map<String, OSS> ossMap = new ConcurrentHashMap<>();
-
-    /**
-     * 放入实例
-     * @param bucketName
-     * @param oss
-     */
-    public static void putOss(String bucketName, OSS oss) {
-        ossMap.put(bucketName, oss);
-    }
+    public BucketProperty primaryBucketProperty;
 
 
     /**
-     * 根据bucket name 获取存储的实例
-     * @param bucketName
+     * 返回默认OSS bean
      * @return
      */
-    public static OSS getOss(String bucketName) {
-        return ossMap.get(bucketName);
+    public OSS getDefaultOssClient() {
+        return defaultOssClient;
     }
 
     /**
-     * 获取STS授权信息
+     * 返回主存储桶属性， 一般都会只用到一个存储桶，不会用到多个的
      * @return
-     * @throws ClientException
      */
-    public static AssumeRoleResponse getRoleResponse() throws ClientException {
-        return defaultAcsClient.getAcsResponse(assumeRoleRequest);
+    public BucketProperty getPrimaryBucketProperty() {
+        return this.primaryBucketProperty;
     }
+
 
     /**
      * 返回STS核心授权信息
      * @return
      * @throws ClientException
      */
-    public static StsTokenResponse getStsCredentials(StsTokenRequest request) throws ClientException {
-        if (primaryBucketProperty == null) {
-            final Optional<BucketProperty> first = ossProperties.getBuckets().stream().filter(BucketProperty::isPrimary).findFirst();
-            if (!first.isPresent()) {
-                throw new ServerErrorException("没有配置主存储桶！");
-            }
-            primaryBucketProperty = first.get();
-        }
-        final StsTokenResponse response = BeanUtil.copy(getRoleResponse().getCredentials(), StsTokenResponse.class);
-        PreconditionUtil.checkArgument(response != null, "获取oss授权信息失败");
-        response.setObjectPrefix(getPath(request.getPlatform(), request.getIdentity()));
-        response.setOssPrefix(getOssPrefix(primaryBucketProperty.getBucketName(), primaryBucketProperty.getBucketEndpoint()));
-        response.setBucketName(primaryBucketProperty.getBucketName());
-        response.setEndPoint(primaryBucketProperty.getBucketEndpoint());
-        return response;
+    public StsTokenResponse getOssToken(StsTokenRequest stsTokenRequest) {
+        String path = getPath(stsTokenRequest.getPlatform(), stsTokenRequest.getIdentity());
+        AssumeRoleResponse acsResponse = getAcsResponse(stsTokenRequest, path);
+        final AssumeRoleResponse.Credentials credentials = acsResponse.getCredentials();
+        return StsTokenResponse.builder()
+                .securityToken(credentials.getSecurityToken())
+                .accessKeySecret(credentials.getAccessKeySecret())
+                .accessKeyId(credentials.getAccessKeyId())
+                .expiration(credentials.getExpiration())
+                .bucketName(primaryBucketProperty.getBucketName())
+                .endPoint(primaryBucketProperty.getBucketEndpoint())
+                .ossPrefix(getOssPrefix(primaryBucketProperty.getBucketName(), primaryBucketProperty.getBucketEndpoint()))
+                .objectPrefix(path)
+                .build();
     }
 
+
     /**
-     * 获取临时授权的oss实例，其实这个一般用不到，服务端自己使用肯定是直接使用的，一般是将授权信息返回给web客户端，然后web客户端这么去玩
+     * 获取OSS token, 使用完成后关闭对象
+     * @param stsTokenRequest
      * @return
-     * @throws ClientException
      */
-    public static OSS getStsOss() throws ClientException {
-        AssumeRoleResponse acsResponse = defaultAcsClient.getAcsResponse(assumeRoleRequest);
-        AssumeRoleResponse.Credentials credentials = acsResponse.getCredentials();
-        final OSS build = new OSSClientBuilder().build(ossProperties.getEndpoint(), credentials.getAccessKeyId(),
-                credentials.getAccessKeySecret(), credentials.getSecurityToken());
-        PreconditionUtil.checkArgument(build != null, "获取oss授权信息失败");
-        return build;
+    public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
+        final StsTokenResponse acsResponse = getOssToken(stsTokenRequest);
+        final OSS stsOss = new OSSClientBuilder().build(primaryBucketProperty.getBucketEndpoint(), acsResponse.getAccessKeyId(),
+                acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken());
+        try {
+            final StsOssTransfer stsOssTransfer = StsOssTransfer.builder()
+                    .oss(new OSSClientBuilder().build(acsResponse.getEndPoint(), acsResponse.getAccessKeyId(),
+                            acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken()))
+                    .stsTokenResponse(acsResponse).build();
+            consumer.accept(stsOssTransfer);
+        } finally {
+            stsOss.shutdown();
+        }
+    }
+
+
+    /**
+     * 获取Acs 响应属性
+     * @param stsTokenRequest
+     * @return
+     */
+    public AssumeRoleResponse getAcsResponse(StsTokenRequest stsTokenRequest, String path) {
+        final AssumeRoleRequest request = new AssumeRoleRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setRoleArn(primaryOssProperties.getRoleArn());
+        request.setRoleSessionName(primaryOssProperties.getRoleSessionName());
+        // 若policy为空，则用户将获得该角色下所有权限
+        request.setPolicy(getPolicy(primaryBucketProperty.getBucketName(), path));
+        // 设置凭证有效时间
+        request.setDurationSeconds(primaryOssProperties.getDurationSeconds());
+        try {
+            return defaultAcsClient.getAcsResponse(request);
+        } catch (ClientException e) {
+            log.error("处理阿里云OSS异常!", e);
+            throw new ServerErrorException("处理阿里云OSS异常");
+        }
     }
 
 
@@ -136,7 +164,7 @@ public class OssHelper {
     }
 
     /**
-     * todo 完善
+     * 对资源进行动态授权
      * @param path
      * @param bucketName
      * @return
@@ -152,7 +180,19 @@ public class OssHelper {
         aliOssPolicy.setPath(path);
         aliOssPolicy.setVersion("1");
         aliOssPolicy.setStatement(Lists.newArrayList(statementBean));
-        String result = JSONUtil.toJsonStr(aliOssPolicy);
-        return result;
+        return JSONUtil.toJsonStr(aliOssPolicy);
+    }
+
+    /**
+     */
+    @Override
+    public void afterSingletonsInstantiated() {
+        if (primaryBucketProperty == null) {
+            final Optional<BucketProperty> first = primaryOssProperties.getBuckets().stream().filter(BucketProperty::isPrimary).findFirst();
+            if (!first.isPresent()) {
+                throw new ServerErrorException("没有配置主存储桶！");
+            }
+            primaryBucketProperty = first.get();
+        }
     }
 }
