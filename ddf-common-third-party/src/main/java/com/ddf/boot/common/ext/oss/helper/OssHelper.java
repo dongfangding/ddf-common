@@ -1,11 +1,10 @@
 package com.ddf.boot.common.ext.oss.helper;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
-import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
@@ -16,14 +15,13 @@ import com.ddf.boot.common.ext.oss.dto.StsOssTransfer;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -33,29 +31,37 @@ import java.util.function.Consumer;
  * @version 1.0
  * @date 2020/10/12 13:33
  */
+@Slf4j
 @Component
 @AllArgsConstructor(onConstructor_={@Autowired})
-@Slf4j
-public class OssHelper implements SmartInitializingSingleton {
+public class OssHelper {
 
     /**
-     * @see OssBeanDefinitionRegistrar
+     * @see OssBeanAutoConfiguration
      */
-    private final DefaultAcsClient defaultAcsClient;
-
-    private OssProperties primaryOssProperties;
+    private final IAcsClient defaultAcsClient;
 
     /**
-     * @see OssBeanDefinitionRegistrar
+     * @see OssBeanAutoConfiguration
      */
     private final OSS defaultOssClient;
 
+    private final OssProperties ossProperties;
 
     /**
      * 主存储桶配置
      */
-    public BucketProperty primaryBucketProperty;
+    public static BucketProperty primaryBucketProperty;
 
+    /**
+     * 初始化
+     */
+    @PostConstruct
+    public void init() {
+        // 这里会保证一定能够拿到主存储桶信息， 在OssProperties初始化的时候已经校验过
+        primaryBucketProperty = ossProperties.getBuckets().size() == 1 ? ossProperties.getBuckets().get(0) :
+                ossProperties.getBuckets().stream().filter(BucketProperty::isPrimary).findFirst().get();
+    }
 
     /**
      * 返回默认OSS bean
@@ -70,7 +76,7 @@ public class OssHelper implements SmartInitializingSingleton {
      * @return
      */
     public BucketProperty getPrimaryBucketProperty() {
-        return this.primaryBucketProperty;
+        return OssHelper.primaryBucketProperty;
     }
 
 
@@ -81,7 +87,7 @@ public class OssHelper implements SmartInitializingSingleton {
      */
     public StsTokenResponse getOssToken(StsTokenRequest stsTokenRequest) {
         String path = getPath(stsTokenRequest.getPlatform(), stsTokenRequest.getIdentity());
-        AssumeRoleResponse acsResponse = getAcsResponse(stsTokenRequest, path);
+        AssumeRoleResponse acsResponse = getAcsResponse(path);
         final AssumeRoleResponse.Credentials credentials = acsResponse.getCredentials();
         return StsTokenResponse.builder()
                 .securityToken(credentials.getSecurityToken())
@@ -90,7 +96,6 @@ public class OssHelper implements SmartInitializingSingleton {
                 .expiration(credentials.getExpiration())
                 .bucketName(primaryBucketProperty.getBucketName())
                 .endPoint(primaryBucketProperty.getBucketEndpoint())
-                .ossPrefix(getOssPrefix(primaryBucketProperty.getBucketName(), primaryBucketProperty.getBucketEndpoint()))
                 .objectPrefix(path)
                 .build();
     }
@@ -103,12 +108,11 @@ public class OssHelper implements SmartInitializingSingleton {
      */
     public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
         final StsTokenResponse acsResponse = getOssToken(stsTokenRequest);
-        final OSS stsOss = new OSSClientBuilder().build(primaryBucketProperty.getBucketEndpoint(), acsResponse.getAccessKeyId(),
+        final OSS stsOss = new OSSClientBuilder().build(ossProperties.getEndpoint(), acsResponse.getAccessKeyId(),
                 acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken());
         try {
             final StsOssTransfer stsOssTransfer = StsOssTransfer.builder()
-                    .oss(new OSSClientBuilder().build(acsResponse.getEndPoint(), acsResponse.getAccessKeyId(),
-                            acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken()))
+                    .oss(stsOss)
                     .stsTokenResponse(acsResponse).build();
             consumer.accept(stsOssTransfer);
         } finally {
@@ -119,18 +123,18 @@ public class OssHelper implements SmartInitializingSingleton {
 
     /**
      * 获取Acs 响应属性
-     * @param stsTokenRequest
+     * @param path
      * @return
      */
-    public AssumeRoleResponse getAcsResponse(StsTokenRequest stsTokenRequest, String path) {
+    public AssumeRoleResponse getAcsResponse(String path) {
         final AssumeRoleRequest request = new AssumeRoleRequest();
         request.setSysMethod(MethodType.POST);
-        request.setRoleArn(primaryOssProperties.getRoleArn());
-        request.setRoleSessionName(primaryOssProperties.getRoleSessionName());
+        request.setRoleArn(ossProperties.getRoleArn());
+        request.setRoleSessionName(ossProperties.getRoleSessionName());
         // 若policy为空，则用户将获得该角色下所有权限
         request.setPolicy(getPolicy(primaryBucketProperty.getBucketName(), path));
         // 设置凭证有效时间
-        request.setDurationSeconds(primaryOssProperties.getDurationSeconds());
+        request.setDurationSeconds(ossProperties.getDurationSeconds());
         try {
             return defaultAcsClient.getAcsResponse(request);
         } catch (ClientException e) {
@@ -150,17 +154,7 @@ public class OssHelper implements SmartInitializingSingleton {
         String formatTime = "yyyy/MM/dd";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(formatTime);
         String format = LocalDateTime.now().format(dtf);
-        return MessageFormat.format("{0}/{1}/{2}/{3}", format, platform, identity, IdUtil.simpleUUID());
-    }
-
-    /**
-     * 获取oss访问域前缀
-     * @param bucketName
-     * @param endPoint
-     * @return
-     */
-    public static String getOssPrefix(String bucketName, String endPoint) {
-        return StrUtil.format("{}{}.{}", "https://", bucketName, endPoint);
+        return MessageFormat.format("{0}/{1}/{2}/{3}", platform, format, identity, IdUtil.simpleUUID());
     }
 
     /**
@@ -169,7 +163,7 @@ public class OssHelper implements SmartInitializingSingleton {
      * @param bucketName
      * @return
      */
-    private static String getPolicy(String path, String bucketName) {
+    private static String getPolicy(String bucketName, String path) {
         AliOssPolicyDTO.StatementBean statementBean = new AliOssPolicyDTO.StatementBean();
         statementBean.setEffect("Allow");
         statementBean.setAction(Lists.newArrayList("oss:GetObject", "oss:PutObject", "oss:HeadObject"));
@@ -181,18 +175,5 @@ public class OssHelper implements SmartInitializingSingleton {
         aliOssPolicy.setVersion("1");
         aliOssPolicy.setStatement(Lists.newArrayList(statementBean));
         return JSONUtil.toJsonStr(aliOssPolicy);
-    }
-
-    /**
-     */
-    @Override
-    public void afterSingletonsInstantiated() {
-        if (primaryBucketProperty == null) {
-            final Optional<BucketProperty> first = primaryOssProperties.getBuckets().stream().filter(BucketProperty::isPrimary).findFirst();
-            if (!first.isPresent()) {
-                throw new ServerErrorException("没有配置主存储桶！");
-            }
-            primaryBucketProperty = first.get();
-        }
     }
 }
