@@ -282,9 +282,9 @@
     </dependencyManagement>
 
 
-<!--    <distributionManagement>
+    <distributionManagement>
         <repository>
-            &lt;!&ndash; 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 &ndash;&gt;
+            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
             <id>nexus_release</id>
             <name>Release Repository of nexus_release</name>
             <url>http://106.15.10.135:8081/repository/nexus_release/</url>
@@ -294,7 +294,7 @@
             <name>Snapshot Repository of nexus_snapshot</name>
             <url>http://106.15.10.135:8081/repository/nexus_snapshot/</url>
         </snapshotRepository>
-    </distributionManagement>-->
+    </distributionManagement>
 
     <modules>
         <module>ddf-common-core</module>
