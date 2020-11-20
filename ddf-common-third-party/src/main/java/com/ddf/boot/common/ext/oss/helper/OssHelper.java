@@ -13,7 +13,7 @@ import com.ddf.boot.common.core.exception200.ServerErrorException;
 import com.ddf.boot.common.ext.oss.config.*;
 import com.ddf.boot.common.ext.oss.dto.StsOssTransfer;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @Component
-@AllArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor(onConstructor_={@Autowired})
 public class OssHelper {
 
     /**
