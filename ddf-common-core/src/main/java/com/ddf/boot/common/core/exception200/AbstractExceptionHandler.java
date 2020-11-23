@@ -84,7 +84,6 @@ public abstract class AbstractExceptionHandler {
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
                     exception.getMessage(), locale);
-            response.setStatus(Integer.parseInt(baseException.getCode()));
         } else if (exception instanceof IllegalArgumentException ) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
             message = exception.getMessage();
