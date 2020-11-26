@@ -10,19 +10,26 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.ddf.boot.common.core.exception200.ServerErrorException;
-import com.ddf.boot.common.ext.oss.config.*;
+import com.ddf.boot.common.core.util.ResourceUrlUtils;
+import com.ddf.boot.common.ext.oss.config.AliOssPolicyDTO;
+import com.ddf.boot.common.ext.oss.config.BucketProperty;
+import com.ddf.boot.common.ext.oss.config.OssBeanAutoConfiguration;
+import com.ddf.boot.common.ext.oss.config.OssProperties;
+import com.ddf.boot.common.ext.oss.config.StsTokenRequest;
+import com.ddf.boot.common.ext.oss.config.StsTokenResponse;
 import com.ddf.boot.common.ext.oss.dto.StsOssTransfer;
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
+import java.io.File;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
+import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -101,6 +108,51 @@ public class OssHelper {
     }
 
 
+
+    /**
+     * 获取阿里云oss路径前缀, 优先使用cdn，没有再使用bucket域名
+     * @return
+     */
+    public String getOssPrefix() {
+        return getOssPrefix(true);
+    }
+
+    /**
+     * 获取阿里云oss路径前缀
+     * @param useCdn 如果存在cdn地址， 是否使用cdn路径
+     * @return
+     */
+    public String getOssPrefix(boolean useCdn) {
+        if (useCdn) {
+            return StringUtils.isNotBlank(ossProperties.getCdnAddr()) ? ossProperties.getCdnAddr() : primaryBucketProperty.getBucketEndpoint();
+        }
+        return primaryBucketProperty.getBucketEndpoint();
+    }
+
+
+    /**
+     * 获取oss存储对象真实访问地址, 存储时相对路径，取出时拼凑完成的访问前缀，优先使用cdn， 没有再使用Bucket域名
+     *
+     * @param objectKey 对象key
+     * @return
+     */
+    public String getOssObjectRealUrl(String objectKey) {
+        return getOssObjectRealUrl(getOssPrefix(), objectKey);
+    }
+
+    /**
+     * 获取oss存储对象真实访问地址, 存储时相对路径，取出时拼凑完成的访问前缀，优先使用cdn， 没有再使用Bucket域名
+     *
+     * @param prefix    主要是有可能会在循环中使用，所以获取前缀会在循环外获取一次， 然后在循环内部直接饮用，避免循环跨服务调用， 还有不需要使用cdn的
+     * @param objectKey 对象key
+     * @return
+     */
+    public String getOssObjectRealUrl(String prefix, String objectKey) {
+        return ResourceUrlUtils.wrapAbsolutePath(prefix, objectKey);
+    }
+
+
+
     /**
      * 获取OSS token, 使用完成后关闭对象
      * @param stsTokenRequest
@@ -126,7 +178,7 @@ public class OssHelper {
      * @param path
      * @return
      */
-    public AssumeRoleResponse getAcsResponse(String path) {
+    private AssumeRoleResponse getAcsResponse(String path) {
         final AssumeRoleRequest request = new AssumeRoleRequest();
         request.setSysMethod(MethodType.POST);
         request.setRoleArn(ossProperties.getRoleArn());
@@ -175,5 +227,15 @@ public class OssHelper {
         aliOssPolicy.setVersion("1");
         aliOssPolicy.setStatement(Lists.newArrayList(statementBean));
         return JSONUtil.toJsonStr(aliOssPolicy);
+    }
+
+
+    public static void main(String[] args) {
+        final OSS stsOss = new OSSClientBuilder().build("oss-cn-hangzhou.aliyuncs.com", "STS.NTXKVzNyBFa1HFFYC21t9awAb",
+                "965xDoLYyGZeY5WdRUfRzFDk8w37JuA9i4HJuUL8b1QJ", "CAIS5AJ1q6Ft5B2yfSjIr5ftAOzOo6Zj8aPaSmD3vUNnPfsVjrLqgDz2IH1NfXNgAe0ev/Q2mWlZ6Psdlq1oSpZDHaZ87G7HqMY5yxioRqackWPcj9Vd+jTMewW6Dxr8w7X8AYHQR8/cffGAck3NkjQJr5LxaTSlWS7jU/iOkoU1QdkLeQO6YDFaZrJRPRAwkNIGEnHTOP2xUHjtmXGCLEdhti12i2509d6noKum5wHZkUfxx8IMuo31OeLEVcR3O4plWNrH4I5Mf6HagilL8EoIpuUkgKVc8DaCutCDDhxN7g6adOHT9MZoKAI+P+9gQ/Qc66Gl0qck/eaIztuslR8WY70KDHiAG4vwn8fNFb34botkebr1N3jHkPL3b8Ov6l16OS1Hb1MUJIN6cEUdU0J8FmvoTYa8403PbwuZTKyI7bo7y5IdzS+zoIPTfQjXHu3IgX9FY85iMhwyXBkNxnx1r3Wbm4exGRqAAa069nX+8Odb6DsF3dyfeylI8yklBMFqaOzE/BqjTJ0ziOOP6uD078pcFLeS5bazr3cwrIGK7DNIrH1Vf+wnxMXeXTyxm1I+T17pyAsEwSIuNu2MSXocV8twtV7umeqws9dJnAMCe1d7/ztJERbDMGsUHrW6WCrNsUYqqeeGpv5d");
+
+        stsOss.putObject("dapai-live-test", "console/1/2020/11/24/b31736a36477477c87dae69055ddfddb.svga",
+                new File("C:\\Users\\Administrator\\Pictures\\sharding\\rocket.svga"));
+
     }
 }

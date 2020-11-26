@@ -4,13 +4,12 @@ import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Preconditions;
+import java.util.List;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * <p>description</p >
@@ -78,6 +77,11 @@ public class OssProperties implements InitializingBean {
      * https://help.aliyun.com/document_detail/100624.html?spm=a2c4g.11186623.2.10.89fb1b92RKtxmw#concept-xzh-nzk-2gb
      */
     private long durationSeconds = 1800L;
+
+    /**
+     * oss前缀地址的cdn加速地址, 可选，没有的话还是使用bucket自己的域名
+     */
+    private String cdnAddr;
 
 
     @Override
