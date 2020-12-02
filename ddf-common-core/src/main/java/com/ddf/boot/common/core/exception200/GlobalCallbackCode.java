@@ -21,7 +21,10 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
      * 演示异常占位符以及使用异常自己的通用状态码来标识code
      * throw new BusinessException(GlobalCallbackCode.FILL_PARAM_DEMO, "粉刷匠", "强");
      */
-    FILL_PARAM_DEMO("101", "我是一个{0}， 粉刷本领{1}")
+    FILL_PARAM_DEMO("101", "我是一个{0}， 粉刷本领{1}"),
+
+
+    RATE_LIMIT("999", "接口已限流")
 
     ;
 
