@@ -50,11 +50,6 @@ public class StsTokenResponse implements Serializable {
 	private String endPoint;
 
 	/**
-	 * oss访问前缀
-	 */
-	private String ossPrefix;
-
-	/**
 	 * 上传对象的前缀
 	 */
 	private String objectPrefix;

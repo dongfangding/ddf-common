@@ -72,6 +72,7 @@ public class MonitorRegistryConfig implements InitializingBean {
      */
     @Bean(initMethod = "start", destroyMethod = "close")
     public CuratorFramework client() {
+        log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         return CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
                 monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy);

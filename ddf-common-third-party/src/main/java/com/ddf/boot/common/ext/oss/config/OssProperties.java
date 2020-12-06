@@ -1,21 +1,15 @@
 package com.ddf.boot.common.ext.oss.config;
 
 import cn.hutool.core.collection.CollUtil;
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.http.MethodType;
-import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.profile.IClientProfile;
-import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
-import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Preconditions;
+import java.util.List;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * <p>description</p >
@@ -84,6 +78,11 @@ public class OssProperties implements InitializingBean {
      */
     private long durationSeconds = 1800L;
 
+    /**
+     * oss前缀地址的cdn加速地址, 可选，没有的话还是使用bucket自己的域名
+     */
+    private String cdnAddr;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -91,6 +90,9 @@ public class OssProperties implements InitializingBean {
         Preconditions.checkArgument(CollUtil.isNotEmpty(this.getBuckets()), "请检查bucket列表配置");
         Preconditions.checkArgument(StringUtils.isNotBlank(stsEndpoint), "sts的接入地址不能为空");
         Preconditions.checkArgument(StringUtils.isNotBlank(roleArn), "roleArn不能为空");
+        final List<BucketProperty> buckets = this.getBuckets();
+        boolean includePrimary = buckets.size() == 1 || buckets.stream().filter(BucketProperty::isPrimary).count() == 1;
+        PreconditionUtil.checkArgument(includePrimary, "请且只能配置一个主存储桶， 参考属性primary");
         boolean isDecrypt = false;
         for (BucketProperty property : this.getBuckets()) {
             Preconditions.checkArgument(StringUtils.isNotBlank(property.getBucketName()), "请检查bucket配置");
@@ -102,29 +104,6 @@ public class OssProperties implements InitializingBean {
                     isDecrypt = true;
                 }
             }
-        }
-
-        // 配置STS访问
-        if (!StringUtils.isAnyBlank(this.getStsEndpoint(), this.getRoleArn())) {
-            DefaultProfile.addEndpoint("", "Sts", this.getStsEndpoint());
-            IClientProfile profile = DefaultProfile.getProfile("", this.getAccessKeyId(), this.getAccessKeySecret());
-            // 用profile构造client
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            final AssumeRoleRequest request = new AssumeRoleRequest();
-            request.setSysMethod(MethodType.POST);
-            request.setRoleArn(this.getRoleArn());
-            request.setRoleSessionName(this.getRoleSessionName());
-            // 若policy为空，则用户将获得该角色下所有权限
-            request.setPolicy(this.getPolicy());
-            // 设置凭证有效时间
-            request.setDurationSeconds(this.getDurationSeconds());
-
-            final AssumeRoleResponse response = client.getAcsResponse(request);
-            System.out.println("Expiration: " + response.getCredentials().getExpiration());
-            System.out.println("Access Key Id: " + response.getCredentials().getAccessKeyId());
-            System.out.println("Access Key Secret: " + response.getCredentials().getAccessKeySecret());
-            System.out.println("Security Token: " + response.getCredentials().getSecurityToken());
-            System.out.println("RequestId: " + response.getRequestId());
         }
     }
 

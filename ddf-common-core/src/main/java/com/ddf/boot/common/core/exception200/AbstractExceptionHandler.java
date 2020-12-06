@@ -10,11 +10,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2020/06/28 10:20
  */
-@RestControllerAdvice(basePackages = "com")
 @Slf4j
-public abstract class ExceptionHandlerAdvice {
+@Component
+public abstract class AbstractExceptionHandler {
 
     @Autowired
     private GlobalProperties globalProperties;
@@ -84,7 +84,6 @@ public abstract class ExceptionHandlerAdvice {
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
                     exception.getMessage(), locale);
-            response.setStatus(Integer.parseInt(baseException.getCode()));
         } else if (exception instanceof IllegalArgumentException ) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
             message = exception.getMessage();
@@ -109,11 +108,4 @@ public abstract class ExceptionHandlerAdvice {
         }
         return ResponseData.failure(exceptionCode, message, ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception));
     }
-
-    public static void main(String[] args) {
-        final long maxValue = Long.MAX_VALUE;
-        System.out.println(maxValue);
-        System.out.println(Integer.parseInt("2222"));
-    }
-
 }

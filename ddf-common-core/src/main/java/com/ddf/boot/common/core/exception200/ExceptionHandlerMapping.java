@@ -16,7 +16,7 @@ public interface ExceptionHandlerMapping {
      *
      *
      * @param exception
-     * @see ExceptionHandlerAdvice#handlerException(java.lang.Exception)
+     * @see AbstractExceptionHandler#handlerException(java.lang.Exception)
      *
      * @return 如果当前异常不是自己要处理的类型，请返回{@code null}
      */

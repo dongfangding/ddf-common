@@ -3,12 +3,11 @@ package com.ddf.boot.common.core.util;
 import com.ddf.boot.common.core.exception200.BadRequestException;
 import com.ddf.boot.common.core.exception200.BaseCallbackCode;
 import com.ddf.boot.common.core.exception200.BusinessException;
-
+import java.util.Iterator;
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * <p>提供断言，抛出系统自定义异常信息</p >
@@ -58,6 +57,19 @@ public class PreconditionUtil {
     public static void checkArgument(boolean expression, BaseCallbackCode callbackCode) {
         if (!expression) {
             throw new BusinessException(callbackCode);
+        }
+    }
+
+
+    /**
+     * 检查参数
+     *
+     * @param expression
+     * @param message
+     */
+    public static void checkBadRequest(boolean expression, String message) {
+        if (!expression) {
+            throw new BusinessException("400", message);
         }
     }
 

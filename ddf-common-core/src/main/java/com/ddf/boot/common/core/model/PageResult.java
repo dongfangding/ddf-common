@@ -50,6 +50,15 @@ public class PageResult<E> implements Serializable {
 	 */
 	private List<E> content = Collections.emptyList();
 
+
+	/**
+	 * 是否为空分页对象
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return total == 0 || CollectionUtil.isEmpty(content);
+	}
+
 	/**
 	 * 空分页
 	 * @param <E>
