@@ -313,5 +313,6 @@
         <module>ddf-common-script</module>
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
+        <module>ddf-common-xxl-executor</module>
     </modules>
 </project>
