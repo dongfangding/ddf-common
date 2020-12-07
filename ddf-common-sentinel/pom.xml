@@ -35,6 +35,14 @@
             <artifactId>sentinel-annotation-aspectj</artifactId>
             <version>${sentinel.version}</version>
         </dependency>
+
+        <!-- 客户端需要引入 Transport 模块来与 Sentinel 控制台进行通信 -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-transport-simple-http</artifactId>
+            <version>${sentinel.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>

@@ -15,6 +15,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SentinelAutoConfiguration {
 
+    /**
+     * 如果是通过 Spring Cloud Alibaba 则不需要这个
+     * @return
+     */
     @Bean
     public SentinelResourceAspect sentinelResourceAspect() {
         return new SentinelResourceAspect();
