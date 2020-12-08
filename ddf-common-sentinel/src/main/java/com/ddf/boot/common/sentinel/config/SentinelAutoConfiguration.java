@@ -97,7 +97,7 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
         // config.setBlockExceptionHandler((request, response, e) -> { throw e; });
 
         // Use the default handler.
-        config.setBlockExceptionHandler(new DefaultBlockExceptionHandler());
+        config.setBlockExceptionHandler(new SimpleBlockExceptionHandler());
 
         // Custom configuration if necessary
         config.setHttpMethodSpecify(true);
