@@ -44,6 +44,11 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
      * Web 适配，经测试这个也可以使用，不过这个是基于原生Servlet的
      * https://github.com/alibaba/Sentinel/wiki/%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E7%9A%84%E9%80%82%E9%85%8D#web-servlet
      *
+     *         <dependency>
+     *             <groupId>com.alibaba.csp</groupId>
+     *             <artifactId>sentinel-web-servlet</artifactId>
+     *             <version>${sentinel.version}</version>
+     *         </dependency>
      *
      * @return
      */
