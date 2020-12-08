@@ -8,7 +8,6 @@ import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;
 import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
 import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMapping;
 import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMappingHandler;
-import com.ddf.boot.common.sentinel.exception.SimpleBlockExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -116,11 +115,11 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
         // Depending on your situation, you can choose to process the BlockException via
         // the BlockExceptionHandler or throw it directly, then handle it
         // in Spring web global exception handler.
-
-        // config.setBlockExceptionHandler((request, response, e) -> { throw e; });
+        // 将异常抛出去， 然后接管异常处理
+        config.setBlockExceptionHandler((request, response, e) -> { throw e; });
 
         // Use the default handler.
-        config.setBlockExceptionHandler(new SimpleBlockExceptionHandler());
+//        config.setBlockExceptionHandler(new DefaultBlockExceptionHandler());
 
         // Custom configuration if necessary
         config.setHttpMethodSpecify(true);

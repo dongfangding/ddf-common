@@ -2,7 +2,6 @@ package com.ddf.boot.common.sentinel.exception;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.ddf.boot.common.core.response.ResponseData;
-import com.ddf.boot.common.core.util.StringExtUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ public class SentinelExceptionHandlerMappingHandler {
      */
     public ResponseData<?> handlerException(Exception exception) {
         if (exception instanceof BlockException) {
-            return ResponseData.failure("429", "当前访问次数过多，请稍后再试^_^", StringExtUtil.exceptionToStringNoLimit(exception));
+            return ResponseData.failure("429", "当前访问次数过多，请稍后再试^_^", "");
         }
         // 如果不是流控异常， 还是让上层处理异常， 使用null来标识自己不处理
         return null;

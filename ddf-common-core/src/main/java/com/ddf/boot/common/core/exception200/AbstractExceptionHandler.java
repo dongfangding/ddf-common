@@ -58,12 +58,6 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         log.error("异常信息: ", exception);
-        if (exceptionHandlerMapping != null) {
-            ResponseData<?> responseData = exceptionHandlerMapping.handlerException(exception);
-            if (responseData != null) {
-                return responseData;
-            }
-        }
 
         // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
         boolean ignoreErrorStack = false;
@@ -72,6 +66,16 @@ public abstract class AbstractExceptionHandler {
         if (CollectionUtil.isNotEmpty(ignoreErrorTraceProfile) && environmentHelper.checkIsExistOr(ignoreErrorTraceProfile)) {
             ignoreErrorStack = true;
             extraServerMessage = "";
+        }
+
+        if (exceptionHandlerMapping != null) {
+            ResponseData<?> responseData = exceptionHandlerMapping.handlerException(exception);
+            if (responseData != null) {
+                if (ignoreErrorStack) {
+                    responseData.setStack(null);
+                }
+                return responseData;
+            }
         }
 
         String exceptionCode;
