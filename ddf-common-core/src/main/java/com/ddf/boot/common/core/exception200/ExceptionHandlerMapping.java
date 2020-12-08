@@ -2,6 +2,9 @@ package com.ddf.boot.common.core.exception200;
 
 import com.ddf.boot.common.core.response.ResponseData;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * <p>将捕获的异常暴露出去，允许实现方实现接口根据这个异常自定义返回数据</p >
  *
@@ -16,7 +19,7 @@ public interface ExceptionHandlerMapping {
      *
      *
      * @param exception
-     * @see AbstractExceptionHandler#handlerException(java.lang.Exception)
+     * @see AbstractExceptionHandler#handlerException(Exception, HttpServletRequest, HttpServletResponse)
      *
      * @return 如果当前异常不是自己要处理的类型，请返回{@code null}
      */
