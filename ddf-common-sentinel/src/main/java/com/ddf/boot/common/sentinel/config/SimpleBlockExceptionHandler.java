@@ -40,7 +40,7 @@ public class SimpleBlockExceptionHandler implements BlockExceptionHandler {
         if ("GET".equals(request.getMethod()) && StringUtil.isNotBlank(request.getQueryString())) {
             url.append("?").append(request.getQueryString());
         }
-
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         out.print("当前访问次数过多，请稍后再试^_^");
         out.flush();

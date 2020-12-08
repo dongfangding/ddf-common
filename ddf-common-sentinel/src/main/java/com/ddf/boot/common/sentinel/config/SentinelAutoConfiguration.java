@@ -2,7 +2,6 @@ package com.ddf.boot.common.sentinel.config;
 
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.SentinelWebInterceptor;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.SentinelWebTotalInterceptor;
-import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.DefaultBlockExceptionHandler;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcConfig;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcTotalConfig;
 import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;
