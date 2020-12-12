@@ -24,6 +24,17 @@ public class RedisTemplateHelper {
     /**
      * 分布式限流
      *
+     * 底层使用hash实现， 使用ttl过期格式内容如下
+     *
+     * current_token为剩余的token，
+     *
+     * {
+     *     "last_time":"1607769790054",
+     *     "current_token": "0"
+     * }
+     *
+     *
+     *
      * @param request
      */
     public boolean rateLimitAcquire(RateLimitRequest request) {
