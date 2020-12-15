@@ -314,6 +314,25 @@
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
         <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-redis</module>
     </modules>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
