@@ -11,7 +11,9 @@
 
     <artifactId>ddf-common-redis</artifactId>
     <description>redis模块</description>
-
+    <properties>
+        <redisson.version>3.14.0</redisson.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -23,6 +25,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>${redisson.version}</version>
         </dependency>
     </dependencies>
 
