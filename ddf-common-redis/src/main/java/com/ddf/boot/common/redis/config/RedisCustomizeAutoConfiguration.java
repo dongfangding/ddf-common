@@ -1,7 +1,9 @@
 package com.ddf.boot.common.redis.config;
 
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.redisson.api.RedissonClient;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,6 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @date 2020/12/11 11:06
  */
 @Configuration
+@AutoConfigureAfter(value = {RedissonAutoConfiguration.class})
 public class RedisCustomizeAutoConfiguration {
 
     /**
@@ -22,7 +25,7 @@ public class RedisCustomizeAutoConfiguration {
      * @return
      */
     @Bean
-    public RedisTemplateHelper redisTemplateHelper(@Autowired StringRedisTemplate stringRedisTemplate) {
-        return new RedisTemplateHelper(stringRedisTemplate);
+    public RedisTemplateHelper redisTemplateHelper(StringRedisTemplate stringRedisTemplate, RedissonClient redissonClient) {
+        return new RedisTemplateHelper(stringRedisTemplate, redissonClient);
     }
 }
