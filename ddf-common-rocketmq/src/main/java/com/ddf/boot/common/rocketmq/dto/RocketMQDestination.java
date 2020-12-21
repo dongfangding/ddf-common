@@ -7,9 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>遵循最佳实践的消息目的地</p >
- *
+ * <p>
  * 使用topic:tags筛选的方式， 来减少topic定义的数量
- *
+ * <p>
  * 参考下述方法对destination的解释，也是能够这么玩的前提； 消息的目的地可以由topic:tags的方式组成
  * org.apache.rocketmq.spring.core.RocketMQTemplate#syncSend(java.lang.String, org.springframework.messaging.Message)
  *
@@ -34,21 +34,18 @@ public class RocketMQDestination {
 
 
     public static RocketMQDestination instanceOfDestination(String destinationStr) {
-        if (StringUtils.isEmpty(destinationStr) ||
-                destinationStr.indexOf(SPLIT) < 1 ||
-                destinationStr.indexOf(SPLIT) != destinationStr.lastIndexOf(SPLIT)) {
+        if (StringUtils.isEmpty(destinationStr) || destinationStr.indexOf(SPLIT) < 1 || destinationStr.indexOf(SPLIT)
+                != destinationStr.lastIndexOf(SPLIT)) {
             return null;
         }
         String[] arrays = destinationStr.split(SPLIT);
-        return RocketMQDestination.builder()
-                .topic(arrays[0])
-                .tags(arrays[1])
-                .build();
+        return RocketMQDestination.builder().topic(arrays[0]).tags(arrays[1]).build();
     }
 
 
     /**
      * 返回
+     *
      * @return
      */
     public String toDestination() {

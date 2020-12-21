@@ -11,6 +11,7 @@ public interface LogBoolReturnAction {
 
     /**
      * 消费LogBoolReturnResult
+     *
      * @param logBoolReturnResult
      */
     void doAction(LogBoolReturnResult logBoolReturnResult);

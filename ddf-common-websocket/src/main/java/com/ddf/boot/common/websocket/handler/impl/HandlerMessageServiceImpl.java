@@ -11,6 +11,7 @@ import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,10 +20,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
-import java.io.IOException;
-
 /**
- *
  * 接收到消息之后的处理
  *
  * @author dongfang.ding
@@ -49,22 +47,26 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
      * @param textMessage
      */
     @Override
-    public void handlerMessage(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper, TextMessage textMessage) {
+    public void handlerMessage(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper,
+            TextMessage textMessage) {
         doMessageConsumer(authPrincipal, webSocketSessionWrapper, textMessage);
     }
 
 
     /**
      * 安卓认证用户收到数据之后的业务处理
+     *
      * @param authPrincipal
      * @param webSocketSessionWrapper
      * @param textMessage
      */
-    private void doMessageConsumer(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper, TextMessage textMessage) {
+    private void doMessageConsumer(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper,
+            TextMessage textMessage) {
         handlerMessagePool.execute(() -> {
             if (InternalCmdEnum.PING.name().equals(textMessage.getPayload())) {
                 try {
-                    WebsocketSessionStorage.get(authPrincipal).getWebSocketSession().sendMessage(new TextMessage(InternalCmdEnum.PONG.name()));
+                    WebsocketSessionStorage.get(authPrincipal).getWebSocketSession().sendMessage(
+                            new TextMessage(InternalCmdEnum.PONG.name()));
                 } catch (IOException e) {
                     log.error("响应心跳包出错！", e);
                 }
@@ -96,14 +98,19 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
                 if (Message.Type.RESPONSE.equals(message.getType())) {
                     cmdStrategyHelper.buildDeviceCmdRunningState(authPrincipal, message, true);
                 }
-                int code = channelTransferService.recordResponse(authPrincipal, message.getRequestId(),
-                        messageStr, message);
+                int code = channelTransferService.recordResponse(authPrincipal, message.getRequestId(), messageStr,
+                        message
+                );
                 if (code == -1) {
-                    WebsocketSessionStorage.sendMessage(webSocketSessionWrapper, Message.responseNotMatchRequest(message));
+                    WebsocketSessionStorage.sendMessage(webSocketSessionWrapper,
+                            Message.responseNotMatchRequest(message)
+                    );
                     log.warn("请求不匹配：{}", message);
                     return;
                 } else if (code == 1) {
-                    WebsocketSessionStorage.sendMessage(webSocketSessionWrapper, Message.responseRepeatRequest(message));
+                    WebsocketSessionStorage.sendMessage(webSocketSessionWrapper,
+                            Message.responseRepeatRequest(message)
+                    );
                     log.warn("重复请求: {}", message);
                     return;
                 }

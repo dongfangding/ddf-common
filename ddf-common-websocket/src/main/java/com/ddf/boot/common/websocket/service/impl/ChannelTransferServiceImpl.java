@@ -11,16 +11,25 @@ import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
 import com.ddf.boot.common.websocket.helper.CmdAction;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.mapper.ChannelTransferMapper;
-import com.ddf.boot.common.websocket.model.*;
+import com.ddf.boot.common.websocket.model.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.ChannelTransfer;
+import com.ddf.boot.common.websocket.model.Message;
+import com.ddf.boot.common.websocket.model.MessageRequest;
+import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 通道传输接口实现
@@ -29,7 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2019/8/23 9:45
  */
 @Service
-public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMapper, ChannelTransfer> implements ChannelTransferService {
+public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMapper, ChannelTransfer>
+        implements ChannelTransferService {
 
     /**
      * 批量创建本机所有设备的消息记录
@@ -40,8 +50,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public <T> Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values
-            , MessageRequest<T> messageRequest) {
+    public <T> Map<AuthPrincipal, String> batchRecordRequest(
+            ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values, MessageRequest<T> messageRequest) {
         if (values == null || messageRequest.getCmd() == null) {
             return null;
         }
@@ -54,17 +64,19 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             }
             AuthPrincipal authPrincipal = entry.getKey();
             CmdAction cmdAction = new CmdAction();
-            Message<T> message = cmdAction.push(messageRequest.getCmd(), messageRequest.getClientChannel(), messageRequest.getPayload());
+            Message<T> message = cmdAction.push(messageRequest.getCmd(), messageRequest.getClientChannel(),
+                    messageRequest.getPayload()
+            );
             String messageStr = JsonUtil.asString(message);
             channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
             messageMap.put(authPrincipal, messageStr);
         }
-        Lists.partition(channelTransfers, 500).forEach(ls-> saveBatch(ls));
+        Lists.partition(channelTransfers, 500).forEach(ls -> saveBatch(ls));
         return messageMap;
     }
 
-    private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request
-            ,WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
+    private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request,
+            WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
         ChannelTransfer channelTransfer = new ChannelTransfer();
         channelTransfer.setCmd(message.getCmd());
         channelTransfer.setRequestId(message.getRequestId());
@@ -99,8 +111,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message
-            , MessageRequest<Q> messageRequest) {
+    public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message,
+            MessageRequest<Q> messageRequest) {
         if (InternalCmdEnum.PING.equals(message.getCmd())) {
             return true;
         }
@@ -114,8 +126,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         try {
             save(buildChannelTransfer(authPrincipal, message, request, webSocketSessionWrapper, messageRequest));
         } catch (Exception e) {
-            throw new ClientRepeatRequestException(String.format("客户端重复对同一数据[%s]发送相同指令！",
-                    messageRequest.getLogicPrimaryKey()));
+            throw new ClientRepeatRequestException(
+                    String.format("客户端重复对同一数据[%s]发送相同指令！", messageRequest.getLogicPrimaryKey()));
         }
         return true;
     }
@@ -131,7 +143,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public <T> int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message<T> message) {
-        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(message.getCmd()))) {
+        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(
+                message.getCmd()))) {
             // ignore
             return 0;
         }
@@ -178,12 +191,15 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         if (exist == null) {
             return -1;
         }
-        if (!exist.getStatus().equals(ChannelTransfer.STATUS_SEND) && !exist.getStatus().equals(ChannelTransfer.STATUS_FAILURE)) {
+        if (!exist.getStatus().equals(ChannelTransfer.STATUS_SEND) && !exist.getStatus().equals(
+                ChannelTransfer.STATUS_FAILURE)) {
             return 1;
         }
         LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
         updateWrapper.set(ChannelTransfer::getResponse, response);
-        updateWrapper.set(ChannelTransfer::getFullRequestResponse, appendJsonArr(exist.getFullRequestResponse(), response));
+        updateWrapper.set(ChannelTransfer::getFullRequestResponse,
+                appendJsonArr(exist.getFullRequestResponse(), response)
+        );
         updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_RECEIVED);
         updateWrapper.eq(ChannelTransfer::getId, exist.getId());
         update(null, updateWrapper);
@@ -201,8 +217,8 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response
-            , String serverSend) {
+    public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response,
+            String serverSend) {
         if (message == null || StringUtils.isBlank(message.getRequestId())) {
             return false;
         }
@@ -224,8 +240,9 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             updateWrapper.set(ChannelTransfer::getResponse, response);
             ChannelTransfer exist = getByRequestId(message.getRequestId());
             if (exist != null) {
-                updateWrapper.set(ChannelTransfer::getFullRequestResponse, appendJsonArr(exist.getFullRequestResponse(),
-                        response, serverSend));
+                updateWrapper.set(ChannelTransfer::getFullRequestResponse,
+                        appendJsonArr(exist.getFullRequestResponse(), response, serverSend)
+                );
             }
         }
         return update(null, updateWrapper);
@@ -246,8 +263,6 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      *
      * @param requestId
      * @return
-
-
      */
     @Override
     public String getPayloadByRequestId(String requestId) {

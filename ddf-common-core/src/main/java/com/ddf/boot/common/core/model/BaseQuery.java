@@ -4,6 +4,9 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiModel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +14,6 @@ import lombok.experimental.Accessors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>description</p >
@@ -55,6 +54,7 @@ public class BaseQuery {
 
     /**
      * 构造基于spring-data基本分页对象
+     *
      * @return
      */
     public Pageable toSpringData() {
@@ -67,6 +67,7 @@ public class BaseQuery {
 
     /**
      * 构造基于mybatis的基本分页对象
+     *
      * @param <T>
      * @return
      */
@@ -96,6 +97,7 @@ public class BaseQuery {
     /**
      * 构建mybatis排序对象
      * FIXME 经测试，排序方式，会被最后一条记录给覆盖。所以并没有如现在数据格式设计的如此，可以为每个字段都定义排序类型，所以现在写这么复杂并没有什么卵用
+     *
      * @return
      */
     public List<OrderItem> toMybatisOrder() {

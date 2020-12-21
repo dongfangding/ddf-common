@@ -1,18 +1,17 @@
 package com.ddf.boot.common.mq.config;
 
+import java.io.UnsupportedEncodingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * fixme
  * 消息发送前可以更改消息，现在自定义RabbitTemplate会报错，暂未解决。如果解决可以在这里统一拦截处理记录发送的数据，这样就不用
  * 在RabbitTemplateHelper中的每个发送方法中都去调用发送事件了
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88

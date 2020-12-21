@@ -10,10 +10,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author dongfang.ding
@@ -49,6 +48,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
 
     /**
      * 如果是聊天室的功能，其实就是服务端收到消息之后，然后再由服务端向所有连接的客户端转发这个消息而已
+     *
      * @param ctx
      * @param msg
      * @throws JsonProcessingException

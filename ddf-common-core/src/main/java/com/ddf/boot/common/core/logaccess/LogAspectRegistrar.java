@@ -1,15 +1,14 @@
 package com.ddf.boot.common.core.logaccess;
 
+import java.util.Map;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.Map;
-
 /**
  * 注册日志记录相关bean
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -41,6 +40,7 @@ public class LogAspectRegistrar implements ImportBeanDefinitionRegistrar {
 
     /**
      * 注册项目是否开启了@EnableLogAspect功能
+     *
      * @param metadata
      * @param registry
      */
@@ -53,10 +53,10 @@ public class LogAspectRegistrar implements ImportBeanDefinitionRegistrar {
                 BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder.
                         genericBeanDefinition(AccessLogAspect.class);
                 registry.registerBeanDefinition(AccessLogAspect.BEAN_NAME,
-                        requestContextDefinition.getBeanDefinition());
+                        requestContextDefinition.getBeanDefinition()
+                );
             }
-            Map<String, Object> defaultAttrs = metadata
-                    .getAnnotationAttributes(EnableLogAspect.class.getName(), true);
+            Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(EnableLogAspect.class.getName(), true);
             if (defaultAttrs != null && !defaultAttrs.isEmpty()) {
                 defaultAttrs.forEach(builder::addPropertyValue);
             }

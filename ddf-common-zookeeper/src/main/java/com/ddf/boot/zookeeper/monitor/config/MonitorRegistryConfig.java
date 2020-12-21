@@ -8,6 +8,14 @@ import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.zookeeper.listener.NodeEventListener;
 import com.ddf.boot.zookeeper.monitor.properties.MonitorNode;
 import com.ddf.boot.zookeeper.monitor.properties.MonitorProperties;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
@@ -24,15 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * <p>description</p >
@@ -68,6 +67,7 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 连接客户端，注册CuratorFramework对象
      * http://curator.apache.org/getting-started.html
+     *
      * @return
      */
     @Bean(initMethod = "start", destroyMethod = "close")
@@ -75,11 +75,13 @@ public class MonitorRegistryConfig implements InitializingBean {
         log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         return CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
-                monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy);
+                monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy
+        );
     }
 
     /**
      * 初始化节点创建以及事件监听
+     *
      * @throws Exception
      */
     @Override
@@ -106,12 +108,14 @@ public class MonitorRegistryConfig implements InitializingBean {
 
     /**
      * 获取监听节点路径
+     *
      * @param monitor
      * @return
      */
     private String getMonitorPath(MonitorNode monitor) {
         if (MonitorNode.HOST_MODE_AUTO.equals(monitor.getMonitorHost())) {
-            return monitor.getMonitorPath().concat("/").concat(NetUtil.getLocalhostStr() + ":" + environmentHelper.getPort());
+            return monitor.getMonitorPath().concat("/").concat(
+                    NetUtil.getLocalhostStr() + ":" + environmentHelper.getPort());
         }
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
@@ -119,6 +123,7 @@ public class MonitorRegistryConfig implements InitializingBean {
 
     /**
      * 监听节点事件
+     *
      * @param path
      */
     private void listenerNode(final String path) {
@@ -130,16 +135,20 @@ public class MonitorRegistryConfig implements InitializingBean {
                 case NODE_CREATED:
                     log.debug("[{}]节点创建成功...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                                Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
                             nodeEventListener.nodeCreate(client, path, oldData, data);
                         }
                     }
                     break;
                 case NODE_CHANGED:
-                    log.debug("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(), data.toString());
+                    log.debug("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(),
+                            data.toString()
+                    );
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                                Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
                             nodeEventListener.nodeChange(client, path, oldData, data);
                         }
@@ -148,7 +157,8 @@ public class MonitorRegistryConfig implements InitializingBean {
                 case NODE_DELETED:
                     log.debug("[{}]节点被删除...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                                Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                         for (NodeEventListener nodeEventListener : nodeEventListeners) {
                             nodeEventListener.nodeDeleted(client, path, oldData, data);
                         }
@@ -162,6 +172,7 @@ public class MonitorRegistryConfig implements InitializingBean {
 
     /**
      * 创建节点
+     *
      * @param path
      * @param monitor
      * @throws Exception
@@ -195,7 +206,9 @@ public class MonitorRegistryConfig implements InitializingBean {
         // 创建子节点, 由于是临时节点，可以不用判断节点是否存在，如果不是临时节点，则需要判断
         if (monitor.isUseDefaultTimeStampUpload()) {
             if (client.checkExists().forPath(path) == null) {
-                client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path, String.valueOf(System.currentTimeMillis()).getBytes());
+                client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path,
+                        String.valueOf(System.currentTimeMillis()).getBytes()
+                );
             }
             // 子节点存储时间戳数据
             client.setData().forPath(path, String.valueOf(System.currentTimeMillis()).getBytes());
@@ -247,7 +260,8 @@ public class MonitorRegistryConfig implements InitializingBean {
      * 定时更新节点数据
      */
     private void scheduleUploadData() {
-        Executors.newSingleThreadScheduledExecutor(ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-upload").build())
+        Executors.newSingleThreadScheduledExecutor(
+                ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-upload").build())
                 .scheduleAtFixedRate(this::updateNode, 10, 10, TimeUnit.SECONDS);
     }
 
@@ -255,12 +269,13 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 定时检查节点是否存在, 由于当前的实现基本上是基于临时节点的， 对应服务下线后节点被删除，回调事件不一定能够被对应创建节点的主机处理，因为对应主机已经突然挂了，无法继续处理
      * 节点被删除事件回调
-     *
+     * <p>
      * 这里就需要依赖定时检查某个监听节点下的子节点，是否存在被删除的数据
      */
     private void scheduleCheckNode() {
-        Executors.newSingleThreadScheduledExecutor(ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-check").build())
-                .scheduleAtFixedRate(() -> {
+        Executors.newSingleThreadScheduledExecutor(
+                ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-check").build()).scheduleAtFixedRate(
+                () -> {
                     try {
                         checkNodeExist();
                     } catch (Exception exception) {
@@ -271,7 +286,6 @@ public class MonitorRegistryConfig implements InitializingBean {
 
     /**
      * 检查节点是否存在
-     *
      */
     private void checkNodeExist() {
         zookeeperDistributedLock.lockWorkOnce(DistributedLock.formatPath(CHECK_NODE_LOCK_PATH), () -> {
@@ -304,7 +318,9 @@ public class MonitorRegistryConfig implements InitializingBean {
                         // 回调节点事件
                         callbackNode(monitorPath, monitor, disjunction);
                         // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
-                        client.setData().forPath(monitor.getMonitorPath(), StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8));
+                        client.setData().forPath(monitor.getMonitorPath(),
+                                StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8)
+                        );
                     }
                 }
             }
@@ -316,7 +332,9 @@ public class MonitorRegistryConfig implements InitializingBean {
         // 回调所有节点的监听事件
         for (String currNode : allNodes) {
             try {
-                childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode), client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
+                childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode),
+                        client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath)
+                );
             } catch (KeeperException.NoNodeException exception) {
                 // fixme 节点不存在的时候把数据删掉， 但是这一块比较复杂，如果真的采取以当前数据判断覆盖的话，容易产生数据错误，会把当前程序以外同时新增或删除的节点给覆盖掉， 所以如果不用父节点存数据的话，
                 // 直接用另外一个节点存全部节点，使用path来处理就会简单很多
@@ -324,7 +342,8 @@ public class MonitorRegistryConfig implements InitializingBean {
             }
             log.debug("节点检查时发现[{}]被删除", childData.getPath());
             if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                nodeEventListeners = nodeEventListeners.stream().sorted(Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
+                nodeEventListeners = nodeEventListeners.stream().sorted(
+                        Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
                 for (NodeEventListener nodeEventListener : nodeEventListeners) {
                     nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
                 }

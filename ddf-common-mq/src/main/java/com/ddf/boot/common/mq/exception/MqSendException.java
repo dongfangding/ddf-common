@@ -2,7 +2,7 @@ package com.ddf.boot.common.mq.exception;
 
 /**
  * 发送Mq消息异常
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88

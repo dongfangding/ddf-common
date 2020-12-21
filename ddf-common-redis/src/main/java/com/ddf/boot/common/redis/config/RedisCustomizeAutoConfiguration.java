@@ -21,11 +21,13 @@ public class RedisCustomizeAutoConfiguration {
 
     /**
      * 注册redis扩展方法类
+     *
      * @param stringRedisTemplate
      * @return
      */
     @Bean
-    public RedisTemplateHelper redisTemplateHelper(StringRedisTemplate stringRedisTemplate, RedissonClient redissonClient) {
+    public RedisTemplateHelper redisTemplateHelper(StringRedisTemplate stringRedisTemplate,
+            RedissonClient redissonClient) {
         return new RedisTemplateHelper(stringRedisTemplate, redissonClient);
     }
 }

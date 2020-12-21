@@ -5,6 +5,7 @@ import com.ddf.boot.common.lock.exception.LockingAcquireException;
 import com.ddf.boot.common.lock.exception.LockingBusinessException;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
 import com.google.common.base.Strings;
+import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -12,8 +13,6 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 基于zookeeper实现的分布式锁$
@@ -79,7 +78,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             handleData.handle();
         } catch (Exception e) {
-            log.error("在锁[{}]执行业务时出错！",formatLockPath);
+            log.error("在锁[{}]执行业务时出错！", formatLockPath);
             throw new LockingBusinessException(e);
         } finally {
             if (lock.isAcquiredInThisProcess()) {
@@ -93,13 +92,16 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
      * fixme 但这种方式显然是不准确的， 更不准的一种情况是获取了分布式锁但是还没释放之后的那台机器掉线了，由于zk对客户端感知的延迟性，再未删除节点前另外一太机器会多次内无法获取到锁，影响
      * 业务流程执行
+     *
      * @param lockPath
      * @param handleData
      * @return
      */
     @Override
     public boolean lockWorkOnce(String lockPath, HandlerBusiness handleData) {
-        return tryLock(lockPath, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, handleData);
+        return tryLock(lockPath, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT,
+                handleData
+        );
     }
 
     /**
@@ -128,7 +130,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             handleData.handle();
         } catch (Exception e) {
-            log.error("在锁[{}]执行业务时出错！",formatLockPath);
+            log.error("在锁[{}]执行业务时出错！", formatLockPath);
             throw new LockingBusinessException(e);
         } finally {
             if (lock.isAcquiredInThisProcess()) {
@@ -160,9 +162,6 @@ public class ZookeeperDistributedLock implements DistributedLock {
         if (Strings.isNullOrEmpty(lockPath) || !lockPath.startsWith("/")) {
             throw new IllegalStateException(" lockPath error, lockPath must start with /, lockPath=" + lockPath);
         }
-        return distributedLockZookeeperProperties.getRoot()
-                + "/" + env
-                +"/locks"
-                + lockPath;
+        return distributedLockZookeeperProperties.getRoot() + "/" + env + "/locks" + lockPath;
     }
 }

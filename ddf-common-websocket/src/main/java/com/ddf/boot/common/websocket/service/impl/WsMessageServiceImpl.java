@@ -7,10 +7,23 @@ import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.interceptor.WsMessageFilter;
-import com.ddf.boot.common.websocket.model.*;
+import com.ddf.boot.common.websocket.model.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.ChannelTransfer;
+import com.ddf.boot.common.websocket.model.Message;
+import com.ddf.boot.common.websocket.model.MessageRequest;
+import com.ddf.boot.common.websocket.model.MessageResponse;
+import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import com.ddf.boot.common.websocket.service.WsMessageService;
 import com.google.common.base.Preconditions;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -22,17 +35,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
- *
  * 提供rest接口允许对在线的客户端发送消息
  *
  * @author dongfang.ding
@@ -77,7 +80,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request
      * @return
-
      * @date 2019/08/21 11:00
      */
     @Override
@@ -141,6 +143,7 @@ public class WsMessageServiceImpl implements WsMessageService {
 
     /**
      * 之前过滤器校验，有一个校验不通过，则不会继续执行
+     *
      * @param request
      * @param <Q>
      * @return
@@ -159,6 +162,7 @@ public class WsMessageServiceImpl implements WsMessageService {
 
     /**
      * 必传参数校验
+     *
      * @param request
      * @param <T>
      * @param <Q>
@@ -180,6 +184,7 @@ public class WsMessageServiceImpl implements WsMessageService {
 
     /**
      * 尝试从本地缓存获取数据
+     *
      * @param request
      * @return
      */
@@ -193,6 +198,7 @@ public class WsMessageServiceImpl implements WsMessageService {
 
     /**
      * 校验是否可以发送指令
+     *
      * @param request
      * @param authPrincipal
      * @return
@@ -200,7 +206,9 @@ public class WsMessageServiceImpl implements WsMessageService {
     private <Q> boolean canSend(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
         if (request.isCheckLastTime()) {
             // 如果需要检查上次发送时间，则必须在指定的间隔时间之后
-            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getAccessKeyId(), request.getCmd(), true);
+            List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getAccessKeyId(),
+                    request.getCmd(), true
+            );
             if (preLogs != null && !preLogs.isEmpty()) {
                 // 小于等于0，代表不限制；如果限制了的话，今日次数如果已大于参数，则不可以发送指令
                 if (request.getDailyMaxTimes() > 0 && preLogs.size() > request.getDailyMaxTimes()) {
@@ -209,9 +217,10 @@ public class WsMessageServiceImpl implements WsMessageService {
                 }
                 Date lastDate = preLogs.get(0).getCreateTime();
                 // 如果没有达到间隔时间，则不发送指令
-                if (request.getSendMinutesInterval() > 0 && DateUtils.addMinutes(lastDate, request.getSendMinutesInterval()).after(new Date())) {
-                    log.warn("该指令没有达到指定[{}]间隔时间，不允许再次发送！上次发送时间: {}", request.getSendMinutesInterval(),
-                            lastDate);
+                if (request.getSendMinutesInterval() > 0 && DateUtils.addMinutes(lastDate,
+                        request.getSendMinutesInterval()
+                ).after(new Date())) {
+                    log.warn("该指令没有达到指定[{}]间隔时间，不允许再次发送！上次发送时间: {}", request.getSendMinutesInterval(), lastDate);
                     return false;
                 }
             }
@@ -221,19 +230,20 @@ public class WsMessageServiceImpl implements WsMessageService {
 
 
     /**
-     *
      * 处理发送指令逻辑
      *
      * @param request
      * @param localAddress
      * @return
      */
-    private <T, Q> MessageResponse<T> sendCmd(MessageRequest<Q> request, String localAddress){
+    private <T, Q> MessageResponse<T> sendCmd(MessageRequest<Q> request, String localAddress) {
         Message<?> message;
         String messageStr;
         String accessKeyId = request.getAccessKeyId();
         String authCode = request.getAuthCode();
-        AuthPrincipal authPrincipal = AuthPrincipal.buildChannelPrincipal(accessKeyId, authCode, request.getLoginType());
+        AuthPrincipal authPrincipal = AuthPrincipal.buildChannelPrincipal(accessKeyId, authCode,
+                request.getLoginType()
+        );
         // 远程发送前本地尝试取数据
         MessageResponse<T> response = tryLoadByLocalCache(request, authPrincipal);
         if (response != null) {
@@ -242,7 +252,8 @@ public class WsMessageServiceImpl implements WsMessageService {
 
         // 校验是否可以发送指令
         if (!canSend(request, authPrincipal)) {
-            return MessageResponse.fastFailure(String.format("[%s]-[%s]指令未达到发送间隔或今日次数已超限！", accessKeyId, request.getCmd()));
+            return MessageResponse.fastFailure(
+                    String.format("[%s]-[%s]指令未达到发送间隔或今日次数已超限！", accessKeyId, request.getCmd()));
         }
 
         if (!request.isRedirect()) {
@@ -259,12 +270,15 @@ public class WsMessageServiceImpl implements WsMessageService {
             message = JsonUtil.toBean(request.getMessage(), Message.class);
         }
         WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
-        if (webSocketSessionWrapper == null || WebSocketSessionWrapper.STATUS_OFF_LINE
-                .equals(webSocketSessionWrapper.getStatus())) {
+        if (webSocketSessionWrapper == null || WebSocketSessionWrapper.STATUS_OFF_LINE.equals(
+                webSocketSessionWrapper.getStatus())) {
 
-            String monitorJson = (String) redisTemplate.opsForHash().get(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
-                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(),
-                            request.getLoginType(), request.getAccessKeyId(), request.getAuthCode()));
+            String monitorJson = (String) redisTemplate.opsForHash().get(
+                    CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
+                    MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), request.getLoginType(),
+                            request.getAccessKeyId(), request.getAuthCode()
+                    )
+            );
             if (StringUtils.isBlank(monitorJson)) {
                 return MessageResponse.fastFailure("设备不存在！");
             }
@@ -283,7 +297,8 @@ public class WsMessageServiceImpl implements WsMessageService {
                 log.info("广播指令下发数据: {}", request);
                 redisTemplate.convertAndSend(WebsocketConst.REDIRECT_CMD_TOPIC, JsonUtil.asString(request));
                 return blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
-                        request.getBlockMilliSeconds());
+                        request.getBlockMilliSeconds()
+                );
             } else {
                 return null;
             }
@@ -298,7 +313,8 @@ public class WsMessageServiceImpl implements WsMessageService {
         log.info("对设备[{}]下发指令: {}", accessKeyId, messageStr);
         WebsocketSessionStorage.sendMessage(authPrincipal, message);
         MessageResponse<T> messageResponse = blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
-                request.getBlockMilliSeconds());
+                request.getBlockMilliSeconds()
+        );
         if (request.isRedirect()) {
             log.info("本次接口请求为{}转发过来，数据处理完成，广播返回数据: {}", request.getRedirectFrom(), messageResponse);
             messageResponse.setRequestId(message.getRequestId());
@@ -313,10 +329,9 @@ public class WsMessageServiceImpl implements WsMessageService {
      * @param requestId 请求id，数据回传回来之后需要根据这个来对应起来
      * @param async     是否需要阻塞
      * @return
-
      */
-    private <T, Q> MessageResponse<T> blockUntilDataFlush(@NotNull MessageRequest<Q> messageRequest, @NotNull String requestId,
-            boolean async, long blockMilliSeconds) {
+    private <T, Q> MessageResponse<T> blockUntilDataFlush(@NotNull MessageRequest<Q> messageRequest,
+            @NotNull String requestId, boolean async, long blockMilliSeconds) {
         // 非单个设备的指令阻塞没有意义
         if (async || !MessageRequest.SendMode.SINGLE.equals(messageRequest.getSendMode())) {
             return MessageResponse.success(requestId);

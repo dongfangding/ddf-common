@@ -5,18 +5,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
-
 /**
  * 通道传输报文日志记录
  *
  * @author dongfang.ding
- *
  */
 @TableName(value = "log_channel_transfer")
 @ToString(callSuper = true)
@@ -26,20 +24,34 @@ import java.util.Date;
 @ApiModel("通道传输报文日志记录")
 public class ChannelTransfer {
 
-    /** 服务端主动发送数据表示 */
+    /**
+     * 服务端主动发送数据表示
+     */
     public static final Integer SEND_FLAG_SERVER = 0;
-    /** 客户端主动发送数据标识 */
+    /**
+     * 客户端主动发送数据标识
+     */
     public static final Integer SEND_FLAG_CLIENT = 1;
 
-    /** 已发送 */
+    /**
+     * 已发送
+     */
     public static final Integer STATUS_SEND = 0;
-    /** 已接收 */
+    /**
+     * 已接收
+     */
     public static final Integer STATUS_RECEIVED = 1;
-    /** 已响应 */
+    /**
+     * 已响应
+     */
     public static final Integer STATUS_RESPONSE = 2;
-    /** 已处理 */
+    /**
+     * 已处理
+     */
     public static final Integer STATUS_SUCCESS = 3;
-    /** 处理失败 */
+    /**
+     * 处理失败
+     */
     public static final Integer STATUS_FAILURE = 4;
 
     @TableId(type = IdType.AUTO)

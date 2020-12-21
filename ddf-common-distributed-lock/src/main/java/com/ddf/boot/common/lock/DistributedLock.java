@@ -1,8 +1,7 @@
 package com.ddf.boot.common.lock;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 分布式锁接口$
@@ -36,6 +35,7 @@ public interface DistributedLock {
 
     /**
      * 针对多个路径进行格式化，用以符合zk node格式
+     *
      * @param path
      * @return
      */
@@ -54,6 +54,7 @@ public interface DistributedLock {
 
     /**
      * 尝试获取锁并执行业务
+     *
      * @param lockPath
      * @param time
      * @param timeUnit
@@ -64,6 +65,7 @@ public interface DistributedLock {
 
     /**
      * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
+     *
      * @param lockPath
      * @param handleData
      * @return

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -26,8 +25,8 @@ import lombok.Setter;
  * .............................................
  * 佛曰：bug泛滥，我已瘫痪！
  *
- * @see LogAspectRegistrar
  * @author dongfang.ding on 2018/11/7
+ * @see LogAspectRegistrar
  */
 @Getter
 @Setter

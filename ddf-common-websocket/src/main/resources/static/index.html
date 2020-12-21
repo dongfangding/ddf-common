@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <link href="/msg/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="/msg/webjars/jquery/jquery.min.js"></script>
     <script src="/msg/webjars/sockjs-client/sockjs.min.js"></script>
@@ -18,7 +18,7 @@
         <div class="col-md-6">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="name" >输入要链接的websocket的地址</label>
+                    <label for="name">输入要链接的websocket的地址</label>
                     <input type="text" id="url" style="width:500px">
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
                     <button id="batchConnect" class="btn btn-default" type="submit">批量连接</button>
@@ -28,8 +28,8 @@
             </form>
         </div>
     </div>
-    <br />
-    <br />
+    <br/>
+    <br/>
     <div class="row">
         <div class="col-md-6">
             <form class="form-inline">
@@ -41,20 +41,20 @@
                 <button id="send" class="btn btn-default" type="submit">Send</button>
             </form>
         </div>
-    <div class="row">
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Response</th>
-                </tr>
-                </thead>
-                <tbody id="greetings">
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="conversation" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Response</th>
+                        </tr>
+                        </thead>
+                        <tbody id="greetings">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 </body>
 </html>

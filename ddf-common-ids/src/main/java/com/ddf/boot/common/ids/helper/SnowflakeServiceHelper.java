@@ -26,6 +26,7 @@ public class SnowflakeServiceHelper {
 
     /**
      * 获取雪花id， 失败后有三次尝试次数
+     *
      * @return
      */
     public long getLongId() {

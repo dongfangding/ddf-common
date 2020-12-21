@@ -66,22 +66,27 @@ public class ListenerQueueEntity<T> {
 
     /**
      * 发送时的数据构建参数
+     *
      * @param messageWrapper
      * @param mqEvent
      * @param queueDefinition
      * @param <T>
      * @return
      */
-    public static <T> ListenerQueueEntity<T> buildSend(MqMessageWrapper<T> messageWrapper, MqEvent mqEvent
-            , QueueBuilder.QueueDefinition queueDefinition, Throwable throwable) {
+    public static <T> ListenerQueueEntity<T> buildSend(MqMessageWrapper<T> messageWrapper, MqEvent mqEvent,
+            QueueBuilder.QueueDefinition queueDefinition, Throwable throwable) {
         ListenerQueueEntity<T> entity = new ListenerQueueEntity<>();
-        return entity.setMessageWrapper(messageWrapper).setMqEvent(mqEvent).setTimestamp(System.currentTimeMillis())
-                .setQueueDefinition(queueDefinition).setThrowable(throwable);
+        return entity.setMessageWrapper(messageWrapper)
+                .setMqEvent(mqEvent)
+                .setTimestamp(System.currentTimeMillis())
+                .setQueueDefinition(queueDefinition)
+                .setThrowable(throwable);
     }
 
 
     /**
      * 消费时的构建参数
+     *
      * @param messageWrapper
      * @param mqEvent
      * @param rabbitListener
@@ -89,18 +94,18 @@ public class ListenerQueueEntity<T> {
      * @param throwable
      * @return
      */
-    public static <T> ListenerQueueEntity<T> buildConsumer(MqMessageWrapper<T> messageWrapper, MqEvent mqEvent
-            , RabbitListener rabbitListener, Throwable throwable) {
+    public static <T> ListenerQueueEntity<T> buildConsumer(MqMessageWrapper<T> messageWrapper, MqEvent mqEvent,
+            RabbitListener rabbitListener, Throwable throwable) {
         ListenerQueueEntity<T> entity = new ListenerQueueEntity<>();
-        return entity.setMessageWrapper(messageWrapper).setMqEvent(mqEvent).setRabbitListener(rabbitListener)
-                .setTimestamp(System.currentTimeMillis()).setThrowable(throwable);
+        return entity.setMessageWrapper(messageWrapper)
+                .setMqEvent(mqEvent)
+                .setRabbitListener(rabbitListener)
+                .setTimestamp(System.currentTimeMillis())
+                .setThrowable(throwable);
     }
 
 
     public enum MqEvent {
-        SEND_SUCCESS,
-        SEND_FAILURE,
-        CONSUMER_SUCCESS,
-        CONSUMER_FAILURE
+        SEND_SUCCESS, SEND_FAILURE, CONSUMER_SUCCESS, CONSUMER_FAILURE
     }
 }

@@ -8,18 +8,28 @@ import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.exception.UserClaimMissionException;
 import com.ddf.boot.common.jwt.model.UserClaim;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.KeyException;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.util.AntPathMatcher;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
 /**
  * Jwt的工具类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -66,26 +76,22 @@ public class JwtUtil {
 
 
     /**
-     *
      * 创建默认的Jws payload
      * 会将传入的UserClaim里的有get方法的所有属性附加到payload中;
      *
      * @param userClaim
      * @return
-
      */
     public static String defaultJws(UserClaim userClaim) {
         return defaultJws(userClaim, Collections.emptyMap());
     }
 
     /**
-     *
      * 创建默认的Jws payload
      * 会将传入的UserClaim里的有get方法的所有属性附加到payload中;
      *
      * @param userClaim
      * @return
-
      */
     public static String defaultJws(UserClaim userClaim, Map<String, Object> claims) {
         Date now = new Date();
@@ -103,7 +109,10 @@ public class JwtUtil {
                 .setSubject(JsonUtil.asString(userClaim))
                 .setExpiration(calendar.getTime())
                 .setIssuedAt(now)
-                .signWith(Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .signWith(
+                        Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)),
+                        SignatureAlgorithm.HS512
+                )
                 .compact();
     }
 
@@ -115,10 +124,10 @@ public class JwtUtil {
      */
     public static String createJws(Map<String, Object> claims) {
 
-        return Jwts.builder()
-                .addClaims(claims)
-                .signWith(Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
-                .compact();
+        return Jwts.builder().addClaims(claims).signWith(
+                Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8)),
+                SignatureAlgorithm.HS512
+        ).compact();
     }
 
     /**
@@ -139,11 +148,10 @@ public class JwtUtil {
      * @param allowedClockSkewSeconds 解析时为了可以忽略的一个时间差，单位为秒；在这个时间差时间，jws依然有效
      * @return
      */
-    public static Jws<Claims> parseJws(String jws, int allowedClockSkewSeconds) throws KeyException, ExpiredJwtException {
-        return Jwts.parser()
-                .setAllowedClockSkewSeconds(allowedClockSkewSeconds)
-                .setSigningKey(JWT_PROPERTIES.getSecret())
-                .parseClaimsJws(jws);
+    public static Jws<Claims> parseJws(String jws, int allowedClockSkewSeconds)
+            throws KeyException, ExpiredJwtException {
+        return Jwts.parser().setAllowedClockSkewSeconds(allowedClockSkewSeconds).setSigningKey(
+                JWT_PROPERTIES.getSecret()).parseClaimsJws(jws);
     }
 
 
@@ -191,18 +199,18 @@ public class JwtUtil {
         }
         return JsonUtil.toBean(Convert.toStr(headerUser), UserClaim.class);
     }
-    
-    
+
+
     /**
      * 获取当前用户信息，如果没有获取到用户信息，会返回默认用户信息
-     
+     *
      * @return com.ddf.boot.common.jwt.model.UserClaim
      * @author dongfang.ding
      * @date 2019/12/9 0009 16:23
      **/
     public static UserClaim getByContextNotNecessary() {
         try {
-           return getByContext(false); 
+            return getByContext(false);
         } catch (Exception e) {
             return UserClaim.defaultUser();
         }
@@ -210,6 +218,7 @@ public class JwtUtil {
 
     /**
      * 获取客户端ip
+     *
      * @return
      */
     public static String getHost() {

@@ -1,13 +1,11 @@
 package com.ddf.boot.common.jwt.interfaces;
 
 import com.ddf.boot.common.jwt.model.UserClaim;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
  * 提供一个接口让调用方实现，来将用户的数据库信息加载进来
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -31,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 public interface UserClaimService {
 
@@ -42,7 +39,7 @@ public interface UserClaimService {
      * 存入的方式再获取到
      *
      * @param request
-     * @param host  客户端请求ip
+     * @param host    客户端请求ip
      * @return void
      * @author dongfang.ding
      * @date 2019/12/7 0007 16:04
@@ -52,6 +49,7 @@ public interface UserClaimService {
 
     /**
      * Jwt将token中的用户信息，传递给调用方，需要调用方实现这个接口来将数据库中的最新用户数据返回过来
+     *
      * @param userClaim
      * @return
      */
@@ -60,6 +58,7 @@ public interface UserClaimService {
     /**
      * 验证通过后预留一个接口允许客户端对用户做一些事情；
      * 如可以将用户放在自行选择的安全框架上下文中
+     *
      * @param userClaim
      */
     default void afterVerifySuccess(UserClaim userClaim) {

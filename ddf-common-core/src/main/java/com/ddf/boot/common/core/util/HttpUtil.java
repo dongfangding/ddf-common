@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.core.exception200.ServerErrorException;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
@@ -12,17 +13,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-
 /**
  * http客户端工具
  */
 @Slf4j
 public class HttpUtil {
-    
-    
+
+
     /**
      * post请求
+     *
      * @param url
      * @param body
      * @param callbackResult

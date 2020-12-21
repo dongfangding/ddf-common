@@ -9,7 +9,6 @@ import org.springframework.web.socket.TextMessage;
  * 命令码的策略接口
  * 每个实现的Service的beanName必须和命令码保持一致
  *
- *
  * @author dongfang.ding
  * @date 2019/8/24 10:35
  */
@@ -18,6 +17,7 @@ public interface CmdStrategy {
 
     /**
      * 将指令下发给设备
+     *
      * @param cmd
      * @param clientChannel
      * @param body
@@ -38,7 +38,8 @@ public interface CmdStrategy {
      * @author dongfang.ding
      * @date 2019/10/26 15:17
      */
-    <T> Message<T> responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal, Message<T> message);
+    <T> Message<T> responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal,
+            Message<T> message);
 
     /**
      * 响应Cmd命令码

@@ -1,8 +1,7 @@
 package com.ddf.boot.common.ext.oss.config;
 
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 /**
  * <p>token请求参数类， 主要是为了对ObjectKey进行路径区分</p >

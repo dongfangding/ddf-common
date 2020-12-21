@@ -4,8 +4,8 @@ import com.ddf.boot.common.mq.config.MqAutoConfiguration;
 
 /**
  * 队列、交换器、路由键的常量类
- *
- *
+ * <p>
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -26,7 +26,6 @@ import com.ddf.boot.common.mq.config.MqAutoConfiguration;
  * `=---='
  * .............................................
  * 佛曰：bug泛滥，我已瘫痪！
- *
  */
 public class BindingConst {
 
@@ -47,39 +46,46 @@ public class BindingConst {
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者AutoAck
+     *
      * @see MqAutoConfiguration#singleAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_SINGLE_AUTO_ACK = "singleAutoAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者AutoAck
+     *
      * @see MqAutoConfiguration#concurrentAutoAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_AUTO_ACK = "concurrentAutoAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者手动ack
+     *
      * @see MqAutoConfiguration#singleManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_SINGLE_MANUAL_ACK = "singleManualAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者手动ack
+     *
      * @see MqAutoConfiguration#concurrentManualAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_MANUAL_ACK = "concurrentManualAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 单消费者none ack
+     *
      * @see MqAutoConfiguration#noneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_NONE_ACK = "noneAck";
 
     /**
      * 消费端消息确认模式 Bean Name>>> 多消费者none ack
+     *
      * @see MqAutoConfiguration#concurrentNoneAck(org.springframework.amqp.rabbit.connection.CachingConnectionFactory)
      */
     public static final String ACK_MODE_CONCURRENT_NONE_ACK = "concurrentNoneAck";
+
 
     /**
      * 交换器名称
@@ -108,6 +114,7 @@ public class BindingConst {
 
     }
 
+
     /**
      * 队列名称
      */
@@ -128,7 +135,8 @@ public class BindingConst {
         /**
          * 测试基本死信队列的接收队列， 上述死信队列出现死信数据后，消息将被转发到该队列
          */
-        public static final String TEST_DEAD_LETTER_RECEIVE_QUEUE = DEAD_LETTER_PREFIX + "test.dead.letter.receive.queue";
+        public static final String TEST_DEAD_LETTER_RECEIVE_QUEUE =
+                DEAD_LETTER_PREFIX + "test.dead.letter.receive.queue";
 
         // ----------------------------------------------------------------------------------------
 
@@ -154,9 +162,11 @@ public class BindingConst {
         /**
          * 设备指令运行状态监控数据持久化
          */
-        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE = PREFIX + "device.cmd.running.state.persistence";
+        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE =
+                PREFIX + "device.cmd.running.state.persistence";
 
     }
+
 
     /**
      * 路由键名称
@@ -195,13 +205,15 @@ public class BindingConst {
 
 
         /**
+         *
          */
         public static final String USER_LOGIN_HISTORY_KEY = "user.login.token.key";
 
         /**
          * 设备指令运行状态监控数据持久化
          */
-        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY = PREFIX + "device.cmd.running.state.persistence.key";
+        public static final String DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY =
+                PREFIX + "device.cmd.running.state.persistence.key";
 
     }
 

@@ -2,7 +2,7 @@ package com.ddf.boot.common.jwt.consts;
 
 /**
  * Jwt常量
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -26,17 +26,16 @@ package com.ddf.boot.common.jwt.consts;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 public class JwtConstant {
 
-	/**
-	 * 客户端ip
-	 */
-	public static final String CLIENT_IP = "client_ip";
+    /**
+     * 客户端ip
+     */
+    public static final String CLIENT_IP = "client_ip";
 
-	/**
-	 * 用户信息
-	 */
-	public static final String HEADER_USER = "header_user_info";
+    /**
+     * 用户信息
+     */
+    public static final String HEADER_USER = "header_user_info";
 }

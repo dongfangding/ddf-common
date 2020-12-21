@@ -35,6 +35,7 @@ public class AliYunSmsHelper {
 
     /**
      * 随机生成基于验证码变量code的短信模板参数
+     *
      * @return
      */
     public String randomCodeTemplateParam() {
@@ -45,11 +46,14 @@ public class AliYunSmsHelper {
 
     /**
      * 发送短信验证码
+     *
      * @param aliYunSmsRequest
      */
     @SneakyThrows
     public CommonResponse sendSms(AliYunSmsRequest aliYunSmsRequest) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(), smsProperties.getAccessKeySecret());
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(),
+                smsProperties.getAccessKeySecret()
+        );
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
         request.setSysMethod(MethodType.POST);

@@ -20,11 +20,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * mq的配置类
  * <p>
  * https://www.docs4dev.com/docs/zh/spring-amqp/2.1.2.RELEASE/reference/_reference.html
- *
+ * <p>
  * TODO
  * 1. 持久化和发送是否同步提供参数，对于想要保证数据库和实际发送保持一致的使用者来说，可以使用同步模式，先持久化后发送
  * 2. 存储消息的队列分开，每个事件使用单独的队列，否则持久化的速度有点感人
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -57,6 +57,7 @@ public class MqAutoConfiguration {
 
     /**
      * 默认出现mq事件的线程池
+     *
      * @return
      */
     @Bean
@@ -83,12 +84,12 @@ public class MqAutoConfiguration {
      * @author dongfang.ding
      * @date 2019/12/10 0010 14:24
      **/
-//    @Bean
-//    public RabbitTemplate rabbitTemplate(RabbitTemplate rabbitTemplate, CustomizeMessagePostProcessor messagePostProcessor) {
-//        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-//        rabbitTemplate.addBeforePublishPostProcessors(messagePostProcessor);
-//        return rabbitTemplate;
-//    }
+    //    @Bean
+    //    public RabbitTemplate rabbitTemplate(RabbitTemplate rabbitTemplate, CustomizeMessagePostProcessor messagePostProcessor) {
+    //        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+    //        rabbitTemplate.addBeforePublishPostProcessors(messagePostProcessor);
+    //        return rabbitTemplate;
+    //    }
 
     /**
      * 设置rabbitmq的序列化机制为application/json
@@ -106,18 +107,18 @@ public class MqAutoConfiguration {
      * 如果消费过程中出现异常，那么消息状态会转为Unacked， 然后如果有消费这，消息会再次变为Ready等待消费；重复这个过程；
      * 类似与手动模式开启requeue
      *
-     *
      * @param rabbitConnectionFactory 该项目为基本配置包，因此IDE会提示没有这个类，必须将该项目依赖到有rabbitmq的连接信息项目中
      * @return
-     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
-     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
+     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
+     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      */
     @Bean(BindingConst.ACK_MODE_SINGLE_AUTO_ACK)
     public RabbitListenerContainerFactory singleAutoAck(CachingConnectionFactory rabbitConnectionFactory) {
         SimpleRabbitListenerContainerFactory rabbitListener = buildRabbitListener(rabbitConnectionFactory,
-                AcknowledgeMode.AUTO, 250, 1, 1, 0L, 0L);
+                AcknowledgeMode.AUTO, 250, 1, 1, 0L, 0L
+        );
         // 要小于或等于prefetchCount,一个事务中要处理的消息数,这个值暂未理解影响程度
         rabbitListener.setTxSize(100);
         return rabbitListener;
@@ -134,13 +135,14 @@ public class MqAutoConfiguration {
     @Bean(BindingConst.ACK_MODE_CONCURRENT_AUTO_ACK)
     public RabbitListenerContainerFactory concurrentAutoAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.AUTO, 250, 2,
-                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L
+        );
     }
 
 
     /**
      * 配置消费端的策略，消息确认机制为手动ack
-     *
+     * <p>
      * 默认最小和最大消费者数量都为1
      * <p>
      * 开启手动ack之后，如果消费端不调用basicAck方法，则消息会一直处理Unacked状态，而如果处理失败之后调用basicNack或basicReject将requeue的值设置为
@@ -149,7 +151,7 @@ public class MqAutoConfiguration {
      * <p>
      * 解决方案之一：
      * 最好不要重新投递，消费成功的就直接ack，而如果消费失败的，那么就将消费失败的消息保存到本地数据库中或者死信队列，然后再做处理最后将消息删除
-     *
+     * <p>
      * 本模块包提供一个消费失败后的简单重投实现，可以参考{@link RabbitTemplateHelper#nackAndRequeue(com.rabbitmq.client.Channel, org.springframework.amqp.core.Message, com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition, com.ddf.boot.common.mq.definition.MqMessageWrapper, java.util.function.Consumer)}
      *
      * <pre class="code">
@@ -168,15 +170,14 @@ public class MqAutoConfiguration {
      *
      * @param rabbitConnectionFactory 该项目为基本配置包，因此IDE会提示没有这个类，必须将该项目依赖到有rabbitmq的连接信息项目中
      * @return
-     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
-     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
+     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
+     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      */
     @Bean(BindingConst.ACK_MODE_SINGLE_MANUAL_ACK)
     public RabbitListenerContainerFactory singleManualAck(CachingConnectionFactory rabbitConnectionFactory) {
-        return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 1,
-                1, 0L, 0L);
+        return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 1, 1, 0L, 0L);
     }
 
 
@@ -191,30 +192,33 @@ public class MqAutoConfiguration {
     @Bean(BindingConst.ACK_MODE_CONCURRENT_MANUAL_ACK)
     public RabbitListenerContainerFactory concurrentManualAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.MANUAL, 1, 2,
-                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L
+        );
     }
 
 
     /**
      * 配置消费端的策略，消息确认机制为NONE，即autoAck=true，注意与{@link AcknowledgeMode#AUTO}的区别
-     *
+     * <p>
      * 无论消费过程中成功还是失败，消息都直接丢弃！
      *
      * @param rabbitConnectionFactory 该项目为基本配置包，因此IDE会提示没有这个类，必须将该项目依赖到有rabbitmq的连接信息项目中
      * @return
-     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
-     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      * @author dongfang.ding
      * @date 2019/12/12 0012 15:40
+     * @see RabbitAutoConfiguration.RabbitConnectionFactoryCreator#rabbitConnectionFactory
+     * @see org.springframework.amqp.rabbit.annotation.RabbitListener#containerFactory
      */
     @Bean(BindingConst.ACK_MODE_NONE_ACK)
     public RabbitListenerContainerFactory noneAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.NONE, 1, 1,
-                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
-    }   
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L
+        );
+    }
 
     /**
      * 并发AcknowledgeMode.NONE
+     *
      * @param rabbitConnectionFactory
      * @return org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
      * @author dongfang.ding
@@ -223,7 +227,8 @@ public class MqAutoConfiguration {
     @Bean(BindingConst.ACK_MODE_CONCURRENT_NONE_ACK)
     public RabbitListenerContainerFactory concurrentNoneAck(CachingConnectionFactory rabbitConnectionFactory) {
         return buildRabbitListener(rabbitConnectionFactory, AcknowledgeMode.NONE, 1, 1,
-                Runtime.getRuntime().availableProcessors(), 10000L, 60000L);
+                Runtime.getRuntime().availableProcessors(), 10000L, 60000L
+        );
     }
 
 
@@ -241,10 +246,11 @@ public class MqAutoConfiguration {
      * @author dongfang.ding
      * @date 2019/12/12 0012 10:49
      **/
-    private SimpleRabbitListenerContainerFactory buildRabbitListener(CachingConnectionFactory rabbitConnectionFactory
-            , AcknowledgeMode acknowledgeMode, Integer prefetchCount, Integer concurrency, Integer maxConcurrency
-            , Long minStartInterval, Long minStopInterval) {
-        SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
+    private SimpleRabbitListenerContainerFactory buildRabbitListener(CachingConnectionFactory rabbitConnectionFactory,
+            AcknowledgeMode acknowledgeMode, Integer prefetchCount, Integer concurrency, Integer maxConcurrency,
+            Long minStartInterval, Long minStopInterval) {
+        SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory =
+                new SimpleRabbitListenerContainerFactory();
         simpleRabbitListenerContainerFactory.setConnectionFactory(rabbitConnectionFactory);
         // ack模式
         simpleRabbitListenerContainerFactory.setAcknowledgeMode(acknowledgeMode);

@@ -40,15 +40,18 @@ public class OssBeanAutoConfiguration {
     @Bean(name = DEFAULT_OSS_CLIENT_NAME, destroyMethod = "shutdown")
     @Primary
     public OSS defaultOssClient(OssProperties ossProperties) {
-        return new OSSClientBuilder()
-                .build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
+        return new OSSClientBuilder().build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(),
+                ossProperties.getAccessKeySecret()
+        );
     }
 
     @Bean(name = DEFAULT_ACS_CLIENT_NAME, destroyMethod = "shutdown")
     @Primary
     public IAcsClient defaultAcsClient(OssProperties ossProperties) {
         DefaultProfile.addEndpoint("", "Sts", ossProperties.getStsEndpoint());
-        IClientProfile profile = DefaultProfile.getProfile("", ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
+        IClientProfile profile = DefaultProfile.getProfile("", ossProperties.getAccessKeyId(),
+                ossProperties.getAccessKeySecret()
+        );
         // 用profile构造client
         return new DefaultAcsClient(profile);
     }

@@ -1,8 +1,7 @@
 package com.ddf.boot.common.core.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * 泛型键值对$

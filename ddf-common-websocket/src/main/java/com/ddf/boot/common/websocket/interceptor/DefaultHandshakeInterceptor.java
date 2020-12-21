@@ -10,6 +10,13 @@ import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.HandshakeParam;
 import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.properties.WebSocketProperties;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -21,14 +28,6 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 握手前的拦截器，认证客户端是否允许握手
@@ -45,7 +44,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
 
     private final List<HandshakeAuth> handshakeAuthList;
 
-    private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(EncryptProcessor.class);
+    private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(
+            EncryptProcessor.class);
 
     public DefaultHandshakeInterceptor(WebSocketProperties webSocketProperties, List<HandshakeAuth> handshakeAuthList) {
         this.webSocketProperties = webSocketProperties;
@@ -63,10 +63,10 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
      * @param attributes attributes from the HTTP handshake to associate with the WebSocket
      *                   session; the provided attributes are copied, the original map is not used.
      * @return whether to proceed with the handshake ({@code true}) or abort ({@code false})
-     *
      */
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+            Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest req = (ServletServerHttpRequest) request;
         HttpServletRequest servletRequest = req.getServletRequest();
         Principal principal = req.getPrincipal();
@@ -94,7 +94,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
                     if (encryptProcessor == null) {
                         throw new NoSuchBeanDefinitionException(webSocketProperties.getSecretBeanName());
                     }
-                    token = ENCRYPT_PROCESSORS.get(webSocketProperties.getSecretBeanName()).decryptHandshakeToken(token);
+                    token = ENCRYPT_PROCESSORS.get(webSocketProperties.getSecretBeanName()).decryptHandshakeToken(
+                            token);
                 }
                 handshakeParam = JsonUtil.toBean(token, HandshakeParam.class);
                 if (!validArgument(handshakeParam, response)) {
@@ -141,8 +142,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
                     return false;
                 }
                 String newClientAddress = req.getRemoteAddress().getAddress().getHostAddress();
-                oldSession.getWebSocketSession().sendMessage(new TextMessage("账号在别处[" +
-                        newClientAddress + "]登陆，即将断开连接。。。"));
+                oldSession.getWebSocketSession().sendMessage(
+                        new TextMessage("账号在别处[" + newClientAddress + "]登陆，即将断开连接。。。"));
                 oldSession.getWebSocketSession().close();
             } catch (Exception exception) {
                 log.error(ExceptionUtils.getStackTrace(exception));
@@ -161,12 +162,14 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
      * @param exception an exception raised during the handshake, or {@code null} if none
      */
     @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+            Exception exception) {
 
     }
 
     /**
      * 参数校验
+     *
      * @param handshakeParam
      * @param response
      * @return
@@ -189,7 +192,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
             long now = System.currentTimeMillis();
             if (Math.abs(now - handshakeParam.getCurrentTimeStamp()) > webSocketProperties.getValidAuthTimeStamp()) {
                 log.error("认证参数已过期{}==>{}", now, handshakeParam.getCurrentTimeStamp());
-                response.getBody().write(String.format("认证参数已过期%s==>%s", now, handshakeParam.getCurrentTimeStamp()).getBytes(StandardCharsets.UTF_8));
+                response.getBody().write(String.format("认证参数已过期%s==>%s", now, handshakeParam.getCurrentTimeStamp())
+                        .getBytes(StandardCharsets.UTF_8));
                 return false;
             }
         }

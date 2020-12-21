@@ -53,10 +53,7 @@ public enum MessageResponseCodeEnum {
     /**
      * 无权限
      */
-    UNAUTHORIZED(401)
-
-
-    ;
+    UNAUTHORIZED(401);
 
     private static Map<Integer, MessageResponseCodeEnum> mappingMap;
 
@@ -80,6 +77,7 @@ public enum MessageResponseCodeEnum {
 
     /**
      * 根据状态码构建枚举对象
+     *
      * @param code
      * @return
      */

@@ -3,16 +3,15 @@ package com.ddf.boot.common.mq.config;
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
 import com.rabbitmq.client.Channel;
+import java.util.function.Consumer;
 import lombok.Data;
 import org.springframework.amqp.core.Message;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.function.Consumer;
-
 /**
  * 自定义封装的一些mq方法全局属性
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -59,15 +58,16 @@ public class MqMessageProperties/* implements InitializingBean*/ {
     /**
      * 落库监听日志的实现类的beanName
      * 默认使用Mongo落库，可切换为数据库
+     *
      * @see com.ddf.boot.common.mq.persistence.LogMqPersistenceProcessor
      */
     private String logMqPersistenceProcessorBeanName = "mongoLogMqPersistenceProcessor";
 
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-//        Object bean = SpringContextHolder.getBean(logMqPersistenceProcessorBeanName);
-//        if (!(bean instanceof LogMqPersistenceProcessor)) {
-//            throw new NoSuchBeanDefinitionException(logMqPersistenceProcessorBeanName);
-//        }
-//    }
+    //    @Override
+    //    public void afterPropertiesSet() throws Exception {
+    //        Object bean = SpringContextHolder.getBean(logMqPersistenceProcessorBeanName);
+    //        if (!(bean instanceof LogMqPersistenceProcessor)) {
+    //            throw new NoSuchBeanDefinitionException(logMqPersistenceProcessorBeanName);
+    //        }
+    //    }
 }

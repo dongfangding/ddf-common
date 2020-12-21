@@ -1,19 +1,18 @@
 package com.ddf.boot.common.jwt.config;
 
 import com.ddf.boot.common.jwt.util.JwtUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Jwt相关配置类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 @ConfigurationProperties(prefix = "customs.jwt")
 @Data
@@ -55,7 +53,6 @@ public class JwtProperties {
      * 如果没有配置httpMethod或为*,则直接配置路径
      *
      * @see PathMatch
-     *
      */
     private List<PathMatch> ignores = new ArrayList<>();
 
@@ -87,8 +84,8 @@ public class JwtProperties {
         if (ignores == null || ignores.isEmpty()) {
             return false;
         }
-        List<String> pathList = ignores.stream().filter(s -> StringUtils.isNotBlank(s.getPath()))
-                .map(PathMatch::getPath).collect(Collectors.toList());
+        List<String> pathList = ignores.stream().filter(s -> StringUtils.isNotBlank(s.getPath())).map(
+                PathMatch::getPath).collect(Collectors.toList());
         // 当前请求地址是否需要跳过认证
         if (!pathList.isEmpty()) {
             for (String ignore : pathList) {

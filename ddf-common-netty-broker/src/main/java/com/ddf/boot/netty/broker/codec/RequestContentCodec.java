@@ -7,13 +7,13 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.util.CharsetUtil;
-import lombok.extern.slf4j.Slf4j;
-
 import java.nio.charset.Charset;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 编解码器，用于解析和传输对象{@link RequestContent}
+ *
  * @author dongfang.ding
  * @date 2019/7/5 15:01
  */
@@ -35,6 +35,7 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
 
     /**
      * 服务端操作数据使用对象{@link RequestContent}，最终写入到客户端的时候编码成字节
+     *
      * @param ctx
      * @param msg
      * @param out
@@ -52,6 +53,7 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
     /**
      * 将客户端传入的解码成服务端使用的{@link RequestContent}
      * 注意TCP的粘包和拆包问题，这里已经使用了{@link io.netty.handler.codec.LineBasedFrameDecoder}解码器来解决，要求客户端比如以换行符结尾
+     *
      * @param ctx
      * @param in
      * @param out

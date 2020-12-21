@@ -3,18 +3,17 @@ package com.ddf.boot.common.mybatis.config;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ddf.boot.common.core.model.BaseDomain;
 import com.ddf.boot.common.jwt.util.JwtUtil;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 /**
  * 针对通用字段自动填充功能的实现
- *
+ * <p>
  * 实现对通用实体字段的赋值，
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -65,13 +64,15 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
         try {
             String bindingParamKey = "param1";
             MapperMethod.ParamMap mapperMethod = (MapperMethod.ParamMap) metaObject.getOriginalObject();
-            boolean isMapperMethod = mapperMethod.containsKey(bindingParamKey) && mapperMethod.get(bindingParamKey) instanceof BaseDomain;
+            boolean isMapperMethod = mapperMethod.containsKey(bindingParamKey) && mapperMethod.get(
+                    bindingParamKey) instanceof BaseDomain;
             if (metaObject.getOriginalObject() instanceof BaseDomain || isMapperMethod) {
                 log.info("start update fill ....");
                 // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
                 setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
                 setFieldValByName("modifyTime", new Date(), metaObject);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }

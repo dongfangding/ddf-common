@@ -1,18 +1,21 @@
 package com.ddf.boot.common.core.exception1;
 
 
-import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>生成实体的简单工具类</p>
@@ -32,12 +35,13 @@ public class EntityGenerateUtil {
 
     private static final String LINE = System.getProperty("line.separator");
     private static final String BLANK = "    ";
-    private static final String TWO_LINE = (System.getProperty("line.separator") + System.getProperty("line.separator"));
+    private static final String TWO_LINE = (System.getProperty("line.separator") + System.getProperty(
+            "line.separator"));
 
     /**
      * 项目源码根路径地址,根据包名生成java代码的时候需要用到需要生成到哪个目录下
      */
-//    private static final String SOURCE_ROOT = System.getProperty("bootUser.dir") + "/src/main/java";
+    //    private static final String SOURCE_ROOT = System.getProperty("bootUser.dir") + "/src/main/java";
     private static final String SOURCE_ROOT = "D:\\auto-pay\\provider-common\\core-model\\src\\main\\java";
 
     /**
@@ -46,13 +50,13 @@ public class EntityGenerateUtil {
     private static Set<String> ignoreColumn = new HashSet<>();
 
     static {
-//        ignoreColumn.add("id");
-////        ignoreColumn.add("create_by");
-////        ignoreColumn.add("create_time");
-////        ignoreColumn.add("modify_by");
-////        ignoreColumn.add("modify_time");
-////        ignoreColumn.add("removed");
-////        ignoreColumn.add("version");
+        //        ignoreColumn.add("id");
+        ////        ignoreColumn.add("create_by");
+        ////        ignoreColumn.add("create_time");
+        ////        ignoreColumn.add("modify_by");
+        ////        ignoreColumn.add("modify_time");
+        ////        ignoreColumn.add("removed");
+        ////        ignoreColumn.add("version");
 
         ignoreColumn.add("id");
         ignoreColumn.add("create_date");
@@ -76,13 +80,15 @@ public class EntityGenerateUtil {
      */
     private static Connection getConnection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        return DriverManager.getConnection("jdbc:mysql://192.168.3.188:3306/company_pay_auto_v2?characterEncoding" +
-                "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "h8fCueq9ujqao3Y");
+        return DriverManager.getConnection("jdbc:mysql://192.168.3.188:3306/company_pay_auto_v2?characterEncoding"
+                        + "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root",
+                "h8fCueq9ujqao3Y"
+        );
     }
 
 
     public static void main(String[] args) throws Exception {
-//        generateEntity(TableType.LINE_HUMP);
+        //        generateEntity(TableType.LINE_HUMP);
         String packageName = "com.company.pay.core.model.datao";
         doAction(TableType.LINE_HUMP, packageName);
     }
@@ -129,7 +135,7 @@ public class EntityGenerateUtil {
         DatabaseMetaData metaData = conn.getMetaData();
         int columnType;
 
-        ResultSet tables = metaData.getTables(CATLOG, "%", "%", new String[]{"TABLE"});
+        ResultSet tables = metaData.getTables(CATLOG, "%", "%", new String[] {"TABLE"});
         while (tables.next()) {
             String tableRemarks = "", columnName, fieldType, columnRemarks, fieldName;
             String tableName = tables.getString("table_name");
@@ -168,7 +174,9 @@ public class EntityGenerateUtil {
             System.out.println("SOURCE_ROOT: " + SOURCE_ROOT);
             File file = new File(SOURCE_ROOT + File.separator + packageDir + File.separator + className + ".java");
             file.createNewFile();
-            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file),
+                    StandardCharsets.UTF_8
+            )) {
                 String sourceStr = sbl.toString();
                 if (isDateImport) {
                     sourceStr = String.format(sourceStr, "import java.util.Date;" + LINE);
@@ -246,7 +254,8 @@ public class EntityGenerateUtil {
         sbl.append("@AllArgsConstructor ").append(LINE);
         sbl.append("@Data").append(LINE);
         sbl.append("@ApiModel(\"").append(tableRemarks).append("\")").append(LINE);
-        sbl.append("public class ").append(className).append(" extends BaseModel implements Serializable {").append(LINE);
+        sbl.append("public class ").append(className).append(" extends BaseModel implements Serializable {").append(
+                LINE);
         return sbl;
     }
 

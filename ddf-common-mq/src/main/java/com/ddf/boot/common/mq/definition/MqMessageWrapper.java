@@ -1,17 +1,16 @@
 package com.ddf.boot.common.mq.definition;
 
 import com.rabbitmq.client.Channel;
+import java.io.Serializable;
+import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.amqp.core.Message;
 
-import java.io.Serializable;
-import java.util.function.Consumer;
-
 /**
  * mq发送消息的统一格式类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -42,13 +41,19 @@ import java.util.function.Consumer;
 public class MqMessageWrapper<T> implements Serializable {
     private static final long serialVersionUID = -8328345290360094049L;
 
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     private String creator;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Long createTime;
 
-    /** 消息的唯一标识符 */
+    /**
+     * 消息的唯一标识符
+     */
     private String messageId;
 
     /**
@@ -58,6 +63,8 @@ public class MqMessageWrapper<T> implements Serializable {
      */
     private int requeueTimes;
 
-    /** 序列化后的消息正文 */
+    /**
+     * 序列化后的消息正文
+     */
     private T body;
 }

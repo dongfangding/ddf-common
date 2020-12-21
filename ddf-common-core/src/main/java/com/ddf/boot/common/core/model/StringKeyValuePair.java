@@ -1,8 +1,7 @@
 package com.ddf.boot.common.core.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * String格式的键值对$

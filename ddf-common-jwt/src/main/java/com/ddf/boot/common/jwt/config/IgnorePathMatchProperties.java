@@ -1,17 +1,15 @@
 package com.ddf.boot.common.jwt.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- *
  * 配置路径放行规则
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -35,7 +33,6 @@ import java.util.List;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 @ConfigurationProperties("jwt.auth")
 @Getter
@@ -46,9 +43,7 @@ public class IgnorePathMatchProperties {
     public static final String BEAN_NAME = "ignorePathMatchProperties";
 
     /**
-     *
      * @see PathMatch
-     *
      */
     private List<PathMatch> ignores = new ArrayList<>();
 

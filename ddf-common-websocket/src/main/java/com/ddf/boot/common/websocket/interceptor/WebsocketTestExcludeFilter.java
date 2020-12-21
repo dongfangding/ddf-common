@@ -1,13 +1,12 @@
 package com.ddf.boot.common.websocket.interceptor;
 
 import com.ddf.boot.common.websocket.config.WebSocketConfig;
+import java.io.IOException;
+import java.util.Objects;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * <p>由于测试模块websocket相关配置会导致测试类无法启动，因此提供一个排除类，如果在引用了websocket模块类之后，可以在测试类
@@ -19,7 +18,8 @@ import java.util.Objects;
  */
 public class WebsocketTestExcludeFilter implements TypeFilter {
     @Override
-    public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
+    public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
+            throws IOException {
         ClassMetadata classMetadata = metadataReader.getClassMetadata();
         String className = classMetadata.getClassName();
         if (Objects.equals(WebSocketConfig.class.getName(), className)) {

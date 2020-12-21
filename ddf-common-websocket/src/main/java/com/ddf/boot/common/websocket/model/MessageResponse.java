@@ -1,42 +1,55 @@
 package com.ddf.boot.common.websocket.model;
 
 import com.ddf.boot.common.websocket.enumu.MessageResponseCodeEnum;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 /**
  * 指令发送后服务端给调用方的响应结果
- * 
+ *
  * @author dongfang.ding
- * @date 2019/9/24 16:18 
+ * @date 2019/9/24 16:18
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageResponse<T> implements Serializable {
 
-    /** 响应数据延迟 */
+    /**
+     * 响应数据延迟
+     */
     public static final Integer SERVER_CODE_RECEIVED = 202;
 
-    /** 服务端响应状态码 ，已处理完成 */
+    /**
+     * 服务端响应状态码 ，已处理完成
+     */
     public static final Integer SERVER_CODE_COMPLETE = 200;
 
-    /** 服务端响应状态码， 客户端未登录*/
+    /**
+     * 服务端响应状态码， 客户端未登录
+     */
     public static final Integer SERVER_CODE_NOT_LOGIN = -2;
 
-    /** 服务端响应状态码， 处理失败*/
+    /**
+     * 服务端响应状态码， 处理失败
+     */
     public static final Integer SERVER_CODE_ERROR = 500;
 
-    /** 服务端响应客户端请求资源不存在，如想要获取最新版本，服务端无可用版本等 */
+    /**
+     * 服务端响应客户端请求资源不存在，如想要获取最新版本，服务端无可用版本等
+     */
     public static final Integer SERVER_CODE_RESOURCE_NOT_EXIST = 404;
 
-    /** 客户端格式无效 */
+    /**
+     * 客户端格式无效
+     */
     public static final Integer SERVER_CODE_FORMAT_INVALID = 422;
 
-    /** 客户端针对同一个业务主键数据重复下达指令 */
+    /**
+     * 客户端针对同一个业务主键数据重复下达指令
+     */
     public static final Integer SERVER_CODE_CLIENT_REPEAT_REQUEST = 400;
 
     /**
@@ -75,6 +88,7 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 代表没有返回值的空对象
+     *
      * @return
      */
     public static MessageResponse<?> none() {
@@ -120,6 +134,7 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 阻塞实现如果超时的一个提示方法
+     *
      * @return
      */
     public static <T> MessageResponse<T> delay(String requestId) {
@@ -128,6 +143,7 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 异步提示方法
+     *
      * @return
      */
     public static <T> MessageResponse<T> confirm() {
@@ -136,6 +152,7 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 客户端针对同一个业务主键进行重复请求
+     *
      * @return
      */
     public static <T> MessageResponse<T> repeatRequest() {

@@ -10,10 +10,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 代理服务器$
@@ -58,7 +57,8 @@ public class BrokerServer {
                 .childOption(ChannelOption.SO_SNDBUF, brokerProperties.getSoSndBuf());
         try {
             if (brokerProperties.isSsl()) {
-                serverBootstrap.childHandler(new ServerChannelInit(brokerProperties, KeyManagerFactoryHelper.defaultServerContext()));
+                serverBootstrap.childHandler(
+                        new ServerChannelInit(brokerProperties, KeyManagerFactoryHelper.defaultServerContext()));
             } else {
                 serverBootstrap.childHandler(new ServerChannelInit(brokerProperties));
             }
@@ -73,7 +73,8 @@ public class BrokerServer {
                 System.out.println("服务端启动成功....");
             }
             // todo 处理同步任务
-            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new ChannelStoreSyncTask(), 10, 10, TimeUnit.SECONDS);
+            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
+                    new ChannelStoreSyncTask(), 10, 10, TimeUnit.SECONDS);
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("启动服务端失败", e);

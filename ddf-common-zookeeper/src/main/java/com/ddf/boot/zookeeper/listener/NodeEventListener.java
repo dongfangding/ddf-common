@@ -14,6 +14,7 @@ public interface NodeEventListener {
 
     /**
      * 实现可以有多个，可以根据sort做优先级排序处理，sort值越小，优先级越高
+     *
      * @return
      */
     default int getSort() {
@@ -22,9 +23,9 @@ public interface NodeEventListener {
 
     /**
      * 节点被创建事件
-     *
+     * <p>
      * 当前节点创建的时候没有放入数据，如果想要放入数据，可以实现后自己放入数据
-     *
+     * <p>
      * client.setData().forPath(finalPath, "要放入的数据".getBytes())
      *
      * @param client  客户端连接对象
@@ -46,7 +47,7 @@ public interface NodeEventListener {
 
     /**
      * 节点被删除事件
-     * 
+     * <p>
      * 还有一种情况，当集群中的服务是属于同一个服务时， 如果集群中的所有服务挂掉了，就没有人来处理这个事件了
      *
      * @param client  客户端连接对象

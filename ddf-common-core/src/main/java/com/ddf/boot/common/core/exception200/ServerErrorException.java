@@ -32,6 +32,7 @@ public class ServerErrorException extends BaseException {
 
     /**
      * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     *
      * @param baseCallbackCode
      * @param params
      */

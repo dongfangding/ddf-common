@@ -5,17 +5,15 @@ import com.ddf.boot.common.core.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- *
  * 通道传输数据格式定义类
  *
  * @author dongfang.ding
@@ -54,6 +52,7 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * REQUEST 请求 RESPONSE 应答
+     *
      * @see Type
      */
     private Type type;
@@ -103,7 +102,8 @@ public class RequestContent<T> implements Serializable {
     private transient Map<String, String> extraMap;
 
 
-    public RequestContent(String requestId, Type type, String cmd, Integer sendMode, String clientChannel, Long timestamp, T content) {
+    public RequestContent(String requestId, Type type, String cmd, Integer sendMode, String clientChannel,
+            Long timestamp, T content) {
         this.requestId = requestId;
         this.type = type;
         this.cmd = cmd;
@@ -122,7 +122,9 @@ public class RequestContent<T> implements Serializable {
      * @return
      */
     public static <T> RequestContent<T> request(String cmd, T content) {
-        return new RequestContent<>(IdsUtil.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null, System.currentTimeMillis(), content);
+        return new RequestContent<>(IdsUtil.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null,
+                System.currentTimeMillis(), content
+        );
     }
 
     /**
@@ -245,6 +247,7 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * 由于set添加扩展值容易出错，因此不对外提供，进攻解码器使用
+     *
      * @param extra
      * @return
      */
@@ -274,6 +277,7 @@ public class RequestContent<T> implements Serializable {
          */
         RESPONSE
     }
+
 
     /**
      * 命名

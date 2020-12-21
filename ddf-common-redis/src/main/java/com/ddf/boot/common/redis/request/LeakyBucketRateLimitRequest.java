@@ -36,6 +36,7 @@ public class LeakyBucketRateLimitRequest {
 
     /**
      * 获取Builder， 主要是因为可能会对属性做一些判断修改，所以自己写了构建器，方便改写
+     *
      * @return
      */
     public static LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder builder() {
@@ -86,7 +87,8 @@ public class LeakyBucketRateLimitRequest {
             return this;
         }
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder rateIntervalSeconds(long rateIntervalSeconds) {
+        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder rateIntervalSeconds(
+                long rateIntervalSeconds) {
             this.rateIntervalSeconds = rateIntervalSeconds;
             return this;
         }

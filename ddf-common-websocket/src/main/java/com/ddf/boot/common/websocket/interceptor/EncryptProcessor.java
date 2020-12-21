@@ -14,6 +14,7 @@ public interface EncryptProcessor {
     /**
      * 解密握手时需要的token参数
      * 如果客户端加密了的话
+     *
      * @param token
      * @return
      */
@@ -23,6 +24,7 @@ public interface EncryptProcessor {
 
     /**
      * 加密要发送的消息对象
+     *
      * @param message
      * @param <T>
      * @return

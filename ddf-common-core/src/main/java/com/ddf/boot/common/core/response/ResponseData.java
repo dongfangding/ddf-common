@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 统一响应内容类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -37,31 +37,40 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ResponseData<T> {
 
-    /** 返回消息代码 */
+    /**
+     * 返回消息代码
+     */
     private String code;
-    /** 返回消息 */
+    /**
+     * 返回消息
+     */
     private String message;
     /**
      * 错误堆栈信息
      */
     private String stack;
-    /** 响应时间 */
+    /**
+     * 响应时间
+     */
     private long timestamp;
-    /** 返回数据 */
+    /**
+     * 返回数据
+     */
     private T data;
 
 
     public ResponseData(String code, String message, String stack, long timestamp, T data) {
         this.code = code;
         this.message = message;
-        this.stack= stack;
+        this.stack = stack;
         this.timestamp = timestamp;
         this.data = data;
     }
 
     public static <T> ResponseData<T> success(T data) {
-        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getDescription()
-                , "", System.currentTimeMillis(), data);
+        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), data
+        );
     }
 
     public static <T> ResponseData<T> failure(String code, String message, String stack) {

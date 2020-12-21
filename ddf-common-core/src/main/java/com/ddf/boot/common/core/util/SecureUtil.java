@@ -7,17 +7,18 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.ddf.boot.common.core.config.GlobalProperties;
-import org.apache.commons.lang3.StringUtils;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.lang3.StringUtils;
 
 public class SecureUtil {
 
-    private SecureUtil() {}
+    private SecureUtil() {
+    }
 
 
-    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(GlobalProperties.class);
+    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(
+            GlobalProperties.class);
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -34,8 +35,10 @@ public class SecureUtil {
     /**
      * 本地公钥私钥
      */
-    private static final  String LOCAL_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCHTMSHP88BKSwWLlrab7t+yZQmdsVfDLyoJjAisP35C+sfYZVUGlPqntqpuMC6Q2gxAgN1sybVfJ+B/xqx7/1RXjwiS64VMSaScFoGcsTBxptCbt4/TDUcpE4UKrG7pizPL6ID6fYbPLvzhh6s14w1zVz7OL39zJ1l0AhUPDez/QIDAQAB";
-    private static final  String LOCAL_PRIVATE_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIdMxIc/zwEpLBYuWtpvu37JlCZ2xV8MvKgmMCKw/fkL6x9hlVQaU+qe2qm4wLpDaDECA3WzJtV8n4H/GrHv/VFePCJLrhUxJpJwWgZyxMHGm0Ju3j9MNRykThQqsbumLM8vogPp9hs8u/OGHqzXjDXNXPs4vf3MnWXQCFQ8N7P9AgMBAAECgYAbox/F7M/REeLyiPeABTDMfkqn7Lz2ZHio9FwCyhqm47tchqdlLZeUpmxOHPIpWhmPYTTptvWoyDMg78Y5MKeSyZcFOpzkTKjcJGUwEimgZCjl5Xsnqv/rK5TR3ADggmrAEkJ5+bdf5IWSStBpHDbZhg6Xll45cTRZNuw8V+9GgQJBANbQTqwekzZFJmhxr5m1E+RtsEQpkHAOoCC7vAdHFJdWPZX6wuw9wBWNxlr9Z6GkS6pHwu2ijTQb1S8Aa+w4siECQQChPa+t0vTShyVdzUpVsRryPF8BZik5q3varWA2LmyhqOmpXKtoNahazb4YNC857Co4WHGzlHQ4jP4VhRAHGz5dAkA/kZFWeg3SZ5BAJDR05hMm7BbXdP1bS9izFxtDhBNh3ZGICpcYVgW72yKx1n+OZBJIJ8hVjl7+5qWlrRhC5VxBAkBGNa8euIIkffaWXsLkh2bdXc5ctJh05SfcM6x2S0bAKeX8+j4k9WBmkboZnfeGeEB2IoT4Fkd5LGOjCTrObV19AkEArl8C9M2cQu3qBtBfb721u07bDJpo5LmjyKKM2JzboU38Vjy3O25kL8lLPVi13GeUrenUUp8ZtEVR6Gz+Sjowgw==";
+    private static final String LOCAL_PUBLIC_KEY =
+            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCHTMSHP88BKSwWLlrab7t+yZQmdsVfDLyoJjAisP35C+sfYZVUGlPqntqpuMC6Q2gxAgN1sybVfJ+B/xqx7/1RXjwiS64VMSaScFoGcsTBxptCbt4/TDUcpE4UKrG7pizPL6ID6fYbPLvzhh6s14w1zVz7OL39zJ1l0AhUPDez/QIDAQAB";
+    private static final String LOCAL_PRIVATE_KEY =
+            "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIdMxIc/zwEpLBYuWtpvu37JlCZ2xV8MvKgmMCKw/fkL6x9hlVQaU+qe2qm4wLpDaDECA3WzJtV8n4H/GrHv/VFePCJLrhUxJpJwWgZyxMHGm0Ju3j9MNRykThQqsbumLM8vogPp9hs8u/OGHqzXjDXNXPs4vf3MnWXQCFQ8N7P9AgMBAAECgYAbox/F7M/REeLyiPeABTDMfkqn7Lz2ZHio9FwCyhqm47tchqdlLZeUpmxOHPIpWhmPYTTptvWoyDMg78Y5MKeSyZcFOpzkTKjcJGUwEimgZCjl5Xsnqv/rK5TR3ADggmrAEkJ5+bdf5IWSStBpHDbZhg6Xll45cTRZNuw8V+9GgQJBANbQTqwekzZFJmhxr5m1E+RtsEQpkHAOoCC7vAdHFJdWPZX6wuw9wBWNxlr9Z6GkS6pHwu2ijTQb1S8Aa+w4siECQQChPa+t0vTShyVdzUpVsRryPF8BZik5q3varWA2LmyhqOmpXKtoNahazb4YNC857Co4WHGzlHQ4jP4VhRAHGz5dAkA/kZFWeg3SZ5BAJDR05hMm7BbXdP1bS9izFxtDhBNh3ZGICpcYVgW72yKx1n+OZBJIJ8hVjl7+5qWlrRhC5VxBAkBGNa8euIIkffaWXsLkh2bdXc5ctJh05SfcM6x2S0bAKeX8+j4k9WBmkboZnfeGeEB2IoT4Fkd5LGOjCTrObV19AkEArl8C9M2cQu3qBtBfb721u07bDJpo5LmjyKKM2JzboU38Vjy3O25kL8lLPVi13GeUrenUUp8ZtEVR6Gz+Sjowgw==";
 
     private static final String PRIMARY_KEY = LOCAL_PRIVATE_KEY;
 
@@ -60,7 +63,6 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 12:02
      **/
     public static String privateEncryptBcd(String data) {
@@ -70,9 +72,9 @@ public class SecureUtil {
 
     /**
      * 私钥解密
+     *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 0029 12:03
      **/
     public static String privateDecryptFromBcd(String data) {
@@ -86,7 +88,6 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 12:02
      **/
     public static String publicEncryptBcd(String data) {
@@ -96,9 +97,9 @@ public class SecureUtil {
 
     /**
      * 公钥解密
+     *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 12:03
      **/
     public static String publicDecryptFromBcd(String data) {
@@ -107,10 +108,10 @@ public class SecureUtil {
 
     /**
      * 生成摘要
+     *
      * @param data
      * @param key
      * @return java.lang.String
-
      * @date 2019/11/29 12:06
      **/
     public static String signWithHMac(String data, String key) {
@@ -124,7 +125,6 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 12:02
      **/
     public static String localPrivateEncryptBcd(String data) {
@@ -134,9 +134,9 @@ public class SecureUtil {
 
     /**
      * 私钥解密
+     *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 0029 12:03
      **/
     public static String localPrivateDecryptFromBcd(String data) {
@@ -158,9 +158,9 @@ public class SecureUtil {
 
     /**
      * 公钥解密
+     *
      * @param data
      * @return java.lang.String
-
      * @date 2019/11/29 12:03
      **/
     public static String localPublicDecryptFromBcd(String data) {
@@ -169,6 +169,7 @@ public class SecureUtil {
 
     /**
      * 获取AES实例
+     *
      * @return
      */
     public static SymmetricCrypto getAES() {
@@ -177,6 +178,7 @@ public class SecureUtil {
 
     /**
      * 使用AES加密成十六进制
+     *
      * @param str
      * @return
      */
@@ -190,7 +192,8 @@ public class SecureUtil {
 
     public static void main(String[] args) {
 
-        String str = "{\"accessKeyId\":\"1\",\"accessKeyName\":\"ddf\",\"loginType\":\"USER\",\"currentTimeStamp\":1600229897375}";
+        String str =
+                "{\"accessKeyId\":\"1\",\"accessKeyName\":\"ddf\",\"loginType\":\"USER\",\"currentTimeStamp\":1600229897375}";
 
         String s = SecureUtil.localPublicEncryptBcd(str);
         System.out.println("s = " + s);

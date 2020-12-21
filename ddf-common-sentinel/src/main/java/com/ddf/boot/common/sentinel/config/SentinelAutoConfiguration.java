@@ -20,9 +20,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * https://github.com/alibaba/Sentinel/wiki/%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81
  * <p>
  * https://github.com/alibaba/Sentinel/blob/master/sentinel-demo/sentinel-demo-spring-webmvc/src/main/java/com/alibaba/csp/sentinel/demo/spring/webmvc/config/InterceptorConfig.java
- *
+ * <p>
  * 客户端引入这个模块之后，还需要在项目启动时添加虚拟机启动参数-Dcsp.sentinel.dashboard.server=106.15.10.135:8807 -Dproject.name=boot-quick
- *
+ * <p>
  * csp.sentinel.dashboard.server sentinel控制台地址 ip:port的形式
  * project.name 项目名称，分类用，会生成一个菜单
  *
@@ -47,24 +47,23 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
      * Web 适配，经测试这个也可以使用，不过这个是基于原生Servlet的
      * https://github.com/alibaba/Sentinel/wiki/%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E7%9A%84%E9%80%82%E9%85%8D#web-servlet
      *
-     *         <dependency>
-     *             <groupId>com.alibaba.csp</groupId>
-     *             <artifactId>sentinel-web-servlet</artifactId>
-     *             <version>${sentinel.version}</version>
-     *         </dependency>
+     * <dependency>
+     * <groupId>com.alibaba.csp</groupId>
+     * <artifactId>sentinel-web-servlet</artifactId>
+     * <version>${sentinel.version}</version>
+     * </dependency>
      *
      * @return
      */
-//    @Bean
-//    public FilterRegistrationBean<CommonFilter> sentinelFilterRegistration() {
-//        FilterRegistrationBean<CommonFilter> registration = new FilterRegistrationBean<>();
-//        registration.setFilter(new CommonFilter());
-//        registration.addUrlPatterns("/*");
-//        registration.setName("sentinelFilter");
-//        registration.setOrder(1);
-//        return registration;
-//    }
-
+    //    @Bean
+    //    public FilterRegistrationBean<CommonFilter> sentinelFilterRegistration() {
+    //        FilterRegistrationBean<CommonFilter> registration = new FilterRegistrationBean<>();
+    //        registration.setFilter(new CommonFilter());
+    //        registration.addUrlPatterns("/*");
+    //        registration.setName("sentinelFilter");
+    //        registration.setOrder(1);
+    //        return registration;
+    //    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Add Sentinel interceptor
@@ -74,6 +73,7 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 流控处理逻辑类
+     *
      * @return
      */
     @Bean
@@ -83,12 +83,14 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 注册异常接管类，由于只能有一个， 不能影响应用端再接管
+     *
      * @param sentinelExceptionHandlerMappingHandler
      * @return
      */
     @Bean
     @ConditionalOnMissingBean(value = {ExceptionHandlerMapping.class})
-    public ExceptionHandlerMapping sentinelExceptionHandlerMapping(SentinelExceptionHandlerMappingHandler sentinelExceptionHandlerMappingHandler) {
+    public ExceptionHandlerMapping sentinelExceptionHandlerMapping(
+            SentinelExceptionHandlerMappingHandler sentinelExceptionHandlerMappingHandler) {
         return new SentinelExceptionHandlerMapping(sentinelExceptionHandlerMappingHandler);
     }
 
@@ -97,15 +99,14 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
      * 接口请求后会被拦截到控制台的---簇点链路上， 可以不适用@SentinelResource注解， 区别是， 如果接口调用链上没有生命是的@SentinelResource资源，
      * 那么就将最外层接口入口层（即方法的@RequestMapping）作为资源且不会往下生成资源链。而如果@RequestMapping方法调用了某个@SentinelResource资源，
      * 则会在入口层往下生成资源链路
-     *
+     * <p>
      * 格式如下
      * 无资源映射
-     *  /helloA
-     *
+     * /helloA
+     * <p>
      * 有资源映射
-     *  /helloB
-     *      -- hello(如果这个方法声明了@SentinelResource的话)
-     *
+     * /helloB
+     * -- hello(如果这个方法声明了@SentinelResource的话)
      *
      * @param registry
      */
@@ -116,10 +117,12 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
         // the BlockExceptionHandler or throw it directly, then handle it
         // in Spring web global exception handler.
         // 将异常抛出去， 然后接管异常处理
-        config.setBlockExceptionHandler((request, response, e) -> { throw e; });
+        config.setBlockExceptionHandler((request, response, e) -> {
+            throw e;
+        });
 
         // Use the default handler.
-//        config.setBlockExceptionHandler(new DefaultBlockExceptionHandler());
+        //        config.setBlockExceptionHandler(new DefaultBlockExceptionHandler());
 
         // Custom configuration if necessary
         config.setHttpMethodSpecify(true);
@@ -137,6 +140,7 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 这个是所有的请求下面都会包含这个资源， 意思是将系统所有接口统一为同一个资源名称，然后对统一的资源名称做一个限流
+     *
      * @param registry
      */
     private void addSpringMvcTotalInterceptor(InterceptorRegistry registry) {

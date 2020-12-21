@@ -1,9 +1,8 @@
 package com.ddf.boot.common.mq.definition;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 定义创建队列的各种参数类
@@ -57,17 +56,17 @@ public class ArgumentDefinition {
      * 2. x-dead-letter-routing-key 死信交换路由键
      * <p>
      * 3. x-message-ttl 队列的过期时间 如果要创建延时队列，其实是依赖于死信队列的；首先将一个队列声明成死信队列并且设置过期时间，
-     *              发送的时候往这个队列里发送数据，但是不要消费，等消息过期后就会转发到与死信队列绑定的另外一个队列中，消费者
-     *              要消费的是另外一个队列，千万不要搞错了！！
-     *
-     *              如果想要消息消费失败后，关闭重投功能；然后将消息转发到死信队列，那么可以结合ttl,完成延时重试的功能；步骤如下
-     *              1. 首先是要发送和消费消息的原始队列，然后声明成死信队列，将交换器路由到另外一个死信队列
-     *              2. 另外一个死信队列设置ttl，当原始队列拒绝消息后，消息转发到该死信队列，该死信队列路由到另外一个正常的消息队列；
-     *                 该死信队列不要设置消费者，等待ttl，然后消息路由到该死信队列交换器绑定的队列中
-     *              3. 建立消费者，监听最后一个队列，执行消费；
-     *
+     * 发送的时候往这个队列里发送数据，但是不要消费，等消息过期后就会转发到与死信队列绑定的另外一个队列中，消费者
+     * 要消费的是另外一个队列，千万不要搞错了！！
+     * <p>
+     * 如果想要消息消费失败后，关闭重投功能；然后将消息转发到死信队列，那么可以结合ttl,完成延时重试的功能；步骤如下
+     * 1. 首先是要发送和消费消息的原始队列，然后声明成死信队列，将交换器路由到另外一个死信队列
+     * 2. 另外一个死信队列设置ttl，当原始队列拒绝消息后，消息转发到该死信队列，该死信队列路由到另外一个正常的消息队列；
+     * 该死信队列不要设置消费者，等待ttl，然后消息路由到该死信队列交换器绑定的队列中
+     * 3. 建立消费者，监听最后一个队列，执行消费；
+     * <p>
      * 消息进入死信队列的情况
-     *
+     * <p>
      * 1. 消息被拒绝。通过调用basic.reject或者basic.nack并且设置的requeue参数为false。
      * 2. 消息因为设置了TTL而过期。
      * 3. 消息进入了一条已经达到最大长度的队列。
@@ -95,7 +94,7 @@ public class ArgumentDefinition {
      * 只包含死信队列的定义参数
      *
      * @param redirectTo
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
      * @date 2019/12/16 0016 13:30
      **/

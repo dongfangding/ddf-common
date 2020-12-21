@@ -4,7 +4,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 /**
  * <p>description</p >
- *
+ * <p>
  * todo 基于mongo的通用配置服务
  *
  * @author dongfang.ding

@@ -1,19 +1,18 @@
 package com.ddf.boot.common.mq.helper;
 
-import com.ddf.boot.common.mq.definition.MqMessageWrapper;
-import com.ddf.boot.common.mq.interfaces.MqAuditorAware;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.mq.definition.MqMessageWrapper;
+import com.ddf.boot.common.mq.interfaces.MqAuditorAware;
+import java.nio.charset.StandardCharsets;
+import javax.validation.constraints.NotNull;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
-import java.nio.charset.StandardCharsets;
-
 /**
  * mq发送消息格式类的工具类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -94,6 +93,7 @@ public class MqMessageHelper {
 
     /**
      * 将消息中的byte数组转换为统一对象
+     *
      * @param message
      * @param clazz
      * @return com.ddf.boot.common.mq.definition.MqMessageWrapper<T>
@@ -101,12 +101,14 @@ public class MqMessageHelper {
      * @date 2019/12/10 0010 22:58
      **/
     public <T> MqMessageWrapper<T> parse(@NotNull Message message, @NotNull Class<T> clazz) {
-        if (message == null || clazz == null) return null;
+        if (message == null || clazz == null)
+            return null;
         return parse(getBodyAsString(message.getBody()), clazz);
     }
 
     /**
      * 将消息体中的字节数组转换为包装对象，但是不关注包装对象中包含的业务数据
+     *
      * @param message
      * @return com.ddf.boot.common.mq.definition.MqMessageWrapper
      * @author dongfang.ding

@@ -38,6 +38,7 @@ public class PreconditionUtil {
 
     /**
      * 检查参数
+     *
      * @param expression
      * @param code
      * @param message
@@ -76,6 +77,7 @@ public class PreconditionUtil {
 
     /**
      * 提供一种手动式的必传参数校验
+     *
      * @param request
      */
     public static <T> void requiredParamCheck(T request) {

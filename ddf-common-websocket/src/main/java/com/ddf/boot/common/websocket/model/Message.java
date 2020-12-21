@@ -8,6 +8,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * 报文内容类
  * 1. {"type":"REQUEST","requestId":"1566439043767dd92a290ea144f9dbcc","cmd":"QRCODE_CREATE","code":0,"extra":null,"body":{"amount":100,"type":"upay","orderId":"133","bankCardNumber":"6212264589887566599"}}
  * 2.
- *
  *
  * @author dongfang.ding
  * @date 2019/12/21
@@ -98,7 +96,8 @@ public class Message<T> {
         this.clientChannel = clientChannel;
     }
 
-    public Message(Type type, String requestId, String sendModel, String cmd, T body, Integer code, String clientChannel) {
+    public Message(Type type, String requestId, String sendModel, String cmd, T body, Integer code,
+            String clientChannel) {
         this.type = type;
         this.requestId = requestId;
         this.sendModel = sendModel;
@@ -122,16 +121,19 @@ public class Message<T> {
 
     /**
      * 客户端连接上来的欢迎语
+     *
      * @param payload
      * @return
      */
     public static Message<String> echo(String payload) {
-        return new Message<>(Type.RESPONSE, StringExtUtil.randomString(64), SEND_MODEL_SERVER, InternalCmdEnum.PONG.name(),
-                payload, null);
+        return new Message<>(Type.RESPONSE, StringExtUtil.randomString(64), SEND_MODEL_SERVER,
+                InternalCmdEnum.PONG.name(), payload, null
+        );
     }
 
     /**
      * 服务端响应客户端未登录
+     *
      * @return
      */
     public static Message<String> responseNotLogin(@NotNull WebSocketMessage<?> message) {
@@ -141,11 +143,13 @@ public class Message<T> {
         String payload = (String) message.getPayload();
         Message<?> message1 = JsonUtil.toBean(payload, Message.class);
         return new Message<>(Type.RESPONSE, message1.getRequestId(), SEND_MODEL_SERVER, message1.getCmd(), "未登录",
-                MessageResponse.SERVER_CODE_NOT_LOGIN, null);
+                MessageResponse.SERVER_CODE_NOT_LOGIN, null
+        );
     }
 
     /**
      * 服务端响应客户端的数据在服务端没有对应的请求
+     *
      * @return
      */
     public static <O> Message<String> responseNotMatchRequest(@NotNull Message<O> message) {
@@ -158,6 +162,7 @@ public class Message<T> {
 
     /**
      * 服务端响应客户端在重复请求数据
+     *
      * @return
      */
     public static <O> Message<String> responseRepeatRequest(@NotNull Message<O> message) {
@@ -169,6 +174,7 @@ public class Message<T> {
 
     /**
      * 将Message对象包装成发送的TextMessage
+     *
      * @param message
      * @return
      */
@@ -182,6 +188,7 @@ public class Message<T> {
 
     /**
      * 加密加签封装
+     *
      * @param message
      * @return
      */
@@ -198,6 +205,7 @@ public class Message<T> {
 
     /**
      * 服务端请求数据
+     *
      * @param cmd
      * @param clientChannel
      * @param body
@@ -209,6 +217,7 @@ public class Message<T> {
 
     /**
      * 响应客户端数据
+     *
      * @param message
      * @param <T>
      * @return
@@ -222,6 +231,7 @@ public class Message<T> {
 
     /**
      * 通用响应客户端数据处理成功
+     *
      * @param message
      * @return
      */
@@ -231,6 +241,7 @@ public class Message<T> {
 
     /**
      * 根据客户端数据构建响应数据
+     *
      * @param message
      * @param body
      * @param code
@@ -241,8 +252,9 @@ public class Message<T> {
         if (message == null) {
             return null;
         }
-        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(), body,
-                code, message.getClientChannel());
+        return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(), body, code,
+                message.getClientChannel()
+        );
     }
 
     /**
@@ -295,6 +307,7 @@ public class Message<T> {
 
     /**
      * 对报文数据进行解密与验签
+     *
      * @param textMessagePayload
      * @return
      */
@@ -320,6 +333,7 @@ public class Message<T> {
 
     /**
      * 将收到的消息转换为Message对象
+     *
      * @param textMessage
      * @return
      */

@@ -25,7 +25,8 @@ public class DbLogMqPersistenceProcessor implements LogMqPersistenceProcessor {
 
     /**
      * 落库方案
-     * @param poll 原始数据内容
+     *
+     * @param poll          原始数据内容
      * @param logMqListener 处理后的内容
      */
     @Override

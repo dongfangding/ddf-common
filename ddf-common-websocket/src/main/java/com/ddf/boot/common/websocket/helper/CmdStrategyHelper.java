@@ -27,32 +27,33 @@ public class CmdStrategyHelper {
 
     /**
      * 发送设备指令码运行状态数据
+     *
      * @param authPrincipal
      * @param message
-     * @param isResponse 是否时响应数据
+     * @param isResponse    是否时响应数据
      */
     public void buildDeviceCmdRunningState(AuthPrincipal authPrincipal, Message<?> message, boolean isResponse) {
-//        deviceCmdRunningStatePersistencePool.execute(() -> {
-//            if (message == null || authPrincipal == null || CmdEnum.PONG.equals(message.getCmd())
-//                    || CmdEnum.PING.equals(message.getCmd())) {
-//                return;
-//            }
-//            MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
-//            MerchantBaseDeviceRunningState runningState = new MerchantBaseDeviceRunningState();
-//            runningState.setDeviceId(baseDevice.getId()).setCmd(message.getCmd().name()).setRequestId(message.getRequestId())
-//                    .setRequestTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.RUNNING.getStatus())
-//                    .setResponseFlag(isResponse).setId(IdsUtil.getNextLongId());
-//
-//            if (isResponse) {
-//                runningState.setResponseTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.OVER.getStatus());
-//            }
-//
-//            try {
-//                rabbitTemplateHelper.wrapperAndSend(QueueBuilder.QueueDefinition.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_QUEUE, runningState);
-//            } catch (MqSendException e) {
-//                log.error("发送设备状态数据监控报错！数据为： {}", JsonUtil.asString(runningState), e);
-//            }
-//        });
+        //        deviceCmdRunningStatePersistencePool.execute(() -> {
+        //            if (message == null || authPrincipal == null || CmdEnum.PONG.equals(message.getCmd())
+        //                    || CmdEnum.PING.equals(message.getCmd())) {
+        //                return;
+        //            }
+        //            MerchantBaseDevice baseDevice = merchantBaseDeviceService.getByAuthPrincipal(authPrincipal);
+        //            MerchantBaseDeviceRunningState runningState = new MerchantBaseDeviceRunningState();
+        //            runningState.setDeviceId(baseDevice.getId()).setCmd(message.getCmd().name()).setRequestId(message.getRequestId())
+        //                    .setRequestTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.RUNNING.getStatus())
+        //                    .setResponseFlag(isResponse).setId(IdsUtil.getNextLongId());
+        //
+        //            if (isResponse) {
+        //                runningState.setResponseTime(message.getTimestamp()).setStatus(DeviceRunningStateStatus.OVER.getStatus());
+        //            }
+        //
+        //            try {
+        //                rabbitTemplateHelper.wrapperAndSend(QueueBuilder.QueueDefinition.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_QUEUE, runningState);
+        //            } catch (MqSendException e) {
+        //                log.error("发送设备状态数据监控报错！数据为： {}", JsonUtil.asString(runningState), e);
+        //            }
+        //        });
     }
 
     /**
@@ -67,7 +68,7 @@ public class CmdStrategyHelper {
         TextMessage textMessage = Message.wrapper(message);
         MessageRequest messageRequest = new MessageRequest();
         messageRequest.setBusinessData(JsonUtil.asString(payload));
-//        channelTransferService.recordRequest(authPrincipal, textMessage.getPayload(), message, messageRequest);
+        //        channelTransferService.recordRequest(authPrincipal, textMessage.getPayload(), message, messageRequest);
         WebsocketSessionStorage.sendMessage(authPrincipal, message);
     }
 }

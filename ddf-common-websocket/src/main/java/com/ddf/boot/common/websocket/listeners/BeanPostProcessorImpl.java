@@ -21,6 +21,7 @@ public class BeanPostProcessorImpl implements BeanPostProcessor {
 
     /**
      * 在bean初始化之前执行一些业务
+     *
      * @param bean
      * @param beanName
      * @return
@@ -32,7 +33,8 @@ public class BeanPostProcessorImpl implements BeanPostProcessor {
         // todo 完善服务下线功能
         if (MonitorProperties.class.equals(bean.getClass())) {
             // 注册当前服务需要的监听节点
-            ((MonitorProperties) bean).getMonitors().add(new MonitorNode(MonitorNode.HOST_MODE_AUTO, WEBSOCKET_ONLINE_SERVER_PATH, true));
+            ((MonitorProperties) bean).getMonitors().add(
+                    new MonitorNode(MonitorNode.HOST_MODE_AUTO, WEBSOCKET_ONLINE_SERVER_PATH, true));
         }
         return bean;
     }

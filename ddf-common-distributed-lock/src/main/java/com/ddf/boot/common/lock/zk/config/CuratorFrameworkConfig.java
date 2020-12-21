@@ -24,9 +24,11 @@ public class CuratorFrameworkConfig {
         return CuratorFrameworkFactory.newClient(
                 distributedLockZookeeperProperties.getConnectString(),
                 distributedLockZookeeperProperties.getSessionTimeoutMs(),
-                distributedLockZookeeperProperties.getConnectionTimeoutMs(),
-                new RetryNTimes(distributedLockZookeeperProperties.getRetryCount(),
-                        distributedLockZookeeperProperties.getElapsedTimeMs()));
+                distributedLockZookeeperProperties.getConnectionTimeoutMs(), new RetryNTimes(
+                        distributedLockZookeeperProperties.getRetryCount(),
+                        distributedLockZookeeperProperties.getElapsedTimeMs()
+                )
+        );
     }
 
 }

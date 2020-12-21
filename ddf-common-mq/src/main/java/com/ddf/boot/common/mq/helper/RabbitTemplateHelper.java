@@ -6,19 +6,18 @@ import com.ddf.boot.common.mq.definition.QueueBuilder;
 import com.ddf.boot.common.mq.exception.MqSendException;
 import com.ddf.boot.common.mq.listener.MqEventListener;
 import com.rabbitmq.client.Channel;
+import java.util.List;
+import java.util.function.Consumer;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.function.Consumer;
-
 /**
  * rabbitMq发送工具类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -99,9 +98,12 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 22:48
      **/
-    public <T> void send(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) throws MqSendException {
+    public <T> void send(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper)
+            throws MqSendException {
         try {
-            rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
+            rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(),
+                    messageWrapper
+            );
             if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
                 // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
                 mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, messageWrapper));
@@ -125,9 +127,12 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 22:50
      **/
-    public <T> boolean sendNotNecessary(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
+    public <T> boolean sendNotNecessary(QueueBuilder.QueueDefinition queueDefinition,
+            MqMessageWrapper<T> messageWrapper) {
         try {
-            rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(), messageWrapper);
+            rabbitTemplate.convertAndSend(queueDefinition.getExchangeName(), queueDefinition.getRouteKey(),
+                    messageWrapper
+            );
             if (mqEventListeners != null && !mqEventListeners.isEmpty()) {
                 // 这里不在异步中调用，如果想要业务异步，将实现里的方法异步就好，保留给实现者选择的权力
                 mqEventListeners.forEach(listener -> listener.sendSuccess(queueDefinition, messageWrapper));
@@ -144,28 +149,27 @@ public class RabbitTemplateHelper {
     }
 
     /**
-     *
      * 该方法坑非常多！！！！一定要注意看注释！！！！！！！！他么的写的时候没想到后面会有那么多问题！目前保留看是否后面能否用到吧
-     *
-     *
+     * <p>
+     * <p>
      * 由于MQ自实现的重投会放到队列头部，如果数据有问题，会循环消费影响后面的数据；因此不使用；
      * <p>
      * 简单变相实现重投机制，手动消费如果失败，则直接拒绝消息，消息从队头丢弃后，重新将当前消息发送一次到队尾,有一个计数器，如果达到最大次数，不会再重投；
      * <p>
      * 注意：！！！！！！！
-     *     1. 如果当前队列是死信队列，那么每次消费失败，再重投都会导致产生一条新的数据被路由到消费当前死信队列的另外一个队列中；
-     *          但由于消费失败转死信目前无法控制，所以不要在死信队列上调用该方法！！
-     *          如果想要调用，重复的消息会保障消息id是一致的，如果消费端会根据这个做幂等性，也是可以的；要谨慎使用！
-     *
-     *     2. 如果配置了多消费者，在消息重投多次后，如果有两个消费者每个都拿取了其中的一条重试数据，那么一个消费者消费成功，一个消费失败，
-     *          消息又会进行重投。同样会出现数据重复问题。。。。Orz......
-     *
-     *
-     *     3. 这只是一种简单的补偿机制，并不作为可靠性的存在；而且调用的时候一定要在拒绝之后再调用该方法；
-     *          如果丢弃之后重新发送失败就失败了，千万不能再丢弃之前发送，否则发送成功，旧的数据丢弃失败，那么数据就会重复；
-     *          这一块在方法{@link RabbitTemplateHelper#nackAndRequeue(com.rabbitmq.client.Channel,
-     *          org.springframework.amqp.core.Message, com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition,
-     *          com.ddf.boot.common.mq.definition.MqMessageWrapper, java.util.function.Consumer)}封装的时候已经避免
+     * 1. 如果当前队列是死信队列，那么每次消费失败，再重投都会导致产生一条新的数据被路由到消费当前死信队列的另外一个队列中；
+     * 但由于消费失败转死信目前无法控制，所以不要在死信队列上调用该方法！！
+     * 如果想要调用，重复的消息会保障消息id是一致的，如果消费端会根据这个做幂等性，也是可以的；要谨慎使用！
+     * <p>
+     * 2. 如果配置了多消费者，在消息重投多次后，如果有两个消费者每个都拿取了其中的一条重试数据，那么一个消费者消费成功，一个消费失败，
+     * 消息又会进行重投。同样会出现数据重复问题。。。。Orz......
+     * <p>
+     * <p>
+     * 3. 这只是一种简单的补偿机制，并不作为可靠性的存在；而且调用的时候一定要在拒绝之后再调用该方法；
+     * 如果丢弃之后重新发送失败就失败了，千万不能再丢弃之前发送，否则发送成功，旧的数据丢弃失败，那么数据就会重复；
+     * 这一块在方法{@link RabbitTemplateHelper#nackAndRequeue(com.rabbitmq.client.Channel,
+     * org.springframework.amqp.core.Message, com.ddf.boot.common.mq.definition.QueueBuilder.QueueDefinition,
+     * com.ddf.boot.common.mq.definition.MqMessageWrapper, java.util.function.Consumer)}封装的时候已经避免
      *
      * @param queueDefinition 需要发送到哪个队列
      * @param messageWrapper  要重新投递的消息
@@ -174,9 +178,10 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/10 0010 23:06
      **/
-    public  <T> void requeue(@NotNull QueueBuilder.QueueDefinition queueDefinition
-            , @NotNull MqMessageWrapper<T> messageWrapper, Consumer<MqMessageWrapper> consumer) {
-        if (queueDefinition == null || messageWrapper == null || messageWrapper.getRequeueTimes() >= mqMessageProperties.getMaxRequeueTimes())
+    public <T> void requeue(@NotNull QueueBuilder.QueueDefinition queueDefinition,
+            @NotNull MqMessageWrapper<T> messageWrapper, Consumer<MqMessageWrapper> consumer) {
+        if (queueDefinition == null || messageWrapper == null || messageWrapper.getRequeueTimes() >= mqMessageProperties
+                .getMaxRequeueTimes())
             return;
         log.debug("重投消息: {}", messageWrapper);
         messageWrapper.setRequeueTimes(messageWrapper.getRequeueTimes() + 1);
@@ -200,9 +205,9 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/11 0011 10:19
      **/
-    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
-            , @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper
-            , Consumer<MqMessageWrapper> consumer) {
+    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message,
+            @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper,
+            Consumer<MqMessageWrapper> consumer) {
         boolean isNack = false;
         try {
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
@@ -229,8 +234,8 @@ public class RabbitTemplateHelper {
      * @author dongfang.ding
      * @date 2019/12/11 0011 10:19
      **/
-    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message
-            , @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper) {
+    public <T> void nackAndRequeue(@NotNull Channel channel, @NotNull Message message,
+            @NotNull QueueBuilder.QueueDefinition queueDefinition, @NotNull MqMessageWrapper<T> messageWrapper) {
         nackAndRequeue(channel, message, queueDefinition, messageWrapper, (data) -> log.error("消息重投失败: {}", data));
     }
 }

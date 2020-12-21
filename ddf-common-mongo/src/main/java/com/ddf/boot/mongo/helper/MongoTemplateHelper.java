@@ -3,6 +3,9 @@ package com.ddf.boot.mongo.helper;
 import cn.hutool.core.convert.Convert;
 import com.ddf.boot.common.core.model.BaseQuery;
 import com.ddf.boot.common.core.model.PageResult;
+import java.util.Collections;
+import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,10 +15,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>mongo帮助类</p >
@@ -43,8 +42,8 @@ public class MongoTemplateHelper {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <Q extends BaseQuery, T, R> PageResult<R> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query, @NotNull Class<T> poClazz
-            , @Nullable Class<R> voClazz) {
+    public <Q extends BaseQuery, T, R> PageResult<R> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query,
+            @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         if (count <= 0) {
             return PageResult.empty();
@@ -73,7 +72,8 @@ public class MongoTemplateHelper {
      * @param <T>       原始Mongo对象类型
      * @return
      */
-    public <Q extends BaseQuery, T> PageResult<T> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query, @NotNull Class<T> poClazz) {
+    public <Q extends BaseQuery, T> PageResult<T> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query,
+            @NotNull Class<T> poClazz) {
         return handlerPageResult(baseQuery, query, poClazz, null);
     }
 
@@ -92,8 +92,8 @@ public class MongoTemplateHelper {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <Q extends BaseQuery, T, R> Page<R> handlerPage(@NotNull Q baseQuery, @NotNull Query query, @NotNull Class<T> poClazz
-            , @Nullable Class<R> voClazz) {
+    public <Q extends BaseQuery, T, R> Page<R> handlerPage(@NotNull Q baseQuery, @NotNull Query query,
+            @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         Pageable pageable = baseQuery.toSpringData();
         if (count <= 0) {
@@ -119,7 +119,8 @@ public class MongoTemplateHelper {
      * @param <T>       原始Mongo对象类型
      * @return
      */
-    public <Q extends BaseQuery, T> Page<T> handlerPage(@NotNull Q baseQuery, @NotNull Query query, @NotNull Class<T> poClazz) {
+    public <Q extends BaseQuery, T> Page<T> handlerPage(@NotNull Q baseQuery, @NotNull Query query,
+            @NotNull Class<T> poClazz) {
         return handlerPage(baseQuery, query, poClazz, null);
     }
 }

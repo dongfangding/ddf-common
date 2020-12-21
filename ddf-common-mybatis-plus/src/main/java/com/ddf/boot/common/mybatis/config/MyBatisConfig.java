@@ -6,17 +6,16 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * mybatis-plus的配置类,
- *
- *
+ * <p>
+ * <p>
  * 关于mybatis-plus的关键点总结
  * <ul>
  *     <li>
@@ -67,7 +66,7 @@ import java.util.List;
  *         一样，也要加这个注解指定，在传入基本包装类型的对象时，会无法使用正确使用动态sql解析参数
  *     </li>
  * </ul>
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -98,6 +97,7 @@ public class MyBatisConfig {
 
     /**
      * 分页与攻击 SQL 阻断解析器
+     *
      * @return
      */
     @Bean
@@ -117,6 +117,7 @@ public class MyBatisConfig {
     /**
      * 乐观锁支持,where条件中必须带version，否则不会生效
      * 仅支持 updateById(id) 与 update(model, wrapper) 方法
+     *
      * @return
      */
     @Bean

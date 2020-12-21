@@ -1,17 +1,19 @@
 package com.ddf.boot.common.core.model;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.Version;
+import java.util.Date;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.util.Date;
-
 /**
- *
  * 通用基类
-
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -61,8 +63,10 @@ public class BaseDomain {
      * https://github.com/baomidou/mybatis-plus/issues/1387
      * 由于以上问题的存在，禁止使用框架生成的逻辑删除功能
      */
-    /** 是否删除 0保留 1删除 */
-//    @TableLogic
+    /**
+     * 是否删除 0保留 1删除
+     */
+    //    @TableLogic
     protected Integer removed = 0;
 
     @Version

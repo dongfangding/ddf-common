@@ -3,7 +3,6 @@ package com.ddf.boot.netty.broker.storage;
 import com.ddf.boot.netty.broker.handler.ServerInboundHandler;
 import com.ddf.boot.netty.broker.message.RequestContent;
 import io.netty.channel.Channel;
-
 import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -59,7 +58,7 @@ public class ChannelInfo {
     }
 
     public ChannelInfo(Channel channel, String remoteAddress, int status, Date registryTime, Date modifyTime,
-                       BlockingQueue<RequestContent> queue, boolean syncDone) {
+            BlockingQueue<RequestContent> queue, boolean syncDone) {
         this.channel = channel;
         this.remoteAddress = remoteAddress;
         this.status = status;
@@ -77,7 +76,8 @@ public class ChannelInfo {
      */
     public static ChannelInfo registry(Channel channel) {
         return new ChannelInfo(channel, channel.remoteAddress().toString(), STATUS_REGISTRY, new Date(), new Date(),
-                new ArrayBlockingQueue<>(1024), false);
+                new ArrayBlockingQueue<>(1024), false
+        );
     }
 
     /**

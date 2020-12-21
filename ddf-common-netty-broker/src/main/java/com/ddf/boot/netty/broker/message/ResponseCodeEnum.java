@@ -53,10 +53,7 @@ public enum ResponseCodeEnum {
     /**
      * 无权限
      */
-    UNAUTHORIZED(401)
-
-
-    ;
+    UNAUTHORIZED(401);
 
     private static final Map<Integer, ResponseCodeEnum> MAPPING_MAP;
 
@@ -80,6 +77,7 @@ public enum ResponseCodeEnum {
 
     /**
      * 根据状态码构建枚举对象
+     *
      * @param code code码
      * @return
      */

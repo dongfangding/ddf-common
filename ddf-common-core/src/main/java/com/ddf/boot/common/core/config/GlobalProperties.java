@@ -1,16 +1,14 @@
 package com.ddf.boot.common.core.config;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
- *
  * 存放一些全局的自定义属性，根据需要决定是否可配置
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -57,7 +55,6 @@ public class GlobalProperties {
     /**
      * 默认异常处理类会返回一个trace字段，将当前错误堆栈信息返回，方便调试时查看错误，提供该参数指定的
      * profile不会返回该字段，如生产环境
-     *
      */
     private List<String> ignoreErrorTraceProfile;
 
@@ -70,6 +67,7 @@ public class GlobalProperties {
 
     /**
      * rsa 通用秘钥
+     *
      * @see com.ddf.boot.common.core.util.SecureUtil
      */
     private String rsaPrivateKey;
@@ -77,12 +75,14 @@ public class GlobalProperties {
 
     /**
      * rsa rsa通用公钥
+     *
      * @see com.ddf.boot.common.core.util.SecureUtil
      */
     private String rsaPublicKey;
 
     /**
      * AES 秘钥
+     *
      * @see com.ddf.boot.common.core.util.SecureUtil
      */
     private String aesSecret;

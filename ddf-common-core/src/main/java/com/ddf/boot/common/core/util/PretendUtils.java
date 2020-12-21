@@ -82,7 +82,10 @@ public class PretendUtils {
         if (StringUtils.isBlank(num)) {
             return "";
         }
-        return StringUtils.left(num, 3).concat(StringUtils.removeStart(StringUtils.leftPad(StringUtils.right(num, 4), StringUtils.length(num), "*"), "***"));
+        return StringUtils.left(num, 3).concat(
+                StringUtils.removeStart(StringUtils.leftPad(StringUtils.right(num, 4), StringUtils.length(num), "*"),
+                        "***"
+                ));
     }
 
 
@@ -115,7 +118,8 @@ public class PretendUtils {
         if (index <= 1) {
             return email;
         } else {
-            return StringUtils.rightPad(StringUtils.left(email, 1), index, "*").concat(StringUtils.mid(email, index, StringUtils.length(email)));
+            return StringUtils.rightPad(StringUtils.left(email, 1), index, "*").concat(
+                    StringUtils.mid(email, index, StringUtils.length(email)));
         }
 
     }
@@ -130,7 +134,8 @@ public class PretendUtils {
         if (StringUtils.isBlank(cardNum)) {
             return "";
         }
-        return StringUtils.left(cardNum, 4).concat(StringUtils.removeStart(StringUtils.leftPad(StringUtils.right(cardNum, 4), StringUtils.length(cardNum), "*"), "******"));
+        return StringUtils.left(cardNum, 4).concat(StringUtils.removeStart(
+                StringUtils.leftPad(StringUtils.right(cardNum, 4), StringUtils.length(cardNum), "*"), "******"));
     }
 
 

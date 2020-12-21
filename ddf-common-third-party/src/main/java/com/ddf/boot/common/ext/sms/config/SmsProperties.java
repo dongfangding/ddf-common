@@ -37,6 +37,7 @@ public class SmsProperties implements InitializingBean {
     /**
      * 是否加密accessKeyId、accessKeySecret
      * 如果加密，则使用系统自带的AES算法进行解密
+     *
      * @see com.ddf.boot.common.core.util.SecureUtil
      */
     private boolean secretAccessKey;
@@ -69,6 +70,7 @@ public class SmsProperties implements InitializingBean {
     /**
      * 接收上行消息, 未实现
      * https://dysms.console.aliyun.com/dysms.htm?spm=5176.broadband-accelerate-account.products-recent.ddysms.308068afopt6gX#/system/general
+     *
      * @throws Exception
      */
     private String queueName;
@@ -76,7 +78,9 @@ public class SmsProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()), "请检查oss配置属性");
+        Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()),
+                "请检查oss配置属性"
+        );
         if (secretAccessKey) {
             this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
             this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));

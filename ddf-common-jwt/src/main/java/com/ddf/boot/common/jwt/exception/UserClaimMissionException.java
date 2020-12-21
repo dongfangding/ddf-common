@@ -2,7 +2,7 @@ package com.ddf.boot.common.jwt.exception;
 
 /**
  * 用户信息丢失异常
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -26,7 +26,6 @@ package com.ddf.boot.common.jwt.exception;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 public class UserClaimMissionException extends Exception {
 

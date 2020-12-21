@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * XxlJob开发示例（Bean模式）
- *
+ * <p>
  * 开发步骤：
  * 1、在Spring Bean实例中，开发Job方法，方式格式要求为 "public ReturnT<String> execute(String param)"
  * 2、为Job方法添加注解 "@XxlJob(value="自定义jobhandler名称", init = "JobHandler初始化方法", destroy = "JobHandler销毁方法")"，注解value值对应的是调度中心新建任务的JobHandler属性的值。
@@ -105,31 +105,31 @@ public class SampleXxlJob {
         if (exitValue == 0) {
             return IJobHandler.SUCCESS;
         } else {
-            return new ReturnT<String>(IJobHandler.FAIL.getCode(), "command exit value("+exitValue+") is failed");
+            return new ReturnT<String>(IJobHandler.FAIL.getCode(), "command exit value(" + exitValue + ") is failed");
         }
     }
 
 
     /**
      * 4、跨平台Http任务
-     *  参数示例：
-     *      "url: http://www.baidu.com\n" +
-     *      "method: get\n" +
-     *      "data: content\n";
+     * 参数示例：
+     * "url: http://www.baidu.com\n" +
+     * "method: get\n" +
+     * "data: content\n";
      */
     @XxlJob("httpJobHandler")
     public ReturnT<String> httpJobHandler(String param) throws Exception {
 
         // param parse
-        if (param==null || param.trim().length()==0) {
-            XxlJobLogger.log("param["+ param +"] invalid.");
+        if (param == null || param.trim().length() == 0) {
+            XxlJobLogger.log("param[" + param + "] invalid.");
             return ReturnT.FAIL;
         }
         String[] httpParams = param.split("\n");
         String url = null;
         String method = null;
         String data = null;
-        for (String httpParam: httpParams) {
+        for (String httpParam : httpParams) {
             if (httpParam.startsWith("url:")) {
                 url = httpParam.substring(httpParam.indexOf("url:") + 4).trim();
             }
@@ -142,12 +142,12 @@ public class SampleXxlJob {
         }
 
         // param valid
-        if (url==null || url.trim().length()==0) {
-            XxlJobLogger.log("url["+ url +"] invalid.");
+        if (url == null || url.trim().length() == 0) {
+            XxlJobLogger.log("url[" + url + "] invalid.");
             return ReturnT.FAIL;
         }
-        if (method==null || !Arrays.asList("GET", "POST").contains(method)) {
-            XxlJobLogger.log("method["+ method +"] invalid.");
+        if (method == null || !Arrays.asList("GET", "POST").contains(method)) {
+            XxlJobLogger.log("method[" + method + "] invalid.");
             return ReturnT.FAIL;
         }
 
@@ -174,7 +174,7 @@ public class SampleXxlJob {
             connection.connect();
 
             // data
-            if (data!=null && data.trim().length()>0) {
+            if (data != null && data.trim().length() > 0) {
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
                 dataOutputStream.write(data.getBytes("UTF-8"));
                 dataOutputStream.flush();
@@ -224,10 +224,12 @@ public class SampleXxlJob {
         XxlJobLogger.log("XXL-JOB, Hello World.");
         return ReturnT.SUCCESS;
     }
-    public void init(){
+
+    public void init() {
         logger.info("init");
     }
-    public void destroy(){
+
+    public void destroy() {
         logger.info("destory");
     }
 

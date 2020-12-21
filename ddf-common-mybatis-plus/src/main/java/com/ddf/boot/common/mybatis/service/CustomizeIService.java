@@ -2,15 +2,14 @@ package com.ddf.boot.common.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ddf.boot.common.core.model.BaseDomain;
 import com.ddf.boot.common.core.exception200.ServerErrorException;
-
+import com.ddf.boot.common.core.model.BaseDomain;
 import java.util.Collection;
 
 
 /**
  * 自定义接口查询
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -72,7 +71,7 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
 
     /**
      * 更新时检查返回结果，如果为false,则抛出运行时异常
-     * 
+     *
      * @param entity
      * @param updateWrapper
      * @param exception
@@ -81,10 +80,11 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
      * @date 2019/12/7 0007 22:34
      **/
     boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException exception);
-    
-    
+
+
     /**
      * 更新时检查返回结果，如果为false,则抛出运行时异常
+     *
      * @param updateWrapper
      * @param exception
      * @return boolean
@@ -106,7 +106,8 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
      * @param duplicateKeyException 更新导致唯一索引异常
      * @return
      */
-    boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException updateFalseException, RuntimeException duplicateKeyException);
+    boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException updateFalseException,
+            RuntimeException duplicateKeyException);
 
 
     /**
@@ -118,14 +119,15 @@ public interface CustomizeIService<T extends BaseDomain> extends IService<T> {
      * @param duplicateKeyException 更新导致唯一索引异常
      * @return
      */
-    boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException, RuntimeException duplicateKeyException);
+    boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException,
+            RuntimeException duplicateKeyException);
 
     /**
      * 更新时检查返回结果，如果为false,则抛出运行时异常
      * 如果更新时导致唯一索引异常，提供一个接收异常
      *
      * @param entity
-     * @param updateFalseException  更新结果为false的异常
+     * @param updateFalseException 更新结果为false的异常
      * @return
      */
     default boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException) {

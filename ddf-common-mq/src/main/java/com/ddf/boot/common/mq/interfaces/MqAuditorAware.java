@@ -35,6 +35,7 @@ public interface MqAuditorAware {
 
     /**
      * 获取当前系统操作人
+     *
      * @return
      */
     Optional<String> getAuditor();

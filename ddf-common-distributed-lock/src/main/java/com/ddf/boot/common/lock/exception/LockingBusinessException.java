@@ -1,7 +1,6 @@
 package com.ddf.boot.common.lock.exception;
 
 /**
- *
  * 获取锁运行时异常
  *
  * <p>

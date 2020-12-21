@@ -1,12 +1,11 @@
 package com.ddf.boot.common.websocket.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -65,7 +64,8 @@ public class AuthPrincipal implements Principal, Serializable {
         this.loginType = loginType;
     }
 
-    public AuthPrincipal(String accessKeyId, String accessKeyName, String authCode, LoginType loginType, String version, long timeStamp) {
+    public AuthPrincipal(String accessKeyId, String accessKeyName, String authCode, LoginType loginType, String version,
+            long timeStamp) {
         this.accessKeyId = accessKeyId;
         this.accessKeyName = accessKeyName;
         this.authCode = authCode;
@@ -76,6 +76,7 @@ public class AuthPrincipal implements Principal, Serializable {
 
     /**
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
+     *
      * @param accessKeyId
      * @return
      */
@@ -85,6 +86,7 @@ public class AuthPrincipal implements Principal, Serializable {
 
     /**
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
+     *
      * @param accessKeyId
      * @return
      */
@@ -112,9 +114,8 @@ public class AuthPrincipal implements Principal, Serializable {
             return false;
         }
         AuthPrincipal that = (AuthPrincipal) o;
-        return Objects.equals(accessKeyId, that.accessKeyId) &&
-                Objects.equals(authCode, that.authCode) &&
-                loginType == that.loginType;
+        return Objects.equals(accessKeyId, that.accessKeyId) && Objects.equals(authCode, that.authCode)
+                && loginType == that.loginType;
     }
 
     @Override

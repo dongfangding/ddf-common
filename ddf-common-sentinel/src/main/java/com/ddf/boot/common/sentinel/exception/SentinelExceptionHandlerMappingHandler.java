@@ -2,7 +2,6 @@ package com.ddf.boot.common.sentinel.exception;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.ddf.boot.common.core.response.ResponseData;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

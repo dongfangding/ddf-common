@@ -8,7 +8,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * jwt拦截器的导入类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -32,12 +32,10 @@ import org.springframework.core.type.AnnotationMetadata;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 public class JwtFilterRegistrar implements ImportBeanDefinitionRegistrar {
 
     /**
-     *
      * 为了防止依赖包的引用，将不需要使用jwt的项目也注册了拦截器，因此需要使用方手动指定开启才导入拦截器类
      *
      * @param importingClassMetadata annotation metadata of the importing class
@@ -52,7 +50,8 @@ public class JwtFilterRegistrar implements ImportBeanDefinitionRegistrar {
                 BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder.
                         genericBeanDefinition(JwtAuthorizationTokenFilter.class);
                 registry.registerBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME,
-                        requestContextDefinition.getBeanDefinition());
+                        requestContextDefinition.getBeanDefinition()
+                );
             }
         }
     }

@@ -1,14 +1,17 @@
-
 package com.ddf.boot.common.core.util;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
+import javax.imageio.ImageIO;
 
 /**
  * @author https://blog.csdn.net/ruixue0117/article/details/22829557
@@ -69,9 +72,10 @@ public class VerifyCodeUtils {
         Graphics2D g2 = image.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color[] colors = new Color[5];
-        Color[] colorSpaces = new Color[]{Color.WHITE, Color.CYAN,
-                Color.GRAY, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE,
-                Color.PINK, Color.YELLOW};
+        Color[] colorSpaces = new Color[] {
+                Color.WHITE, Color.CYAN, Color.GRAY, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE, Color.PINK,
+                Color.YELLOW
+        };
         float[] fractions = new float[colors.length];
         for (int i = 0; i < colors.length; i++) {
             colors[i] = colorSpaces[rand.nextInt(colorSpaces.length)];
@@ -121,8 +125,10 @@ public class VerifyCodeUtils {
         char[] chars = code.toCharArray();
         for (int i = 0; i < verifySize; i++) {
             AffineTransform affine = new AffineTransform();
-            affine.setToRotation(Math.PI / 4 * rand.nextDouble() * (rand.nextBoolean() ? 1 : -1),
-                    (w / verifySize) * i + fontSize / 2, h / 2);
+            affine.setToRotation(
+                    Math.PI / 4 * rand.nextDouble() * (rand.nextBoolean() ? 1 : -1),
+                    (w / verifySize) * i + fontSize / 2, h / 2
+            );
             g2.setTransform(affine);
             g2.drawChars(chars, i, 1, ((w - 10) / verifySize) * i + 5, h / 2 + fontSize / 2 - 10);
         }
@@ -176,10 +182,8 @@ public class VerifyCodeUtils {
         int phase = random.nextInt(2);
 
         for (int i = 0; i < h1; i++) {
-            double d = (double) (period >> 1)
-                    * Math.sin((double) i / (double) period
-                    + (6.2831853071795862D * (double) phase)
-                    / (double) frames);
+            double d = (double) (period >> 1) * Math.sin(
+                    (double) i / (double) period + (6.2831853071795862D * (double) phase) / (double) frames);
             g.copyArea(0, i, w1, 1, (int) d, 0);
             if (borderGap) {
                 g.setColor(color);
@@ -198,10 +202,8 @@ public class VerifyCodeUtils {
         int frames = 20;
         int phase = 7;
         for (int i = 0; i < w1; i++) {
-            double d = (double) (period >> 1)
-                    * Math.sin((double) i / (double) period
-                    + (6.2831853071795862D * (double) phase)
-                    / (double) frames);
+            double d = (double) (period >> 1) * Math.sin(
+                    (double) i / (double) period + (6.2831853071795862D * (double) phase) / (double) frames);
             g.copyArea(i, 0, 1, h1, 0, (int) d);
             if (borderGap) {
                 g.setColor(color);

@@ -4,11 +4,11 @@ import lombok.Data;
 
 /**
  * <p>description</p >
- *
+ * <p>
  * https://help.aliyun.com/document_detail/101341.html?spm=a2c4g.11186623.6.617.7bca7ce8NvHEbH
  * https://help.aliyun.com/document_detail/101414.html?spm=a2c4g.11186623.2.13.13ce3e2cyyH2aX
- *
- *
+ * <p>
+ * <p>
  * 这个不是发送给阿里云供应商的，而是给自己内部提供的发送短信的传递参数
  *
  * @author dongfang.ding
@@ -49,10 +49,8 @@ public class AliYunSmsRequest {
     /**
      * 短信模板变量对应的实际值，JSON格式
      * 模板：您的验证码${code}，该验证码5分钟内有效，请勿泄漏于他人！
-     *
+     * <p>
      * 参数内容： {"code":"1111"}
-     *
-     *
      */
     private String templateParam;
 

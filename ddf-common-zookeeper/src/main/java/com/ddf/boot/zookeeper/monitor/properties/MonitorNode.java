@@ -20,7 +20,7 @@ public class MonitorNode {
 
     /**
      * 要监控的端点主机地址
-     *
+     * <p>
      * 如果为AUTO, 则为使用当前服务的ip+端口号
      */
     private String monitorHost = HOST_MODE_AUTO;

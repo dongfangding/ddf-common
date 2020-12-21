@@ -13,6 +13,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.KeyException;
+import java.io.IOException;
+import java.util.Objects;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.rpc.RpcContext;
@@ -20,16 +26,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Objects;
-
 /**
  * 拦截请求处理用户信息
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -53,7 +52,6 @@ import java.util.Objects;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 @Slf4j
 public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
@@ -80,7 +78,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
         String path = request.getServletPath();
         String host = WebUtil.getHost();
         request.setAttribute(JwtConstant.CLIENT_IP, host);
@@ -111,7 +110,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         UserClaim userClaim = JwtUtil.getUserClaim(claimsJws);
         Preconditions.checkNotNull(userClaim, "解析用户为空!");
         Preconditions.checkArgument(!StringUtils.isAnyBlank(userClaim.getUsername(), userClaim.getCredit()),
-                "用户关键信息缺失！");
+                "用户关键信息缺失！"
+        );
 
         if (userClaimService == null) {
             throw new NoSuchBeanDefinitionException(UserClaimService.class);

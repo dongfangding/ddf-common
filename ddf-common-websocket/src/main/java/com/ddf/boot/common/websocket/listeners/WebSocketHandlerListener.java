@@ -17,6 +17,7 @@ public interface WebSocketHandlerListener {
 
     /**
      * 连接建立事件
+     *
      * @param session
      * @throws Exception
      */
@@ -24,6 +25,7 @@ public interface WebSocketHandlerListener {
 
     /**
      * 收到二进制消息事件
+     *
      * @param session
      * @param message
      * @throws Exception
@@ -32,6 +34,7 @@ public interface WebSocketHandlerListener {
 
     /**
      * 处理pong事件
+     *
      * @param session
      * @param message
      * @throws Exception
@@ -40,6 +43,7 @@ public interface WebSocketHandlerListener {
 
     /**
      * 传输异常事件
+     *
      * @param session
      * @param exception
      * @throws Exception
@@ -48,6 +52,7 @@ public interface WebSocketHandlerListener {
 
     /**
      * 连接关闭事件
+     *
      * @param session
      * @param status
      * @throws Exception

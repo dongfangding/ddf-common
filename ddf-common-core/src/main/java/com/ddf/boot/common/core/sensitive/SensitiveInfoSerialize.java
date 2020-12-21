@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import org.springframework.context.annotation.Configuration;
-
 import java.io.IOException;
 import java.util.Objects;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 功能描述:数据脱敏序列化
@@ -31,7 +30,8 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
     }
 
     @Override
-    public void serialize(String value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
+    public void serialize(String value, JsonGenerator jsonGenerator, SerializerProvider serializers)
+            throws IOException {
         switch (this.type) {
             case CHINESE_NAME: {
                 jsonGenerator.writeString(PretendUtils.chineseName(value));
@@ -65,12 +65,14 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
                 jsonGenerator.writeString(PretendUtils.password(value));
                 break;
             }
-            default:break;
+            default:
+                break;
         }
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider serializerProvider, BeanProperty beanProperty) throws JsonMappingException {
+    public JsonSerializer<?> createContextual(SerializerProvider serializerProvider, BeanProperty beanProperty)
+            throws JsonMappingException {
         // 为空直接跳过
         if (beanProperty != null) {
             // 非 String 类直接跳过

@@ -3,16 +3,15 @@ package com.ddf.boot.common.mq.listener;
 import com.ddf.boot.common.mq.config.MqMessageProperties;
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.mq.definition.QueueBuilder;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 对消息事件的默认实现，落库（不百分百保证）提供状态跟踪$
@@ -82,8 +81,10 @@ public class DefaultMqEventListener implements MqEventListener {
     public <T> void sendSuccess(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper) {
         defaultEventListenerPool.execute(() -> {
             synchronized (DefaultMqEventListener.class) {
-                MESSAGE_QUEUE.add(ListenerQueueEntity.buildSend(messageWrapper, ListenerQueueEntity.MqEvent.SEND_SUCCESS,
-                        queueDefinition, null));
+                MESSAGE_QUEUE.add(
+                        ListenerQueueEntity.buildSend(messageWrapper, ListenerQueueEntity.MqEvent.SEND_SUCCESS,
+                                queueDefinition, null
+                        ));
             }
         });
 
@@ -100,12 +101,14 @@ public class DefaultMqEventListener implements MqEventListener {
      * @date 2019/12/16 0016 17:50
      **/
     @Override
-    public <T> void sendFailure(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper
-            , Throwable throwable) {
+    public <T> void sendFailure(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper,
+            Throwable throwable) {
         defaultEventListenerPool.execute(() -> {
             synchronized (DefaultMqEventListener.class) {
-                MESSAGE_QUEUE.add(ListenerQueueEntity.buildSend(messageWrapper, ListenerQueueEntity.MqEvent.SEND_FAILURE,
-                        queueDefinition, throwable));
+                MESSAGE_QUEUE.add(
+                        ListenerQueueEntity.buildSend(messageWrapper, ListenerQueueEntity.MqEvent.SEND_FAILURE,
+                                queueDefinition, throwable
+                        ));
             }
         });
 
@@ -124,8 +127,10 @@ public class DefaultMqEventListener implements MqEventListener {
     public <T> void consumerSuccess(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper) {
         defaultEventListenerPool.execute(() -> {
             synchronized (DefaultMqEventListener.class) {
-                MESSAGE_QUEUE.add(ListenerQueueEntity.buildConsumer(messageWrapper, ListenerQueueEntity.MqEvent.CONSUMER_SUCCESS,
-                        rabbitListener, null));
+                MESSAGE_QUEUE.add(
+                        ListenerQueueEntity.buildConsumer(messageWrapper, ListenerQueueEntity.MqEvent.CONSUMER_SUCCESS,
+                                rabbitListener, null
+                        ));
             }
         });
 
@@ -142,12 +147,14 @@ public class DefaultMqEventListener implements MqEventListener {
      * @date 2019/12/16 0016 17:50
      **/
     @Override
-    public <T> void consumerFailure(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper
-            , Throwable throwable) {
+    public <T> void consumerFailure(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper,
+            Throwable throwable) {
         defaultEventListenerPool.execute(() -> {
             synchronized (DefaultMqEventListener.class) {
-                MESSAGE_QUEUE.add(ListenerQueueEntity.buildConsumer(messageWrapper, ListenerQueueEntity.MqEvent.CONSUMER_FAILURE,
-                        rabbitListener, throwable));
+                MESSAGE_QUEUE.add(
+                        ListenerQueueEntity.buildConsumer(messageWrapper, ListenerQueueEntity.MqEvent.CONSUMER_FAILURE,
+                                rabbitListener, throwable
+                        ));
             }
         });
     }

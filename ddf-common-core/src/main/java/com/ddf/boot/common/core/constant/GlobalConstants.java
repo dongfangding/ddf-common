@@ -2,7 +2,7 @@ package com.ddf.boot.common.core.constant;
 
 /**
  * 全局常量类
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88

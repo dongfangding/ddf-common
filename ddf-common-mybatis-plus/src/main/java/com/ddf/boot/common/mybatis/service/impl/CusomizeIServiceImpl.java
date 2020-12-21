@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ddf.boot.common.core.model.BaseDomain;
 import com.ddf.boot.common.mybatis.mapper.CustomizeBaseMapper;
 import com.ddf.boot.common.mybatis.service.CustomizeIService;
-import org.springframework.dao.DuplicateKeyException;
-
 import java.util.Collection;
+import org.springframework.dao.DuplicateKeyException;
 
 /**
  * 自定义接口查询
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -36,7 +35,8 @@ import java.util.Collection;
  * @author dongfang.ding
  * @date 2019/12/7 0007 22:48
  **/
-public class CusomizeIServiceImpl<M extends CustomizeBaseMapper<T>, T extends BaseDomain> extends ServiceImpl<M, T> implements CustomizeIService<T> {
+public class CusomizeIServiceImpl<M extends CustomizeBaseMapper<T>, T extends BaseDomain> extends ServiceImpl<M, T>
+        implements CustomizeIService<T> {
 
     /**
      * 保存的时候捕获唯一数据库唯一索引异常，并抛出自定义异常消息（运行时异常）
@@ -98,7 +98,8 @@ public class CusomizeIServiceImpl<M extends CustomizeBaseMapper<T>, T extends Ba
      * @return
      */
     @Override
-    public boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException updateFalseException, RuntimeException duplicateKeyException) {
+    public boolean updateCheckBool(T entity, Wrapper<T> updateWrapper, RuntimeException updateFalseException,
+            RuntimeException duplicateKeyException) {
         boolean update;
         try {
             update = super.update(entity, updateWrapper);
@@ -121,7 +122,8 @@ public class CusomizeIServiceImpl<M extends CustomizeBaseMapper<T>, T extends Ba
      * @return
      */
     @Override
-    public boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException, RuntimeException duplicateKeyException) {
+    public boolean updateByIdCheckBool(T entity, RuntimeException updateFalseException,
+            RuntimeException duplicateKeyException) {
         boolean update;
         try {
             update = super.updateById(entity);

@@ -12,8 +12,17 @@ import com.ddf.boot.common.mq.listener.DefaultMqEventListener;
 import com.ddf.boot.common.mq.listener.ListenerQueueEntity;
 import com.ddf.boot.common.mq.listener.MqEventListener;
 import com.ddf.boot.common.mq.persistence.LogMqPersistenceProcessor;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,13 +30,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.Executors;
-
 /**
  * 根据预定义的队列/交换器/路由键信息声明队列
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -101,9 +106,15 @@ public class AmqpDeclareBean implements InitializingBean {
                 amqpAdmin.declareQueue(queue);
                 amqpAdmin.declareExchange(exchange);
                 if (value.getBindingArguments() != null && !value.getBindingArguments().isEmpty()) {
-                    amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(value.getRouteKey()).and(value.getBindingArguments()));
+                    amqpAdmin.declareBinding(BindingBuilder.bind(queue)
+                            .to(exchange)
+                            .with(value.getRouteKey())
+                            .and(value.getBindingArguments()));
                 } else {
-                    amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(value.getRouteKey()).noargs());
+                    amqpAdmin.declareBinding(BindingBuilder.bind(queue)
+                            .to(exchange)
+                            .with(value.getRouteKey())
+                            .noargs());
                 }
             }
         }
@@ -119,7 +130,10 @@ public class AmqpDeclareBean implements InitializingBean {
      **/
     private void initListenerQueue() {
         if (defaultMqEventListener != null && defaultMqEventListener instanceof DefaultMqEventListener) {
-            Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create().setDaemon(true).setNamePrefix("consumer-listener-queue").build()).execute(() -> {
+            Executors.newSingleThreadExecutor(ThreadFactoryBuilder.create()
+                    .setDaemon(true)
+                    .setNamePrefix("consumer-listener-queue")
+                    .build()).execute(() -> {
                 while (true) {
                     try {
                         ListenerQueueEntity<?> poll = DefaultMqEventListener.MESSAGE_QUEUE.poll();
@@ -127,7 +141,8 @@ public class AmqpDeclareBean implements InitializingBean {
                             try {
                                 // 做一个延迟,其实更好的方式是使用等待唤醒，目前既要支持读和写，而又不互斥，还没想到好的方案
                                 Thread.sleep(200);
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+                            }
                         } else {
                             LogMqListener logMqListener = new LogMqListener();
                             if (poll.getMessageWrapper() == null) {
@@ -140,8 +155,8 @@ public class AmqpDeclareBean implements InitializingBean {
                             logMqListener.setMessageJson(JsonUtil.asString(poll.getMessageWrapper()));
                             logMqListener.setEvent(poll.getMqEvent().name());
                             logMqListener.setEventTimestamp(poll.getTimestamp());
-                            if (ListenerQueueEntity.MqEvent.SEND_SUCCESS.equals(poll.getMqEvent()) ||
-                                    ListenerQueueEntity.MqEvent.SEND_FAILURE.equals(poll.getMqEvent())) {
+                            if (ListenerQueueEntity.MqEvent.SEND_SUCCESS.equals(poll.getMqEvent())
+                                    || ListenerQueueEntity.MqEvent.SEND_FAILURE.equals(poll.getMqEvent())) {
                                 logMqListener.setSendTimestamp(poll.getTimestamp());
                             } else {
                                 logMqListener.setConsumerTimestamp(poll.getTimestamp());
@@ -158,12 +173,18 @@ public class AmqpDeclareBean implements InitializingBean {
                                 logMqListener.setContainerFactory(poll.getRabbitListener().containerFactory());
                             }
                             logMqListener.setCurrentThreadName(Thread.currentThread().getName());
-                            logMqListener.setErrorMessage(poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
-                            logMqListener.setErrorStack(poll.getThrowable() == null ? "" : StringExtUtil.exceptionToStringNoLimit(poll.getThrowable()));
+                            logMqListener.setErrorMessage(
+                                    poll.getThrowable() == null ? "" : poll.getThrowable().getMessage());
+                            logMqListener.setErrorStack(poll.getThrowable() == null ?
+                                    "" :
+                                    StringExtUtil.exceptionToStringNoLimit(poll.getThrowable()));
 
-                            Map<String, LogMqPersistenceProcessor> processorMap = SpringContextHolder.getBeansOfType(LogMqPersistenceProcessor.class);
-                            if (CollUtil.isNotEmpty(processorMap) && processorMap.containsKey(mqMessageProperties.getLogMqPersistenceProcessorBeanName())) {
-                                processorMap.get(mqMessageProperties.getLogMqPersistenceProcessorBeanName()).persistence(poll, logMqListener);
+                            Map<String, LogMqPersistenceProcessor> processorMap = SpringContextHolder.getBeansOfType(
+                                    LogMqPersistenceProcessor.class);
+                            if (CollUtil.isNotEmpty(processorMap) && processorMap.containsKey(
+                                    mqMessageProperties.getLogMqPersistenceProcessorBeanName())) {
+                                processorMap.get(mqMessageProperties.getLogMqPersistenceProcessorBeanName())
+                                        .persistence(poll, logMqListener);
                             } else {
                                 log.warn("没有配置mq监听消费持久化方案");
                             }

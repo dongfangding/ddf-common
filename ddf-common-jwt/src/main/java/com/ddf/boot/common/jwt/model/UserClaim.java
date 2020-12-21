@@ -2,24 +2,23 @@ package com.ddf.boot.common.jwt.model;
 
 
 import cn.hutool.core.util.ReflectUtil;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 自定义jws的payload部分的用户信息类
  * 生成Jwt的时候调用参数为该类的方法即可，会把这个类中的所有有get方法的字段都生成到payload中
- *
+ * <p>
  * Jwt本身虽然是无状态的，不能直接将某个用户T掉过期掉，但是我们可以通过另外一种方式去实现；
  * 由于我们在生成token的时候会去校验最后登录时间是否和token中的一致，如果要过期某个用户的token,则我们直接修改该用户的最后登录时间即可
- *
- *
+ * <p>
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -43,7 +42,6 @@ import java.util.Map;
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
- *
  */
 @Data
 @NoArgsConstructor
@@ -144,8 +142,10 @@ public class UserClaim implements Serializable {
         if (fields.length > 0) {
             for (Field field : fields) {
                 try {
-                    Method method = ReflectUtil.getMethod(aClass, "get" + field.getName().substring(0, 1)
-                            .toUpperCase() + field.getName().substring(1));
+                    Method method = ReflectUtil.getMethod(
+                            aClass,
+                            "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1)
+                    );
                     if (method != null) {
                         // 如果能找到方法就设置
                         claimMap.put(field.getName(), method.invoke(this));

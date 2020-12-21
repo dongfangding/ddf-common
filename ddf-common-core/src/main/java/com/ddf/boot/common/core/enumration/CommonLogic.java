@@ -3,7 +3,6 @@ package com.ddf.boot.common.core.enumration;
 
 import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.ddf.boot.common.core.util.PreconditionUtil;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,9 +29,7 @@ public enum CommonLogic {
     /**
      * 是
      */
-    TRUE(1)
-
-    ;
+    TRUE(1);
 
     private final Integer logic;
 

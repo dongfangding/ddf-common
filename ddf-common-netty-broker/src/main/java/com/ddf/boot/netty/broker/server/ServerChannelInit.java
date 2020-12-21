@@ -5,19 +5,22 @@ import com.ddf.boot.netty.broker.handler.ServerInboundHandler;
 import com.ddf.boot.netty.broker.handler.ServerOutboundHandler;
 import com.ddf.boot.netty.broker.message.RequestContent;
 import com.ddf.boot.netty.broker.server.properties.BrokerProperties;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLEngine;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.SSLEngine;
-import java.util.concurrent.TimeUnit;
-
 /**
- *
  * 服务端的handler
  *
  * @author dongfang.ding
@@ -52,11 +55,10 @@ public class ServerChannelInit extends ChannelInitializer<Channel> {
             }
 
             // 添加换行符解码器，以及自定义编解码器,客户端每次传输数据必须以"\r\n"结尾并且符合自定义解码器规则
-            pipeline.addLast(new LineBasedFrameDecoder(1024)).addLast(new RequestContentCodec())
-                    .addLast(new ServerOutboundHandler()).addLast(new ServerInboundHandler())
+            pipeline.addLast(new LineBasedFrameDecoder(1024)).addLast(new RequestContentCodec()).addLast(
+                    new ServerOutboundHandler()).addLast(new ServerInboundHandler())
                     // IdleStateHandler 将通过 IdleStateEvent 调用 userEventTriggered ，如果连接没有接收或发送数据超过
-                    .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
-                    .addLast(new HeartbeatHandler());
+                    .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS)).addLast(new HeartbeatHandler());
         }
     }
 
@@ -72,8 +74,7 @@ public class ServerChannelInit extends ChannelInitializer<Channel> {
                 if (ctx.channel().isActive()) {
                     // 发送的心跳并添加一个侦听器，如果发送操作失败将关闭连接
                     try {
-                        ctx.writeAndFlush(RequestContent.heart())
-                                .addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+                        ctx.writeAndFlush(RequestContent.heart()).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
                     } catch (Exception e) {
                         log.error("向客户端发送心跳包失败>>>>>>>>>>>>>>>>>>>");
                     }

@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class OssHelper {
 
     /**
@@ -66,12 +66,14 @@ public class OssHelper {
     @PostConstruct
     public void init() {
         // 这里会保证一定能够拿到主存储桶信息， 在OssProperties初始化的时候已经校验过
-        primaryBucketProperty = ossProperties.getBuckets().size() == 1 ? ossProperties.getBuckets().get(0) :
+        primaryBucketProperty = ossProperties.getBuckets().size() == 1 ?
+                ossProperties.getBuckets().get(0) :
                 ossProperties.getBuckets().stream().filter(BucketProperty::isPrimary).findFirst().get();
     }
 
     /**
      * 返回默认OSS bean
+     *
      * @return
      */
     public OSS getDefaultOssClient() {
@@ -80,6 +82,7 @@ public class OssHelper {
 
     /**
      * 返回主存储桶属性， 一般都会只用到一个存储桶，不会用到多个的
+     *
      * @return
      */
     public BucketProperty getPrimaryBucketProperty() {
@@ -89,6 +92,7 @@ public class OssHelper {
 
     /**
      * 返回STS核心授权信息
+     *
      * @return
      * @throws ClientException
      */
@@ -96,21 +100,17 @@ public class OssHelper {
         String path = getPath(stsTokenRequest.getPlatform(), stsTokenRequest.getIdentity());
         AssumeRoleResponse acsResponse = getAcsResponse(path);
         final AssumeRoleResponse.Credentials credentials = acsResponse.getCredentials();
-        return StsTokenResponse.builder()
-                .securityToken(credentials.getSecurityToken())
-                .accessKeySecret(credentials.getAccessKeySecret())
-                .accessKeyId(credentials.getAccessKeyId())
-                .expiration(credentials.getExpiration())
-                .bucketName(primaryBucketProperty.getBucketName())
-                .endPoint(primaryBucketProperty.getBucketEndpoint())
-                .objectPrefix(path)
-                .build();
+        return StsTokenResponse.builder().securityToken(credentials.getSecurityToken()).accessKeySecret(
+                credentials.getAccessKeySecret()).accessKeyId(credentials.getAccessKeyId()).expiration(
+                credentials.getExpiration()).bucketName(primaryBucketProperty.getBucketName()).endPoint(
+                primaryBucketProperty.getBucketEndpoint()).objectPrefix(path).build();
     }
 
 
 
     /**
      * 获取阿里云oss路径前缀, 优先使用cdn，没有再使用bucket域名
+     *
      * @return
      */
     public String getOssPrefix() {
@@ -119,12 +119,15 @@ public class OssHelper {
 
     /**
      * 获取阿里云oss路径前缀
+     *
      * @param useCdn 如果存在cdn地址， 是否使用cdn路径
      * @return
      */
     public String getOssPrefix(boolean useCdn) {
         if (useCdn) {
-            return StringUtils.isNotBlank(ossProperties.getCdnAddr()) ? ossProperties.getCdnAddr() : primaryBucketProperty.getBucketEndpoint();
+            return StringUtils.isNotBlank(ossProperties.getCdnAddr()) ?
+                    ossProperties.getCdnAddr() :
+                    primaryBucketProperty.getBucketEndpoint();
         }
         return primaryBucketProperty.getBucketEndpoint();
     }
@@ -155,17 +158,20 @@ public class OssHelper {
 
     /**
      * 获取OSS token, 使用完成后关闭对象
+     *
      * @param stsTokenRequest
      * @return
      */
     public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
         final StsTokenResponse acsResponse = getOssToken(stsTokenRequest);
         final OSS stsOss = new OSSClientBuilder().build(ossProperties.getEndpoint(), acsResponse.getAccessKeyId(),
-                acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken());
+                acsResponse.getAccessKeySecret(), acsResponse.getSecurityToken()
+        );
         try {
             final StsOssTransfer stsOssTransfer = StsOssTransfer.builder()
                     .oss(stsOss)
-                    .stsTokenResponse(acsResponse).build();
+                    .stsTokenResponse(acsResponse)
+                    .build();
             consumer.accept(stsOssTransfer);
         } finally {
             stsOss.shutdown();
@@ -175,6 +181,7 @@ public class OssHelper {
 
     /**
      * 获取Acs 响应属性
+     *
      * @param path
      * @return
      */
@@ -198,6 +205,7 @@ public class OssHelper {
 
     /**
      * 获取ObjectKey前缀路径
+     *
      * @param platform
      * @param identity
      * @return
@@ -211,6 +219,7 @@ public class OssHelper {
 
     /**
      * 对资源进行动态授权
+     *
      * @param path
      * @param bucketName
      * @return
@@ -232,10 +241,13 @@ public class OssHelper {
 
     public static void main(String[] args) {
         final OSS stsOss = new OSSClientBuilder().build("oss-cn-hangzhou.aliyuncs.com", "STS.NTXKVzNyBFa1HFFYC21t9awAb",
-                "965xDoLYyGZeY5WdRUfRzFDk8w37JuA9i4HJuUL8b1QJ", "CAIS5AJ1q6Ft5B2yfSjIr5ftAOzOo6Zj8aPaSmD3vUNnPfsVjrLqgDz2IH1NfXNgAe0ev/Q2mWlZ6Psdlq1oSpZDHaZ87G7HqMY5yxioRqackWPcj9Vd+jTMewW6Dxr8w7X8AYHQR8/cffGAck3NkjQJr5LxaTSlWS7jU/iOkoU1QdkLeQO6YDFaZrJRPRAwkNIGEnHTOP2xUHjtmXGCLEdhti12i2509d6noKum5wHZkUfxx8IMuo31OeLEVcR3O4plWNrH4I5Mf6HagilL8EoIpuUkgKVc8DaCutCDDhxN7g6adOHT9MZoKAI+P+9gQ/Qc66Gl0qck/eaIztuslR8WY70KDHiAG4vwn8fNFb34botkebr1N3jHkPL3b8Ov6l16OS1Hb1MUJIN6cEUdU0J8FmvoTYa8403PbwuZTKyI7bo7y5IdzS+zoIPTfQjXHu3IgX9FY85iMhwyXBkNxnx1r3Wbm4exGRqAAa069nX+8Odb6DsF3dyfeylI8yklBMFqaOzE/BqjTJ0ziOOP6uD078pcFLeS5bazr3cwrIGK7DNIrH1Vf+wnxMXeXTyxm1I+T17pyAsEwSIuNu2MSXocV8twtV7umeqws9dJnAMCe1d7/ztJERbDMGsUHrW6WCrNsUYqqeeGpv5d");
+                "965xDoLYyGZeY5WdRUfRzFDk8w37JuA9i4HJuUL8b1QJ",
+                "CAIS5AJ1q6Ft5B2yfSjIr5ftAOzOo6Zj8aPaSmD3vUNnPfsVjrLqgDz2IH1NfXNgAe0ev/Q2mWlZ6Psdlq1oSpZDHaZ87G7HqMY5yxioRqackWPcj9Vd+jTMewW6Dxr8w7X8AYHQR8/cffGAck3NkjQJr5LxaTSlWS7jU/iOkoU1QdkLeQO6YDFaZrJRPRAwkNIGEnHTOP2xUHjtmXGCLEdhti12i2509d6noKum5wHZkUfxx8IMuo31OeLEVcR3O4plWNrH4I5Mf6HagilL8EoIpuUkgKVc8DaCutCDDhxN7g6adOHT9MZoKAI+P+9gQ/Qc66Gl0qck/eaIztuslR8WY70KDHiAG4vwn8fNFb34botkebr1N3jHkPL3b8Ov6l16OS1Hb1MUJIN6cEUdU0J8FmvoTYa8403PbwuZTKyI7bo7y5IdzS+zoIPTfQjXHu3IgX9FY85iMhwyXBkNxnx1r3Wbm4exGRqAAa069nX+8Odb6DsF3dyfeylI8yklBMFqaOzE/BqjTJ0ziOOP6uD078pcFLeS5bazr3cwrIGK7DNIrH1Vf+wnxMXeXTyxm1I+T17pyAsEwSIuNu2MSXocV8twtV7umeqws9dJnAMCe1d7/ztJERbDMGsUHrW6WCrNsUYqqeeGpv5d"
+        );
 
         stsOss.putObject("dapai-live-test", "console/1/2020/11/24/b31736a36477477c87dae69055ddfddb.svga",
-                new File("C:\\Users\\Administrator\\Pictures\\sharding\\rocket.svga"));
+                new File("C:\\Users\\Administrator\\Pictures\\sharding\\rocket.svga")
+        );
 
     }
 }

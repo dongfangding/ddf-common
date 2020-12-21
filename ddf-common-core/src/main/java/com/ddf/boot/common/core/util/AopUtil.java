@@ -1,15 +1,14 @@
 package com.ddf.boot.common.core.util;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.annotation.AnnotationUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * aop获取相关属性的方法工具类$
@@ -51,7 +50,8 @@ public class AopUtil {
      * @author dongfang.ding
      * @date 2019/12/20 0020 10:29
      **/
-    public static <T extends Annotation> T getAnnotation(ProceedingJoinPoint joinPoint, Class<T> targetAnnotation) throws NoSuchMethodException {
+    public static <T extends Annotation> T getAnnotation(ProceedingJoinPoint joinPoint, Class<T> targetAnnotation)
+            throws NoSuchMethodException {
         Class clazz = joinPoint.getSignature().getDeclaringType();
         String methodName = joinPoint.getSignature().getName();
         Class[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
@@ -66,6 +66,7 @@ public class AopUtil {
 
     /**
      * 获取当前拦截的类
+     *
      * @param joinPoint
      * @return
      */
@@ -75,6 +76,7 @@ public class AopUtil {
 
     /**
      * 获取当前拦截的方法
+     *
      * @param joinPoint
      * @return
      */
@@ -111,7 +113,7 @@ public class AopUtil {
      * 返回当前方法的参数map
      *
      * @param joinPoint
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
      * @date 2020/6/12 0012 18:46
      **/

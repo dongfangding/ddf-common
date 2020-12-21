@@ -1,11 +1,10 @@
 package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.core.constant.GlobalConstants;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Web层辅助工具类

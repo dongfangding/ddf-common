@@ -22,7 +22,7 @@
         <dubbo.version>2.7.3</dubbo.version>
         <lombok.version>1.18.10</lombok.version>
         <mysql.version>8.0.16</mysql.version>
-<!--        <guava.version>28.1-jre</guava.version>-->
+        <!--        <guava.version>28.1-jre</guava.version>-->
         <guava.version>20.0</guava.version>
         <http-client.version>4.5.10</http-client.version>
         <http-core.version>4.4.12</http-core.version>
@@ -275,7 +275,6 @@
                 <artifactId>httpcore</artifactId>
                 <version>${http-core.version}</version>
             </dependency>
-
 
 
         </dependencies>

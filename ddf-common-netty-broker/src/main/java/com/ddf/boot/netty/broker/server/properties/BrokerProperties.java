@@ -32,7 +32,6 @@ public class BrokerProperties {
     private Integer soSndBuf = 1048576;
 
     /**
-     *
      * @see ChannelOption#SO_RCVBUF
      */
     private Integer soRecBuf = 1048576;

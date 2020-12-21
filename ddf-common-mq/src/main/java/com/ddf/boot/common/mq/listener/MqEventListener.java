@@ -61,7 +61,8 @@ public interface MqEventListener {
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void sendFailure(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper, Throwable throwable) {
+    default <T> void sendFailure(QueueBuilder.QueueDefinition queueDefinition, MqMessageWrapper<T> messageWrapper,
+            Throwable throwable) {
 
     }
 
@@ -91,7 +92,8 @@ public interface MqEventListener {
      * @author dongfang.ding
      * @date 2019/12/16 0016 17:50
      **/
-    default <T> void consumerFailure(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper, Throwable throwable) {
+    default <T> void consumerFailure(RabbitListener rabbitListener, MqMessageWrapper<T> messageWrapper,
+            Throwable throwable) {
 
     }
 }

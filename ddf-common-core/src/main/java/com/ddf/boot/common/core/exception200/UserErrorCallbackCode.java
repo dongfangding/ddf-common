@@ -42,6 +42,7 @@ public enum UserErrorCallbackCode implements BaseCallbackCode {
         this.code = code;
         this.description = description;
     }
+
     /**
      * 响应状态码
      *

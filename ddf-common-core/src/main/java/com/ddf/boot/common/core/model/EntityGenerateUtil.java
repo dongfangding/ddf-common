@@ -1,21 +1,23 @@
 package com.ddf.boot.common.core.model;
 
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- *
  * <p>生成实体的简单工具类</p>
  * <ul>
  * <li>修改{@code SOURCE_ROOT} 为自己项目源码的根路径</li>
@@ -33,12 +35,17 @@ public class EntityGenerateUtil {
 
     private static final String LINE = System.getProperty("line.separator");
     private static final String BLANK = "    ";
-    private static final String TWO_LINE = (System.getProperty("line.separator") + System.getProperty("line.separator"));
+    private static final String TWO_LINE = (System.getProperty("line.separator") + System.getProperty(
+            "line.separator"));
 
-    /** 项目源码根路径地址,根据包名生成java代码的时候需要用到需要生成到哪个目录下 */
+    /**
+     * 项目源码根路径地址,根据包名生成java代码的时候需要用到需要生成到哪个目录下
+     */
     private static final String SOURCE_ROOT = System.getProperty("bootUser.dir") + "/src/main/java";
 
-    /**  需要忽略生成的字段名,如BaseDomain的字段其它表都要忽略这几个字段 */
+    /**
+     * 需要忽略生成的字段名,如BaseDomain的字段其它表都要忽略这几个字段
+     */
     private static Set<String> ignoreColumn = new HashSet<>();
 
     static {
@@ -55,13 +62,14 @@ public class EntityGenerateUtil {
 
     /**
      * 初始化数据库连接对象
+     *
      * @return
      * @throws Exception
      */
     private static Connection getConnection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding" +
-                "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding"
+                + "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
     }
 
 
@@ -72,15 +80,20 @@ public class EntityGenerateUtil {
 
 
     enum TableType {
-        /** 经典下划线表名直接转驼峰, 如user_info 对应生成实体类UserInfo */
+        /**
+         * 经典下划线表名直接转驼峰, 如user_info 对应生成实体类UserInfo
+         */
         LINE_HUMP,
 
-        /** 经典下划线表名，但舍弃第一个下划线前的前缀部分,如t_user_info 对应生成实体类UserInfo */
+        /**
+         * 经典下划线表名，但舍弃第一个下划线前的前缀部分,如t_user_info 对应生成实体类UserInfo
+         */
         PREFIX_DISCARD_LINE_HUMP
     }
 
     /**
      * 生成实体源码
+     *
      * @param tableType
      * @throws Exception
      */
@@ -95,7 +108,7 @@ public class EntityGenerateUtil {
             tableName = scanner.nextLine();
         }
         ResultSet columns = metaData.getColumns(CATLOG, "%", tableName, "%");
-        ResultSet tables = metaData.getTables(CATLOG, "%", "%", new String[]{"TABLE"});
+        ResultSet tables = metaData.getTables(CATLOG, "%", "%", new String[] {"TABLE"});
         String tableRemarks = "", columnName, fieldType, columnRemarks, fieldName;
         while (tables.next()) {
             tableRemarks = tables.getString("REMARKS");
@@ -148,7 +161,9 @@ public class EntityGenerateUtil {
         System.out.println("SOURCE_ROOT: " + SOURCE_ROOT);
         File file = new File(SOURCE_ROOT + File.separator + packageDir + File.separator + className + ".java");
         file.createNewFile();
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file),
+                StandardCharsets.UTF_8
+        )) {
             String sourceStr = sbl.toString();
             if (isDateImport) {
                 sourceStr = String.format(sourceStr, "import java.util.Date;" + LINE);
@@ -161,6 +176,7 @@ public class EntityGenerateUtil {
 
     /**
      * 将数据库类型转换为实体类型，可能会有遗漏，这里只转换了大部分，如不合适需要自己修改
+     *
      * @param type
      * @param columnName
      * @return
@@ -170,7 +186,7 @@ public class EntityGenerateUtil {
             return " Byte ";
         } else if (Types.INTEGER == type) {
             return " Integer ";
-        } else if (Types.FLOAT == type || Types.DOUBLE == type || Types.NUMERIC == type ||Types.DECIMAL == type ) {
+        } else if (Types.FLOAT == type || Types.DOUBLE == type || Types.NUMERIC == type || Types.DECIMAL == type) {
             return " BigDecimal ";
         } else if (Types.VARCHAR == type || Types.CHAR == type || Types.CLOB == type || Types.NVARCHAR == type
                 || Types.LONGVARCHAR == type) {
@@ -183,7 +199,9 @@ public class EntityGenerateUtil {
         throw new RuntimeException("暂未支持的数据类型" + type + " | " + columnName);
     }
 
-    /** 下划线转驼峰 */
+    /**
+     * 下划线转驼峰
+     */
     private static String lineToHump(String str) {
         final String regex = "_(\\w)";
         Pattern linePattern = Pattern.compile(regex);
@@ -199,9 +217,10 @@ public class EntityGenerateUtil {
 
     /**
      * 初始化包名，要导入的包、类名和通用注解等
+     *
      * @param packageName 要生成的包名
-     * @param tableName 表名
-     * @param className 类名
+     * @param tableName   表名
+     * @param className   类名
      * @return
      */
     public static StringBuffer initClass(String packageName, String tableName, String tableRemarks, String className) {
@@ -216,7 +235,8 @@ public class EntityGenerateUtil {
         sbl.append(LINE);
         sbl.append("/**").append(LINE);
         sbl.append(" * ").append(tableRemarks).append(LINE);
-        sbl.append(" * @author {@link com.ddf.scaffold.fw.model.EntityGenerateUtil}").append(" ").append(new java.util.Date()).append(LINE);
+        sbl.append(" * @author {@link com.ddf.scaffold.fw.model.EntityGenerateUtil}").append(" ").append(
+                new java.util.Date()).append(LINE);
         sbl.append(" */").append(LINE);
         sbl.append("@Entity").append(LINE);
         sbl.append("@Table(name = \"").append(tableName).append("\")").append(LINE);
@@ -231,6 +251,7 @@ public class EntityGenerateUtil {
 
     /**
      * 将输入的包名转换为文件路径
+     *
      * @param packageName
      * @return
      */

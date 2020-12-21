@@ -12,6 +12,7 @@ public interface HandlerMessageService {
 
     /**
      * 处理接收到的消息
+     *
      * @param authPrincipal
      * @param session
      * @param textMessage

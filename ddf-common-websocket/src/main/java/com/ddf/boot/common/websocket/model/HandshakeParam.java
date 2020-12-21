@@ -1,9 +1,8 @@
 package com.ddf.boot.common.websocket.model;
 
+import java.io.Serializable;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * 握手参数$

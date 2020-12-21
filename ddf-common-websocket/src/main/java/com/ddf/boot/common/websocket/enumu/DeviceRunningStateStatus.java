@@ -32,7 +32,7 @@ public enum DeviceRunningStateStatus {
 
     /**
      * 未运行
-     *
+     * <p>
      * 未运行和执行结束的区别在于未运行是从未运行，只要运行过就是执行结束，在这里没有在执行结束的时候把状态重置为未运行；
      * 所以如果有业务处理的时候，空闲状态时包含未运行和执行结束的
      */
@@ -46,10 +46,7 @@ public enum DeviceRunningStateStatus {
     /**
      * 执行结束
      */
-    OVER(2)
-
-
-    ;
+    OVER(2);
 
     private Integer status;
 

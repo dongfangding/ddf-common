@@ -1,8 +1,7 @@
 package com.ddf.boot.common.mq.definition;
 
-import lombok.Getter;
-
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * 队列配置生成类模板
@@ -10,9 +9,9 @@ import java.util.Map;
  * 目的是为了集中管理队列相关配置信息；
  * 但是带来的劣势是，如果使用这种方式，那么在项目运行过程中，如果有人把队列删掉了，那么与之对应的
  * 相关消费就会出现问题；
- *
+ * <p>
  * 除非消费端使用auth declare（在消费配置上使用declare能够在队列不存在的时候创建队列）功能，但是那种方式与该类的初衷是相悖的。
- *
+ * <p>
  * _ooOoo_
  * o8888888o
  * 88" . "88
@@ -50,11 +49,11 @@ public class QueueBuilder {
 
     }
 
+
     /**
-     *
      * FIXME 如何做到让使用方可以在外部自定义自己的队列而不用修改源码？
      * 如果时普通的类可以通过接口，但现在是个枚举，不能让使用方还写那么多重复的已定义的属性和构造方法
-     *
+     * <p>
      * 队列的配置
      * 暂不支持复杂的队列配置
      * <p>
@@ -73,23 +72,28 @@ public class QueueBuilder {
         /**
          * 正常队列， 发送和消费都针对这个队列操作即可
          */
-        TEST_NORMAL_QUEUE(BindingConst.QueueName.TEST_NORMAL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.TEST_NORMAL_KEY),
+        TEST_NORMAL_QUEUE(BindingConst.QueueName.TEST_NORMAL_QUEUE, BindingConst.ExchangeName.DIRECT,
+                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_NORMAL_KEY
+        ),
 
         // ------------------------------------------------------------------------------------------------------
 
         /**
          * 测试基本死信队列的接收队列，该队列是一个正常队列，上述死信队列出现死信数据后，消息将被转发到该队列,后续消息消费该队列
          */
-        TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
-                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY),
+        TEST_DEAD_LETTER_RECEIVE_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_RECEIVE_QUEUE,
+                BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
+                BindingConst.RouteKey.TEST_DEAD_LETTER_RECEIVE_KEY
+        ),
 
 
         /**
          * 测试基本死信队列
          */
-        TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                          BindingConst.RouteKey.TEST_DEAD_LETTER_KEY, ArgumentDefinition.deadLetterRedirectTo(TEST_DEAD_LETTER_RECEIVE_QUEUE)),
+        TEST_DEAD_LETTER_QUEUE(BindingConst.QueueName.TEST_DEAD_LETTER_QUEUE, BindingConst.ExchangeName.DIRECT,
+                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_DEAD_LETTER_KEY,
+                ArgumentDefinition.deadLetterRedirectTo(TEST_DEAD_LETTER_RECEIVE_QUEUE)
+        ),
 
 
         // ------------------------------------------------------------------------------------------------------
@@ -100,14 +104,17 @@ public class QueueBuilder {
          * 测试延时队列的接收队列，延时队列依赖与死信队列
          */
         TEST_TTL_RECEIVE_QUEUE(BindingConst.QueueName.TEST_TTL_RECEIVE_QUEUE, BindingConst.ExchangeName.DIRECT,
-                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY),
+                ExchangeType.DIRECT, BindingConst.RouteKey.TEST_TTL_RECEIVE_KEY
+        ),
 
 
         /**
          * 测试延时队列，其实是一个死信队列，然后设置ttl，不消费该队列，等待消息过期，然后转发到另外一个接收队列上，从而实现延时队列
          */
         TEST_TTL_QUEUE(BindingConst.QueueName.TEST_TTL_QUEUE, BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.TEST_TTL_KEY, ArgumentDefinition.deadLetterRedirectTo(TEST_TTL_RECEIVE_QUEUE, 10000)),
+                BindingConst.RouteKey.TEST_TTL_KEY,
+                ArgumentDefinition.deadLetterRedirectTo(TEST_TTL_RECEIVE_QUEUE, 10000)
+        ),
 
 
         // ------------------------------------------------------------------------------------------------------
@@ -117,14 +124,16 @@ public class QueueBuilder {
          * 用户登录日志
          */
         USER_LOGIN_HISTORY_QUEUE(BindingConst.QueueName.USER_LOGIN_HISTORY_QUEUE, BindingConst.ExchangeName.DIRECT,
-                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY),
+                ExchangeType.DIRECT, BindingConst.RouteKey.USER_LOGIN_HISTORY_KEY
+        ),
 
         /**
          * 设备指令运行状态监控数据持久化
          */
         DEVICE_CMD_RUNNING_STATE_PERSISTENCE_QUEUE(BindingConst.QueueName.DEVICE_CMD_RUNNING_STATE_PERSISTENCE,
                 BindingConst.ExchangeName.DIRECT, ExchangeType.DIRECT,
-                BindingConst.RouteKey.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY),
+                BindingConst.RouteKey.DEVICE_CMD_RUNNING_STATE_PERSISTENCE_KEY
+        ),
 
         ;
 
@@ -184,7 +193,7 @@ public class QueueBuilder {
          * @param queueArgument
          */
         QueueDefinition(String queueName, String exchangeName, ExchangeType exchangeType, String routeKey,
-                        Map<String, Object> queueArgument) {
+                Map<String, Object> queueArgument) {
             this.queueName = queueName;
             this.exchangeName = exchangeName;
             this.exchangeType = exchangeType;
@@ -205,7 +214,7 @@ public class QueueBuilder {
          * @param exchangeArguments
          */
         QueueDefinition(String queueName, String exchangeName, ExchangeType exchangeType, String routeKey,
-                        Map<String, Object> queueArguments, Map<String, Object> exchangeArguments) {
+                Map<String, Object> queueArguments, Map<String, Object> exchangeArguments) {
             this.queueName = queueName;
             this.exchangeName = exchangeName;
             this.exchangeType = exchangeType;
@@ -227,8 +236,8 @@ public class QueueBuilder {
          * @param bindingArguments
          */
         QueueDefinition(String queueName, String exchangeName, ExchangeType exchangeType, String routeKey,
-                        Map<String, Object> queueArguments, Map<String, Object> exchangeArguments,
-                        Map<String, Object> bindingArguments) {
+                Map<String, Object> queueArguments, Map<String, Object> exchangeArguments,
+                Map<String, Object> bindingArguments) {
             this.queueName = queueName;
             this.exchangeName = exchangeName;
             this.exchangeType = exchangeType;

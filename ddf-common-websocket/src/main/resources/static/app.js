@@ -16,13 +16,13 @@ function connect() {
     // ws://localhost:8302/msg/pay-ws?deviceNumber=huawei-1aac7aa5-d1e9-43f6-a139-4e6fe1e6f15b&token=13542612549&loginType=ANDROID
     ws = new WebSocket(url);
 
-    ws.onmessage = function(evt) {
+    ws.onmessage = function (evt) {
         showGreeting(evt.data);
     };
 
-    ws.onopen = function(evt) {
+    ws.onopen = function (evt) {
         setConnected(true);
-        setInterval(function() {
+        setInterval(function () {
             ws.send("PING")
         }, 30000);
     }

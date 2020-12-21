@@ -1,12 +1,11 @@
 package com.ddf.boot.common.websocket.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
-
-import java.io.Serializable;
 
 /**
  * 包装WebsocketSession
@@ -19,9 +18,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class WebSocketSessionWrapper implements Serializable {
 
-    /** 连接状态离线 */
+    /**
+     * 连接状态离线
+     */
     public static final Integer STATUS_OFF_LINE = 0;
-    /** 连接状态在线 */
+    /**
+     * 连接状态在线
+     */
     public static final Integer STATUS_ON_LINE = 1;
 
     /**

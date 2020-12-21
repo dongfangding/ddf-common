@@ -39,15 +39,17 @@ public enum GlobalAntMatcher {
 
     /**
      * 将实例返回
+     *
      * @return
      */
     public AntPathMatcher getAntPathMatcher() {
-        return  antPathMatcher;
+        return antPathMatcher;
     }
 
 
     /**
      * 转接方法
+     *
      * @param pattern
      * @param path
      * @return

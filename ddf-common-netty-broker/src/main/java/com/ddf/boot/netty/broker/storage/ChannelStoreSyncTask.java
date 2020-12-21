@@ -3,8 +3,12 @@ package com.ddf.boot.netty.broker.storage;
 import com.ddf.boot.netty.broker.handler.ServerInboundHandler;
 import com.ddf.boot.netty.broker.message.RequestContent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -37,7 +41,8 @@ public class ChannelStoreSyncTask implements Runnable {
     @Override
     public synchronized void run() {
         // 防止处理的时候数据又有变化，每个任务只处理当前已有处理
-        ConcurrentHashMap<String, ChannelInfo> channelStore = new ConcurrentHashMap<>(ServerInboundHandler.channelStore);
+        ConcurrentHashMap<String, ChannelInfo> channelStore = new ConcurrentHashMap<>(
+                ServerInboundHandler.channelStore);
         if (channelStore != null && !channelStore.isEmpty()) {
             for (Map.Entry<String, ChannelInfo> entry : channelStore.entrySet()) {
                 executorService.execute(() -> {
@@ -48,7 +53,8 @@ public class ChannelStoreSyncTask implements Runnable {
                         String fileName;
                         if (queue.peek() != null) {
                             fileName = k.replace(":", "_") + "_接收内容.txt";
-                            RandomAccessFile file = new RandomAccessFile(System.getProperty("user.dir") + "/src/main/resources/" + fileName, "rw");
+                            RandomAccessFile file = new RandomAccessFile(
+                                    System.getProperty("user.dir") + "/src/main/resources/" + fileName, "rw");
                             ObjectMapper objectMapper = new ObjectMapper();
                             while (queue.peek() != null) {
                                 RequestContent content = queue.poll();
@@ -64,7 +70,8 @@ public class ChannelStoreSyncTask implements Runnable {
                         }
                         fileName = k.replace(":", "_") + "_连接状态.txt";
                         File file2 = new File(System.getProperty("user.dir") + "/src/main/resources/" + fileName);
-                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file2), Charset.forName("utf-8")));
+                        BufferedWriter bw = new BufferedWriter(
+                                new OutputStreamWriter(new FileOutputStream(file2), Charset.forName("utf-8")));
                         if (!file2.exists()) {
                             try {
                                 file2.createNewFile();

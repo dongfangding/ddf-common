@@ -61,9 +61,7 @@ public class ResourceUrlUtils {
      */
     public static String base64(String url) {
         try {
-            HttpResponse response = HttpRequest.get(url)
-                    .timeout(HttpGlobalConfig.getTimeout())
-                    .execute();
+            HttpResponse response = HttpRequest.get(url).timeout(HttpGlobalConfig.getTimeout()).execute();
             byte[] bytes = response.bodyBytes();
             // data:image/jpeg;base64
             return Base64.getEncoder().encodeToString(bytes);
