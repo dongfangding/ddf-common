@@ -2,8 +2,9 @@ package com.ddf.boot.common.redis.helper;
 
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
-import com.ddf.boot.common.redis.script.RedisRateLimitScript;
+import com.ddf.boot.common.redis.script.RedisLuaScript;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -43,12 +44,43 @@ public class RedisTemplateHelper {
      * @param request
      */
     public boolean rateLimitAcquire(RateLimitRequest request) {
-        return Objects.equals(Boolean.TRUE,
-                stringRedisTemplate.execute(new RedisRateLimitScript(), Collections.singletonList(request.getKey()),
+        return Integer.parseInt(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.RATE_LIMIT, Collections.singletonList(request.getKey()),
                         Integer.toString(request.getMax()), Integer.toString(request.getRate()),
                         Long.toString(System.currentTimeMillis())
-                )
-        );
+                ))) > 0;
+    }
+
+    /**
+     * 对String类型的key进行递增递减并设置过期值的原子脚本, 初始值为0， 每次递增+1
+     *
+     * @param key           key
+     * @param expireSeconds 过期秒值
+     * @return 缓存key对应的最新值
+     */
+    public Long incrementKeyExpire(String key, long expireSeconds) {
+        return Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE, Collections.singletonList(key),
+                        "1", String.valueOf(expireSeconds)
+                )));
+    }
+
+
+    /**
+     * 对String类型的key进行递增递减并设置过期指定指定时间的原子脚本
+     * 时间小于当前时间，会导致tt为-1, 这里不进行校验
+     *
+     * @param key      key
+     * @param expireAt 指定过期的具体时间
+     * @return 缓存key对应的最新值
+     */
+    public Long incrementKeyExpireAt(String key, Date expireAt) {
+        return Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE_AT,
+                        Collections.singletonList(key), "1",
+                        // 这个单位是秒
+                        String.valueOf(expireAt.getTime() / 1000)
+                )));
     }
 
 
