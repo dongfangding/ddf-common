@@ -120,6 +120,28 @@ public class MonitorRegistryConfig implements InitializingBean {
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
 
+    public static void main(String[] args) {
+        double singlePrice = 0.8d;
+        int firstNum = 2;
+        int upLimit = 100;
+        int totalPayNum = 0;
+        int totalPayDay = 0;
+        int tryPayNum = 0;
+        while (totalPayNum < upLimit) {
+            if (totalPayNum == 0) {
+                tryPayNum = 1;
+            } else {
+                tryPayNum = totalPayNum * 2;
+            }
+            if (tryPayNum > upLimit) {
+                break;
+            }
+            totalPayNum = tryPayNum;
+            totalPayDay ++;
+        }
+        System.out.printf("共买类%d天%d个苹果， 平均每天话费%s", totalPayDay, totalPayNum, (totalPayNum) * 0.8 / totalPayDay);
+    }
+
 
     /**
      * 监听节点事件

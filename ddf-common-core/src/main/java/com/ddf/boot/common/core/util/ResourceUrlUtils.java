@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * <p>资源链接工具类</p >
  *
- * @author Mitchell
+ * @author network
  * @version 1.0
  * @date 2020/10/24 12:08
  */
