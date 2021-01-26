@@ -1,4 +1,4 @@
-package com.ddf.boot.common.generator.generate;
+package com.ddf.boot.common.generator;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,12 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir") + "/ddf-common-mybatis-generator";
         gc.setOutputDir(projectPath + "/src/main/java");
-        gc.setAuthor("dongfang.ding");
+        gc.setAuthor("mybatis-plus-generator");
+        gc.setFileOverride(true);
+        gc.setActiveRecord(false);
+        gc.setBaseResultMap(true);
+        gc.setBaseColumnList(true);
+        gc.setEnableCache(false);
         gc.setOpen(false);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
@@ -71,13 +75,14 @@ public class CodeGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName(scanner("模块名"));
-        pc.setEntity("com.ddf.boot.entity");
+//        pc.setModuleName(scanner("模块名"));
+        pc.setParent("com.ddf.boot");
+/*        pc.setEntity("com.ddf.boot.entity");
         pc.setService("com.ddf.boot.service");
         pc.setServiceImpl("com.ddf.boot.service.impl");
         pc.setController("com.ddf.boot.controller");
-        pc.setMapper("com.ddf.boot.mapper");
-        pc.setXml("com.ddf.boot.mapper.impl");
+        pc.setMapper("com.ddf.boot.mapper");*/
+        pc.setXml(null);
         mpg.setPackageInfo(pc);
 
         // 自定义配置
@@ -102,31 +107,45 @@ public class CodeGenerator {
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
+
+/*        // 自定义vo
+        focList.add(new FileOutConfig("myTemplates/vo.java.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                return gc.getOutputDir() + "/com/code/generator/domain/vo/"
+                        + tableInfo.getEntityName()+"Vo" + StringPool.DOT_JAVA;
+            }
+        });*/
+        // 应用自定义文件输出
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
 
+
         // 配置模板
         TemplateConfig templateConfig = new TemplateConfig();
-
         templateConfig.setXml(null);
         mpg.setTemplate(templateConfig);
-
         mpg.setTemplateEngine(new VelocityTemplateEngine());
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
+        // 过滤表名前缀
+        strategy.setTablePrefix("");
+        // 驼峰命名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
+        // 设置父类，如果存在的话
         strategy.setSuperEntityClass("com.ddf.boot.common.core.model.BaseDomain");
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         // 写于父类中的公共字段
-        strategy.setSuperEntityColumns("id");
+        strategy.setSuperEntityColumns("id", "createBy", "createTime", "modifyBy", "modifyTime", "removed", "version");
+        // 其它带父类的
+//        strategy.setSuperServiceClass("");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);
-        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();
     }
 
