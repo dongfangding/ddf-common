@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.Version;
 import java.util.Date;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -38,6 +40,8 @@ import org.springframework.data.annotation.LastModifiedDate;
  * @author dongfang.ding
  */
 @Data
+@SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 public class BaseDomain {
 
     @TableId(type = IdType.INPUT)
@@ -67,7 +71,7 @@ public class BaseDomain {
      * 是否删除 0保留 1删除
      */
     //    @TableLogic
-    protected Integer removed = 0;
+    protected Integer isDel = 0;
 
     @Version
     @TableField(fill = FieldFill.INSERT)

@@ -26,6 +26,10 @@ import java.util.Scanner;
  */
 public class CodeGenerator {
 
+    public static void main(String[] args) {
+        generate();
+    }
+
 
     /**
      * <p>
@@ -46,8 +50,7 @@ public class CodeGenerator {
         throw new MybatisPlusException("请输入正确的" + tip + "！");
     }
 
-
-    public static void main(String[] args) {
+    public static void generate() {
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
 
@@ -76,9 +79,9 @@ public class CodeGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
 //        pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.ddf.boot");
-/*        pc.setEntity("com.ddf.boot.entity");
-        pc.setService("com.ddf.boot.service");
+        pc.setParent("com.ddf.boot.quick");
+        pc.setEntity("model.entity");
+/*        pc.setService("com.ddf.boot.service");
         pc.setServiceImpl("com.ddf.boot.service.impl");
         pc.setController("com.ddf.boot.controller");
         pc.setMapper("com.ddf.boot.mapper");*/
@@ -139,7 +142,7 @@ public class CodeGenerator {
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         // 写于父类中的公共字段
-        strategy.setSuperEntityColumns("id", "createBy", "createTime", "modifyBy", "modifyTime", "removed", "version");
+        strategy.setSuperEntityColumns("id", "create_by", "create_time", "modify_by", "modify_time", "is_del", "version");
         // 其它带父类的
 //        strategy.setSuperServiceClass("");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));

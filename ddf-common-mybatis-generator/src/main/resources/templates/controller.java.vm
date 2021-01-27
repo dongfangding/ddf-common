@@ -1,7 +1,9 @@
 package ${package.Controller};
 
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 #if(${restControllerStyle})
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,8 @@ import ${superControllerClassPackage};
 @Controller
 #end
 @RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+@RequiredArgsConstructor(onConstructor_={@Autowired})
+@Slf4j
 #if(${kotlin})
 class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
 
