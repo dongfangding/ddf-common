@@ -2,10 +2,12 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
 /**
@@ -20,6 +22,8 @@ public class DateUtils {
 
 
     public static final String MM_DD = "MM/dd";
+
+    public static final String TIME_SPLIT = ":";
 
     /**
      * 获取本月第一天
@@ -99,6 +103,59 @@ public class DateUtils {
         return (int) DateTime.now()
                 .between(dateTime)
                 .betweenYear(false);
+    }
+
+    /**
+     * 获取指定日期对应时:分的毫秒值
+     *
+     * @param date
+     * @return
+     */
+    public static long getMillionsOfHourMinute(Date date) {
+        final Calendar instance = Calendar.getInstance();
+        instance.setTime(new Date());
+        return instance.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000 + instance.get(Calendar.MINUTE) * 60 * 1000;
+    }
+
+
+    /**
+     * 获取时分对应的毫秒值， 字符格式固定为时:分
+     *
+     * @param hourMinuteStr
+     * @return
+     * @see DateUtils#TIME_SPLIT
+     */
+    public static long getMillionsOfHourMinuteStr(String hourMinuteStr) {
+        final int[] hourMinute = checkHourMinute(hourMinuteStr);
+        int hour = hourMinute[0];
+        int minute = hourMinute[1];
+        return hour * 60 * 60 * 1000 + minute * 60 * 1000;
+    }
+
+
+    /**
+     * 校验时分格式
+     *
+     * @param hourMinuteStr 时分时间字符串
+     * @return [0] 时  [1] 分
+     */
+    public static int[] checkHourMinute(String hourMinuteStr) {
+        if (StringUtils.isBlank(hourMinuteStr) || !hourMinuteStr.contains(TIME_SPLIT)) {
+            throw new IllegalArgumentException(String.format("[%s]没有格式有误，没有包含%s", hourMinuteStr, TIME_SPLIT));
+        }
+        final String[] split = hourMinuteStr.split(TIME_SPLIT);
+        if (split.length != 2 || !NumberUtil.isNumber(split[0].trim()) || !NumberUtil.isNumber(split[1].trim())) {
+            throw new IllegalArgumentException(hourMinuteStr);
+        }
+        final int hour = Integer.parseInt(split[0].trim());
+        final int minute = Integer.parseInt(split[1].trim());
+        if (hour < 0 || hour > 23) {
+            throw new IllegalArgumentException(String.format("【%s】小时只能位于0到23之间", hour));
+        }
+        if (minute < 0 || minute > 59) {
+            throw new IllegalArgumentException(String.format("【%s】分钟只能位于0到59之间", minute));
+        }
+        return new int[] {hour, minute};
     }
 
 }
