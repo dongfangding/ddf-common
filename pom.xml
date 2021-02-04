@@ -17,7 +17,7 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.0.6</hutool.version>
+        <hutool.version>5.2.4</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.3</dubbo.version>
         <lombok.version>1.18.10</lombok.version>
@@ -27,6 +27,7 @@
         <http-client.version>4.5.10</http-client.version>
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.17</druid.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -38,32 +39,12 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-mail</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-devtools</artifactId>
-                <version>${spring-boot.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -81,21 +62,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-jdbc</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-
-            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
@@ -106,32 +72,6 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
-            </dependency>
-
-            <!-- 引入对缓存的支持 -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-cache</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <!-- 引入Redis的支持 -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-security</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${spring-boot.version}</version>
             </dependency>
 
             <dependency>
@@ -278,6 +218,16 @@
                 <version>${http-core.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-jdk8</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
