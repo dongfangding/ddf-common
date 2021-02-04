@@ -41,8 +41,8 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
  *          key = "T(com.company.sian.club.constants.SpringCacheManager).
  *              genClubInfoDb(#clubInfo.clubId)")
  * })
- * public Object getByProperties(String property1, String property2) {
- *      return xxxDao.getByProperties(property1, property2);
+ * public Object updateObject(String property1, String property2) {
+ *      return xxxDao.update(property1, property2);
  * }
  * </pre>
  *
