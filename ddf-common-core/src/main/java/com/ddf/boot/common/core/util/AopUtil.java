@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -50,11 +49,11 @@ public class AopUtil {
      * @author dongfang.ding
      * @date 2019/12/20 0020 10:29
      **/
-    public static <T extends Annotation> T getAnnotation(ProceedingJoinPoint joinPoint, Class<T> targetAnnotation)
+    public static <T extends Annotation> T getAnnotation(JoinPoint joinPoint, Class<T> targetAnnotation)
             throws NoSuchMethodException {
-        Class clazz = joinPoint.getSignature().getDeclaringType();
+        Class<?> clazz = joinPoint.getSignature().getDeclaringType();
         String methodName = joinPoint.getSignature().getName();
-        Class[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
+        Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
         Method method = clazz.getMethod(methodName, parameterTypes);
         T annotation = method.getAnnotation(targetAnnotation);
         if (annotation == null) {
@@ -93,7 +92,7 @@ public class AopUtil {
      * @author dongfang.ding
      * @date 2019/12/20 0020 11:28
      **/
-    public static Map<Class<?>, Object> getArgs(ProceedingJoinPoint joinPoint) {
+    public static Map<Class<?>, Object> getArgs(JoinPoint joinPoint) {
         if (joinPoint == null) {
             return Collections.emptyMap();
         }

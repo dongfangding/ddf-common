@@ -24,7 +24,11 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
     FILL_PARAM_DEMO("101", "我是一个{0}， 粉刷本领{1}"),
 
 
-    RATE_LIMIT("999", "接口已限流");
+    RATE_LIMIT("999", "接口已限流"),
+
+    REPEAT_SUBMIT("998", "操作频繁")
+
+    ;
 
     /**
      * 异常code码

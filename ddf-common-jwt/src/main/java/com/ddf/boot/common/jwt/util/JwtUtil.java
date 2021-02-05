@@ -172,6 +172,27 @@ public class JwtUtil {
         return JsonUtil.toBean(body.getSubject(), UserClaim.class);
     }
 
+    /**
+     * 获取用户uid
+     *
+     * @return
+     */
+    public static String getUserId() throws UserClaimMissionException {
+        return getByContext().getUserId();
+    }
+
+    /**
+     * 尝试获取用户uid
+     *
+     * @return
+     */
+    public static String tryGetUserId() {
+        try {
+            return getByContext().getUserId();
+        } catch (UserClaimMissionException e) {
+            return UserClaim.defaultUser().getUserId();
+        }
+    }
 
     /**
      * 获取当前用户信息，如果没有获取到用户信息会抛出异常
@@ -195,7 +216,10 @@ public class JwtUtil {
             headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
         }
         if (headerUser == null) {
-            throw new UserClaimMissionException("无法获取当前用户信息！");
+            if (necessary) {
+                throw new UserClaimMissionException("无法获取当前用户信息！");
+            }
+            return UserClaim.defaultUser();
         }
         return JsonUtil.toBean(Convert.toStr(headerUser), UserClaim.class);
     }
