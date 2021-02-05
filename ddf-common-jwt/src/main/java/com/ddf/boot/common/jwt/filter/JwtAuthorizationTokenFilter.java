@@ -1,30 +1,32 @@
 package com.ddf.boot.common.jwt.filter;
 
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
+import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
-import com.ddf.boot.common.jwt.model.UserClaim;
 import com.ddf.boot.common.jwt.util.JwtUtil;
 import com.google.common.base.Preconditions;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.KeyException;
-import java.io.IOException;
 import java.util.Objects;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.rpc.RpcContext;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.lang.Nullable;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * 拦截请求处理用户信息
@@ -54,9 +56,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @date 2019-12-07 16:45
  */
 @Slf4j
-public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
+public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
 
     public static final String BEAN_NAME = "jwtAuthorizationTokenFilter";
+
+    /**
+     * 用户uid
+     */
+    private static final String USER_ID = "userId";
 
     /**
      * 认证请求头字段
@@ -77,19 +84,86 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     private JwtProperties jwtProperties;
 
 
+    /**
+     * 前置校验
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
         String host = WebUtil.getHost();
         request.setAttribute(JwtConstant.CLIENT_IP, host);
+
+        // 填充认证接口前置属性
         userClaimService.storeRequest(request, host);
         RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
-            chain.doFilter(request, response);
-            return;
+            return true;
         }
+
+        // 校验并转换jws
+        AuthInfo authInfo = checkAndGetJws(request, host);
+        final UserClaim userClaim = authInfo.getUserClaim();
+        final Jws<Claims> claimsJws = authInfo.getClaimsJws();
+        String token = authInfo.getRealToken();
+        final UserClaim storeUserClaim = authInfo.getStoreUserClaim();
+
+        // 预留认证通过后置接口
+        userClaimService.afterVerifySuccess(userClaim);
+
+        // 如果token即将失效，服务端主动用原来token中的信息重新生成token返回给客户端
+        long oldExpiredMinute = claimsJws.getBody().getExpiration().getTime();
+        long now = System.currentTimeMillis();
+        // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
+        // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
+        if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
+            synchronized (token.intern()) {
+                token = JwtUtil.defaultJws(userClaim);
+                response.setHeader(AUTH_HEADER, token);
+            }
+        }
+        String userInfo = JsonUtil.asString(storeUserClaim);
+        // 塞入最新用户数据
+        UserContextUtil.setUserClaim(storeUserClaim);
+        MDC.put(USER_ID, storeUserClaim.getUserId());
+        request.setAttribute(JwtConstant.HEADER_USER, userInfo);
+        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
+
+        return true;
+    }
+
+
+    /**
+     * 执行器结束
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @param ex
+     * @throws Exception
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable
+            Exception ex) throws Exception {
+        // 移除用户信息
+        UserContextUtil.removeUserClaim();
+        MDC.remove(USER_ID);
+    }
+
+    /**
+     * 校验并转换jws
+     *
+     * @param request
+     * @param host
+     * @return
+     */
+    private AuthInfo checkAndGetJws(HttpServletRequest request, String host) {
         final String tokenHeader = request.getHeader(AUTH_HEADER);
         if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
             throw new AccessDeniedException("token格式不合法！");
@@ -133,24 +207,37 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
             throw new AccessDeniedException("token已刷新，请重新登录！");
         }
+        return new AuthInfo().setRealToken(token)
+                .setClaimsJws(claimsJws)
+                .setUserClaim(userClaim)
+                .setStoreUserClaim(storeUser);
+    }
 
-        userClaimService.afterVerifySuccess(userClaim);
 
-        // 如果token即将失效，服务端主动用原来token中的信息重新生成token返回给客户端
-        long oldExpiredMinute = claimsJws.getBody().getExpiration().getTime();
-        long now = System.currentTimeMillis();
-        // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
-        // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
-        if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
-            synchronized (token.intern()) {
-                token = JwtUtil.defaultJws(userClaim);
-                response.setHeader(AUTH_HEADER, token);
-            }
-        }
-        String userInfo = JsonUtil.asString(storeUser);
-        request.setAttribute(JwtConstant.HEADER_USER, userInfo);
-        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
+    @Data
+    @Accessors(chain = true)
+    public static class AuthInfo {
 
-        chain.doFilter(request, response);
+        /**
+         * 真实jwt token内容
+         */
+        private String realToken;
+
+        /**
+         * token解析后的Jws对象
+         */
+        private Jws<Claims> claimsJws;
+
+        /**
+         * 解析后自定义对象
+         */
+        private UserClaim userClaim;
+
+        /**
+         * 根据解析对象接口实现返回最新的UserClaim对象信息
+         */
+        private UserClaim storeUserClaim;
+
+
     }
 }

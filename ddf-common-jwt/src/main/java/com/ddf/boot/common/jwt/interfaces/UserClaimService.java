@@ -1,6 +1,6 @@
 package com.ddf.boot.common.jwt.interfaces;
 
-import com.ddf.boot.common.jwt.model.UserClaim;
+import com.ddf.boot.common.core.model.UserClaim;
 import javax.servlet.http.HttpServletRequest;
 
 /**

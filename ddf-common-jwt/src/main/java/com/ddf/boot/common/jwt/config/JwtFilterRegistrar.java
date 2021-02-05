@@ -45,14 +45,15 @@ public class JwtFilterRegistrar implements ImportBeanDefinitionRegistrar {
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         boolean exist = importingClassMetadata.hasAnnotation(EnableJwt.class.getName());
 
-        if (exist) {
-            if (!registry.containsBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME)) {
-                BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder.
-                        genericBeanDefinition(JwtAuthorizationTokenFilter.class);
-                registry.registerBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME,
-                        requestContextDefinition.getBeanDefinition()
-                );
-            }
+        if (!exist) {
+            return;
+        }
+        if (!registry.containsBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME)) {
+            BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder.
+                    genericBeanDefinition(JwtAuthorizationTokenFilter.class);
+            registry.registerBeanDefinition(JwtAuthorizationTokenFilter.BEAN_NAME,
+                    requestContextDefinition.getBeanDefinition()
+            );
         }
     }
 }
