@@ -7,6 +7,8 @@ import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import java.util.Map;
+
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -33,8 +35,8 @@ public class RepeatAspect {
     /**
      * 表单防重校验接口实现
      */
-    private final Map<String, RepeatableValidator> handlerMapping =
-            SpringUtil.getApplicationContext().getBeansOfType(RepeatableValidator.class);
+    private final Map<String, RepeatableValidator> handlerMapping = SpringContextHolder.
+            getBeansOfType(RepeatableValidator.class);
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.core.repeatable.Repeatable) || @within(com.ddf.boot.common.core.repeatable.Repeatable)")
     public void pointCut() {
