@@ -26,7 +26,9 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
 
     RATE_LIMIT("999", "接口已限流"),
 
-    REPEAT_SUBMIT("998", "操作频繁")
+    REPEAT_SUBMIT("998", "操作频繁"),
+
+    ENUM_CODE_NOT_MAPPING("997", "枚举代码未映射")
 
     ;
 
