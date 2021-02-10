@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import java.util.Date;
 import lombok.Data;
@@ -68,9 +69,9 @@ public class BaseDomain {
      * 由于以上问题的存在，禁止使用框架生成的逻辑删除功能
      */
     /**
-     * 是否删除 0保留 1删除
+     * 是否删除 0保留 删除时，将当前记录的id赋值给这个字段代表删除，然后数据库的唯一索引约束要带上这个字段， 为了解决简单的0和1带来的唯一索引问题
      */
-    //    @TableLogic
+    @TableLogic
     protected Integer isDel = 0;
 
     @Version

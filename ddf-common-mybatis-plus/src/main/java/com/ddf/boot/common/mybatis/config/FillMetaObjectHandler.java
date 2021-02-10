@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
  * @date 2019/5/22 17:15
  */
 @Slf4j
-@Component
 public class FillMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {

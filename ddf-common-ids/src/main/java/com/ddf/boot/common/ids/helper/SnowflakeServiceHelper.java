@@ -43,4 +43,14 @@ public class SnowflakeServiceHelper {
     }
 
 
+    /**
+     * 获取字符串格式的雪花id
+     *
+     * @return
+     */
+    public String getStringId() {
+        return String.valueOf(getLongId());
+    }
+
+
 }

@@ -12,6 +12,21 @@
     <artifactId>ddf-common-mybatis-plus</artifactId>
 
     <dependencies>
+
+        <!-- 处理LocalDateTime的查询和实体映射 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-typehandlers-jsr310</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!-- 处理LocalDateTime的序列化和反序列化 @JsonFormat -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
