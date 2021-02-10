@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -92,7 +91,6 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/5/22 17:14
  */
 @Configuration
-@ComponentScan(basePackages = "com.ddf.boot.common.mybatis")
 public class MyBatisConfig {
 
     /**
@@ -123,6 +121,17 @@ public class MyBatisConfig {
     @Bean
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
+    }
+
+
+    /**
+     * 通用字段填充
+     *
+     * @return
+     */
+    @Bean
+    public FillMetaObjectHandler fillMetaObjectHandler() {
+        return new FillMetaObjectHandler();
     }
 
 }
