@@ -1,6 +1,6 @@
 package com.ddf.boot.common.redis.constant;
 
-import cn.hutool.extra.spring.SpringUtil;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.google.common.base.Joiner;
 import reactor.util.annotation.NonNull;
 
@@ -20,7 +20,7 @@ public class ApplicationNamedKeyGenerator {
 
     private static final String GLOBAL_NAME = "global";
 
-    private static String applicationName = SpringUtil.getApplicationContext().getEnvironment().getProperty("spring.application.name");
+    private static final String applicationName = SpringContextHolder.getApplicationContext().getEnvironment().getProperty("spring.application.name");
 
     /**
      * 拼凑key
