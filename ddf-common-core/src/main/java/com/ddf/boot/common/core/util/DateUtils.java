@@ -3,6 +3,9 @@ package com.ddf.boot.common.core.util;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -156,6 +159,28 @@ public class DateUtils {
             throw new IllegalArgumentException(String.format("【%s】分钟只能位于0到59之间", minute));
         }
         return new int[] {hour, minute};
+    }
+
+    /**
+     * 使用系统默认时区LocalDateTime转Instant
+     *
+     * @param localDateTime
+     * @return
+     */
+    public static Instant toDefaultInstant(LocalDateTime localDateTime) {
+        return Objects.isNull(localDateTime) ? null : localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+    }
+
+
+    /**
+     * 使用系统默认时区LocalDateTime转时间戳
+     *
+     * @param localDateTime
+     * @return
+     */
+    public static long toDefaultMills(LocalDateTime localDateTime) {
+        final Instant instant = toDefaultInstant(localDateTime);
+        return Objects.isNull(instant) ? 0 : instant.toEpochMilli();
     }
 
 }
