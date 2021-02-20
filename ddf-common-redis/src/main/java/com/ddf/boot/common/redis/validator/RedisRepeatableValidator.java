@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.ddf.boot.common.core.repeatable.Repeatable;
+import com.ddf.boot.common.core.repeatable.RepeatableProperties;
 import com.ddf.boot.common.core.repeatable.RepeatableValidator;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
@@ -54,18 +55,18 @@ public class RedisRepeatableValidator implements RepeatableValidator {
      *
      * @param joinPoint  织入点
      * @param repeatable 注解
-     * @param currentUid 用户uid
+     * @param currentUid 当前用户uid
+     * @param repeatableProperties 配置属性
      * @return 是否通过校验
      */
     @Override
-    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid) {
+    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties) {
         // 获取当前拦截类
         final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
         // 获取当前拦截方法
         MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
         // 获取定义的间隔时间
-        final long interval = repeatable.interval();
-
+        final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
         String paramValue = JsonUtil.asString(AopUtil.getParamMap(joinPoint));
         // 使用用户uid做盐值
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, currentUid.getBytes(StandardCharsets.UTF_8));

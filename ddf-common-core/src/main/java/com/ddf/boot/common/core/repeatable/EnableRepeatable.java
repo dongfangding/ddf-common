@@ -26,6 +26,13 @@ import org.springframework.context.annotation.Import;
 public @interface EnableRepeatable {
 
     /**
+     * 视作同一次请求的间隔时间，单位毫秒
+     *
+     * @return
+     */
+    long interval() default 1000;
+
+    /**
      * 全局默认校验器， 这个是默认值， 可以在{@link Repeatable#validator()} 覆盖
      *
      * 可实现接口{@link RepeatableValidator} 完成自定义校验器实现

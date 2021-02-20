@@ -17,10 +17,11 @@ public interface RepeatableValidator {
      * @param joinPoint  织入点
      * @param repeatable 注解
      * @param currentUid 用户uid
+     * @param repeatableProperties 配置属性
      *
      * @return 是否通过校验
      *
      */
-    boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid);
+    boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties);
 
 }
