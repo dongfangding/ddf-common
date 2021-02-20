@@ -2,12 +2,11 @@ package com.ddf.boot.common.mybatis.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ddf.boot.common.core.model.BaseDomain;
-import com.ddf.boot.common.jwt.util.JwtUtil;
+import com.ddf.boot.common.core.util.UserContextUtil;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.stereotype.Component;
 
 /**
  * 针对通用字段自动填充功能的实现
@@ -45,9 +44,9 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
         if (metaObject.getOriginalObject() instanceof BaseDomain) {
             log.info("start insert fill ....");
             // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-            setFieldValByName("createBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
+            setFieldValByName("createBy", UserContextUtil.getUserId(), metaObject);
             setFieldValByName("createTime", new Date(), metaObject);
-            setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
+            setFieldValByName("modifyBy", UserContextUtil.getUserId(), metaObject);
             setFieldValByName("modifyTime", new Date(), metaObject);
             // 启用乐观锁以后，version并不会自动赋默认值，导致新增的时候对象中没值，如果使用新对象直接获取version来更新，乐观锁会失效，
             // 采用这种方式如果没有值的话，在新增的时候给个默认值
@@ -68,7 +67,7 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
             if (metaObject.getOriginalObject() instanceof BaseDomain || isMapperMethod) {
                 log.info("start update fill ....");
                 // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-                setFieldValByName("modifyBy", JwtUtil.getByContextNotNecessary().getUserId(), metaObject);
+                setFieldValByName("modifyBy", UserContextUtil.getUserId(), metaObject);
                 setFieldValByName("modifyTime", new Date(), metaObject);
             }
         } catch (Exception ignored) {
