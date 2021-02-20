@@ -13,6 +13,11 @@ import lombok.Data;
 public class RepeatableProperties {
 
     /**
+     * 全局默认视作一个请求的间隔时间
+     */
+    private long interval;
+
+    /**
      * 全局验证器
      */
     private String globalValidator;

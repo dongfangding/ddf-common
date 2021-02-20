@@ -37,12 +37,14 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      *
      * @param joinPoint  织入点
      * @param repeatable 注解
+     * @param currentUid 当前用户id
+     * @param repeatableProperties 配置属性
      * @return 是否通过校验
      */
     @Override
-    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid) {
+    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties) {
         // 获取定义的间隔时间
-        final long interval = repeatable.interval();
+        final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
         final long currentTimeMillis = System.currentTimeMillis();
 
         // 获取缓存key

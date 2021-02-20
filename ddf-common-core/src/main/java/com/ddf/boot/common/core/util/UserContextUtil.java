@@ -11,7 +11,7 @@ import com.ddf.boot.common.core.model.UserClaim;
  */
 public class UserContextUtil {
 
-    private static final ThreadLocal<UserClaim> USER_CONTEXT = ThreadLocal.withInitial(UserClaim::defaultUser);
+    private static final ThreadLocal<UserClaim> USER_CONTEXT = ThreadLocal.withInitial(UserClaim::new);
 
     /**
      * 获取当前用户信息
@@ -46,5 +46,4 @@ public class UserContextUtil {
     public static String getUserId() {
         return getUserClaim().getUserId();
     }
-
 }

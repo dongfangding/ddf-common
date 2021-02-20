@@ -19,11 +19,11 @@ import java.lang.annotation.Target;
 public @interface Repeatable {
 
     /**
-     * 同一次请求的间隔时间，单位毫秒
+     * 同一次请求的间隔时间，单位毫秒， 默认使用{@link EnableRepeatable#interval()}里指定的， 如果这里指定了，则使用这里的
      *
      * @return
      */
-    long interval() default 100;
+    long interval() default 0;
 
     /**
      * 验证方式， 默认使用{@link EnableRepeatable#globalValidator()}里指定的， 如果这里指定了，则使用这里的
