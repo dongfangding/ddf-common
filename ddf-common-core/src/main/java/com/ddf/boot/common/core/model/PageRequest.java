@@ -1,6 +1,8 @@
 package com.ddf.boot.common.core.model;
 
 import cn.hutool.core.util.PageUtil;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>分页请求通用接口
@@ -17,6 +19,25 @@ public interface PageRequest {
     int DEFAULT_PAGE_NUM = 1;
 
     int DEFAULT_PAGE_SIZE = 10;
+
+
+    /**
+     * 不分页查询， 默认false
+     *
+     * @return 返回是否分页
+     */
+    default Boolean isUnPaged() {
+        return false;
+    }
+
+    /**
+     * 获取排序对象信息
+     *
+     * @return
+     */
+    default List<Order> getOrders() {
+        return Collections.emptyList();
+    }
 
     /**
      * 页码
@@ -53,5 +74,8 @@ public interface PageRequest {
     default Integer getEndIndex() {
         return getStartIndex() + getPageSize();
     }
+
+
+
 
 }

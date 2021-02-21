@@ -22,7 +22,7 @@ public final class JsonUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
-    private static final ObjectMapper objectMapper = newInstance();
+    private static final ObjectMapper OBJECT_MAPPER = newInstance();
 
     /**
      * 对象转Json
@@ -37,9 +37,9 @@ public final class JsonUtil {
             return (String) obj;
         }
         try {
-            return objectMapper.writeValueAsString(obj);
+            return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.error("对象转换Json失败", e.getMessage(), e);
+            logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
     }
@@ -52,7 +52,7 @@ public final class JsonUtil {
      */
     public static String asString(Object obj) {
         try {
-            return objectMapper.writeValueAsString(obj);
+            return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("对象序列化失败！");
         }
@@ -66,7 +66,7 @@ public final class JsonUtil {
      * @return
      */
     public static <T> T toBean(String json, Class<T> type) {
-        return toBean(json, objectMapper.getTypeFactory().constructType(type));
+        return toBean(json, OBJECT_MAPPER.getTypeFactory().constructType(type));
     }
 
     /**
@@ -78,7 +78,7 @@ public final class JsonUtil {
      * @return
      */
     public static <T> T toBean(String json, Class<?> paramType, Class<?>... types) {
-        return toBean(json, objectMapper.getTypeFactory().constructParametricType(paramType, types));
+        return toBean(json, OBJECT_MAPPER.getTypeFactory().constructParametricType(paramType, types));
     }
 
     /**
@@ -89,7 +89,7 @@ public final class JsonUtil {
      * @return
      */
     public static <T> T toBean(String json, TypeReference<T> type) {
-        return toBean(json, objectMapper.getTypeFactory().constructType(type));
+        return toBean(json, OBJECT_MAPPER.getTypeFactory().constructType(type));
     }
 
     /**
@@ -101,7 +101,7 @@ public final class JsonUtil {
      */
     public static <T> T toBean(String json, JavaType type) {
         try {
-            return objectMapper.readValue(json, type);
+            return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
             throw new RuntimeException("Json转换对象失败", e);
         }
@@ -115,7 +115,7 @@ public final class JsonUtil {
      */
     public static byte[] toByte(Object obj) {
         try {
-            return objectMapper.writeValueAsBytes(obj);
+            return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("对象转换字节失败", e);
         }
@@ -130,7 +130,7 @@ public final class JsonUtil {
      */
     public static <T> T toBean(byte[] bytes, Class<T> type) {
         try {
-            return objectMapper.readValue(bytes, type);
+            return OBJECT_MAPPER.readValue(bytes, type);
         } catch (IOException e) {
             throw new RuntimeException("字节转换对象失败", e);
         }
@@ -182,7 +182,7 @@ public final class JsonUtil {
      * @since 2019年07月25日
      */
     public static ObjectMapper getInstance() {
-        return objectMapper;
+        return OBJECT_MAPPER;
     }
 
     /**
