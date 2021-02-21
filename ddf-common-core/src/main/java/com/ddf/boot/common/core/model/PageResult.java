@@ -1,16 +1,12 @@
 package com.ddf.boot.common.core.model;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.convert.Convert;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 /**
  * <p>分页展示层</p >
@@ -60,78 +56,13 @@ public class PageResult<E> implements Serializable {
     }
 
     /**
-     * 空分页
-     *
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> empty() {
-        return new PageResult<>(BaseQuery.DEFAULT_PAGE_NUM, BaseQuery.DEFAULT_PAGE_SIZE);
-    }
-
-    /**
-     * 有数据的分页对象
-     *
-     * @param baseQuery
-     * @param total
-     * @param content
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> ofBaseQuery(BaseQuery baseQuery, long total, List<E> content) {
-        if (baseQuery.isUnPaged()) {
-            return new PageResult<>(baseQuery.getPage(), total, total, content);
-        }
-        return new PageResult<>(baseQuery.getPage(), baseQuery.getPageSize(), total, content);
-    }
-
-    /**
-     * 将mybatis-plus的分页对象转换为当前对象，主要是为了统一多个不同查询层的分页对象
-     *
-     * @param page
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> ofMybatis(Page<E> page) {
-        return new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal(), page.getRecords());
-    }
-
-    /**
-     * 将mybatis-plus的分页对象转换为自定义封装的分页对象，，主要是为了统一多个不同查询层的分页对象
-     * <p>
-     * 同时提供一个数据库查询结果对象和返回对象的一个转换， 将数据库查询对象转换为指定对象，要求属性相同
-     *
-     * @param page
-     * @param poClazz
-     * @param voClazz
-     * @param <T>
-     * @param <R>
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static <T, R> PageResult<R> ofMybatis(@NotNull Page<T> page, @NotNull Class<T> poClazz,
-            @Nullable Class<R> voClazz) {
-        final List<T> list = page.getRecords();
-        if (CollectionUtil.isEmpty(list)) {
-            return PageResult.empty();
-        }
-        // 如果是这张情况， 应该直接使用com.ddf.boot.common.core.entity.PageResult.ofMybatis(com.baomidou.mybatisplus.extension.plugins.pagination.Page<E>)
-        if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
-            List<R> rtnList = (List<R>) list;
-            return new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal(), rtnList);
-        } else {
-            return new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal(), Convert.toList(voClazz, list));
-        }
-    }
-
-    /**
      * 构造
      *
      * @param page     页码
      * @param pageSize 每页结果数
      */
     public PageResult(long page, long pageSize) {
-        this.page = Math.max(page, BaseQuery.DEFAULT_PAGE_NUM);
+        this.page = Math.max(page, PageRequest.DEFAULT_PAGE_NUM);
         this.pageSize = pageSize;
     }
 

@@ -1,8 +1,9 @@
 package com.ddf.boot.mongo.helper;
 
 import cn.hutool.core.convert.Convert;
-import com.ddf.boot.common.core.model.BaseQuery;
+import com.ddf.boot.common.core.model.PageRequest;
 import com.ddf.boot.common.core.model.PageResult;
+import com.ddf.boot.common.core.util.PageUtil;
 import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -32,32 +33,31 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换， 这个返回的是自己包装的分页对象，建议优先使用
      *
-     * @param baseQuery 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param voClazz   输出对象
-     * @param <Q>       原始查询对象
      * @param <T>       原始Mongo对象类型
      * @param <R>       要转换的输出的实体类型
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <Q extends BaseQuery, T, R> PageResult<R> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query,
+    public <T, R> PageResult<R> handlerPageResult(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         if (count <= 0) {
-            return PageResult.empty();
+            return PageUtil.empty();
         }
-        if (!baseQuery.isUnPaged()) {
-            Pageable pageable = baseQuery.toSpringData();
+        if (!pageRequest.isUnPaged()) {
+            Pageable pageable = PageUtil.toSpringData(pageRequest);
             query.with(pageable);
         }
         List<T> dbList = mongoTemplate.find(query, poClazz);
         if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
             List<R> rtnList = (List<R>) dbList;
-            return PageResult.ofBaseQuery(baseQuery, count, rtnList);
+            return PageUtil.ofPageRequest(pageRequest, count, rtnList);
         } else {
-            return PageResult.ofBaseQuery(baseQuery, count, Convert.toList(voClazz, dbList));
+            return PageUtil.ofPageRequest(pageRequest, count, Convert.toList(voClazz, dbList));
         }
     }
 
@@ -65,16 +65,15 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个， 这个返回的是自己包装的分页对象，建议优先使用
      *
-     * @param baseQuery 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
-     * @param <Q>       原始查询对象
      * @param <T>       原始Mongo对象类型
      * @return
      */
-    public <Q extends BaseQuery, T> PageResult<T> handlerPageResult(@NotNull Q baseQuery, @NotNull Query query,
+    public <T> PageResult<T> handlerPageResult(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz) {
-        return handlerPageResult(baseQuery, query, poClazz, null);
+        return handlerPageResult(pageRequest, query, poClazz, null);
     }
 
 
@@ -82,20 +81,19 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换, 这个返回的是spring-data自己的分页对象
      *
-     * @param baseQuery 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param voClazz   输出对象
-     * @param <Q>       原始查询对象
      * @param <T>       原始Mongo对象类型
      * @param <R>       要转换的输出的实体类型
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <Q extends BaseQuery, T, R> Page<R> handlerPage(@NotNull Q baseQuery, @NotNull Query query,
+    public <T, R> Page<R> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
-        Pageable pageable = baseQuery.toSpringData();
+        Pageable pageable = PageUtil.toSpringData(pageRequest);
         if (count <= 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
@@ -112,15 +110,14 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个, 这个返回的是spring-data自己的分页对象
      *
-     * @param baseQuery 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
-     * @param <Q>       原始查询对象
      * @param <T>       原始Mongo对象类型
      * @return
      */
-    public <Q extends BaseQuery, T> Page<T> handlerPage(@NotNull Q baseQuery, @NotNull Query query,
+    public <T> Page<T> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz) {
-        return handlerPage(baseQuery, query, poClazz, null);
+        return handlerPage(pageRequest, query, poClazz, null);
     }
 }
