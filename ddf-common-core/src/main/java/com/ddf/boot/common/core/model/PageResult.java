@@ -71,6 +71,19 @@ public class PageResult<E> implements Serializable {
      *
      * @param page     页码
      * @param pageSize 每页结果数
+     * @param total 总条数
+     */
+    public PageResult(long page, long pageSize, long total) {
+        this(page, pageSize);
+        this.total = total;
+        this.totalPage = totalPage(total, pageSize);
+    }
+
+    /**
+     * 构造
+     *
+     * @param page     页码
+     * @param pageSize 每页结果数
      * @param total    结果总数
      */
     public PageResult(long page, long pageSize, long total, List<E> content) {

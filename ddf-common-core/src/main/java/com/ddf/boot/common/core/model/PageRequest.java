@@ -20,7 +20,6 @@ public interface PageRequest {
 
     int DEFAULT_PAGE_SIZE = 10;
 
-
     /**
      * 不分页查询， 默认false
      *
