@@ -3,7 +3,7 @@ package com.ddf.boot.common.mybatis.config;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.ddf.boot.common.core.model.BaseDomain;
 import com.ddf.boot.common.core.util.UserContextUtil;
-import java.util.Date;
+import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.reflection.MetaObject;
@@ -44,15 +44,15 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
         if (metaObject.getOriginalObject() instanceof BaseDomain) {
             log.info("start insert fill ....");
             // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-            setFieldValByName("createBy", UserContextUtil.getUserId(), metaObject);
-            setFieldValByName("createTime", new Date(), metaObject);
-            setFieldValByName("modifyBy", UserContextUtil.getUserId(), metaObject);
-            setFieldValByName("modifyTime", new Date(), metaObject);
+            this.strictInsertFill(metaObject, "createBy", String.class, UserContextUtil.getUserId());
+            this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, LocalDateTime.now());
+            this.strictInsertFill(metaObject, "modifyBy", String.class, UserContextUtil.getUserId());
+            this.strictInsertFill(metaObject, "modifyTime", LocalDateTime.class, LocalDateTime.now());
             // 启用乐观锁以后，version并不会自动赋默认值，导致新增的时候对象中没值，如果使用新对象直接获取version来更新，乐观锁会失效，
             // 采用这种方式如果没有值的话，在新增的时候给个默认值
             Object version = metaObject.getValue("version");
             if (null == version) {
-                setFieldValByName("version", 1, metaObject);
+                this.strictInsertFill(metaObject, "version", Long.class, 1);
             }
         }
     }
@@ -61,16 +61,20 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
     public void updateFill(MetaObject metaObject) {
         try {
             String bindingParamKey = "param1";
-            MapperMethod.ParamMap mapperMethod = (MapperMethod.ParamMap) metaObject.getOriginalObject();
-            boolean isMapperMethod = mapperMethod.containsKey(bindingParamKey) && mapperMethod.get(
-                    bindingParamKey) instanceof BaseDomain;
-            if (metaObject.getOriginalObject() instanceof BaseDomain || isMapperMethod) {
+            boolean isFill = metaObject.getOriginalObject() instanceof BaseDomain;
+            if (!isFill) {
+                MapperMethod.ParamMap mapperMethod = (MapperMethod.ParamMap) metaObject.getOriginalObject();
+                isFill = mapperMethod.containsKey(bindingParamKey) && mapperMethod.get(
+                        bindingParamKey) instanceof BaseDomain;
+            }
+            if (isFill) {
                 log.info("start update fill ....");
                 // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
-                setFieldValByName("modifyBy", UserContextUtil.getUserId(), metaObject);
-                setFieldValByName("modifyTime", new Date(), metaObject);
+                this.strictUpdateFill(metaObject, "modifyBy", String.class, UserContextUtil.getUserId());
+                this.strictUpdateFill(metaObject, "modifyTime", LocalDateTime.class, LocalDateTime.now());
             }
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
+            log.error("自动填充功能异常", exception);
         }
     }
 }

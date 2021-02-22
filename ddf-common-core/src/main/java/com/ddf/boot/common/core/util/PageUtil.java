@@ -12,6 +12,7 @@ import com.ddf.boot.common.core.model.PageResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -145,5 +146,32 @@ public class PageUtil {
         // spring-data的分页从0开始
         return org.springframework.data.domain.PageRequest.of(
                 (int) pageRequest.getPageNum() - 1, (int) pageRequest.getPageSize());
+    }
+
+    /**
+     * 由一个db查询出来的分页对象转换为自定义响应对象
+     *  注意这个方法并没有像{@link PageUtil#ofMybatis(com.baomidou.mybatisplus.core.metadata.IPage, java.lang.Class, java.lang.Class)}
+     *  一样提供了内部转换，这是由于两者期望的实现方式不同， 提供转换的那个内部使用了根据放射提供的工具类， 而这个方法更期望将转换方法交给调用方自己决定，
+     *  如下面的例子演示的，则内部转换使用了mapstruct
+     *
+     * <pre>
+     * final PageResult<SysRole> result = sysRoleService.pageList(request);
+     * if (result.isEmpty()) {
+     *    return PageUtil.empty();
+     * }
+     * final PageResult<SysRoleDTO> responsePageResult = PageUtil.convertPageResult(
+     *          result, SysRoleConvertMapper.INSTANCE::convert);
+     * </pre>
+     *
+     * @param pageResult
+     * @param function
+     * @param <E>
+     * @param <R>
+     * @return
+     */
+    public static <E, R> PageResult<R> convertPageResult(PageResult<E> pageResult, Function<List<E>, List<R>> function) {
+        final PageResult<R> result = new PageResult<>(pageResult.getPage(), pageResult.getPageSize(), pageResult.getTotal());
+        result.setContent(function.apply(pageResult.getContent()));
+        return result;
     }
 }

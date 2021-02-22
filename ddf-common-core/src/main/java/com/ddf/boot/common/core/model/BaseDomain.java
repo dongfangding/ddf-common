@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
-import java.util.Date;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -45,7 +45,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 public class BaseDomain {
 
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.AUTO)
     @Id
     protected Long id;
 
@@ -54,14 +54,14 @@ public class BaseDomain {
 
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     @CreatedDate
-    protected Date createTime;
+    protected LocalDateTime createTime;
 
     @TableField(value = "modify_by", fill = FieldFill.INSERT_UPDATE)
     protected String modifyBy;
 
     @TableField(value = "modify_time", fill = FieldFill.INSERT_UPDATE)
     @LastModifiedDate
-    protected Date modifyTime;
+    protected LocalDateTime modifyTime;
 
     /**
      * https://github.com/baomidou/mybatis-plus/issues/707
