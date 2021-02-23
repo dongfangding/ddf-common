@@ -62,14 +62,10 @@ public abstract class AbstractExceptionHandler {
 
         // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
         boolean ignoreErrorStack = false;
-        String extraServerMessage = String.format("-[%s:%s]", environmentHelper.getApplicationName(),
-                NetUtil.getLocalhostStr()
-        );
         List<String> ignoreErrorTraceProfile = globalProperties.getIgnoreErrorTraceProfile();
         if (CollectionUtil.isNotEmpty(ignoreErrorTraceProfile) && environmentHelper.checkIsExistOr(
                 ignoreErrorTraceProfile)) {
             ignoreErrorStack = true;
-            extraServerMessage = "";
         }
 
         if (exceptionHandlerMapping != null) {
@@ -105,8 +101,7 @@ public abstract class AbstractExceptionHandler {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
             message = exception.getMessage();
         }
-        // 附加信息
-        message += extraServerMessage;
+
         if (globalProperties.isExceptionCodeToResponseStatus()) {
             String numberRegex = "\\d+";
             // 可能会出现超过int最大值的问题，暂时不管
@@ -116,8 +111,12 @@ public abstract class AbstractExceptionHandler {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
         }
+        // 附加服务消息
+        String extraServerMessage = String.format("-[%s:%s]", environmentHelper.getApplicationName(),
+                NetUtil.getLocalhostStr()
+        );
         return ResponseData.failure(exceptionCode, message,
-                ignoreErrorStack ? "" : ExceptionUtils.getStackTrace(exception)
+                ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception)
         );
     }
 }
