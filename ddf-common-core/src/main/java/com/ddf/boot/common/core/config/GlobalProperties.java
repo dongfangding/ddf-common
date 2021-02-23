@@ -87,10 +87,4 @@ public class GlobalProperties {
      */
     private String aesSecret;
 
-    /**
-     * 登录白名单
-     * 不进行验证码校验
-     */
-    private List<String> blankLoginNameList;
-
 }
