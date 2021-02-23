@@ -28,4 +28,10 @@ public interface RedisLuaScript {
      */
     RedisScript<String> STRING_KEY_INCREMENT_EXPIRE_AT = RedisScript.of(
             new ClassPathResource("lua/stringIncrementExpireAt.lua"), String.class);
+
+    /**
+     * 基于滑动窗口，对指定时间段的访问总数进行控制
+     */
+    RedisScript<String> SLIDER_WINDOW_COUNT = RedisScript.of(
+            new ClassPathResource("lua/sliderWindowCount.lua"), String.class);
 }

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.redis.helper;
 
+import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
@@ -101,6 +102,25 @@ public class RedisTemplateHelper {
             return Boolean.FALSE;
         }
         return limiter.tryAcquire();
+    }
+
+
+    /**
+     * 控制某个时间窗口类，对访问总次数进行控制
+     *
+     * @param key
+     * @param maxCount
+     * @param windowInSecond
+     * @return
+     */
+    public boolean sliderWindowAccess(final String key, final long maxCount, final int windowInSecond) {
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(windowInSecond),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdsUtil.getNextStrId()
+                ));
+        return Objects.equals("1", result);
     }
 
 }
