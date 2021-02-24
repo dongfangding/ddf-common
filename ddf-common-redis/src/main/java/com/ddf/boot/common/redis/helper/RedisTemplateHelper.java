@@ -45,11 +45,11 @@ public class RedisTemplateHelper {
      * @param request
      */
     public boolean rateLimitAcquire(RateLimitRequest request) {
-        return Integer.parseInt(Objects.requireNonNull(
-                stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT, Collections.singletonList(request.getKey()),
-                        Integer.toString(request.getMax()), Integer.toString(request.getRate()),
-                        Long.toString(System.currentTimeMillis())
-                ))) > 0;
+        final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
+                Collections.singletonList(request.getKey()), String.valueOf(request.getMax()),
+                String.valueOf(request.getRate()), String.valueOf(System.currentTimeMillis())
+        ));
+        return Objects.equals("1", result);
     }
 
     /**
