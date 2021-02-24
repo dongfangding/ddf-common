@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * <p>针对请求的一些封装类</p >
+ * <p>针对限流请求的参数类</p >
  *
  * @author Snowball
  * @version 1.0
@@ -92,4 +92,5 @@ public class RateLimitRequest {
             return new RateLimitRequest(key, max, rate);
         }
     }
+
 }
