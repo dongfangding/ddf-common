@@ -46,7 +46,7 @@ public class RedisTemplateHelper {
      */
     public boolean rateLimitAcquire(RateLimitRequest request) {
         return Integer.parseInt(Objects.requireNonNull(
-                stringRedisTemplate.execute(RedisLuaScript.RATE_LIMIT, Collections.singletonList(request.getKey()),
+                stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT, Collections.singletonList(request.getKey()),
                         Integer.toString(request.getMax()), Integer.toString(request.getRate()),
                         Long.toString(System.currentTimeMillis())
                 ))) > 0;
