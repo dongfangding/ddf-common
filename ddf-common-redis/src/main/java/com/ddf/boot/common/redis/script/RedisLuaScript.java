@@ -13,9 +13,9 @@ import org.springframework.data.redis.core.script.RedisScript;
 public interface RedisLuaScript {
 
     /**
-     * 基于漏桶算法的分布式限流
+     * 基于令牌桶算法的分布式限流
      */
-    RedisScript<String> RATE_LIMIT = RedisScript.of(new ClassPathResource("lua/rateLimit.lua"), String.class);
+    RedisScript<String> TOKEN_BUCKET_RATE_LIMIT = RedisScript.of(new ClassPathResource("lua/tokenBucketRateLimit.lua"), String.class);
 
     /**
      * 对String类型的key进行递增递减并设置剩余过期时间的原子脚本
