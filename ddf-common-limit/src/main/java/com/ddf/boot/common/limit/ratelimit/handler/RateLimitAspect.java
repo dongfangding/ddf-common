@@ -1,9 +1,9 @@
 package com.ddf.boot.common.limit.ratelimit.handler;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
@@ -48,7 +48,7 @@ public class RateLimitAspect {
      * key生成规则实现器
      *
      */
-    public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringUtil.getApplicationContext()
+    public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringContextHolder
             .getBeansOfType(RateLimitKeyGenerator.class);
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit) || @within(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)")

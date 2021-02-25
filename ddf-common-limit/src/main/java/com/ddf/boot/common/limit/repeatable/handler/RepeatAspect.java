@@ -1,9 +1,9 @@
 package com.ddf.boot.common.limit.repeatable.handler;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
@@ -40,7 +40,7 @@ public class RepeatAspect {
     /**
      * 表单防重校验接口实现
      */
-    private final Map<String, RepeatableValidator> handlerMapping = SpringUtil.getApplicationContext().getBeansOfType(
+    private final Map<String, RepeatableValidator> handlerMapping = SpringContextHolder.getBeansOfType(
             RepeatableValidator.class);
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.limit.repeatable.annotation.Repeatable) || @within(com.ddf.boot.common.limit.repeatable.annotation.Repeatable)")
