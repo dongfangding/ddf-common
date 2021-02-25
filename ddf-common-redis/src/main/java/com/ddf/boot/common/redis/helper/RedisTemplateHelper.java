@@ -116,13 +116,15 @@ public class RedisTemplateHelper {
 
     /**
      * 对String类型的key进行递增递减并设置过期指定指定时间的原子脚本
-     * 时间小于当前时间，会导致tt为-1, 这里不进行校验
      *
      * @param key      key
      * @param expireAt 指定过期的具体时间
      * @return 缓存key对应的最新值
      */
     public Long incrementKeyExpireAt(String key, Date expireAt) {
+        if (System.currentTimeMillis() > expireAt.getTime()) {
+            throw new IllegalArgumentException("过期时间不能早于当前时间");
+        }
         return Long.parseLong(Objects.requireNonNull(
                 stringRedisTemplate.execute(RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE_AT,
                         Collections.singletonList(key), "1",
