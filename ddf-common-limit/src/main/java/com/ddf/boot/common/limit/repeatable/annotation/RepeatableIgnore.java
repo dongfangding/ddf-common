@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.repeatable;
+package com.ddf.boot.common.limit.repeatable.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * <p>接口防重校验忽略， 忽略存在的原因是校验注解可以放在类上， 如果只有个别忽略， 可以单独标记</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 11:35
  */

@@ -1,5 +1,8 @@
-package com.ddf.boot.common.core.repeatable;
+package com.ddf.boot.common.limit.repeatable.annotation;
 
+import com.ddf.boot.common.limit.repeatable.config.RepeatableRegistrar;
+import com.ddf.boot.common.limit.repeatable.validator.LocalRepeatableValidator;
+import com.ddf.boot.common.limit.repeatable.validator.RepeatableValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +18,7 @@ import org.springframework.context.annotation.Import;
  * {@link Repeatable} 该注解可以标注在类上和方法上， 支持属性请进入代码查看， 然后就会按照既定规则执行防重复校验
  * {@link RepeatableIgnore} 由于{@link Repeatable}可以标注在类上，那么为了寻求简单，如果真的被应用到类上，而某个方法却不需要，则使用该注解标识跳过
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 12:54
  */

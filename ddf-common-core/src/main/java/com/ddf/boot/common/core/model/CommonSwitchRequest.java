@@ -7,7 +7,7 @@ import lombok.Data;
  * <p>通用开关型请求类， 使用0否1是来代表关和开，
  * 然后业务系统接收后，转换为对应的业务状态， 前端永远只关心是开还是关，不关心具体对应状态</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/23 10:19
  */

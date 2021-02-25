@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * <p>针对限流请求的参数类</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/12/11 11:12
  */

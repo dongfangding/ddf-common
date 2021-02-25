@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * 消息发送样例
  * https://github.com/apache/rocketmq/blob/master/docs/cn/RocketMQ_Example.md
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/11/20 11:32
  */

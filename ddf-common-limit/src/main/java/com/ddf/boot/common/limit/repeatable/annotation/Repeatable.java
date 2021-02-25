@@ -1,5 +1,7 @@
-package com.ddf.boot.common.core.repeatable;
+package com.ddf.boot.common.limit.repeatable.annotation;
 
+import com.ddf.boot.common.limit.repeatable.handler.RepeatAspect;
+import com.ddf.boot.common.limit.repeatable.validator.RepeatableValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * <p>接口防重校验</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 11:35
  */

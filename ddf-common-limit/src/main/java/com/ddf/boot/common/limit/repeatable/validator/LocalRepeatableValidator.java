@@ -1,10 +1,12 @@
-package com.ddf.boot.common.core.repeatable;
+package com.ddf.boot.common.limit.repeatable.validator;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
+import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
@@ -15,7 +17,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 /**
  * <p>基于本地缓存实现的防重提交验证器</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 11:43
  */
@@ -37,8 +39,6 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      *
      * @param joinPoint  织入点
      * @param repeatable 注解
-     * @param currentUid 当前用户id
-     * @param repeatableProperties 配置属性
      * @return 是否通过校验
      */
     @Override

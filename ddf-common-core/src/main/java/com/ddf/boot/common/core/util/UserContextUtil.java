@@ -5,7 +5,7 @@ import com.ddf.boot.common.core.model.UserClaim;
 /**
  * <p>获取当前用户信息</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 22:33
  */
@@ -45,5 +45,14 @@ public class UserContextUtil {
      */
     public static String getUserId() {
         return getUserClaim().getUserId();
+    }
+
+    /**
+     * 获取客户端唯一标识
+     *
+     * @return
+     */
+    public static String getCredit() {
+        return getUserClaim().getCredit();
     }
 }

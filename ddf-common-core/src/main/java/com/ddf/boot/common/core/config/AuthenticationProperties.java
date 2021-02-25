@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * <p>认证相关参数</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/23 11:10
  */

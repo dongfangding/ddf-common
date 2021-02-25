@@ -6,7 +6,7 @@ package com.ddf.boot.common.rocketmq.dto;
  * <p>
  * 针对定义来说，使用枚举可能更好， 但是针对注解上的引用来说，使用常量可以直接方便引用
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/11/19 19:16
  */
