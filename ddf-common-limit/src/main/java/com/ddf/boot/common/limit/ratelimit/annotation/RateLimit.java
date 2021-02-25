@@ -32,11 +32,11 @@ public @interface RateLimit {
     String keyGenerator() default "";
 
     /**
-     * 条件表达式， 更可能的场景是该接口不限流，但是满足某些特定参数或者场景之后触发限流
+     * 条件表达式， 更可能的场景是该接口不限流，但是满足某些特定参数或者场景之后触发限流, 仅支持Spel表达式
      *
      * @return
      */
-    boolean condition() default true;
+    String condition() default "";
 
     /**
      * 限流的最大令牌桶数量

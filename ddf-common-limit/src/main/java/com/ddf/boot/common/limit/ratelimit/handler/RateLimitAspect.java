@@ -23,6 +23,11 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
  * <p>限流处理器</p >
@@ -43,6 +48,10 @@ public class RateLimitAspect {
     private RateLimitPropertiesCollect rateLimitPropertiesCollect;
 
     public static final String BEAN_NAME = "rateLimitAspect";
+
+    private final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
+
+    private final ExpressionParser parser = new SpelExpressionParser();
 
     /**
      * key生成规则实现器
@@ -116,5 +125,34 @@ public class RateLimitAspect {
             );
             throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
         }
+    }
+
+
+    /**
+     * 处理条件表达式, 满足条件的才会限流
+     *
+     * @param joinPoint
+     * @param annotation
+     * @param currentMethod
+     * @return
+     */
+    private boolean condition(JoinPoint joinPoint, RateLimit annotation, MethodSignature currentMethod) {
+        if (StringUtils.isBlank(annotation.condition())) {
+            return true;
+        }
+        String[] params = discoverer.getParameterNames(currentMethod.getMethod());
+        StandardEvaluationContext context = new StandardEvaluationContext();
+
+        if (Objects.nonNull(params)) {
+            for (int i = 0; i < joinPoint.getArgs().length; i++) {
+                context.setVariable(params[i], joinPoint.getArgs()[i]);
+            }
+            Expression expression = parser.parseExpression(annotation.condition());
+            final Object value = expression.getValue(context);
+            if (value instanceof Boolean) {
+                return (boolean) value;
+            }
+        }
+        return true;
     }
 }
