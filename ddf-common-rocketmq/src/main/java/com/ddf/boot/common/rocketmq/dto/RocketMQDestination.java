@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  * 参考下述方法对destination的解释，也是能够这么玩的前提； 消息的目的地可以由topic:tags的方式组成
  * org.apache.rocketmq.spring.core.RocketMQTemplate#syncSend(java.lang.String, org.springframework.messaging.Message)
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/11/20 11:36
  */

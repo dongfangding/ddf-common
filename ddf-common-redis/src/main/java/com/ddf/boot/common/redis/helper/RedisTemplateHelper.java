@@ -1,6 +1,6 @@
 package com.ddf.boot.common.redis.helper;
 
-import com.ddf.boot.common.core.util.IdsUtil;
+import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/12/11 11:05
  */
@@ -32,6 +32,52 @@ public class RedisTemplateHelper {
     }
 
     /**
+     * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
+     * 业务方面的单位时间逻辑次数控制
+     *
+     * @param key            缓存key
+     * @param maxCount       单位时间内最大访问次数
+     * @param windowInSecond 窗口时间，单位秒
+     * @return
+     */
+    public boolean sliderWindowAccess(final String key, final long maxCount, final int windowInSecond) {
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(
+                        RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(windowInSecond),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()
+                ));
+        return Objects.equals("1", result);
+    }
+
+    /**
+     * 全局分布式限流, 基于令牌桶算法
+     * <p>
+     * 底层使用hash实现， 使用ttl实现单位毫秒内的key过期， 格式内容如下， 具体实现逻辑可进入脚本查看
+     * <p>
+     * 一个hash结构的key内部对象类两个hash key参数
+     * "last_time":"1607769790054",
+     * "current_token": "0"
+     * <p>
+     * last_time 上次恢复令牌时间
+     * current_token为剩余的token，注意这个数量有可能不是最新的， 因为要在获取的时间才会按照恢复速率重新计算剩余令牌数
+     *
+     * @param key  缓存key
+     * @param max  单位时间内最大令牌桶数量
+     * @param rate 每秒钟令牌桶恢复速率
+     * @return
+     */
+    public boolean tokenBucketRateLimitAcquire(String key, Integer max, Integer rate) {
+        return tokenBucketRateLimitAcquire(RateLimitRequest.builder()
+                .key(key)
+                .max(max)
+                .rate(rate)
+                .ignorePrefix(true)
+                .build());
+    }
+
+    /**
      * 全局分布式限流, 基于令牌桶算法
      * <p>
      * 底层使用hash实现， 使用ttl实现单位秒内的key过期， 格式内容如下
@@ -44,8 +90,9 @@ public class RedisTemplateHelper {
      *
      * @param request
      */
-    public boolean rateLimitAcquire(RateLimitRequest request) {
-        final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
+    public boolean tokenBucketRateLimitAcquire(RateLimitRequest request) {
+        final String result = String.valueOf(stringRedisTemplate.execute(
+                RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
                 Collections.singletonList(request.getKey()), String.valueOf(request.getMax()),
                 String.valueOf(request.getRate()), String.valueOf(System.currentTimeMillis())
         ));
@@ -103,24 +150,4 @@ public class RedisTemplateHelper {
         }
         return limiter.tryAcquire();
     }
-
-
-    /**
-     * 控制某个时间窗口类，对访问总次数进行控制
-     *
-     * @param key
-     * @param maxCount
-     * @param windowInSecond
-     * @return
-     */
-    public boolean sliderWindowAccess(final String key, final long maxCount, final int windowInSecond) {
-        final String result = String.valueOf(
-                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
-                        String.valueOf(maxCount), String.valueOf(windowInSecond),
-                        String.valueOf(System.currentTimeMillis()),
-                        System.currentTimeMillis() + "-" + IdsUtil.getNextStrId()
-                ));
-        return Objects.equals("1", result);
-    }
-
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * <p>token请求参数类， 主要是为了对ObjectKey进行路径区分</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/10/28 11:27
  */

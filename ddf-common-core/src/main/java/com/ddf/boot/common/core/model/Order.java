@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 /**
  * mybatis 排序对象
  *
- * @author snowball
+ * @author dongfang.ding
  *
  */
 @Data

@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * <p>收集用户id的接口标记类</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/22 10:47
  */

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * <p>如果返回值不希望直接返回List， 可以提供一个通用的包装</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2020/12/31 13:54
  */

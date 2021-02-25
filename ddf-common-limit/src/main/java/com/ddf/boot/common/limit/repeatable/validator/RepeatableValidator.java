@@ -1,11 +1,13 @@
-package com.ddf.boot.common.core.repeatable;
+package com.ddf.boot.common.limit.repeatable.validator;
 
+import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
+import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import org.aspectj.lang.JoinPoint;
 
 /**
  * <p>AspectJ实现方式的表单防重复提交验证接口</p >
  *
- * @author Snowball
+ * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/05 11:41
  */
