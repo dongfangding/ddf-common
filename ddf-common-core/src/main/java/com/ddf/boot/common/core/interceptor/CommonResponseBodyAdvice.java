@@ -4,7 +4,6 @@ import com.ddf.boot.common.core.response.ResponseData;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
@@ -49,12 +48,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author dongfang.ding
  * @date 2019/6/27 11:15
  */
-@RestControllerAdvice(basePackages = {"com"}) // fixme 如何能够接受配置参数呢？如${basePackages}
+@RestControllerAdvice(basePackages = {"${customs.response.package:com}"}) // fixme 如何能够接受配置参数呢？如${basePackages}
 @Order
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    private final CommonResponseBodyAdviceProperties commonResponseBodyAdviceProperties;
+    @Autowired
+    private CommonResponseBodyAdviceProperties commonResponseBodyAdviceProperties;
 
     private static final Class[] ANNOTATIONS = {
             RequestMapping.class, GetMapping.class, PostMapping.class, DeleteMapping.class, PutMapping.class
