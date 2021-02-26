@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -45,6 +44,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 public class BaseDomain {
 
+    /**
+     * 代表删除的字段含义，为空，方便处理唯一索引问题
+     *
+     */
+    public static final Integer IS_DEL_LOGIC_DELETE_VALUE = null;
+
+
     @TableId(type = IdType.AUTO)
     @Id
     protected Long id;
@@ -71,7 +77,6 @@ public class BaseDomain {
     /**
      * 是否删除 0保留 删除时，将当前记录的id赋值给这个字段代表删除，然后数据库的唯一索引约束要带上这个字段， 为了解决简单的0和1带来的唯一索引问题
      */
-    @TableLogic
     protected Integer isDel = 0;
 
     @Version

@@ -65,6 +65,18 @@ public class PreconditionUtil {
     }
 
     /**
+     * 校验参数抛出外部传入运行时异常
+     *
+     * @param expression
+     * @param exception
+     */
+    public static void checkArgument(boolean expression, RuntimeException exception) {
+        if (!expression) {
+            throw exception;
+        }
+    }
+
+    /**
      * 检查参数并格式化占位符消息
      *
      * @param expression
@@ -87,7 +99,6 @@ public class PreconditionUtil {
             throw new BusinessException("400", message);
         }
     }
-
 
     /**
      * 提供一种手动式的必传参数校验
