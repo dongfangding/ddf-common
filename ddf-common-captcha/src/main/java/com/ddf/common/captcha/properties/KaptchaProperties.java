@@ -28,7 +28,7 @@ public class KaptchaProperties {
      * 阴影 com.google.code.kaptcha.impl.ShadowGimpy   (2)
      * 鱼眼 com.google.code.kaptcha.impl.FishEyeGimpy  (丑)
      */
-    private String obscurificator = "com.google.code.kaptcha.impl.ShadowGimpy";
+    private String obscurificator = "com.google.code.kaptcha.impl.WaterRipple";
 
     /**
      * 内容

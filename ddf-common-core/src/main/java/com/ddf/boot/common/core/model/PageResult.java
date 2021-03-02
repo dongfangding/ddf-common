@@ -26,7 +26,7 @@ public class PageResult<E> implements Serializable {
     /**
      * 页码
      */
-    private long page;
+    private long pageNum;
     /**
      * 每页结果数
      */
@@ -58,23 +58,23 @@ public class PageResult<E> implements Serializable {
     /**
      * 构造
      *
-     * @param page     页码
+     * @param pageNum     页码
      * @param pageSize 每页结果数
      */
-    public PageResult(long page, long pageSize) {
-        this.page = Math.max(page, PageRequest.DEFAULT_PAGE_NUM);
+    public PageResult(long pageNum, long pageSize) {
+        this.pageNum = Math.max(pageNum, PageRequest.DEFAULT_PAGE_NUM);
         this.pageSize = pageSize;
     }
 
     /**
      * 构造
      *
-     * @param page     页码
+     * @param pageNum     页码
      * @param pageSize 每页结果数
      * @param total 总条数
      */
-    public PageResult(long page, long pageSize, long total) {
-        this(page, pageSize);
+    public PageResult(long pageNum, long pageSize, long total) {
+        this(pageNum, pageSize);
         this.total = total;
         this.totalPage = totalPage(total, pageSize);
     }
@@ -82,12 +82,12 @@ public class PageResult<E> implements Serializable {
     /**
      * 构造
      *
-     * @param page     页码
+     * @param pageNum     页码
      * @param pageSize 每页结果数
      * @param total    结果总数
      */
-    public PageResult(long page, long pageSize, long total, List<E> content) {
-        this(page, pageSize);
+    public PageResult(long pageNum, long pageSize, long total, List<E> content) {
+        this(pageNum, pageSize);
         this.total = total;
         this.totalPage = totalPage(total, pageSize);
         this.content = content;
