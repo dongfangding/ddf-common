@@ -50,6 +50,12 @@ public class BaseDomain {
      */
     public static final Integer IS_DEL_LOGIC_DELETE_VALUE = null;
 
+    /**
+     * 代表有效的字段含义
+     *
+     */
+    public static final Integer IS_DEL_LOGIC_VALID_VALUE = 0;
+
 
     @TableId(type = IdType.AUTO)
     @Id
