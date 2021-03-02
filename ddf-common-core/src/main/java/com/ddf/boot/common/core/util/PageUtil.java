@@ -170,7 +170,7 @@ public class PageUtil {
      * @return
      */
     public static <E, R> PageResult<R> convertPageResult(PageResult<E> pageResult, Function<List<E>, List<R>> function) {
-        final PageResult<R> result = new PageResult<>(pageResult.getPage(), pageResult.getPageSize(), pageResult.getTotal());
+        final PageResult<R> result = new PageResult<>(pageResult.getPageNum(), pageResult.getPageSize(), pageResult.getTotal());
         result.setContent(function.apply(pageResult.getContent()));
         return result;
     }
