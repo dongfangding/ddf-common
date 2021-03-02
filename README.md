@@ -27,7 +27,7 @@ TODO
 | 模块                        | 功能                                                         |
 | --------------------------- | ------------------------------------------------------------ |
 | ddf-common-core             | 核心功能包                                                  |
-| ddf-common-captcha             | 整合谷歌kapacha完成验证码的生成，包括计算型验证码                                             |
+| ddf-common-captcha             | 整合谷歌kaptcha完成验证码的生成，包括计算型验证码                                             |
 | ddf-common-distributed-lock | 分布式锁模块                                                 |
 | ddf-common-ids              | id模块                                                   |
 | ddf-common-jwt              | 快速集成jwt模块，提供了jwt通用生成参数类， 注解开启全局验证、白名单等功能，只需实现一个接口即可 |
@@ -38,7 +38,7 @@ TODO
 | ddf-common-mybatis-plus     | mybatis-plud常用配置模块                                     |
 | ddf-common-netty-broker     | 基于Netty实现的自定义协议实现，提供报文定义、编解码、加密传输、配置类；待实现，连接管理、集群转发 |
 | ddf-common-websocket        | websocket快速集成模块，可引入后快速集成，提供一整套报文定义、发送、连接管理、加密传输、集群消息转发、异步阻塞消息接收等 |
-| ddf-common-redis                         |            redis依赖、key规则生成工具、常用lua脚本整理                                                |
+| ddf-common-redis                         |            redis依赖、key规则生成工具、常用lua脚本整理、redisson集成                                                |
 | ddf-common-security         | 未整理                                                       |
 | ddf-common-rocketmq      | rocketmq依赖和消息定义规则生成                                  |
 | ddf-common-script      | 开发常用脚本收集                                  |
