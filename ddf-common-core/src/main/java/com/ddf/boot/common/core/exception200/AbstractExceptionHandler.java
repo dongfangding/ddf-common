@@ -112,7 +112,7 @@ public abstract class AbstractExceptionHandler {
             }
         }
         // 附加服务消息
-        String extraServerMessage = String.format("-[%s:%s]", environmentHelper.getApplicationName(),
+        String extraServerMessage = String.format("[%s:%s]", environmentHelper.getApplicationName(),
                 NetUtil.getLocalhostStr()
         );
         return ResponseData.failure(exceptionCode, message,

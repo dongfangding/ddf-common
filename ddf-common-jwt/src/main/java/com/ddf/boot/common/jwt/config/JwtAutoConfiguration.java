@@ -1,7 +1,12 @@
 package com.ddf.boot.common.jwt.config;
 
+import com.ddf.boot.common.jwt.filter.JwtAuthorizationTokenFilter;
+import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * jwt模块的自动配置类类
@@ -11,5 +16,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan(basePackages = "com.ddf.boot.common.jwt")
-public class JwtAutoConfiguration {
+public class JwtAutoConfiguration implements WebMvcConfigurer {
+
+    @Autowired(required = false)
+    private JwtAuthorizationTokenFilter jwtAuthorizationTokenFilter;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        if (Objects.nonNull(jwtAuthorizationTokenFilter)) {
+            registry.addInterceptor(jwtAuthorizationTokenFilter).addPathPatterns("/**");
+        }
+    }
 }
