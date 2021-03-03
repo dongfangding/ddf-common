@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.validator.constraint;
 
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.StrUtil;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -57,6 +58,10 @@ public @interface Mobile {
 
         @Override
         public boolean isValid(String value, ConstraintValidatorContext context) {
+            // 为空时不进行逻辑校验
+            if (StrUtil.isBlank(value)) {
+                return Boolean.TRUE;
+            }
             return Validator.isMatchRegex(Validator.MOBILE, value);
         }
     }

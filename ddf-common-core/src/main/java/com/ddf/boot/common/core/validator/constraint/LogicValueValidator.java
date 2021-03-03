@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -87,7 +88,7 @@ public @interface LogicValueValidator {
          */
         @Override
         public boolean isValid(Integer value, ConstraintValidatorContext context) {
-            return values.contains(value);
+            return Objects.isNull(value) || values.contains(value);
         }
     }
 }
