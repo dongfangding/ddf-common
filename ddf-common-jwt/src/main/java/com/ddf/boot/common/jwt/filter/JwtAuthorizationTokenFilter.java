@@ -174,10 +174,13 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         try {
             claimsJws = JwtUtil.parseJws(token, 0);
         } catch (KeyException e) {
+            log.error("KeyException>>>>>", e);
             throw new AccessDeniedException("token无效！");
         } catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException>>>>>", e);
             throw new AccessDeniedException("token已过期！");
         } catch (Exception e) {
+            log.error("token解析其它异常>>>>>", e);
             throw new AccessDeniedException("token解析失败！");
         }
 
