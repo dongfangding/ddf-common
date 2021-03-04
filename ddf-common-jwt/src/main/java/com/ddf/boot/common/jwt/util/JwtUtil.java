@@ -151,7 +151,7 @@ public class JwtUtil {
     public static Jws<Claims> parseJws(String jws, int allowedClockSkewSeconds)
             throws KeyException, ExpiredJwtException {
         return Jwts.parser().setAllowedClockSkewSeconds(allowedClockSkewSeconds).setSigningKey(
-                JWT_PROPERTIES.getSecret()).parseClaimsJws(jws);
+                Keys.hmacShaKeyFor(JWT_PROPERTIES.getSecret().getBytes(StandardCharsets.UTF_8))).parseClaimsJws(jws);
     }
 
 
