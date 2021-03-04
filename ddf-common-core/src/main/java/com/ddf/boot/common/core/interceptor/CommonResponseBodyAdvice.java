@@ -48,7 +48,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author dongfang.ding
  * @date 2019/6/27 11:15
  */
-@RestControllerAdvice(basePackages = {"${customs.response.package:com}"}) // fixme 如何能够接受配置参数呢？如${basePackages}
+//@RestControllerAdvice(basePackages = {"${customs.response.package:com}"}) // fixme 如何能够接受配置参数呢？如${basePackages}
+@RestControllerAdvice(basePackages = {"com"}) // fixme 如何能够接受配置参数呢？如${basePackages}
 @Order
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
