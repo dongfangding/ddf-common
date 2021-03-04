@@ -178,9 +178,9 @@ public class DateUtils {
      * @param localDateTime
      * @return
      */
-    public static long toDefaultMills(LocalDateTime localDateTime) {
+    public static Long toDefaultMills(LocalDateTime localDateTime) {
         final Instant instant = toDefaultInstant(localDateTime);
-        return Objects.isNull(instant) ? 0 : instant.toEpochMilli();
+        return Objects.isNull(instant) ? null : instant.toEpochMilli();
     }
 
 }
