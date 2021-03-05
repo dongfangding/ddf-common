@@ -40,6 +40,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象转换Json失败", e);
+            logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
     }
@@ -54,6 +55,7 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
+            logger.error("对象序列化失败", e);
             throw new RuntimeException("对象序列化失败！");
         }
     }
@@ -103,6 +105,7 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
+            logger.error("Json转换对象失败", e);
             throw new RuntimeException("Json转换对象失败", e);
         }
     }
@@ -117,6 +120,7 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
+            logger.error("对象转换字节失败", e);
             throw new RuntimeException("对象转换字节失败", e);
         }
     }
@@ -132,6 +136,7 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(bytes, type);
         } catch (IOException e) {
+            logger.error("字节转换对象失败", e);
             throw new RuntimeException("字节转换对象失败", e);
         }
     }
@@ -155,6 +160,7 @@ public final class JsonUtil {
             mapper.setSerializationInclusion(strategy);
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
+            logger.error("对象转换Json失败", e);
             logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
