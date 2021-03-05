@@ -22,6 +22,10 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     SERVER_ERROR("500", "服务端异常"),
 
+    PAGE_NUM_NOT_ALLOW_NULL("1001", "当前页数不能为空"),
+
+    PAGE_SIZE_NOT_ALLOW_NULL("1002", "每页大小不能为空")
+
 
     ;
 

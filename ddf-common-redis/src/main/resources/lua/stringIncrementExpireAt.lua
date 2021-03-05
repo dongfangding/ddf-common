@@ -23,3 +23,4 @@ redis.call("INCRBY", KEYS[1], step)
 
 -- 返回最新结果，由于使用 stringRedisTemplate，返回值用string，否则值转换有问题
 return tostring(redis.call("GET", KEYS[1]))
+

@@ -1,8 +1,11 @@
 package com.ddf.boot.common.core.model;
 
 import cn.hutool.core.util.PageUtil;
+import com.ddf.boot.common.core.exception200.BaseErrorCallbackCode;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>分页请求通用接口
@@ -62,6 +65,7 @@ public interface PageRequest {
      * @return
      */
     default Integer getStartIndex() {
+        checkArgument();
         return PageUtil.getStart(getPageNum() - 1, getPageSize());
     }
 
@@ -71,9 +75,18 @@ public interface PageRequest {
      * @return
      */
     default Integer getEndIndex() {
+        checkArgument();
         return getStartIndex() + getPageSize();
     }
 
+    /**
+     * 参数校验
+     *
+     */
+    default void checkArgument() {
+        PreconditionUtil.checkArgument(Objects.nonNull(getPageNum()), BaseErrorCallbackCode.PAGE_NUM_NOT_ALLOW_NULL);
+        PreconditionUtil.checkArgument(Objects.nonNull(getPageSize()), BaseErrorCallbackCode.PAGE_NUM_NOT_ALLOW_NULL);
+    }
 
 
 
