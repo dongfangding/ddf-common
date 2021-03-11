@@ -1,5 +1,8 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import com.ddf.boot.common.core.response.ClubBackground;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +148,58 @@ public final class JsonUtil {
     }
 
     /**
+     * 将json数据转换成pojo对象list
+     *
+     * 如果想使用的话，可以参考newInstance().readValue(jsonData, new Ty peReference<List<T>>()， 这里的T不使用泛型，直接使用具体对象是可以的
+     *
+     * @param jsonData json数据
+     * @param beanType 类型
+     * @param <T>      类型
+     * @return T
+     */
+    @SneakyThrows
+    public static <T> List<T> toList(String jsonData, Class<T> beanType) {
+        // 这个可行，但用到了其它库
+//        return JSONUtil.toList(new JSONArray(jsonData), beanType);
+        // 这里不知道为啥用泛型不行， T如果是个具体类就可以
+//        return OBJECT_MAPPER.readValue(jsonData, new TypeReference<List<T>>() {
+//            @Override
+//            public Type getType() {
+//                return super.getType();
+//            }
+//        });
+        final List list = toBean(jsonData, List.class);
+        List<T> resList = new ArrayList<>(list.size());
+        for (Object obj : list) {
+            resList.add(toBean(asString(obj), beanType));
+        }
+        return resList;
+    }
+
+
+    public static void main(String[] args) throws JsonProcessingException {
+        String jsonStr = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
+        long now = System.currentTimeMillis();
+        final List<ClubBackground> x = toList(jsonStr, ClubBackground.class);
+        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+
+        // 这个的性能最好
+        now = System.currentTimeMillis();
+        final List<ClubBackground> backgrounds = getInstance().readValue(
+                jsonStr, new TypeReference<List<ClubBackground>>() {});
+        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+
+        now = System.currentTimeMillis();
+        JSONUtil.toList(new JSONArray(jsonStr), ClubBackground.class);
+        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+
+        // 上述结果， 因此还是用第二种方式
+        //  循环耗时: 83
+        //  循环耗时: 5
+        //  循环耗时: 54
+    }
+
+    /**
      * 根据策略生成Json
      *
      * @param obj
@@ -160,7 +218,6 @@ public final class JsonUtil {
             mapper.setSerializationInclusion(strategy);
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.error("对象转换Json失败", e);
             logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
