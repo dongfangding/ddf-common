@@ -10,10 +10,13 @@ import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
 import com.ddf.boot.common.jwt.util.JwtUtil;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.KeyException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +64,11 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
     public static final String BEAN_NAME = "jwtAuthorizationTokenFilter";
 
     /**
+     * 系统级别忽略的路径
+     */
+    private static final List<String> SYSTEM_IGNORE_PATH = Collections.unmodifiableList(Lists.newArrayList("/error"));
+
+    /**
      * 用户uid
      */
     private static final String USER_ID = "userId";
@@ -96,6 +104,9 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
+        if (SYSTEM_IGNORE_PATH.contains(path)) {
+            return true;
+        }
         String host = WebUtil.getHost();
         request.setAttribute(JwtConstant.CLIENT_IP, host);
 
