@@ -1,8 +1,5 @@
 package com.ddf.boot.common.core.util;
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONUtil;
-import com.ddf.boot.common.core.response.ClubBackground;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -177,27 +174,27 @@ public final class JsonUtil {
     }
 
 
-    public static void main(String[] args) throws JsonProcessingException {
-        String jsonStr = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
-        long now = System.currentTimeMillis();
-        final List<ClubBackground> x = toList(jsonStr, ClubBackground.class);
-        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-
-        // 这个的性能最好
-        now = System.currentTimeMillis();
-        final List<ClubBackground> backgrounds = getInstance().readValue(
-                jsonStr, new TypeReference<List<ClubBackground>>() {});
-        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-
-        now = System.currentTimeMillis();
-        JSONUtil.toList(new JSONArray(jsonStr), ClubBackground.class);
-        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-
-        // 上述结果， 因此还是用第二种方式
-        //  循环耗时: 83
-        //  循环耗时: 5
-        //  循环耗时: 54
-    }
+//    public static void main(String[] args) throws JsonProcessingException {
+//        String jsonStr = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
+//        long now = System.currentTimeMillis();
+//        final List<ClubBackground> x = toList(jsonStr, ClubBackground.class);
+//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+//
+//        // 这个的性能最好
+//        now = System.currentTimeMillis();
+//        final List<ClubBackground> backgrounds = getInstance().readValue(
+//                jsonStr, new TypeReference<List<ClubBackground>>() {});
+//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+//
+//        now = System.currentTimeMillis();
+//        JSONUtil.toList(new JSONArray(jsonStr), ClubBackground.class);
+//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+//
+//        // 上述结果， 因此还是用第二种方式
+//        //  循环耗时: 83
+//        //  循环耗时: 5
+//        //  循环耗时: 54
+//    }
 
     /**
      * 根据策略生成Json
