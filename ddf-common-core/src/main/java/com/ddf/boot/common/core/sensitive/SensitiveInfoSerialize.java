@@ -83,7 +83,6 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
                 }
                 // 如果能得到注解，就将注解的 value 传入 SensitiveInfoSerialize
                 if (sensitiveInfo != null) {
-
                     return new SensitiveInfoSerialize(sensitiveInfo.value());
                 }
             }

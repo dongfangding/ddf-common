@@ -2,7 +2,6 @@ package com.ddf.boot.common.core.config;
 
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.SpringDataWebConfiguration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,6 +19,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -89,8 +90,30 @@ public class CoreWebConfig implements WebMvcConfigurer {
      * @param registry
      */
     @Override
+    @Deprecated
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowCredentials(true).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+        // 这种由于拦截器的顺序问题无法处理项目内部有自定义拦截器且内部出现异常的问题
+        // registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+    }
+
+    /**
+     * 处理全局跨域
+     * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-cors-filter
+     *
+     * @return
+     */
+    @Bean
+    public CorsFilter corsRegistration() {
+        CorsConfiguration config = new CorsConfiguration();
+        // Possibly...
+        // config.applyPermitDefaultValues()
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
     /**
@@ -103,19 +126,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 一个全局的用于格式化的工具类
-     * 如果一个方法内多次使用的话，最好还是自己new一个使用
-     *
-     * @return
-     */
-    @Bean
-    @Primary
-    @Scope("prototype")
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
-    /**
      * 配置自定义参数解析器
      *
      * @param resolvers
@@ -124,7 +134,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(queryParamArgumentResolver);
     }
-
 
     /**
      * 默认线程池
@@ -136,7 +145,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
     public ThreadPoolTaskExecutor defaultThreadPool() {
         return ThreadBuilderHelper.buildThreadExecutor("default-thread-pool", 60, 1000);
     }
-
 
     /**
      * 定时任务调度线程池
