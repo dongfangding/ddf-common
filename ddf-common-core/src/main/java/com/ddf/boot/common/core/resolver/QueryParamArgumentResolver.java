@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -45,7 +44,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *
  * @author dongfang.ding on 2019/1/16
  */
-@Component
 public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver {
 
     /**
