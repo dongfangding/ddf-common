@@ -73,6 +73,21 @@ public class RateLimitAspect {
      */
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws NoSuchMethodException {
+        // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
+        if (rateLimitProperties.isCloudRefresh()) {
+            if (Objects.isNull(rateLimitPropertiesCollect)) {
+                throw new NoSuchBeanDefinitionException(String.format("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]",
+                        RateLimitPropertiesCollect.class.getName()));
+            }
+            // 使用外部接口类填充全局属性
+            rateLimitPropertiesCollect.copyToProperties(rateLimitProperties);
+        }
+        // 属性检查
+        rateLimitProperties.check();
+        if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            return;
+        }
+
         // 获取当前拦截类
         final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
         // 获取当前拦截方法
@@ -87,17 +102,6 @@ public class RateLimitAspect {
             return;
         }
 
-        // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
-        if (rateLimitProperties.isCloudRefresh()) {
-            if (Objects.isNull(rateLimitPropertiesCollect)) {
-                throw new NoSuchBeanDefinitionException(String.format("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]",
-                        RateLimitPropertiesCollect.class.getName()));
-            }
-            // 使用外部接口类填充全局属性
-            rateLimitPropertiesCollect.copyToProperties(rateLimitProperties);
-        }
-        // 属性检查
-        rateLimitProperties.check();
         // 获取key生成器
         final String keyGenerator = StringUtils.isBlank(annotation.keyGenerator()) ?
                 rateLimitProperties.getKeyGenerators() : annotation.keyGenerator();
@@ -111,6 +115,9 @@ public class RateLimitAspect {
         Integer max = annotation.max() == 0 ? rateLimitProperties.getMax() : annotation.max();
         // 获取令牌恢复速率
         Integer rate = annotation.rate() == 0 ? rateLimitProperties.getRate() : annotation.rate();
+        if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            return;
+        }
 
         // 限流可能是多方面的规则，因此考虑允许多个存在
         if (!KEY_GENERATOR_MAP.containsKey(keyGenerator)) {
