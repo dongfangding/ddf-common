@@ -24,6 +24,11 @@ public class RateLimitProperties {
     private String keyGenerators = GlobalRateLimitKeyGenerator.BEAN_NAME;
 
     /**
+     * 作为不控制限流的特殊值
+     */
+    public static final Integer NOT_CONTROL = 0;
+
+    /**
      * 是否是spring-cloud环境并使用@RequestScope刷新特性。
      * 由于当前模块的依赖问题， 在这个模块中不准备依赖cloud的依赖。如果想要使用动态刷新特性，可以实现接口{@link RateLimitPropertiesCollect}来返回实时刷新值
      *
@@ -36,12 +41,12 @@ public class RateLimitProperties {
     /**
      * 令牌桶最大数量
      */
-    private Integer max = 1;
+    private Integer max = NOT_CONTROL;
 
     /**
      * 令牌恢复速率，单位秒
      */
-    private Integer rate = 1;
+    private Integer rate = NOT_CONTROL;
 
     /**
      * 执行参数检查
