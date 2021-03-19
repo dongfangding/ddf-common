@@ -73,6 +73,20 @@ public class RateLimitAspect {
      */
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws NoSuchMethodException {
+        // 获取当前拦截类
+        final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
+        // 获取当前拦截方法
+        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
+        if (currentMethod.getMethod().isAnnotationPresent(RateLimitIgnore.class)) {
+            log.info("忽略执行[{}]-[{}]的限流处理>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
+            return;
+        }
+        // 获取限流注解
+        final RateLimit annotation = AopUtil.getAnnotation(joinPoint, RateLimit.class);
+        if (Objects.isNull(annotation)) {
+            return;
+        }
+
         // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
         if (rateLimitProperties.isCloudRefresh()) {
             if (Objects.isNull(rateLimitPropertiesCollect)) {
@@ -85,20 +99,6 @@ public class RateLimitAspect {
         // 属性检查
         rateLimitProperties.check();
         if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
-            return;
-        }
-
-        // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
-        // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
-        if (currentMethod.getMethod().isAnnotationPresent(RateLimitIgnore.class)) {
-            log.info("忽略执行[{}]-[{}]的限流处理>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
-            return;
-        }
-        // 获取限流注解
-        final RateLimit annotation = AopUtil.getAnnotation(joinPoint, RateLimit.class);
-        if (Objects.isNull(annotation)) {
             return;
         }
 
