@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.util;
 
+import com.google.common.collect.Maps;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -117,7 +118,7 @@ public class AopUtil {
      * @date 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getParamMap(JoinPoint joinPoint) {
-        Map<String, Object> paramsMap = new HashMap<>(16);
+        Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
         String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
         if (parameterNames.length > 0) {
             for (int i = 0; i < parameterNames.length; i++) {
