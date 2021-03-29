@@ -1,17 +1,23 @@
 package com.ddf.boot.common.limit.ratelimit.handler;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
+import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimitIgnore;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
 import com.ddf.boot.common.limit.ratelimit.extra.RateLimitPropertiesCollect;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +66,9 @@ public class RateLimitAspect {
     public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringContextHolder
             .getBeansOfType(RateLimitKeyGenerator.class);
 
-    @Pointcut(value = "@annotation(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit) || @within(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)")
+    @Pointcut(value = "@annotation(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
+            + " || @within(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
+            + " || @annotation(com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit)")
     public void pointCut() {
 
     }
@@ -81,59 +89,75 @@ public class RateLimitAspect {
             log.info("忽略执行[{}]-[{}]的限流处理>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
             return;
         }
-        // 获取限流注解
-        final RateLimit annotation = AopUtil.getAnnotation(joinPoint, RateLimit.class);
-        if (Objects.isNull(annotation)) {
-            return;
-        }
-
-        // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
-        if (rateLimitProperties.isCloudRefresh()) {
-            if (Objects.isNull(rateLimitPropertiesCollect)) {
-                throw new NoSuchBeanDefinitionException(String.format("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]",
-                        RateLimitPropertiesCollect.class.getName()));
+        final MultiRateLimit multiRateLimit = AopUtil.getAnnotation(joinPoint, MultiRateLimit.class);
+        // 限流规则，统一用集合处理
+        final List<RateLimit> rules;
+        if (Objects.nonNull(multiRateLimit)) {
+            rules = new ArrayList<>(Arrays.asList(multiRateLimit.rules()));
+        } else {
+            // 获取限流注解
+            final RateLimit annotation = AopUtil.getAnnotation(joinPoint, RateLimit.class);
+            if (Objects.isNull(annotation)) {
+                log.debug("[{}-{}]未开启限流限流>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
+                return;
             }
-            // 使用外部接口类填充全局属性
-            rateLimitPropertiesCollect.copyToProperties(rateLimitProperties);
+            rules = Collections.singletonList(annotation);
         }
-        // 属性检查
-        rateLimitProperties.check();
-        if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+        if (CollectionUtil.isEmpty(rules)) {
+            log.debug("[{}-{}]限流规则为空>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
             return;
         }
 
-        // 获取key生成器
-        final String keyGenerator = StringUtils.isBlank(annotation.keyGenerator()) ?
-                rateLimitProperties.getKeyGenerators() : annotation.keyGenerator();
-        if (StringUtils.isBlank(keyGenerator)) {
-            return;
-        }
+        // 允许多个限流规则存在，如接口全局限流以及也同时需要控制用户级别的防刷
+        for (RateLimit annotation : rules) {
+            // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
+            // 这个特性基本上只会用在全局限流规则， 其它个性化的限流规则，其实应该用不到这个，不过这里代码统一，反正只要使用的时候，
+            // 自己在方法级别设置自己的限流规则就行了
+            if (rateLimitProperties.isCloudRefresh()) {
+                if (Objects.isNull(rateLimitPropertiesCollect)) {
+                    throw new NoSuchBeanDefinitionException(String.format("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]",
+                            RateLimitPropertiesCollect.class.getName()));
+                }
+                // 使用外部接口类填充全局属性
+                rateLimitPropertiesCollect.copyToProperties(rateLimitProperties);
+            }
+            // 属性检查
+            rateLimitProperties.check();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+                continue;
+            }
+            // 获取key生成器
+            final String keyGenerator = StringUtils.isBlank(annotation.keyGenerator()) ?
+                    rateLimitProperties.getKeyGenerators() : annotation.keyGenerator();
+            if (StringUtils.isBlank(keyGenerator)) {
+                return;
+            }
 
-        // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
-        String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getCredit());
-        // 获取限流最大令牌桶数量
-        Integer max = annotation.max() == 0 ? rateLimitProperties.getMax() : annotation.max();
-        // 获取令牌恢复速率
-        Integer rate = annotation.rate() == 0 ? rateLimitProperties.getRate() : annotation.rate();
-        if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
-            return;
-        }
+            // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
+            String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getCredit());
+            // 获取限流最大令牌桶数量
+            Integer max = annotation.max() == 0 ? rateLimitProperties.getMax() : annotation.max();
+            // 获取令牌恢复速率
+            Integer rate = annotation.rate() == 0 ? rateLimitProperties.getRate() : annotation.rate();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+                return;
+            }
 
-        // 限流可能是多方面的规则，因此考虑允许多个存在
-        if (!KEY_GENERATOR_MAP.containsKey(keyGenerator)) {
-            throw new NoSuchBeanDefinitionException(String.format("限流组件[%s]不存在", keyGenerator));
-        }
+            // 强制性校验，避免隐藏错误
+            if (!KEY_GENERATOR_MAP.containsKey(keyGenerator)) {
+                throw new NoSuchBeanDefinitionException(String.format("限流组件[%s]不存在", keyGenerator));
+            }
 
-        // 生成限流的key
-        String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
-        if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
-            log.error("接口【{}-{}-{}】超过限流组件[{}]预定流量，过滤请求， 对应参数【{}】, 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                    currentMethod.getName(), keyGenerator, JsonUtil.asString(AopUtil.getParamMap(joinPoint))
-            );
-            throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
+            // 生成限流的key
+            String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
+            if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
+                log.error("接口【{}-{}-{}】超过限流组件[{}]预定流量，过滤请求， 对应参数【{}】, 记录日志>>>>>>>", identityNo, currentClass.getName(),
+                        currentMethod.getName(), keyGenerator, JsonUtil.asString(AopUtil.getParamMap(joinPoint))
+                );
+                throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
+            }
         }
     }
-
 
     /**
      * 处理条件表达式, 满足条件的才会限流
