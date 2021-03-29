@@ -34,7 +34,7 @@ public @interface EnableRateLimit {
      * @see RateLimitKeyGenerator
      * @return
      */
-    String keyGenerators() default GlobalRateLimitKeyGenerator.BEAN_NAME;
+    String keyGenerator() default GlobalRateLimitKeyGenerator.BEAN_NAME;
 
     /**
      * 是否是spring-cloud环境并使用@RequestScope刷新特性。
