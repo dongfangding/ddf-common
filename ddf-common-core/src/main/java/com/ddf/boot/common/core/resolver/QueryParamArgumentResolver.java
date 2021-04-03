@@ -1,16 +1,16 @@
 package com.ddf.boot.common.core.resolver;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.model.QueryParam;
 import com.ddf.boot.common.core.util.ContextKey;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ddf.boot.common.core.util.JsonUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.springframework.core.MethodParameter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -81,26 +81,26 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
     public List<QueryParam> resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String queryParamsStr = webRequest.getParameter(ContextKey.queryParams.name());
-        if (!StringUtils.isEmpty(queryParamsStr)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<Map<String, Object>> list = objectMapper.readValue(queryParamsStr, List.class);
-            List<QueryParam> rtnList = new ArrayList<>();
-            if (list != null && !list.isEmpty()) {
-                for (Map<String, Object> v : list) {
-                    QueryParam queryParam = objectMapper.readValue(objectMapper.writeValueAsString(v),
-                            QueryParam.class
-                    );
-                    if (queryParam.getRelative() == null) {
-                        queryParam.setRelative(QueryParam.Relative.AND);
+        if (StrUtil.isBlank(queryParamsStr)) {
+            return Collections.emptyList();
+        }
+        final List<QueryParam> params = JsonUtil.getInstance()
+                .readValue(queryParamsStr, new TypeReference<List<QueryParam>>() {
+                    @Override
+                    public Type getType() {
+                        return super.getType();
                     }
-                    if (queryParam.getOp() == null) {
-                        queryParam.setOp(QueryParam.Op.EQ);
-                    }
-                    rtnList.add(queryParam);
+                });
+        if (CollectionUtil.isNotEmpty(params)) {
+            for (QueryParam param : params) {
+                if (param.getRelative() == null) {
+                    param.setRelative(QueryParam.Relative.AND);
+                }
+                if (param.getOp() == null) {
+                    param.setOp(QueryParam.Op.EQ);
                 }
             }
-            return rtnList;
         }
-        return Collections.emptyList();
+        return params;
     }
 }
