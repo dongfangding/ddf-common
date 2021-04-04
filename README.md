@@ -50,6 +50,19 @@ TODO
 ## ddf-common-core
 核心功能包
 
+### 特性和功能
+- 自定义参数解析器
+    - 使用介绍-[SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
+    - 项目特性-[自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
+- 配置跨域
+    - 使用介绍-[SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
+    - 项目特性-[项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
+- 自定义拦截器
+    - 使用介绍-[SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
+- 配置线程池
+    - 使用介绍-[SpringBoot项目配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
+    - 项目特性-[快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
+
 ### 基本配置
 
 位于包`com.ddf.boot.common.core.config`路径下
