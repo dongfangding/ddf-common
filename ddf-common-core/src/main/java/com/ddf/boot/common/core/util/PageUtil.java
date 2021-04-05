@@ -178,6 +178,15 @@ public class PageUtil {
     /**
      * 将Mybatis查询出来的对象转换为PageResult对象，且数据集合类型不同，提供转换
      *
+     *  final Page<UserDynamicDTO> page = userDynamicService.searchUserDynamic(request);
+     *  PageUtil.convertMybatis(page, (list) -> {
+     *  List<UserDynamicResponse> responseList = new ArrayList<>(list.size());
+     *      for (UserDynamicDTO dto : list) {
+     *          final UserDynamicResponse response = new UserDynamicResponse();
+     *      }
+     *      return responseList;
+     *  });
+     *
      * @param page
      * @param function
      * @param <E>
