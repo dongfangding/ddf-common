@@ -174,4 +174,19 @@ public class PageUtil {
         result.setContent(function.apply(pageResult.getContent()));
         return result;
     }
+
+    /**
+     * 将Mybatis查询出来的对象转换为PageResult对象，且数据集合类型不同，提供转换
+     *
+     * @param page
+     * @param function
+     * @param <E>
+     * @param <R>
+     * @return
+     */
+    public static <E, R> PageResult<R> convertMybatis(@NotNull IPage<E> page, Function<List<E>, List<R>> function) {
+        final PageResult<R> result = new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal());
+        result.setContent(function.apply(page.getRecords()));
+        return result;
+    }
 }
