@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,9 +26,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
  * @version 1.0
  * @date 2020/08/31 19:00
  */
+@Component
 public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgumentResolver  {
 
-    @Autowired
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     private static final String CONTENT_TYPE_JSON = "application/json";

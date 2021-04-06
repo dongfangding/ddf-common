@@ -70,7 +70,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://www.dongfang.ding.fans:3306/boot-quick?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&tinyInt1isBit=false");
+        dsc.setUrl("jdbc:mysql://www.snowball.fans:3306/better-together?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&tinyInt1isBit=false");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("develop");
         dsc.setPassword("12345678");
@@ -79,7 +79,7 @@ public class CodeGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
 //        pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.ddf.boot.quick");
+        pc.setParent("com.ddf.better.together");
         pc.setEntity("model.entity");
 /*        pc.setService("com.ddf.boot.service");
         pc.setServiceImpl("com.ddf.boot.service.impl");
@@ -138,11 +138,11 @@ public class CodeGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // 设置父类，如果存在的话
-        strategy.setSuperEntityClass("com.ddf.boot.common.core.model.BaseDomain");
+//        strategy.setSuperEntityClass("com.ddf.boot.common.core.model.BaseDomain");
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         // 写于父类中的公共字段
-        strategy.setSuperEntityColumns("id", "create_by", "create_time", "modify_by", "modify_time", "is_del", "version");
+//        strategy.setSuperEntityColumns("id", "create_by", "create_time", "modify_by", "modify_time", "is_del", "version");
         // 其它带父类的
 //        strategy.setSuperServiceClass("");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
