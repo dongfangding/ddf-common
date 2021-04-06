@@ -3,6 +3,7 @@ package com.ddf.boot.common.core.config;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
+import com.ddf.boot.common.core.util.SpringContextHolder;
 import java.util.List;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -77,16 +78,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
         return new QueryParamArgumentResolver();
     }
 
-    /**
-     * 注册多格式参数解析器
-     *
-     * @return
-     */
-    @Bean
-    public MultiArgumentResolverMethodProcessor multiArgumentResolverMethodProcessor() {
-        return new MultiArgumentResolverMethodProcessor();
-    }
-
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(0, new MappingJackson2HttpMessageConverter());
@@ -149,7 +140,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(multiArgumentResolverMethodProcessor());
+        resolvers.add(SpringContextHolder.getBean(MultiArgumentResolverMethodProcessor.class));
         resolvers.add(queryParamArgumentResolver());
     }
 
