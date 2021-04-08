@@ -2,7 +2,10 @@ package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.core.exception200.BadRequestException;
 import com.ddf.boot.common.core.exception200.BaseCallbackCode;
+import com.ddf.boot.common.core.exception200.BaseErrorCallbackCode;
 import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
+import com.google.common.base.Objects;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,12 +109,14 @@ public class PreconditionUtil {
      * @param request
      */
     public static <T> void requiredParamCheck(T request) {
+        PreconditionUtil.checkArgument(
+                Objects.nonNull(request), BaseErrorCallbackCode.BAD_REQUEST
+        );
         Set<ConstraintViolation<T>> constraintViolations = VALIDATOR.validate(request);
         if (constraintViolations.size() == 0) {
             return;
         }
         Iterator<ConstraintViolation<T>> iterator = constraintViolations.iterator();
-        throw new BadRequestException(iterator.next()
-                .getMessage());
+        throw new BadRequestException(iterator.next().getMessage());
     }
 }

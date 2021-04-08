@@ -49,7 +49,7 @@ public enum CommonLogic {
 
     public static CommonLogic getByLogic(Integer logic) {
         final CommonLogic contentLibraryStatus = valueMappings.get(logic);
-        PreconditionUtil.checkArgument(contentLibraryStatus != null, GlobalCallbackCode.COMMON_LOGIC_ERROR);
+        PreconditionUtil.checkArgument(contentLibraryStatus != null, GlobalCallbackCode.ENUM_CODE_NOT_MAPPING);
         return contentLibraryStatus;
     }
 }
