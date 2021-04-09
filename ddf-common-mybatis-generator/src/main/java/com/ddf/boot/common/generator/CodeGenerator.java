@@ -70,10 +70,11 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://www.snowball.fans:3306/better-together?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&tinyInt1isBit=false");
+        dsc.setUrl("jdbc:mysql://localhost:3306/better-together?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&tinyInt1isBit=false");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("develop");
-        dsc.setPassword("12345678");
+        dsc.setUsername("root");
+        dsc.setPassword("123");
+        dsc.setTypeConvert(new MySqlTypeConvertCustom());
         mpg.setDataSource(dsc);
 
         // 包配置
