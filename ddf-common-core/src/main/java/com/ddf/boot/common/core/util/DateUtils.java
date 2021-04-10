@@ -183,4 +183,33 @@ public class DateUtils {
         return Objects.isNull(instant) ? null : instant.toEpochMilli();
     }
 
+    /**
+     * 获取下个星期的第一天
+     *
+     * @return
+     */
+    public static Date nextWeekFirstDay() {
+        return DateUtil.beginOfWeek(DateUtil.nextWeek());
+    }
+
+    /**
+     * 获取下个月的第一天
+     *
+     * @return
+     */
+    public static Date nextMonthFirstDay() {
+        return DateUtil.beginOfMonth(DateUtil.nextMonth());
+    }
+
+    /**
+     * 获取下一年的第一天
+     *
+     * @return
+     */
+    public static Date nextYearFirstDay() {
+        final Calendar instance = Calendar.getInstance();
+        instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
+        return DateUtil.beginOfYear(instance).getTime();
+    }
+
 }
