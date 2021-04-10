@@ -193,12 +193,30 @@ public class DateUtils {
     }
 
     /**
+     * 获取下个星期的最后一天
+     *
+     * @return
+     */
+    public static Date nextWeekEndDay() {
+        return DateUtil.endOfWeek(DateUtil.nextWeek());
+    }
+
+    /**
      * 获取下个月的第一天
      *
      * @return
      */
     public static Date nextMonthFirstDay() {
         return DateUtil.beginOfMonth(DateUtil.nextMonth());
+    }
+
+    /**
+     * 获取下个月的最后一天
+     *
+     * @return
+     */
+    public static Date nextMonthEndDay() {
+        return DateUtil.endOfDay(DateUtil.nextMonth());
     }
 
     /**
@@ -210,6 +228,17 @@ public class DateUtils {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
         return DateUtil.beginOfYear(instance).getTime();
+    }
+
+    /**
+     * 获取下一年的第一天
+     *
+     * @return
+     */
+    public static Date nextYearEndDay() {
+        final Calendar instance = Calendar.getInstance();
+        instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
+        return DateUtil.endOfYear(instance).getTime();
     }
 
 }
