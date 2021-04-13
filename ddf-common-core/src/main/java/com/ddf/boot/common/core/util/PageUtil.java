@@ -75,8 +75,18 @@ public class PageUtil {
      * @param <E>
      * @return
      */
-    public static <E> PageResult<E> empty() {
-        return new PageResult<>(PageRequest.DEFAULT_PAGE_NUM, PageRequest.DEFAULT_PAGE_SIZE);
+    public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
+        return new PageResult<>(pageNum, pageSize);
+    }
+
+    /**
+     * 空分页
+     *
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> empty(PageRequest pageRequest) {
+        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
     }
 
     /**
@@ -123,7 +133,7 @@ public class PageUtil {
             @Nullable Class<R> voClazz) {
         final List<T> list = page.getRecords();
         if (CollectionUtil.isEmpty(list)) {
-            return empty();
+            return empty((int) page.getCurrent(), (int) page.getSize());
         }
         if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
             List<R> rtnList = (List<R>) list;
@@ -180,7 +190,7 @@ public class PageUtil {
      *
      *  final Page<UserDynamicDTO> page = userDynamicService.searchUserDynamic(request);
      *  PageUtil.convertMybatis(page, (list) -> {
-     *  List<UserDynamicResponse> responseList = new ArrayList<>(list.size());
+     *      List<UserDynamicResponse> responseList = new ArrayList<>(list.size());
      *      for (UserDynamicDTO dto : list) {
      *          final UserDynamicResponse response = new UserDynamicResponse();
      *      }
