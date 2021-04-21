@@ -36,6 +36,7 @@ public class PageUtil {
     public static <T> Page<T> toMybatis(PageRequest pageRequest) {
         int pageNum = 0;
         int pageSize = 0;
+        pageRequest.checkArgument();
         if (!pageRequest.isUnPaged()) {
             pageNum = pageRequest.getPageNum();
             pageSize = pageRequest.getPageSize();
@@ -54,6 +55,7 @@ public class PageUtil {
      * @return
      */
     private static List<OrderItem> toMybatisOrder(PageRequest pageRequest) {
+        pageRequest.checkArgument();
         if (CollUtil.isEmpty(pageRequest.getOrders())) {
             return Collections.emptyList();
         }
@@ -86,6 +88,7 @@ public class PageUtil {
      * @return
      */
     public static <E> PageResult<E> empty(PageRequest pageRequest) {
+        pageRequest.checkArgument();
         return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
     }
 
@@ -99,6 +102,7 @@ public class PageUtil {
      * @return
      */
     public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
+        pageRequest.checkArgument();
         if (pageRequest.isUnPaged()) {
             return new PageResult<>(pageRequest.getPageNum(), total, total, content);
         }
@@ -150,6 +154,7 @@ public class PageUtil {
      * @return
      */
     public static Pageable toSpringData(PageRequest pageRequest) {
+        pageRequest.checkArgument();
         if (pageRequest.isUnPaged()) {
             return Pageable.unpaged();
         }
