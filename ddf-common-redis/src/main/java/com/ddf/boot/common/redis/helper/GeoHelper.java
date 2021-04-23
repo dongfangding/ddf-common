@@ -7,7 +7,6 @@ import com.ddf.boot.common.redis.request.GeoMemberSearchRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TimeZone;
 import org.redisson.Redisson;
 import org.redisson.api.GeoEntry;
 import org.redisson.api.GeoOrder;
@@ -295,6 +294,9 @@ public class GeoHelper {
         helper.add(key, 18.087269, 37.502669, "WangEr");
         helper.add(key, 25.087269, 39.502669, "MaZi");
 
+        final Double dist = helper.dist(key, "Palermo", "MaZi", GeoUnit.KILOMETERS);
+        System.out.printf("相距距离: %s %s%n", dist, GeoUnit.KILOMETERS.name());
+
         final GeoCoordinateSearchRequest build = GeoCoordinateSearchRequest.builder()
                 .key(key)
                 .longitude(14.361389)
@@ -315,8 +317,6 @@ public class GeoHelper {
         final Map<String, GeoPosition> map1 = helper.radiusWithPosition(build);
         System.out.println("map1 = " + map1);
 
-
-        System.out.println(TimeZone.getTimeZone("GMT+8"));
     }
 
 
