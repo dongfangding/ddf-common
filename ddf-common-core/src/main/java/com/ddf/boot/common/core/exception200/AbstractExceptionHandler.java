@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.net.NetUtil;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
+import com.ddf.boot.common.core.logaccess.AccessLogAspect;
 import com.ddf.boot.common.core.response.ResponseData;
 import java.util.List;
 import java.util.Locale;
@@ -58,8 +60,10 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-        log.error("异常信息: ", exception);
-
+        // 这个可选的日志处理器会在异常时打印异常日志， 如果已经处理了，这里就不要重复打印了
+        if (!SpringContextHolder.containsBeanType(AccessLogAspect.class)) {
+            log.error("异常信息: ", exception);
+        }
         // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
         boolean ignoreErrorStack = false;
         List<String> ignoreErrorTraceProfile = globalProperties.getIgnoreErrorTraceProfile();

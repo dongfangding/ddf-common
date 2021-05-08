@@ -1,9 +1,9 @@
 package com.ddf.boot.common.jwt.util;
 
 import cn.hutool.core.convert.Convert;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.SpringContextHolder;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;

@@ -46,7 +46,7 @@ public class MongoTemplateHelper {
             @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         if (count <= 0) {
-            return PageUtil.empty();
+            return PageUtil.empty(pageRequest);
         }
         if (!pageRequest.isUnPaged()) {
             Pageable pageable = PageUtil.toSpringData(pageRequest);

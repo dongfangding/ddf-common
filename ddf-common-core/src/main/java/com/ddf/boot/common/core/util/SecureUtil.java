@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.ddf.boot.common.core.config.GlobalProperties;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;

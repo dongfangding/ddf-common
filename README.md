@@ -169,7 +169,7 @@ public class ResponseData<T> {
 
 * 如果某个返回对象，我就是不想再被统一对象包装怎么办？
 
-  提供了一个属性`com.ddf.boot.common.core.interceptor.CommonResponseBodyAdviceProperties#ignoreReturnType`，
+  提供了一个属性`com.ddf.boot.common.core.controllerwrapper.CommonResponseBodyAdviceProperties#ignoreReturnType`，
 
   当控制器层返回的对象全类名包含在配置列表中时， 统一返回对象将不会继续执行包装逻辑
 
@@ -291,7 +291,7 @@ public class ResponseData<T> {
 - com.ddf.boot.common.core.util.JsonUtil
   Json相关序列化方法
 
-- com.ddf.boot.common.core.util.SpringContextHolder
+- com.ddf.boot.common.core.helper.SpringContextHolder
   提供在非Spring容器中静态获取Spring bean的功能
 
 - com.ddf.boot.common.core.helper.EnvironmentHelper

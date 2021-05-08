@@ -1,6 +1,6 @@
 package com.ddf.boot.common.redis.constant;
 
-import com.ddf.boot.common.core.util.SpringContextHolder;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.google.common.base.Joiner;
 import reactor.util.annotation.NonNull;
 

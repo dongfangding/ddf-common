@@ -1,9 +1,9 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
-import com.ddf.boot.common.core.util.SpringContextHolder;
 import java.util.List;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;

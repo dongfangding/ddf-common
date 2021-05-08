@@ -3,6 +3,7 @@ package com.ddf.boot.common.core.util;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.core.config.GlobalProperties;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 
 /**
  * 本地雪花id生成器

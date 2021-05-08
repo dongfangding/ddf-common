@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.interceptor;
+package com.ddf.boot.common.core.controllerwrapper;
 
 import com.ddf.boot.common.core.response.ResponseData;
 import java.lang.reflect.AnnotatedElement;
