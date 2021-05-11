@@ -21,7 +21,7 @@ public class RateLimitProperties {
     /**
      * 限流key生成规则bean_name
      */
-    private String keyGenerators = GlobalRateLimitKeyGenerator.BEAN_NAME;
+    private String keyGenerator = GlobalRateLimitKeyGenerator.BEAN_NAME;
 
     /**
      * 作为不控制限流的特殊值
@@ -53,7 +53,7 @@ public class RateLimitProperties {
      *
      */
     public void check() {
-        if (StringUtil.isBlank(keyGenerators)) {
+        if (StringUtil.isBlank(keyGenerator)) {
             throw new IllegalArgumentException("限流key组件生成器参数异常");
         }
         if (Objects.isNull(max) || max <= 0) {
