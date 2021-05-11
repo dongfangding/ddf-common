@@ -128,7 +128,7 @@ public class RateLimitAspect {
             }
             // 获取key生成器
             final String keyGenerator = StringUtils.isBlank(annotation.keyGenerator()) ?
-                    rateLimitProperties.getKeyGenerators() : annotation.keyGenerator();
+                    rateLimitProperties.getKeyGenerator() : annotation.keyGenerator();
             if (StringUtils.isBlank(keyGenerator)) {
                 return;
             }
