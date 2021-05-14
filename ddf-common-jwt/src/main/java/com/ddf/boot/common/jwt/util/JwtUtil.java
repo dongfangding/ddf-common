@@ -29,27 +29,6 @@ import org.springframework.util.AntPathMatcher;
 
 /**
  * Jwt的工具类
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
@@ -177,7 +156,7 @@ public class JwtUtil {
      *
      * @return
      */
-    public static String getUserId() throws UserClaimMissionException {
+    public static String getUserId() {
         return getByContext().getUserId();
     }
 
@@ -198,14 +177,19 @@ public class JwtUtil {
      * 获取当前用户信息，如果没有获取到用户信息会抛出异常
      *
      * @return
-     * @throws UserClaimMissionException
      */
-    public static UserClaim getByContext() throws UserClaimMissionException {
+    public static UserClaim getByContext() {
         return getByContext(true);
     }
 
 
-    private static UserClaim getByContext(boolean necessary) throws UserClaimMissionException {
+    /**
+     * 从上下文中获取用户信息， 这个上下文可能是多个上下文， 如http请求头， RpcContext等
+     *
+     * @param necessary
+     * @return
+     */
+    private static UserClaim getByContext(boolean necessary) {
         Object headerUser;
         try {
             headerUser = WebUtil.getCurRequest().getAttribute(JwtConstant.HEADER_USER);

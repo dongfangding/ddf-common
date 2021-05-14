@@ -3,7 +3,6 @@ package com.ddf.boot.common.jwt.config;
 import com.ddf.boot.common.jwt.util.JwtUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -12,27 +11,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * Jwt相关配置类
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
@@ -44,7 +22,6 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
 
     public static final String BEAN_NAME = "jwtProperties";
-
 
     /**
      * 适用于permitAll的放行路径配置
@@ -63,15 +40,21 @@ public class JwtProperties {
     private int refreshTokenMinute;
 
     /**
-     * 过期时间，第一次生成token时登录时别的服务生成的，这个过期时间是网关判断token即将失效，重新签发的
+     * 过期时间，签发jwt的过期时间
      * 单位  分钟
      */
     private int expiredMinute;
 
     /**
-     * 生成的秘钥
+     * 加密算法秘钥
      */
     private String secret;
+
+    /**
+     * 是否开启mock登录用户功能， 如果开启的话，那么则不会走jwt的解析流程，也不走认证流程，而是把token直接作为用户id放入到上下文中直接使用,
+     * 则当前请求可以直接非常简单的用对应身份进行操作
+     */
+    private boolean mock;
 
 
     /**
@@ -84,16 +67,10 @@ public class JwtProperties {
         if (ignores == null || ignores.isEmpty()) {
             return false;
         }
-        List<String> pathList = ignores.stream().filter(s -> StringUtils.isNotBlank(s.getPath())).map(
-                PathMatch::getPath).collect(Collectors.toList());
         // 当前请求地址是否需要跳过认证
-        if (!pathList.isEmpty()) {
-            for (String ignore : pathList) {
-                if (JwtUtil.getAntPathMatcher().match(ignore, path)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ignores.stream()
+                .map(PathMatch::getPath)
+                .filter(StringUtils::isNotBlank)
+                .anyMatch(ignore -> JwtUtil.getAntPathMatcher().match(ignore, path));
     }
 }
