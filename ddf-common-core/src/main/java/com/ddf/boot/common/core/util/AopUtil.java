@@ -2,38 +2,21 @@ package com.ddf.boot.common.core.util;
 
 import com.google.common.collect.Maps;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * aop获取相关属性的方法工具类$
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
  * @date 2019/12/20 0020 10:24
@@ -127,5 +110,40 @@ public class AopUtil {
             }
         }
         return paramsMap;
+    }
+
+    /**
+     * 动态通过反射修改指定注解实例里的属性的值， 这个是如果只有一个属性要修改时提供的简便方法
+     *
+     * @param annotation
+     * @param name
+     * @param value
+     */
+    @SneakyThrows
+    public static void modifyAnnotationValue(Annotation annotation, String name, Object value) {
+        Map<String, Object> valueMap = new HashMap<>(2);
+        valueMap.put(name, value);
+        modifyAnnotationValue(annotation, valueMap);
+    }
+
+
+    /**
+     * 动态通过反射修改指定注解示例里的属性的值
+     *
+     * @param annotation   注解实例对象
+     * @param nameValueMap 属性和值集合
+     */
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    public static void modifyAnnotationValue(Annotation annotation, Map<String, Object> nameValueMap) {
+        if (CollectionUtils.isEmpty(nameValueMap)) {
+            return;
+        }
+        final InvocationHandler handler = Proxy.getInvocationHandler(annotation);
+        // memberValues是注解代理类存储属性的固定属性值， 是个LinkedHashMap
+        Field hField = handler.getClass().getDeclaredField("memberValues");
+        hField.setAccessible(true);
+        Map memberValues = (Map) hField.get(handler);
+        nameValueMap.forEach(memberValues::put);
     }
 }
