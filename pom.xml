@@ -28,6 +28,8 @@
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.24</druid.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
+        <reflectasm.version>1.11.9</reflectasm.version>
+        <jdeferred.version>2.0.0</jdeferred.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -227,6 +229,18 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>reflectasm</artifactId>
+                <version>${reflectasm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdeferred.v2</groupId>
+                <artifactId>jdeferred-core</artifactId>
+                <version>${jdeferred.version}</version>
             </dependency>
 
         </dependencies>
