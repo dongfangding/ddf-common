@@ -157,4 +157,48 @@ public class StringExtUtil {
     public static String exceptionToStringNoLimit(Throwable e) {
         return ExceptionUtil.stacktraceToString(e, -1);
     }
+
+
+    /**
+     * 以指定格式分隔后进行固定格式拼接
+     *
+     * @param str
+     * @param separator
+     * @return
+     */
+    public static String getShortNameBySplit(String str, String separator) {
+        return getShortNameBySplit(str, separator, separator);
+    }
+
+    /**
+     * 以指定格式分隔后进行固定格式拼接
+     *
+     * @param str
+     * @param separator
+     * @return
+     */
+    public static String getShortNameBySplit(String str, String separator, String replaceSeparator) {
+        final String[] charArray = str.split(separator);
+        final int size = charArray.length;
+        if (size == 1) {
+            return str;
+        }
+        final StringBuilder result = new StringBuilder();
+        result.append(charArray[0].charAt(0));
+        for (int i = 1; i < size; i++) {
+            result.append(replaceSeparator).append(charArray[i].charAt(0));
+        }
+        return result.toString();
+    }
+
+    /**
+     * 获取首字符小写字符串
+     * 如HelloService --> helloService
+     *
+     * @param name
+     * @return
+     */
+    public static String getFirstLowerCaseName(String name) {
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
+    }
 }
