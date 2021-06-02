@@ -1,11 +1,9 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.annotation.AnnotationUtil;
 import com.google.common.collect.Maps;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,9 +119,7 @@ public class AopUtil {
      */
     @SneakyThrows
     public static void modifyAnnotationValue(Annotation annotation, String name, Object value) {
-        Map<String, Object> valueMap = new HashMap<>(2);
-        valueMap.put(name, value);
-        modifyAnnotationValue(annotation, valueMap);
+        AnnotationUtil.setValue(annotation, name, value);
     }
 
 
@@ -134,16 +130,10 @@ public class AopUtil {
      * @param nameValueMap 属性和值集合
      */
     @SneakyThrows
-    @SuppressWarnings("unchecked")
     public static void modifyAnnotationValue(Annotation annotation, Map<String, Object> nameValueMap) {
         if (CollectionUtils.isEmpty(nameValueMap)) {
             return;
         }
-        final InvocationHandler handler = Proxy.getInvocationHandler(annotation);
-        // memberValues是注解代理类存储属性的固定属性值， 是个LinkedHashMap
-        Field hField = handler.getClass().getDeclaredField("memberValues");
-        hField.setAccessible(true);
-        Map memberValues = (Map) hField.get(handler);
-        nameValueMap.forEach(memberValues::put);
+        nameValueMap.forEach((k, v) -> AnnotationUtil.setValue(annotation, k, v));
     }
 }
