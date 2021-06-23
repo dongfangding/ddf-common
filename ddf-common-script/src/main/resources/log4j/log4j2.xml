@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Log4j 2.x 配置文件 -->
+<Configuration status="warn" strict="true">
+    <Properties>
+        <Property name="LOG_BASE_DIR">/data/log/app/</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{[%d{yyyy-MM-dd HH:mm:ss.SSS}]}{faint} %clr{%level}{magenta}
+            %clr{[%t]}{faint} %clr{%c{1.}}{cyan} %clr{-}{faint} %m%n%xwEx
+        </Property>
+        <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] %level [%t] %c{1.} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- 输出到控制台 -->
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <!-- 需要记录的格式 -->
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
+        </Console>
+
+        <RollingRandomAccessFile name="INFO_FILE" fileName="${LOG_BASE_DIR}/game.log"
+                                 filePattern="${LOG_BASE_DIR}/app-%d{yyyy-MM-dd}.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 需要记录的格式 -->
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+            <Policies>
+                <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <!-- 最大保留文件数量 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="WARN_FILE" fileName="${LOG_BASE_DIR}/app-warn.log"
+                                 filePattern="${LOG_BASE_DIR}/app-warn-%d{yyyy-MM-dd}.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 需要记录的格式 -->
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+            <Policies>
+                <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <!-- 最大保留文件数量 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="ERROR_FILE" fileName="${LOG_BASE_DIR}/app-error.log"
+                                 filePattern="${LOG_BASE_DIR}/app-error-%d{yyyy-MM-dd}.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 需要记录的格式 -->
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+            <Policies>
+                <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <!-- 最大保留文件数量 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <!-- 不同业务逻辑打印到不同文件中 -->
+        <RollingRandomAccessFile name="appSingleAppender" fileName="${LOG_BASE_DIR}/app-single.log"
+                                 filePattern="${LOG_BASE_DIR}/app-single-%d{yyyy-MM-dd}.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 需要记录的格式 -->
+            <PatternLayout pattern="${sys:ONLY_MESSAGE_LOG_PATTERN}"/>
+            <Policies>
+                <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <!-- 最大保留文件数量 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 全局配置 -->
+        <asyncRoot level="INFO" includeLocation="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="INFO_FILE"/>
+            <AppenderRef ref="WARN_FILE"/>
+            <AppenderRef ref="ERROR_FILE"/>
+        </asyncRoot>
+
+        <Logger name="appSingleLogger" level="INFO">
+            <AppenderRef ref="appSingleAppender"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>
