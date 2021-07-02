@@ -3,6 +3,7 @@ package com.ddf.boot.common.core.util;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -239,6 +240,20 @@ public class DateUtils {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
         return DateUtil.endOfYear(instance).getTime();
+    }
+
+    /**
+     * 获取本周的最后一天
+     *
+     * @return String
+     **/
+    static String getWeekEnd() {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK));
+        cal.add(Calendar.DAY_OF_WEEK, 1);
+        Date time = cal.getTime();
+        return new SimpleDateFormat("yyyy-MM-dd").format(time);
     }
 
 }

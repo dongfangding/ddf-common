@@ -283,6 +283,7 @@
         <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
+        <module>ddf-common-es</module>
     </modules>
 
 
