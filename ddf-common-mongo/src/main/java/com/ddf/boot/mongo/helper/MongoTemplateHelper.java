@@ -1,8 +1,8 @@
 package com.ddf.boot.mongo.helper;
 
-import cn.hutool.core.convert.Convert;
 import com.ddf.boot.common.core.model.PageRequest;
 import com.ddf.boot.common.core.model.PageResult;
+import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.boot.common.core.util.PageUtil;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +57,7 @@ public class MongoTemplateHelper {
             List<R> rtnList = (List<R>) dbList;
             return PageUtil.ofPageRequest(pageRequest, count, rtnList);
         } else {
-            return PageUtil.ofPageRequest(pageRequest, count, Convert.toList(voClazz, dbList));
+            return PageUtil.ofPageRequest(pageRequest, count, BeanCopierUtils.copy(dbList, voClazz));
         }
     }
 
@@ -103,7 +103,7 @@ public class MongoTemplateHelper {
             List<R> rtnList = (List<R>) dbList;
             return new PageImpl<>(rtnList, pageable, count);
         } else {
-            return new PageImpl<>(Convert.toList(voClazz, dbList), pageable, count);
+            return new PageImpl<>(BeanCopierUtils.copy(dbList, voClazz), pageable, count);
         }
     }
 
