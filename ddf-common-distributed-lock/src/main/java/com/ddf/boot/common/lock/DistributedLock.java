@@ -55,54 +55,47 @@ public interface DistributedLock {
     /**
      * 尝试获取锁并执行业务
      *
-     * @param lockPath
+     * @param lockKey
      * @param time
      * @param timeUnit
      * @param handleData
      * @return
      */
-    Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
+    Boolean tryLock(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData);
 
-    /**
-     * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
-     *
-     * @param lockPath
-     * @param handleData
-     * @return
-     */
-    boolean lockWorkOnce(String lockPath, HandlerBusiness handleData);
 
     /**
      * 加锁并执行业务
      *
-     * @param lockPath   zk节点路径
+     * @param lockKey   zk节点路径
      * @param time       等待获取锁的时间
      * @param timeUnit   单位
      * @param handleData 具体业务
      */
-    void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
+    void lockWork(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData);
 
     /**
      * 加锁并执行业务- 加锁默认等待10s获取不到锁抛出异常IllegalStateException
      *
-     * @param lockPath   zk节点路径
+     * @param lockKey   zk节点路径
      * @param handleData 具体业务
      * @return
      */
-    void lockWork(String lockPath, HandlerBusiness handleData);
+    void lockWork(String lockKey, SuccessHandler handleData);
 
     /**
      * 上锁路径格式化
      *
-     * @param lockPath
+     * @param lockKey
      * @return
      */
-    String formatLockPath(String lockPath);
+    String formatLockKey(String lockKey);
 
-
-
+    /**
+     * 加锁成功执行业务
+     */
     @FunctionalInterface
-    interface HandlerBusiness {
+    interface SuccessHandler {
         /**
          * 执行业务
          */
