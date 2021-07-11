@@ -1,5 +1,7 @@
 package com.ddf.boot.common.lock.zk.config;
 
+import com.ddf.boot.common.lock.DistributedLock;
+import com.ddf.boot.common.lock.zk.impl.ZookeeperDistributedLock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 @EnableConfigurationProperties(value = {DistributedLockZookeeperProperties.class})
+@ConditionalOnProperty(value = "distributed.lock.zookeeper.enable", havingValue = "true")
 public class CuratorFrameworkConfig {
 
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
@@ -27,7 +30,6 @@ public class CuratorFrameworkConfig {
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
-    @ConditionalOnProperty(value = "distributed.lock.zookeeper.enable", havingValue = "true")
     public CuratorFramework curatorFramework() {
         log.info("开始初始化分布式锁zk客户端工具");
         return CuratorFrameworkFactory.newClient(
@@ -40,4 +42,8 @@ public class CuratorFrameworkConfig {
         );
     }
 
+    @Bean
+    public DistributedLock zookeeperDistributedLock() {
+        return new ZookeeperDistributedLock(curatorFramework(), distributedLockZookeeperProperties);
+    }
 }

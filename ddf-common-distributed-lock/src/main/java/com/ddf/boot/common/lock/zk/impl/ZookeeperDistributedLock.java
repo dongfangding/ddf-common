@@ -10,9 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * 基于zookeeper实现的分布式锁$
@@ -42,17 +40,18 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:56
  */
-@Component
 @Slf4j
 public class ZookeeperDistributedLock implements DistributedLock {
 
-    @Autowired
-    private CuratorFramework client;
+    private final CuratorFramework client;
+    private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
+
+    public ZookeeperDistributedLock(CuratorFramework client, DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
+        this.client = client;
+        this.distributedLockZookeeperProperties = distributedLockZookeeperProperties;
+    }
     @Value("${spring.profiles.active:local}")
     private String env;
-    @Autowired
-    private DistributedLockZookeeperProperties distributedLockZookeeperProperties;
-
 
     /**
      * 尝试获取锁
