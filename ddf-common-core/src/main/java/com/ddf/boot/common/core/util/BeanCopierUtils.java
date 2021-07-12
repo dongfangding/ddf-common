@@ -116,11 +116,11 @@ public class BeanCopierUtils {
         }).collect(Collectors.toList());
     }
 
-    private static void copy(Object source, Object target) {
+    public static void copy(Object source, Object target) {
         copy(source, target, null);
     }
 
-    private static void copy(Object source, Object target, Converter converter) {
+    public static void copy(Object source, Object target, Converter converter) {
         boolean useConverter = null != converter;
         BeanCopier copier = getBeanCopier(source.getClass(), target.getClass(), useConverter);
         copier.copy(source, target, converter);

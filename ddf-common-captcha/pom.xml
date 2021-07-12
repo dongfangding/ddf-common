@@ -13,6 +13,7 @@
     <artifactId>ddf-common-captcha</artifactId>
     <properties>
         <kaptcha-version>2.3.2</kaptcha-version>
+        <anji-plus.version>1.2.9</anji-plus.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,18 @@
                     <groupId>javax.servlet</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.anji-plus</groupId>
+            <artifactId>spring-boot-starter-captcha</artifactId>
+            <version>${anji-plus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-redis</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
