@@ -42,6 +42,7 @@ public class DefaultAjCaptchaProperties {
 
     /**
      * aes加密坐标开启或者禁用(true|false).
+     * 开启的话前端需要对坐标数组进行aes加密然后回传
      */
     private Boolean aesStatus = true;
 

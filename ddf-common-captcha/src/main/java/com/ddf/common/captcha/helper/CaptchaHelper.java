@@ -156,7 +156,7 @@ public class CaptchaHelper {
     /**
      * 校验验证码
      */
-    public void check(CaptchaCheckRequest request) {
+    public boolean check(CaptchaCheckRequest request) {
         final String captchaType = request.getCaptchaType();
         if (Objects.equal(CaptchaTypeEnum.CLICKWORD.getCodeValue(), captchaType) ||
                 Objects.equal(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue(), captchaType)) {
@@ -174,6 +174,7 @@ public class CaptchaHelper {
             PreconditionUtil.checkArgument(
                     java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
         }
+        return Boolean.TRUE;
     }
 
     /**
