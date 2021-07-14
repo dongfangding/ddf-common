@@ -4,29 +4,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 分布式锁接口$
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
+ * 分布式锁接口
  *
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:30
@@ -35,6 +13,7 @@ public interface DistributedLock {
 
     /**
      * 针对多个路径进行格式化，用以符合zk node格式
+     * zk分布式锁时使用
      *
      * @param path
      * @return
@@ -46,59 +25,78 @@ public interface DistributedLock {
     /**
      * 默认等待时间 10s
      */
-    Integer DEFAULT_ACQUIRE_TIME = 10;
+    Integer DEFAULT_ACQUIRE_TIME = 1000;
     /**
      * 默认等待时间 单位
      */
-    TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
+    TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     /**
-     * 尝试获取锁并执行业务
+     * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
+     *
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则返回null
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R tryLock(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception;
+
+
+    /**
+     * 指定等待时间加锁并执行业务
+     *
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception;
+
+    /**
+     * 等待默认时间加锁并执行业务
+     *
+     * @param lockKey        锁
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
+            throws Exception;
+
+    /**
+     * 上锁路径格式化， zk专用
      *
      * @param lockKey
-     * @param time
-     * @param timeUnit
-     * @param handleData
      * @return
      */
-    Boolean tryLock(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData);
-
-
-    /**
-     * 加锁并执行业务
-     *
-     * @param lockKey   zk节点路径
-     * @param time       等待获取锁的时间
-     * @param timeUnit   单位
-     * @param handleData 具体业务
-     */
-    void lockWork(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData);
+    default String formatLockKey(String lockKey) {
+        return lockKey;
+    }
 
     /**
-     * 加锁并执行业务- 加锁默认等待10s获取不到锁抛出异常IllegalStateException
-     *
-     * @param lockKey   zk节点路径
-     * @param handleData 具体业务
-     * @return
-     */
-    void lockWork(String lockKey, SuccessHandler handleData);
-
-    /**
-     * 上锁路径格式化
-     *
-     * @param lockKey
-     * @return
-     */
-    String formatLockKey(String lockKey);
-
-    /**
-     * 加锁成功执行业务
+     * 执行业务方法
      */
     @FunctionalInterface
-    interface SuccessHandler {
+    interface BusinessHandler<R> {
+
         /**
          * 执行业务
+         *
+         * @return
+         * @throws Exception
          */
-        void handle() throws Exception;
+        R handle() throws Exception;
     }
 }

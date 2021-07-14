@@ -2,11 +2,10 @@ package com.ddf.boot.common.lock.zk.impl;
 
 import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.common.lock.exception.LockingAcquireException;
-import com.ddf.boot.common.lock.exception.LockingBusinessException;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
 import com.google.common.base.Strings;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
@@ -43,6 +42,8 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 public class ZookeeperDistributedLock implements DistributedLock {
 
+    public static final String BEAN_NAME = "zookeeperDistributedLock";
+
     private final CuratorFramework client;
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
 
@@ -54,68 +55,35 @@ public class ZookeeperDistributedLock implements DistributedLock {
     private String env;
 
     /**
-     * 尝试获取锁
+     * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
      *
-     * @param lockKey
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则返回null
+     * @param <R>
      * @return
+     * @throws Exception
      */
-    @SneakyThrows
     @Override
-    public Boolean tryLock(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData) {
+    public <R> R tryLock(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception {
         String formatLockKey = formatLockKey(lockKey);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);
-        try {
-            if (!lock.acquire(time, timeUnit)) {
-                log.warn("{}等待[{}{}]后未获取到锁", lockKey, time, timeUnit);
-                return Boolean.FALSE;
+        if (!lock.acquire(time, timeUnit)) {
+            log.warn("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+            if (Objects.nonNull(failureHandler)) {
+                log.info("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+                return failureHandler.handle();
             }
-        } catch (Exception e) {
-            log.error("尝试获取锁路径[{}]时出错！", formatLockKey);
-            return false;
+            return null;
         }
-
         try {
-            handleData.handle();
+            return successHandler.handle();
         } catch (Exception e) {
-            log.error("在锁[{}]执行业务时出错！", formatLockKey);
-            throw new LockingBusinessException(e);
-        } finally {
-            if (lock.isAcquiredInThisProcess()) {
-                lock.release();
-            }
-        }
-        return Boolean.TRUE;
-    }
-
-
-    /**
-     * 加锁并执行业务
-     *
-     * @param lockKey   zk节点路径
-     * @param time       等待获取锁的时间
-     * @param timeUnit   单位
-     * @param handleData 具体业务
-     */
-    @SneakyThrows
-    @Override
-    public void lockWork(String lockKey, int time, TimeUnit timeUnit, SuccessHandler handleData) {
-        String formatLockKey = formatLockKey(lockKey);
-        InterProcessMutex lock;
-        try {
-            lock = new InterProcessMutex(client, formatLockKey);
-            if (!lock.acquire(time, timeUnit)) {
-                throw new IllegalStateException(lock + " could not acquire the lock");
-            }
-        } catch (Exception e) {
-            log.error("尝试获取锁路径[{}]时出错！", formatLockKey);
-            throw new LockingAcquireException(e);
-        }
-
-        try {
-            handleData.handle();
-        } catch (Exception e) {
-            log.error("在锁[{}]执行业务时出错！", formatLockKey);
-            throw new LockingBusinessException(e);
+            log.warn("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+            throw e;
         } finally {
             if (lock.isAcquiredInThisProcess()) {
                 lock.release();
@@ -123,16 +91,56 @@ public class ZookeeperDistributedLock implements DistributedLock {
         }
     }
 
+
     /**
-     * 加锁并执行业务- 加锁默认等待10s获取不到锁抛出异常IllegalStateException
+     * 指定等待时间加锁并执行业务
      *
-     * @param lockKey   zk节点路径
-     * @param handleData 具体业务
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
      * @return
+     * @throws Exception
      */
     @Override
-    public void lockWork(String lockKey, SuccessHandler handleData) {
-        lockWork(lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, handleData);
+    public <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) throws Exception {
+        String formatLockKey = formatLockKey(lockKey);
+        InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);;
+        if (!lock.acquire(time, timeUnit)) {
+            log.warn("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+            if (Objects.nonNull(failureHandler)) {
+                log.info("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+                return failureHandler.handle();
+            }
+            throw new LockingAcquireException(lockKey);
+        }
+        try {
+            return successHandler.handle();
+        } catch (Exception e) {
+            log.error("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+            throw e;
+        } finally {
+            if (lock.isAcquiredInThisProcess()) {
+                lock.release();
+            }
+        }
+    }
+
+    /**
+     * 等待默认时间加锁并执行业务
+     *
+     * @param lockKey        锁
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) throws Exception {
+        return lockWork(lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, successHandler, failureHandler);
     }
 
     /**

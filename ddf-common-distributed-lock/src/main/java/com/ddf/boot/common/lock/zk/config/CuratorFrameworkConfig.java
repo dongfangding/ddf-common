@@ -42,7 +42,7 @@ public class CuratorFrameworkConfig {
         );
     }
 
-    @Bean
+    @Bean(name = ZookeeperDistributedLock.BEAN_NAME)
     public DistributedLock zookeeperDistributedLock() {
         return new ZookeeperDistributedLock(curatorFramework(), distributedLockZookeeperProperties);
     }
