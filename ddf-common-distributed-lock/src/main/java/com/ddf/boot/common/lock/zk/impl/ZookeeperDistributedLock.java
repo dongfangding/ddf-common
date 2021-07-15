@@ -13,28 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 基于zookeeper实现的分布式锁$
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:56
@@ -47,10 +25,12 @@ public class ZookeeperDistributedLock implements DistributedLock {
     private final CuratorFramework client;
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
 
-    public ZookeeperDistributedLock(CuratorFramework client, DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
+    public ZookeeperDistributedLock(CuratorFramework client,
+            DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
         this.client = client;
         this.distributedLockZookeeperProperties = distributedLockZookeeperProperties;
     }
+
     @Value("${spring.profiles.active:local}")
     private String env;
 
@@ -72,9 +52,10 @@ public class ZookeeperDistributedLock implements DistributedLock {
         String formatLockKey = formatLockKey(lockKey);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);
         if (!lock.acquire(time, timeUnit)) {
-            log.warn("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+            log.warn("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms",
+                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
             if (Objects.nonNull(failureHandler)) {
-                log.info("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+                log.warn("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
                 return failureHandler.handle();
             }
             return null;
@@ -82,7 +63,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             return successHandler.handle();
         } catch (Exception e) {
-            log.warn("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+            log.error("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey, e);
             throw e;
         } finally {
             if (lock.isAcquiredInThisProcess()) {
@@ -105,13 +86,16 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @throws Exception
      */
     @Override
-    public <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) throws Exception {
+    public <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception {
         String formatLockKey = formatLockKey(lockKey);
-        InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);;
+        InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);
+        ;
         if (!lock.acquire(time, timeUnit)) {
-            log.warn("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+            log.warn("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms",
+                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
             if (Objects.nonNull(failureHandler)) {
-                log.info("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+                log.warn("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
                 return failureHandler.handle();
             }
             throw new LockingAcquireException(lockKey);
@@ -119,7 +103,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             return successHandler.handle();
         } catch (Exception e) {
-            log.error("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
+            log.error("zk-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey, e);
             throw e;
         } finally {
             if (lock.isAcquiredInThisProcess()) {
@@ -139,8 +123,12 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @throws Exception
      */
     @Override
-    public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) throws Exception {
-        return lockWork(lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT, successHandler, failureHandler);
+    public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
+            throws Exception {
+        return lockWork(
+                lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT,
+                successHandler, failureHandler
+        );
     }
 
     /**

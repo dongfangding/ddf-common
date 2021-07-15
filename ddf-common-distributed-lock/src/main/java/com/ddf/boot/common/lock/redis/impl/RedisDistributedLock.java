@@ -10,7 +10,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 /**
- * <p>description</p >
+ * <p>基于redisson实现分布式锁</p >
  *
  * @author Snowball
  * @version 1.0
@@ -53,13 +53,10 @@ public class RedisDistributedLock implements DistributedLock {
         RLock lock = redissonClient.getLock(lockKey);
         boolean locked = lock.tryLock(time, timeUnit);
         if (!locked) {
-            log.warn(
-                    "redisson-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread()
-                            .getName(), lockKey);
+            log.warn("redisson-尝试获取锁失败, thread = {}, lockKey = {}",
+                    Thread.currentThread().getName(), lockKey);
             if (Objects.nonNull(failureHandler)) {
-                log.info(
-                        "redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread()
-                                .getName(), lockKey);
+                log.warn("redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
                 return failureHandler.handle();
             }
             return null;
@@ -67,9 +64,7 @@ public class RedisDistributedLock implements DistributedLock {
         try {
             return successHandler.handle();
         } catch (Exception e) {
-            log.error(
-                    "redisson-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread()
-                            .getName(), lockKey);
+            log.error("redisson-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey, e);
             throw e;
         } finally {
             lock.unlock();
@@ -97,17 +92,16 @@ public class RedisDistributedLock implements DistributedLock {
         if (lock.isHeldByCurrentThread()) {
             try {
                 return successHandler.handle();
+            } catch (Exception e) {
+                log.error("redisson-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey, e);
+                throw e;
             } finally {
                 lock.unlock();
             }
         }
-        log.warn(
-                "redisson-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread()
-                        .getName(), lockKey);
+        log.warn("redisson-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
         if (Objects.nonNull(failureHandler)) {
-            log.warn(
-                    "redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread()
-                            .getName(), lockKey);
+            log.warn("redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
             return failureHandler.handle();
         }
         throw new LockingAcquireException(lockKey);

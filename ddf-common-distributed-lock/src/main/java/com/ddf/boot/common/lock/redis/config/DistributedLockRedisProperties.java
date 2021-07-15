@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 1.0
  * @date 2021/07/13 20:10
  */
-@ConfigurationProperties(prefix = "distributed.lock.redis")
+@ConfigurationProperties(prefix = "customs.distributed.lock.redis")
 @Data
 public class DistributedLockRedisProperties {
 

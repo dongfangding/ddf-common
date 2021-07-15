@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:43
  **/
-@ConfigurationProperties(prefix = "distributed.lock.zookeeper")
+@ConfigurationProperties(prefix = "customs.distributed.lock.zookeeper")
 @Data
 public class DistributedLockZookeeperProperties {
 
