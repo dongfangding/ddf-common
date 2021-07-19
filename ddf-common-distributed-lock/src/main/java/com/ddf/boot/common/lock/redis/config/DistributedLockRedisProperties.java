@@ -18,9 +18,4 @@ public class DistributedLockRedisProperties {
      * 是否启用redis分布式锁
      */
     private boolean enable;
-
-    /**
-     * 默认锁定时间, 单位毫秒
-     */
-    private Integer defaultLockTimeMillions = 1000;
 }
