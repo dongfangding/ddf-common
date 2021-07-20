@@ -284,6 +284,7 @@
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
         <module>ddf-common-es</module>
+        <module>ddf-commom-ids-service</module>
     </modules>
 
 

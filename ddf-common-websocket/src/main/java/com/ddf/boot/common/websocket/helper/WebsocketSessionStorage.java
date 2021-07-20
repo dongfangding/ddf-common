@@ -4,8 +4,6 @@ import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.lock.DistributedLock;
-import com.ddf.boot.common.lock.exception.LockingAcquireException;
-import com.ddf.boot.common.lock.exception.LockingReleaseException;
 import com.ddf.boot.common.lock.zk.impl.ZookeeperDistributedLock;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;
@@ -95,7 +93,7 @@ public class WebsocketSessionStorage {
      */
     @SneakyThrows
     public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) {
-        DISTRIBUTED_LOCK.lockWorkOnce(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
+        DISTRIBUTED_LOCK.lockWork(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
             String serverHost = webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + "";
             int port = ENVIRONMENT_HELPER.getPort();
             WebSocketSessionWrapper wrapper = new WebSocketSessionWrapper(authPrincipal,
@@ -130,7 +128,8 @@ public class WebsocketSessionStorage {
                         ), JsonUtil.asString(wrapper)
                 );
             }
-        });
+            return null;
+        }, null);
     }
 
     /**
@@ -138,11 +137,10 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      */
-    public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession)
-            throws LockingReleaseException, LockingAcquireException {
-        DISTRIBUTED_LOCK.lockWorkOnce(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
-            modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
-        });
+    public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) throws Exception {
+        DISTRIBUTED_LOCK.lockWork(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
+            return modifyStatus(authPrincipal, WebSocketSessionWrapper.STATUS_OFF_LINE, webSocketSession);
+        }, null);
     }
 
     /**
