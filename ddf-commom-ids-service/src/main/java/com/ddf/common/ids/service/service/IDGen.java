@@ -25,21 +25,10 @@ public interface IDGen {
      * 批量获取id
      *
      * @param key
-     * @param length
+     * @param number
      * @return
      */
-    default ResultList list(String key, int length) {
-        return null;
-    }
-
-
-    /**
-     * 批量获取id
-     *
-     * @param length 指定获取多少个id
-     * @return
-     */
-    default ResultList list(int length) {
+    default ResultList list(String key, int number) {
         return null;
     }
 

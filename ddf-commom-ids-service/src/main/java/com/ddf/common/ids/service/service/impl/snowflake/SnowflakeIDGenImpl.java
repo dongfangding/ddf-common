@@ -1,5 +1,7 @@
 package com.ddf.common.ids.service.service.impl.snowflake;
 
+import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
 import com.ddf.common.ids.service.model.common.Result;
 import com.ddf.common.ids.service.model.common.ResultList;
 import com.ddf.common.ids.service.model.common.Status;
@@ -7,7 +9,6 @@ import com.ddf.common.ids.service.service.IDGen;
 import com.ddf.common.ids.service.util.Utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import java.util.Objects;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,14 +80,14 @@ public class SnowflakeIDGenImpl implements IDGen {
                     wait(offset << 1);
                     timestamp = timeGen();
                     if (timestamp < lastTimestamp) {
-                        return new Result("-1", Status.EXCEPTION);
+                        throw new BusinessException(IdsErrorCodeEnum.CLOCK_BACK_RETRY_FAILURE);
                     }
                 } catch (InterruptedException e) {
                     LOGGER.error("wait interrupted");
-                    return new Result("-2", Status.EXCEPTION);
+                    throw new BusinessException(IdsErrorCodeEnum.INTERRUPTED_EXCEPTION);
                 }
             } else {
-                return new Result("-3", Status.EXCEPTION);
+                throw new BusinessException(IdsErrorCodeEnum.CLOCK_BACK);
             }
         }
         if (lastTimestamp == timestamp) {
@@ -108,19 +109,15 @@ public class SnowflakeIDGenImpl implements IDGen {
 
 
     @Override
-    public ResultList list(int length) {
-        if (0 == length) {
-            return new ResultList(-1, Status.EXCEPTION);
+    public ResultList list(String key, int length) {
+        if (0 >length) {
+            throw new BusinessException(IdsErrorCodeEnum.BATCH_NUMBER_IS_VALID);
         }
         ResultList resultList = new ResultList();
         resultList.setStatus(Status.SUCCESS);
         resultList.setIdList(Lists.newArrayList());
         for (int i = 0; i < length; i++) {
-            final Result result = get(null);
-            if (Objects.equals(Status.EXCEPTION, result.getStatus())) {
-                return new ResultList(Long.parseLong(result.getId()), Status.EXCEPTION);
-            }
-            resultList.getIdList().add(result.getId());
+            resultList.getIdList().add(get(key).getId());
         }
         return resultList;
     }

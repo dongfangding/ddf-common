@@ -1,14 +1,16 @@
 package com.ddf.common.ids.service.service.impl.segment;
 
+import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.common.ids.service.config.properties.IdsProperties;
+import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
 import com.ddf.common.ids.service.model.common.Result;
 import com.ddf.common.ids.service.model.common.ResultList;
-import com.ddf.common.ids.service.model.common.Segment;
-import com.ddf.common.ids.service.model.common.SegmentBuffer;
 import com.ddf.common.ids.service.model.common.Status;
 import com.ddf.common.ids.service.service.IDGen;
 import com.ddf.common.ids.service.service.impl.segment.dao.IDAllocDao;
 import com.ddf.common.ids.service.service.impl.segment.model.LeafAlloc;
-import com.google.common.base.Objects;
+import com.ddf.common.ids.service.service.impl.segment.model.Segment;
+import com.ddf.common.ids.service.service.impl.segment.model.SegmentBuffer;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -47,11 +50,14 @@ public class SegmentIDGenImpl implements IDGen {
      * SegmentBuffer中的两个Segment均未从DB中装载时的异常码
      */
     public static final String EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL = "-3";
-
     /**
      * 批量取id长度为0时的异常码
      */
-    public static final long EXCEPTION_ID_LENGTH_NULL = -4;
+    public static final String EXCEPTION_ID_LENGTH_NULL = "-4";
+    /**
+     * 号段模式未开启时的异常码
+     */
+    public static final String EXCEPTION_ID_DISABLED = "-5";
 
     /**
      * 最大步长不超过100,0000
@@ -66,7 +72,13 @@ public class SegmentIDGenImpl implements IDGen {
     private volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
+    private IdsProperties idsProperties;
 
+    public SegmentIDGenImpl(IDAllocDao dao, IdsProperties idsProperties) {
+        this.dao = dao;
+        this.idsProperties = idsProperties;
+        init();
+    }
 
     public static class UpdateThreadFactory implements ThreadFactory {
 
@@ -93,14 +105,11 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     private void updateCacheFromDbAtEveryMinute() {
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                t.setName("check-idCache-thread");
-                t.setDaemon(true);
-                return t;
-            }
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r);
+            t.setName("check-idCache-thread");
+            t.setDaemon(true);
+            return t;
         });
         service.scheduleWithFixedDelay(this::updateCacheFromDb, 60, 60, TimeUnit.SECONDS);
     }
@@ -113,7 +122,7 @@ public class SegmentIDGenImpl implements IDGen {
             if (dbTags == null || dbTags.isEmpty()) {
                 return;
             }
-            List<String> cacheTags = new ArrayList<String>(cache.keySet());
+            List<String> cacheTags = new ArrayList<>(cache.keySet());
             Set<String> insertTagsSet = new HashSet<>(dbTags);
             Set<String> removeTagsSet = new HashSet<>(cacheTags);
             //db中新加的tags灌进cache
@@ -130,6 +139,7 @@ public class SegmentIDGenImpl implements IDGen {
                 segment.setValue(new AtomicLong(0));
                 segment.setMax(0);
                 segment.setStep(0);
+                segment.setFillLength(0);
                 cache.put(tag, buffer);
                 logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", tag, buffer);
             }
@@ -151,13 +161,23 @@ public class SegmentIDGenImpl implements IDGen {
         }
     }
 
+
+    /**
+     * 获取id
+     *
+     * @param key
+     * @return
+     */
     @Override
     public Result get(final String key) {
+        if (!idsProperties.isSegmentEnable()) {
+            throw new BusinessException(IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
+        }
         if (!initOK) {
-            return new Result(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION);
+            throw new BusinessException(IdsErrorCodeEnum.ID_CACHE_INIT_FALSE);
         }
         if (!cache.containsKey(key)) {
-            return new Result(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION);
+            throw new BusinessException(IdsErrorCodeEnum.KEY_NOT_EXISTS);
         }
         SegmentBuffer buffer = cache.get(key);
         if (!buffer.isInitOk()) {
@@ -176,20 +196,24 @@ public class SegmentIDGenImpl implements IDGen {
         return getIdFromSegmentBuffer(cache.get(key));
     }
 
+
+    /**
+     * 批量获取ids
+     *
+     * @param key
+     * @param number
+     * @return
+     */
     @Override
-    public ResultList list(String key, int length) {
-        if (0 == length) {
-            return new ResultList(EXCEPTION_ID_LENGTH_NULL, Status.EXCEPTION);
+    public ResultList list(String key, int number) {
+        if (0 >= number) {
+            throw new BusinessException(IdsErrorCodeEnum.BATCH_NUMBER_IS_VALID);
         }
         ResultList resultList = new ResultList();
         resultList.setStatus(Status.SUCCESS);
         resultList.setIdList(Lists.newArrayList());
-        for (int i = 0; i < length; i++) {
-            Result result = get(key);
-            if (!Objects.equal(Status.SUCCESS, result.getStatus())) {
-                return new ResultList(EXCEPTION_ID_LENGTH_NULL, Status.EXCEPTION);
-            }
-            resultList.getIdList().add(result.getId());
+        for (int i = 0; i < number; i++) {
+            resultList.getIdList().add(get(key).getId());
         }
         return resultList;
     }
@@ -201,12 +225,14 @@ public class SegmentIDGenImpl implements IDGen {
         if (!buffer.isInitOk()) {
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
             buffer.setStep(leafAlloc.getStep());
+            buffer.setFillLength(leafAlloc.getFillLength());
             // leafAlloc中的step为DB中的step
             buffer.setMinStep(leafAlloc.getStep());
         } else if (buffer.getUpdateTimestamp() == 0) {
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
             buffer.setStep(leafAlloc.getStep());
+            buffer.setFillLength(leafAlloc.getFillLength());
             // leafAlloc中的step为DB中的step
             buffer.setMinStep(leafAlloc.getStep());
         } else {
@@ -232,6 +258,7 @@ public class SegmentIDGenImpl implements IDGen {
             temp.setStep(nextStep);
             leafAlloc = dao.updateMaxIdByCustomStepAndGetLeafAlloc(temp);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
+            buffer.setFillLength(leafAlloc.getFillLength());
             buffer.setStep(nextStep);
             // leafAlloc的step为DB中的step
             buffer.setMinStep(leafAlloc.getStep());
@@ -241,6 +268,7 @@ public class SegmentIDGenImpl implements IDGen {
         segment.getValue().set(value);
         segment.setMax(leafAlloc.getMaxId());
         segment.setStep(buffer.getStep());
+        segment.setFillLength(buffer.getFillLength());
         sw.stop("updateSegmentFromDb", key + " " + segment);
     }
 
@@ -274,7 +302,7 @@ public class SegmentIDGenImpl implements IDGen {
                 }
                 long value = segment.getValue().getAndIncrement();
                 if (value < segment.getMax()) {
-                    return new Result(String.valueOf(value), Status.SUCCESS);
+                    return new Result(fillValue(value, segment), Status.SUCCESS);
                 }
             } finally {
                 buffer.rLock().unlock();
@@ -285,14 +313,14 @@ public class SegmentIDGenImpl implements IDGen {
                 final Segment segment = buffer.getCurrent();
                 long value = segment.getValue().getAndIncrement();
                 if (value < segment.getMax()) {
-                    return new Result(String.valueOf(value), Status.SUCCESS);
+                    return new Result(fillValue(value, segment), Status.SUCCESS);
                 }
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
                     buffer.setNextReady(false);
                 } else {
                     logger.error("Both two segments in {} are not ready!", buffer);
-                    return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
+                    throw new BusinessException(IdsErrorCodeEnum.TWO_SEGMENTS_ARE_NULL);
                 }
             } finally {
                 buffer.wLock().unlock();
@@ -314,6 +342,21 @@ public class SegmentIDGenImpl implements IDGen {
                 }
             }
         }
+    }
+
+    /**
+     * 填充对其value位数
+     *
+     * @param value
+     * @param segment
+     * @return
+     */
+    private String fillValue(long value, Segment segment) {
+        String strValue = value + "";
+        if (strValue.length() >= segment.getFillLength()) {
+            return strValue;
+        }
+        return StringUtils.leftPad(strValue, segment.getFillLength(), "0");
     }
 
     public List<LeafAlloc> getAllLeafAllocs() {

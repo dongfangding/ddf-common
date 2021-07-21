@@ -1,25 +1,21 @@
 package com.ddf.common.ids.service.api.impl;
 
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.ids.service.api.IdsApi;
-import com.ddf.common.ids.service.exception.LeafServerException;
+import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
 import com.ddf.common.ids.service.exception.LengthZeroException;
 import com.ddf.common.ids.service.exception.NoKeyException;
-import com.ddf.common.ids.service.model.bo.SegmentIncrementMultiBO;
-import com.ddf.common.ids.service.model.bo.SegmentIncrementSnowflakeMultiBO;
 import com.ddf.common.ids.service.model.common.IdsMultiData;
 import com.ddf.common.ids.service.model.common.IdsMultiListData;
 import com.ddf.common.ids.service.model.common.Result;
 import com.ddf.common.ids.service.model.common.ResultList;
-import com.ddf.common.ids.service.model.common.Status;
-import com.ddf.common.ids.service.model.dto.SegmentIncrementMultiDTO;
-import com.ddf.common.ids.service.model.dto.SegmentIncrementSnowflakeMultiDTO;
 import com.ddf.common.ids.service.service.IDGen;
 import com.ddf.common.ids.service.service.SnowflakeService;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * <p>description</p >
+ * <p>雪花ID和</p >
  *
  * @author Trump
  * @version 1.0
@@ -43,18 +39,18 @@ public class IdsApiImpl implements IdsApi {
      */
     @Override
     public String getSnowflakeId() {
-        return get(snowflakeService.getId());
+        return get(snowflakeService.get());
     }
 
     /**
      * snowflake获取多个id
      *
-     * @param length
+     * @param number
      * @return
      */
     @Override
-    public List<String> getSnowflakeIds(Integer length) {
-        return list(length, snowflakeService.getIdList(length));
+    public List<String> getSnowflakeIds(Integer number) {
+        return list(number, snowflakeService.list(number));
     }
 
     /**
@@ -65,6 +61,7 @@ public class IdsApiImpl implements IdsApi {
      */
     @Override
     public String getSegmentId(String key) {
+        checkSegment();
         return get(segmentIDGen.get(key));
     }
 
@@ -72,11 +69,13 @@ public class IdsApiImpl implements IdsApi {
      * Segment获取多个id
      *
      * @param key
+     * @param number
      * @return
      */
     @Override
-    public List<String> getSegmentId(String key, Integer length) {
-        return null;
+    public List<String> getSegmentIds(String key, Integer number) {
+        checkSegment();
+        return list(key, segmentIDGen.list(key, number));
     }
 
     /**
@@ -87,58 +86,33 @@ public class IdsApiImpl implements IdsApi {
      */
     @Override
     public IdsMultiData getMultiId(String key) {
-        return new IdsMultiData().setSequenceId("")
-                .setSnowflakeId(get(snowflakeService.getId()));
+        checkSegment();
+        return new IdsMultiData().setSequenceId(get(segmentIDGen.get(key)))
+                .setSnowflakeId(get(snowflakeService.get()));
     }
 
     /**
      * 获取组合批量ID
      *
      * @param key
-     * @param length
+     * @param number
      * @return
      */
     @Override
-    public IdsMultiListData getMultiId(String key, Integer length) {
+    public IdsMultiListData getMultiIds(String key, Integer number) {
+        checkSegment();
         return new IdsMultiListData()
-                .setSequenceIds(Collections.emptyList())
-                .setSnowflakeIds(list(length, snowflakeService.getIdList(length)));
+                .setSequenceIds(list(number, segmentIDGen.list(key, number)))
+                .setSnowflakeIds(list(number, snowflakeService.list(number)));
     }
-
-    @Override
-    public String getSegmentIncrementId(String key) {
-        return null;
-    }
-
-    @Override
-    public List<String> getSegmentIncrementId(String key, Integer length) {
-        return null;
-    }
-
-    @Override
-    public SegmentIncrementMultiDTO getMulti(List<SegmentIncrementMultiBO> bos) {
-        return null;
-    }
-
-    @Override
-    public SegmentIncrementSnowflakeMultiDTO getSegmentIncrementSnowflakeMulti(SegmentIncrementSnowflakeMultiBO bo) {
-        return null;
-    }
-
 
     private String get(Result result) {
-        if (result.getStatus().equals(Status.EXCEPTION)) {
-            throw new LeafServerException(result.toString());
-        }
         return result.getId();
     }
 
     private List<String> list(String key, ResultList resultList) {
         if (key == null || key.isEmpty()) {
             throw new NoKeyException();
-        }
-        if (resultList.getStatus().equals(Status.EXCEPTION)) {
-            throw new LeafServerException(resultList.toString());
         }
         return resultList.getIdList();
     }
@@ -147,10 +121,11 @@ public class IdsApiImpl implements IdsApi {
         if (length == null || 0 == length) {
             throw new LengthZeroException();
         }
-        if (resultList.getStatus().equals(Status.EXCEPTION)) {
-            throw new LeafServerException(resultList.toString());
-        }
         return resultList.getIdList();
+    }
+
+    private void checkSegment() {
+        PreconditionUtil.checkArgument(Objects.nonNull(segmentIDGen), IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
     }
 
 }

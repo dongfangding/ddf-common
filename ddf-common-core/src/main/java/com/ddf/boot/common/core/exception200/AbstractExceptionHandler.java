@@ -72,6 +72,7 @@ public abstract class AbstractExceptionHandler {
             ignoreErrorStack = true;
         }
 
+        // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         if (exceptionHandlerMapping != null) {
             ResponseData<?> responseData = exceptionHandlerMapping.handlerException(exception);
             if (responseData != null) {
@@ -91,7 +92,7 @@ public abstract class AbstractExceptionHandler {
             Locale locale = httpServletRequest.getLocale();
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
-                    exception.getMessage(), locale
+                    baseException.getBizMessage(), locale
             );
         } else if (exception instanceof IllegalArgumentException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();

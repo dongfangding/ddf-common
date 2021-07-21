@@ -24,7 +24,7 @@ public class SnowflakeService {
      *
      * @return
      */
-    public Result getId() {
+    public Result get() {
         return idGen.get(null);
     }
 
@@ -35,7 +35,7 @@ public class SnowflakeService {
      * @param length
      * @return
      */
-    public ResultList getIdList(int length) {
-        return idGen.list(length);
+    public ResultList list(int length) {
+        return idGen.list(null, length);
     }
 }

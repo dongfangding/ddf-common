@@ -10,19 +10,21 @@ import org.apache.ibatis.annotations.Update;
 
 public interface IDAllocMapper {
 
-    @Select("SELECT biz_tag, max_id, step, update_time FROM leaf_alloc")
+    @Select("SELECT biz_tag, max_id, step, fill_Length, update_time FROM leaf_alloc")
     @Results(value = {
             @Result(column = "biz_tag", property = "key"),
             @Result(column = "max_id", property = "maxId"),
             @Result(column = "step", property = "step"),
+            @Result(column = "fill_Length", property = "fillLength"),
             @Result(column = "update_time", property = "updateTime")
     })
     List<LeafAlloc> getAllLeafAllocs();
 
-    @Select("SELECT biz_tag, max_id, step FROM leaf_alloc WHERE biz_tag = #{tag}")
+    @Select("SELECT biz_tag, max_id, step, fill_Length FROM leaf_alloc WHERE biz_tag = #{tag}")
     @Results(value = {
             @Result(column = "biz_tag", property = "key"),
             @Result(column = "max_id", property = "maxId"),
+            @Result(column = "fill_Length", property = "fillLength"),
             @Result(column = "step", property = "step")
     })
     LeafAlloc getLeafAlloc(@Param("tag") String tag);

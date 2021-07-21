@@ -2,11 +2,17 @@ package com.ddf.common.ids.service.config;
 
 import com.ddf.common.ids.service.api.IdsApi;
 import com.ddf.common.ids.service.api.impl.IdsApiImpl;
-import com.ddf.common.ids.service.config.properties.SnowflakeProperties;
+import com.ddf.common.ids.service.config.properties.IdsProperties;
 import com.ddf.common.ids.service.service.IDGen;
 import com.ddf.common.ids.service.service.SnowflakeService;
 import com.ddf.common.ids.service.service.impl.segment.SegmentIDGenImpl;
+import com.ddf.common.ids.service.service.impl.segment.dao.IDAllocDao;
+import com.ddf.common.ids.service.service.impl.segment.dao.impl.IDAllocDaoImpl;
 import com.ddf.common.ids.service.service.impl.snowflake.SnowflakeIDGenImpl;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,16 +25,40 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/07/19 20:20
  */
 @Configuration
-@EnableConfigurationProperties(value = {SnowflakeProperties.class})
+@EnableConfigurationProperties(value = {IdsProperties.class})
 public class IdsServiceAutoConfiguration {
 
     /**
      * 雪花id配置属性
      */
-    private final SnowflakeProperties snowflakeProperties;
+    private final IdsProperties idsProperties;
 
-    public IdsServiceAutoConfiguration(SnowflakeProperties snowflakeProperties) {
-        this.snowflakeProperties = snowflakeProperties;
+    public IdsServiceAutoConfiguration(IdsProperties idsProperties) {
+        this.idsProperties = idsProperties;
+    }
+
+    /**
+     * 将数据源注入到查询Dao中，支持外部重新注册Bean
+     *
+     * @param dataSource
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
+    public IDAllocDao idAllocDao(@Autowired DataSource dataSource) {
+        return new IDAllocDaoImpl(dataSource);
+    }
+
+    /**
+     * 号段模式id实现类
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
+    public IDGen segmentIDGen(@Autowired IDAllocDao idAllocDao) {
+        return  new SegmentIDGenImpl(idAllocDao, idsProperties);
     }
 
     /**
@@ -37,8 +67,12 @@ public class IdsServiceAutoConfiguration {
      * @return
      */
     @Bean
-    public IdsApi idsApi() {
-        return new IdsApiImpl(snowflakeService(), snowflakeIDGen());
+    public IdsApi idsApi(@Autowired(required = false) IDGen segmentIDGen) {
+        if (!idsProperties.isSegmentEnable()) {
+            return new IdsApiImpl(snowflakeService(), null);
+        } else {
+            return new IdsApiImpl(snowflakeService(), segmentIDGen);
+        }
     }
 
     /**
@@ -48,7 +82,7 @@ public class IdsServiceAutoConfiguration {
      */
     @Bean
     public IDGen snowflakeIDGen() {
-        return new SnowflakeIDGenImpl(snowflakeProperties.getZkAddress(), snowflakeProperties.getZkPort());
+        return new SnowflakeIDGenImpl(idsProperties.getZkAddress(), idsProperties.getZkPort());
     }
 
     /**
@@ -59,15 +93,5 @@ public class IdsServiceAutoConfiguration {
     @Bean
     public SnowflakeService snowflakeService() {
         return new SnowflakeService(snowflakeIDGen());
-    }
-
-    /**
-     * 号段模式id实现类
-     *
-     * @return
-     */
-    @Bean
-    public IDGen segmentIDGen() {
-        return new SegmentIDGenImpl();
     }
 }

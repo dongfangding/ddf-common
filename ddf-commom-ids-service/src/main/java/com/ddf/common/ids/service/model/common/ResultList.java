@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ResultList implements Serializable {
-    private long code;
+    private String code;
     private List<String> idList;
     private Status status;
 
-    public ResultList(long code, Status status) {
+    public ResultList(String code, Status status) {
         this.code = code;
         this.status = status;
     }
@@ -30,11 +30,11 @@ public class ResultList implements Serializable {
         this.status = status;
     }
 
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
