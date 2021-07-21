@@ -5,15 +5,18 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>${description}</p >
+ * 组合id
  *
- * @author shuaishuai.xiao
- * @version 1.0: IdsMultiData.java
- * @date 2019/12/18 18:42
- */
+ * @author dongfang.ding
+ * @date 2021/7/21 15:54
+ **/
 @Data
 @Accessors(chain = true)
 public class IdsMultiData implements Serializable {
+
+    private static final long serialVersionUID = -1760809172296914265L;
+
+
     /**
      * 序列ID
      */

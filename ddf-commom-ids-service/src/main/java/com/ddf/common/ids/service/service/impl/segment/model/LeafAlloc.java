@@ -1,9 +1,13 @@
 package com.ddf.common.ids.service.service.impl.segment.model;
 
+import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class LeafAlloc {
+public class LeafAlloc implements Serializable {
+
+    private static final long serialVersionUID = -909210655925093800L;
+
     /**
      * 业务tag
      */

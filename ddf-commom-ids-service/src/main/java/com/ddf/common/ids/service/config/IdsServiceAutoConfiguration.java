@@ -69,9 +69,9 @@ public class IdsServiceAutoConfiguration {
     @Bean
     public IdsApi idsApi(@Autowired(required = false) IDGen segmentIDGen) {
         if (!idsProperties.isSegmentEnable()) {
-            return new IdsApiImpl(snowflakeService(), null);
+            return new IdsApiImpl(idsProperties, snowflakeService(), null);
         } else {
-            return new IdsApiImpl(snowflakeService(), segmentIDGen);
+            return new IdsApiImpl(idsProperties, snowflakeService(), segmentIDGen);
         }
     }
 
@@ -82,11 +82,11 @@ public class IdsServiceAutoConfiguration {
      */
     @Bean
     public IDGen snowflakeIDGen() {
-        return new SnowflakeIDGenImpl(idsProperties.getZkAddress(), idsProperties.getZkPort());
+        return new SnowflakeIDGenImpl(idsProperties);
     }
 
     /**
-     * 包装的雪花id实现
+     * 包装的雪花id组件类
      *
      * @return
      */

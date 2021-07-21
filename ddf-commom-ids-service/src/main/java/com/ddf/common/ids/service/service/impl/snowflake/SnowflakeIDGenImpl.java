@@ -1,6 +1,7 @@
 package com.ddf.common.ids.service.service.impl.snowflake;
 
 import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.common.ids.service.config.properties.IdsProperties;
 import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
 import com.ddf.common.ids.service.model.common.Result;
 import com.ddf.common.ids.service.model.common.ResultList;
@@ -18,11 +19,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SnowflakeIDGenImpl implements IDGen {
 
-    @Override
-    public boolean init() {
-        return true;
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
 
     private final long twepoch;
@@ -36,22 +32,21 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     private static final Random RANDOM = new Random();
+    private IdsProperties idsProperties;
 
-    public SnowflakeIDGenImpl(String zkAddress, int port) {
-        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
-        this(zkAddress, port, 1288834974657L);
+    public SnowflakeIDGenImpl(IdsProperties idsProperties) {
+        this.idsProperties = idsProperties;
+        this.twepoch = idsProperties.getBeginTimestamp();
+        init();
     }
 
-    /**
-     * @param zkAddress zk地址
-     * @param port      snowflake监听端口
-     * @param twepoch   起始的时间戳
-     */
-    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
-        this.twepoch = twepoch;
+    @Override
+    public boolean init() {
+        final String zkAddress = idsProperties.getZkAddress();
+        final Integer port = idsProperties.getPort();
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
-        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
+        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, idsProperties);
         LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
         boolean initFlag = holder.init();
         if (initFlag) {
@@ -61,6 +56,7 @@ public class SnowflakeIDGenImpl implements IDGen {
             Preconditions.checkArgument(initFlag, "Snowflake Id Gen is not init ok");
         }
         Preconditions.checkArgument(workerId >= 0 && workerId <= maxWorkerId, "workerID must gte 0 and lte 1023");
+        return true;
     }
 
 

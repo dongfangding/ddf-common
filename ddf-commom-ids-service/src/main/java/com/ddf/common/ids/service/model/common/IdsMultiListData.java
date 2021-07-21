@@ -6,15 +6,19 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>${description}</p >
  *
- * @author shuaishuai.xiao
- * @version 1.0: IdsMultiListData.java
- * @date 2019/12/18 18:43
- */
+ * 批量组合id
+ *
+ * @author dongfang.ding
+ * @date 2021/7/21 15:55
+ **/
 @Data
 @Accessors(chain = true)
 public class IdsMultiListData implements Serializable {
+
+    private static final long serialVersionUID = 865829966599939822L;
+
+
     /**
      * 序列ID
      */

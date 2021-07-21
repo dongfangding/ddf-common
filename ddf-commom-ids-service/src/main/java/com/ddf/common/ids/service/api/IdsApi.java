@@ -1,8 +1,12 @@
 package com.ddf.common.ids.service.api;
 
+import com.ddf.common.ids.service.model.common.DecodeSnowflakeIdData;
 import com.ddf.common.ids.service.model.common.IdsMultiData;
 import com.ddf.common.ids.service.model.common.IdsMultiListData;
+import com.ddf.common.ids.service.model.common.SegmentBufferView;
+import com.ddf.common.ids.service.service.impl.segment.model.LeafAlloc;
 import java.util.List;
+import java.util.Map;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
@@ -63,4 +67,24 @@ public interface IdsApi {
      */
     IdsMultiListData getMultiIds(@PathVariable("key") String key, Integer number);
 
+    /**
+     * 获取号段模式缓存信息
+     *
+     * @return
+     */
+    Map<String, SegmentBufferView> getSegmentCache();
+
+
+    /**
+     * 获取号段模式db信息
+     *
+     * @return
+     */
+    List<LeafAlloc> getDb();
+
+    /**
+     * 解析雪花id信息
+     *
+     */
+    DecodeSnowflakeIdData decodeSnowflakeId(String snowflakeId);
 }
