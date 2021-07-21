@@ -6,17 +6,32 @@
 # 使用
 自动配置类`com.ddf.common.ids.service.config.IdsServiceAutoConfiguration`
 
+可以直接作为依赖，添加到具体服务中，也可以使用单独的服务对外提供，默认使用当前服务的数据源注入， 如果要自定义其它数据源
+就重新注入`com.ddf.common.ids.service.service.impl.segment.dao.IDAllocDao`
 
+无论是雪花id还是号段模式，对外统一暴露请使用api
+`com.ddf.common.ids.service.api.IdsApi`
+
+## 雪花id
 使用雪花ID， 需要配置zookeeper连接地址, 配置类对应
 `com.ddf.common.ids.service.config.properties.IdsProperties`
+
 ```yaml
 customs:
   ids:
-    snowflake:
-      zkAddress: ${zk_addr}
-      zkPort: 2181
+    name: ids_demo # 雪花id名称，会作为zk和本地目录存储workId路径中的一部分
+    beginTimestamp: 1609430400000 # 相对的一个起始时间戳，能够用来混淆生产出来的雪花ID的时间戳部分的数据
+    zkAddress: ${zk_addr} # zookeeper连接地址
+    zkPort: 2181 # 端口，注意不是zookeeper的连接端口，是客户端上报数据时的节点组成的一部分，使用ip+port, 可以解决同一台机器多个服务问题
 ```
 
+## 号段模式
+配置类首先开启号段模式
+```yaml
+customs:
+  ids:
+    segmentEnable: true
+```
 
 号段模式建表语句
 
@@ -36,5 +51,4 @@ PRIMARY KEY (`biz_tag`)
 insert into leaf_alloc(biz_tag, max_id, step, fill_length, description) values('IDS', 1, 2000, 8, '测试号段模式')
 ```
 
-无论是雪花id还是号段模式，对外统一暴露请使用api
-`com.ddf.common.ids.service.api.IdsApi`
+

@@ -22,7 +22,7 @@ public class IdsProperties {
     private String name = "customs.ids";
 
     /**
-     * 为节省时间戳， 可以设定一个起始时间戳，也可以达到混淆实际输出雪花id中包含的时间
+     * 可以设定一个起始时间戳，可以达到混淆实际输出雪花id中包含的时间
      * 2021-01-01 00:00:00
      */
     private Long beginTimestamp = 1609430400000L;
