@@ -62,6 +62,13 @@ public class ResponseData<T> {
      */
     private T data;
 
+    /**
+     * 扩展字段
+     * 比如在某些情况下正常逻辑返回的是data
+     * 某些异常逻辑下返回的是另外一套数据
+     */
+    private Object extra;
+
 
     public ResponseData(String code, String message, String stack, long timestamp, T data) {
         this.code = code;
