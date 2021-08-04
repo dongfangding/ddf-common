@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.exception200;
 
 import java.text.MessageFormat;
+import lombok.Getter;
 
 /**
  * <p>基准异常类</p >
@@ -9,26 +10,31 @@ import java.text.MessageFormat;
  * @version 1.0
  * @date 2020/06/17 15:55
  */
-public abstract class BaseException extends RuntimeException implements BaseCallbackCode {
+public abstract class BaseException extends RuntimeException {
 
     /**
      * 异常code码
      */
+    @Getter
     private String code;
 
     /**
      * 异常消息
      */
+    @Getter
     private String description;
 
     /**
      * 如果使用国际化的话，由于消息会提前定义在资源文件中， 某些消息需要提供占位符希望运行时填充数据，这里可以传入占位符对应的参数
      */
+    @Getter
     private Object[] params;
 
-    public BaseException() {
-
-    }
+    /**
+     * 保存业务异常相关信息的类
+     */
+    @Getter
+    private BaseCallbackCode baseCallbackCode;
 
     public BaseException(Throwable throwable) {
         super(throwable);
@@ -64,11 +70,12 @@ public abstract class BaseException extends RuntimeException implements BaseCall
      */
     public BaseException(BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
-        initCallback(baseCallbackCode.getCode(), baseCallbackCode.getDescription(), params);
+        initCallback(baseCallbackCode, params);
     }
 
 
-    private void initCallback(BaseCallbackCode baseCallbackCode) {
+    private void initCallback(BaseCallbackCode baseCallbackCode, Object... params) {
+        this.baseCallbackCode = baseCallbackCode;
         initCallback(
                 baseCallbackCode.getCode() == null ? defaultCallback().getCode() : baseCallbackCode.getCode(),
                 baseCallbackCode.getDescription()
@@ -95,32 +102,4 @@ public abstract class BaseException extends RuntimeException implements BaseCall
      * @return
      */
     public abstract BaseCallbackCode defaultCallback();
-
-    /**
-     * 响应状态码
-     *
-     * @return
-     */
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * 响应消息
-     *
-     * @return
-     */
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public Object[] getParams() {
-        return params;
-    }
-
-    public static void main(String[] args) {
-
-    }
 }

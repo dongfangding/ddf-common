@@ -7,8 +7,10 @@ import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.logaccess.AccessLogAspect;
 import com.ddf.boot.common.core.response.ResponseData;
+import com.ddf.boot.common.core.util.WebUtil;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,10 +92,12 @@ public abstract class AbstractExceptionHandler {
             exceptionCode = baseException.getCode();
             // 解析异常类消息代码，并根据当前Local格式化资源文件
             Locale locale = httpServletRequest.getLocale();
+            String description = baseException.getDescription();
+            if (Objects.nonNull(baseException.getBaseCallbackCode())) {
+                description = baseException.getBaseCallbackCode().getBizMessage();
+            }
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
-            message = messageSource.getMessage(baseException.getCode(), baseException.getParams(),
-                    baseException.getBizMessage(), locale
-            );
+            message = messageSource.getMessage(baseException.getCode(), baseException.getParams(), description, locale);
         } else if (exception instanceof IllegalArgumentException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
             message = exception.getMessage();
@@ -123,5 +127,33 @@ public abstract class AbstractExceptionHandler {
         return ResponseData.failure(exceptionCode, message,
                 ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception)
         );
+    }
+
+
+    /**
+     * 解析业务异常消息
+     *
+     * @param exception
+     * @return
+     */
+    public static String resolveExceptionMessage(Exception exception) {
+        try {
+            if (exception instanceof BaseException) {
+                BaseException baseException = (BaseException) exception;
+                // 解析异常类消息代码，并根据当前Local格式化资源文件
+                Locale locale = WebUtil.getCurRequest().getLocale();
+                String description = baseException.getDescription();
+                if (Objects.nonNull(baseException.getBaseCallbackCode())) {
+                    description = baseException.getBaseCallbackCode().getBizMessage();
+                }
+                // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
+                return SpringContextHolder.getBean(MessageSource.class).getMessage(baseException.getCode(),
+                        baseException.getParams(), description, locale);
+            }
+            return exception.getMessage();
+        } catch (Exception e) {
+            log.error("解析异常消息时失败, 原始异常消息 = {}", exception, e);
+            return exception.getMessage();
+        }
     }
 }

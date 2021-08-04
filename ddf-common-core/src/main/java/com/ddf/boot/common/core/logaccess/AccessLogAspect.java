@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.logaccess;
 
+import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import java.util.Map;
@@ -93,9 +94,9 @@ public class AccessLogAspect {
             // 执行慢接口逻辑判断
             dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
             return proceed;
-        } catch (Throwable throwable) {
-            logger.info("[{}]-[{}]请求参数: {}, 执行出现异常！", pointClass.getName(), pointMethod.getName(),
-                    JsonUtil.asString(paramMap), throwable);
+        } catch (Exception throwable) {
+            logger.error("[{}]-[{}]请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(), pointMethod.getName(),
+                    JsonUtil.asString(paramMap), AbstractExceptionHandler.resolveExceptionMessage(throwable), throwable);
             throw throwable;
         }
     }
