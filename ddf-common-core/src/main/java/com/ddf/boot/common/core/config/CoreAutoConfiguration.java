@@ -1,6 +1,10 @@
 package com.ddf.boot.common.core.config;
 
 import com.ddf.boot.common.core.constant.GlobalConstants;
+import com.ddf.boot.common.core.shutdown.ThreadPoolExecutorShutdownDefinition;
+import java.util.concurrent.TimeUnit;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,4 +17,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = GlobalConstants.CORE_BASE_PACKAGE)
 public class CoreAutoConfiguration {
+
+    /**
+     * 线程池优雅关闭注册类
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ThreadPoolExecutorShutdownDefinition threadPoolExecutorShutdownDefinition() {
+        return new ThreadPoolExecutorShutdownDefinition(60, TimeUnit.SECONDS);
+    }
 }
