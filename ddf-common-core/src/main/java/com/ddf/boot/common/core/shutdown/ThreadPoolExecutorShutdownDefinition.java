@@ -3,6 +3,7 @@ package com.ddf.boot.common.core.shutdown;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -13,17 +14,20 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.CollectionUtils;
 
 /**
  * <p>参考{@link ExecutorConfigurationSupport#shutdown()} 实现的对线程池优雅关闭的注册类</p >
  * <p>Spring已经实现了线程池的优雅关闭逻辑， 需要满足几个前提和注意事项</p >
- *      <li>1. 线程池必须交由Spring容器管理， 优雅关闭的方法是在父类中{@link ExecutorConfigurationSupport#shutdown()}定义的</li>
- *      <li>2. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，可以通过{@link Order}定义线程池的高优先级</li>
- *      <li>3. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
+ *      <li>1. 使用Spring封装的线程池类， 如{@link ThreadPoolTaskExecutor}, 线程池必须交由Spring容器管理， 优雅关闭的方法是在父类中{@link ExecutorConfigurationSupport#shutdown()}定义的</li>
+ *      <li>2. 必须调用线程池父类的{@link ExecutorConfigurationSupport#setWaitForTasksToCompleteOnShutdown(boolean)}
+ *             和{@link ExecutorConfigurationSupport#setAwaitTerminationSeconds(int)}方法来满足优雅关闭的判断前提</li>
+ *      <li>3. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，可以通过{@link Order}定义线程池的高优先级</li>
+ *      <li>4. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
  *       在关闭单例池时执行到{@link DefaultSingletonBeanRegistry#destroySingletons()}时有个属性{@link DefaultSingletonBeanRegistry#disposableBeans},
  *       销毁的时候是按照这个顺序来定义的，而且这个属性本身有序，这个属性里存的bean都是实现了Spring生命周期相关方法的bean,
- *       具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(String, Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
+ *       具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(java.lang.String, java.lang.Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
  *  <p></p>
  *
  *  <p>
@@ -45,7 +49,7 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener<ContextClosedEvent> {
 
-    private static final List<ThreadPoolExecutor> POOLS = Collections.synchronizedList(new ArrayList<>(12));
+    private static final List<ExecutorService> POOLS = Collections.synchronizedList(new ArrayList<>(12));
 
     private final long awaitTermination;
 
@@ -54,6 +58,15 @@ public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener
     public ThreadPoolExecutorShutdownDefinition(long awaitTermination, TimeUnit timeUnit) {
         this.awaitTermination = awaitTermination;
         this.timeUnit = timeUnit;
+    }
+
+    /**
+     * 注册要关闭的线程池， 如果一些线程池未交由线程池管理，则可以调用这个方法
+     *
+     * @param executor
+     */
+    public static void registryExecutor(ThreadPoolExecutor executor) {
+        POOLS.add(executor);
     }
 
     /**
@@ -69,12 +82,18 @@ public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener
     }
 
     /**
-     * 注册要关闭的线程池， 如果一些线程池未交由线程池管理，则可以调用这个方法
+     * 注册要关闭的线程池
+     * 注意如果调用这个方法的话，而线程池又是由Spring管理的，则必须等待这个bean初始化完成后才可以调用
+     * 因为依赖的{@link ThreadPoolTaskExecutor#getThreadPoolExecutor()}必须要在bean的父类方法中定义的
+     * 初始化{@link ExecutorConfigurationSupport#afterPropertiesSet()}方法中才会赋值
      *
-     * @param executor
+     * 重写了{@link ThreadPoolTaskScheduler#initializeExecutor(java.util.concurrent.ThreadFactory, java.util.concurrent.RejectedExecutionHandler)}
+     * 来对父类的{@link ExecutorConfigurationSupport#executor}赋值
+     *
+     * @param threadPoolTaskExecutor
      */
-    public static void registryExecutor(ThreadPoolExecutor executor) {
-        POOLS.add(executor);
+    public static void registryExecutor(ThreadPoolTaskScheduler threadPoolTaskExecutor) {
+        POOLS.add(threadPoolTaskExecutor.getScheduledThreadPoolExecutor());
     }
 
     /**
@@ -91,7 +110,7 @@ public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener
         if (CollectionUtils.isEmpty(POOLS)) {
             return;
         }
-        for (ThreadPoolExecutor pool : POOLS) {
+        for (ExecutorService pool : POOLS) {
             pool.shutdown();
             try {
                 if (!pool.awaitTermination(awaitTermination, timeUnit)) {
