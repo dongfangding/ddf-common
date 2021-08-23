@@ -13,9 +13,11 @@ import com.google.code.kaptcha.util.Config;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_IMPL;
 
@@ -88,8 +90,9 @@ public class CaptchaAutoConfiguration {
      * @return
      */
     @Bean
-    public CaptchaCacheService anjiCaptchaCacheService() {
-        return new AnjiCaptchaCacheService();
+    @ConditionalOnMissingBean
+    public CaptchaCacheService anjiCaptchaCacheService(@Autowired StringRedisTemplate stringRedisTemplate) {
+        return new AnjiCaptchaCacheService(stringRedisTemplate);
     }
 
     /**

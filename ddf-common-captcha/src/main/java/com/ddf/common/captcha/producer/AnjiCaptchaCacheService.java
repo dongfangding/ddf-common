@@ -1,7 +1,6 @@
 package com.ddf.common.captcha.producer;
 
 import com.anji.captcha.service.CaptchaCacheService;
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -17,13 +16,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 public class AnjiCaptchaCacheService implements CaptchaCacheService {
 
-    private volatile StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
-    public StringRedisTemplate getStringRedisTemplate() {
-        if (stringRedisTemplate == null) {
-            stringRedisTemplate = SpringContextHolder.getBean(StringRedisTemplate.class);
-        }
-        return stringRedisTemplate;
+    public AnjiCaptchaCacheService(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -35,28 +31,28 @@ public class AnjiCaptchaCacheService implements CaptchaCacheService {
      */
     @Override
     public void set(String key, String value, long expiresInSeconds) {
-        getStringRedisTemplate().opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
     }
 
     @Override
     public boolean exists(String key) {
-        final Boolean aBoolean = getStringRedisTemplate().hasKey(key);
+        final Boolean aBoolean = stringRedisTemplate.hasKey(key);
         return Objects.nonNull(aBoolean) && aBoolean;
     }
 
     @Override
     public void delete(String key) {
-        getStringRedisTemplate().delete(key);
+        stringRedisTemplate.delete(key);
     }
 
     @Override
     public String get(String key) {
-        return getStringRedisTemplate().opsForValue().get(key);
+        return stringRedisTemplate.opsForValue().get(key);
     }
 
     @Override
     public Long increment(String key, long val) {
-        return getStringRedisTemplate().opsForValue().increment(key,val);
+        return stringRedisTemplate.opsForValue().increment(key,val);
     }
 
     /**
