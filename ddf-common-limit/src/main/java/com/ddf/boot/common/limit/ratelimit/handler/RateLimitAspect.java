@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
@@ -152,7 +151,7 @@ public class RateLimitAspect {
             String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
             if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
                 log.error("接口【{}-{}-{}】超过限流组件[{}]预定流量，过滤请求， 对应参数【{}】, 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                        currentMethod.getName(), keyGenerator, JsonUtil.asString(AopUtil.getParamMap(joinPoint))
+                        currentMethod.getName(), keyGenerator, AopUtil.serializeParam(joinPoint)
                 );
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }

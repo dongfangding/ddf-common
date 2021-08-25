@@ -1,7 +1,6 @@
 package com.ddf.boot.common.core.logbool;
 
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -53,7 +52,7 @@ public class LogBoolReturnAspect {
             logBoolReturnResult.setClassName(className)
                     .setMethodName(methodName)
                     .setLogName(annotation.logName())
-                    .setParam(JsonUtil.asString(AopUtil.getParamMap(joinPoint)));
+                    .setParam(AopUtil.serializeParam(joinPoint));
             logBoolReturnResult.setBoolReturn((BoolReturn) proceed);
         }
 

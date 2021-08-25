@@ -3,7 +3,6 @@ package com.ddf.boot.common.core.logaccess;
 import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
-import java.util.Map;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -79,8 +78,7 @@ public class AccessLogAspect {
         // 获取当前方法名
         MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
         // 获取请求参数
-        Map<String, Object> paramMap = AopUtil.getParamMap(joinPoint);
-        String paramJson = JsonUtil.asString(paramMap);
+        String paramJson = AopUtil.serializeParam(joinPoint);
         // 调用起始时间
         long beforeTime = System.currentTimeMillis();
         // 执行方法
@@ -96,7 +94,7 @@ public class AccessLogAspect {
             return proceed;
         } catch (Exception throwable) {
             logger.error("[{}]-[{}]请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(), pointMethod.getName(),
-                    JsonUtil.asString(paramMap), AbstractExceptionHandler.resolveExceptionMessage(throwable), throwable);
+                    paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable), throwable);
             throw throwable;
         }
     }

@@ -3,7 +3,6 @@ package com.ddf.boot.common.limit.repeatable.handler;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
@@ -79,7 +78,7 @@ public class RepeatAspect {
         final boolean check = handlerMapping.get(validator).check(joinPoint, annotation, identityNo, repeatableProperties);
         if (!check && annotation.throwError()) {
             log.info("接口【{}-{}-{}】对应参数【{}】请求过于频繁， 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                    currentMethod.getName(), JsonUtil.asString(AopUtil.getParamMap(joinPoint)));
+                    currentMethod.getName(), AopUtil.serializeParam(joinPoint));
             throw new BusinessException(LimitExceptionCode.REPEAT_SUBMIT);
         }
     }

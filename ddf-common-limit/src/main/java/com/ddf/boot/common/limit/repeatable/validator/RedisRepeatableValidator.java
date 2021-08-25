@@ -3,7 +3,6 @@ package com.ddf.boot.common.limit.repeatable.validator;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
 import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
@@ -68,7 +67,7 @@ public class RedisRepeatableValidator implements RepeatableValidator {
         // 获取定义的间隔时间
         final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
 
-        String paramValue = JsonUtil.asString(AopUtil.getParamMap(joinPoint));
+        String paramValue = AopUtil.serializeParam(joinPoint);
         // 使用用户uid做盐值
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, currentUid.getBytes(StandardCharsets.UTF_8));
         // 生成key规则

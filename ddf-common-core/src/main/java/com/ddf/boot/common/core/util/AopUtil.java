@@ -7,11 +7,14 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import lombok.SneakyThrows;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * aop获取相关属性的方法工具类$
@@ -91,14 +94,15 @@ public class AopUtil {
 
 
     /**
-     * 返回当前方法的参数map
+     * 返回当前方法的参数map， 注意如果入参又不能序列化的对象也会返回，如果要用来做序列不要使用这个方法
+     * 可以用{@link AopUtil#getSerializableParamMap(org.aspectj.lang.JoinPoint)}代替
      *
      * @param joinPoint
      * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
      * @date 2020/6/12 0012 18:46
      **/
-    public static Map<String, Object> getParamMap(JoinPoint joinPoint) {
+    public static Map<String, Object> getAllParamMap(JoinPoint joinPoint) {
         Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
         String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
         if (parameterNames.length > 0) {
@@ -109,6 +113,42 @@ public class AopUtil {
         }
         return paramsMap;
     }
+
+    /**
+     * 返回可以序列化的当前方法的参数map
+     *
+     * @param joinPoint
+     * @return java.util.Map<java.lang.String, java.lang.Object>
+     * @author dongfang.ding
+     * @date 2020/6/12 0012 18:46
+     **/
+    public static Map<String, Object> getSerializableParamMap(JoinPoint joinPoint) {
+        Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
+        String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
+        if (parameterNames.length > 0) {
+            for (int i = 0; i < parameterNames.length; i++) {
+                Object value = joinPoint.getArgs()[i];
+                if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile) {
+                    continue;
+                }
+                paramsMap.put(parameterNames[i], value);
+            }
+        }
+        return paramsMap;
+    }
+
+
+    /**
+     * 序列化参数
+     *
+     * @param joinPoint
+     * @return
+     */
+    public static String serializeParam(JoinPoint joinPoint) {
+        return JsonUtil.asString(getSerializableParamMap(joinPoint));
+    }
+
+
 
     /**
      * 动态通过反射修改指定注解实例里的属性的值， 这个是如果只有一个属性要修改时提供的简便方法

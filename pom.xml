@@ -285,6 +285,7 @@
         <module>ddf-common-captcha</module>
         <module>ddf-common-es</module>
         <module>ddf-commom-ids-service</module>
+        <module>ddf-common-trace</module>
     </modules>
 
 
