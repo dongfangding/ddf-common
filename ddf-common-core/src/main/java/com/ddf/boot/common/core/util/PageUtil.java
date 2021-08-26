@@ -147,7 +147,6 @@ public class PageUtil {
         }
     }
 
-
     /**
      * 构造基于spring-data基本分页对象
      *
@@ -211,6 +210,19 @@ public class PageUtil {
     public static <E, R> PageResult<R> convertMybatis(@NotNull IPage<E> page, Function<List<E>, List<R>> function) {
         final PageResult<R> result = new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal());
         result.setContent(function.apply(page.getRecords()));
+        return result;
+    }
+
+    /**
+     * 从spring-data分页结果对象转换为自定义分页结果对象
+     *
+     * @param page
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> convertFromSpringData(@NotNull org.springframework.data.domain.Page<E> page) {
+        final PageResult<E> result = new PageResult<E>(page.getNumber(), page.getSize(), page.getTotalElements());
+        result.setContent(page.getContent());
         return result;
     }
 }

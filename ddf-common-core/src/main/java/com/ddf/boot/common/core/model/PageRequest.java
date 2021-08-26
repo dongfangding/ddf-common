@@ -6,6 +6,8 @@ import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * <p>分页请求通用接口
@@ -86,6 +88,17 @@ public interface PageRequest {
     default void checkArgument() {
         PreconditionUtil.checkArgument(Objects.nonNull(getPageNum()), BaseErrorCallbackCode.PAGE_NUM_NOT_ALLOW_NULL);
         PreconditionUtil.checkArgument(Objects.nonNull(getPageSize()), BaseErrorCallbackCode.PAGE_NUM_NOT_ALLOW_NULL);
+    }
+
+    @Data
+    @AllArgsConstructor
+    class DefaultPageRequest implements PageRequest {
+        private Integer pageNum;
+        private Integer pageSize;
+
+        public static PageRequest of(Integer pageNum, Integer pageSize) {
+            return new DefaultPageRequest(pageNum, pageSize);
+        }
     }
 
 
