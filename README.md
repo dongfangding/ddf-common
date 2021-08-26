@@ -4,12 +4,6 @@
 
 **持续开发中**
 
-**持续开发中**
-
-**持续开发中**
-
-**持续开发中**
-
 TODO
 
 1.  以来的第三方组件中依赖的开源库的版本低于系统中自己使用的， 如leaf的guava和curator， guava.version版本暂时为了兼容leaf降级了
@@ -52,16 +46,28 @@ TODO
 
 ### 特性和功能
 - 自定义参数解析器
-    - 使用介绍-[SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
-    - 项目特性-[自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
+    - 基础
+      - [SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
+    - 项目特性
+      - [自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
 - 配置跨域
-    - 使用介绍-[SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
-    - 项目特性-[项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
+    - 基础
+       - [SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
+    - 项目特性
+       - [项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
 - 自定义拦截器
-    - 使用介绍-[SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
+    - 基础
+      - [SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
 - 配置线程池
-    - 使用介绍-[SpringBoot项目配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
-    - 项目特性-[快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
+    - 基础
+      - [SpringBoot项目如何配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
+      - [线程池优雅关闭方案](https://blog.csdn.net/yichen0429/article/details/119818681)
+   - 项目特性
+     - [快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
+     - [让普通线程池具备优雅停机逻辑](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/shutdown/ThreadPoolExecutorShutdownDefinition.java)
+- 11@ControllerAdvice和@RestControllerAdvice的使用
+    - 
+
 
 ### 基本配置
 

@@ -3,8 +3,6 @@ package com.ddf.boot.common.core.controllerwrapper;
 import com.ddf.boot.common.core.response.ResponseData;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
@@ -48,13 +46,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author dongfang.ding
  * @date 2019/6/27 11:15
  */
-//@RestControllerAdvice(basePackages = {"${customs.response.package:com}"}) // fixme 如何能够接受配置参数呢？如${basePackages}
-@RestControllerAdvice(basePackages = {"com"}) // fixme 如何能够接受配置参数呢？如${basePackages}
+@RestControllerAdvice(basePackages = {"com"})
 @Order
 public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
-
-    @Autowired
-    private CommonResponseBodyAdviceProperties commonResponseBodyAdviceProperties;
 
     private static final Class[] ANNOTATIONS = {
             RequestMapping.class, GetMapping.class, PostMapping.class, DeleteMapping.class, PutMapping.class
@@ -67,8 +61,7 @@ public class CommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        List<String> ignoreReturnType = commonResponseBodyAdviceProperties.getIgnoreReturnType();
-        if (ignoreReturnType != null && ignoreReturnType.contains(returnType.getGenericParameterType().getTypeName())) {
+        if (returnType.getMethod() == null || returnType.getMethod().isAnnotationPresent(WrapperIgnore.class)) {
             return false;
         }
         AnnotatedElement element = returnType.getAnnotatedElement();
