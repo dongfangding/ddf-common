@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.exception200;
 
 import java.text.MessageFormat;
 import lombok.Getter;
+import org.springframework.context.MessageSource;
 
 /**
  * <p>基准异常类</p >
@@ -25,7 +26,8 @@ public abstract class BaseException extends RuntimeException {
     private String description;
 
     /**
-     * 如果使用国际化的话，由于消息会提前定义在资源文件中， 某些消息需要提供占位符希望运行时填充数据，这里可以传入占位符对应的参数
+     * 某些消息需要提供占位符希望运行时填充数据，这里可以传入占位符对应的参数
+     * 注意格式化参数使用的是{@link MessageSource}， 所以请注意原展位参数需使用{0} {1} 方式
      */
     @Getter
     private Object[] params;
@@ -36,34 +38,30 @@ public abstract class BaseException extends RuntimeException {
     @Getter
     private BaseCallbackCode baseCallbackCode;
 
+
+    /**
+     * 用来包装其它异常来转换为自定义异常
+     *
+     * @param throwable
+     */
     public BaseException(Throwable throwable) {
         super(throwable);
         initCallback(defaultCallback());
     }
 
+    /**
+     * 推荐使用的系统自定义的一套体系的异常使用方式，传入异常错误码类
+     *
+     * @param baseCallbackCode
+     */
     public BaseException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode.getDescription());
         initCallback(baseCallbackCode);
     }
 
-
-    public BaseException(String description) {
-        super(description);
-        initCallback(defaultCallback());
-    }
-
-    public BaseException(String code, String description) {
-        super(description);
-        initCallback(code, description);
-    }
-
-    public BaseException(String code, String description, Object... params) {
-        super(MessageFormat.format(description, params));
-        initCallback(code, description, params);
-    }
-
     /**
-     * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     * 同上，但是额外提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     * 占位字符串采用{0} {1}这种角标方式
      *
      * @param baseCallbackCode
      * @param params
@@ -71,6 +69,39 @@ public abstract class BaseException extends RuntimeException {
     public BaseException(BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
         initCallback(baseCallbackCode, params);
+    }
+
+    /**
+     * 只简单抛出消息异常
+     *
+     * @param description
+     */
+    public BaseException(String description) {
+        super(description);
+        initCallback(defaultCallback());
+    }
+
+    /**
+     * 不走系统定义的错误码定义体系， 但是使用错误码和消息体系
+     *
+     * @param code
+     * @param description
+     */
+    public BaseException(String code, String description) {
+        super(description);
+        initCallback(code, description);
+    }
+
+    /**
+     * 同上，但是支持占位符
+     *
+     * @param code
+     * @param description
+     * @param params
+     */
+    public BaseException(String code, String description, Object... params) {
+        super(MessageFormat.format(description, params));
+        initCallback(code, description, params);
     }
 
 

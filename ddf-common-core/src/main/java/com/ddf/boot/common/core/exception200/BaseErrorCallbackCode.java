@@ -1,5 +1,7 @@
 package com.ddf.boot.common.core.exception200;
 
+import lombok.Getter;
+
 /**
  * <p>异常定义枚举</p >
  *
@@ -12,6 +14,16 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     /**
      * 异常状态码，可持续补充
      */
+    DEMO_BLA_BLA("base_0001", "系统内部出现问题，bla bla...", "系统异常，请稍后确认"),
+
+    TEST_FILL_EXCEPTION("base_0002", "带占位符的异常演示[{0}]"),
+
+    TEST_FILL_BIZ_EXCEPTION("base_0003", "带占位符的异常演示[{0}],客户端隐藏详细信息", "报错啦"),
+
+    PAGE_NUM_NOT_ALLOW_NULL("base_0004", "当前页数不能为空"),
+
+    PAGE_SIZE_NOT_ALLOW_NULL("base_0005", "每页大小不能为空"),
+
     COMPLETE("200", "请求成功"),
 
     BAD_REQUEST("400", "错误请求"),
@@ -22,46 +34,35 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     SERVER_ERROR("500", "服务端异常"),
 
-    PAGE_NUM_NOT_ALLOW_NULL("1001", "当前页数不能为空"),
-
-    PAGE_SIZE_NOT_ALLOW_NULL("1002", "每页大小不能为空")
-
-
     ;
-
 
     /**
      * 异常code码
      */
+    @Getter
     private final String code;
 
     /**
      * 异常消息
      */
+    @Getter
     private final String description;
+
+    /**
+     * 返回给用户的异常消息
+     */
+    @Getter
+    private final String bizMessage;
 
     BaseErrorCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;
+        this.bizMessage = description;
     }
 
-    /**
-     * 响应状态码
-     *
-     * @return
-     */
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * 响应消息
-     *
-     * @return
-     */
-    @Override
-    public String getDescription() {
-        return description;
+    BaseErrorCallbackCode(String code, String description, String bizMessage) {
+        this.code = code;
+        this.description = description;
+        this.bizMessage = bizMessage;
     }
 }
