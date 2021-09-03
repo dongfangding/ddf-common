@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.exception200;
 
+import com.google.common.base.Objects;
 import java.text.MessageFormat;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
@@ -78,6 +79,7 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(String description) {
         super(description);
+        this.description = description;
         initCallback(defaultCallback());
     }
 
@@ -109,7 +111,9 @@ public abstract class BaseException extends RuntimeException {
         this.baseCallbackCode = baseCallbackCode;
         initCallback(
                 baseCallbackCode.getCode() == null ? defaultCallback().getCode() : baseCallbackCode.getCode(),
-                baseCallbackCode.getDescription()
+                // 如果是默认状态码生效， 基本上说明使用方没有按照错误码体系走， 那么就不去解析， 直接使用传入的description
+                Objects.equal(baseCallbackCode.getCode(), defaultCallback().getCode()) ? description : baseCallbackCode.getDescription(),
+                params
         );
     }
 

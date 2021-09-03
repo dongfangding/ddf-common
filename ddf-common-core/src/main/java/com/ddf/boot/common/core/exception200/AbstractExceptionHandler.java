@@ -19,7 +19,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,7 +38,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @date 2020/06/28 10:20
  */
 @Slf4j
-@Component
 public abstract class AbstractExceptionHandler {
 
     @Autowired
@@ -93,7 +91,7 @@ public abstract class AbstractExceptionHandler {
             // 解析异常类消息代码，并根据当前Local格式化资源文件
             Locale locale = httpServletRequest.getLocale();
             String description = baseException.getDescription();
-            if (Objects.nonNull(baseException.getBaseCallbackCode())) {
+            if (!Objects.equals(baseException.defaultCallback(), baseException.getBaseCallbackCode())) {
                 description = baseException.getBaseCallbackCode().getBizMessage();
             }
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
