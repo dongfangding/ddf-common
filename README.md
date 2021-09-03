@@ -65,8 +65,8 @@ TODO
    - 项目特性
      - [快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
      - [让普通线程池具备优雅停机逻辑](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/shutdown/ThreadPoolExecutorShutdownDefinition.java)
-- 11@ControllerAdvice和@RestControllerAdvice的使用
-    - 
+- ControllerAdvice和@RestControllerAdvice的使用
+    - [全局对象包装和异常处理](https://blog.csdn.net/yichen0429/article/details/120087311)
 
 
 ### 基本配置
