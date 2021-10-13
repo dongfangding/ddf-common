@@ -32,6 +32,10 @@ public class RocketMQDestination {
     @Setter
     private final String tags;
 
+    public RocketMQDestination of(String topic, String tags) {
+        return new RocketMQDestination(topic, tags);
+    }
+
 
     public static RocketMQDestination instanceOfDestination(String destinationStr) {
         if (StringUtils.isEmpty(destinationStr) || destinationStr.indexOf(SPLIT) < 1 || destinationStr.indexOf(SPLIT)
