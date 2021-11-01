@@ -57,6 +57,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -287,6 +293,7 @@
         <module>ddf-commom-ids-service</module>
         <module>ddf-common-trace</module>
         <module>common-ons</module>
+        <module>ddf-common-nacos</module>
     </modules>
 
 
