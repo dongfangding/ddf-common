@@ -18,6 +18,10 @@ public class AnjiCaptchaCacheService implements CaptchaCacheService {
 
     private StringRedisTemplate stringRedisTemplate;
 
+    public AnjiCaptchaCacheService() {
+
+    }
+
     public AnjiCaptchaCacheService(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
     }
