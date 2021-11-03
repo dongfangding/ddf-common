@@ -23,7 +23,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "spring.websocket.properties")
+@ConfigurationProperties(prefix = "customize.websocket.properties")
 public class WebSocketProperties {
 
     /**

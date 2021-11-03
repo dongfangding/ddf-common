@@ -10,12 +10,13 @@ import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.properties.WebSocketProperties;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -28,17 +29,15 @@ import org.springframework.web.socket.TextMessage;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor(onConstructor_={@Autowired})
 public class HandlerMessageServiceImpl implements HandlerMessageService {
 
     @Autowired
     @Qualifier(value = "handlerMessagePool")
     private ThreadPoolTaskExecutor handlerMessagePool;
-    @Autowired
-    private ChannelTransferService channelTransferService;
-    @Value("${customs.message_secret}")
-    private boolean messageSecret;
-    @Autowired
-    private CmdStrategyHelper cmdStrategyHelper;
+    private final ChannelTransferService channelTransferService;
+    private final WebSocketProperties webSocketProperties;
+    private final CmdStrategyHelper cmdStrategyHelper;
 
     /**
      * 处理接收到的消息
@@ -75,7 +74,7 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
             Message<?> message = null;
             String messageStr = textMessage.getPayload();
             try {
-                if (messageSecret) {
+                if (webSocketProperties.isMessageSecret()) {
                     message = Message.unSign(textMessage.getPayload());
                     if (message == null) {
                         throw new BadRequestException("验签不通过!");
