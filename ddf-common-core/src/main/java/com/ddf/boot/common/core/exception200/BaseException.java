@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.exception200;
 
+import cn.hutool.core.util.StrUtil;
 import com.google.common.base.Objects;
 import java.text.MessageFormat;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(Throwable throwable) {
         super(throwable);
-        initCallback(defaultCallback());
+        initCallback(defaultCallback(), throwable);
     }
 
     /**
@@ -127,7 +128,19 @@ public abstract class BaseException extends RuntimeException {
     private void initCallback(String code, String description, Object... params) {
         this.code = code == null ? defaultCallback().getCode() : code;
         this.params = params;
-        this.description = MessageFormat.format(description, params);
+        this.description = StrUtil.isNotBlank(description) ? MessageFormat.format(description, params) : "";
+    }
+
+
+    /**
+     * 处理接收其它异常时初始化状态码和消息
+     *
+     * @param baseCallbackCode
+     * @param throwable
+     */
+    private void initCallback(BaseCallbackCode baseCallbackCode, Throwable throwable) {
+        this.code = code == null ? defaultCallback().getCode() : code;
+        this.description = throwable.getMessage();
     }
 
 

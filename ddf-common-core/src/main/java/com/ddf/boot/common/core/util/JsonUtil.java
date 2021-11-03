@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.util;
 
+import com.ddf.boot.common.core.exception200.ServerErrorException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -49,7 +50,6 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象转换Json失败", e);
-            logger.error("对象转换Json失败", e);
         }
         return StringUtils.EMPTY;
     }
@@ -65,7 +65,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象序列化失败", e);
-            throw new RuntimeException("对象序列化失败！");
+            throw new ServerErrorException(e);
         }
     }
 
@@ -115,7 +115,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
             logger.error("Json转换对象失败", e);
-            throw new RuntimeException("Json转换对象失败", e);
+            throw new ServerErrorException(e);
         }
     }
 
@@ -125,12 +125,13 @@ public final class JsonUtil {
      * @param obj
      * @return
      */
+    @SneakyThrows
     public static byte[] toByte(Object obj) {
         try {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象转换字节失败", e);
-            throw new RuntimeException("对象转换字节失败", e);
+            throw e;
         }
     }
 
@@ -141,12 +142,13 @@ public final class JsonUtil {
      * @param type
      * @return
      */
+    @SneakyThrows
     public static <T> T toBean(byte[] bytes, Class<T> type) {
         try {
             return OBJECT_MAPPER.readValue(bytes, type);
         } catch (IOException e) {
             logger.error("字节转换对象失败", e);
-            throw new RuntimeException("字节转换对象失败", e);
+            throw e;
         }
     }
 
