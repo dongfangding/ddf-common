@@ -69,6 +69,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public GeoHelper geoHelper(RedissonClient redissonClient) {
         return new GeoHelper(redissonClient);
     }

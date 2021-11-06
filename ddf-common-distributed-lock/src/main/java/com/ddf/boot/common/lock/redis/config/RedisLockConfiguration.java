@@ -5,6 +5,7 @@ import com.ddf.boot.common.lock.redis.impl.RedisDistributedLock;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ public class RedisLockConfiguration {
      * @return
      */
     @Bean(name = RedisDistributedLock.BEAN_NAME)
+    @ConditionalOnMissingBean(name = "redisDistributedLock")
     public DistributedLock redisDistributedLock(@Autowired RedissonClient redissonClient) {
         return new RedisDistributedLock(redissonClient, distributedLockRedisProperties);
     }

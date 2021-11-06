@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,7 @@ public class CuratorFrameworkConfig {
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
+    @ConditionalOnMissingBean
     public CuratorFramework curatorFramework() {
         log.info("开始初始化分布式锁zk客户端工具");
         return CuratorFrameworkFactory.newClient(
@@ -43,7 +46,8 @@ public class CuratorFrameworkConfig {
     }
 
     @Bean(name = ZookeeperDistributedLock.BEAN_NAME)
-    public DistributedLock zookeeperDistributedLock() {
-        return new ZookeeperDistributedLock(curatorFramework(), distributedLockZookeeperProperties);
+    @ConditionalOnMissingBean(name = "zookeeperDistributedLock")
+    public DistributedLock zookeeperDistributedLock(@Autowired CuratorFramework curatorFramework) {
+        return new ZookeeperDistributedLock(curatorFramework, distributedLockZookeeperProperties);
     }
 }

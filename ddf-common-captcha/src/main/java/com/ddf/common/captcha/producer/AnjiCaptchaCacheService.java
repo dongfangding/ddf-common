@@ -1,9 +1,9 @@
 package com.ddf.common.captcha.producer;
 
 import com.anji.captcha.service.CaptchaCacheService;
+import com.ddf.common.captcha.repository.CacheAdapter;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * 滑块或点选文字验证码实现
@@ -16,14 +16,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 public class AnjiCaptchaCacheService implements CaptchaCacheService {
 
-    private StringRedisTemplate stringRedisTemplate;
-
+    /**
+     * 必须保留空构造， 有load SPI
+     */
     public AnjiCaptchaCacheService() {
-
-    }
-
-    public AnjiCaptchaCacheService(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -35,28 +31,28 @@ public class AnjiCaptchaCacheService implements CaptchaCacheService {
      */
     @Override
     public void set(String key, String value, long expiresInSeconds) {
-        stringRedisTemplate.opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
+        CacheAdapter.getTemplate().opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
     }
 
     @Override
     public boolean exists(String key) {
-        final Boolean aBoolean = stringRedisTemplate.hasKey(key);
+        final Boolean aBoolean = CacheAdapter.getTemplate().hasKey(key);
         return Objects.nonNull(aBoolean) && aBoolean;
     }
 
     @Override
     public void delete(String key) {
-        stringRedisTemplate.delete(key);
+        CacheAdapter.getTemplate().delete(key);
     }
 
     @Override
     public String get(String key) {
-        return stringRedisTemplate.opsForValue().get(key);
+        return CacheAdapter.getTemplate().opsForValue().get(key);
     }
 
     @Override
     public Long increment(String key, long val) {
-        return stringRedisTemplate.opsForValue().increment(key,val);
+        return CacheAdapter.getTemplate().opsForValue().increment(key,val);
     }
 
     /**

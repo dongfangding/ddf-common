@@ -1,12 +1,11 @@
 package com.ddf.common.captcha.config;
 
-import com.anji.captcha.service.CaptchaCacheService;
 import com.anji.captcha.service.CaptchaService;
 import com.ddf.common.captcha.constants.CaptchaConst;
 import com.ddf.common.captcha.helper.CaptchaHelper;
-import com.ddf.common.captcha.producer.AnjiCaptchaCacheService;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
+import com.ddf.common.captcha.repository.CacheAdapter;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
@@ -69,6 +68,18 @@ public class CaptchaAutoConfiguration {
     }
 
     /**
+     * 适配缓存代理类
+     *
+     * @param stringRedisTemplate
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public CacheAdapter cacheAdapter(@Autowired StringRedisTemplate stringRedisTemplate) {
+        return new CacheAdapter(stringRedisTemplate);
+    }
+
+    /**
      * 验证码实现帮助类
      *
      * @param defaultKaptcha
@@ -77,6 +88,7 @@ public class CaptchaAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public CaptchaHelper captchaHelper(@Autowired @Qualifier(value = CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
             @Autowired @Qualifier(value = CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
             @Autowired CaptchaService captchaService) {
@@ -84,16 +96,6 @@ public class CaptchaAutoConfiguration {
     }
 
 
-    /**
-     * 三方验证码缓存实现
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public CaptchaCacheService anjiCaptchaCacheService(@Autowired StringRedisTemplate stringRedisTemplate) {
-        return new AnjiCaptchaCacheService(stringRedisTemplate);
-    }
 
     /**
      * 构建属性类
