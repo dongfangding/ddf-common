@@ -1,6 +1,5 @@
 package com.ddf.common.captcha.model;
 
-import com.ddf.common.captcha.helper.CaptchaHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
@@ -52,9 +51,5 @@ public class CaptchaResult implements Serializable {
      * 唯一表单token, 使用这个和验证码做对应关系， 在表单中需要回传这个值
      */
     private String token;
-
-    public String getTokenKey() {
-        return CaptchaHelper.CAPTCHA_KEY_PREFIX + token;
-    }
 
 }
