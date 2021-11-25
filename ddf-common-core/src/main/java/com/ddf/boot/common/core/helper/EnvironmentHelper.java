@@ -1,5 +1,7 @@
 package com.ddf.boot.common.core.helper;
 
+import com.ddf.boot.common.core.enumration.EnvironmentProfileEnum;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +84,14 @@ public class EnvironmentHelper {
      */
     public String getApplicationName() {
         return environment.getProperty("spring.application.name");
+    }
+
+    /**
+     * 是否生产环境
+     *
+     * @return
+     */
+    public boolean isProProfile() {
+        return checkIsExistOr(Lists.newArrayList(EnvironmentProfileEnum.PRO.getCode()));
     }
 }

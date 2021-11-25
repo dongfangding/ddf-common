@@ -109,6 +109,20 @@ public class UserClaim implements Serializable {
     }
 
     /**
+     * 简单创建用户
+     *
+     * @param userId
+     * @param username
+     * @return
+     */
+    public static UserClaim simpleUser(String userId, String username) {
+        final UserClaim claim = new UserClaim();
+        claim.setUserId(userId);
+        claim.setUsername(username);
+        return claim;
+    }
+
+    /**
      * 将用户信息生成map，用以放到jwt的payload中
      *
      * @return

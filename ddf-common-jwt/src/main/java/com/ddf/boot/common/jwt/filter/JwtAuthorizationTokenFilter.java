@@ -1,6 +1,7 @@
 package com.ddf.boot.common.jwt.filter;
 
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.UserContextUtil;
@@ -24,7 +25,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.rpc.RpcContext;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +90,8 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
 
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private EnvironmentHelper environmentHelper;
 
 
     /**
@@ -109,10 +111,14 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         }
         String host = WebUtil.getHost();
         request.setAttribute(JwtConstant.CLIENT_IP, host);
+        if (jwtProperties.isMock() && !environmentHelper.isProProfile()) {
+            return true;
+        }
+//        RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
+
 
         // 填充认证接口前置属性
         userClaimService.storeRequest(request, host);
-        RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
             return true;
@@ -144,7 +150,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         UserContextUtil.setUserClaim(storeUserClaim);
         MDC.put(USER_ID, storeUserClaim.getUserId());
         request.setAttribute(JwtConstant.HEADER_USER, userInfo);
-        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
+//        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
 
         return true;
     }
