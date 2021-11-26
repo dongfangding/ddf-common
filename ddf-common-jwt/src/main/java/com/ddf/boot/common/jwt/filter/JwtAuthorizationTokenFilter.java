@@ -110,12 +110,15 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             return true;
         }
         String host = WebUtil.getHost();
+        final String tokenHeader = request.getHeader(AUTH_HEADER);
         request.setAttribute(JwtConstant.CLIENT_IP, host);
-        if (jwtProperties.isMock() && !environmentHelper.isProProfile()) {
+        if (jwtProperties.isMock() && !environmentHelper.isProdProfile()) {
+            if (StringUtils.isBlank(tokenHeader)) {
+                throw new AccessDeniedException("mock模式token header未传入");
+            }
+            UserContextUtil.setUserClaim(UserClaim.simpleUser(tokenHeader, "mock"));
             return true;
         }
-//        RpcContext.getContext().setAttachment(JwtConstant.CLIENT_IP, WebUtil.getHost());
-
 
         // 填充认证接口前置属性
         userClaimService.storeRequest(request, host);
@@ -124,8 +127,9 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             return true;
         }
 
+
         // 校验并转换jws
-        AuthInfo authInfo = checkAndGetJws(request, host);
+        AuthInfo authInfo = checkAndGetJws(request, host, tokenHeader);
         final UserClaim userClaim = authInfo.getUserClaim();
         final Jws<Claims> claimsJws = authInfo.getClaimsJws();
         String token = authInfo.getRealToken();
@@ -150,8 +154,6 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         UserContextUtil.setUserClaim(storeUserClaim);
         MDC.put(USER_ID, storeUserClaim.getUserId());
         request.setAttribute(JwtConstant.HEADER_USER, userInfo);
-//        RpcContext.getContext().setAttachment(JwtConstant.HEADER_USER, userInfo);
-
         return true;
     }
 
@@ -180,8 +182,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      * @param host
      * @return
      */
-    private AuthInfo checkAndGetJws(HttpServletRequest request, String host) {
-        final String tokenHeader = request.getHeader(AUTH_HEADER);
+    private AuthInfo checkAndGetJws(HttpServletRequest request, String host, String tokenHeader) {
         if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
             throw new AccessDeniedException("token格式不合法！");
         }

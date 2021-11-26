@@ -26,6 +26,6 @@ public class CoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ThreadPoolExecutorShutdownDefinition threadPoolExecutorShutdownDefinition() {
-        return new ThreadPoolExecutorShutdownDefinition(60, TimeUnit.SECONDS);
+        return new ThreadPoolExecutorShutdownDefinition(120, TimeUnit.SECONDS);
     }
 }
