@@ -112,28 +112,23 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         String host = WebUtil.getHost();
         final String tokenHeader = request.getHeader(AUTH_HEADER);
         request.setAttribute(JwtConstant.CLIENT_IP, host);
-        if (jwtProperties.isMock() && !environmentHelper.isProdProfile()) {
-            if (StringUtils.isBlank(tokenHeader)) {
-                throw new AccessDeniedException("mock模式token header未传入");
-            }
-            UserContextUtil.setUserClaim(UserClaim.simpleUser(tokenHeader, "mock"));
-            return true;
-        }
-
-        // 填充认证接口前置属性
-        userClaimService.storeRequest(request, host);
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
             return true;
         }
 
+        if (userClaimService == null) {
+            throw new NoSuchBeanDefinitionException(UserClaimService.class);
+        }
+        // 填充认证接口前置属性
+        userClaimService.storeRequest(request, host);
 
         // 校验并转换jws
         AuthInfo authInfo = checkAndGetJws(request, host, tokenHeader);
         final UserClaim userClaim = authInfo.getUserClaim();
         final Jws<Claims> claimsJws = authInfo.getClaimsJws();
         String token = authInfo.getRealToken();
-        final UserClaim storeUserClaim = authInfo.getStoreUserClaim();
+        UserClaim storeUserClaim = authInfo.getStoreUserClaim();
 
         // 预留认证通过后置接口
         userClaimService.afterVerifySuccess(userClaim);
@@ -143,7 +138,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         long now = System.currentTimeMillis();
         // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
         // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
-        if (oldExpiredMinute - now <= jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
+        if (oldExpiredMinute - now <= (long) jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
             synchronized (token.intern()) {
                 token = JwtUtil.defaultJws(userClaim);
                 response.setHeader(AUTH_HEADER, token);
@@ -183,54 +178,52 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      * @return
      */
     private AuthInfo checkAndGetJws(HttpServletRequest request, String host, String tokenHeader) {
+        UserClaim tokenUserClaim;
         if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
             throw new AccessDeniedException("token格式不合法！");
         }
-
         String token = tokenHeader.split(TOKEN_PREFIX)[1];
-        Jws<Claims> claimsJws;
-        try {
-            claimsJws = JwtUtil.parseJws(token, 0);
-        } catch (KeyException e) {
-            log.error("KeyException>>>>>", e);
-            throw new AccessDeniedException("token无效！");
-        } catch (ExpiredJwtException e) {
-            log.error("ExpiredJwtException>>>>>", e);
-            throw new AccessDeniedException("token已过期！");
-        } catch (Exception e) {
-            log.error("token解析其它异常>>>>>", e);
-            throw new AccessDeniedException("token解析失败！");
+
+        Jws<Claims> claimsJws = null;
+        if (jwtProperties.isMock() && !environmentHelper.isProdProfile()) {
+            tokenUserClaim = UserClaim.mockUser(token);
+        } else {
+            try {
+                claimsJws = JwtUtil.parseJws(token, 0);
+            } catch (KeyException e) {
+                throw new AccessDeniedException("token无效！");
+            } catch (ExpiredJwtException e) {
+                throw new AccessDeniedException("token已过期！");
+            } catch (Exception e) {
+                throw new AccessDeniedException("token解析失败！");
+            }
+            tokenUserClaim = JwtUtil.getUserClaim(claimsJws);
         }
 
-        UserClaim userClaim = JwtUtil.getUserClaim(claimsJws);
-        Preconditions.checkNotNull(userClaim, "解析用户为空!");
-        Preconditions.checkArgument(!StringUtils.isAnyBlank(userClaim.getUsername(), userClaim.getCredit()),
+        Preconditions.checkNotNull(tokenUserClaim, "解析用户为空!");
+        Preconditions.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
                 "用户关键信息缺失！"
         );
 
-        if (userClaimService == null) {
-            throw new NoSuchBeanDefinitionException(UserClaimService.class);
-        }
-
         // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
-        if (!Objects.equals(userClaim.getCredit(), host) && !JwtUtil.DEFAULT_CLIENT_IP.contains(host)) {
-            log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, userClaim);
+        if (!Objects.equals(tokenUserClaim.getCredit(), host) && !tokenUserClaim.ignoreCredit()) {
+            log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, tokenUserClaim);
             throw new AccessDeniedException("更换登录地址，需要重新登录！");
         }
 
-        UserClaim storeUser = userClaimService.getStoreUserInfo(userClaim);
+        UserClaim storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
 
-        if (!Objects.equals(userClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
-            log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
+        if (Objects.nonNull(storeUser.getLastModifyPasswordTime()) && !Objects.equals(tokenUserClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
+            log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
             throw new AccessDeniedException("密码已经修改，请重新登录！");
         }
-        if (!Objects.equals(userClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
-            log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), userClaim);
+        if (Objects.nonNull(storeUser.getLastLoginTime()) && !Objects.equals(tokenUserClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
+            log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
             throw new AccessDeniedException("token已刷新，请重新登录！");
         }
         return new AuthInfo().setRealToken(token)
                 .setClaimsJws(claimsJws)
-                .setUserClaim(userClaim)
+                .setUserClaim(tokenUserClaim)
                 .setStoreUserClaim(storeUser);
     }
 

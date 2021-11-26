@@ -60,7 +60,7 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-        // 这个可选的日志处理器会在异常时打印异常日志， 如果已经处理了，这里就不要重复打印了
+        // 这个可选的日志处理器会在异常时打印异常日志， 如果已经处理了，这里就不要重复打印了, 但是有些异常还未进入方法，不会被切面，这里加判断就会导致异常栈打印不出来
         if (!SpringContextHolder.containsBeanType(AccessLogAspect.class)) {
             log.error("异常信息: ", exception);
         }

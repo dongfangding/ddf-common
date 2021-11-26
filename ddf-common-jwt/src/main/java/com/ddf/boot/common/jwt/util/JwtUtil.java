@@ -12,12 +12,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.KeyException;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.util.AntPathMatcher;
@@ -40,13 +38,6 @@ public class JwtUtil {
      * 而导致jws失效，这里提供一个忽略值
      */
     private static final int ALLOWED_CLOCK_SKEW_SECONDS = 120;
-
-
-    /**
-     * 由于Jwt要判断客户端的IP，但是在RpcContext中有可能会获取不到（不知道为啥，就是有一次没有获取到），现在为了
-     * 保险，如果没有获取到给个默认值；如果是默认值也算IP 匹配
-     */
-    public static final List<String> DEFAULT_CLIENT_IP = Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 
 
     /**

@@ -2,10 +2,12 @@ package com.ddf.boot.common.core.model;
 
 
 import cn.hutool.core.util.ReflectUtil;
+import com.google.common.collect.Lists;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,6 +44,11 @@ public class UserClaim implements Serializable {
      * </pre>
      */
     private static final UserClaim DEFAULT_USER = new UserClaim("0", "SYSTEM");
+
+    /**
+     * 忽略验证的credit
+     */
+    public static final List<String> IGNORE_CREDIT = Lists.newArrayList("127.0.0.1", "0:0:0:0:0:0:0:1", "*");
 
     /**
      * 用户id
@@ -109,16 +116,16 @@ public class UserClaim implements Serializable {
     }
 
     /**
-     * 简单创建用户
+     * 创建mock用户
      *
      * @param userId
-     * @param username
      * @return
      */
-    public static UserClaim simpleUser(String userId, String username) {
+    public static UserClaim mockUser(String userId) {
         final UserClaim claim = new UserClaim();
         claim.setUserId(userId);
-        claim.setUsername(username);
+        claim.setUsername("mock");
+        claim.setCredit("*");
         return claim;
     }
 
@@ -148,5 +155,14 @@ public class UserClaim implements Serializable {
             }
         }
         return claimMap;
+    }
+
+    /**
+     * 当前credit是否忽略验证
+     *
+     * @return
+     */
+    public boolean ignoreCredit() {
+        return IGNORE_CREDIT.contains(credit);
     }
 }
