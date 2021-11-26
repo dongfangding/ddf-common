@@ -100,8 +100,8 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>nexus-private-public</id>
-            <url>https://dev.91banban.com/nexus/content/groups/public/</url>
+            <id>nexus-public</id>
+            <url>http://106.15.10.135:8800/repository/nexus_public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
