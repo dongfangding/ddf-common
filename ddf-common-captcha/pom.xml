@@ -17,6 +17,14 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-core</artifactId>
+            <version>${project.parent.version}</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- 验证码 -->
         <dependency>
             <groupId>com.github.penggle</groupId>
