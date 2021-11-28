@@ -58,6 +58,11 @@ public class JwtProperties {
      */
     private boolean mock;
 
+    /**
+     * 为安全起见，必须配置在其中的mock用户才能使用
+     */
+    private List<String> mockUserIdList;
+
 
     /**
      * 判断路径是否跳过

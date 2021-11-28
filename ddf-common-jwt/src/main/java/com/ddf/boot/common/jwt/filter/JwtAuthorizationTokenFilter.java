@@ -1,5 +1,6 @@
 package com.ddf.boot.common.jwt.filter;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.model.UserClaim;
@@ -134,14 +135,16 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         userClaimService.afterVerifySuccess(userClaim);
 
         // 如果token即将失效，服务端主动用原来token中的信息重新生成token返回给客户端
-        long oldExpiredMinute = claimsJws.getBody().getExpiration().getTime();
-        long now = System.currentTimeMillis();
-        // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
-        // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
-        if (oldExpiredMinute - now <= (long) jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
-            synchronized (token.intern()) {
-                token = JwtUtil.defaultJws(userClaim);
-                response.setHeader(AUTH_HEADER, token);
+        if (Objects.nonNull(claimsJws)) {
+            long oldExpiredMinute = claimsJws.getBody().getExpiration().getTime();
+            long now = System.currentTimeMillis();
+            // 如果在未将新token返回给客户端或客户端未替换掉旧的token之前有多个请求过来，会生成多个有效token，由于token有信任
+            // 设备的管理，因此这里不再做分布式锁的处理，只随缘用本地锁稍微意思一下
+            if (oldExpiredMinute - now <= (long) jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
+                synchronized (token.intern()) {
+                    token = JwtUtil.defaultJws(userClaim);
+                    response.setHeader(AUTH_HEADER, token);
+                }
             }
         }
         String userInfo = JsonUtil.asString(storeUserClaim);
@@ -185,7 +188,8 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         String token = tokenHeader.split(TOKEN_PREFIX)[1];
 
         Jws<Claims> claimsJws = null;
-        if (jwtProperties.isMock() && !environmentHelper.isProdProfile()) {
+        if (jwtProperties.isMock() && !environmentHelper.isProdProfile() &&
+                CollUtil.isNotEmpty(jwtProperties.getMockUserIdList()) && jwtProperties.getMockUserIdList().contains(token)) {
             tokenUserClaim = UserClaim.mockUser(token);
         } else {
             try {
