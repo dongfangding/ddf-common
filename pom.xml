@@ -379,6 +379,7 @@
         <module>ddf-common-trace</module>
         <module>common-ons</module>
         <module>ddf-common-nacos</module>
+        <module>ddf-common-fdfs-client</module>
     </modules>
 
     <build>
