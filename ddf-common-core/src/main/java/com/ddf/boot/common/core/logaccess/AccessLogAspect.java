@@ -79,10 +79,13 @@ public class AccessLogAspect {
         MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
         // 获取请求参数
         String paramJson = AopUtil.serializeParam(joinPoint);
-        // 调用起始时间
-        long beforeTime = System.currentTimeMillis();
         // 执行方法
         try {
+            pointClass = AopUtil.getJoinPointClass(joinPoint);
+            pointMethod = AopUtil.getJoinPointMethod(joinPoint);
+            paramJson = AopUtil.serializeParam(joinPoint);
+            // 调用起始时间
+            long beforeTime = System.currentTimeMillis();
             Object proceed = joinPoint.proceed();
             long consumerTime = System.currentTimeMillis() - beforeTime;
             // 打印返回值和接口耗时
