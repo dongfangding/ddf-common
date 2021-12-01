@@ -1,6 +1,8 @@
 package com.ddf.boot.common.websocket.config;
 
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
+import com.ddf.boot.common.core.shutdown.ThreadPoolExecutorShutdownDefinition;
+import javax.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -85,5 +87,17 @@ public class WebsocketThreadConfig {
     @Bean("deviceCmdRunningStatePersistencePool")
     public ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool() {
         return ThreadBuilderHelper.buildThreadExecutor("running-state-persistence-pool-", 60, 2000);
+    }
+
+
+    @PostConstruct
+    public void init() {
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(batchCmdExecutor());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(handlerMessagePool());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(handlerMatchTemplateExecutor());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(handlerMessageBusiness());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(channelTransferPool());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(wsSendMessagePool());
+        ThreadPoolExecutorShutdownDefinition.registryExecutor(deviceCmdRunningStatePersistencePool());
     }
 }
