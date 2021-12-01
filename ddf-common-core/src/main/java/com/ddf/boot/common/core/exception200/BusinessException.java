@@ -9,6 +9,10 @@ package com.ddf.boot.common.core.exception200;
  */
 public class BusinessException extends BaseException {
 
+    public BusinessException(Throwable throwable) {
+        super(throwable);
+    }
+
     /**
      * @param baseCallbackCode
      */
