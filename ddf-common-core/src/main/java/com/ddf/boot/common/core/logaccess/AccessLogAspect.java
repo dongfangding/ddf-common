@@ -81,9 +81,6 @@ public class AccessLogAspect {
         String paramJson = AopUtil.serializeParam(joinPoint);
         // 执行方法
         try {
-            pointClass = AopUtil.getJoinPointClass(joinPoint);
-            pointMethod = AopUtil.getJoinPointMethod(joinPoint);
-            paramJson = AopUtil.serializeParam(joinPoint);
             // 调用起始时间
             long beforeTime = System.currentTimeMillis();
             Object proceed = joinPoint.proceed();
