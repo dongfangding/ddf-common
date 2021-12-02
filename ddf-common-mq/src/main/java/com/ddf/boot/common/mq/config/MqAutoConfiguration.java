@@ -120,7 +120,7 @@ public class MqAutoConfiguration {
                 AcknowledgeMode.AUTO, 250, 1, 1, 0L, 0L
         );
         // 要小于或等于prefetchCount,一个事务中要处理的消息数,这个值暂未理解影响程度
-        rabbitListener.setTxSize(100);
+//        rabbitListener.setTxSize(100);
         return rabbitListener;
     }
 

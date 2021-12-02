@@ -13,7 +13,8 @@
         <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
+<!--        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>-->
+        <spring-boot.version>2.5.7</spring-boot.version>
         <mybatis.version>3.3.0</mybatis.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
@@ -38,6 +39,7 @@
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
+        <validation.version>2.0.2</validation.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -349,6 +351,11 @@
                 <version>${jdeferred.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${validation.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
