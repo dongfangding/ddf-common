@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -93,9 +94,13 @@ public class VpsClient {
         final String ffmpegTmpPath = vpsProperties.getFfmpegTmpPath();
         String coverTmpPath = VpsUtil.cutVideoCover(storeAccessPath, ffmpegTmpPath.endsWith(File.separator) ?
                 ffmpegTmpPath : ffmpegTmpPath + File.separator + environmentHelper.getApplicationName());
-        final UploadResponse tmpResponse = uploadFile(coverTmpPath);
-        // 视频截帧时使用缩略图字段返回视频封面图片地址
-        response.setThumbPath(tmpResponse.getFullPath());
+        // 存在截帧失败的情况，则这个封面图就没有
+        response.setThumbPath(null);
+        if (Objects.nonNull(coverTmpPath)) {
+            final UploadResponse tmpResponse = uploadFile(coverTmpPath);
+            // 视频截帧时使用缩略图字段返回视频封面图片地址
+            response.setThumbPath(tmpResponse.getFullPath());
+        }
         return response;
     }
 }

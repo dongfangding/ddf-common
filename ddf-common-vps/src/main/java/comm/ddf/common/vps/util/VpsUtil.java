@@ -65,7 +65,7 @@ public class VpsUtil {
      */
     public static String cutVideoCover(String filePath, String beforeCutSecond, String tmpPath) {
         tmpPath = tmpPath.endsWith(File.separator) ? tmpPath : tmpPath + File.separator;
-        String finalFilePath = tmpPath + filePath + "_" + System.currentTimeMillis() + ".jpg";
+        String finalFilePath = tmpPath + filePath.replaceAll("//*", "_") + "_" + System.currentTimeMillis() + ".jpg";
         String command = MessageFormat.format(FFMPEG_SCREENSHOT_COMMAND, filePath, beforeCutSecond, finalFilePath);
         log.info("视频截图命令， command = {}", command);
         try {
@@ -73,7 +73,9 @@ public class VpsUtil {
             builder.command(command);
             builder.start();
         } catch (Exception e) {
+            // 如果失败的话，会损失数据，暂时不处理
             log.error("视频截图失败， command = {}", command);
+            return null;
         }
         return finalFilePath;
     }
