@@ -74,7 +74,7 @@ public class VpsUtil {
             builder.start();
         } catch (Exception e) {
             // 如果失败的话，会损失数据，暂时不处理
-            log.error("视频截图失败， command = {}", command);
+            log.error("视频截图失败， command = {}", command, e);
             return null;
         }
         return finalFilePath;
