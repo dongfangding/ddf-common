@@ -44,7 +44,7 @@ public class VpsUtil {
      * -ss 从哪个时间段开始截取，格式时:分:秒
      * -to 截取到哪个时间段结束，格式时:分:秒
      */
-    public static final String FFMPEG_VIDEO_CUT_COMMAND = "ffmpeg -i {0} -y -vcodec copy -acodec copy -ss {1} --to {2} {3}";
+    public static final String FFMPEG_VIDEO_CUT_COMMAND = "ffmpeg -i {0} -y -vcodec copy -acodec copy -ss {1} -to {2} {3}";
 
     /**
      * 对视频进行封面截图
@@ -67,11 +67,11 @@ public class VpsUtil {
         tmpPath = tmpPath.endsWith(File.separator) ? tmpPath : tmpPath + File.separator;
         String finalFilePath = tmpPath + filePath.replaceAll("//*", "_") + "_" + System.currentTimeMillis() + ".jpg";
         String command = MessageFormat.format(FFMPEG_SCREENSHOT_COMMAND, filePath, beforeCutSecond, finalFilePath);
-        log.info("视频截图命令， command = {}", command);
         try {
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.command(command);
-            builder.start();
+            log.info("视频截图命令， command = {}", command);
+            ProcessBuilder builder = new ProcessBuilder("sh", "-c", command);
+            final Process start = builder.start();
+            start.waitFor();
         } catch (Exception e) {
             // 如果失败的话，会损失数据，暂时不处理
             log.error("视频截图失败， command = {}", command, e);
