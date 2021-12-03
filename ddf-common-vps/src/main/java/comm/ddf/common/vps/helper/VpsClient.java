@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor(onConstructor_={@Autowired})
+@Slf4j
 public class VpsClient {
 
     private final FastFileStorageClient fastFileStorageClient;
@@ -69,7 +71,7 @@ public class VpsClient {
      */
     public UploadResponse uploadFile(InputStream inputStream, long fileSize, String fileExtName, Set<MetaData> metaDataSet) {
         // 暂时以这个来判断是上传的图片还是视频
-        if (SUPPORT_IMAGE_LIST.contains(fileExtName)) {
+        if (isImage(fileExtName)) {
             final StorePath storePath = fastFileStorageClient.uploadImageAndCrtThumbImage(inputStream, fileSize, fileExtName, metaDataSet);
             return UploadResponse.fromStorePath(storePath);
         }
@@ -102,5 +104,21 @@ public class VpsClient {
             response.setThumbPath(tmpResponse.getFullPath());
         }
         return response;
+    }
+
+
+    /**
+     * 简单判断是否是图片
+     *
+     * @param fileExtName
+     * @return
+     */
+    private boolean isImage(String fileExtName) {
+        for (String s : SUPPORT_IMAGE_LIST) {
+            if (s.equalsIgnoreCase(fileExtName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
