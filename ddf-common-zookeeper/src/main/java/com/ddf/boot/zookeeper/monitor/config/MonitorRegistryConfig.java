@@ -32,7 +32,6 @@ import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,10 +45,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MonitorRegistryConfig implements InitializingBean {
 
+    private CuratorFramework client;
+
     @Autowired
     private MonitorProperties monitorProperties;
-    @Autowired
-    private CuratorFramework client;
     @Autowired
     private EnvironmentHelper environmentHelper;
     @Autowired(required = false)
@@ -72,11 +71,10 @@ public class MonitorRegistryConfig implements InitializingBean {
      *
      * @return
      */
-    @Bean(initMethod = "start", destroyMethod = "close")
-    public CuratorFramework client() {
+    public void initClient() {
         log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-        return CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
+       this.client =  CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
                 monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy
         );
     }
@@ -88,6 +86,7 @@ public class MonitorRegistryConfig implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        initClient();
         List<MonitorNode> monitors = monitorProperties.getMonitors();
         if (CollUtil.isEmpty(monitors)) {
             return;
