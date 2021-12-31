@@ -1,8 +1,13 @@
 package com.ddf.boot.common.core.logaccess;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -53,6 +58,8 @@ public class AccessLogAspect {
 
     @Autowired(required = false)
     private SlowEventAction slowEventAction;
+    @Autowired(required = false)
+    private Map<String, AccessFilterChain> accessFilterChainMap;
 
     @Autowired
     private ThreadPoolTaskExecutor defaultThreadPool;
@@ -83,6 +90,17 @@ public class AccessLogAspect {
         try {
             // 调用起始时间
             long beforeTime = System.currentTimeMillis();
+            if (CollUtil.isNotEmpty(accessFilterChainMap)) {
+                final List<AccessFilterChain> chainList = accessFilterChainMap.values()
+                        .stream()
+                        .sorted(Comparator.comparingInt(AccessFilterChain::getOrder))
+                        .collect(Collectors.toList());
+                for (AccessFilterChain chain : chainList) {
+                    if (!chain.filter(joinPoint, pointClass, pointMethod)) {
+                        break;
+                    }
+                }
+            }
             Object proceed = joinPoint.proceed();
             long consumerTime = System.currentTimeMillis() - beforeTime;
             // 打印返回值和接口耗时

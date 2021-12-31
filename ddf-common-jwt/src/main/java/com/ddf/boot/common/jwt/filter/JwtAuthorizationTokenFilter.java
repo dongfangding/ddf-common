@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.model.UserClaim;
+import com.ddf.boot.common.core.model.request.RequestHeaderEnum;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.core.util.WebUtil;
@@ -75,13 +76,8 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
     private static final String USER_ID = "userId";
 
     /**
-     * 认证请求头字段
-     */
-    private static final String AUTH_HEADER = "Authorization";
-
-    /**
      * 认证接口类型
-     * 与{@link JwtAuthorizationTokenFilter#AUTH_HEADER} 组合表现形式为:
+     * 与{@link RequestHeaderEnum#AUTH_HEADER} 组合表现形式为:
      * Authorization: Bearer <token>
      */
     private static final String TOKEN_PREFIX = "Bearer ";
@@ -111,7 +107,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             return true;
         }
         String host = WebUtil.getHost();
-        final String tokenHeader = request.getHeader(AUTH_HEADER);
+        final String tokenHeader = request.getHeader(RequestHeaderEnum.AUTH_HEADER.getName());
         request.setAttribute(JwtConstant.CLIENT_IP, host);
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
@@ -143,7 +139,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             if (oldExpiredMinute - now <= (long) jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
                 synchronized (token.intern()) {
                     token = JwtUtil.defaultJws(userClaim);
-                    response.setHeader(AUTH_HEADER, token);
+                    response.setHeader(RequestHeaderEnum.AUTH_HEADER.getName(), token);
                 }
             }
         }
