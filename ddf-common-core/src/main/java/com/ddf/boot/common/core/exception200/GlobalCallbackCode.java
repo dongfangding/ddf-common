@@ -27,7 +27,9 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
 
     REPEAT_SUBMIT("998", "操作频繁"),
 
-    ENUM_CODE_NOT_MAPPING("997", "枚举代码未映射")
+    ENUM_CODE_NOT_MAPPING("997", "枚举代码未映射"),
+
+    SIGN_ERROR("996", "签名校验失败，数据不合法")
 
     ;
 
@@ -70,16 +72,5 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
     @Override
     public String getDescription() {
         return description;
-    }
-
-
-    public static void main(String[] args) {
-        if (true) {
-            try {
-                throw new BadRequestException(GlobalCallbackCode.FILL_PARAM_DEMO, "粉刷匠", "强");
-            } catch (BadRequestException exception) {
-                exception.printStackTrace();
-            }
-        }
     }
 }
