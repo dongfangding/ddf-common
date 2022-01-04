@@ -29,7 +29,9 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
 
     ENUM_CODE_NOT_MAPPING("997", "枚举代码未映射"),
 
-    SIGN_ERROR("996", "签名校验失败，数据不合法")
+    SIGN_ERROR("996", "签名校验失败，数据不合法"),
+
+    SIGN_TIMESTAMP_ERROR("995", "签名校验失败，数据已过期")
 
     ;
 
