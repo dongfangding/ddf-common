@@ -20,6 +20,17 @@ public enum RequestHeaderEnum {
     SIGN("sign"),
 
     /**
+     * 客户端操作系统， 如 pc/ios/android
+     */
+    OS("os"),
+
+    /**
+     * 客户端设备唯一标识，
+     * 主要是移动端设备，需要识别到具体设备号的时候
+     */
+    IMEI("imei"),
+
+    /**
      * 防重放字段， 毫秒时间戳
      */
     NONCE("nonce")
