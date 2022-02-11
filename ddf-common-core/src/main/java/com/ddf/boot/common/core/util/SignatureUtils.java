@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import org.springframework.util.StringUtils;
 
 /**
@@ -71,18 +72,22 @@ public class SignatureUtils {
     }
 
     /**
-     * 验证签名
+     * 验证签名以及是否重放
      *
-     * @param sign      签名参数
-     * @param keySecret 秘钥
      * @param data
+     * @param keySecret
+     * @param sign
+     * @param timestamp
+     * @param nonceIntervalMillions
+     * @param <T>
      * @return
      */
-    public static <T> boolean verifySelfSignature(T data, String keySecret, String sign, Long timestamp) {
+    public static <T> boolean verifySelfSignature(T data, String keySecret, String sign, Long timestamp, Long nonceIntervalMillions) {
         if (StringUtils.isEmpty(sign)) {
             throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
         }
-        if (Objects.isNull(timestamp) || timestamp < System.currentTimeMillis() - 60000) {
+        // 时间戳参数超过一定间隔，视作重放
+        if (Objects.isNull(timestamp) || timestamp < System.currentTimeMillis() - nonceIntervalMillions) {
             throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
         String str = JsonUtil.asString(data);
@@ -90,6 +95,7 @@ public class SignatureUtils {
         String s = genSelfSignature(keySecret, map);
         return s.equals(sign);
     }
+
 
     /**
      * 验证签名
@@ -99,7 +105,25 @@ public class SignatureUtils {
      * @return
      */
     public static <T extends BaseSign> boolean verifySelfSignature(T data, String keySecret) {
-        return verifySelfSignature(data, keySecret, data.getSign(), data.getTimestamp());
+        return verifySelfSignature(data, keySecret, data.getSign(), data.getTimestamp(), TimeUnit.SECONDS.toMillis(60));
+    }
+
+    /**
+     * 验证签名
+     *
+     * @param keySecret 秘钥
+     * @param sign
+     * @param data
+     * @return
+     */
+    public static <T> boolean verifySelfSignature(T data, String sign, String keySecret) {
+        if (StringUtils.isEmpty(sign)) {
+            throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
+        }
+        String str = JsonUtil.asString(data);
+        Map<String, Object> map = JsonUtil.toBean(str, Map.class);
+        String s = genSelfSignature(keySecret, map);
+        return s.equals(sign);
     }
 
     /**

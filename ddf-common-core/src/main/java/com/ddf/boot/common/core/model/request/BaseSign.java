@@ -15,9 +15,14 @@ public interface BaseSign extends Serializable {
 
 
     /**
-     * 自己系统的加签字段
+     * 自己系统加签字段固定参数名
      */
     String SELF_SIGNATURE_FIELD = "sign";
+
+    /**
+     * 自己系统时间戳固定参数名
+     */
+    String SELF_TIMESTAMP_FIELD = "timestamp";
 
     /**
      * 获取签名摘要值
