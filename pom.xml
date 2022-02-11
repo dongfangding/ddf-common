@@ -191,11 +191,12 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
-                    <exclusion>
-                        <artifactId>log4j-slf4j-impl</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
+<!--                    <exclusion>-->
+<!--                        <artifactId>log4j-slf4j-impl</artifactId>-->
+<!--                        <groupId>org.apache.logging.log4j</groupId>-->
+<!--                    </exclusion>-->
                     <exclusion>
                         <artifactId>log4j-api</artifactId>
                         <groupId>org.apache.logging.log4j</groupId>
@@ -203,10 +204,6 @@
                     <exclusion>
                         <artifactId>log4j-core</artifactId>
                         <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>slf4j-api</artifactId>
-                        <groupId>org.slf4j</groupId>
                     </exclusion>
                     <exclusion>
                         <artifactId>log4j-jul</artifactId>
@@ -215,25 +212,25 @@
                 </exclusions>
             </dependency>
 
-            <dependency>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <groupId>org.apache.logging.log4j</groupId>
-                <version>${log4j2.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>log4j-api</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>log4j-core</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>slf4j-api</artifactId>
-                        <groupId>org.slf4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+<!--            <dependency>-->
+<!--                <artifactId>log4j-slf4j-impl</artifactId>-->
+<!--                <groupId>org.apache.logging.log4j</groupId>-->
+<!--                <version>${log4j2.version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <artifactId>log4j-api</artifactId>-->
+<!--                        <groupId>org.apache.logging.log4j</groupId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <artifactId>log4j-core</artifactId>-->
+<!--                        <groupId>org.apache.logging.log4j</groupId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <artifactId>slf4j-api</artifactId>-->
+<!--                        <groupId>org.slf4j</groupId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
 
             <dependency>
                 <artifactId>log4j-api</artifactId>
@@ -253,15 +250,10 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-to-slf4j</artifactId>
+                <artifactId>log4j-jul</artifactId>
                 <version>${log4j2.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>log4j-api</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
+
             <!-- 日志组件依赖，异步打印日志 -->
             <dependency>
                 <groupId>com.lmax</groupId>
