@@ -14,7 +14,7 @@
     </description>
 
     <properties>
-        <xxl-job-version>2.2.0</xxl-job-version>
+        <xxl-job-version>2.3.0</xxl-job-version>
     </properties>
 
     <dependencies>
