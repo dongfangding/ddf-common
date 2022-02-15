@@ -33,14 +33,14 @@ public class CaptchaResult implements Serializable {
     private String verifyCode;
 
     /**
+     * 原始图片base64编码， 某些情况下与实际使用的不一样，比如滑块图片，因为实际使用的是缺少的
+     */
+    private String originalImageBase64;
+
+    /**
      * 图片的base64编码
      */
     private String imageBase64;
-
-    /**
-     * 滑块图片base64， 图片滑动验证码可用
-     */
-    private String jigsawImageBase64;
 
     /**
      * 点选文字顺序， 文字点选验证码可用
@@ -51,5 +51,10 @@ public class CaptchaResult implements Serializable {
      * 唯一表单token, 使用这个和验证码做对应关系， 在表单中需要回传这个值
      */
     private String token;
+
+    /**
+     * 图片编码base64的前缀，如`data:image/jpeg;base64,` + 真实的base64图片编码为一个完整版的格式，可以还原成图片
+     */
+    private String prefix = "data:image/jpeg;base64,";
 
 }

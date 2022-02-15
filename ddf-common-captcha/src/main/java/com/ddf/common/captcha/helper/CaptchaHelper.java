@@ -44,6 +44,9 @@ public class CaptchaHelper {
 
     private CaptchaCacheService captchaCacheService;
 
+    /**
+     * key取名这个是因为三方库的key使用的名字是这个， 自定义的与它保持一致吧，这样都放在一块
+     */
     public final static String CAPTCHA_KEY_PREFIX = "RUNNING:CAPTCHA:";
 
     public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties, CaptchaService captchaService) {
@@ -95,7 +98,8 @@ public class CaptchaHelper {
         } catch (IOException e) {
             throw new IllegalStateException("验证码生成失败");
         }
-        result.setImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
+        result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
+        result.setImageBase64(result.getOriginalImageBase64());
         final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setToken(token);
         captchaCacheService.set(token, text, captchaProperties.getKeyExpiredSeconds());
@@ -124,7 +128,8 @@ public class CaptchaHelper {
         } catch (IOException e) {
             throw new IllegalStateException("验证码生成失败");
         }
-        result.setImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
+        result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
+        result.setImageBase64(result.getOriginalImageBase64());
         final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setToken(token);
         captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());
@@ -144,9 +149,9 @@ public class CaptchaHelper {
         final CaptchaResult result = new CaptchaResult();
         result.setToken(captchaVO.getToken());
         // 底图base64编码
-        result.setImageBase64(captchaVO.getOriginalImageBase64());
+        result.setOriginalImageBase64(captchaVO.getOriginalImageBase64());
         // 滑块图base64编码
-        result.setJigsawImageBase64(captchaVO.getJigsawImageBase64());
+        result.setImageBase64(captchaVO.getJigsawImageBase64());
         result.setWordList(captchaVO.getWordList());
         result.setVerifyCode(captchaVO.getPointJson());
         return result;
