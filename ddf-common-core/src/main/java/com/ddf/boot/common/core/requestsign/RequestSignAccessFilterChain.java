@@ -89,8 +89,9 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
                     paramMap, keySecret, sign, timestamp,
                     TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds())
             );
+        } else {
+            result = SignatureUtils.verifySelfSignature(paramMap, keySecret, sign);
         }
-        result = SignatureUtils.verifySelfSignature(paramMap, keySecret, sign);
         if (!result) {
             throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
         }
