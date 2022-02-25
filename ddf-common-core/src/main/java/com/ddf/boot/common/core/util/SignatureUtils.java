@@ -67,7 +67,6 @@ public class SignatureUtils {
             i++;
         }
         HMac mac = new HMac(HmacAlgorithm.HmacSHA256, secretKey.getBytes(StandardCharsets.UTF_8));
-        System.out.println(paramBuffer.toString());
         return mac.digestHex(paramBuffer.toString(), "UTF-8");
     }
 
