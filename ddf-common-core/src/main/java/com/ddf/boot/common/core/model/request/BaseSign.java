@@ -22,7 +22,7 @@ public interface BaseSign extends Serializable {
     /**
      * 自己系统时间戳固定参数名
      */
-    String SELF_TIMESTAMP_FIELD = "timestamp";
+    String SELF_TIMESTAMP_FIELD = "nonceTimestamp";
 
     /**
      * 获取签名摘要值
@@ -36,5 +36,5 @@ public interface BaseSign extends Serializable {
      *
      * @return
      */
-    Long getTimestamp();
+    Long getNonceTimestamp();
 }

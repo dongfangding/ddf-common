@@ -25,7 +25,7 @@ public class SignatureUtils {
      * <p>
      * 1. 参数名按ASCII升序排序；
      * 2. 参数值非空按 k=v&k1=v2 形式组合数据（参数值为数组时，请将值转换成 json；
-     *    参数值为对象时，请保证按照ASCII升序排序去设置json字段的值，至少在生成签名时要保证这个规则
+     * 参数值为对象时，请保证按照ASCII升序排序去设置json字段的值，至少在生成签名时要保证这个规则
      * 3. 使用 HmacSHA256 算法加密，Access Key Secret 作为加密的秘钥；这里用了jackson的反序列属性保证反序列化时字段有序
      * 4. 以 16 进制小写形式输出加密后的内容
      * 5. sign参数不建议放在data中， 如果放的话， 这个方法需要识别出这个字段的值是哪个， 否则无法剔除这个字段的影响，目前固定为sign
@@ -47,7 +47,7 @@ public class SignatureUtils {
         Object obj;
         for (String key : keys) {
             // 排除参数为空的
-            if (StringUtils.isEmpty(params.get(key)) || BaseSign.SELF_SIGNATURE_FIELD.equals(key)) {
+            if (StringUtils.isEmpty(params.get(key)) || BaseSign.SELF_SIGNATURE_FIELD.equals(key) || BaseSign.SELF_TIMESTAMP_FIELD.equals(key)) {
                 continue;
             }
             if (i != 0) {
@@ -58,12 +58,16 @@ public class SignatureUtils {
             if (Objects.isNull(obj)) {
                 continue;
             }
-            if (isBasic(obj)) {
+//            if (isBasic(obj)) {
                 paramBuffer.append(key).append("=").append(obj);
-            } else {
-                // 这里如果是对象序列化的话，已经设置了jackson序列化要按照ASCII升序排序，所以传参时顺序不重要，但是在加签时这个顺序必须正确。
-                paramBuffer.append(key).append("=").append(JsonUtil.asString(obj));
-            }
+//            } else {
+//                final MapConverter converter = new MapConverter(HashMap.class);
+//                final Map<?, ?> convert = converter.convert(obj, new HashMap<>());
+//                convert.remove(BaseSign.SELF_SIGNATURE_FIELD);
+//                convert.remove(BaseSign.SELF_TIMESTAMP_FIELD);
+//                // 这里如果是对象序列化的话，已经设置了jackson序列化要按照ASCII升序排序，所以传参时顺序不重要，但是在加签时这个顺序必须正确。
+//                paramBuffer.append(key).append("=").append(JsonUtil.asString(convert));
+//            }
             i++;
         }
         HMac mac = new HMac(HmacAlgorithm.HmacSHA256, secretKey.getBytes(StandardCharsets.UTF_8));
@@ -71,40 +75,20 @@ public class SignatureUtils {
     }
 
     /**
-     * 验证签名以及是否重放
-     *
-     * @param data
-     * @param keySecret
-     * @param sign
-     * @param timestamp
-     * @param nonceIntervalMillions
-     * @param <T>
-     * @return
-     */
-    public static <T> boolean verifySelfSignature(T data, String keySecret, String sign, Long timestamp, Long nonceIntervalMillions) {
-        if (StringUtils.isEmpty(sign)) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
-        }
-        // 时间戳参数超过一定间隔，视作重放
-        if (Objects.isNull(timestamp) || timestamp < System.currentTimeMillis() - nonceIntervalMillions) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
-        }
-        String str = JsonUtil.asString(data);
-        Map<String, Object> map = JsonUtil.toBean(str, Map.class);
-        String s = genSelfSignature(keySecret, map);
-        return s.equals(sign);
-    }
-
-
-    /**
      * 验证签名
      *
-     * @param keySecret 秘钥
      * @param data
+     * @param keySecret           秘钥
+     * @param nonceTimeoutSeconds 重放校验时间， 单位秒
      * @return
      */
-    public static <T extends BaseSign> boolean verifySelfSignature(T data, String keySecret) {
-        return verifySelfSignature(data, keySecret, data.getSign(), data.getTimestamp(), TimeUnit.SECONDS.toMillis(60));
+    public static <T extends BaseSign> boolean verifySelfSignature(T data, String keySecret, long nonceTimeoutSeconds) {
+        // 时间戳参数超过一定间隔，视作重放
+        if (Objects.isNull(data.getNonceTimestamp())
+                || data.getNonceTimestamp() < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(nonceTimeoutSeconds)) {
+            throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
+        }
+        return verifySelfSignature(data, keySecret, data.getSign());
     }
 
     /**
@@ -117,12 +101,11 @@ public class SignatureUtils {
      */
     public static <T> boolean verifySelfSignature(T data, String sign, String keySecret) {
         if (StringUtils.isEmpty(sign)) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
+            return false;
         }
         String str = JsonUtil.asString(data);
         Map<String, Object> map = JsonUtil.toBean(str, Map.class);
-        String s = genSelfSignature(keySecret, map);
-        return s.equals(sign);
+        return Objects.equals(genSelfSignature(keySecret, map), sign);
     }
 
     /**
@@ -132,7 +115,7 @@ public class SignatureUtils {
      * @return
      */
     private static boolean isBasic(Object obj) {
-        return obj instanceof Integer || obj instanceof String || obj instanceof Double || obj instanceof Float ||
-                obj instanceof Byte || obj instanceof Short || obj instanceof Long || obj instanceof Boolean;
+        return obj instanceof Integer || obj instanceof String || obj instanceof Double || obj instanceof Float
+                || obj instanceof Byte || obj instanceof Short || obj instanceof Long || obj instanceof Boolean;
     }
 }

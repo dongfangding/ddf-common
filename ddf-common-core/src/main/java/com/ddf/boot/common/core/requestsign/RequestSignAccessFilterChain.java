@@ -56,22 +56,28 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
         if (Objects.isNull(requestSign)) {
             return Boolean.TRUE;
         }
-        final Map<String, Object> paramMap = AopUtil.getAllParamMap(joinPoint);
+        final Map<String, Object> paramMap = AopUtil.getSerializableParamMap(joinPoint);
+        // 签名值
         String sign;
+        // 重放时间戳
         Long timestamp = null;
+        // 最终用来验签的参数对象， 强制定义规则， 如果参数对象没有实现过BaseSign， 则说明传入参数不是对象， 这个时候，这个时候使用map参数对象，否则使用BaseSign实现类
+        Object data;
         final BaseSign baseSign = (BaseSign) paramMap.values()
                 .stream()
                 .filter((obj -> obj instanceof BaseSign))
                 .findFirst()
                 .orElse(null);
         if (Objects.nonNull(baseSign)) {
+            data = baseSign;
             sign = baseSign.getSign();
-            timestamp = baseSign.getTimestamp();
+            timestamp = baseSign.getNonceTimestamp();
         } else {
             if (!paramMap.containsKey(BaseSign.SELF_SIGNATURE_FIELD)) {
                 throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
             }
             sign = (String) paramMap.get(BaseSign.SELF_SIGNATURE_FIELD);
+            data = paramMap;
         }
         if (StrUtil.isBlank(sign)) {
             throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
@@ -85,13 +91,12 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
             if (Objects.isNull(timestamp)) {
                 timestamp = Long.parseLong((String) paramMap.get(BaseSign.SELF_TIMESTAMP_FIELD));
             }
-            result = SignatureUtils.verifySelfSignature(
-                    paramMap, keySecret, sign, timestamp,
-                    TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds())
-            );
-        } else {
-            result = SignatureUtils.verifySelfSignature(paramMap, keySecret, sign);
+            // 时间戳参数超过一定间隔，视作重放
+            if (timestamp < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds())) {
+                throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
+            }
         }
+        result = SignatureUtils.verifySelfSignature(data, sign, keySecret);
         if (!result) {
             throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
         }
