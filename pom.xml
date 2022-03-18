@@ -493,6 +493,7 @@
         <module>ddf-common-nacos</module>
         <module>ddf-common-fdfs-client</module>
         <module>ddf-common-vps</module>
+        <module>ddf-common-mqtt</module>
     </modules>
 
     <build>
