@@ -5,7 +5,6 @@ import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -45,6 +44,7 @@ public class EmqConnectionProperties {
 
         /**
          * 连接地址
+         * tcp://localhost:1883
          */
         private String url;
     }
@@ -72,22 +72,13 @@ public class EmqConnectionProperties {
     }
 
     /**
-     * 协议地址
-     */
-    private Map<String, ConnectionConfig> protocolMap;
-
-    @PostConstruct
-    public void init() {
-        protocolMap = connectionUrls.stream().collect(Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
-    }
-
-    /**
      * 获取指定协议的配置
      *
      * @param protocol
      * @return
      */
     public ConnectionConfig getConnectionUrl(String protocol) {
+        Map<String, ConnectionConfig> protocolMap = connectionUrls.stream().collect(Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
         return protocolMap.get(protocol);
     }
 
