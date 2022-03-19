@@ -1,7 +1,9 @@
 package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,6 +15,8 @@ import lombok.NoArgsConstructor;
  * @date 2022/03/19 12:30
  */
 @Builder
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class PushToPointMqttTopic implements MqttTopic {
 

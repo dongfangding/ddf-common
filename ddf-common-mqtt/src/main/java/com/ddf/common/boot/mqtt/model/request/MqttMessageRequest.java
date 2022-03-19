@@ -20,7 +20,7 @@ public class MqttMessageRequest<T> implements Serializable {
     /**
      * 基础请求头， 当然由于预留了扩展字段， 应该没有必要继承这个类继续扩展了，请使用扩展字段来存储自定义的字段
      */
-    private BaseHeader header;
+    private BaseHeader header = BaseHeader.DEFAULT;
 
     /**
      * 控制mqtt消息行为参数

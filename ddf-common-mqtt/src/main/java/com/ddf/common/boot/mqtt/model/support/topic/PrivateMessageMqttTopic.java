@@ -2,8 +2,10 @@ package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>一对一聊天topic格式</p >
@@ -14,6 +16,8 @@ import lombok.Data;
  */
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PrivateMessageMqttTopic implements MqttTopic, Serializable {
 
     private static final long serialVersionUID = 5668777228627540185L;

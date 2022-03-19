@@ -2,6 +2,9 @@ package com.ddf.common.boot.mqtt.config;
 
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
+import com.ddf.common.boot.mqtt.client.MqttDefinition;
+import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
@@ -128,6 +131,28 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             }
         });
         return mqttClient;
+    }
+
+    /**
+     * mqtt内部实现bean
+     *
+     * @param mqttClient
+     * @return
+     */
+    @Bean
+    public MqttDefinition mqttDefinition(MqttClient mqttClient) {
+        return new DefaultMqttPublishImpl(mqttClient);
+    }
+
+    /**
+     * 暴露给外部使用的封装好的发送消息的client
+     *
+     * @param mqttDefinition
+     * @return
+     */
+    @Bean
+    public MqttPublishClient mqttPublishClient(MqttDefinition mqttDefinition) {
+        return new MqttPublishClient(mqttDefinition);
     }
 
     @Override

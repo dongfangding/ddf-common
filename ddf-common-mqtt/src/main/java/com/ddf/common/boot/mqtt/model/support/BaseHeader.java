@@ -18,6 +18,12 @@ public class BaseHeader implements Serializable {
 
     private static final long serialVersionUID = 4813011310202804454L;
 
+    public static BaseHeader DEFAULT;
+
+    static {
+        DEFAULT = new BaseHeader();
+    }
+
     /**
      * 扩展头每个键值对之间的分隔符，注意空格
      */
