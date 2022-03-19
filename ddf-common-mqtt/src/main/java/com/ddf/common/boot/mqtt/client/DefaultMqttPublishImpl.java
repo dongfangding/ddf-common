@@ -5,6 +5,7 @@ import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
+import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -40,7 +41,10 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         message.setId((int) IdsUtil.getNextLongId());
         message.setQos(control.getQos().getQos());
         message.setRetained(control.getRetain());
-        message.setPayload(JsonUtil.asString(request).getBytes(StandardCharsets.UTF_8));
+
+        // 将请求对象转换为实际的mqtt message payload
+        final MqttMessagePayload<T> payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
+        message.setPayload(JsonUtil.asString(payload).getBytes(StandardCharsets.UTF_8));
         try {
             mqttClient.publish(request.getTopic(), message);
         } catch (MqttException e) {

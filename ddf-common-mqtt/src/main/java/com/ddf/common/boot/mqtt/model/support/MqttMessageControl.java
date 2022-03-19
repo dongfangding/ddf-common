@@ -32,4 +32,14 @@ public class MqttMessageControl implements Serializable {
      * https://www.emqx.io/docs/zh/v4.4/advanced/retained.html
      */
     private Boolean retain = Boolean.FALSE;
+
+    /**
+     * 历史记录中是否显示该消息
+     */
+    private Boolean show = Boolean.TRUE;
+
+    /**
+     * 是否持久化
+     */
+    private Boolean persistence = Boolean.TRUE;
 }
