@@ -5,6 +5,7 @@ import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
+import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -46,6 +47,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
         PreconditionUtil.checkArgument(Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
+        // 存入到全局变量中
+        GlobalStorage.clientConfig = clientConfig;
+        GlobalStorage.SYSTEM_CLIENT_ID_PREFIX = clientConfig.getClientIdPrefix();
 
         // 默认使用mqtt 的 tcp 来进行连接
         final String protocol = MQTTProtocolEnum.MQTT_TCP.getProtocol();
