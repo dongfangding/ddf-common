@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.config;
 
 import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
@@ -39,6 +40,7 @@ import org.springframework.context.annotation.Configuration;
 public class MqttAutoConfiguration implements DisposableBean, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
+    private EnvironmentHelper environmentHelper;
 
     /**
      * 创建Mqtt客户端
@@ -53,6 +55,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 存入到全局变量中
         GlobalStorage.clientConfig = clientConfig;
         GlobalStorage.SYSTEM_CLIENT_ID_PREFIX = clientConfig.getClientIdPrefix();
+        GlobalStorage.APPLICATION_PORT = environmentHelper.getPort();
 
         // 默认使用mqtt 的 tcp 来进行连接
         final String protocol = MQTTProtocolEnum.MQTT_TCP.getProtocol();

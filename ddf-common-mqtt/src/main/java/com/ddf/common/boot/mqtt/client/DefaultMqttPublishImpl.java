@@ -47,8 +47,9 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         final MqttMessagePayload<T> payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
         message.setPayload(JsonUtil.asString(payload).getBytes(StandardCharsets.UTF_8));
         try {
-            mqttClient.publish(request.getTopic(), message);
+            mqttClient.publish(request.getTopic().getFullTopic(), message);
         } catch (MqttException e) {
+            // todo 返回对象告知失败
             log.error("mqtt消息发送失败, 消息内容 = {}", JsonUtil.asString(request));
         }
     }

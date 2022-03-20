@@ -21,8 +21,14 @@ public class GlobalStorage {
 
     /**
      * 系统clientId前缀
+     * 这个值会在mqtt client 初始化的时候改变
      */
-    public static String SYSTEM_CLIENT_ID_PREFIX;
+    public static String SYSTEM_CLIENT_ID_PREFIX = "DEFAULT_CLIENT_ID";
+
+    /**
+     * 系统当前使用的端口
+     */
+    public static int APPLICATION_PORT;
 
     /**
      * topic 路径分隔符

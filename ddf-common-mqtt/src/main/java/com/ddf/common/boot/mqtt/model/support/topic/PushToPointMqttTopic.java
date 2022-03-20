@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>对点推送topic格式</p >
@@ -53,6 +54,12 @@ public class PushToPointMqttTopic implements MqttTopic {
      */
     @Override
     public <T> T convertTopicObj(String fullTopic) {
+        final String topicPrefix = getTopicPrefix();
+        if (fullTopic.startsWith(topicPrefix)) {
+            final String userId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
+            final PushToPointMqttTopic topic = new PushToPointMqttTopic();
+            topic.setUserId(userId);
+        }
         return null;
     }
 }

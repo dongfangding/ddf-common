@@ -3,8 +3,10 @@ package com.ddf.common.boot.mqtt.model.request;
 import com.ddf.common.boot.mqtt.model.support.BaseHeader;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
+import com.ddf.common.boot.mqtt.model.support.topic.MqttTopic;
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
@@ -31,9 +33,8 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
     /**
      * 接收端topic
      */
-    @NotBlank(message = "topic不能为空")
-    @Size(min = 1, max = 128, message = "topicId参数过长")
-    private String topic;
+    @NotNull(message = "topic不能为空")
+    private MqttTopic topic;
 
     /**
      * 消息类型，  用来标识这个消息具体是做什么用的

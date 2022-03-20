@@ -1,7 +1,8 @@
 package com.ddf.common.boot.mqtt.config.properties;
 
-import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.net.NetUtil;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
+import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -88,7 +89,7 @@ public class EmqConnectionProperties {
      * @return
      */
     public String getClientId() {
-        return String.join("-", getClient().getClientIdPrefix(), System.currentTimeMillis() + "",
-                RandomUtil.randomInt(1000) + "");
+        return String.join("-", getClient().getClientIdPrefix(), NetUtil.getLocalhostStr() + "",
+                GlobalStorage.APPLICATION_PORT + "");
     }
 }

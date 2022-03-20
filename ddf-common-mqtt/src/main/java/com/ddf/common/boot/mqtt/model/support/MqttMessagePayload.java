@@ -31,11 +31,6 @@ public class MqttMessagePayload<T extends MessageBody> {
     private MqttMessageServerClient serverInfo;
 
     /**
-     * 接收端topic
-     */
-    private String topic;
-
-    /**
      * 消息业务类型，这个类型大于消息类型， 某个业务下的消息，一个业务类型下面可以有很多消息类型
      *
      * 比如业务类型是某个群聊， 在群里发的消息类型有聊天文本， 红包
@@ -52,7 +47,6 @@ public class MqttMessagePayload<T extends MessageBody> {
      */
     private T body;
 
-
     /**
      * 通过外部发送消息的请求对象转换为实际要发送mqtt message的payload
      * {@link MqttMessage#setPayload(byte[])} ()}
@@ -65,7 +59,6 @@ public class MqttMessagePayload<T extends MessageBody> {
     public static <T extends MessageBody> MqttMessagePayload<T> fromMessageRequest(MqttMessageRequest<T> request, String serverClientId) {
         final MqttMessagePayload<T> payload = new MqttMessagePayload<>();
         payload.setHeader(request.getHeader());
-        payload.setTopic(request.getTopic());
         payload.setMessageType(request.getMessageType());
         payload.setBizType(request.getBizType());
         payload.setBody(request.getBody());
