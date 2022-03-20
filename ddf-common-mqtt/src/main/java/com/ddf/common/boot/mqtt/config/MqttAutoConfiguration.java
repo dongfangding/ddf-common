@@ -40,7 +40,6 @@ import org.springframework.context.annotation.Configuration;
 public class MqttAutoConfiguration implements DisposableBean, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
-    private EnvironmentHelper environmentHelper;
 
     /**
      * 创建Mqtt客户端
@@ -48,7 +47,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties) {
+    public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
         PreconditionUtil.checkArgument(Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
