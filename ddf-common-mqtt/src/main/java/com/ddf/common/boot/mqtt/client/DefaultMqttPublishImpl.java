@@ -6,6 +6,7 @@ import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
+import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -34,7 +35,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
      * @param request
      */
     @Override
-    public <T> void publish(MqttMessageRequest<T> request) {
+    public <T extends MessageBody> void publish(MqttMessageRequest<T> request) {
         PreconditionUtil.requiredParamCheck(request);
         final MqttMessage message = new MqttMessage();
         final MqttMessageControl control = request.getControl();

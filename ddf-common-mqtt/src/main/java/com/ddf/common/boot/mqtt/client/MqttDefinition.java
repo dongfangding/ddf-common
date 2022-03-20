@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.client;
 
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
+import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 
 /**
  * <p>description</p >
@@ -16,5 +17,5 @@ public interface MqttDefinition {
      *
      * @param request
      */
-    <T> void publish(MqttMessageRequest<T> request);
+    <T extends MessageBody> void publish(MqttMessageRequest<T> request);
 }

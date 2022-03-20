@@ -1,7 +1,9 @@
 package com.ddf.common.boot.mqtt.model.support;
 
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
+import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import lombok.Data;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 /**
  * <p>发送的mqtt的实际消息对象， 该对象通过发送消息请求对象构建,舍弃了一些无必要参数，同时增加了一些自己作为服务端代码的一些参数</p >
@@ -12,7 +14,7 @@ import lombok.Data;
  * @date 2022/03/19 18:24
  */
 @Data
-public class MqttMessagePayload<T> {
+public class MqttMessagePayload<T extends MessageBody> {
 
     private MqttMessagePayload() {
 
@@ -50,7 +52,17 @@ public class MqttMessagePayload<T> {
      */
     private T body;
 
-    public static <T> MqttMessagePayload<T> fromMessageRequest(MqttMessageRequest<T> request, String serverClientId) {
+
+    /**
+     * 通过外部发送消息的请求对象转换为实际要发送mqtt message的payload
+     * {@link MqttMessage#setPayload(byte[])} ()}
+     *
+     * @param request
+     * @param serverClientId
+     * @param <T>
+     * @return
+     */
+    public static <T extends MessageBody> MqttMessagePayload<T> fromMessageRequest(MqttMessageRequest<T> request, String serverClientId) {
         final MqttMessagePayload<T> payload = new MqttMessagePayload<>();
         payload.setHeader(request.getHeader());
         payload.setTopic(request.getTopic());

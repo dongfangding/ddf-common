@@ -2,6 +2,7 @@ package com.ddf.common.boot.mqtt.model.request;
 
 import com.ddf.common.boot.mqtt.model.support.BaseHeader;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
+import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -15,7 +16,7 @@ import lombok.Data;
  * @date 2022/03/18 20:25
  */
 @Data
-public class MqttMessageRequest<T> implements Serializable {
+public class MqttMessageRequest<T extends MessageBody> implements Serializable {
 
     /**
      * 基础请求头， 当然由于预留了扩展字段， 应该没有必要继承这个类继续扩展了，请使用扩展字段来存储自定义的字段

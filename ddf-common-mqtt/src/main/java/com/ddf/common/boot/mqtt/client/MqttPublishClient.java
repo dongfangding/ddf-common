@@ -4,6 +4,7 @@ import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.request.MqttTopicCreateRequest;
 import com.ddf.common.boot.mqtt.model.response.MqttTopicCreateResponse;
+import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 
 /**
@@ -40,7 +41,7 @@ public class MqttPublishClient {
      *
      * @param request
      */
-    public <T> void publish(MqttMessageRequest<T> request) {
+    public <T extends MessageBody> void publish(MqttMessageRequest<T> request) {
         mqttDefinition.publish(request);
     }
 }
