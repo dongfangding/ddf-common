@@ -41,6 +41,22 @@ public class MqttHeader implements Serializable {
     private Long fromTimestamp;
 
     /**
+     * 发送方身份id
+     * 如用户id, 设备id，账号id，根据实际情况填写
+     */
+    private String fromIdentityId;
+
+    /**
+     * 发送方身份名称
+     */
+    private String fromIdentityName;
+
+    /**
+     * 发送方身份头像地址
+     */
+    private String fromIdentityAvatarUrl;
+
+    /**
      * 添加指定扩展字段的快速方法
      *
      * @param key

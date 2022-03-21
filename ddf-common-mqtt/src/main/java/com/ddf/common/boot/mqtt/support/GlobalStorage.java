@@ -45,4 +45,14 @@ public class GlobalStorage {
      */
     public static final String NOTICE_TOPIC = "notice";
 
+    /**
+     * 私聊类topic前缀
+     */
+    public static final String PRIVATE_MESSAGE_TOPIC = "PRIVATE_MESSAGE";
+
+    /**
+     * 群聊类topic前缀
+     */
+    public static final String CHAT_ROOM_MESSAGE_TOPIC = "CHAT_ROOM";
+
 }

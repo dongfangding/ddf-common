@@ -3,7 +3,7 @@ package com.ddf.common.boot.mqtt.model.support;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
-import com.ddf.common.boot.mqtt.model.support.body.TextMessageBody2;
+import com.ddf.common.boot.mqtt.model.support.body.TextMessageBody;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
 import lombok.Data;
@@ -82,15 +82,15 @@ public class MqttMessagePayload<T> {
     }
 
     public static void main(String[] args) {
-        final MqttMessageRequest<TextMessageBody2> request = new MqttMessageRequest<>();
-        final TextMessageBody2 body = new TextMessageBody2();
-        body.setMsg2("haha");
+        final MqttMessageRequest<TextMessageBody> request = new MqttMessageRequest<>();
+        final TextMessageBody body = new TextMessageBody();
+        body.setMsg("haha");
         request.setBody(body);
         request.setMessageCode("didi");
-        final MqttMessagePayload<TextMessageBody2> payload = MqttMessagePayload.fromMessageRequest(request, "111");
+        final MqttMessagePayload<TextMessageBody> payload = MqttMessagePayload.fromMessageRequest(request, "111");
         String str = JsonUtil.asString(payload);
         System.out.println("str = " + str);
-        final MqttMessagePayload<TextMessageBody2> request1 = JsonUtil.toBean(str, MqttMessagePayload.class);
+        final MqttMessagePayload<TextMessageBody> request1 = JsonUtil.toBean(str, MqttMessagePayload.class);
         System.out.println("request1 = " + request1);
     }
 }

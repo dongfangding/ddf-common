@@ -26,4 +26,20 @@ import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
  * @date 2022/03/20 13:11
  */
 public interface MessageBody {
+
+    /**
+     * 消息内容
+     * @return
+     */
+    String getMsg();
+
+    /**
+     * 消息标题
+     * 如果消息本身很长，用来处理一些消息标题相关功能
+     *
+     * @return
+     */
+    default String msgTitle() {
+        return getMsg();
+    }
 }

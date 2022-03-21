@@ -10,10 +10,6 @@ import lombok.Data;
  * @date 2022/03/20 13:14
  */
 @Data
-public class TextMessageBody implements MessageBody {
+public class TextMessageBody extends AbstractMessageBody {
 
-    /**
-     * 文本内容
-     */
-    private String msg;
 }

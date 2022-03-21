@@ -24,8 +24,9 @@ public interface MqttPublishListener {
     /**
      * 消息发送完成后时间，可以做消息落地业务
      *
-     * @param payload
+     * @param message 已经构建好的MqttMessage对象
+     * @param payload 携带的数据保温
      * @param <T>
      */
-    <T>  void afterPublish(MqttMessagePayload<T> payload);
+    <T> void afterPublish(MqttMessage message, MqttMessagePayload<T> payload);
 }

@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,8 +9,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * <p>对点推送topic格式</p >
- * 点对点
+ * <p>群聊topic格式</p >
  *
  * @author Snowball
  * @version 1.0
@@ -19,12 +19,14 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PushToPointMqttTopic implements MqttTopic {
+public class ImChatRoomMqttTopic implements MqttTopic, Serializable {
+
+    private static final long serialVersionUID = 5668777228627540185L;
 
     /**
-     * 用户uid
+     * 群聊室id
      */
-    private String userId;
+    private String roomId;
 
     /**
      * topic前缀
@@ -33,7 +35,7 @@ public class PushToPointMqttTopic implements MqttTopic {
      */
     public static String getTopicPrefix() {
         return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
-                GlobalStorage.NOTICE_TOPIC, "2point");
+                GlobalStorage.IM_TOPIC, GlobalStorage.CHAT_ROOM_MESSAGE_TOPIC);
     }
 
     /**
@@ -43,7 +45,7 @@ public class PushToPointMqttTopic implements MqttTopic {
      */
     @Override
     public String getFullTopic() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, getTopicPrefix(), userId);
+        return String.join(GlobalStorage.TOPIC_SEPARATOR, getTopicPrefix(), roomId);
     }
 
     /**
@@ -56,9 +58,9 @@ public class PushToPointMqttTopic implements MqttTopic {
     public <T> T convertTopicObj(String fullTopic) {
         final String topicPrefix = getTopicPrefix();
         if (fullTopic.startsWith(topicPrefix)) {
-            final String userId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
-            final PushToPointMqttTopic topic = new PushToPointMqttTopic();
-            topic.setUserId(userId);
+            final String roomId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
+            final ImChatRoomMqttTopic topic = new ImChatRoomMqttTopic();
+            topic.setRoomId(roomId);
         }
         return null;
     }
