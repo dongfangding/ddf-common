@@ -18,6 +18,15 @@ import java.io.Serializable;
 public interface MqttTopic extends Serializable {
 
     /**
+     * 获取身份id
+     * topic是由规则生成的， 一般都是前缀和最后一个动态身份id,比如用户id ，群聊室的id， 必须自己指定这个值，服务端会把这个值取出来作为身份落库，
+     * 可以通过这个身份查找与之关联的消息
+     *
+     * @return
+     */
+    String identityId();
+
+    /**
      * 获取完整的topic
      *
      * @return

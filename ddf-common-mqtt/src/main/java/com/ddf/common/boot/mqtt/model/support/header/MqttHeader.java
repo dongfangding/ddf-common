@@ -38,23 +38,23 @@ public class MqttHeader implements Serializable {
     /**
      * 调用端时间戳， 本模块代码在发送时也会传递一个时间戳
      */
-    private Long fromTimestamp;
+    private Long sourceTimestamp;
 
     /**
      * 发送方身份id
      * 如用户id, 设备id，账号id，根据实际情况填写
      */
-    private String fromIdentityId;
+    private String sourceIdentityId;
 
     /**
      * 发送方身份名称
      */
-    private String fromIdentityName;
+    private String sourceIdentityName;
 
     /**
      * 发送方身份头像地址
      */
-    private String fromIdentityAvatarUrl;
+    private String sourceIdentityAvatarUrl;
 
     /**
      * 添加指定扩展字段的快速方法

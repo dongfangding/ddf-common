@@ -36,6 +36,11 @@ public class Push2CMqttTopic implements MqttTopic {
                 GlobalStorage.NOTICE_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
     }
 
+    @Override
+    public String identityId() {
+        return identityId;
+    }
+
     /**
      * 获取完整的topic
      *

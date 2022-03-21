@@ -38,6 +38,11 @@ public class ImChatRoomMqttTopic implements MqttTopic, Serializable {
                 GlobalStorage.IM_TOPIC, GlobalStorage.CHAT_ROOM_MESSAGE_TOPIC);
     }
 
+    @Override
+    public String identityId() {
+        return roomId;
+    }
+
     /**
      * 获取完整的topic
      *

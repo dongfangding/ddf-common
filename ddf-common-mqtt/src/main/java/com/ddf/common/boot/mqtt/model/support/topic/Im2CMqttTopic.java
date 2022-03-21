@@ -38,6 +38,11 @@ public class Im2CMqttTopic implements MqttTopic, Serializable {
                 GlobalStorage.IM_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
     }
 
+    @Override
+    public String identityId() {
+        return identityId;
+    }
+
     /**
      * 获取完整的topic
      *
