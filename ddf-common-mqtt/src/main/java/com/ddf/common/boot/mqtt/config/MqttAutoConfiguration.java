@@ -9,7 +9,9 @@ import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
+import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -21,6 +23,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -142,8 +145,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    public MqttDefinition mqttDefinition(MqttClient mqttClient) {
-        return new DefaultMqttPublishImpl(mqttClient);
+    public MqttDefinition mqttDefinition(MqttClient mqttClient, @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
+        return new DefaultMqttPublishImpl(mqttClient, listenerMap);
     }
 
     /**

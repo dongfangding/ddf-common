@@ -18,6 +18,7 @@ public class MqttPublishClient {
 
     private final MqttDefinition mqttDefinition;
 
+
     public MqttPublishClient(MqttDefinition mqttDefinition) {
         this.mqttDefinition = mqttDefinition;
     }

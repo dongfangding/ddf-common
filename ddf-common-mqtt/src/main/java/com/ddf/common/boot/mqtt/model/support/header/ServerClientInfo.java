@@ -1,4 +1,4 @@
-package com.ddf.common.boot.mqtt.model.support;
+package com.ddf.common.boot.mqtt.model.support.header;
 
 import java.io.Serializable;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
  * @date 2022/03/19 21:32
  */
 @Data
-public class MqttMessageServerClient implements Serializable {
+public class ServerClientInfo implements Serializable {
 
     /**
      * 服务端作为mqtt客户端时使用的clientId
