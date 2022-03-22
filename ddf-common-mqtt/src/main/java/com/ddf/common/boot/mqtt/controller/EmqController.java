@@ -98,6 +98,12 @@ public class EmqController {
      */
     @PostMapping("superuser")
     public void superuser(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
-
+        final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
+        final String reqClientId = request.getClientId();
+        if (reqClientId.startsWith(client.getClientIdPrefix())) {
+            EmqHttpResponseUtil.success(response, "超级用户ACL认证通过");
+            return;
+        }
+        EmqHttpResponseUtil.error(response, "超级用户ACL未认证通过");
     }
 }
