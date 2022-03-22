@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImChatRoomMqttTopic implements MqttTopic, Serializable {
+public class ImChatRoomMqttTopic implements MqttTopicDefine, Serializable {
 
     private static final long serialVersionUID = 5668777228627540185L;
 

@@ -57,7 +57,7 @@ public enum MQTTProtocolEnum {
         MAPPINGS = Arrays.stream(MQTTProtocolEnum.values()).collect(Collectors.toMap(MQTTProtocolEnum::getProtocol, obj -> obj));
     }
 
-    public MQTTProtocolEnum resolve(String protocol) {
+    public static MQTTProtocolEnum resolve(String protocol) {
         return MAPPINGS.get(protocol);
     }
 }

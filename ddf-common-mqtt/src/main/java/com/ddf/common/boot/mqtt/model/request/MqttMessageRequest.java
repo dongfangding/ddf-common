@@ -3,7 +3,7 @@ package com.ddf.common.boot.mqtt.model.request;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
-import com.ddf.common.boot.mqtt.model.support.topic.MqttTopic;
+import com.ddf.common.boot.mqtt.model.support.topic.MqttTopicDefine;
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,7 +34,7 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
      * 接收端topic
      */
     @NotNull(message = "topic不能为空")
-    private MqttTopic topic;
+    private MqttTopicDefine topic;
 
     /**
      * 消息代码，  用来标识这个消息具体是做什么用的

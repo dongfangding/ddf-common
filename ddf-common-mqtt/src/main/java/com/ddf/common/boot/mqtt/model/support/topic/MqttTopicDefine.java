@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2022/03/19 11:48
  */
-public interface MqttTopic extends Serializable {
+public interface MqttTopicDefine extends Serializable {
 
     /**
      * 获取身份id

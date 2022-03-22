@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PushChatRoomMqttTopic implements MqttTopic, Serializable {
+public class PushChatRoomMqttTopic implements MqttTopicDefine, Serializable {
 
     private static final long serialVersionUID = 5668777228627540185L;
 

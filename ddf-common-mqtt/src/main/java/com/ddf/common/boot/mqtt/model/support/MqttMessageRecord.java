@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support;
 
+import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -61,17 +62,26 @@ public class MqttMessageRecord implements Serializable {
     private String sourceIdentityAvatarUrl;
 
     /**
+     * 消息header json序列化后的内容
+     * @see MqttMessagePayload#getHeader()
+     */
+    private String header;
+
+    /**
      * 整个mqtt message的payload
+     * @see MqttMessagePayload
      */
     private String payload;
 
     /**
      * 调用方自己设置的body
+     * @see MqttMessagePayload#getBody()
      */
     private String body;
 
     /**
      * 最终发送出去的topic
+     * @see MqttMessageRequest#getTopic()
      */
     private String topicUrl;
 

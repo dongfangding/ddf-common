@@ -44,6 +44,11 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
     private ApplicationContext applicationContext;
 
+    @Bean
+    public EmqConnectionProperties emqConnectionProperties() {
+        return new EmqConnectionProperties();
+    }
+
     /**
      * 创建Mqtt客户端
      *

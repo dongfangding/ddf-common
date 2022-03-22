@@ -3,11 +3,13 @@ package com.ddf.common.boot.mqtt.config.properties;
 import cn.hutool.core.net.NetUtil;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -19,6 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "emq.config")
 @Data
+@Component
 public class EmqConnectionProperties {
 
     /**
@@ -35,7 +38,9 @@ public class EmqConnectionProperties {
      * 连接配置类
      */
     @Data
-    public static class ConnectionConfig {
+    public static class ConnectionConfig implements Serializable {
+
+        private static final long serialVersionUID = 1516322558409231083L;
 
         /**
          * 协议

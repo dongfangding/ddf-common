@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,8 +9,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * <p>对点推送topic格式</p >
- * 点对点
+ * <p>对点聊天topic格式</p >
  *
  * @author Snowball
  * @version 1.0
@@ -19,7 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Push2CMqttTopic implements MqttTopic {
+public class Im2PointMqttTopic implements MqttTopicDefine, Serializable {
+
+    private static final long serialVersionUID = 5668777228627540185L;
 
     /**
      * 身份id
@@ -33,7 +35,7 @@ public class Push2CMqttTopic implements MqttTopic {
      */
     public static String getTopicPrefix() {
         return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
-                GlobalStorage.NOTICE_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
+                GlobalStorage.IM_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class Push2CMqttTopic implements MqttTopic {
         final String topicPrefix = getTopicPrefix();
         if (fullTopic.startsWith(topicPrefix)) {
             final String identityId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
-            final Push2CMqttTopic topic = new Push2CMqttTopic();
+            final Im2PointMqttTopic topic = new Im2PointMqttTopic();
             topic.setIdentityId(identityId);
         }
         return null;

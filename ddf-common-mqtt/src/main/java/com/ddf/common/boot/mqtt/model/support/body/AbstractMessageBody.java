@@ -3,7 +3,7 @@ package com.ddf.common.boot.mqtt.model.support.body;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * <p>description</p >
+ * <p>抽象消息body, 主要是增加消息标题功能</p >
  *
  * @author Snowball
  * @version 1.0
