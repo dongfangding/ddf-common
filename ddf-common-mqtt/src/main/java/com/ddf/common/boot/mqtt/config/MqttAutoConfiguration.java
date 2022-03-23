@@ -28,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -40,14 +41,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(value = {EmqConnectionProperties.class})
 @Slf4j
+@ComponentScan(basePackages = {"com.ddf.common.boot.mqtt"})
 public class MqttAutoConfiguration implements DisposableBean, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
-
-    @Bean
-    public EmqConnectionProperties emqConnectionProperties() {
-        return new EmqConnectionProperties();
-    }
 
     /**
      * 创建Mqtt客户端
