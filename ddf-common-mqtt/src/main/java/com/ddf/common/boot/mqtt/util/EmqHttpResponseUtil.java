@@ -24,6 +24,7 @@ public class EmqHttpResponseUtil {
      */
     public static void success(HttpServletResponse response, String message) {
         response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
         try {
             response.getWriter().print(message);
         } catch (IOException e) {
@@ -40,6 +41,7 @@ public class EmqHttpResponseUtil {
     public static void error(HttpServletResponse response, String errorMessage) {
         log.debug("------------------失败响应------------------");
         response.setStatus(401);
+        response.setCharacterEncoding("UTF-8");
         try {
             response.getWriter().print(errorMessage);
         } catch (IOException e) {

@@ -11,6 +11,8 @@ import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("emq")
 @RequiredArgsConstructor(onConstructor_={@Autowired})
+@Slf4j
 public class EmqController {
 
     private final EmqConnectionProperties emqConnectionProperties;
@@ -61,31 +64,40 @@ public class EmqController {
      */
     @PostMapping("authenticate")
     public void authenticate(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
-        final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
-        final String username = client.getUsername();
-        final String password = client.getPassword();
-        final String clientId = client.getClientIdPrefix();
+        try {
+            final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
+            final String username = client.getUsername();
+            final String password = client.getPassword();
+            final String clientId = client.getClientIdPrefix();
 
-        // 服务端用户
-        if (request.getClientId().startsWith(clientId)) {
-            // 匹配用户名和密码
-            if (Objects.equals(username, request.getUsername()) && Objects.equals(password, request.getPassword())) {
-                EmqHttpResponseUtil.success(response, "服务端连接认证通过");
+            // 服务端用户
+            if (request.getClientId().startsWith(clientId)) {
+                if (StringUtils.isAllBlank(username, password)) {
+                    EmqHttpResponseUtil.success(response, "连接未配置用户名和密码无需校验，服务端连接认证通过");
+                    return;
+                }
+                // 匹配用户名和密码
+                if (Objects.equals(username, request.getUsername()) && Objects.equals(password, request.getPassword())) {
+                    EmqHttpResponseUtil.success(response, "服务端连接认证通过");
+                } else {
+                    EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
+                }
             } else {
-                EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
+                // 客户端用户， 让使用该模块的功能完成自己的用户认证
+                if (emqClientAuthenticate == null) {
+                    EmqHttpResponseUtil.success(response, "客户端不校验权限，认证通过");
+                    return;
+                }
+                final EmqClientAuthenticateResponse authenticate = emqClientAuthenticate.authenticate(request);
+                if (authenticate.isResult()) {
+                    EmqHttpResponseUtil.success(response, "客户端连接认证通过");
+                } else {
+                    EmqHttpResponseUtil.error(response, "客户端连接认证不通过，原因: " + authenticate.getMsg());
+                }
             }
-        } else {
-            // 客户端用户， 让使用该模块的功能完成自己的用户认证
-            if (emqClientAuthenticate == null) {
-                EmqHttpResponseUtil.success(response, "客户端不校验权限，认证通过");
-                return;
-            }
-            final EmqClientAuthenticateResponse authenticate = emqClientAuthenticate.authenticate(request);
-            if (authenticate.isResult()) {
-                EmqHttpResponseUtil.success(response, "客户端连接认证通过");
-            } else {
-                EmqHttpResponseUtil.error(response, "客户端连接认证不通过，原因: " + authenticate.getMsg());
-            }
+        } catch (Exception e) {
+            log.error("mqtt连接认证失败", e);
+            EmqHttpResponseUtil.error(response, "认证失败" + e.getMessage());
         }
     }
 
@@ -105,5 +117,14 @@ public class EmqController {
             return;
         }
         EmqHttpResponseUtil.error(response, "超级用户ACL未认证通过");
+    }
+
+    /**
+     * 普通客户端ACL认证
+     *
+     * @param request
+     */
+    @PostMapping("acl")
+    public void acl(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
     }
 }

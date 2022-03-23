@@ -2,6 +2,7 @@ package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
 import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -57,6 +58,7 @@ public class EmqAuthenticateRequest implements Serializable {
     /**
      * Client ID
      */
+    @NotBlank(message = "clientId不能为空")
     private String clientId;
 
     /**
