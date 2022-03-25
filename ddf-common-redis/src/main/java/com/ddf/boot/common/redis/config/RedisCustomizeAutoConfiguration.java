@@ -82,6 +82,12 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     @SneakyThrows
     @Override
     public void customize(Config configuration) {
+        if (configuration.isSentinelConfig()) {
+            // fixme 临时解决，最后还是没看懂，先按照提示取消校验
+            // https://stackoverflow.com/questions/53665923/spring-redisson-sentinel-error-at-least-two-sentinels-are-required
+            // https://github.com/redisson/redisson/issues/2788
+            configuration.useSentinelServers().setCheckSentinelsList(false);
+        }
         if (StrUtil.isNotBlank(redissonCustomizeProperties.getCodec())) {
             configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).newInstance());
         } else {
