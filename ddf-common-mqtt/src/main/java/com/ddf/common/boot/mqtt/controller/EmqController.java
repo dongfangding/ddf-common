@@ -73,7 +73,7 @@ public class EmqController {
             // 服务端用户
             if (request.getClientId().startsWith(clientId)) {
                 if (StringUtils.isAllBlank(username, password)) {
-                    EmqHttpResponseUtil.success(response, "连接未配置用户名和密码无需校验，服务端连接认证通过");
+                    EmqHttpResponseUtil.success(response, "服务端未配置用户名和密码无需校验，服务端连接认证通过");
                     return;
                 }
                 // 匹配用户名和密码
@@ -85,7 +85,7 @@ public class EmqController {
             } else {
                 // 客户端用户， 让使用该模块的功能完成自己的用户认证
                 if (emqClientAuthenticate == null) {
-                    EmqHttpResponseUtil.success(response, "客户端不校验权限，认证通过");
+                    EmqHttpResponseUtil.error(response, "未定义客户端认证规则，不允许连接");
                     return;
                 }
                 final EmqClientAuthenticateResponse authenticate = emqClientAuthenticate.authenticate(request);
