@@ -16,7 +16,7 @@
 <!--        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>-->
         <!-- nacos starter使用的一个类在2.4就被移除了，除非自己重写starter修改，这里考虑到应该还有其它大量的三方库可能都会有兼容问题，因此不再使用这个版本 -->
         <!--<spring-boot.version>2.5.7</spring-boot.version>-->
-        <spring-boot.version>2.3.9.RELEASE</spring-boot.version>
+        <spring-boot.version>2.5.12</spring-boot.version>
         <spring-cloud.version>2.2.9.RELEASE</spring-cloud.version>
         <mybatis.version>3.3.0</mybatis.version>
         <p6spy.version>3.8.2</p6spy.version>
