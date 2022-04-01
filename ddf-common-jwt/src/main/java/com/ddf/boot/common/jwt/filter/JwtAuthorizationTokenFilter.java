@@ -5,6 +5,7 @@ import com.ddf.boot.common.core.exception200.AccessDeniedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.model.request.RequestHeaderEnum;
+import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.core.util.WebUtil;
@@ -74,6 +75,11 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      * 用户uid
      */
     private static final String USER_ID = "userId";
+
+    /**
+     * 日志跟踪上下文id
+     */
+    private static final String TRACE_ID = "traceId";
 
     /**
      * 认证接口类型
@@ -147,6 +153,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         // 塞入最新用户数据
         UserContextUtil.setUserClaim(storeUserClaim);
         MDC.put(USER_ID, storeUserClaim.getUserId());
+        MDC.put(TRACE_ID, storeUserClaim.getUserId() + "-" + IdsUtil.getNextStrId());
         request.setAttribute(JwtConstant.HEADER_USER, userInfo);
         return true;
     }
@@ -167,6 +174,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         // 移除用户信息
         UserContextUtil.removeUserClaim();
         MDC.remove(USER_ID);
+        MDC.remove(TRACE_ID);
     }
 
     /**
