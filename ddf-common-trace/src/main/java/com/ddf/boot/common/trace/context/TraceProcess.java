@@ -1,5 +1,6 @@
 package com.ddf.boot.common.trace.context;
 
+import com.ddf.boot.common.trace.annotation.DfTrace;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class TraceProcess implements Serializable {
     private Integer traceDepthNum = 0;
 
     /**
-     * 记录当前请求是否包含{@link cn.ibobei.framework.trace.annotation.QlTrace}注解
+     * 记录当前请求是否包含{@link DfTrace}注解
      * 只有存在这个注解才会处理参数
      */
     private boolean traceFlag = false;

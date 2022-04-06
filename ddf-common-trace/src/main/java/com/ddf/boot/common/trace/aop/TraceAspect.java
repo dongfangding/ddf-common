@@ -44,7 +44,7 @@ public class TraceAspect {
     /**
      * 由于参数拦截以及trace的规则过多，这里必须添加自定义注解才真正拦截
      */
-    @Pointcut("@annotation(cn.ibobei.framework.trace.annotation.QlTrace)")
+    @Pointcut("@annotation(com.ddf.boot.common.trace.annotation.DfTrace)")
     private void qileTrace() {
 
     }
