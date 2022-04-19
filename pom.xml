@@ -43,8 +43,6 @@
         <jdeferred.version>2.0.0</jdeferred.version>
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <validation.version>2.0.2</validation.version>
-        <disruptor.version>3.4.4</disruptor.version>
-        <log4j2.version>2.17.0</log4j2.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -52,7 +50,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0.RELEASE</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <distributionManagement>
         <repository>
@@ -179,87 +177,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
-                <!-- 排除默认日志依赖，如logback， 手动引入log4j依赖， 如果使用logback这里注释放开即可 -->
-                <exclusions>
-                    <exclusion>
-                        <artifactId>spring-boot-starter-logging</artifactId>
-                        <groupId>org.springframework.boot</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- 日志组件 -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-log4j2</artifactId>
-                <version>${spring-boot.version}</version>
-                <exclusions>
-<!--                    <exclusion>-->
-<!--                        <artifactId>log4j-slf4j-impl</artifactId>-->
-<!--                        <groupId>org.apache.logging.log4j</groupId>-->
-<!--                    </exclusion>-->
-                    <exclusion>
-                        <artifactId>log4j-api</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>log4j-core</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>log4j-jul</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-<!--            <dependency>-->
-<!--                <artifactId>log4j-slf4j-impl</artifactId>-->
-<!--                <groupId>org.apache.logging.log4j</groupId>-->
-<!--                <version>${log4j2.version}</version>-->
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>log4j-api</artifactId>-->
-<!--                        <groupId>org.apache.logging.log4j</groupId>-->
-<!--                    </exclusion>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>log4j-core</artifactId>-->
-<!--                        <groupId>org.apache.logging.log4j</groupId>-->
-<!--                    </exclusion>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>slf4j-api</artifactId>-->
-<!--                        <groupId>org.slf4j</groupId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
-<!--            </dependency>-->
-
-            <dependency>
-                <artifactId>log4j-api</artifactId>
-                <groupId>org.apache.logging.log4j</groupId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <artifactId>log4j-core</artifactId>
-                <groupId>org.apache.logging.log4j</groupId>
-                <version>${log4j2.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>log4j-api</artifactId>
-                        <groupId>org.apache.logging.log4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-
-            <!-- 日志组件依赖，异步打印日志 -->
-            <dependency>
-                <groupId>com.lmax</groupId>
-                <artifactId>disruptor</artifactId>
-                <version>${disruptor.version}</version>
             </dependency>
 
             <dependency>
@@ -494,6 +411,7 @@
         <module>ddf-common-fdfs-client</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
+        <module>ddf-common-log4j</module>
     </modules>
 
     <build>
