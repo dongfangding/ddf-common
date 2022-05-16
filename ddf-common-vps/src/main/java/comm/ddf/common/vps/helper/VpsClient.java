@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>视频、图片处理客户端</p >
@@ -61,7 +63,20 @@ public class VpsClient {
     }
 
     /**
+     * 上传文件并生成缩略图
      *
+     * @param multipartFile
+     * @return
+     */
+    @SneakyThrows
+    public UploadResponse uploadFile(MultipartFile multipartFile) {
+        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
+        String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        return uploadFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName, new HashSet<>());
+    }
+
+    /**
+     * 上传文件并生成缩略图
      *
      * @param inputStream
      * @param fileSize
