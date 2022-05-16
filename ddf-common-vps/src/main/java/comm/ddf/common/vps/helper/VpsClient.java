@@ -78,6 +78,9 @@ public class VpsClient {
     /**
      * 上传文件并生成缩略图
      *
+     * 如果是视频的话， 视频需要先上传然后调用ffmpeg进行截帧命令， 然后将生成的文件再次调用上传。
+     * 因此这个方法能工作的前提必须是有一台专门的服务器用来处理文件上传请求， 然后在这台服务器上要安装ffmpeg，这样才能正常工作
+     *
      * @param inputStream
      * @param fileSize
      * @param fileExtName
