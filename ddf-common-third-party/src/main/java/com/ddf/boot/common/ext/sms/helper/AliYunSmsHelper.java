@@ -9,7 +9,6 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.ext.sms.config.SmsProperties;
 import com.ddf.boot.common.ext.sms.domain.AliYunSmsActionEnum;
 import com.ddf.boot.common.ext.sms.domain.AliYunSmsRequest;
@@ -81,7 +80,10 @@ public class AliYunSmsHelper {
         CommonResponse response = client.getCommonResponse(request);
         // fixme 可能有问题，没找到代表错误的字段是哪个，没充值也不确定成功时这里会不会有消息
         if (response.getData() != null) {
-            throw new BusinessException(JSONUtil.parse(response.getData()).getByPath("Message", String.class));
+            final String message = JSONUtil.parse(response.getData()).getByPath("Message", String.class);
+            if (!"OK".equals(message)) {
+                throw new BusinessException(message);
+            }
         }
         return response;
     }

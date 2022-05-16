@@ -9,6 +9,7 @@ import com.aliyuncs.profile.IClientProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -24,7 +25,8 @@ import org.springframework.core.Ordered;
 @Slf4j
 @Configurable
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@EnableConfigurationProperties(OssProperties.class)
+@EnableConfigurationProperties({OssProperties.class})
+@ConditionalOnProperty(prefix = "customs.ext.oss", value = "enable", havingValue = "true")
 public class OssBeanAutoConfiguration {
 
     /**

@@ -24,6 +24,11 @@ import org.springframework.stereotype.Component;
 public class OssProperties implements InitializingBean {
 
     /**
+     * 是否使用oss， 使用的话必须为true, 如果不使用则会跳过参数处理过程
+     */
+    private boolean enable;
+
+    /**
      * 是否加密， 如果加密，则使用系统自带的AES算法进行解密
      */
     private boolean secret;
@@ -88,6 +93,9 @@ public class OssProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        if (!enable) {
+            return;
+        }
         Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()),
                 "请检查oss配置属性"
         );

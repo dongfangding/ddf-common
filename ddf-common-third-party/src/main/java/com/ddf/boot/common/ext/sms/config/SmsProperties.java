@@ -22,6 +22,10 @@ public class SmsProperties implements InitializingBean {
 
     public static final String DEFAULT_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";
 
+    /**
+     * 是否使用sms， 使用的话必须为true, 如果不使用则会跳过参数处理过程
+     */
+    private boolean enable;
 
     /**
      * 服务地址
@@ -44,6 +48,8 @@ public class SmsProperties implements InitializingBean {
 
     /**
      * access_key_id
+     *
+     * 必须再RAM 访问控制中创建的用户具有对应权限
      */
     private String accessKeyId;
 
@@ -78,6 +84,9 @@ public class SmsProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        if (!enable) {
+            return;
+        }
         Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()),
                 "请检查sms配置属性"
         );
