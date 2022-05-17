@@ -116,7 +116,8 @@ public class VpsClient {
                 ffmpegTmpPath : ffmpegTmpPath + File.separator + environmentHelper.getApplicationName());
         // 存在截帧失败的情况，则这个封面图就没有
         response.setThumbPath(null);
-        if (Objects.nonNull(coverTmpPath)) {
+        // 依赖于本地要安装ffmpeg， 否则这个文件在本地不会存在，无法上传，因此做近一步文件是否存在的判断
+        if (Objects.nonNull(coverTmpPath) && new File(coverTmpPath).exists()) {
             final UploadResponse tmpResponse = uploadFile(coverTmpPath);
             // 视频截帧时使用缩略图字段返回视频封面图片地址
             response.setThumbPath(tmpResponse.getFullPath());
