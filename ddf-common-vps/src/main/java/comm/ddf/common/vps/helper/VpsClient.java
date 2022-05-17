@@ -12,6 +12,7 @@ import comm.ddf.common.vps.util.VpsUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +74,20 @@ public class VpsClient {
         final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
         String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
         return uploadFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName, new HashSet<>());
+    }
+
+    /**
+     * 批量上传文件
+     *
+     * @param multipartFiles
+     * @return
+     */
+    public List<UploadResponse> batchUploadFile(MultipartFile[] multipartFiles) {
+        List<UploadResponse> rtnList = new ArrayList<>();
+        for (MultipartFile file : multipartFiles) {
+            rtnList.add(uploadFile(file));
+        }
+        return rtnList;
     }
 
     /**
