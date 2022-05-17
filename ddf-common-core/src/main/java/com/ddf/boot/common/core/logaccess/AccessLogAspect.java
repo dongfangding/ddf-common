@@ -85,9 +85,10 @@ public class AccessLogAspect {
         // 获取当前方法名
         MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
         // 获取请求参数
-        String paramJson = AopUtil.serializeParam(joinPoint);
+        String paramJson = "";
         // 执行方法
         try {
+            paramJson = AopUtil.serializeParam(joinPoint);
             // 调用起始时间
             long beforeTime = System.currentTimeMillis();
             if (CollUtil.isNotEmpty(accessFilterChainMap)) {

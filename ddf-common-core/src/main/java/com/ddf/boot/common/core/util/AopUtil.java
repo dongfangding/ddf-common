@@ -128,7 +128,7 @@ public class AopUtil {
         if (parameterNames.length > 0) {
             for (int i = 0; i < parameterNames.length; i++) {
                 Object value = joinPoint.getArgs()[i];
-                if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile) {
+                if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile || value instanceof MultipartFile[]) {
                     continue;
                 }
                 paramsMap.put(parameterNames[i], value);
