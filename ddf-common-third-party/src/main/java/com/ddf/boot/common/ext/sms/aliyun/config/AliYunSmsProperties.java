@@ -1,4 +1,4 @@
-package com.ddf.boot.common.ext.sms.config;
+package com.ddf.boot.common.ext.sms.aliyun.config;
 
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Preconditions;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "customs.ext.sms")
-public class SmsProperties implements InitializingBean {
+public class AliYunSmsProperties implements InitializingBean {
 
     public static final String DEFAULT_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";
 

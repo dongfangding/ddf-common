@@ -1,4 +1,4 @@
-package com.ddf.boot.common.ext.sms.helper;
+package com.ddf.boot.common.ext.sms.aliyun.helper;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
@@ -10,11 +10,14 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.ddf.boot.common.core.exception200.BusinessException;
-import com.ddf.boot.common.ext.sms.config.SmsProperties;
-import com.ddf.boot.common.ext.sms.domain.AliYunSmsActionEnum;
-import com.ddf.boot.common.ext.sms.domain.AliYunSmsRequest;
+import com.ddf.boot.common.ext.sms.aliyun.config.AliYunSmsProperties;
+import com.ddf.boot.common.ext.sms.aliyun.domain.AliYunSmsActionEnum;
+import com.ddf.boot.common.ext.sms.model.SmsSendRequest;
+import com.ddf.boot.common.ext.sms.model.SmsSendResponse;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,10 +31,11 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
+@Slf4j
+@RequiredArgsConstructor(onConstructor_={@Autowired})
 public class AliYunSmsHelper {
 
-    @Autowired
-    private SmsProperties smsProperties;
+    private final AliYunSmsProperties smsProperties;
 
     /**
      * 随机生成基于验证码变量code的短信模板参数
@@ -50,10 +54,11 @@ public class AliYunSmsHelper {
      * @param aliYunSmsRequest
      */
     @SneakyThrows
-    public CommonResponse sendSms(AliYunSmsRequest aliYunSmsRequest) {
+    public SmsSendResponse sendSms(SmsSendRequest aliYunSmsRequest) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(),
                 smsProperties.getAccessKeySecret()
         );
+        String templateParam = aliYunSmsRequest.getTemplateParam();
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
         request.setSysMethod(MethodType.POST);
@@ -63,8 +68,9 @@ public class AliYunSmsHelper {
         request.setSysAction(AliYunSmsActionEnum.SendSms.name());
         request.putQueryParameter("RegionId", "cn-hangzhou");
         request.putQueryParameter("PhoneNumbers", aliYunSmsRequest.getPhoneNumbers());
-        if (aliYunSmsRequest.isUseRandomCode()) {
-            request.putQueryParameter("TemplateParam", randomCodeTemplateParam());
+        if (StringUtils.isBlank(templateParam)) {
+            templateParam = randomCodeTemplateParam();
+            request.putQueryParameter("TemplateParam", templateParam);
         } else {
             request.putQueryParameter("TemplateParam", aliYunSmsRequest.getTemplateParam());
         }
@@ -86,6 +92,8 @@ public class AliYunSmsHelper {
                 throw new BusinessException(message);
             }
         }
-        return response;
+        return SmsSendResponse.builder()
+                .templateParam(templateParam)
+                .build();
     }
 }

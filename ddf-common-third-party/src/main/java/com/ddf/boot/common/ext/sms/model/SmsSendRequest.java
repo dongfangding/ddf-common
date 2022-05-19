@@ -1,9 +1,9 @@
-package com.ddf.boot.common.ext.sms.domain;
+package com.ddf.boot.common.ext.sms.model;
 
 import lombok.Data;
 
 /**
- * <p>description</p >
+ * <p>短信发送请求类</p >
  * <p>
  * https://help.aliyun.com/document_detail/101341.html?spm=a2c4g.11186623.6.617.7bca7ce8NvHEbH
  * https://help.aliyun.com/document_detail/101414.html?spm=a2c4g.11186623.2.13.13ce3e2cyyH2aX
@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020/10/14 10:59
  */
 @Data
-public class AliYunSmsRequest {
+public class SmsSendRequest {
 
     /**
      * 短信签名名称
@@ -39,15 +39,8 @@ public class AliYunSmsRequest {
      */
     private String phoneNumbers;
 
-
     /**
-     * 是否使用基于验证码的随机短信模板参数， 该参数仅针对基于验证码模板的短信模板有效，且变量名必须为code
-     * 然后会随机生成验证码，处理模板参数
-     */
-    private boolean useRandomCode;
-
-    /**
-     * 短信模板变量对应的实际值，JSON格式
+     * 短信模板变量对应的实际值，JSON格式。也可以不传该参数，内部会随机生成6位验证码
      * 模板：您的验证码${code}，该验证码5分钟内有效，请勿泄漏于他人！
      * <p>
      * 参数内容： {"code":"1111"}

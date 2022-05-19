@@ -1,4 +1,4 @@
-package com.ddf.boot.common.ext.sms.domain;
+package com.ddf.boot.common.ext.sms.aliyun.domain;
 
 /**
  * <p>阿里云短信接口action类型</p >
