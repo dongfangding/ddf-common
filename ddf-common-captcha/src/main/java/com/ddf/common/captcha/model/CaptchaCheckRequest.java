@@ -1,5 +1,6 @@
 package com.ddf.common.captcha.model;
 
+import com.ddf.common.captcha.constants.CaptchaType;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -27,9 +28,7 @@ public class CaptchaCheckRequest implements Serializable {
     private String verifyCode;
 
     /**
-     * 验证码类型, 当为文字点选或图片滑动验证码时必传
-     * blockPuzzle 滑动拼图
-     * clickWord   文字点选
+     * 验证码类型
      */
-    private String captchaType;
+    private CaptchaType captchaType;
 }

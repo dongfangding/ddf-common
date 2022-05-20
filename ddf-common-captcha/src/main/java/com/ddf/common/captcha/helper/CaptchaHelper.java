@@ -11,6 +11,7 @@ import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
+import com.ddf.common.captcha.constants.CaptchaType;
 import com.ddf.common.captcha.model.CaptchaCheckRequest;
 import com.ddf.common.captcha.model.CaptchaRequest;
 import com.ddf.common.captcha.model.CaptchaResult;
@@ -162,13 +163,12 @@ public class CaptchaHelper {
      * 校验验证码
      */
     public boolean check(CaptchaCheckRequest request) {
-        final String captchaType = request.getCaptchaType();
-        if (Objects.equal(CaptchaTypeEnum.CLICKWORD.getCodeValue(), captchaType) ||
-                Objects.equal(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue(), captchaType)) {
+        final CaptchaType captchaType = request.getCaptchaType();
+        if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
             final CaptchaVO vo = new CaptchaVO();
             vo.setToken(request.getToken());
             vo.setPointJson(request.getVerifyCode());
-            vo.setCaptchaType(captchaType);
+            vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
             final ResponseModel checkResult = captchaService.check(vo);
             if (!"0000".equals(checkResult.getRepCode())) {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());

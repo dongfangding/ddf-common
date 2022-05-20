@@ -1,5 +1,7 @@
 package com.ddf.common.captcha.constants;
 
+import com.anji.captcha.model.common.CaptchaTypeEnum;
+
 /**
  * <p>验证码类型</p >
  *
@@ -28,4 +30,13 @@ public enum CaptchaType {
      * 图片滑动
      */
     PIC_SLIDE
+
+    ;
+
+    public CaptchaTypeEnum transferAnJi() {
+        if (CaptchaType.CLICK_WORDS.equals(this)) {
+            return CaptchaTypeEnum.CLICKWORD;
+        }
+        return CaptchaTypeEnum.BLOCKPUZZLE;
+    }
 }

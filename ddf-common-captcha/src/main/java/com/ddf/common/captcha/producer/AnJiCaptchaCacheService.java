@@ -14,12 +14,12 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @date 2021/07/12 10:46
  */
-public class AnjiCaptchaCacheService implements CaptchaCacheService {
+public class AnJiCaptchaCacheService implements CaptchaCacheService {
 
     /**
      * 必须保留空构造， 有load SPI
      */
-    public AnjiCaptchaCacheService() {
+    public AnJiCaptchaCacheService() {
     }
 
     /**
