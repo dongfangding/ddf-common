@@ -22,7 +22,12 @@ public class SmsSendResponse implements Serializable {
     private static final long serialVersionUID = 1516322558409231083L;
 
     /**
-     * 短信参数内容，一般为验证码
+     * 短信参数内容， 根据不同供应商结果不同，是原始的短信中的变量内容，一般为json
      */
     private String templateParam;
+
+    /**
+     * 随机验证码, 简单方式的验证码， 只有一个验证码的时候，会将随机验证码返回
+     */
+    private String randomCode;
 }

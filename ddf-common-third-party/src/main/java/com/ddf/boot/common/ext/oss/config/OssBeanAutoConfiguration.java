@@ -6,6 +6,7 @@ import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.ddf.boot.common.ext.oss.helper.OssHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 
 /**
- * <p>description</p >
+ * <p>Oss自动注入类</p >
  *
  * @author dongfang.ding
  * @version 1.0
@@ -56,5 +57,11 @@ public class OssBeanAutoConfiguration {
         );
         // 用profile构造client
         return new DefaultAcsClient(profile);
+    }
+
+
+    @Bean
+    public OssHelper ossHelper(IAcsClient defaultAcsClient, OSS defaultOssClient, OssProperties ossProperties) {
+        return new OssHelper(defaultAcsClient, defaultOssClient, ossProperties);
     }
 }

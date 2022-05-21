@@ -6,17 +6,19 @@ import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
+import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.ext.constants.ExceptionCode;
 import com.ddf.boot.common.ext.sms.aliyun.config.AliYunSmsProperties;
 import com.ddf.boot.common.ext.sms.aliyun.domain.AliYunSmsActionEnum;
+import com.ddf.boot.common.ext.sms.aliyun.domain.TemplateParamObj;
 import com.ddf.boot.common.ext.sms.model.SmsSendRequest;
 import com.ddf.boot.common.ext.sms.model.SmsSendResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,12 @@ public class AliYunSmsHelper {
      *
      * @return
      */
-    public String randomCodeTemplateParam() {
+    public TemplateParamObj randomCodeTemplateParam() {
         int code = RandomUtil.randomInt(100000, 999999);
-        return "{\"code\": " + code + "}";
+        return TemplateParamObj.builder()
+                .templateParam("{\"code\": " + code + "}")
+                .code(code + "")
+                .build();
     }
 
 
@@ -53,7 +58,6 @@ public class AliYunSmsHelper {
      *
      * @param aliYunSmsRequest
      */
-    @SneakyThrows
     public SmsSendResponse sendSms(SmsSendRequest aliYunSmsRequest) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(),
                 smsProperties.getAccessKeySecret()
@@ -68,10 +72,13 @@ public class AliYunSmsHelper {
         request.setSysAction(AliYunSmsActionEnum.SendSms.name());
         request.putQueryParameter("RegionId", "cn-hangzhou");
         request.putQueryParameter("PhoneNumbers", aliYunSmsRequest.getPhoneNumbers());
+        TemplateParamObj templateParamObj;
         if (StringUtils.isBlank(templateParam)) {
-            templateParam = randomCodeTemplateParam();
+            templateParamObj = randomCodeTemplateParam();
+            templateParam = templateParamObj.getTemplateParam();
             request.putQueryParameter("TemplateParam", templateParam);
         } else {
+            templateParamObj = JSONUtil.toBean(templateParam, TemplateParamObj.class);
             request.putQueryParameter("TemplateParam", aliYunSmsRequest.getTemplateParam());
         }
         if (StringUtils.isNotBlank(aliYunSmsRequest.getSinaName())) {
@@ -84,7 +91,13 @@ public class AliYunSmsHelper {
         } else {
             request.putQueryParameter("TemplateCode", smsProperties.getTemplateCode());
         }
-        CommonResponse response = client.getCommonResponse(request);
+        CommonResponse response;
+        try {
+            response = client.getCommonResponse(request);
+        } catch (ClientException e) {
+            log.error("发送短信失败， mobile = {}, e = {}", aliYunSmsRequest.getPhoneNumbers(), e);
+            throw new BusinessException(ExceptionCode.SMS_SEND_FAILURE);
+        }
         // fixme 可能有问题，没找到代表错误的字段是哪个，没充值也不确定成功时这里会不会有消息
         if (response.getData() != null) {
             final String message = JSONUtil.parse(response.getData()).getByPath("Message", String.class);
@@ -94,6 +107,7 @@ public class AliYunSmsHelper {
         }
         return SmsSendResponse.builder()
                 .templateParam(templateParam)
+                .randomCode(templateParamObj.getCode())
                 .build();
     }
 }
