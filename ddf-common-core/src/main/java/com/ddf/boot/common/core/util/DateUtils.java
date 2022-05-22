@@ -172,6 +172,16 @@ public class DateUtils {
         return Objects.isNull(localDateTime) ? null : localDateTime.atZone(ZoneId.systemDefault()).toInstant();
     }
 
+    /**
+     * 使用系统默认时区LocalDateTime转Instant
+     *
+     * @param localDateTime
+     * @return
+     */
+    public static Instant toZhCnInstant(LocalDateTime localDateTime) {
+        return Objects.isNull(localDateTime) ? null : localDateTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant();
+    }
+
 
     /**
      * 使用系统默认时区LocalDateTime转时间戳
@@ -182,6 +192,24 @@ public class DateUtils {
     public static Long toDefaultMills(LocalDateTime localDateTime) {
         final Instant instant = toDefaultInstant(localDateTime);
         return Objects.isNull(instant) ? null : instant.toEpochMilli();
+    }
+
+    /**
+     * 使用系统默认时区LocalDateTime转时间戳
+     *
+     * @param localDateTime
+     * @return
+     */
+    public static Long toZhCnMills(LocalDateTime localDateTime) {
+        final Instant instant = toZhCnInstant(localDateTime);
+        return Objects.isNull(instant) ? null : instant.toEpochMilli();
+    }
+
+    public static void main(String[] args) {
+        final LocalDateTime now = LocalDateTime.now();
+        final Long aLong = toZhCnMills(now);
+        System.out.println(aLong);
+        System.out.println(new Date(aLong));
     }
 
     /**
@@ -254,6 +282,15 @@ public class DateUtils {
         cal.add(Calendar.DAY_OF_WEEK, 1);
         Date time = cal.getTime();
         return new SimpleDateFormat("yyyy-MM-dd").format(time);
+    }
+
+    /**
+     * 获取当前秒时间戳
+     *
+     * @return
+     */
+    static Long currentTimeSeconds() {
+        return System.currentTimeMillis() / 1000;
     }
 
 }
