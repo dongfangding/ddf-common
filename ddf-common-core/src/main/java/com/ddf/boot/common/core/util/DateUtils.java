@@ -275,7 +275,7 @@ public class DateUtils {
      *
      * @return String
      **/
-    static String getWeekEnd() {
+    public static String getWeekEnd() {
         Calendar cal = Calendar.getInstance();
         cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK));
@@ -289,7 +289,7 @@ public class DateUtils {
      *
      * @return
      */
-    static Long currentTimeSeconds() {
+    public static Long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
     }
 
