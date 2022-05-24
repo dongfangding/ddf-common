@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -26,6 +28,8 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@Builder
+@AllArgsConstructor
 public class UserClaim implements Serializable {
     private static final long serialVersionUID = -6557510720376811244L;
 

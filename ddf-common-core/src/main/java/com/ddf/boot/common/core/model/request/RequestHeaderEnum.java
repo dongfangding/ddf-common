@@ -10,11 +10,6 @@ package com.ddf.boot.common.core.model.request;
 public enum RequestHeaderEnum {
 
     /**
-     * 认证请求头字段
-     */
-    AUTH_HEADER("Authorization"),
-
-    /**
      * 加签字段
      */
     SIGN("sign"),

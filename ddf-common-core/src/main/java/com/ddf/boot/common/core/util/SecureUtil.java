@@ -7,11 +7,21 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.ddf.boot.common.core.config.GlobalProperties;
+import com.ddf.boot.common.core.encode.BCryptPasswordEncoder;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 加密工具类
+ *
+ * @author dongfang.ding on 2018/5/31
+ * @date 2022/5/24 22:57
+ **/
 public class SecureUtil {
 
     private SecureUtil() {
@@ -32,6 +42,16 @@ public class SecureUtil {
     private final static RSA LOCAL_PUBLIC_RSA;
 
     private final static SymmetricCrypto AES;
+
+    /**
+     * 动态的AES对象缓存
+     */
+    private final static Map<String, SymmetricCrypto> DYNAMIC_AES_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * 密码随机散列工具类
+     */
+    private final static BCryptPasswordEncoder B_CRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     /**
      * 本地公钥私钥
@@ -178,7 +198,7 @@ public class SecureUtil {
     }
 
     /**
-     * 使用AES加密成十六进制
+     * 使用系统配置的AES加密成十六进制
      *
      * @param str
      * @return
@@ -187,8 +207,66 @@ public class SecureUtil {
         return AES.encryptHex(str, StandardCharsets.UTF_8);
     }
 
+    /**
+     * 使用系统配置的AES解密加密后的十六进制数据
+     *
+     * @param str
+     * @return
+     */
     public static String decryptFromHexByAES(String str) {
         return AES.decryptStr(str);
+    }
+
+    /**
+     * 使用指定秘钥的AES加密成十六进制
+     *
+     * @param str
+     * @return
+     */
+    public static String encryptHexByAESWithKey(String str, String secret) {
+        SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
+        if (Objects.isNull(aes)) {
+            aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secret.getBytes(UTF_8));
+            DYNAMIC_AES_CACHE.put(secret, aes);
+        }
+        return AES.encryptHex(str, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 使用指定秘钥的AES解密加密后的十六进制数据
+     *
+     * @param str
+     * @param secret
+     * @return
+     */
+    public static String decryptFromHexByAESWithKey(String str, String secret) {
+        SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
+        if (Objects.isNull(aes)) {
+            aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secret.getBytes(UTF_8));
+            DYNAMIC_AES_CACHE.put(secret, aes);
+        }
+        return aes.decryptStr(str);
+    }
+
+    /**
+     * 随机散列函数摘要
+     *
+     * @param originStr
+     * @return
+     */
+    public static String bCryptEncoder(String originStr) {
+        return B_CRYPT_PASSWORD_ENCODER.encode(originStr);
+    }
+
+    /**
+     * 验证随机散列函数摘要是否匹配
+     *
+     * @param originStr
+     * @param encodeStr
+     * @return
+     */
+    public static boolean bCryptMatch(String originStr, String encodeStr) {
+        return B_CRYPT_PASSWORD_ENCODER.matches(originStr, encodeStr);
     }
 
     public static void main(String[] args) {
