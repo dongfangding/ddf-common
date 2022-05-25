@@ -19,7 +19,7 @@ public class AuthenticateToken implements Serializable {
 
     private static final long serialVersionUID = 1516322558409231083L;
 
-    private static final String SPLIT = ".";
+    private static final String SPLIT = "<=>";
 
     /**
      * token前半部分， 用于校验的用户id
