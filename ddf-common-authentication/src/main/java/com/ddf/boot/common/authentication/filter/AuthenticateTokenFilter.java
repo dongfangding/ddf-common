@@ -136,36 +136,36 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
         }
         String token = tokenHeader.split(tokenPrefix)[1];
 
+        UserClaim storeUser;
         if (authenticateProperties.isMock() && !environmentHelper.isProdProfile() &&
                 CollUtil.isNotEmpty(authenticateProperties.getMockUserIdList()) && authenticateProperties.getMockUserIdList().contains(token)) {
             tokenUserClaim = UserClaim.mockUser(token);
+            storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
         } else {
             AuthenticateCheckResult authenticateCheckResult = TokenUtil.checkToken(token);
             if (Objects.nonNull(tokenCustomizeCheckService)) {
                 tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
             }
             tokenUserClaim = authenticateCheckResult.getUserClaim();
-        }
-        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), "解析用户为空!");
-        PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
-                "用户关键信息缺失！");
+            PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), "解析用户为空!");
+            PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
+                    "用户关键信息缺失！");
 
-        final String credit = request.getHeader(authenticateProperties.getCreditHeaderName());
-        // 也可以维护一个列表，这里如果token中未填充的话，就不校验了
-        if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit) && !tokenUserClaim.ignoreCredit()) {
-            log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
-            throw new AccessDeniedException("登录环境变更，需要重新登录！");
-        }
-
-        UserClaim storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
-
-        if (Objects.nonNull(storeUser.getLastModifyPasswordTime()) && !Objects.equals(tokenUserClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
-            log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
-            throw new AccessDeniedException("密码已经修改，请重新登录！");
-        }
-        if (Objects.nonNull(storeUser.getLastLoginTime()) && !Objects.equals(tokenUserClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
-            log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
-            throw new AccessDeniedException("token已刷新，请重新登录！");
+            final String credit = request.getHeader(authenticateProperties.getCreditHeaderName());
+            // 也可以维护一个列表，这里如果token中未填充的话，就不校验了
+            if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit) && !tokenUserClaim.ignoreCredit()) {
+                log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
+                throw new AccessDeniedException("登录环境变更，需要重新登录！");
+            }
+            storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
+            if (Objects.nonNull(storeUser.getLastModifyPasswordTime()) && !Objects.equals(tokenUserClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
+                log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
+                throw new AccessDeniedException("密码已经修改，请重新登录！");
+            }
+            if (Objects.nonNull(storeUser.getLastLoginTime()) && !Objects.equals(tokenUserClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
+                log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
+                throw new AccessDeniedException("token已刷新，请重新登录！");
+            }
         }
         return new AuthInfo().setRealToken(token)
                 .setUserClaim(tokenUserClaim)

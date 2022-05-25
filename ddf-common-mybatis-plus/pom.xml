@@ -35,6 +35,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-authentication</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

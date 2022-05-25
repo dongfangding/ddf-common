@@ -70,7 +70,7 @@ public class AuthenticationProperties {
     /**
      * 业务配置对象
      */
-    private Biz biz;
+    private Biz biz = new Biz();
 
     /**
      * 判断路径是否跳过
@@ -98,7 +98,7 @@ public class AuthenticationProperties {
          * 登录白名单
          * 不进行验证码校验
          */
-        private List<String> whiteLoginNameList;
+        private List<String> whiteLoginNameList = new ArrayList<>();
 
         /**
          * 重置后默认密码
