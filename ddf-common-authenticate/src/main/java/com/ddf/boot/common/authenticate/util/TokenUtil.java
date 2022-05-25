@@ -1,12 +1,15 @@
 package com.ddf.boot.common.authenticate.util;
 
+import com.ddf.boot.common.authenticate.model.AuthenticateCheckResult;
 import com.ddf.boot.common.authenticate.model.AuthenticateToken;
+import com.ddf.boot.common.authenticate.model.UserClaim;
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
-import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+
+;
 
 /**
  * <p>token生成工具</p >
@@ -53,15 +56,21 @@ public class TokenUtil {
         return claim;
     }
 
-    public static UserClaim checkToken(String token) {
-        final AuthenticateToken tokenObj = AuthenticateToken.fromToken(token);
-        final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
+    /**
+     * 解析token并验证token本身规则
+     *
+     * @param token
+     * @return
+     */
+    public static AuthenticateCheckResult checkToken(String token) {
+        final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
+        final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
         UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
         String userId = userClaim.getUserId();
-        final boolean bool = SecureUtil.bCryptMatch(userId, tokenObj.getUserIdToken());
+        final boolean bool = SecureUtil.bCryptMatch(userId, authenticateToken.getUserIdToken());
         if (!bool) {
             throw new AccessDeniedException("被伪造的身份信息签名");
         }
-        return userClaim;
+        return AuthenticateCheckResult.of(authenticateToken, userClaim);
     }
 }

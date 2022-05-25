@@ -3,16 +3,18 @@ package com.ddf.boot.common.authenticate.filter;
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.authenticate.config.AuthenticateProperties;
 import com.ddf.boot.common.authenticate.consts.AuthenticateConstant;
+import com.ddf.boot.common.authenticate.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authenticate.interfaces.UserClaimService;
+import com.ddf.boot.common.authenticate.model.AuthenticateCheckResult;
+import com.ddf.boot.common.authenticate.model.UserClaim;
 import com.ddf.boot.common.authenticate.util.TokenUtil;
+import com.ddf.boot.common.authenticate.util.UserContextUtil;
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.UserContextUtil;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.WebUtil;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
@@ -47,12 +49,12 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
 
     @Autowired(required = false)
     private UserClaimService userClaimService;
-
+    @Autowired(required = false)
+    private TokenCustomizeCheckService tokenCustomizeCheckService;
     @Autowired
     private AuthenticateProperties authenticateProperties;
     @Autowired
     private EnvironmentHelper environmentHelper;
-
 
     /**
      * 前置校验
@@ -70,7 +72,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
             return true;
         }
         String host = WebUtil.getHost();
-        final String tokenHeader = request.getHeader(authenticateProperties.getTokenHeaderName());
+        final String token = request.getHeader(authenticateProperties.getTokenHeaderName());
         request.setAttribute(AuthenticateConstant.CLIENT_IP, host);
         // 跳过忽略路径
         if (authenticateProperties.isIgnore(path)) {
@@ -84,7 +86,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
         userClaimService.storeRequest(request, host);
 
         // 校验并转换jws
-        AuthInfo authInfo = checkAndGetJws(request, host, tokenHeader);
+        AuthInfo authInfo = checkAndParseAuthInfo(request, token);
         final UserClaim userClaim = authInfo.getUserClaim();
         UserClaim storeUserClaim = authInfo.getStoreUserClaim();
 
@@ -120,13 +122,13 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     }
 
     /**
-     * 校验并转换jws
+     * 校验并转换用户信息
      *
      * @param request
-     * @param host
+     * @param tokenHeader
      * @return
      */
-    private AuthInfo checkAndGetJws(HttpServletRequest request, String host, String tokenHeader) {
+    private AuthInfo checkAndParseAuthInfo(HttpServletRequest request,  String tokenHeader) {
         UserClaim tokenUserClaim;
         String tokenPrefix = authenticateProperties.getTokenPrefix();
         if (tokenHeader == null || !tokenHeader.startsWith(tokenPrefix)) {
@@ -138,18 +140,21 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
                 CollUtil.isNotEmpty(authenticateProperties.getMockUserIdList()) && authenticateProperties.getMockUserIdList().contains(token)) {
             tokenUserClaim = UserClaim.mockUser(token);
         } else {
-            tokenUserClaim = TokenUtil.checkToken(token);
+            AuthenticateCheckResult authenticateCheckResult = TokenUtil.checkToken(token);
+            if (Objects.nonNull(tokenCustomizeCheckService)) {
+                tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
+            }
+            tokenUserClaim = authenticateCheckResult.getUserClaim();
         }
+        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), "解析用户为空!");
+        PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
+                "用户关键信息缺失！");
 
-        Preconditions.checkNotNull(tokenUserClaim, "解析用户为空!");
-        Preconditions.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
-                "用户关键信息缺失！"
-        );
-
-        // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
-        if (!Objects.equals(tokenUserClaim.getCredit(), host) && !tokenUserClaim.ignoreCredit()) {
-            log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, tokenUserClaim);
-            throw new AccessDeniedException("更换登录地址，需要重新登录！");
+        final String credit = request.getHeader(authenticateProperties.getCreditHeaderName());
+        // 也可以维护一个列表，这里如果token中未填充的话，就不校验了
+        if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit) && !tokenUserClaim.ignoreCredit()) {
+            log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
+            throw new AccessDeniedException("登录环境变更，需要重新登录！");
         }
 
         UserClaim storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
@@ -173,7 +178,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     public static class AuthInfo {
 
         /**
-         * 真实jwt token内容
+         * 真实token内容
          */
         private String realToken;
 

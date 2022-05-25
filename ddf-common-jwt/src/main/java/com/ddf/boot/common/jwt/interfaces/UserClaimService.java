@@ -1,7 +1,9 @@
 package com.ddf.boot.common.jwt.interfaces;
 
-import com.ddf.boot.common.core.model.UserClaim;
+import com.ddf.boot.common.jwt.model.UserClaim;
 import javax.servlet.http.HttpServletRequest;
+
+;
 
 /**
  * 提供一个接口让调用方实现，来将用户的数据库信息加载进来

@@ -1,6 +1,8 @@
-package com.ddf.boot.common.core.util;
+package com.ddf.boot.common.authenticate.util;
 
-import com.ddf.boot.common.core.model.UserClaim;
+import com.ddf.boot.common.authenticate.model.UserClaim;
+
+;
 
 /**
  * <p>获取当前用户信息</p >

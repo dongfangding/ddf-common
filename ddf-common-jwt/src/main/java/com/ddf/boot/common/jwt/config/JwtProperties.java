@@ -24,6 +24,16 @@ public class JwtProperties {
     public static final String BEAN_NAME = "jwtProperties";
 
     /**
+     * token header name, 控制客户端通过哪个header传token
+     */
+    private String tokenHeaderName = "Authorization";
+
+    /**
+     * token的value前缀, 控制token是不是包含前缀，token本身不包含，客户端传送过来的时候要包含
+     */
+    private String tokenPrefix = "Bearer ";
+
+    /**
      * 适用于permitAll的放行路径配置
      * httpSecurity.authorizeRequests().antMatchers(httpMethod, path).permitAll()
      * 如果配置了httpMethod，则针对该方法配置路径；

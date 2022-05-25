@@ -3,16 +3,15 @@ package com.ddf.boot.common.jwt.filter;
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.exception200.AccessDeniedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import com.ddf.boot.common.core.model.UserClaim;
-import com.ddf.boot.common.core.model.request.RequestHeaderEnum;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;
 import com.ddf.boot.common.jwt.interfaces.UserClaimService;
+import com.ddf.boot.common.jwt.model.UserClaim;
 import com.ddf.boot.common.jwt.util.JwtUtil;
+import com.ddf.boot.common.jwt.util.UserContextUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
@@ -33,6 +32,8 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+;
 
 /**
  * 拦截请求处理用户信息
@@ -81,13 +82,6 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      */
     private static final String TRACE_ID = "traceId";
 
-    /**
-     * 认证接口类型
-     * 与{@link RequestHeaderEnum#AUTH_HEADER} 组合表现形式为:
-     * Authorization: Bearer <token>
-     */
-    private static final String TOKEN_PREFIX = "Bearer ";
-
     @Autowired(required = false)
     private UserClaimService userClaimService;
 
@@ -113,7 +107,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             return true;
         }
         String host = WebUtil.getHost();
-        final String tokenHeader = request.getHeader(RequestHeaderEnum.AUTH_HEADER.getName());
+        final String tokenHeader = request.getHeader(jwtProperties.getTokenHeaderName());
         request.setAttribute(JwtConstant.CLIENT_IP, host);
         // 跳过忽略路径
         if (jwtProperties.isIgnore(path)) {
@@ -145,7 +139,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
             if (oldExpiredMinute - now <= (long) jwtProperties.getRefreshTokenMinute() * 60 * 1000) {
                 synchronized (token.intern()) {
                     token = JwtUtil.defaultJws(userClaim);
-                    response.setHeader(RequestHeaderEnum.AUTH_HEADER.getName(), token);
+                    response.setHeader(jwtProperties.getTokenHeaderName(), token);
                 }
             }
         }
@@ -186,10 +180,10 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      */
     private AuthInfo checkAndGetJws(HttpServletRequest request, String host, String tokenHeader) {
         UserClaim tokenUserClaim;
-        if (tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
+        if (tokenHeader == null || !tokenHeader.startsWith(jwtProperties.getTokenPrefix())) {
             throw new AccessDeniedException("token格式不合法！");
         }
-        String token = tokenHeader.split(TOKEN_PREFIX)[1];
+        String token = tokenHeader.split(jwtProperties.getTokenPrefix())[1];
 
         Jws<Claims> claimsJws = null;
         if (jwtProperties.isMock() && !environmentHelper.isProdProfile() &&

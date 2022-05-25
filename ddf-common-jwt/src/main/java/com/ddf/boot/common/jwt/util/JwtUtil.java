@@ -1,9 +1,9 @@
 package com.ddf.boot.common.jwt.util;
 
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.model.UserClaim;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.jwt.config.JwtProperties;
+import com.ddf.boot.common.jwt.model.UserClaim;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;

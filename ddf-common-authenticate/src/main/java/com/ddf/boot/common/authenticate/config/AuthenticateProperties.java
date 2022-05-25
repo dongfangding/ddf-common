@@ -38,6 +38,12 @@ public class AuthenticateProperties {
     private String tokenPrefix = "Bearer ";
 
     /**
+     * 用来校验token中credit身份的header name, 如果生成token的时候不放入，则不会校验
+     * 如果是移动端，一般是设备号什么之类的
+     */
+    private String creditHeaderName = "User-Agent";
+
+    /**
      * 忽略路径
      */
     private List<String> ignores = new ArrayList<>();
