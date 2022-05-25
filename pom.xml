@@ -412,7 +412,7 @@
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
         <module>ddf-common-log4j</module>
-        <module>ddf-common-authenticate</module>
+        <module>ddf-common-authentication</module>
     </modules>
 
     <build>
