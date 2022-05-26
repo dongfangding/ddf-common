@@ -67,7 +67,7 @@ public class RedisTemplateHelper {
         Long expiredSeconds = 0L;
         Date now = new Date();
         if (expiredAt.compareTo(now) > 0) {
-            expiredSeconds = (now.getTime() / 1000) - (expiredAt.getTime() / 1000);
+            expiredSeconds = (expiredAt.getTime() / 1000) - (now.getTime() / 1000);
         }
         final String result = String.valueOf(
                 stringRedisTemplate.execute(
