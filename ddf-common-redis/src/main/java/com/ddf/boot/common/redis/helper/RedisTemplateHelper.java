@@ -1,12 +1,15 @@
 package com.ddf.boot.common.redis.helper;
 
 import cn.hutool.core.util.IdUtil;
+import com.ddf.boot.common.core.exception200.BaseCallbackCode;
+import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.function.Supplier;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -74,6 +77,44 @@ public class RedisTemplateHelper {
                         System.currentTimeMillis() + "-" + IdUtil.randomUUID()
                 ));
         return Objects.equals("1", result);
+    }
+
+    /**
+     * 提供一体化的判断，满足条件执行，不满足抛出异常
+     *
+     * @param key
+     * @param maxCount
+     * @param windowInSecond
+     * @param supplier
+     * @param exceptionCode
+     * @param <T>
+     * @return
+     */
+    public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+        final boolean b = sliderWindowAccess(key, maxCount, windowInSecond);
+        if (b) {
+            return supplier.get();
+        }
+        throw new BusinessException(exceptionCode);
+    }
+
+    /**
+     * 提供一体化的判断，满足条件执行，不满足抛出异常
+     *
+     * @param key
+     * @param maxCount
+     * @param expiredAt
+     * @param supplier
+     * @param exceptionCode
+     * @param <T>
+     * @return
+     */
+    public <T> T sliderWindowAccessExpiredAtCheckException(final String key, final long maxCount, final Date expiredAt, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+        final boolean b = sliderWindowAccessExpiredAt(key, maxCount, expiredAt);
+        if (b) {
+            return supplier.get();
+        }
+        throw new BusinessException(exceptionCode);
     }
 
     /**
