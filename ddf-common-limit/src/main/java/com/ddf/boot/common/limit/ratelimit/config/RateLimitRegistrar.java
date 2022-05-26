@@ -5,6 +5,7 @@ import com.ddf.boot.common.limit.ratelimit.annotation.EnableRateLimit;
 import com.ddf.boot.common.limit.ratelimit.handler.RateLimitAspect;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.GlobalRateLimitKeyGenerator;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.IdentityRateLimitKeyGenerator;
+import com.ddf.boot.common.limit.ratelimit.keygenerator.IpRateLimitKeyGenerator;
 import java.util.Map;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -42,20 +43,18 @@ public class RateLimitRegistrar implements ImportBeanDefinitionRegistrar {
         registry.registerBeanDefinition(RateLimitProperties.BEAN_NAME, rateLimitProperties.getBeanDefinition());
 
         // 注册限流处理类
-        registry.registerBeanDefinition(
-                RateLimitAspect.BEAN_NAME, BeanDefinitionBuilder.genericBeanDefinition(RateLimitAspect.class)
-                        .getBeanDefinition());
+        registry.registerBeanDefinition(RateLimitAspect.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(RateLimitAspect.class).getBeanDefinition());
 
         // 注册限流key规则生成器
-        registry.registerBeanDefinition(
-                GlobalRateLimitKeyGenerator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(GlobalRateLimitKeyGenerator.class)
-                        .getBeanDefinition()
+        registry.registerBeanDefinition(GlobalRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(GlobalRateLimitKeyGenerator.class).getBeanDefinition()
         );
-        registry.registerBeanDefinition(
-                IdentityRateLimitKeyGenerator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class)
-                        .getBeanDefinition()
+        registry.registerBeanDefinition(IdentityRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class).getBeanDefinition()
+        );
+        registry.registerBeanDefinition(IdentityRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(IpRateLimitKeyGenerator.class).getBeanDefinition()
         );
     }
 }

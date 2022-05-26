@@ -132,8 +132,7 @@ public class WebUtil {
      * @return
      */
     public static String getUserAgent(HttpServletRequest request) {
-        String ua = request.getHeader("User-Agent");
-        return ua != null ? ua : "";
+        return StrUtil.blankToDefault(request.getHeader("User-Agent"), "");
     }
 
     /**

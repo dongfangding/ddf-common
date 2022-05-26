@@ -17,9 +17,9 @@ public enum LimitExceptionCode implements BaseCallbackCode {
     /**
      * 异常码
      */
-    RATE_LIMIT("999", "接口已限流"),
+    RATE_LIMIT("rate_limit", "接口已限流"),
 
-    REPEAT_SUBMIT("998", "操作频繁"),
+    REPEAT_SUBMIT("repeat_submit", "操作频繁"),
 
     ;
 

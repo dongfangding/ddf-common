@@ -150,8 +150,8 @@ public class RateLimitAspect {
             // 生成限流的key
             String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
             if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
-                log.error("接口【{}-{}-{}】超过限流组件[{}]预定流量，过滤请求， 对应参数【{}】, 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                        currentMethod.getName(), keyGenerator, AopUtil.serializeParam(joinPoint)
+                log.error("接口【{}-{}-{}】超过限流组件{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>", identityNo, currentClass.getName(),
+                        currentMethod.getName(), keyGenerator, key, AopUtil.serializeParam(joinPoint)
                 );
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }
