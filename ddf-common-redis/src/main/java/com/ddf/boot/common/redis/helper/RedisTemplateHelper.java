@@ -52,6 +52,31 @@ public class RedisTemplateHelper {
     }
 
     /**
+     * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
+     * 业务方面的单位时间逻辑次数控制
+     *
+     * @param key            缓存key
+     * @param maxCount       单位时间内最大访问次数
+     * @param expiredAt      过期的具体时间点
+     * @return
+     */
+    public boolean sliderWindowAccessExpiredAt(final String key, final long maxCount, final Date expiredAt) {
+        Long expiredSeconds = 0L;
+        Date now = new Date();
+        if (expiredAt.compareTo(now) > 0) {
+            expiredSeconds = (now.getTime() / 1000) - (expiredAt.getTime() / 1000);
+        }
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(
+                        RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(expiredSeconds),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()
+                ));
+        return Objects.equals("1", result);
+    }
+
+    /**
      * 全局分布式限流, 基于令牌桶算法
      * <p>
      * 底层使用hash实现， 使用ttl实现单位毫秒内的key过期， 格式内容如下， 具体实现逻辑可进入脚本查看
