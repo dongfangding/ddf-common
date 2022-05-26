@@ -53,7 +53,7 @@ public class RateLimitRegistrar implements ImportBeanDefinitionRegistrar {
         registry.registerBeanDefinition(IdentityRateLimitKeyGenerator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class).getBeanDefinition()
         );
-        registry.registerBeanDefinition(IdentityRateLimitKeyGenerator.BEAN_NAME,
+        registry.registerBeanDefinition(IpRateLimitKeyGenerator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(IpRateLimitKeyGenerator.class).getBeanDefinition()
         );
     }

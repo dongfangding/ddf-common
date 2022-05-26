@@ -6,6 +6,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +43,7 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding on 2018/12/31
  */
 @Component
+@Order(value = Ordered.HIGHEST_PRECEDENCE + 5)
 public class SpringContextHolder implements ApplicationContextAware {
 
     @Getter
