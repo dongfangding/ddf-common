@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.constant.GlobalConstants;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -133,5 +134,20 @@ public class WebUtil {
     public static String getUserAgent(HttpServletRequest request) {
         String ua = request.getHeader("User-Agent");
         return ua != null ? ua : "";
+    }
+
+    /**
+     * 获取User-Agent
+     *
+     * @return
+     */
+    public static String getUserAgent() {
+        try {
+            HttpServletRequest request = getCurRequest();
+            return StrUtil.blankToDefault(request.getHeader("User-Agent"), "");
+        } catch (Exception e) {
+            log.error("获取User-Agent失败", e);
+            return "";
+        }
     }
 }
