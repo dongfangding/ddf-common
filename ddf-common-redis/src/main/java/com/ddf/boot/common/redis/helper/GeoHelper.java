@@ -1,7 +1,6 @@
 package com.ddf.boot.common.redis.helper;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.redis.request.GeoCoordinateSearchRequest;
 import com.ddf.boot.common.redis.request.GeoMemberSearchRequest;
 import java.util.List;
@@ -14,6 +13,8 @@ import org.redisson.api.GeoPosition;
 import org.redisson.api.GeoUnit;
 import org.redisson.api.RGeo;
 import org.redisson.api.RedissonClient;
+import org.redisson.api.geo.GeoSearchArgs;
+import org.redisson.api.geo.OptionalGeoSearch;
 import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 
@@ -93,24 +94,18 @@ public class GeoHelper {
      * @return
      */
     public <V> List<V> radius(GeoCoordinateSearchRequest request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radius(request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radius(request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder(), request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radius(request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getCount()
-            );
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radius(request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder()
-            );
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radius(request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
+        return geo.search(optionalGeoSearch);
     }
 
     /**
@@ -125,29 +120,19 @@ public class GeoHelper {
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoCoordinateSearchRequest request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithDistance(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithDistance(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder(), request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder())
+                    .count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radiusWithDistance(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getCount()
-            );
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radiusWithDistance(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder()
-            );
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radiusWithDistance(
-                request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
+        return geo.searchWithDistance(optionalGeoSearch);
     }
 
     /**
@@ -161,29 +146,19 @@ public class GeoHelper {
      * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoCoordinateSearchRequest request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithPosition(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithPosition(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder(), request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder())
+                    .count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radiusWithPosition(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getCount()
-            );
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radiusWithPosition(
-                    request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder()
-            );
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radiusWithPosition(
-                request.getLongitude(), request.getLatitude(), request.getRadius(), request.getGeoUnit());
+        return geo.searchWithPosition(optionalGeoSearch);
     }
 
     /**
@@ -195,20 +170,19 @@ public class GeoHelper {
      * @return
      */
     public <V> List<V> radius(GeoMemberSearchRequest<V> request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radius(request.getMember(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radius(request.getMember(), request.getRadius(), request.getGeoUnit(), request.getGeoOrder(),
-                    request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder())
+                    .count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radius(request.getMember(), request.getRadius(), request.getGeoUnit(), request.getCount());
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radius(request.getMember(), request.getRadius(), request.getGeoUnit(), request.getGeoOrder());
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radius(request.getMember(), request.getRadius(), request.getGeoUnit());
+        return geo.search(optionalGeoSearch);
     }
 
     /**
@@ -223,24 +197,19 @@ public class GeoHelper {
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoMemberSearchRequest<V> request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithDistance(request.getMember(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithDistance(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder(), request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder())
+                    .count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radiusWithDistance(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getCount()
-            );
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radiusWithDistance(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder()
-            );
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radiusWithDistance(request.getMember(), request.getRadius(), request.getGeoUnit());
+        return geo.searchWithDistance(optionalGeoSearch);
     }
 
     /**
@@ -254,31 +223,26 @@ public class GeoHelper {
      * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoMemberSearchRequest<V> request) {
-        PreconditionUtil.requiredParamCheck(request);
+        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        if (ObjectUtil.isAllEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithPosition(request.getMember(), request.getRadius(), request.getGeoUnit());
-        } else if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            return geo.radiusWithPosition(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder(), request.getCount()
-            );
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
+                .radius(request.getRadius(), request.getGeoUnit());
+        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
+            optionalGeoSearch.order(request.getGeoOrder())
+                    .count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
-            return geo.radiusWithPosition(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getCount()
-            );
+            optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
-            return geo.radiusWithPosition(request.getMember(), request.getRadius(), request.getGeoUnit(),
-                    request.getGeoOrder()
-            );
+            optionalGeoSearch.order(request.getGeoOrder());
         }
-        return geo.radiusWithPosition(request.getMember(), request.getRadius(), request.getGeoUnit());
+        return geo.searchWithPosition(optionalGeoSearch);
     }
 
     public static void main(String[] args) {
         final Config config = new Config();
         config.useSingleServer()
                 .setAddress("redis://www.snowball.fans:6379")
-                .setPassword("123456");
+                .setPassword("Dongfang.ding_redis");
         config.setCodec(new JsonJacksonCodec());
         final RedissonClient redisson = Redisson.create(config);
         final GeoHelper helper = new GeoHelper(redisson);
@@ -301,10 +265,10 @@ public class GeoHelper {
                 .key(key)
                 .longitude(14.361389)
                 .latitude(37.502669)
-                .radius(200.0)
+                .radius(150d)
                 .geoUnit(GeoUnit.KILOMETERS)
                 .geoOrder(GeoOrder.ASC)
-                .count(2)
+                .count(5)
                 .build();
 
         final List<String> radius = helper.radius(build);
