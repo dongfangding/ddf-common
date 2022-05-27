@@ -33,14 +33,13 @@ public class CaptchaResult implements Serializable {
     private String verifyCode;
 
     /**
-     * 原始图片base64编码， 滑块验证码时有效，为滑块验证码底图图片，即一张图里多个缺失的图形文案
+     * 原始图片base64编码， 验证码图片一般是这个字段。
+     * 滑块验证码时，为滑块验证码底图图片，即一张图里多个缺失的图形文案
      */
     private String originalImageBase64;
 
     /**
-     * 图片的base64编码，验证码图片一般是这个字段。
-     * 滑块验证码时为滑块图片，即滑块验证码底图中缺失的那一块图案。
-     *
+     * 滑块验证码时可用，其它暂无用处。为滑块图片，即滑块验证码底图中缺失的那一块图案。
      */
     private String imageBase64;
 

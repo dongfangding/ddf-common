@@ -100,7 +100,7 @@ public class CaptchaHelper {
             throw new IllegalStateException("验证码生成失败");
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
-        result.setImageBase64(result.getOriginalImageBase64());
+//        result.setImageBase64(result.getOriginalImageBase64());
         final String uuid = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setUuid(uuid);
         captchaCacheService.set(uuid, text, captchaProperties.getKeyExpiredSeconds());
@@ -130,7 +130,7 @@ public class CaptchaHelper {
             throw new IllegalStateException("验证码生成失败");
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
-        result.setImageBase64(result.getOriginalImageBase64());
+//        result.setImageBase64(result.getOriginalImageBase64());
         final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setUuid(token);
         captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());

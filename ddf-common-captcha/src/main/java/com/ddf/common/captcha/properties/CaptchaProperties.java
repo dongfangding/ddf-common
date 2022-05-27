@@ -35,7 +35,7 @@ public class CaptchaProperties implements ApplicationContextAware {
     /**
      * 验证码缓存存在时间，单位秒
      */
-    private Integer keyExpiredSeconds = 120;
+    private Integer keyExpiredSeconds = 300;
 
     /**
      * 基于谷歌Kaptcha的验证码属性类
