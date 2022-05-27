@@ -14,8 +14,8 @@ public enum CaptchaErrorCode implements BaseCallbackCode {
     /**
      * 验证码异常
      */
-    VERIFY_CODE_EXPIRED("CAPTCHA_10004", "验证码已过期"),
-    VERIFY_CODE_NOT_MAPPING("CAPTCHA_10005", "验证码错误"),
+    VERIFY_CODE_EXPIRED("verify_code_expired", "验证码已过期"),
+    VERIFY_CODE_NOT_MAPPING("verify_code_not_mapping", "验证码错误"),
     ;
 
 
