@@ -8,7 +8,7 @@ public class DefaultAjCaptchaProperties {
     /**
      * 验证码类型.
      */
-    private CaptchaTypeEnum type = CaptchaTypeEnum.DEFAULT;
+    private CaptchaTypeEnum type = CaptchaTypeEnum.CLICKWORD;
 
     /**
      * 滑动拼图底图路径.
@@ -44,7 +44,7 @@ public class DefaultAjCaptchaProperties {
      * aes加密坐标开启或者禁用(true|false).
      * 开启的话前端需要对坐标数组进行aes加密然后回传
      */
-    private Boolean aesStatus = true;
+    private Boolean aesStatus = false;
 
     /**
      * 滑块干扰项(0/1/2)
@@ -74,10 +74,10 @@ public class DefaultAjCaptchaProperties {
     /***
      * 一分钟内check接口失败次数
      */
-    private int reqGetLockLimit = 5;
+    private int reqGetLockLimit = 3;
 
     /**
-     *
+     * 一分钟内check失败超限锁定
      */
     private int reqGetLockSeconds = 300;
 

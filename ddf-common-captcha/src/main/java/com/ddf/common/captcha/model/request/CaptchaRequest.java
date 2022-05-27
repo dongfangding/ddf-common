@@ -1,4 +1,4 @@
-package com.ddf.common.captcha.model;
+package com.ddf.common.captcha.model.request;
 
 import com.ddf.common.captcha.constants.CaptchaType;
 import java.io.Serializable;
