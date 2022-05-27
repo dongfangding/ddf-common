@@ -101,9 +101,9 @@ public class CaptchaHelper {
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
         result.setImageBase64(result.getOriginalImageBase64());
-        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
-        result.setToken(token);
-        captchaCacheService.set(token, text, captchaProperties.getKeyExpiredSeconds());
+        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
+        result.setUuid(uuid);
+        captchaCacheService.set(uuid, text, captchaProperties.getKeyExpiredSeconds());
         return result;
     }
 
@@ -132,7 +132,7 @@ public class CaptchaHelper {
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
         result.setImageBase64(result.getOriginalImageBase64());
         final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
-        result.setToken(token);
+        result.setUuid(token);
         captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());
         return result;
     }
@@ -148,7 +148,7 @@ public class CaptchaHelper {
         final ResponseModel model = captchaService.get(vo);
         final CaptchaVO captchaVO = JsonUtil.toBean(JsonUtil.toJson(model.getRepData()), CaptchaVO.class);
         final CaptchaResult result = new CaptchaResult();
-        result.setToken(captchaVO.getToken());
+        result.setUuid(captchaVO.getToken());
         // 底图base64编码
         result.setOriginalImageBase64(captchaVO.getOriginalImageBase64());
         // 滑块图base64编码
@@ -163,10 +163,11 @@ public class CaptchaHelper {
      * 校验验证码
      */
     public boolean check(CaptchaCheckRequest request) {
+        PreconditionUtil.requiredParamCheck(request);
         final CaptchaType captchaType = request.getCaptchaType();
         if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
             final CaptchaVO vo = new CaptchaVO();
-            vo.setToken(request.getToken());
+            vo.setToken(request.getUuid());
             vo.setPointJson(request.getVerifyCode());
             vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
             final ResponseModel checkResult = captchaService.check(vo);
@@ -174,7 +175,7 @@ public class CaptchaHelper {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
             }
         } else {
-            final String verifyCode = captchaCacheService.get(request.getToken());
+            final String verifyCode = captchaCacheService.get(request.getUuid());
             PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
             PreconditionUtil.checkArgument(
                     java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
@@ -183,7 +184,7 @@ public class CaptchaHelper {
     }
 
     /**
-     * 获取验证码
+     * 获取s验证码
      *
      * @param token
      * @return

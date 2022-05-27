@@ -48,9 +48,9 @@ public class CaptchaResult implements Serializable {
     private List<String> wordList;
 
     /**
-     * 唯一表单token, 使用这个和验证码做对应关系， 在表单中需要回传这个值
+     * 唯一表单标识, 使用这个和验证码做对应关系， 在表单中需要回传这个值
      */
-    private String token;
+    private String uuid;
 
     /**
      * 图片编码base64的前缀，如`data:image/jpeg;base64,` + 真实的base64图片编码为一个完整版的格式，可以还原成图片
