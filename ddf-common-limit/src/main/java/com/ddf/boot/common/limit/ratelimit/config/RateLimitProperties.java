@@ -9,6 +9,8 @@ import lombok.Data;
 /**
  * <p>限流全局参数</p >
  *
+ * 暂时未提供配置类，而是通过注解上的属性来导入的
+ *
  * @author dongfang.ding
  * @version 1.0
  * @date 2021/02/24 13:42
@@ -56,10 +58,10 @@ public class RateLimitProperties {
         if (StringUtil.isBlank(keyGenerator)) {
             throw new IllegalArgumentException("限流key组件生成器参数异常");
         }
-        if (Objects.isNull(max) || max <= 0) {
+        if (Objects.isNull(max) || max < 0) {
             throw new IllegalArgumentException("令牌桶最大数量参数异常");
         }
-        if (Objects.isNull(rate) || rate <= 0) {
+        if (Objects.isNull(rate) || rate < 0) {
             throw new IllegalArgumentException("令牌恢复速率参数异常");
         }
     }

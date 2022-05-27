@@ -122,7 +122,9 @@ public class RateLimitAspect {
             }
             // 属性检查
             rateLimitProperties.check();
-            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            // 获取限流最大令牌桶数量
+            Integer max = annotation.max() == rateLimitProperties.getMax() ? rateLimitProperties.getMax() : annotation.max();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, max)) {
                 continue;
             }
             // 获取key生成器
@@ -134,11 +136,9 @@ public class RateLimitAspect {
 
             // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
             String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getCredit());
-            // 获取限流最大令牌桶数量
-            Integer max = annotation.max() == 0 ? rateLimitProperties.getMax() : annotation.max();
             // 获取令牌恢复速率
-            Integer rate = annotation.rate() == 0 ? rateLimitProperties.getRate() : annotation.rate();
-            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() : annotation.rate();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rate)) {
                 return;
             }
 

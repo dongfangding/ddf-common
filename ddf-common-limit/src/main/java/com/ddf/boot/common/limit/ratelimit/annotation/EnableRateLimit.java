@@ -51,15 +51,18 @@ public @interface EnableRateLimit {
 
     /**
      * 限流的最大令牌桶数量
+     * 0 不控制
      *
      * @return
      */
-    int max() default 1;
+    int max() default 0;
 
     /**
      * 令牌桶恢复速率
      *
+     * 0 不控制
+     *
      * @return
      */
-    int rate() default 1;
+    int rate() default 0;
 }
