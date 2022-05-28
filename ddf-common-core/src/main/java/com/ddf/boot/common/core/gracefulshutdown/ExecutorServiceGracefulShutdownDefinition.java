@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.shutdown;
+package com.ddf.boot.common.core.gracefulshutdown;
 
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import org.springframework.util.CollectionUtils;
  *      <li>1. 使用Spring封装的线程池类， 如{@link ThreadPoolTaskExecutor}, 线程池必须交由Spring容器管理， 优雅关闭的方法是在父类中{@link ExecutorConfigurationSupport#shutdown()}定义的</li>
  *      <li>2. 必须调用线程池父类的{@link ExecutorConfigurationSupport#setWaitForTasksToCompleteOnShutdown(boolean)}
  *             和{@link ExecutorConfigurationSupport#setAwaitTerminationSeconds(int)}方法来满足优雅关闭的判断前提</li>
- *      <li>3. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，可以通过{@link Order}定义线程池的高优先级</li>
+ *      <li>3. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，{@link Order}似乎不是你用来控制容器初始化顺序的，想来应该也和容器依赖有关，根本无法保证有序</li>
  *      <li>4. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
  *       在关闭单例池时执行到{@link DefaultSingletonBeanRegistry#destroySingletons()}时有个属性{@link DefaultSingletonBeanRegistry#disposableBeans},
  *       销毁的时候是按照这个顺序来定义的，而且这个属性本身有序，这个属性里存的bean都是实现了Spring生命周期相关方法的bean,
@@ -48,7 +48,7 @@ import org.springframework.util.CollectionUtils;
  * @date 2021/08/15 13:02
  */
 @Slf4j
-public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener<ContextClosedEvent> {
+public class ExecutorServiceGracefulShutdownDefinition implements ApplicationListener<ContextClosedEvent> {
 
     private static final List<ExecutorService> POOLS = Collections.synchronizedList(new ArrayList<>(12));
 
@@ -56,7 +56,7 @@ public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener
 
     private final TimeUnit timeUnit;
 
-    public ThreadPoolExecutorShutdownDefinition(long awaitTermination, TimeUnit timeUnit) {
+    public ExecutorServiceGracefulShutdownDefinition(long awaitTermination, TimeUnit timeUnit) {
         this.awaitTermination = awaitTermination;
         this.timeUnit = timeUnit;
     }

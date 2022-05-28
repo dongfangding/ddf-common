@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.helper;
 
-import com.ddf.boot.common.core.shutdown.ThreadPoolExecutorShutdownDefinition;
+import com.ddf.boot.common.core.gracefulshutdown.ExecutorServiceGracefulShutdownDefinition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -25,17 +26,23 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class ThreadBuilderHelper {
 
     /**
-     * 这个是给{@link ThreadPoolExecutorShutdownDefinition#onApplicationEvent(org.springframework.context.event.ContextClosedEvent)}用的
-     * 是为了方便通过该类定义线程池的地方不用再手动调用{@link ThreadPoolExecutorShutdownDefinition#registryExecutor(ThreadPoolExecutor)}
+     * 这个是给{@link ExecutorServiceGracefulShutdownDefinition#onApplicationEvent(org.springframework.context.event.ContextClosedEvent)}用的
+     * 是为了方便通过该类定义线程池的地方不用再手动调用{@link ExecutorServiceGracefulShutdownDefinition#registryExecutor(ThreadPoolExecutor)}
      */
-    private static final List<ExecutorService> POOLS = Collections.synchronizedList(new ArrayList<>(12));
+    private static final List<ExecutorService> POOLS = Collections.synchronizedList(new ArrayList<>(20));
+    /**
+     * 主要是ThreadPoolTaskExecutor类的ExecutorService属性在bean未创建完成是没有值的，这里只能先存原始对象，用的时候因为
+     * 晚于初始化，所以用的时候再获取就没有问题了
+     */
+    private static final List<ThreadPoolTaskExecutor> THREAD_POOL_TASK_EXECUTOR = Collections.synchronizedList(new ArrayList<>(20));
 
     /**
      * 返回通过该帮助类添加的线程池
      *
      * @return
      */
-    public static final List<ExecutorService> getPools() {
+    public static List<ExecutorService> getPools() {
+        POOLS.addAll(THREAD_POOL_TASK_EXECUTOR.stream().map(ThreadPoolTaskExecutor::getThreadPoolExecutor).collect(Collectors.toList()));
         return POOLS;
     }
 
@@ -133,7 +140,7 @@ public class ThreadBuilderHelper {
         threadPoolTaskExecutor.setQueueCapacity(queueCapacity);
         threadPoolTaskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler);
         if (gracefulShutdown) {
-            POOLS.add(threadPoolTaskExecutor.getThreadPoolExecutor());
+            THREAD_POOL_TASK_EXECUTOR.add(threadPoolTaskExecutor);
         }
         return threadPoolTaskExecutor;
     }

@@ -1,7 +1,7 @@
 package com.ddf.boot.common.core.config;
 
 import com.ddf.boot.common.core.constant.GlobalConstants;
-import com.ddf.boot.common.core.shutdown.ThreadPoolExecutorShutdownDefinition;
+import com.ddf.boot.common.core.gracefulshutdown.ExecutorServiceGracefulShutdownDefinition;
 import java.util.concurrent.TimeUnit;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class CoreAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public ThreadPoolExecutorShutdownDefinition threadPoolExecutorShutdownDefinition() {
-        return new ThreadPoolExecutorShutdownDefinition(120, TimeUnit.SECONDS);
+    public ExecutorServiceGracefulShutdownDefinition threadPoolExecutorShutdownDefinition() {
+        return new ExecutorServiceGracefulShutdownDefinition(120, TimeUnit.SECONDS);
     }
 }
