@@ -36,15 +36,20 @@ public class UserClaim implements Serializable {
     private static final String HEADER_CHARSET = "UTF-8";
 
     /**
+     * 忽略校验的credit
+     */
+    public static final String SKIP_CREDIT = "*";
+
+    /**
      * 默认用户信息
      * 判断是否默认用户方法{@link UserClaim#isDefaultUser(UserClaim)}
      */
-    private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").credit("*").build();
+    private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").credit(SKIP_CREDIT).build();
 
     /**
      * 忽略验证的credit
      */
-    public static final List<String> IGNORE_CREDIT = Lists.newArrayList("127.0.0.1", "0:0:0:0:0:0:0:1", "*");
+    public static final List<String> IGNORE_CREDIT = Lists.newArrayList("127.0.0.1", "0:0:0:0:0:0:0:1", SKIP_CREDIT);
 
     /**
      * 用户id
@@ -71,14 +76,14 @@ public class UserClaim implements Serializable {
     private Long lastModifyPasswordTime;
 
     /**
-     * 最后一次登录的时间，生成token时将该值放入其中，然后认证的时候判断是否和数据库中一致；不一致不允许再登录；
-     */
-    private Long lastLoginTime;
-
-    /**
      * 预留备注字段
      */
     private String remarks;
+
+    /**
+     * 是否禁用用户
+     */
+    private boolean disabled;
 
     /**
      * 预留的详细信息字段，使用方可以将自己想要放置的数据放到这个字段中；到时候想使用的时候可以自行解析回来
@@ -141,6 +146,10 @@ public class UserClaim implements Serializable {
             }
         }
         return claimMap;
+    }
+
+    public void setIgnoreCredit() {
+        this.credit = SKIP_CREDIT;
     }
 
     /**

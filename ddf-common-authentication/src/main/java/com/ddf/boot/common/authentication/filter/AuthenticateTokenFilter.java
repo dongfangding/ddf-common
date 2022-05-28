@@ -9,22 +9,19 @@ import com.ddf.boot.common.authentication.model.AuthenticateCheckResult;
 import com.ddf.boot.common.authentication.model.UserClaim;
 import com.ddf.boot.common.authentication.util.TokenUtil;
 import com.ddf.boot.common.authentication.util.UserContextUtil;
-import com.ddf.boot.common.core.exception200.AccessDeniedException;
+import com.ddf.boot.common.core.exception200.UnauthorizedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +46,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
 
     @Autowired(required = false)
     private UserClaimService userClaimService;
-    @Autowired(required = false)
+    @Autowired
     private TokenCustomizeCheckService tokenCustomizeCheckService;
     @Autowired
     private AuthenticationProperties authenticateProperties;
@@ -132,7 +129,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
         UserClaim tokenUserClaim;
         String tokenPrefix = authenticateProperties.getTokenPrefix();
         if (tokenHeader == null || !tokenHeader.startsWith(tokenPrefix)) {
-            throw new AccessDeniedException("token格式不合法！");
+            throw new UnauthorizedException("token格式不合法！");
         }
         String token = tokenHeader.split(tokenPrefix)[1];
 
@@ -143,29 +140,9 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
             storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
         } else {
             AuthenticateCheckResult authenticateCheckResult = TokenUtil.checkToken(token);
-            if (Objects.nonNull(tokenCustomizeCheckService)) {
-                tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
-            }
             tokenUserClaim = authenticateCheckResult.getUserClaim();
-            PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), "解析用户为空!");
-            PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
-                    "用户关键信息缺失！");
-
-            final String credit = request.getHeader(authenticateProperties.getCreditHeaderName());
-            // 也可以维护一个列表，这里如果token中未填充的话，就不校验了
-            if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit) && !tokenUserClaim.ignoreCredit()) {
-                log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
-                throw new AccessDeniedException("登录环境变更，需要重新登录！");
-            }
-            storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
-            if (Objects.nonNull(storeUser.getLastModifyPasswordTime()) && !Objects.equals(tokenUserClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
-                log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
-                throw new AccessDeniedException("密码已经修改，请重新登录！");
-            }
-            if (Objects.nonNull(storeUser.getLastLoginTime()) && !Objects.equals(tokenUserClaim.getLastLoginTime(), storeUser.getLastLoginTime())) {
-                log.error("token已刷新！当前最后一次登录时间: {}, token: {}", storeUser.getLastLoginTime(), tokenUserClaim);
-                throw new AccessDeniedException("token已刷新，请重新登录！");
-            }
+            // 额外业务token校验规则
+            storeUser = tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
         }
         return new AuthInfo().setRealToken(token)
                 .setUserClaim(tokenUserClaim)
