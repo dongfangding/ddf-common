@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.shutdown;
 
+import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,6 +107,8 @@ public class ThreadPoolExecutorShutdownDefinition implements ApplicationListener
      */
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
+        // 将通过帮助类创建的线程池现在统一添加进来也进行
+        POOLS.addAll(ThreadBuilderHelper.getPools());
         log.info("容器关闭前处理线程池优雅关闭开始, 当前要处理的线程池数量为: {} >>>>>>>>>>>>>>>>", POOLS.size());
         if (CollectionUtils.isEmpty(POOLS)) {
             return;
