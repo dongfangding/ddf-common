@@ -10,28 +10,23 @@ package com.ddf.boot.common.core.exception200;
 public enum GlobalCallbackCode implements BaseCallbackCode {
 
     // 枚举定义里也可以不指定状态码，这样就会使用每个自定义异常内的通用状态码 com.ddf.boot.common.core.exception200.BaseException.defaultCallback
-
-
     /**
      * 用户异常体系状态码定义
      */
     COMMON_LOGIC_ERROR("400", "逻辑参数不正确"),
-
     /**
      * 演示异常占位符以及使用异常自己的通用状态码来标识code
      * throw new BusinessException(GlobalCallbackCode.FILL_PARAM_DEMO, "粉刷匠", "强");
      */
-    FILL_PARAM_DEMO("101", "我是一个{0}， 粉刷本领{1}"),
+    FILL_PARAM_DEMO("fill_param_demo", "我是一个{0}， 粉刷本领{1}"),
 
-    RATE_LIMIT("999", "接口已限流"),
+    ENUM_CODE_NOT_MAPPING("enum_code_not_mapping", "枚举代码未映射"),
 
-    REPEAT_SUBMIT("998", "操作频繁"),
+    SIGN_ERROR("sign_error", "签名校验失败，数据不合法"),
 
-    ENUM_CODE_NOT_MAPPING("997", "枚举代码未映射"),
+    SIGN_TIMESTAMP_ERROR("sign_timestamp_error", "签名校验失败，数据已过期"),
 
-    SIGN_ERROR("996", "签名校验失败，数据不合法"),
-
-    SIGN_TIMESTAMP_ERROR("995", "签名校验失败，数据已过期")
+    MAIL_SEND_FAILURE("mail_send_failure", "邮件发送失败")
 
     ;
 
