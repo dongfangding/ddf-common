@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 @Data
 @NoArgsConstructor
 @Component
+@Primary
 public class AuthenticationProperties {
 
     public static final String BEAN_NAME = "authenticationProperties";
