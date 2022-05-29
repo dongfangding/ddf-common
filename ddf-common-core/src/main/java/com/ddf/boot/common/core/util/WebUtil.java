@@ -85,6 +85,7 @@ public class WebUtil {
     public static void responseSuccess(HttpServletResponse response, String message) {
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=utf-8");
         try {
             response.getWriter().print(message);
         } catch (IOException e) {
@@ -102,6 +103,7 @@ public class WebUtil {
         log.debug("------------------失败响应------------------");
         response.setStatus(status);
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=utf-8");
         try {
             response.getWriter().print(errorMessage);
         } catch (IOException e) {
