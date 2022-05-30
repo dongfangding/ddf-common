@@ -1,9 +1,9 @@
 package comm.ddf.common.vps.dto;
 
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.github.tobato.fastdfs.domain.fdfs.DefaultThumbImageConfig;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.upload.ThumbImage;
+import java.io.Serializable;
 import lombok.Data;
 
 /**
@@ -14,10 +14,9 @@ import lombok.Data;
  * @date 2021/11/30 20:04
  */
 @Data
-public class UploadResponse {
+public class UploadResponse implements Serializable {
 
-    public static final DefaultThumbImageConfig DEFAULT_THUMB_IMAGE_CONFIG =
-            (DefaultThumbImageConfig) SpringContextHolder.getBean("defaultThumbImageConfig");
+    private static final long serialVersionUID = -4365909723660880167L;
 
     /**
      * 组name
@@ -48,27 +47,14 @@ public class UploadResponse {
      * @param storePath
      * @return
      */
-    public static UploadResponse fromStorePath(StorePath storePath) {
-        final UploadResponse response = new UploadResponse();
-        response.setGroup(storePath.getGroup());
-        response.setPath(storePath.getPath());
-        response.setFullPath(storePath.getFullPath());
-        response.setThumbPath(DEFAULT_THUMB_IMAGE_CONFIG.getThumbImagePath(storePath.getFullPath()));
-        return response;
-    }
-
-    /**
-     * 构造图片上传后返回对象
-     *
-     * @param storePath
-     * @return
-     */
     public static UploadResponse fromStorePath(StorePath storePath, ThumbImage thumbImage) {
         final UploadResponse response = new UploadResponse();
         response.setGroup(storePath.getGroup());
         response.setPath(storePath.getPath());
         response.setFullPath(storePath.getFullPath());
-        response.setThumbPath(thumbImage.getThumbImagePath(storePath.getFullPath()));
+        if (thumbImage != null) {
+            response.setThumbPath(thumbImage.getThumbImagePath(storePath.getFullPath()));
+        }
         return response;
     }
 }
