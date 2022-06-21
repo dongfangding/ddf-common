@@ -120,7 +120,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     @Deprecated
     public void addCorsMappings(CorsRegistry registry) {
         // 这种由于拦截器的顺序问题无法处理项目内部有自定义拦截器且内部出现异常的问题
-        // registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
     }
 
     /**
@@ -134,7 +134,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
         // Possibly...
         // config.applyPermitDefaultValues()
-        config.setAllowCredentials(true);
+        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
+        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
+        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
+        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
+        config.setAllowCredentials(false);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
