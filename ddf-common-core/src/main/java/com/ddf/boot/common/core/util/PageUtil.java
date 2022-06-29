@@ -9,6 +9,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ddf.boot.common.core.model.Order;
 import com.ddf.boot.common.core.model.PageRequest;
 import com.ddf.boot.common.core.model.PageResult;
+import com.github.pagehelper.ISelect;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,130 @@ import org.springframework.lang.Nullable;
  * @date 2021/02/21 22:43
  */
 public class PageUtil {
+
+    /**
+     * 空分页
+     *
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
+        return new PageResult<>(pageNum, pageSize);
+    }
+
+    /**
+     * 空分页
+     *
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> empty(PageRequest pageRequest) {
+        pageRequest.checkArgument();
+        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
+    }
+
+    /**
+     * 有数据的分页对象
+     *
+     * @param pageRequest
+     * @param total
+     * @param content
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
+        pageRequest.checkArgument();
+        if (pageRequest.isUnPaged()) {
+            return new PageResult<>(pageRequest.getPageNum(), total, total, content);
+        }
+        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize(), total, content);
+    }
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
+     *
+     * @param pageRequest
+     * @param select
+     * @param poClazz
+     * @return
+     * @param <E>
+     * @param <R>
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz) {
+        return startPage(pageRequest, select, poClazz, null);
+    }
+
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
+     *
+     * @param pageRequest
+     * @param select
+     * @param poClazz     原始查询出来的对象
+     * @param voClazz     要转换的对象
+     * @param <E>
+     * @param <R>
+     * @return
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz,
+            @Nullable Class<R> voClazz) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        // 转换为自定义对象
+        if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
+            List<R> rtnList = (List<R>) pageInfo.getList();
+            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), rtnList);
+        } else {
+            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), Convert.toList(voClazz, pageInfo.getList()));
+        }
+    }
+
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 需要自己提供转换方法
+     *
+     * @param pageRequest
+     * @param select
+     * @param function
+     * @return
+     * @param <E>
+     * @param <R>
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, Function<List<E>, List<R>> function) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        final PageResult<R> result = new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal());
+        result.setContent(function.apply(pageInfo.getList()));
+        return result;
+    }
+
+
+    /**
+     * 使用PageHelper分页， 转换为自己的分页对象， 但是不转换实体对象
+     *
+     *
+     * @param pageRequest
+     * @param select
+     * @return
+     * @param <E>
+     */
+    public static <E> PageResult<E> startPage(PageRequest pageRequest, ISelect select) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), pageInfo.getList());
+    }
 
     /**
      * 构造基于mybatis的基本分页对象
@@ -71,43 +198,7 @@ public class PageUtil {
     }
 
 
-    /**
-     * 空分页
-     *
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
-        return new PageResult<>(pageNum, pageSize);
-    }
 
-    /**
-     * 空分页
-     *
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> empty(PageRequest pageRequest) {
-        pageRequest.checkArgument();
-        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
-    }
-
-    /**
-     * 有数据的分页对象
-     *
-     * @param pageRequest
-     * @param total
-     * @param content
-     * @param <E>
-     * @return
-     */
-    public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
-        pageRequest.checkArgument();
-        if (pageRequest.isUnPaged()) {
-            return new PageResult<>(pageRequest.getPageNum(), total, total, content);
-        }
-        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize(), total, content);
-    }
 
     /**
      * 将mybatis-plus的分页对象转换为当前对象，主要是为了统一多个不同查询层的分页对象
