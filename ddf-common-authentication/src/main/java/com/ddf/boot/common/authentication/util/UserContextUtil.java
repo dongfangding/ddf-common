@@ -49,6 +49,10 @@ public class UserContextUtil {
         return getUserClaim().getUserId();
     }
 
+    public static Long getLongUserId() {
+        return Long.parseLong(getUserId());
+    }
+
     /**
      * 获取客户端唯一标识
      *
