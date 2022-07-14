@@ -7,6 +7,7 @@ import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.ddf.boot.common.core.model.request.BaseSign;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +95,17 @@ public class SignatureUtils {
     /**
      * 验证签名
      *
+     * 主要问题是json的问题，json的问题不是要对json里面的字段进行map排序。而是一整个json其实是一个value，而不是参数的键值对
+     * 即使拿最简单的查询字符串来说，其实类似于与这样param1={"id":1,"name":"haha"}&param2={"id":1,"name":"haha"}
+     * 那么其实要保证的是参数的value里面的json要有序， 否则客户端和服务端可能因为id和name的前后顺序不一致而导致加签结果不同。
+     *
+     * 这里和param1=1&param2=chen&param3=上海    这种情况并不一致，这种查询串直接map保持一定规则就行，而不是上面那种复杂形势。
+     *
+     * 所以如果是post + json面临的问题就是最上面说的那种复杂情况，要保证json的字段有一定顺序（当然放入可以没有，但是加签一定要保证顺序）
+     * 因为json传参的时候有一个形参来接收整个json字符串。那么加签的时候其实就是对这个形参=json字符串进行加签，而不是对json字符串里面的字符再排序再加钱。
+     * 这里的json已经是一个参数的具体value了，是一个字符串
+     *
+     *
      * @param keySecret 秘钥
      * @param sign
      * @param data
@@ -117,5 +129,23 @@ public class SignatureUtils {
     private static boolean isBasic(Object obj) {
         return obj instanceof Integer || obj instanceof String || obj instanceof Double || obj instanceof Float
                 || obj instanceof Byte || obj instanceof Short || obj instanceof Long || obj instanceof Boolean;
+    }
+
+    public static void main(String[] args) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "张三");
+        map.put("age", 18);
+        map.put("height", 1.8);
+        map.put("weight", 70);
+        map.put("isMarried", true);
+        map.put("nonceTimestamp", System.currentTimeMillis());
+        String paramJson = JsonUtil.asString(map);
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("json", paramJson);
+        // 如果是post json的方式的话，这里不应该用形参处理，客户端又不知道服务端的形参叫什么了     ju
+        final String sign = genSelfSignature("1234567890", dataMap);
+        map.put("sign", sign);
+        System.out.println("sign = " + sign);
+        System.out.println(verifySelfSignature(dataMap, sign, "1234567890"));
     }
 }
