@@ -40,7 +40,7 @@ public class SpringContextHolder {
      */
     public static <T> T getBeanWithStatic(Class<T> requiredType) throws BeansException {
         try {
-            return getBeanWithStatic(requiredType);
+            return getBean(requiredType);
         } catch (Exception e) {
             return null;
         }
