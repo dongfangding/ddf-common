@@ -1,6 +1,8 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.annotation.AnnotationUtil;
+import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
+import com.ddf.boot.common.core.exception200.ServerErrorException;
 import com.google.common.collect.Maps;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -123,18 +125,22 @@ public class AopUtil {
      * @date 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getSerializableParamMap(JoinPoint joinPoint) {
-        Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
-        String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-        if (parameterNames.length > 0) {
-            for (int i = 0; i < parameterNames.length; i++) {
-                Object value = joinPoint.getArgs()[i];
-                if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile || value instanceof MultipartFile[]) {
-                    continue;
+        try {
+            Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
+            String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
+            if (parameterNames.length > 0) {
+                for (int i = 0; i < parameterNames.length; i++) {
+                    Object value = joinPoint.getArgs()[i];
+                    if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile || value instanceof MultipartFile[]) {
+                        continue;
+                    }
+                    paramsMap.put(parameterNames[i], value);
                 }
-                paramsMap.put(parameterNames[i], value);
             }
+            return paramsMap;
+        } catch (Exception e) {
+            throw new ServerErrorException(GlobalCallbackCode.SERIALIZE_PARAM_ERROR);
         }
-        return paramsMap;
     }
 
 
