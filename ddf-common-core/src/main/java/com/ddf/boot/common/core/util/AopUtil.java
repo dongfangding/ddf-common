@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import lombok.SneakyThrows;
@@ -16,6 +17,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -141,6 +143,27 @@ public class AopUtil {
         } catch (Exception e) {
             throw new ServerErrorException(GlobalCallbackCode.SERIALIZE_PARAM_ERROR);
         }
+    }
+
+
+    /**
+     * 获取参数中带@RequestBody的参数的对象的值
+     *
+     * @param joinPoint
+     * @return
+     */
+    public static Object getRequestBodyParamObj(JoinPoint joinPoint) {
+        Class<?>[] parameterClasses = ((MethodSignature) joinPoint.getSignature()).getParameterTypes();
+        if (parameterClasses.length == 0) {
+            return null;
+        }
+        for (int i = 0, length = parameterClasses.length; i < length; i++) {
+            Class<?> clazz = parameterClasses[i];
+            if (Objects.nonNull(clazz.getAnnotation(RequestBody.class))) {
+                return joinPoint.getArgs()[i];
+            }
+        }
+        return null;
     }
 
 

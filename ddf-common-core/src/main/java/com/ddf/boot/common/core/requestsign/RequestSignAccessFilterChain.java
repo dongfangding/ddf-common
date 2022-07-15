@@ -45,6 +45,9 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
     /**
      * 将aop参数暴露， 允许多实现实现自己的拦截业务处理， 如数据校验、签名校验，用户校验交给原生的filter去做了
      *
+     * 1. sign相关参数并没有放到请求头中，这是因为很容易被猜到，一看到字段就知道含义。现在是放到请求参数中，如果是查询串就固定参数sign,
+     * 如果是json, 就固定字段sign
+     *
      * @param joinPoint
      * @param pointClass
      * @param pointMethod
@@ -57,17 +60,24 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
             return Boolean.TRUE;
         }
         final Map<String, Object> paramMap = AopUtil.getSerializableParamMap(joinPoint);
+        // 如果没有参数直接放行
+        if (paramMap.isEmpty()) {
+            return Boolean.TRUE;
+        }
         // 签名值
         String sign;
         // 重放时间戳
         Long timestamp = null;
-        // 最终用来验签的参数对象， 强制定义规则， 如果参数对象没有实现过BaseSign， 则说明传入参数不是对象， 这个时候，这个时候使用map参数对象，否则使用BaseSign实现类
+        // 最终用来验签的参数对象， 强制定义规则， 如果参数对象没有实现过BaseSign， 则不会当做对象来处理。
+        // 这个时候使用map参数对象，否则使用BaseSign实现类
         Object data;
         final BaseSign baseSign = (BaseSign) paramMap.values()
                 .stream()
                 .filter((obj -> obj instanceof BaseSign))
                 .findFirst()
                 .orElse(null);
+        // 接收参数如果实现了BaseSign接口，则按基础对象处理。否则按查询串处理，这里已经包含了application/json和application/x-www-form-urlencoded的处理，
+        // 即入参对象必须实现接口BaseSign
         if (Objects.nonNull(baseSign)) {
             data = baseSign;
             sign = baseSign.getSign();

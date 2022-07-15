@@ -47,8 +47,8 @@ public class SignatureUtils {
         int i = 0;
         Object obj;
         for (String key : keys) {
-            // 排除参数为空的
-            if (StringUtils.isEmpty(params.get(key)) || BaseSign.SELF_SIGNATURE_FIELD.equals(key) || BaseSign.SELF_TIMESTAMP_FIELD.equals(key)) {
+            // 排除参数为空的和以及签名字段
+            if (StringUtils.isEmpty(params.get(key)) || BaseSign.SELF_SIGNATURE_FIELD.equals(key)) {
                 continue;
             }
             if (i != 0) {
@@ -59,9 +59,11 @@ public class SignatureUtils {
             if (Objects.isNull(obj)) {
                 continue;
             }
-//            if (isBasic(obj)) {
+            // 只对基本类型参数加签， 如果是嵌套对象，目前不考虑
+            if (isBasic(obj)) {
                 paramBuffer.append(key).append("=").append(obj);
-//            } else {
+            }
+            //            else {
 //                final MapConverter converter = new MapConverter(HashMap.class);
 //                final Map<?, ?> convert = converter.convert(obj, new HashMap<>());
 //                convert.remove(BaseSign.SELF_SIGNATURE_FIELD);
@@ -139,13 +141,9 @@ public class SignatureUtils {
         map.put("weight", 70);
         map.put("isMarried", true);
         map.put("nonceTimestamp", System.currentTimeMillis());
-        String paramJson = JsonUtil.asString(map);
-        Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("json", paramJson);
-        // 如果是post json的方式的话，这里不应该用形参处理，客户端又不知道服务端的形参叫什么了     ju
-        final String sign = genSelfSignature("1234567890", dataMap);
+        final String sign = genSelfSignature("1234567890", map);
         map.put("sign", sign);
         System.out.println("sign = " + sign);
-        System.out.println(verifySelfSignature(dataMap, sign, "1234567890"));
+        System.out.println(verifySelfSignature(map, sign, "1234567890"));
     }
 }
