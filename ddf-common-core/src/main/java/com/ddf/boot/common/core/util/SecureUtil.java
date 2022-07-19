@@ -229,7 +229,7 @@ public class SecureUtil {
             aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secret.getBytes(UTF_8));
             DYNAMIC_AES_CACHE.put(secret, aes);
         }
-        return AES.encryptHex(str, StandardCharsets.UTF_8);
+        return aes.encryptHex(str, StandardCharsets.UTF_8);
     }
 
     /**
@@ -270,16 +270,6 @@ public class SecureUtil {
     }
 
     public static void main(String[] args) {
-
-        String str =
-                "{\"accessKeyId\":\"1\",\"accessKeyName\":\"ddf\",\"loginType\":\"USER\",\"currentTimeStamp\":1600229897375}";
-
-        String s = SecureUtil.localPublicEncryptBcd(str);
-        System.out.println("s = " + s);
-
-        System.out.println(encryptHexByAES("sssss"));
-        System.out.println(encryptHexByAES("bbbbb"));
-
 
     }
 }
