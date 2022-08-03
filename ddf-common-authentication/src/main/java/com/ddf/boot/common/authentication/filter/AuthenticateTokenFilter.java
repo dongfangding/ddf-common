@@ -94,11 +94,20 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
         // 塞入最新用户数据
         UserContextUtil.setUserClaim(storeUserClaim);
         MDC.put(AuthenticateConstant.MDC_USER_ID, storeUserClaim.getUserId());
-        MDC.put(AuthenticateConstant.MDC_TRACE_ID, storeUserClaim.getUserId() + "-" + IdsUtil.getNextStrId());
+        MDC.put(AuthenticateConstant.MDC_TRACE_ID, generateTraceId(storeUserClaim.getUserId()));
         request.setAttribute(AuthenticateConstant.HEADER_USER, userInfo);
         return true;
     }
 
+    /**
+     * 生成traceId
+     *
+     * @param userId
+     * @return
+     */
+    private String generateTraceId(String userId) {
+        return String.join("-", userId, IdsUtil.getNextStrId());
+    }
 
     /**
      * 执行器结束
