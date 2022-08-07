@@ -26,6 +26,22 @@ public class CmdStrategyHelper {
     private RabbitTemplateHelper rabbitTemplateHelper;
 
     /**
+     * 记录日志并发送消息
+     *
+     * @param authPrincipal
+     * @param payload
+     * @param message
+     * @param <T>
+     */
+    public <T> void recordAndSend(AuthPrincipal authPrincipal, T payload, Message<T> message) {
+        TextMessage textMessage = Message.wrapper(message);
+        MessageRequest messageRequest = new MessageRequest();
+        messageRequest.setBusinessData(JsonUtil.asString(payload));
+        //        channelTransferService.recordRequest(authPrincipal, textMessage.getPayload(), message, messageRequest);
+        WebsocketSessionStorage.sendMessage(authPrincipal, message);
+    }
+
+    /**
      * 发送设备指令码运行状态数据
      *
      * @param authPrincipal
@@ -54,22 +70,6 @@ public class CmdStrategyHelper {
         //                log.error("发送设备状态数据监控报错！数据为： {}", JsonUtil.asString(runningState), e);
         //            }
         //        });
-    }
-
-    /**
-     * 记录日志并发送消息
-     *
-     * @param authPrincipal
-     * @param payload
-     * @param message
-     * @param <T>
-     */
-    public <T> void recordAndSend(AuthPrincipal authPrincipal, T payload, Message<T> message) {
-        TextMessage textMessage = Message.wrapper(message);
-        MessageRequest messageRequest = new MessageRequest();
-        messageRequest.setBusinessData(JsonUtil.asString(payload));
-        //        channelTransferService.recordRequest(authPrincipal, textMessage.getPayload(), message, messageRequest);
-        WebsocketSessionStorage.sendMessage(authPrincipal, message);
     }
 }
 

@@ -27,7 +27,10 @@ public enum GlobalCallbackCode implements BaseCallbackCode {
     SIGN_TIMESTAMP_ERROR("sign_timestamp_error", "签名校验失败，数据已过期"),
 
     MAIL_SEND_FAILURE("mail_send_failure", "邮件发送失败"),
-    SERIALIZE_PARAM_ERROR("序列化参数失败， 请检查是否有入参对象无法序列化[com.ddf.boot.common.core.util.AopUtil.getSerializableParamMap]")
+    SERIALIZE_PARAM_ERROR("序列化参数失败， 请检查是否有入参对象无法序列化[com.ddf.boot.common.core.util.AopUtil.getSerializableParamMap]"),
+
+    JSON_SERIALIZER_FILED("JSON_SERIALIZER_FILED", "Json序列化失败"),
+    JSON_DESERIALIZER_FILED("JSON_DESERIALIZER_FILED", "Json反序列化失败")
 
     ;
 

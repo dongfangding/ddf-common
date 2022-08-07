@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -13,10 +14,20 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -35,6 +46,10 @@ public final class JsonUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = newInstance();
 
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String TIME_PATTERN = "HH:mm:ss";
+
     /**
      * 对象转Json
      *
@@ -49,10 +64,10 @@ public final class JsonUtil {
         }
         try {
             return OBJECT_MAPPER.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            logger.error("对象转换Json失败", e);
+        } catch (Exception e) {
+            logger.error("json序列化异常, obj = {}", obj, e);
+            throw new BusinessException(GlobalCallbackCode.JSON_SERIALIZER_FILED);
         }
-        return StringUtils.EMPTY;
     }
 
     /**
@@ -62,12 +77,7 @@ public final class JsonUtil {
      * @return
      */
     public static String asString(Object obj) {
-        try {
-            return OBJECT_MAPPER.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            logger.error("对象序列化失败", e);
-            throw new ServerErrorException(e);
-        }
+        return toJson(obj);
     }
 
     /**
@@ -115,8 +125,8 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
-            logger.error("Json转换对象失败", e);
-            throw new ServerErrorException(e);
+            logger.error("json反序列化异常, json = {}, type = {}", json, type, e);
+            throw new BusinessException(GlobalCallbackCode.JSON_DESERIALIZER_FILED);
         }
     }
 
@@ -131,8 +141,8 @@ public final class JsonUtil {
         try {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
-            logger.error("对象转换字节失败", e);
-            throw e;
+            logger.error("对象序列化字节异常, obj = {}", obj, e);
+            throw new BusinessException(GlobalCallbackCode.JSON_SERIALIZER_FILED);
         }
     }
 
@@ -145,58 +155,44 @@ public final class JsonUtil {
      */
     @SneakyThrows
     public static <T> T toBean(byte[] bytes, Class<T> type) {
-        try {
-            return OBJECT_MAPPER.readValue(bytes, type);
-        } catch (IOException e) {
-            logger.error("字节转换对象失败", e);
-            throw e;
-        }
+        return OBJECT_MAPPER.readValue(bytes, type);
     }
 
     /**
      * 将json数据转换成pojo对象list
      *
-     * 如果想使用的话，可以参考newInstance().readValue(jsonData, new Ty peReference<List<T>>()， 这里的T不使用泛型，直接使用具体对象是可以的
      *
-     * @param jsonData json数据
+     * @param json json数据
      * @param beanType 类型
      * @param <T>      类型
      * @return T
      */
     @SneakyThrows
-    public static <T> List<T> toList(String jsonData, Class<T> beanType) {
-        // 这个可行，但用到了其它库
-//        return JSONUtil.toList(new JSONArray(jsonData), beanType);
-        // 这里不知道为啥用泛型不行， T如果是个具体类就可以
-//        return OBJECT_MAPPER.readValue(jsonData, new TypeReference<List<T>>() {
-//            @Override
-//            public Type getType() {
-//                return super.getType();
-//            }
-//        });
-        final List list = toBean(jsonData, List.class);
-        List<T> resList = new ArrayList<>(list.size());
-        for (Object obj : list) {
-            resList.add(toBean(asString(obj), beanType));
+    public static <T> List<T> toList(String json, Class<T> beanType) {
+        try {
+            TypeFactory typeFactory = OBJECT_MAPPER.getTypeFactory();
+            return OBJECT_MAPPER.readValue(json, typeFactory.constructCollectionType(List.class, beanType));
+        } catch (Exception e) {
+            logger.error("json反序列化集合异常, json = {}, type = {}", json, beanType, e);
+            throw new BusinessException(GlobalCallbackCode.JSON_DESERIALIZER_FILED);
         }
-        return resList;
     }
 
 
 //    public static void main(String[] args) throws JsonProcessingException {
-//        String jsonStr = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
+//        String json = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
 //        long now = System.currentTimeMillis();
-//        final List<ClubBackground> x = toList(jsonStr, ClubBackground.class);
+//        final List<ClubBackground> x = toList(json, ClubBackground.class);
 //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
 //
 //        // 这个的性能最好
 //        now = System.currentTimeMillis();
 //        final List<ClubBackground> backgrounds = getInstance().readValue(
-//                jsonStr, new TypeReference<List<ClubBackground>>() {});
+//                json, new TypeReference<List<ClubBackground>>() {});
 //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
 //
 //        now = System.currentTimeMillis();
-//        JSONUtil.toList(new JSONArray(jsonStr), ClubBackground.class);
+//        JSONUtil.toList(new JSONArray(json), ClubBackground.class);
 //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
 //
 //        // 上述结果， 因此还是用第二种方式
@@ -224,9 +220,9 @@ public final class JsonUtil {
             mapper.setSerializationInclusion(strategy);
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.error("对象转换Json失败", e);
+            logger.error("json序列化异常, obj = {}", obj, e);
+            throw new BusinessException(GlobalCallbackCode.JSON_SERIALIZER_FILED);
         }
-        return StringUtils.EMPTY;
     }
 
     /**
@@ -236,9 +232,12 @@ public final class JsonUtil {
      * @return
      */
     private static ObjectMapper config(ObjectMapper objectMapper) {
+        // 忽略反序列化时在json字符串中存在, 但在java对象中不存在的属性
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 单引号处理
         objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
+        // 在序列化一个空对象时时不抛出异常
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.setLocale(Locale.SIMPLIFIED_CHINESE);
         objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
@@ -246,9 +245,29 @@ public final class JsonUtil {
         objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        // 去掉默认的时间戳格式
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        // 序列化时，日期的统一格式
+        OBJECT_MAPPER.setDateFormat(new SimpleDateFormat(DATE_TIME_PATTERN));
+        // 初始化JavaTimeModule
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        // 处理LocalDateTime
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+        // 处理LocalDate
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+        // 处理LocalTime
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        // 注册时间模块, 支持支持JSR310, 即新的时间类(java.time包下的时间类)
+        OBJECT_MAPPER.registerModule(javaTimeModule);
+
+        return objectMapper;
     }
 
     /**
