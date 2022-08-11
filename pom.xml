@@ -437,6 +437,7 @@
         <module>ddf-common-mqtt</module>
         <module>ddf-common-log4j</module>
         <module>ddf-common-authentication</module>
+        <module>ddf-common-canal</module>
     </modules>
 
     <build>
