@@ -120,7 +120,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     @Deprecated
     public void addCorsMappings(CorsRegistry registry) {
         // 这种由于拦截器的顺序问题无法处理项目内部有自定义拦截器且内部出现异常的问题
-         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+//         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
     }
 
     /**
