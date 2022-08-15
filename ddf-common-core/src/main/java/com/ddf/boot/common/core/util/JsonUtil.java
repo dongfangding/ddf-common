@@ -249,7 +249,7 @@ public final class JsonUtil {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         // 序列化时，日期的统一格式
-        OBJECT_MAPPER.setDateFormat(new SimpleDateFormat(DATE_TIME_PATTERN));
+        objectMapper.setDateFormat(new SimpleDateFormat(DATE_TIME_PATTERN));
         // 初始化JavaTimeModule
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         // 处理LocalDateTime
@@ -265,7 +265,7 @@ public final class JsonUtil {
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
         javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
         // 注册时间模块, 支持支持JSR310, 即新的时间类(java.time包下的时间类)
-        OBJECT_MAPPER.registerModule(javaTimeModule);
+        objectMapper.registerModule(javaTimeModule);
 
         return objectMapper;
     }
