@@ -40,6 +40,15 @@ public class UploadResponse implements Serializable {
      */
     private String thumbPath;
 
+    /**
+     * 访问域名
+     */
+    private String accessDomain;
+
+    public String getAccessFullPath() {
+        return String.join("/", accessDomain, fullPath);
+    }
+
 
     /**
      * 只适用于使用默认的缩略图配置
@@ -47,11 +56,12 @@ public class UploadResponse implements Serializable {
      * @param storePath
      * @return
      */
-    public static UploadResponse fromStorePath(StorePath storePath, ThumbImage thumbImage) {
+    public static UploadResponse fromStorePath(StorePath storePath, ThumbImage thumbImage, String accessDomain) {
         final UploadResponse response = new UploadResponse();
         response.setGroup(storePath.getGroup());
         response.setPath(storePath.getPath());
         response.setFullPath(storePath.getFullPath());
+        response.setAccessDomain(accessDomain);
         if (thumbImage != null) {
             response.setThumbPath(thumbImage.getThumbImagePath(storePath.getFullPath()));
         }

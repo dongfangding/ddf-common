@@ -41,6 +41,10 @@ public class UploadResponse {
      */
     private String thumbPath;
 
+    /**
+     * 可用于直接访问的路径地址，会带上域名
+     */
+    private String accessFullPath;
 
     /**
      * 只适用于使用默认的缩略图配置

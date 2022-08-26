@@ -114,15 +114,16 @@ public class VpsClient {
         final long fileSize = fastImageFile.getFileSize();
         final Set<MetaData> metaDataSet = fastImageFile.getMetaDataSet();
         ThumbImage thumbImage = fastImageFile.getThumbImage();
+        String accessDomain = fdfsWebServer.getWebServerUrl();
         // 暂时以这个来判断是上传的图片还是视频
         if (isImage(fileExtName)) {
             thumbImage = ObjectUtils.defaultIfNull(thumbImage, new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
             final StorePath storePath = fastFileStorageClient.uploadImage(fastImageFile);
-            return UploadResponse.fromStorePath(storePath, thumbImage);
+            return UploadResponse.fromStorePath(storePath, thumbImage, accessDomain);
         }
         // 走到这里也有可能上传的还是图片,但是不管了，当视频处理，然后去截帧。
         final StorePath storePath = fastFileStorageClient.uploadFile(inputStream, fileSize, fileExtName, metaDataSet);
-        final UploadResponse response = UploadResponse.fromStorePath(storePath, thumbImage);
+        final UploadResponse response = UploadResponse.fromStorePath(storePath, thumbImage, accessDomain);
         if (thumbImage != null) {
             String storeAccessPath = null;
             // 依赖图片在本机服务，且安装了ffmpeg
