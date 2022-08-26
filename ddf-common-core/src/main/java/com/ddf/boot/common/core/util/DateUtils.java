@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -24,10 +26,9 @@ import org.springframework.lang.Nullable;
 @Slf4j
 public class DateUtils {
 
-
-    public static final String MM_DD = "MM/dd";
-
     public static final String TIME_SPLIT = ":";
+
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 获取本月第一天
@@ -205,11 +206,28 @@ public class DateUtils {
         return Objects.isNull(instant) ? null : instant.toEpochMilli();
     }
 
+    /**
+     * 根据秒转换为标准北京时间
+     *
+     * @param seconds
+     * @return
+     */
+    public static LocalDateTime ofSeconds(long seconds) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8"));
+    }
+
+    /**
+     * 根据毫秒转换为标准北京时间
+     *
+     * @param millis
+     * @return
+     */
+    public static LocalDateTime ofMillis(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8"));
+    }
+
     public static void main(String[] args) {
-        final LocalDateTime now = LocalDateTime.now();
-        final Long aLong = toZhCnMills(now);
-        System.out.println(aLong);
-        System.out.println(new Date(aLong));
+        System.out.println(standardFormatSeconds(System.currentTimeMillis() / 1000));
     }
 
     /**
@@ -291,6 +309,35 @@ public class DateUtils {
      */
     public static Long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
+    }
+
+    /**
+     * 返回时间格式化类
+     *
+     * @return
+     */
+    public static DateTimeFormatter getFormatter() {
+        return FORMATTER;
+    }
+
+    /**
+     * 将秒标准格式化输出
+     *
+     * @param seconds
+     * @return
+     */
+    public static String standardFormatSeconds(Long seconds) {
+        return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+    }
+
+    /**
+     * 将毫秒标准格式化输出
+     *
+     * @param millis
+     * @return
+     */
+    public static String standardFormatMillis(Long millis) {
+        return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
     }
 
 }
