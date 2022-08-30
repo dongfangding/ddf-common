@@ -49,4 +49,9 @@ public class CaptchaCheckRequest implements Serializable {
      * 是否是二次接口认证，验证码先是前端校验一次，后端会再次校验一次，前端的这个值是false, 后端的必须是true
      */
     private boolean verification;
+
+    /**
+     * 二次校验参数值，由前端控件生成
+     */
+    private String captchaVerification;
 }

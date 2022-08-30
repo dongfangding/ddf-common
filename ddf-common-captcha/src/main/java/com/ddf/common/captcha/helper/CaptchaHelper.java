@@ -163,7 +163,7 @@ public class CaptchaHelper {
      * 校验验证码
      */
     public boolean check(CaptchaCheckRequest request) {
-        PreconditionUtil.requiredParamCheck(request);
+//        PreconditionUtil.requiredParamCheck(request);
         final CaptchaType captchaType = request.getCaptchaType();
         if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
             final CaptchaVO vo = new CaptchaVO();
@@ -172,9 +172,9 @@ public class CaptchaHelper {
             vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
             final ResponseModel checkResult;
             if (request.isVerification()) {
-                checkResult = captchaService.check(vo);
-            } else {
                 checkResult = captchaService.verification(vo);
+            } else {
+                checkResult = captchaService.check(vo);
             }
             if (!"0000".equals(checkResult.getRepCode())) {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
