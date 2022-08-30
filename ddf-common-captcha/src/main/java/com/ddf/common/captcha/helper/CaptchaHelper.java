@@ -170,7 +170,12 @@ public class CaptchaHelper {
             vo.setToken(request.getUuid());
             vo.setPointJson(request.getVerifyCode());
             vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
-            final ResponseModel checkResult = captchaService.check(vo);
+            final ResponseModel checkResult;
+            if (request.isVerification()) {
+                checkResult = captchaService.check(vo);
+            } else {
+                checkResult = captchaService.verification(vo);
+            }
             if (!"0000".equals(checkResult.getRepCode())) {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
             }
