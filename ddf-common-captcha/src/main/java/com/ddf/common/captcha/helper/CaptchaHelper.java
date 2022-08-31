@@ -170,6 +170,7 @@ public class CaptchaHelper {
             vo.setToken(request.getUuid());
             vo.setPointJson(request.getVerifyCode());
             vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
+            vo.setCaptchaVerification(request.getCaptchaVerification());
             final ResponseModel checkResult;
             if (request.isVerification()) {
                 checkResult = captchaService.verification(vo);
