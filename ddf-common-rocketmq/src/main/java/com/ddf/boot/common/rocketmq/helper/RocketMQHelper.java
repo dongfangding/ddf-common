@@ -2,11 +2,13 @@ package com.ddf.boot.common.rocketmq.helper;
 
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.rocketmq.dto.MessageRequest;
 import com.ddf.boot.common.rocketmq.dto.RocketMQDestination;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,27 @@ import org.springframework.stereotype.Component;
 public class RocketMQHelper {
 
     private final RocketMQTemplate rocketMQTemplate;
+
+
+    /**
+     * 同步发送消息的通用方法
+     *
+     * @param request
+     * @return
+     * @param <T>
+     */
+    public <T> SendResult syncSend(MessageRequest<T> request) {
+        Message<?> message = MessageBuilder.withPayload(request.getBody())
+                // 埋入消息key，便于查询问题
+                .setHeader(RocketMQHeaders.KEYS, request.getBizId()).build();
+        // https://github.com/apache/rocketmq/blob/master/docs/cn/best_practice.md#3-%E6%97%A5%E5%BF%97%E7%9A%84%E6%89%93%E5%8D%B0
+        final SendResult sendResult = rocketMQTemplate.syncSend(request.getDestination(), message,
+                rocketMQTemplate.getProducer().getSendMsgTimeout(), request.getLevel().getLevel());
+        if (Objects.equals(SendStatus.SEND_OK, sendResult.getSendStatus())) {
+            log.error("RocketMQ消息发送失败, destination: {}, data = {}", request.getDestination(), JsonUtil.asString(request));
+        }
+        return sendResult;
+    }
 
     /**
      * 发送普通消息
