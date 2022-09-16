@@ -49,8 +49,9 @@ public class RocketMQHelper {
         // https://github.com/apache/rocketmq/blob/master/docs/cn/best_practice.md#3-%E6%97%A5%E5%BF%97%E7%9A%84%E6%89%93%E5%8D%B0
         final SendResult sendResult = rocketMQTemplate.syncSend(request.getDestination(), message,
                 rocketMQTemplate.getProducer().getSendMsgTimeout(), request.getLevel().getLevel());
-        if (Objects.equals(SendStatus.SEND_OK, sendResult.getSendStatus())) {
-            log.error("RocketMQ消息发送失败, destination: {}, data = {}", request.getDestination(), JsonUtil.asString(request));
+        if (!Objects.equals(SendStatus.SEND_OK, sendResult.getSendStatus())) {
+            log.error("RocketMQ消息发送失败, status = {}, destination: {}, data = {}", sendResult.getSendStatus(),
+                    request.getDestination(), JsonUtil.asString(request));
         }
         return sendResult;
     }
