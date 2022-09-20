@@ -43,8 +43,10 @@ public class MessageRequest<T> implements Serializable {
 
     /**
      * 消息延迟级别
+     * @see RocketMQDelayTimeMapping
+     * @see RocketMQDelayLevelMapping
      */
-    private RocketMQDelayLevelMapping level = RocketMQDelayLevelMapping.NO_DELAY;
+    private Integer level = 0;
 
     /**
      * 获取MQ发往的目的地， 遵循RocketMQ代码规范，由topic和tag组合成
