@@ -33,6 +33,7 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     ACCESS_FORBIDDEN("403", "权限未通过，访问被拒绝"),
 
     SERVER_ERROR("500", "服务端异常"),
+    UPLOAD_FILE_ERROR("upload_file_error", "文件上传失败")
 
     ;
 

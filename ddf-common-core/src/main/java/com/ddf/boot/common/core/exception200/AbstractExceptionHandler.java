@@ -22,6 +22,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartException;
 
 /**
  * <p>description</p >
@@ -97,6 +98,9 @@ public abstract class AbstractExceptionHandler {
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(), description, locale);
         } else if (exception instanceof IllegalArgumentException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
+            message = exception.getMessage();
+        } else if (exception instanceof MultipartException) {
+            exceptionCode = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getCode();
             message = exception.getMessage();
         } else if (exception instanceof MethodArgumentNotValidException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
