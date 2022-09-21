@@ -13,8 +13,8 @@ import comm.ddf.common.vps.config.VpsProperties;
 import comm.ddf.common.vps.dto.UploadResponse;
 import comm.ddf.common.vps.util.VpsUtil;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -67,8 +67,8 @@ public class VpsClient {
         // 安全考虑， 只有这个临时目录的本地文件允许走这块代码上传
 //        PreconditionUtil.checkArgument(filePath.startsWith(vpsProperties.getFfmpegTmpPath()), "不允许上传除ffmpeg临时目录以外的文件");
         String extName = filePath.substring(filePath.lastIndexOf(".") + 1);
-        return uploadFile(new FastImageFile(new FileInputStream(file), file.length(), extName,
-                new HashSet<>(), thumbImage));
+        return uploadFile(new FastImageFile(Files.newInputStream(file.toPath()), file.length(), extName,
+                new HashSet<>(), thumbImage), false);
     }
 
     /**
@@ -82,7 +82,22 @@ public class VpsClient {
         final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
         String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
         return uploadFile(new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName,
-                new HashSet<>(), null));
+                new HashSet<>(), null), false);
+    }
+
+    /**
+     * 上传文件并生成缩略图
+     *
+     * @param multipartFile
+     * @param cutVideoThumb 如果是视频是否裁剪视频帧获取封面图，支持非常有限，仅提供思路
+     * @return
+     */
+    @SneakyThrows
+    public UploadResponse uploadFile(MultipartFile multipartFile, boolean cutVideoThumb) {
+        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
+        String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        return uploadFile(new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName,
+                new HashSet<>(), null), cutVideoThumb);
     }
 
     /**
@@ -108,7 +123,7 @@ public class VpsClient {
      * @param fastImageFile
      * @return
      */
-    public UploadResponse uploadFile(FastImageFile fastImageFile) {
+    public UploadResponse uploadFile(FastImageFile fastImageFile, boolean cutVideoThumb) {
         final String fileExtName = fastImageFile.getFileExtName();
         final InputStream inputStream = fastImageFile.getInputStream();
         final long fileSize = fastImageFile.getFileSize();
@@ -124,7 +139,7 @@ public class VpsClient {
         // 走到这里也有可能上传的还是图片,但是不管了，当视频处理，然后去截帧。
         final StorePath storePath = fastFileStorageClient.uploadFile(inputStream, fileSize, fileExtName, metaDataSet);
         final UploadResponse response = UploadResponse.fromStorePath(storePath, thumbImage, accessDomain);
-        if (thumbImage != null) {
+        if (thumbImage != null && cutVideoThumb) {
             String storeAccessPath = null;
             // 依赖图片在本机服务，且安装了ffmpeg
             final String basePath = vpsProperties.getFdfsBasePath();

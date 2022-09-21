@@ -72,7 +72,7 @@ public class StringExtUtil {
     }
 
     /**
-     * 随机生成云闪付登录密码
+     * 随机生成密码
      *
      * @param
      * @return
