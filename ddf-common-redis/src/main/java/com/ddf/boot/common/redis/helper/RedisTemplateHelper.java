@@ -5,6 +5,7 @@ import com.ddf.boot.common.core.exception200.BaseCallbackCode;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
+import com.ddf.boot.common.redis.response.HashIncrementCheckResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
 import java.util.Collections;
 import java.util.Date;
@@ -217,5 +218,26 @@ public class RedisTemplateHelper {
             return Boolean.FALSE;
         }
         return limiter.tryAcquire();
+    }
+
+
+    /**
+     * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
+     *
+     * @param key
+     * @param hashKey
+     * @param step
+     * @param limit
+     * @return
+     */
+    public HashIncrementCheckResponse hashIncrAndCheck(String key, String hashKey, Long step, Long limit) {
+        final long result = Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK, Collections.singletonList(key),
+                        hashKey, String.valueOf(step), String.valueOf(limit)
+                )));
+        return HashIncrementCheckResponse.builder()
+                .result(result)
+                .actualResult(result > limit ? (result - step) : result)
+                .build();
     }
 }

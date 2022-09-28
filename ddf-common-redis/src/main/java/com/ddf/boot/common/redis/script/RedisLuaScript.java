@@ -34,4 +34,10 @@ public interface RedisLuaScript {
      */
     RedisScript<String> SLIDER_WINDOW_COUNT = RedisScript.of(
             new ClassPathResource("lua/sliderWindowCount.lua"), String.class);
+
+    /**
+     * 基于hash结构的自增并增加上限判定的通用脚本
+     */
+    RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
+
 }
