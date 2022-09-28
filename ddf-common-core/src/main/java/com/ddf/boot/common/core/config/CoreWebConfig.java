@@ -1,6 +1,5 @@
 package com.ddf.boot.common.core.config;
 
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
@@ -76,6 +75,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
     @Bean
     public QueryParamArgumentResolver queryParamArgumentResolver() {
         return new QueryParamArgumentResolver();
+    }
+
+    @Bean
+    public MultiArgumentResolverMethodProcessor multiArgumentResolverMethodProcessor() {
+        return new MultiArgumentResolverMethodProcessor();
     }
 
 
@@ -163,7 +167,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(SpringContextHolder.getBean(MultiArgumentResolverMethodProcessor.class));
+        resolvers.add(multiArgumentResolverMethodProcessor());
         resolvers.add(queryParamArgumentResolver());
     }
 
