@@ -53,7 +53,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         message.setPayload(JsonUtil.asString(payload).getBytes(StandardCharsets.UTF_8));
 
         // 预留的发送前置处理监听
-        if (CollUtil.isEmpty(listenerMap)) {
+        if (CollUtil.isNotEmpty(listenerMap)) {
             listenerMap.forEach((beanName, bean) -> {
                 bean.beforePublish(message, payload);
             });
@@ -67,9 +67,9 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             log.error("mqtt消息发送失败, 消息内容 = {}", JsonUtil.asString(request));
         }
         // 预留的发送成功处理监听
-        if (result && CollUtil.isEmpty(listenerMap)) {
+        if (result && CollUtil.isNotEmpty(listenerMap)) {
             listenerMap.forEach((beanName, bean) -> {
-                bean.beforePublish(message, payload);
+                bean.afterPublish(message, payload);
             });
         }
     }

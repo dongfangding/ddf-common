@@ -12,5 +12,5 @@ import lombok.Data;
  */
 @Data
 public class TextMessageBody extends AbstractMessageBody implements Serializable {
-    private static final long serialVersionUID = 4140157051382161101L;
+    private static final long serialVersionUID = 8362001043321300029L;
 }

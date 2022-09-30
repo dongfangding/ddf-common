@@ -34,8 +34,12 @@ public class Im2PointMqttTopic implements MqttTopicDefine, Serializable {
      * @return
      */
     public static String getTopicPrefix() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
-                GlobalStorage.IM_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
+        return String.join(GlobalStorage.TOPIC_SEPARATOR,
+                GlobalStorage.SYSTEM_CLIENT_ID_PREFIX.startsWith(GlobalStorage.TOPIC_SEPARATOR) ?
+                        GlobalStorage.SYSTEM_CLIENT_ID_PREFIX :
+                        GlobalStorage.TOPIC_SEPARATOR + GlobalStorage.SYSTEM_CLIENT_ID_PREFIX, GlobalStorage.IM_TOPIC,
+                GlobalStorage.PRIVATE_MESSAGE_TOPIC
+        );
     }
 
     @Override

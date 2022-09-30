@@ -34,7 +34,9 @@ public class ImChatRoomMqttTopic implements MqttTopicDefine, Serializable {
      * @return
      */
     public static String getTopicPrefix() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
+        return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX.startsWith(GlobalStorage.TOPIC_SEPARATOR) ?
+                        GlobalStorage.SYSTEM_CLIENT_ID_PREFIX :
+                        GlobalStorage.TOPIC_SEPARATOR + GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
                 GlobalStorage.IM_TOPIC, GlobalStorage.CHAT_ROOM_MESSAGE_TOPIC);
     }
 
