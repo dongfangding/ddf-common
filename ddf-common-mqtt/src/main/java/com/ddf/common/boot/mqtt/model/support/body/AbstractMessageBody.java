@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support.body;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @date 2022/03/21 18:35
  */
+@Data
 public class AbstractMessageBody implements MessageBody {
 
     /**
@@ -21,20 +23,17 @@ public class AbstractMessageBody implements MessageBody {
      */
     private String msgTitle;
 
+    /**
+     * 消息内容
+     */
+    private String contentType;
+
     @Override
     public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
     public String getMsgTitle() {
-        return StringUtils.defaultString(msgTitle, msg);
-    }
-
-    public void setMsgTitle(String msgTitle) {
-        this.msgTitle = msgTitle;
+        return StringUtils.defaultString(msgTitle, StringUtils.isNotBlank(msg) ? msg.substring(20) : "");
     }
 }

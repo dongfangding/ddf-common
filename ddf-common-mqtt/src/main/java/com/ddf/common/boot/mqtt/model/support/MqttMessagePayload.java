@@ -6,6 +6,7 @@ import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import com.ddf.common.boot.mqtt.model.support.body.TextMessageBody;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
+import java.io.Serializable;
 import lombok.Data;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -18,7 +19,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  * @date 2022/03/19 18:24
  */
 @Data
-public class MqttMessagePayload<T> {
+public class MqttMessagePayload<T> implements Serializable {
+
+    private static final long serialVersionUID = 1516322558409231083L;
 
     private MqttMessagePayload() {
 
@@ -39,6 +42,21 @@ public class MqttMessagePayload<T> {
      * 比如是用户上线通知、用户新消息通知，是一个消息的最小表示单位
      */
     private String messageCode;
+
+    /**
+     * 消息类型，比如文本、图片、视频等，用于一些消息的渲染处理， 此值留空，由使用方决定用处
+     */
+    private String contentType;
+
+    /**
+     * 反序列化类型，这个作为预留字段，调用方决定如何使用。整个请求对象在存储时是作为整个请求大对象的而持久化的，
+     * 那么下面消息体的body字段持久化的时候就是消息对象的json序列化字符串。而取出来消息的要使用的时候是需要反序列化回来的，
+     * 可以根据这个字段来判断来决定如何序列化，当然下面还有一个bizType字段是业务类型，根据场景决定可能也是可以使用的，
+     * 使用方自己决定即可，这里只是预留字段
+     *
+     * @return
+     */
+    private String deserializeType;
 
     /**
      * 消息业务类型，这个类型大于消息代码， 标识某个业务下的消息，一个业务类型下面可以有很多消息类型
@@ -70,6 +88,8 @@ public class MqttMessagePayload<T> {
         final MqttMessagePayload<T> payload = new MqttMessagePayload<>();
         payload.setHeader(request.getHeader());
         payload.setMessageCode(request.getMessageCode());
+        payload.setContentType(request.getContentType());
+        payload.setDeserializeType(request.getDeserializeType());
         payload.setBizType(request.getBizType());
         payload.setBody(request.getBody());
 

@@ -26,6 +26,21 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
     private MqttHeader header = MqttHeader.DEFAULT;
 
     /**
+     * 消息类型，比如文本、图片、视频等，用于一些消息的渲染处理， 此值留空，由使用方决定用处
+     */
+    private String contentType;
+
+    /**
+     * 反序列化类型，这个作为预留字段，调用方决定如何使用。整个请求对象在存储时是作为整个请求大对象的而持久化的，
+     * 那么下面消息体的body字段持久化的时候就是消息对象的json序列化字符串。而取出来消息的要使用的时候是需要反序列化回来的，
+     * 可以根据这个字段来判断来决定如何序列化，当然下面还有一个bizType字段是业务类型，根据场景决定可能也是可以使用的，
+     * 使用方自己决定即可，这里只是预留字段
+     *
+     * @return
+     */
+    private String deserializeType;
+
+    /**
      * 控制mqtt消息行为参数
      */
     private MqttMessageControl control = MqttMessageControl.DEFAULT;

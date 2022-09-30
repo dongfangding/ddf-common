@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>提供emq相关的开放接口功能</p >
- * 该接口必须部署在开放服务中
+ * 该接口必须部署在开放服务中， 这里只是实例代码，实际项目中使用要把代码放出去到开放服务中，而不是直接使用该模块中的控制器代码
  *
  * @author Snowball
  * @version 1.0
  * @date 2022/03/22 14:46
  */
 @RestController
-@RequestMapping("emq")
+@RequestMapping("emq/module/")
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 @Slf4j
 public class EmqController {
@@ -83,7 +83,9 @@ public class EmqController {
                     EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
                 }
             } else {
-                // 客户端用户， 让使用该模块的功能完成自己的用户认证
+                // 客户端用户， 让使用该模块的功能完成自己的用户认证， 这块的代码应该写在应用层，而不是这个模块内部，因为如果是模块内部那就是自己依赖自己，
+                // 本身服务没起来的前提所有客户端都无法连接， 所以这个代码应该是一个独立的认证中心，比如写在用户模块，然后接口暴露在网关层，然后将网关层接口
+                // 配置到emq的认证http地址中，这里只是提供写法，小项目单体项目可以直接集成，分布式不合适。
                 if (emqClientAuthenticate == null) {
                     EmqHttpResponseUtil.error(response, "未定义客户端认证规则，不允许连接");
                     return;

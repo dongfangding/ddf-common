@@ -4,7 +4,7 @@ import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 
 /**
- * <p>description</p >
+ * <p>对外暴露的的Client工具</p >
  *
  * @author Snowball
  * @version 1.0

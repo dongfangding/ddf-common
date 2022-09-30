@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.model.support.body;
 
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
+import java.io.Serializable;
 
 /**
  * <p>一个标识类， 只是标识这个类具有在mqtt message body中传递的资格 </p >
@@ -25,13 +26,20 @@ import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
  * @version 1.0
  * @date 2022/03/20 13:11
  */
-public interface MessageBody {
+public interface MessageBody extends Serializable {
 
     /**
      * 消息内容
      * @return
      */
     String getMsg();
+
+    /**
+     * 消息格式类型， 如文本、图片、视频等各种样式，通过这个字段来确定渲染方式等，由调用方自助决定，这里只是预留说明可以这么处理
+     *
+     * @return
+     */
+    String getContentType();
 
     /**
      * 消息标题
