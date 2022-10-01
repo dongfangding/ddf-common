@@ -47,7 +47,7 @@ public interface MessageBody extends Serializable {
      *
      * @return
      */
-    default String msgTitle() {
+    default String getMsgTitle() {
         return getMsg();
     }
 }
