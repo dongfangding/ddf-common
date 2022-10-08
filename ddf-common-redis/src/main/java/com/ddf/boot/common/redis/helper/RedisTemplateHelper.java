@@ -10,6 +10,7 @@ import com.ddf.boot.common.redis.script.RedisLuaScript;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -233,7 +234,7 @@ public class RedisTemplateHelper {
     public HashIncrementCheckResponse hashIncrAndCheck(String key, String hashKey, Long step, Long limit) {
         final long result = Long.parseLong(Objects.requireNonNull(
                 stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK, Collections.singletonList(key),
-                        hashKey, String.valueOf(step), String.valueOf(limit)
+                        hashKey, String.valueOf(step), String.valueOf(limit), String.valueOf(TimeUnit.DAYS.toSeconds(1))
                 )));
         return HashIncrementCheckResponse.builder()
                 .result(result)
