@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <p>随机工具类</p >
@@ -64,14 +67,14 @@ public class RandomExtUtil {
      *
      * @return
      */
-    public static <T extends WeightProportion> WeightProportion hitWeightProportion(List<T> sources) {
+    public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
         // 先求出这批数据的总权重
         final double totalWeight = sources.stream()
                 .mapToDouble(WeightProportion::getWeight)
                 .sum();
         // 先随机出一个数值
         double randomNum = ThreadLocalRandom.current().nextDouble(totalWeight);
-        for (WeightProportion source : sources) {
+        for (T source : sources) {
             if ((randomNum -= source.getWeight()) < 0) {
                 return source;
             }
@@ -92,14 +95,17 @@ public class RandomExtUtil {
      *
      * @return
      */
-    public static <T extends WeightProportion> List<WeightProportion> generateAllByWeight(List<T> sources) {
+    public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources) {
         // 使用一个默认实现来拷贝属性， 不影响到原对象数据
         List<DefaultWeightProportion> tempList = BeanCopierUtils.copy(sources, DefaultWeightProportion.class);
-        List<WeightProportion> rtnList = new ArrayList<>();
+        List<T> rtnList = new ArrayList<>();
         // 先求出这批数据的总权重，这种情况下的数据只支持整形
         final int totalWeight = tempList.stream()
                 .mapToInt(obj -> obj.getWeight().intValue())
                 .sum();
+        // 原始数据key和对应映射，方便后面权重随机后根据key能找到原始对象
+        final Map<String, T> sourceMap = sources.stream()
+                .collect(Collectors.toMap(WeightProportion::getKey, Function.identity()));
         int randomNum;
         // 将所有的数据都随机出来，总权重即是总次数
         for (int i = totalWeight; i > 0; i--) {
@@ -109,7 +115,7 @@ public class RandomExtUtil {
                 if ((randomNum -= source.getWeight()) < 0) {
                     // 每中奖一次自己的权重就减少1次
                     source.changeOriginWeight(source.getWeight() - 1);
-                    rtnList.add(source);
+                    rtnList.add(sourceMap.get(source.getKey()));
                     break;
                 }
             }
