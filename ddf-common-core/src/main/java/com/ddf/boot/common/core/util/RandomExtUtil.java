@@ -9,10 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * <p>随机工具类</p >
@@ -95,27 +92,24 @@ public class RandomExtUtil {
      *
      * @return
      */
-    public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources) {
+    public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources, Class<T> clazz) {
         // 使用一个默认实现来拷贝属性， 不影响到原对象数据
-        List<DefaultWeightProportion> tempList = BeanCopierUtils.copy(sources, DefaultWeightProportion.class);
+        List<T> tempList = BeanCopierUtils.copy(sources, clazz);
         List<T> rtnList = new ArrayList<>();
         // 先求出这批数据的总权重，这种情况下的数据只支持整形
         final int totalWeight = tempList.stream()
                 .mapToInt(obj -> obj.getWeight().intValue())
                 .sum();
-        // 原始数据key和对应映射，方便后面权重随机后根据key能找到原始对象
-        final Map<String, T> sourceMap = sources.stream()
-                .collect(Collectors.toMap(WeightProportion::getKey, Function.identity()));
         int randomNum;
         // 将所有的数据都随机出来，总权重即是总次数
         for (int i = totalWeight; i > 0; i--) {
             // 先随机出一个数值
             randomNum = ThreadLocalRandom.current().nextInt(i);
-            for (WeightProportion source : tempList) {
+            for (T source : tempList) {
                 if ((randomNum -= source.getWeight()) < 0) {
                     // 每中奖一次自己的权重就减少1次
                     source.changeOriginWeight(source.getWeight() - 1);
-                    rtnList.add(sourceMap.get(source.getKey()));
+                    rtnList.add(source);
                     break;
                 }
             }
