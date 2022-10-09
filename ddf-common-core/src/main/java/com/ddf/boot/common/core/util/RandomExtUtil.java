@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -77,6 +78,43 @@ public class RandomExtUtil {
         }
         // 这里的话，肯定数值错误了
         return null;
+    }
+
+    /**
+     * 根据权重次数重新生成数据，生成后的数据长度等于数据的权重之和，用以一些权重规则上的数据列表生成。
+     * 注意这种情况下的权重只支持整形，如果存在小数，自己等比例放大
+     *
+     * 比如
+     * list[0] 权重10
+     * list[1] 权重5
+     *
+     * 则最终会生成15条数据， 生成的顺序根据权重来判定，每次生成后当前权重减少1
+     *
+     * @return
+     */
+    public static <T extends WeightProportion> List<WeightProportion> generateAllByWeight(List<T> sources) {
+        // 使用一个默认实现来拷贝属性， 不影响到原对象数据
+        List<DefaultWeightProportion> tempList = BeanCopierUtils.copy(sources, DefaultWeightProportion.class);
+        List<WeightProportion> rtnList = new ArrayList<>();
+        // 先求出这批数据的总权重，这种情况下的数据只支持整形
+        final int totalWeight = tempList.stream()
+                .mapToInt(obj -> obj.getWeight().intValue())
+                .sum();
+        int randomNum;
+        // 将所有的数据都随机出来，总权重即是总次数
+        for (int i = totalWeight; i > 0; i--) {
+            // 先随机出一个数值
+            randomNum = ThreadLocalRandom.current().nextInt(i);
+            for (WeightProportion source : tempList) {
+                if ((randomNum -= source.getWeight()) < 0) {
+                    // 每中奖一次自己的权重就减少1次
+                    source.changeOriginWeight(source.getWeight() - 1);
+                    rtnList.add(source);
+                    break;
+                }
+            }
+        }
+        return rtnList;
     }
 
     public static void main(String[] args) {

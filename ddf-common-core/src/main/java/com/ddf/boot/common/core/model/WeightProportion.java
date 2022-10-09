@@ -23,5 +23,12 @@ public interface WeightProportion {
      */
     Double getWeight();
 
+    /**
+     * 预留的改变原对象权重的方法
+     *
+     * @param newWeight
+     */
+    default void changeOriginWeight(Double newWeight) {
 
+    }
 }

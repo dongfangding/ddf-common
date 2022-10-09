@@ -46,7 +46,7 @@ public class EmqController {
      * @return
      */
     @GetMapping("getConnectionInfo")
-    public ConnectionInfoResponse getConnectionInfo(@RequestBody ConnectionInfoRequest request) {
+    public ConnectionInfoResponse getConnectionInfo(ConnectionInfoRequest request) {
         final String protocol = request.getProtocol();
         final MQTTProtocolEnum protocolEnum = MQTTProtocolEnum.resolve(protocol);
         if (Objects.isNull(protocolEnum)) {

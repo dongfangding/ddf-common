@@ -24,4 +24,14 @@ public class DefaultWeightProportion implements WeightProportion {
     public Double getWeight() {
         return weight;
     }
+
+    /**
+     * 预留的改变原对象权重的方法
+     *
+     * @param newWeight
+     */
+    @Override
+    public void changeOriginWeight(Double newWeight) {
+        this.weight = newWeight;
+    }
 }
