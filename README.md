@@ -44,4 +44,5 @@ TODO
 | ddf-common-zookeeper        | 基于zookeeper封装的一套基于服务上下线节点的自动化配置监听和回调 |
 
 ## ddf-common-core
+核心功能包模块，具体介绍[移步到具体模块](https://github.com/dongfangding/ddf-common/tree/dev/ddf-common-core)
 
