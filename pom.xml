@@ -445,6 +445,8 @@
         <module>ddf-common-log4j</module>
         <module>ddf-common-authentication</module>
         <module>ddf-common-canal</module>
+        <module>ddf-common-api</module>
+        <module>ddf-common-swagger</module>
     </modules>
 
     <build>

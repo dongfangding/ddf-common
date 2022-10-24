@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.config;
+package com.ddf.boot.common.swagger.config;
 
 import java.util.ArrayList;
 import java.util.List;
