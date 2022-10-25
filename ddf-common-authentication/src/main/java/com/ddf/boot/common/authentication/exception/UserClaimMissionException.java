@@ -1,8 +1,8 @@
 package com.ddf.boot.common.authentication.exception;
 
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseErrorCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseException;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BaseException;
 
 /**
  * 用户信息丢失异常

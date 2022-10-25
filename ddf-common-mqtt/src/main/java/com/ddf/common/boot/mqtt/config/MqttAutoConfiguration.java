@@ -1,6 +1,6 @@
 package com.ddf.common.boot.mqtt.config;
 
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;

@@ -1,7 +1,7 @@
 package com.ddf.boot.common.mq.helper;
 
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.mq.definition.MqMessageWrapper;
 import com.ddf.boot.common.mq.interfaces.MqAuditorAware;
 import java.nio.charset.StandardCharsets;

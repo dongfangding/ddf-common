@@ -1,6 +1,6 @@
 package com.ddf.boot.common.security.config;
 
-import com.ddf.boot.common.core.exception200.AccessDeniedException;
+import com.ddf.boot.common.api.exception.AccessDeniedException;
 import com.ddf.boot.common.jwt.model.UserClaim;
 import org.springframework.security.core.context.SecurityContextHolder;
 

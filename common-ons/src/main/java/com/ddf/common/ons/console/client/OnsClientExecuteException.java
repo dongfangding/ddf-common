@@ -1,9 +1,9 @@
 package com.ddf.common.ons.console.client;
 
 import com.aliyun.tea.TeaException;
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseErrorCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseException;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BaseException;
 import com.ddf.common.ons.console.model.OnsBizErrorCodeEnum;
 import java.util.Objects;
 

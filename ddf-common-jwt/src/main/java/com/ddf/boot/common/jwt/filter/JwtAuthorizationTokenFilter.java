@@ -1,10 +1,10 @@
 package com.ddf.boot.common.jwt.filter;
 
 import cn.hutool.core.collection.CollUtil;
-import com.ddf.boot.common.core.exception200.AccessDeniedException;
+import com.ddf.boot.common.api.exception.AccessDeniedException;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.jwt.config.JwtProperties;
 import com.ddf.boot.common.jwt.consts.JwtConstant;

@@ -1,11 +1,11 @@
 package com.ddf.boot.common.authentication.interfaces.impl;
 
+import com.ddf.boot.common.api.exception.UnauthorizedException;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
 import com.ddf.boot.common.authentication.model.AuthenticateCheckResult;
 import com.ddf.boot.common.authentication.model.UserClaim;
-import com.ddf.boot.common.core.exception200.UnauthorizedException;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;

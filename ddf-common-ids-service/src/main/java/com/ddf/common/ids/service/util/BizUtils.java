@@ -1,6 +1,6 @@
 package com.ddf.common.ids.service.util;
 
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.common.ids.service.enumration.BizCode;
 import com.google.common.collect.Lists;
 import java.util.List;

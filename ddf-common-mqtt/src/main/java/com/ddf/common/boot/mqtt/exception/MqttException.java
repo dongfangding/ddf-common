@@ -1,8 +1,8 @@
 package com.ddf.common.boot.mqtt.exception;
 
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseErrorCallbackCode;
-import com.ddf.boot.common.core.exception200.BaseException;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BaseException;
 
 /**
  * <p>description</p >

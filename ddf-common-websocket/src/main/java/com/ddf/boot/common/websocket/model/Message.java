@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.model;
 
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;

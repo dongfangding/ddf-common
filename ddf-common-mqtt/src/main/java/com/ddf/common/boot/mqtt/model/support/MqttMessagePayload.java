@@ -1,6 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support;
 
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import com.ddf.common.boot.mqtt.model.support.body.TextMessageBody;

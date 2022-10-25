@@ -1,7 +1,7 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.core.exception200.BusinessException;
-import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
@@ -89,7 +89,7 @@ public class MailUtil {
         } catch (Exception e) {
             log.error("邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}", Arrays.toString(sendTo),
                     Arrays.toString(cc), subject, content);
-            throw new BusinessException(GlobalCallbackCode.MAIL_SEND_FAILURE);
+            throw new BusinessException(BaseErrorCallbackCode.MAIL_SEND_FAILURE);
         }
         mailSender.send(mimeMessage);
     }

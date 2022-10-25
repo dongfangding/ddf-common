@@ -1,6 +1,6 @@
 package com.ddf.common.ons.console.model;
 
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;

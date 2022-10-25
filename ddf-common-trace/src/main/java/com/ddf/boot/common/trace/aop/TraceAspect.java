@@ -1,7 +1,7 @@
 package com.ddf.boot.common.trace.aop;
 
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.trace.annotation.DfTrace;
 import com.ddf.boot.common.trace.context.QlTraceContext;
 import com.ddf.boot.common.trace.context.TraceProcess;

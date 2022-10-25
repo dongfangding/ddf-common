@@ -9,7 +9,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.core.util.ResourceUrlUtils;
 import com.ddf.boot.common.ext.oss.config.AliOssPolicyDTO;
 import com.ddf.boot.common.ext.oss.config.BucketProperty;

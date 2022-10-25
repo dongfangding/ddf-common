@@ -1,8 +1,8 @@
 package com.ddf.boot.common.redis.helper;
 
 import cn.hutool.core.util.IdUtil;
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.response.HashIncrementCheckResponse;

@@ -1,6 +1,6 @@
 package com.ddf.common.ids.service.service.impl.snowflake;
 
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.common.ids.service.config.properties.IdsProperties;
 import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
 import com.ddf.common.ids.service.model.common.Result;

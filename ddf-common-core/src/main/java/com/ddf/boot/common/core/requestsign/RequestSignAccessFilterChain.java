@@ -1,10 +1,10 @@
 package com.ddf.boot.common.core.requestsign;
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.request.BaseSign;
 import com.ddf.boot.common.core.config.GlobalProperties;
-import com.ddf.boot.common.core.exception200.BusinessException;
-import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.ddf.boot.common.core.logaccess.AccessFilterChain;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.SignatureUtils;
@@ -84,31 +84,31 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
             timestamp = baseSign.getNonceTimestamp();
         } else {
             if (!paramMap.containsKey(BaseSign.SELF_SIGNATURE_FIELD)) {
-                throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
+                throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
             }
             sign = (String) paramMap.get(BaseSign.SELF_SIGNATURE_FIELD);
             data = paramMap;
         }
         if (StrUtil.isBlank(sign)) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
+            throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
         String keySecret = globalProperties.getSignSecret();
         boolean result;
         if (requestSign.nonce()) {
             if (Objects.isNull(timestamp) && !paramMap.containsKey(BaseSign.SELF_TIMESTAMP_FIELD)) {
-                throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
+                throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
             if (Objects.isNull(timestamp)) {
                 timestamp = Long.parseLong((String) paramMap.get(BaseSign.SELF_TIMESTAMP_FIELD));
             }
             // 时间戳参数超过一定间隔，视作重放
             if (timestamp < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds())) {
-                throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
+                throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
         }
         result = SignatureUtils.verifySelfSignature(data, sign, keySecret);
         if (!result) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_ERROR);
+            throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
         return result;
     }

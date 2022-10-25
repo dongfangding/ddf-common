@@ -1,7 +1,7 @@
 package com.ddf.boot.netty.broker.message;
 
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;

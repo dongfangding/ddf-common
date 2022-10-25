@@ -10,7 +10,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.ext.constants.ExceptionCode;
 import com.ddf.boot.common.ext.sms.aliyun.config.AliYunSmsProperties;
 import com.ddf.boot.common.ext.sms.aliyun.domain.AliYunSmsActionEnum;

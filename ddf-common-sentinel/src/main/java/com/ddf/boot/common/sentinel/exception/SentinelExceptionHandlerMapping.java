@@ -1,9 +1,10 @@
 package com.ddf.boot.common.sentinel.exception;
 
+import com.ddf.boot.common.api.model.response.ResponseData;
 import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
-import com.ddf.boot.common.core.response.ResponseData;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * sentinel流控异常处理类$

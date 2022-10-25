@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.controllerwrapper;
 
-import com.ddf.boot.common.core.response.ResponseData;
+import com.ddf.boot.common.api.model.response.ResponseData;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import org.springframework.core.MethodParameter;

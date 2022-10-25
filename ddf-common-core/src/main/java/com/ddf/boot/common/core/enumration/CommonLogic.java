@@ -1,7 +1,7 @@
 package com.ddf.boot.common.core.enumration;
 
 
-import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.Arrays;
 import java.util.Map;
@@ -49,7 +49,7 @@ public enum CommonLogic {
 
     public static CommonLogic getByLogic(Integer logic) {
         final CommonLogic contentLibraryStatus = valueMappings.get(logic);
-        PreconditionUtil.checkArgument(contentLibraryStatus != null, GlobalCallbackCode.ENUM_CODE_NOT_MAPPING);
+        PreconditionUtil.checkArgument(contentLibraryStatus != null, BaseErrorCallbackCode.ENUM_CODE_NOT_MAPPING);
         return contentLibraryStatus;
     }
 }

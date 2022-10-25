@@ -2,8 +2,8 @@ package com.ddf.boot.common.mq.Initialize;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadFactoryBuilder;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.mq.config.MqMessageProperties;
 import com.ddf.boot.common.mq.definition.QueueBuilder;

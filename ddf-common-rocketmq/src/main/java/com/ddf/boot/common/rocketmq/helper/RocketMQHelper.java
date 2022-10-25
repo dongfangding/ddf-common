@@ -1,7 +1,7 @@
 package com.ddf.boot.common.rocketmq.helper;
 
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.dto.MessageRequest;
 import com.ddf.boot.common.rocketmq.dto.RocketMQDestination;
 import java.util.Objects;

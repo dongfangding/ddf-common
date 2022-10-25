@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.exception200;
 
-import com.ddf.boot.common.core.response.ResponseData;
+import com.ddf.boot.common.api.model.response.ResponseData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;

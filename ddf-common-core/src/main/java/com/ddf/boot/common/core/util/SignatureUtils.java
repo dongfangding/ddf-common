@@ -2,9 +2,10 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.request.BaseSign;
-import com.ddf.boot.common.core.exception200.BusinessException;
-import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
+import com.ddf.boot.common.api.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class SignatureUtils {
         // 时间戳参数超过一定间隔，视作重放
         if (Objects.isNull(data.getNonceTimestamp())
                 || data.getNonceTimestamp() < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(nonceTimeoutSeconds)) {
-            throw new BusinessException(GlobalCallbackCode.SIGN_TIMESTAMP_ERROR);
+            throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
         return verifySelfSignature(data, keySecret, data.getSign());
     }

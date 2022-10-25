@@ -1,6 +1,6 @@
 package com.ddf.common.ids.service.exception;
 
-import com.ddf.boot.common.core.exception200.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import lombok.Getter;
 
 /**

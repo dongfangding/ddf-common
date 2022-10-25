@@ -1,8 +1,9 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.annotation.AnnotationUtil;
-import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.ServerErrorException;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.google.common.collect.Maps;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -141,7 +142,7 @@ public class AopUtil {
             }
             return paramsMap;
         } catch (Exception e) {
-            throw new ServerErrorException(GlobalCallbackCode.SERIALIZE_PARAM_ERROR);
+            throw new ServerErrorException(BaseErrorCallbackCode.SERIALIZE_PARAM_ERROR);
         }
     }
 

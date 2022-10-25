@@ -1,15 +1,15 @@
 package com.ddf.boot.common.authentication.util;
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.api.exception.UnauthorizedException;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.RedisTemplateSupport;
 import com.ddf.boot.common.authentication.model.AuthenticateCheckResult;
 import com.ddf.boot.common.authentication.model.AuthenticateToken;
 import com.ddf.boot.common.authentication.model.UserClaim;
-import com.ddf.boot.common.core.exception200.UnauthorizedException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import java.util.Objects;
