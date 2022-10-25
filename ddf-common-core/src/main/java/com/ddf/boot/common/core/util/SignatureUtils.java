@@ -2,9 +2,9 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
+import com.ddf.boot.common.api.model.request.BaseSign;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
-import com.ddf.boot.common.core.model.request.BaseSign;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;

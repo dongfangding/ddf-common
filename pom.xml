@@ -31,7 +31,7 @@
         <hutool.version>5.7.16</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.14</dubbo.version>
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.24</lombok.version>
         <mysql.version>8.0.16</mysql.version>
                 <guava.version>30.0-jre</guava.version>
         <!--<guava.version>20.0</guava.version>-->
@@ -53,7 +53,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <distributionManagement>
         <repository>
@@ -186,7 +186,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -413,15 +412,18 @@
     </dependencyManagement>
 
     <modules>
+        <module>ddf-common-api</module>
         <module>ddf-common-core</module>
+        <module>ddf-common-swagger</module>
+        <module>ddf-common-authentication</module>
+        <module>ddf-common-ids</module>
+        <module>ddf-common-ids-service</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
         <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
         <module>ddf-common-mybatis-plus</module>
-        <module>ddf-common-model</module>
         <module>ddf-common-distributed-lock</module>
-        <module>ddf-common-ids</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
         <module>ddf-common-zookeeper</module>
@@ -435,7 +437,6 @@
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
         <module>ddf-common-es</module>
-        <module>ddf-commom-ids-service</module>
         <module>ddf-common-trace</module>
         <module>common-ons</module>
         <module>ddf-common-nacos</module>
@@ -443,10 +444,7 @@
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
         <module>ddf-common-log4j</module>
-        <module>ddf-common-authentication</module>
         <module>ddf-common-canal</module>
-        <module>ddf-common-api</module>
-        <module>ddf-common-swagger</module>
     </modules>
 
     <build>

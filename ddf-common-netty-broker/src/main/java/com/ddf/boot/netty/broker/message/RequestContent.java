@@ -4,7 +4,6 @@ import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModel;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Data
 @NoArgsConstructor
-@ApiModel("报文类")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
 @Accessors(chain = true)

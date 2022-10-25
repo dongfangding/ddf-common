@@ -1,8 +1,8 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.util.RandomUtil;
-import com.ddf.boot.common.core.model.DefaultWeightProportion;
-import com.ddf.boot.common.core.model.WeightProportion;
+import com.ddf.boot.common.api.model.DefaultWeightProportion;
+import com.ddf.boot.common.api.model.WeightProportion;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import java.time.LocalDateTime;

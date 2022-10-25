@@ -6,8 +6,6 @@ import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -29,7 +27,6 @@ import org.springframework.web.socket.WebSocketMessage;
  */
 @Data
 @NoArgsConstructor
-@ApiModel("报文类")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
 public class Message<T> {
@@ -45,31 +42,44 @@ public class Message<T> {
 
     private transient static final String SEND_MODEL_SERVER = "SERVER";
 
-    @ApiModelProperty(value = "标识请求还是响应", allowableValues = "REQUEST, RESPONSE")
+    /**
+     * 标识请求还是响应,REQUEST, RESPONSE
+     */
     private Type type;
 
-    @ApiModelProperty("请求唯一标识符")
+    /**
+     * 请求唯一标识符
+     */
     private String requestId;
 
-    @ApiModelProperty(value = "指令", allowableValues = "ECHO, RESTART, UPGRADE, SWITCH_IP, GPS, QRCODE_CREATE, UPAY_MESSAGE")
+    /**
+     * 指令
+     */
     private String cmd;
 
-    @ApiModelProperty("响应码")
+    /**
+     * 响应码
+     */
     private Integer code = 0;
 
-    @ApiModelProperty(value = "扩展字段")
+    /**
+     * 扩展字段
+     */
     private String extra;
 
-    @ApiModelProperty("业务主键的唯一id")
+    /**
+     * 业务主键的唯一id
+     */
     private String logicPrimaryKey;
 
-    @ApiModelProperty("客户端应用通道")
+    /**
+     * 客户端应用通道
+     */
     private String clientChannel;
 
     /**
-     * 发送方标识
+     * 发送方标识,server, client
      */
-    @ApiModelProperty(value = "发送放标识", allowableValues = "server, client")
     private String sendModel;
 
     /**
@@ -83,7 +93,9 @@ public class Message<T> {
     @JsonIgnore
     private transient Map<String, String> extraMap;
 
-    @ApiModelProperty(value = "主体数据内容")
+    /**
+     * 主体数据内容
+     */
     private T body;
 
     public Message(Type type, String requestId, String sendModel, String cmd, T body, String clientChannel) {
@@ -197,7 +209,7 @@ public class Message<T> {
             return null;
         }
         String body = JsonUtil.asString(message.getBody());
-        String sign = SecureUtil.signWithHMac(body, message.getCmd());
+        String sign = com.ddf.boot.common.core.util.SecureUtil.signWithHMac(body, message.getCmd());
         message.addExtra("sign", sign);
         return message;
     }

@@ -1,24 +1,18 @@
 package com.ddf.boot.common.core.util;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ddf.boot.common.core.model.Order;
-import com.ddf.boot.common.core.model.PageRequest;
-import com.ddf.boot.common.core.model.PageResult;
+import com.ddf.boot.common.api.model.PageRequest;
+import com.ddf.boot.common.api.model.PageResult;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 
 /**
@@ -168,37 +162,8 @@ public class PageUtil {
             pageNum = pageRequest.getPageNum();
             pageSize = pageRequest.getPageSize();
         }
-        Page<T> objectPage = new Page<>(pageNum, pageSize);
-        if (CollUtil.isNotEmpty(pageRequest.getOrders())) {
-            objectPage.addOrder(toMybatisOrder(pageRequest));
-        }
-        return objectPage;
+        return new Page<>(pageNum, pageSize);
     }
-
-
-    /**
-     * 构建mybatis排序对象 FIXME 经测试，排序方式，会被最后一条记录给覆盖。所以并没有如现在数据格式设计的如此，可以为每个字段都定义排序类型，所以现在写这么复杂并没有什么卵用
-     *
-     * @return
-     */
-    private static List<OrderItem> toMybatisOrder(PageRequest pageRequest) {
-        pageRequest.checkArgument();
-        if (CollUtil.isEmpty(pageRequest.getOrders())) {
-            return Collections.emptyList();
-        }
-        List<OrderItem> orderItemList = new ArrayList<>();
-        for (Order order : pageRequest.getOrders()) {
-            if (Sort.Direction.ASC.equals(order.getDirection())) {
-                orderItemList.addAll(OrderItem.ascs(order.getColumn()));
-            } else {
-                orderItemList.addAll(OrderItem.descs(order.getColumn()));
-            }
-        }
-        return orderItemList;
-    }
-
-
-
 
     /**
      * 将mybatis-plus的分页对象转换为当前对象，主要是为了统一多个不同查询层的分页对象

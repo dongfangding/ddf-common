@@ -1,11 +1,11 @@
 package com.ddf.boot.common.core.requestsign;
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.api.model.request.BaseSign;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.exception200.BusinessException;
 import com.ddf.boot.common.core.exception200.GlobalCallbackCode;
 import com.ddf.boot.common.core.logaccess.AccessFilterChain;
-import com.ddf.boot.common.core.model.request.BaseSign;
 import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.core.util.SignatureUtils;
 import java.util.Map;
