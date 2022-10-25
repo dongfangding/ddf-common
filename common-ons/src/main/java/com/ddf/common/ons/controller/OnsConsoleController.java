@@ -4,7 +4,7 @@ import com.aliyun.ons20190214.models.OnsGroupCreateResponse;
 import com.aliyun.ons20190214.models.OnsGroupDeleteResponse;
 import com.aliyun.ons20190214.models.OnsTopicCreateResponse;
 import com.aliyun.ons20190214.models.OnsTopicDeleteResponse;
-import com.ddf.boot.common.api.model.PageResult;
+import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.common.ons.console.client.OnsClientOperations;
 import com.ddf.common.ons.console.client.RetryOperations;
 import com.ddf.common.ons.console.model.ConsoleOnsDLQMessageGetByIdRequest;

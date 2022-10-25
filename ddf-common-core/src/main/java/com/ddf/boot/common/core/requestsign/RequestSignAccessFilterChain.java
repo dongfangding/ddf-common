@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.requestsign;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
-import com.ddf.boot.common.api.model.request.BaseSign;
+import com.ddf.boot.common.api.model.common.request.BaseSign;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.logaccess.AccessFilterChain;
 import com.ddf.boot.common.core.util.AopUtil;

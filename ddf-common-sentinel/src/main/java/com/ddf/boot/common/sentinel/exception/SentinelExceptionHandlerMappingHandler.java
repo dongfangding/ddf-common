@@ -1,7 +1,7 @@
 package com.ddf.boot.common.sentinel.exception;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.ddf.boot.common.api.model.response.ResponseData;
+import com.ddf.boot.common.api.model.common.response.response.ResponseData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

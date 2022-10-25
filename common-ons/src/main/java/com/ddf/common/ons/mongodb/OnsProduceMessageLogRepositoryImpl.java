@@ -1,6 +1,6 @@
 package com.ddf.common.ons.mongodb;
 
-import com.ddf.boot.common.api.model.PageResult;
+import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.core.util.PageUtil;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;

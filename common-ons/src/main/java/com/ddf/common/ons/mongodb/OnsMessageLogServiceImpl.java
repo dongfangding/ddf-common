@@ -1,6 +1,6 @@
 package com.ddf.common.ons.mongodb;
 
-import com.ddf.boot.common.api.model.PageResult;
+import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.common.ons.producer.OnsMessage;
 import com.ddf.common.ons.producer.OnsProducer;

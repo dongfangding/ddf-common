@@ -7,14 +7,14 @@ import com.anji.captcha.service.CaptchaCacheService;
 import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.service.impl.CaptchaServiceFactory;
 import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.model.captcha.CaptchaType;
+import com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest;
+import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
+import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
-import com.ddf.common.captcha.constants.CaptchaType;
-import com.ddf.common.captcha.model.request.CaptchaCheckRequest;
-import com.ddf.common.captcha.model.request.CaptchaRequest;
-import com.ddf.common.captcha.model.response.CaptchaResult;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
@@ -169,7 +169,11 @@ public class CaptchaHelper {
             final CaptchaVO vo = new CaptchaVO();
             vo.setToken(request.getUuid());
             vo.setPointJson(request.getVerifyCode());
-            vo.setCaptchaType(captchaType.transferAnJi().getCodeValue());
+            if (CaptchaType.CLICK_WORDS.equals(captchaType)) {
+                vo.setCaptchaType(CaptchaTypeEnum.CLICKWORD.getCodeValue());
+            } else {
+                vo.setCaptchaType(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue());
+            }
             vo.setCaptchaVerification(request.getCaptchaVerification());
             final ResponseModel checkResult;
             if (request.isVerification()) {

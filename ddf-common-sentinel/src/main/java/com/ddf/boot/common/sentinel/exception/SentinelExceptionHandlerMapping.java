@@ -1,6 +1,6 @@
 package com.ddf.boot.common.sentinel.exception;
 
-import com.ddf.boot.common.api.model.response.ResponseData;
+import com.ddf.boot.common.api.model.common.response.response.ResponseData;
 import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
 import javax.servlet.http.HttpServletRequest;

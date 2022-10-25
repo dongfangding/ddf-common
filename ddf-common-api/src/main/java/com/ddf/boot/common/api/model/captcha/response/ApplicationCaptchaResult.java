@@ -1,4 +1,5 @@
-package com.ddf.common.captcha.model.response;
+package com.ddf.boot.common.api.model.captcha.response;
+
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;

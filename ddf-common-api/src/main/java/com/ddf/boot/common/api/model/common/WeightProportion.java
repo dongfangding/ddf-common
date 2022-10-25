@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model;
+package com.ddf.boot.common.api.model.common;
 
 /**
  * <p>基于权重的概率判定属性类接口定义</p >

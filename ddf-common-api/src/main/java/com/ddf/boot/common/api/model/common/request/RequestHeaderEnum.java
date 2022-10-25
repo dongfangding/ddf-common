@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model.request;
+package com.ddf.boot.common.api.model.common.request;
 
 /**
  * <p>请求头通用参数枚举</p >

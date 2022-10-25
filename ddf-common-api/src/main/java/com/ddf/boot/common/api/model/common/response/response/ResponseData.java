@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model.response;
+package com.ddf.boot.common.api.model.common.response.response;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;

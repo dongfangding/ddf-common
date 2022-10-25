@@ -1,6 +1,6 @@
-package com.ddf.common.captcha.model.request;
+package com.ddf.boot.common.api.model.captcha.request;
 
-import com.ddf.common.captcha.constants.CaptchaType;
+import com.ddf.boot.common.api.model.captcha.CaptchaType;
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

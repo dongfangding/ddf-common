@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.api.model.RequestContext;
+import com.ddf.boot.common.api.model.common.RequestContext;
 
 /**
  * <p>request context 上下文 工具类</p >

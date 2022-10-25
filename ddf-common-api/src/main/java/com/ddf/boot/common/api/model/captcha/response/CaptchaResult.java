@@ -1,4 +1,4 @@
-package com.ddf.common.captcha.model.response;
+package com.ddf.boot.common.api.model.captcha.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;

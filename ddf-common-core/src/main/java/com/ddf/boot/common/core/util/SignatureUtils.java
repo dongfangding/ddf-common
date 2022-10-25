@@ -4,7 +4,7 @@ import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
-import com.ddf.boot.common.api.model.request.BaseSign;
+import com.ddf.boot.common.api.model.common.request.BaseSign;
 import com.ddf.boot.common.api.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

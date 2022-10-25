@@ -1,7 +1,7 @@
 package com.ddf.boot.mongo.helper;
 
-import com.ddf.boot.common.api.model.PageRequest;
-import com.ddf.boot.common.api.model.PageResult;
+import com.ddf.boot.common.api.model.common.PageRequest;
+import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.boot.common.core.util.PageUtil;
 import java.util.Collections;

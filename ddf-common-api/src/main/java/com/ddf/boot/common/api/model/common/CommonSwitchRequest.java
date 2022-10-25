@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model;
+package com.ddf.boot.common.api.model.common;
 
 import javax.validation.constraints.NotNull;
 import lombok.Data;

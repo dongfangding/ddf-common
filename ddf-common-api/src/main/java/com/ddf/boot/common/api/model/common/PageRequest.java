@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model;
+package com.ddf.boot.common.api.model.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

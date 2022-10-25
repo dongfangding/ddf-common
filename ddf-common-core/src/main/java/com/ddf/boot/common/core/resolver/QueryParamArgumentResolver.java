@@ -2,7 +2,7 @@ package com.ddf.boot.common.core.resolver;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.ddf.boot.common.api.model.QueryParam;
+import com.ddf.boot.common.api.model.common.QueryParam;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.ContextKey;
 import com.fasterxml.jackson.core.type.TypeReference;

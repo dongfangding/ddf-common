@@ -19,7 +19,7 @@ import com.aliyun.ons20190214.models.OnsMessagePushRequest;
 import com.aliyun.ons20190214.models.OnsTopicCreateResponse;
 import com.aliyun.ons20190214.models.OnsTopicDeleteResponse;
 import com.aliyun.ons20190214.models.OnsTopicListResponse;
-import com.ddf.boot.common.api.model.PageResult;
+import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.PreconditionUtil;

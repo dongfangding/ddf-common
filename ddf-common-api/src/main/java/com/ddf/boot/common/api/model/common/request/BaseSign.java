@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model.request;
+package com.ddf.boot.common.api.model.common.request;
 
 import java.io.Serializable;
 
