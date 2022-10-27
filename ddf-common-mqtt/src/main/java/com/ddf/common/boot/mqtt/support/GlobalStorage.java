@@ -55,4 +55,9 @@ public class GlobalStorage {
      */
     public static final String CHAT_ROOM_MESSAGE_TOPIC = "CHAT_ROOM";
 
+    /**
+     * emq broker支持通配符， 这里定义通配符的字符
+     */
+    public static final String WILDCARD_CHARACTER = "#";
+
 }

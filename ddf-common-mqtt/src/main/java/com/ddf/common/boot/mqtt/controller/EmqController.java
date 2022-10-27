@@ -4,9 +4,11 @@ import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.extra.EmqClientAuthenticate;
 import com.ddf.common.boot.mqtt.model.request.emq.ConnectionInfoRequest;
+import com.ddf.common.boot.mqtt.model.request.emq.EmqAclRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.EmqAuthenticateRequest;
 import com.ddf.common.boot.mqtt.model.response.ConnectionInfoResponse;
 import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse;
+import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>提供emq相关的开放接口功能</p >
- * 该接口必须部署在开放服务中， 这里只是实例代码，实际项目中使用要把代码放出去到开放服务中，而不是直接使用该模块中的控制器代码
+ * 该接口必须部署在开放服务中， 这里只是实例代码，实际项目中使用要把代码放出去到开放服务中，而不是直接使用该模块中的控制器代码。
  *
  * @author Snowball
  * @version 1.0
@@ -110,7 +112,7 @@ public class EmqController {
      *
      * @param request
      */
-    @PostMapping("superuser")
+    @PostMapping("acl/superuser")
     public void superuser(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
         final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
         final String reqClientId = request.getClientId();
@@ -127,6 +129,13 @@ public class EmqController {
      * @param request
      */
     @PostMapping("acl")
-    public void acl(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
+    public void acl(@RequestBody EmqAclRequest request, HttpServletResponse response) {
+        if (request.getTopic().contains(GlobalStorage.WILDCARD_CHARACTER)) {
+            EmqHttpResponseUtil.error(response, "普通用户ACL未认证通过");
+        }
+        // 普通用户（一般为客户端）不允许直接使用调用底层的连接进行发布，必须请求服务端接口，服务端接口使用超级用户进行发布数据
+        if (Objects.equals("2", request.getAction())) {
+            EmqHttpResponseUtil.error(response, "普通用户ACL未认证通过");
+        }
     }
 }
