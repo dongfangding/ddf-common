@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * <p>群聊topic格式</p >
+ * <p>群聊推送通知topic格式</p >
+ *
+ * 与聊天的区别是， 聊天是将消息追加到聊天区域中， 而通知类的则是一些提醒，当然最终作用还是看使用方的定义
  *
  * @author Snowball
  * @version 1.0
@@ -18,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImChatRoomMqttTopic extends AbstractGroupMqttTopic {
+public class NoticeChatRoomMqttTopic extends Notice2PointMqttTopic {
 
     private static final long serialVersionUID = 5668777228627540185L;
 
@@ -27,14 +29,13 @@ public class ImChatRoomMqttTopic extends AbstractGroupMqttTopic {
      */
     private String roomId;
 
-    @Override
     public String getIdentityId() {
         return roomId;
     }
 
     @Override
     public String getBizTopicPrefix() {
-        return GlobalStorage.CHAT_ROOM_MESSAGE_TOPIC;
+        return GlobalStorage.PRIVATE_MESSAGE_TOPIC + GlobalStorage.NOTICE_TOPIC;
     }
 
     /**
@@ -46,7 +47,7 @@ public class ImChatRoomMqttTopic extends AbstractGroupMqttTopic {
     @Override
     public MqttTopicDefine convertTopicObj(String fullTopic) {
         final String topicPrefix = getTopicPrefix();
-        final ImChatRoomMqttTopic topic = new ImChatRoomMqttTopic();
+        final NoticeChatRoomMqttTopic topic = new NoticeChatRoomMqttTopic();
         if (fullTopic.startsWith(topicPrefix)) {
             final String identityId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
             topic.setRoomId(identityId);

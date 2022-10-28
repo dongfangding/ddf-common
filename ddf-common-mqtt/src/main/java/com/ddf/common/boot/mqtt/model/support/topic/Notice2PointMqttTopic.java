@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * <p>对点推送topic格式</p >
+ * <p>对点推送通知类topic格式</p >
+ *
+ * 与聊天的区别是， 聊天是将消息追加到聊天区域中， 而通知类的则是一些提醒，当然最终作用还是看使用方的定义
  *
  * @author Snowball
  * @version 1.0
@@ -18,36 +20,21 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Push2PointMqttTopic implements MqttTopicDefine {
+public class Notice2PointMqttTopic extends AbstractPoint2PointTopic {
 
     /**
      * 身份id
      */
     private String identityId;
 
-    /**
-     * topic前缀
-     *
-     * @return
-     */
-    public static String getTopicPrefix() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.SYSTEM_CLIENT_ID_PREFIX,
-                GlobalStorage.NOTICE_TOPIC, GlobalStorage.PRIVATE_MESSAGE_TOPIC);
-    }
-
     @Override
-    public String identityId() {
+    public String getIdentityId() {
         return identityId;
     }
 
-    /**
-     * 获取完整的topic
-     *
-     * @return
-     */
     @Override
-    public String getFullTopic() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, getTopicPrefix(), identityId);
+    public String getBizTopicPrefix() {
+        return GlobalStorage.PRIVATE_MESSAGE_TOPIC + GlobalStorage.NOTICE_TOPIC;
     }
 
     /**
@@ -57,13 +44,13 @@ public class Push2PointMqttTopic implements MqttTopicDefine {
      * @return
      */
     @Override
-    public <T> T convertTopicObj(String fullTopic) {
+    public MqttTopicDefine convertTopicObj(String fullTopic) {
         final String topicPrefix = getTopicPrefix();
+        final Notice2PointMqttTopic topic = new Notice2PointMqttTopic();
         if (fullTopic.startsWith(topicPrefix)) {
             final String identityId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
-            final Push2PointMqttTopic topic = new Push2PointMqttTopic();
             topic.setIdentityId(identityId);
         }
-        return null;
+        return topic;
     }
 }

@@ -24,7 +24,7 @@ public interface MqttTopicDefine extends Serializable {
      *
      * @return
      */
-    String identityId();
+    String getIdentityId();
 
     /**
      * 获取完整的topic
@@ -37,9 +37,8 @@ public interface MqttTopicDefine extends Serializable {
      * 按照规则通过完整的topic路径反解析成对应的topic对象
      *
      * @param fullTopic
-     * @param <T>
      * @return
      */
-    <T> T convertTopicObj(String fullTopic);
+    MqttTopicDefine convertTopicObj(String fullTopic);
 
 }

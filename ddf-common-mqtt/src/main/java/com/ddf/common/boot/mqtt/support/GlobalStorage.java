@@ -20,12 +20,6 @@ public class GlobalStorage {
     public static EmqConnectionProperties.ClientConfig clientConfig;
 
     /**
-     * 系统clientId前缀
-     * 这个值会在mqtt client 初始化的时候改变
-     */
-    public static String SYSTEM_CLIENT_ID_PREFIX = "DEFAULT_CLIENT_ID";
-
-    /**
      * 系统当前使用的端口
      */
     public static int APPLICATION_PORT;
@@ -36,24 +30,46 @@ public class GlobalStorage {
     public static final String TOPIC_SEPARATOR = "/";
 
     /**
-     * 聊天类topic前缀
+     * 系统clientId前缀
+     * 这个值会在mqtt client 初始化的时候改变
      */
-    public static final String IM_TOPIC = "im";
+    public static String SYSTEM_CLIENT_ID_PREFIX = TOPIC_SEPARATOR + "DEFAULT_CLIENT_ID";
+
+    /**
+     * 获取系统clientId前缀，因为这个值可以配置，所以提供判断方法获取
+     *
+     * @return
+     */
+    public static String getSystemClientIdPrefix() {
+        return GlobalStorage.SYSTEM_CLIENT_ID_PREFIX.startsWith(GlobalStorage.TOPIC_SEPARATOR) ?
+                GlobalStorage.SYSTEM_CLIENT_ID_PREFIX :
+                GlobalStorage.TOPIC_SEPARATOR + GlobalStorage.SYSTEM_CLIENT_ID_PREFIX;
+    }
+
+    /**
+     * 点对点通用topic前缀
+     */
+    public static final String POINT_TO_POINT_TOPIC_PREFIX = TOPIC_SEPARATOR + "point";
+
+    /**
+     * 群组通用topic前缀
+     */
+    public static final String GROUP_TOPIC_PREFIX = TOPIC_SEPARATOR + "group";
 
     /**
      * 通知类topic前缀
      */
-    public static final String NOTICE_TOPIC = "notice";
+    public static final String NOTICE_TOPIC = TOPIC_SEPARATOR + "NOTICE";
 
     /**
      * 私聊类topic前缀
      */
-    public static final String PRIVATE_MESSAGE_TOPIC = "PRIVATE_MESSAGE";
+    public static final String PRIVATE_MESSAGE_TOPIC = TOPIC_SEPARATOR + "PRIVATE_MESSAGE";
 
     /**
      * 群聊类topic前缀
      */
-    public static final String CHAT_ROOM_MESSAGE_TOPIC = "CHAT_ROOM";
+    public static final String CHAT_ROOM_MESSAGE_TOPIC = TOPIC_SEPARATOR + "CHAT_ROOM";
 
     /**
      * emq broker支持通配符， 这里定义通配符的字符

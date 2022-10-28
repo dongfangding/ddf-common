@@ -1,7 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Im2PointMqttTopic implements MqttTopicDefine, Serializable {
+public class Im2PointMqttTopic extends AbstractPoint2PointTopic {
 
     private static final long serialVersionUID = 5668777228627540185L;
 
@@ -28,33 +27,14 @@ public class Im2PointMqttTopic implements MqttTopicDefine, Serializable {
      */
     private String identityId;
 
-    /**
-     * topic前缀
-     *
-     * @return
-     */
-    public static String getTopicPrefix() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR,
-                GlobalStorage.SYSTEM_CLIENT_ID_PREFIX.startsWith(GlobalStorage.TOPIC_SEPARATOR) ?
-                        GlobalStorage.SYSTEM_CLIENT_ID_PREFIX :
-                        GlobalStorage.TOPIC_SEPARATOR + GlobalStorage.SYSTEM_CLIENT_ID_PREFIX, GlobalStorage.IM_TOPIC,
-                GlobalStorage.PRIVATE_MESSAGE_TOPIC
-        );
-    }
-
     @Override
-    public String identityId() {
+    public String getIdentityId() {
         return identityId;
     }
 
-    /**
-     * 获取完整的topic
-     *
-     * @return
-     */
     @Override
-    public String getFullTopic() {
-        return String.join(GlobalStorage.TOPIC_SEPARATOR, getTopicPrefix(), identityId);
+    public String getBizTopicPrefix() {
+        return GlobalStorage.PRIVATE_MESSAGE_TOPIC;
     }
 
     /**
@@ -64,13 +44,13 @@ public class Im2PointMqttTopic implements MqttTopicDefine, Serializable {
      * @return
      */
     @Override
-    public <T> T convertTopicObj(String fullTopic) {
+    public MqttTopicDefine convertTopicObj(String fullTopic) {
         final String topicPrefix = getTopicPrefix();
+        final Im2PointMqttTopic topic = new Im2PointMqttTopic();
         if (fullTopic.startsWith(topicPrefix)) {
             final String identityId = StringUtils.remove(fullTopic, topicPrefix + GlobalStorage.TOPIC_SEPARATOR);
-            final Im2PointMqttTopic topic = new Im2PointMqttTopic();
             topic.setIdentityId(identityId);
         }
-        return null;
+        return topic;
     }
 }
