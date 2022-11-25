@@ -88,7 +88,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             mqttClient.connect(connOpts);
         } catch (MqttException e) {
             log.error("mqtt tcp 连接客户端失败， protocol = {}, url = {}", protocol, url, e);
-            throw new BusinessException(MqttCallbackCode.MQTT_CONFIG_CONNECTION_ERROR);
+            return mqttClient;
         }
 
         // 设置回调

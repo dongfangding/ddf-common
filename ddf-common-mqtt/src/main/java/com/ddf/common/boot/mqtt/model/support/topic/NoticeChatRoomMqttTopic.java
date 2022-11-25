@@ -2,7 +2,6 @@ package com.ddf.common.boot.mqtt.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @date 2022/03/19 12:30
  */
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +27,7 @@ public class NoticeChatRoomMqttTopic extends Notice2PointMqttTopic {
      */
     private String roomId;
 
+    @Override
     public String getIdentityId() {
         return roomId;
     }

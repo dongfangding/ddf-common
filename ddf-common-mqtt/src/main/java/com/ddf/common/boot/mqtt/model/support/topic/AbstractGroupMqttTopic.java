@@ -16,6 +16,7 @@ public abstract class AbstractGroupMqttTopic implements MqttTopicDefine {
      *
      * @return
      */
+    @Override
     public abstract String getIdentityId();
 
     /**
@@ -31,6 +32,7 @@ public abstract class AbstractGroupMqttTopic implements MqttTopicDefine {
      * @param fullTopic
      * @return
      */
+    @Override
     public abstract MqttTopicDefine convertTopicObj(String fullTopic);
 
     /**
