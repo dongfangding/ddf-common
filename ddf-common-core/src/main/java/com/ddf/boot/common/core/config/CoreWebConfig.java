@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.encode.BCryptPasswordEncoder;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
@@ -195,5 +196,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
         threadPoolScheduler.setPoolSize(Runtime.getRuntime().availableProcessors());
         threadPoolScheduler.setRemoveOnCancelPolicy(true);
         return threadPoolScheduler;
+    }
+
+    @Bean
+    @Primary
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
