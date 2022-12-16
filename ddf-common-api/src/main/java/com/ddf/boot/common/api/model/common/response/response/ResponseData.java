@@ -93,6 +93,18 @@ public class ResponseData<T> {
     }
 
     /**
+     * 返回空数据
+     *
+     * @return
+     */
+    public static ResponseData<Void> empty() {
+        return new ResponseData<>(
+                BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), null
+        );
+    }
+
+    /**
      * 失败返回消息方法
      *
      * @param code
