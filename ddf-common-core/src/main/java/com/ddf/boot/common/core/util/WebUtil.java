@@ -151,4 +151,15 @@ public class WebUtil {
             return "";
         }
     }
+
+    /**
+     * 获取header
+     *
+     * @param headerName
+     * @return
+     */
+    public static String getHeader(String headerName) {
+        HttpServletRequest request = getCurRequest();
+        return StrUtil.blankToDefault(request.getHeader(headerName), "");
+    }
 }
