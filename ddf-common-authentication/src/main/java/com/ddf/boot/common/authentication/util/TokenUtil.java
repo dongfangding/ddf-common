@@ -114,4 +114,17 @@ public class TokenUtil {
         PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException("已过期的凭据认证，请重新登录~"));
         return AuthenticateCheckResult.of(authenticateToken, userClaim);
     }
+
+
+    /**
+     * 刷新用户token和过期时间
+     *
+     * @param userId
+     * @param token
+     */
+    public static void refreshToken(String userId, String token) {
+        // token存入缓存
+        stringRedisTemplate.opsForValue().set(getTokenKey(userId), token,
+                AUTHENTICATION_PROPERTIES.getExpiredMinute(), TimeUnit.MINUTES);
+    }
 }
