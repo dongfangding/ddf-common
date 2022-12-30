@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,15 +172,15 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
      * @param request
      */
     public void resolveHeader(HttpServletRequest request) {
-        RequestHeader.builder()
+        UserContextUtil.setRequestHeaderContext(RequestHeader.builder()
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.valueOf(request.getHeader(RequestHeaderEnum.OS.getName())))
                 .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
-                .nonce(Long.parseLong(request.getHeader(RequestHeaderEnum.NONCE.getName())))
-                .version(Integer.parseInt(request.getHeader(RequestHeaderEnum.VERSION.getName())))
-                .longitude(new BigDecimal(request.getHeader(RequestHeaderEnum.LONGITUDE.getName())))
-                .latitude(new BigDecimal(request.getHeader(RequestHeaderEnum.LATITUDE.getName())))
-                .build();
+                .nonce(Long.parseLong(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
+                .version(Integer.parseInt(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION.getName()), "0")))
+                .longitude(new BigDecimal(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LONGITUDE.getName()), "0")))
+                .latitude(new BigDecimal(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LATITUDE.getName()), "0")))
+                .build());
     }
 
 
