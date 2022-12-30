@@ -1,7 +1,10 @@
 package com.ddf.boot.common.authentication.filter;
 
 import cn.hutool.core.collection.CollUtil;
+import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
+import com.ddf.boot.common.api.model.common.RequestHeader;
+import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.consts.AuthenticateConstant;
@@ -15,6 +18,7 @@ import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.google.common.collect.Lists;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +69,8 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
+        // 解析请求头
+        resolveHeader(request);
         if (SYSTEM_IGNORE_PATH.contains(path)) {
             return true;
         }
@@ -123,6 +129,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
             Exception ex) throws Exception {
         // 移除用户信息
         UserContextUtil.removeUserClaim();
+        UserContextUtil.removeRequestHeader();
         MDC.remove(AuthenticateConstant.MDC_USER_ID);
         MDC.remove(AuthenticateConstant.MDC_TRACE_ID);
     }
@@ -158,6 +165,23 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
                 .setStoreUserClaim(storeUser);
     }
 
+    /**
+     * 解析请求头
+     *
+     * @param request
+     */
+    public void resolveHeader(HttpServletRequest request) {
+        RequestHeader.builder()
+                .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
+                .os(OsEnum.valueOf(request.getHeader(RequestHeaderEnum.OS.getName())))
+                .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
+                .nonce(Long.parseLong(request.getHeader(RequestHeaderEnum.NONCE.getName())))
+                .version(Integer.parseInt(request.getHeader(RequestHeaderEnum.VERSION.getName())))
+                .longitude(new BigDecimal(request.getHeader(RequestHeaderEnum.LONGITUDE.getName())))
+                .latitude(new BigDecimal(request.getHeader(RequestHeaderEnum.LATITUDE.getName())))
+                .build();
+    }
+
 
     @Data
     @Accessors(chain = true)
@@ -177,7 +201,5 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
          * 根据解析对象接口实现返回最新的UserClaim对象信息
          */
         private UserClaim storeUserClaim;
-
-
     }
 }

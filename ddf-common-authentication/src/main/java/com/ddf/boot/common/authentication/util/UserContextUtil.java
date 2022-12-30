@@ -1,5 +1,6 @@
 package com.ddf.boot.common.authentication.util;
 
+import com.ddf.boot.common.api.model.common.RequestHeader;
 import com.ddf.boot.common.authentication.model.UserClaim;
 
 ;
@@ -14,6 +15,7 @@ import com.ddf.boot.common.authentication.model.UserClaim;
 public class UserContextUtil {
 
     private static final ThreadLocal<UserClaim> USER_CONTEXT = ThreadLocal.withInitial(UserClaim::new);
+    private static final ThreadLocal<RequestHeader> REQUEST_HEADER_CONTEXT = ThreadLocal.withInitial(RequestHeader::new);
 
     /**
      * 获取当前用户信息
@@ -60,5 +62,31 @@ public class UserContextUtil {
      */
     public static String getCredit() {
         return getUserClaim().getCredit();
+    }
+
+
+    /**
+     * 设置请求头
+     *
+     * @param requestHeader
+     */
+    public static void setRequestHeaderContext(RequestHeader requestHeader) {
+        REQUEST_HEADER_CONTEXT.set(requestHeader);
+    }
+
+    /**
+     * 获取请求头
+     *
+     * @return
+     */
+    public static RequestHeader getRequestHeader() {
+        return REQUEST_HEADER_CONTEXT.get();
+    }
+
+    /**
+     * 移除请求头上下文
+     */
+    public static void removeRequestHeader() {
+        REQUEST_HEADER_CONTEXT.remove();;
     }
 }
