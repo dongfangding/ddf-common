@@ -174,7 +174,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     public void resolveHeader(HttpServletRequest request) {
         UserContextUtil.setRequestHeaderContext(RequestHeader.builder()
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
-                .os(OsEnum.valueOf(request.getHeader(RequestHeaderEnum.OS.getName())))
+                .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
                 .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
                 .nonce(Long.parseLong(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
                 .version(Integer.parseInt(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION.getName()), "0")))
