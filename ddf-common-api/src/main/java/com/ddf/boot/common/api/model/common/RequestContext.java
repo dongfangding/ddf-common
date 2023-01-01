@@ -1,7 +1,10 @@
 package com.ddf.boot.common.api.model.common;
 
+import com.ddf.boot.common.api.enums.OsEnum;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,35 +16,55 @@ import lombok.NoArgsConstructor;
  * @date 2022/01/14 17:17
  */
 @Data
-@AllArgsConstructor(staticName = "of")
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class RequestContext implements Serializable {
 
     private static final long serialVersionUID = -7528108356364083934L;
 
     /**
-     * token
+     * 客户端ip
      */
-    private String token;
+    private String clientIp;
 
     /**
-     * 签名参数
+     * 请求路径
+     */
+    private String requestUri;
+
+    /**
+     * 签名字段
      */
     private String sign;
 
     /**
-     * 客户端操作系统， 如 pc/ios/android
+     * 版本号
      */
-    private String os;
+    private Integer version;
 
     /**
-     * 客户端设备唯一标识，
-     * 主要是移动端设备，需要识别到具体设备号的时候
+     * 设备号
      */
     private String imei;
 
     /**
-     * 客户端ip
+     * 防重放，时间毫秒值
      */
-    private String clientIp;
+    private Long nonce;
+
+    /**
+     * 客户端类型
+     */
+    private OsEnum os;
+
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
 }

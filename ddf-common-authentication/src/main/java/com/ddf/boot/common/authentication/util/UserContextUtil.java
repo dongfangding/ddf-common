@@ -1,6 +1,6 @@
 package com.ddf.boot.common.authentication.util;
 
-import com.ddf.boot.common.api.model.common.RequestHeader;
+import com.ddf.boot.common.api.model.common.RequestContext;
 import com.ddf.boot.common.authentication.model.UserClaim;
 
 ;
@@ -15,7 +15,7 @@ import com.ddf.boot.common.authentication.model.UserClaim;
 public class UserContextUtil {
 
     private static final ThreadLocal<UserClaim> USER_CONTEXT = ThreadLocal.withInitial(UserClaim::new);
-    private static final ThreadLocal<RequestHeader> REQUEST_HEADER_CONTEXT = ThreadLocal.withInitial(RequestHeader::new);
+    private static final ThreadLocal<RequestContext> REQUEST_CONTEXT = ThreadLocal.withInitial(RequestContext::new);
 
     /**
      * 获取当前用户信息
@@ -56,7 +56,7 @@ public class UserContextUtil {
     }
 
     /**
-     * 获取客户端唯一标识
+     * 获取客户端唯一标识, 建议使用设备号
      *
      * @return
      */
@@ -66,27 +66,27 @@ public class UserContextUtil {
 
 
     /**
-     * 设置请求头
+     * 设置请求上下文
      *
      * @param requestHeader
      */
-    public static void setRequestHeaderContext(RequestHeader requestHeader) {
-        REQUEST_HEADER_CONTEXT.set(requestHeader);
+    public static void setRequestContext(RequestContext requestHeader) {
+        REQUEST_CONTEXT.set(requestHeader);
     }
 
     /**
-     * 获取请求头
+     * 获取请求上下文
      *
      * @return
      */
-    public static RequestHeader getRequestHeader() {
-        return REQUEST_HEADER_CONTEXT.get();
+    public static RequestContext getRequestContext() {
+        return REQUEST_CONTEXT.get();
     }
 
     /**
-     * 移除请求头上下文
+     * 移除请求上下文
      */
-    public static void removeRequestHeader() {
-        REQUEST_HEADER_CONTEXT.remove();;
+    public static void removeRequestContext() {
+        REQUEST_CONTEXT.remove();;
     }
 }

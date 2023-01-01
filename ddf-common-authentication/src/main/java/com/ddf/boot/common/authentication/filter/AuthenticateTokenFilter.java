@@ -3,7 +3,7 @@ package com.ddf.boot.common.authentication.filter;
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
-import com.ddf.boot.common.api.model.common.RequestHeader;
+import com.ddf.boot.common.api.model.common.RequestContext;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
@@ -71,13 +71,14 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
         // 解析请求头
-        resolveHeader(request);
+        resolveRequestContext(request);
         if (SYSTEM_IGNORE_PATH.contains(path)) {
             return true;
         }
-        String host = WebUtil.getHost();
+        final RequestContext requestContext = UserContextUtil.getRequestContext();
+        String clientIp = requestContext.getClientIp();
         final String token = request.getHeader(authenticateProperties.getTokenHeaderName());
-        request.setAttribute(AuthenticateConstant.CLIENT_IP, host);
+        request.setAttribute(AuthenticateConstant.CLIENT_IP, clientIp);
         // 跳过忽略路径
         if (authenticateProperties.isIgnore(path)) {
             return true;
@@ -87,7 +88,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
             throw new NoSuchBeanDefinitionException(UserClaimService.class);
         }
         // 填充认证接口前置属性
-        userClaimService.storeRequest(request, host);
+        userClaimService.storeRequest(request, clientIp);
 
         // 校验并转换jws
         AuthInfo authInfo = checkAndParseAuthInfo(request, token);
@@ -130,7 +131,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
             Exception ex) throws Exception {
         // 移除用户信息
         UserContextUtil.removeUserClaim();
-        UserContextUtil.removeRequestHeader();
+        UserContextUtil.removeRequestContext();
         MDC.remove(AuthenticateConstant.MDC_USER_ID);
         MDC.remove(AuthenticateConstant.MDC_TRACE_ID);
     }
@@ -167,12 +168,12 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
     }
 
     /**
-     * 解析请求头
+     * 解析请求上下文
      *
      * @param request
      */
-    public void resolveHeader(HttpServletRequest request) {
-        UserContextUtil.setRequestHeaderContext(RequestHeader.builder()
+    public void resolveRequestContext(HttpServletRequest request) {
+        UserContextUtil.setRequestContext(RequestContext.builder()
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
                 .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
@@ -180,7 +181,13 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
                 .version(Integer.parseInt(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION.getName()), "0")))
                 .longitude(new BigDecimal(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LONGITUDE.getName()), "0")))
                 .latitude(new BigDecimal(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LATITUDE.getName()), "0")))
+                .requestUri(request.getRequestURI())
+                .clientIp(WebUtil.getHost())
                 .build());
+    }
+
+    public void resolveRequestContext() {
+
     }
 
 
