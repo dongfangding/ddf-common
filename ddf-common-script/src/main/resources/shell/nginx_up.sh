@@ -6,7 +6,7 @@ sed -i "s/server 192.168.0.41:8080 weight=1;/#server 192.168.0.41:8080 weight=1;
 openresty -s reload
 echo "8080的流量摘除完毕, 执行应用重启命令"
 supervisorctl restart xiuxian
-#sleep 5
+sleep 5
 times=1
 while(( times <= 20 ))
 do
@@ -32,7 +32,7 @@ sed -i "s/server 192.168.0.41:8081 weight=1;/#server 192.168.0.41:8081 weight=1;
 openresty -s reload
 echo "8081的流量摘除完毕, 执行应用重启命令"
 supervisorctl restart xiuxian1
-#sleep 5
+sleep 5
 times=1
 while(( times <= 20 ))
 do
