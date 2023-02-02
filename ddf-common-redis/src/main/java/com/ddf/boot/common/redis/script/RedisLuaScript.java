@@ -40,4 +40,8 @@ public interface RedisLuaScript {
      */
     RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
 
+    /**
+     * hash自增时进行取模运算后反减运算消耗值，结果返回取整后的值
+     */
+    RedisScript<String> HASH_INCREASE_ROUNDING_REDUCE = RedisScript.of(new ClassPathResource("lua/HashIncreaseRoundingReduce.lua"), String.class);
 }

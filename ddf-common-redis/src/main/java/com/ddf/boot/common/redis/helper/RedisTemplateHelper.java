@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -225,10 +226,10 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key
-     * @param hashKey
-     * @param step
-     * @param limit
+     * @param key     要操作的key
+     * @param hashKey 要操作的hash key
+     * @param step    每次自增的值
+     * @param limit   自增上限值，超过这个值不会继续自增
      * @return
      */
     public HashIncrementCheckResponse hashIncrAndCheck(String key, String hashKey, Long step, Long limit) {
@@ -240,5 +241,23 @@ public class RedisTemplateHelper {
                 .result(result)
                 .actualResult(result > limit ? (result - step) : result)
                 .build();
+    }
+
+    /**
+     * 对一个hash结构的hash key的value进行自增取模求整运算，并返回取模后的整数值，运算后取模消耗的值会被减掉
+     * 使用场景
+     * 比如每次获取3个碎片，当自增到10个碎片后就可以合成一个完整的东西，合成后当前值要减去消耗的数值
+     *
+     *
+     * @param key     要操作的key
+     * @param hashKey 要操作的hash key
+     * @param step    每次自增的值
+     * @param module  模数
+     * @return
+     */
+    public Integer hashIncreaseRoundingReduce(String key, String hashKey, Long step, Long module) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREASE_ROUNDING_REDUCE,
+                Collections.singletonList(key), hashKey, step + "", module + "");
+        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 }
