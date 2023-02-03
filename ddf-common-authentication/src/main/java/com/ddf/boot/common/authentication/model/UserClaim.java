@@ -2,12 +2,10 @@ package com.ddf.boot.common.authentication.model;
 
 
 import cn.hutool.core.util.ReflectUtil;
-import com.google.common.collect.Lists;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -36,20 +34,10 @@ public class UserClaim implements Serializable {
     private static final String HEADER_CHARSET = "UTF-8";
 
     /**
-     * 忽略校验的credit
-     */
-    public static final String SKIP_CREDIT = "*";
-
-    /**
      * 默认用户信息
      * 判断是否默认用户方法{@link UserClaim#isDefaultUser(UserClaim)}
      */
-    private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").credit(SKIP_CREDIT).build();
-
-    /**
-     * 忽略验证的credit
-     */
-    public static final List<String> IGNORE_CREDIT = Lists.newArrayList("127.0.0.1", "0:0:0:0:0:0:0:1", SKIP_CREDIT);
+    private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").build();
 
     /**
      * 用户id
@@ -59,21 +47,16 @@ public class UserClaim implements Serializable {
      * 用户名
      */
     private String username;
+
     /**
      * 用户登录的授信设备唯一标识符
      * 每一次签发token 都必须包含当前登录的设备标识，需要维护每个用户已签发的设备标识,如果
      * 用未签发过token的设备标识发送认证信息，服务器会拒绝认证
      * <p>
-     * 这个标识的规则，最好是服务端不论客户端是什么环境，都能获取到的一个值
+     * 这个标识的规则，最好是服务端不论客户端是什么环境，都能获取到的一个值, 可以使用设备号， 如果是web端，则本地按照规则生成一个存储下来使用，
+     * 最好能前缀以web-开头，避免和真实重复也能看出来是web自己生成的
      */
     private String credit;
-
-    /**
-     * 最后一次修改密码的时间，签发token时设置值；解析token时如果这个值与数据库最后一次修改密码的时间不匹配，
-     * 证明密码已被修改，则该token校验不通过
-     * 注意： 如果有其它字段也代表用户有效性变化的字段，那么当这些字段变化的时候也应该修改这个值；比如用户被删除，或者用户账号被修改之类的
-     */
-    private Long lastModifyPasswordTime;
 
     /**
      * 预留备注字段
@@ -146,19 +129,6 @@ public class UserClaim implements Serializable {
             }
         }
         return claimMap;
-    }
-
-    public void setIgnoreCredit() {
-        this.credit = SKIP_CREDIT;
-    }
-
-    /**
-     * 当前credit是否忽略验证
-     *
-     * @return
-     */
-    public boolean ignoreCredit() {
-        return IGNORE_CREDIT.contains(credit);
     }
 
     /**

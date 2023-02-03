@@ -1,5 +1,6 @@
 package com.ddf.boot.common.authentication.config;
 
+import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class AuthenticationProperties {
      * 用来校验token中credit身份的header name, 如果生成token的时候不放入，则不会校验
      * 如果是移动端，一般是设备号什么之类的
      */
-    private String creditHeaderName = "User-Agent";
+    private String creditHeaderName = RequestHeaderEnum.IMEI.getName();
 
     /**
      * 忽略路径

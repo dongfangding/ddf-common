@@ -43,21 +43,16 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
         PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), "解析用户为空!");
         PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
                 "用户关键信息缺失！");
-
-        final String credit = request.getHeader(authenticationProperties.getCreditHeaderName());
         // credit校验
-        if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit) && !tokenUserClaim.ignoreCredit()) {
+        final String credit = StringUtils.defaultIfBlank(request.getHeader(authenticationProperties.getCreditHeaderName()),
+                request.getHeader("User-Agent"));
+        if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit)) {
             log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
             throw new UnauthorizedException("登录环境变更，需要重新登录！");
         }
         // 获取最新用户信息
         UserClaim storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
         PreconditionUtil.checkArgument(!storeUser.isDisabled(), new UnauthorizedException("用户已被关进小黑屋了~"));
-        // 如果token中设置了相关值，则进行判断，否则视为不开启对应校验。
-        if (Objects.nonNull(tokenUserClaim.getLastModifyPasswordTime()) && !Objects.equals(tokenUserClaim.getLastModifyPasswordTime(), storeUser.getLastModifyPasswordTime())) {
-            log.error("密码已经修改，不允许通过！当前修改密码时间: {}, token: {}", storeUser.getLastModifyPasswordTime(), tokenUserClaim.getLastModifyPasswordTime());
-            throw new UnauthorizedException("密码已经修改，请重新登录！");
-        }
         return storeUser;
     }
 }
