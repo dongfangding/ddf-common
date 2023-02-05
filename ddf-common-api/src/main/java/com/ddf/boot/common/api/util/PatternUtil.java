@@ -27,7 +27,6 @@ public class PatternUtil {
         String imageTagRegex = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
         Pattern imagePattern = Pattern.compile(imageTagRegex, Pattern.CASE_INSENSITIVE);
         Matcher imageMatcher = imagePattern.matcher(htmlStr);
-
         // 匹配<img>标签的src内容，即具体图片链接了
         String imageSrcRegex = "src\\s*=\\s*\"?(.*?)(\"|>|\\s+)";
         Pattern imageSrcPattern = Pattern.compile(imageSrcRegex, Pattern.CASE_INSENSITIVE);
@@ -42,5 +41,22 @@ public class PatternUtil {
             }
         }
         return pics;
+    }
+
+    /**
+     * 找出一个子字符串在原字符串中出现的次数
+     *
+     * @param sourceStr
+     * @param matchStr
+     * @return
+     */
+    public int findChildStrCount(String sourceStr, String matchStr) {
+        Pattern p = Pattern.compile(matchStr, Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(sourceStr);
+        int count = 0;
+        while (m.find()) {
+            count ++;
+        }
+        return count;
     }
 }
