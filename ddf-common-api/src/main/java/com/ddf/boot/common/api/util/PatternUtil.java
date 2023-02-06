@@ -50,7 +50,7 @@ public class PatternUtil {
      * @param matchStr
      * @return
      */
-    public int findChildStrCount(String sourceStr, String matchStr) {
+    public static int findChildStrCount(String sourceStr, String matchStr) {
         Pattern p = Pattern.compile(matchStr, Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(sourceStr);
         int count = 0;

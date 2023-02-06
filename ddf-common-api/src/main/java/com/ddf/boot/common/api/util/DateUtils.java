@@ -29,6 +29,14 @@ public class DateUtils {
     public static final String TIME_SPLIT = ":";
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * 时间转换为int的日格式
+     */
+    public static final DateTimeFormatter DAY_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    /**
+     * 时间转换为int的月格式
+     */
+    public static final DateTimeFormatter MONTH_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMM");
 
     /**
      * 获取本月第一天
@@ -226,10 +234,6 @@ public class DateUtils {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8"));
     }
 
-    public static void main(String[] args) {
-        System.out.println(standardFormatSeconds(System.currentTimeMillis() / 1000));
-    }
-
     /**
      * 获取下个星期的第一天
      *
@@ -312,6 +316,42 @@ public class DateUtils {
     }
 
     /**
+     * 当前年月日
+     *
+     * @return
+     */
+    public static Integer currentYearMonthDay() {
+        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.now()));
+    }
+
+    /**
+     * 当前年月日
+     *
+     * @return
+     */
+    public static Integer formatYearMonthDay(LocalDateTime localDateTime) {
+        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(localDateTime));
+    }
+
+    /**
+     * 当前年月
+     *
+     * @return
+     */
+    public static Integer currentYearMonth() {
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now()));
+    }
+
+    /**
+     * 当前年月日
+     *
+     * @return
+     */
+    public static Integer formatYearMonth(LocalDateTime localDateTime) {
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(localDateTime));
+    }
+
+    /**
      * 返回时间格式化类
      *
      * @return
@@ -340,4 +380,13 @@ public class DateUtils {
         return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
     }
 
+    /**
+     * date转中国标准时间LocalDateTime
+     *
+     * @param date
+     * @return
+     */
+    public static LocalDateTime date2CnLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.of("+8"));
+    }
 }

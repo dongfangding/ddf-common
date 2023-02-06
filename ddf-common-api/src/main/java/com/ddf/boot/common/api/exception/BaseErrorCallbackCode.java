@@ -25,15 +25,15 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
      */
     FILL_PARAM_DEMO("FILL_PARAM_DEMO", "我是一个{0}， 粉刷本领{1}"),
 
-    DEMO_BLA_BLA("base_0001", "系统内部出现问题，bla bla...", "系统异常，请稍后确认"),
+    DEMO_BLA_BLA("DEMO_BLA_BLA", "系统内部出现问题，bla bla...", "系统异常，请稍后确认"),
 
-    TEST_FILL_EXCEPTION("base_0002", "带占位符的异常演示[{0}]"),
+    TEST_FILL_EXCEPTION("TEST_FILL_EXCEPTION", "带占位符的异常演示[{0}]"),
 
-    TEST_FILL_BIZ_EXCEPTION("base_0003", "带占位符的异常演示[{0}],客户端隐藏详细信息", "报错啦"),
+    TEST_FILL_BIZ_EXCEPTION("TEST_FILL_BIZ_EXCEPTION", "带占位符的异常演示[{0}],客户端隐藏详细信息", "报错啦"),
 
-    PAGE_NUM_NOT_ALLOW_NULL("base_0004", "当前页数不能为空"),
+    PAGE_NUM_NOT_ALLOW_NULL("PAGE_NUM_NOT_ALLOW_NULL", "当前页数不能为空"),
 
-    PAGE_SIZE_NOT_ALLOW_NULL("base_0005", "每页大小不能为空"),
+    PAGE_SIZE_NOT_ALLOW_NULL("PAGE_SIZE_NOT_ALLOW_NULL", "每页大小不能为空"),
 
     ENUM_CODE_NOT_MAPPING("ENUM_CODE_NOT_MAPPING", "枚举代码未映射"),
 
@@ -56,7 +56,9 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     ACCESS_FORBIDDEN("403", "权限未通过，访问被拒绝"),
 
     SERVER_ERROR("500", "服务端异常"),
-    UPLOAD_FILE_ERROR("UPLOAD_FILE_ERROR", "文件上传失败")
+    UPLOAD_FILE_ERROR("UPLOAD_FILE_ERROR", "文件上传失败"),
+
+    REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE("REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE", "redis key参数与模板不匹配")
 
     ;
 
