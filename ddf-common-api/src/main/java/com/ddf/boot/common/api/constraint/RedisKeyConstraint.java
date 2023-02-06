@@ -5,6 +5,7 @@ import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.PatternUtil;
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * <p>redis key的约束模板</p >
@@ -43,6 +44,15 @@ public interface RedisKeyConstraint {
     RedisKeyTypeEnum getRedisKeyType();
 
     /**
+     * 获取key的分片规则
+     *
+     * @return
+     * @param <S>
+     * @param <M>
+     */
+    <S, M> RedisShardingRule<S, M> getRedisShardingRule();
+
+    /**
      * 获取key
      *
      * @param args
@@ -54,5 +64,19 @@ public interface RedisKeyConstraint {
             throw new BusinessException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
         }
         return String.format(template, args);
+    }
+
+    /**
+     * 获取分片的key， 分开两个方法，主要是用来让使用方明确自己的意图，避免混用
+     *
+     * @param args
+     * @return
+     */
+    default String getShardingKey(String... args) {
+        final RedisShardingRule<Object, Object> shardingRule = getRedisShardingRule();
+        if (Objects.isNull(shardingRule)) {
+            return getKey(args);
+        }
+        return String.join("_", String.format(getTemplate(), args), shardingRule.getSharding(args));
     }
 }

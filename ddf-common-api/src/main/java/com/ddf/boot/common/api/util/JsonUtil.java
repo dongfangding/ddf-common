@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -89,6 +90,20 @@ public final class JsonUtil {
      */
     public static <T> T toBean(String json, Class<T> type) {
         return toBean(json, OBJECT_MAPPER.getTypeFactory().constructType(type));
+    }
+
+    /**
+     * Json转对象
+     *
+     * @param json
+     * @param type
+     * @return
+     */
+    public static <T> T toBeanChecked(Object json, Class<T> type) {
+        if (Objects.isNull(json) || StringUtils.isBlank(json.toString())) {
+            return null;
+        }
+        return toBean(json.toString(), OBJECT_MAPPER.getTypeFactory().constructType(type));
     }
 
     /**

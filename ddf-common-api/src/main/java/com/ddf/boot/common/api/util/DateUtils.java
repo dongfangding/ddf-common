@@ -204,7 +204,7 @@ public class DateUtils {
     }
 
     /**
-     * 使用系统默认时区LocalDateTime转时间戳
+     * 使用北京时区LocalDateTime转时间戳
      *
      * @param localDateTime
      * @return
@@ -212,6 +212,16 @@ public class DateUtils {
     public static Long toZhCnMills(LocalDateTime localDateTime) {
         final Instant instant = toZhCnInstant(localDateTime);
         return Objects.isNull(instant) ? null : instant.toEpochMilli();
+    }
+
+    /**
+     * 使用北京时区LocalDateTime转秒时间戳
+     *
+     * @param localDateTime
+     * @return
+     */
+    public static Long toZhCnSeconds(LocalDateTime localDateTime) {
+        return localDateTime.toEpochSecond(ZoneOffset.of("+8"));
     }
 
     /**
@@ -388,5 +398,35 @@ public class DateUtils {
      */
     public static LocalDateTime date2CnLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.of("+8"));
+    }
+
+
+    /**
+     * 获取日期的起始时间 如某天 00:00:00
+     * @param time
+     * @return
+     */
+    public static LocalDateTime getStartOfDay(LocalDateTime time) {
+        return LocalDateTime.of(time.getYear(), time.getMonth(), time.getDayOfMonth(), 0, 0, 0, 0);
+    }
+
+    /**
+     * 获取日期的结束时间 如某天 23:59:59
+     * @param time
+     * @return
+     */
+    public static LocalDateTime getEndOfDay(LocalDateTime time) {
+        return LocalDateTime.of(time.getYear(), time.getMonth(), time.getDayOfMonth(), 23, 59, 59);
+    }
+
+    /**
+     * 判定指定时间已经过去了今天多久
+     *
+     * @param timeSeconds
+     * @return
+     */
+    public static long calcPassedTodaySeconds(long timeSeconds) {
+        final LocalDateTime localDateTime = ofSeconds(timeSeconds);
+        return timeSeconds - toZhCnSeconds(getStartOfDay(localDateTime));
     }
 }

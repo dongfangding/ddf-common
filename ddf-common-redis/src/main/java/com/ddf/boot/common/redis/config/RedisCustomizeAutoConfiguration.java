@@ -3,6 +3,7 @@ package com.ddf.boot.common.redis.config;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.redis.helper.GeoHelper;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
+import com.ddf.boot.common.redis.serializer.ObjectStringRedisSerializer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,20 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         template.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
         template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "stringRedisTemplate")
+    @Primary
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setDefaultSerializer(new ObjectStringRedisSerializer());
+        template.setKeySerializer(new ObjectStringRedisSerializer());
+        template.setHashKeySerializer(new ObjectStringRedisSerializer());
+        template.setValueSerializer(new ObjectStringRedisSerializer());
+        template.setHashValueSerializer(new ObjectStringRedisSerializer());
         return template;
     }
 

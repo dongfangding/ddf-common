@@ -58,7 +58,8 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     SERVER_ERROR("500", "服务端异常"),
     UPLOAD_FILE_ERROR("UPLOAD_FILE_ERROR", "文件上传失败"),
 
-    REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE("REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE", "redis key参数与模板不匹配")
+    REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE("REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE", "redis key参数与模板不匹配"),
+    REDIS_SHARDING_KEY_NOT_MATCH_ARGS("REDIS_SHARDING_KEY_NOT_MATCH_ARGS", "redis路由key定义变量与实际参数不匹配"),
 
     ;
 
