@@ -19,6 +19,16 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-json</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.aliyun.oss</groupId>

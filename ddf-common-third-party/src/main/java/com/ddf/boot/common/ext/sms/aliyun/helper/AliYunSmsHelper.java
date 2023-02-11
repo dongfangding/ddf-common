@@ -11,6 +11,7 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.ext.constants.ExceptionCode;
 import com.ddf.boot.common.ext.sms.aliyun.config.AliYunSmsProperties;
 import com.ddf.boot.common.ext.sms.aliyun.domain.AliYunSmsActionEnum;
@@ -78,7 +79,7 @@ public class AliYunSmsHelper {
             templateParam = templateParamObj.getTemplateParam();
             request.putQueryParameter("TemplateParam", templateParam);
         } else {
-            templateParamObj = JSONUtil.toBean(templateParam, TemplateParamObj.class);
+            templateParamObj = JsonUtil.toBean(templateParam, TemplateParamObj.class);
             request.putQueryParameter("TemplateParam", aliYunSmsRequest.getTemplateParam());
         }
         if (StringUtils.isNotBlank(aliYunSmsRequest.getSinaName())) {

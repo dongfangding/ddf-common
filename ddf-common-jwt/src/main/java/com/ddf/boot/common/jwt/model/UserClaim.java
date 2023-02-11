@@ -2,12 +2,10 @@ package com.ddf.boot.common.jwt.model;
 
 
 import cn.hutool.core.util.ReflectUtil;
-import com.google.common.collect.Lists;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -40,12 +38,6 @@ public class UserClaim implements Serializable {
      * 判断是否默认用户方法{@link UserClaim#isDefaultUser(UserClaim)}
      */
     private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").credit("*").build();
-
-    /**
-     * 忽略验证的credit
-     */
-    public static final List<String> IGNORE_CREDIT = Lists.newArrayList("127.0.0.1", "0:0:0:0:0:0:0:1", "*");
-
     /**
      * 用户id
      */
@@ -141,15 +133,6 @@ public class UserClaim implements Serializable {
             }
         }
         return claimMap;
-    }
-
-    /**
-     * 当前credit是否忽略验证
-     *
-     * @return
-     */
-    public boolean ignoreCredit() {
-        return IGNORE_CREDIT.contains(credit);
     }
 
     /**

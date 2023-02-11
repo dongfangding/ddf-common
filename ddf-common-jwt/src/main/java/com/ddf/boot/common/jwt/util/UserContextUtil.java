@@ -57,4 +57,8 @@ public class UserContextUtil {
     public static String getCredit() {
         return getUserClaim().getCredit();
     }
+
+    public static Long getLongUserId() {
+        return Long.parseLong(getUserId());
+    }
 }

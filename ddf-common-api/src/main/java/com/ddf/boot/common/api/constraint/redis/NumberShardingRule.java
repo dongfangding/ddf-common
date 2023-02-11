@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.constraint;
+package com.ddf.boot.common.api.constraint.redis;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;

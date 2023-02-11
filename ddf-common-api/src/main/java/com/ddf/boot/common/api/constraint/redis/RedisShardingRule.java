@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.constraint;
+package com.ddf.boot.common.api.constraint.redis;
 
 /**
  * <p>redis分片key规则定义</p >

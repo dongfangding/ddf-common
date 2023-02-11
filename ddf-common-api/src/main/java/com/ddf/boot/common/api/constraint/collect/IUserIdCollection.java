@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.constant;
+package com.ddf.boot.common.api.constraint.collect;
 
 import java.util.Set;
 

@@ -19,9 +19,15 @@
 
         <dependency>
             <groupId>com.ddf.common</groupId>
-            <artifactId>ddf-common-core</artifactId>
+            <artifactId>ddf-common-api</artifactId>
             <version>${project.parent.version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-core</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -42,7 +48,6 @@
             <artifactId>sentinel-transport-simple-http</artifactId>
             <version>${sentinel.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.alibaba.csp</groupId>

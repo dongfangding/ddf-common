@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.constant;
+package com.ddf.boot.common.api.constraint.collect;
 
 /**
  * <p>树形结构资源需要的核心属性收集接口</p >

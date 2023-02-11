@@ -1,7 +1,7 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.ddf.boot.common.core.constant.ITreeTagCollection;
+import com.ddf.boot.common.api.constraint.collect.ITreeTagCollection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;

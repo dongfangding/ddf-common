@@ -121,7 +121,7 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
         userClaimService.storeRequest(request, host);
 
         // 校验并转换jws
-        AuthInfo authInfo = checkAndGetJws(request, host, tokenHeader);
+        AuthInfo authInfo = checkAndGetJws(request, tokenHeader);
         final UserClaim userClaim = authInfo.getUserClaim();
         final Jws<Claims> claimsJws = authInfo.getClaimsJws();
         String token = authInfo.getRealToken();
@@ -175,10 +175,10 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
      * 校验并转换jws
      *
      * @param request
-     * @param host
+     * @param tokenHeader
      * @return
      */
-    private AuthInfo checkAndGetJws(HttpServletRequest request, String host, String tokenHeader) {
+    private AuthInfo checkAndGetJws(HttpServletRequest request, String tokenHeader) {
         UserClaim tokenUserClaim;
         if (tokenHeader == null || !tokenHeader.startsWith(jwtProperties.getTokenPrefix())) {
             throw new AccessDeniedException("token格式不合法！");
@@ -207,10 +207,10 @@ public class JwtAuthorizationTokenFilter extends HandlerInterceptorAdapter {
                 "用户关键信息缺失！"
         );
 
-        // 也可以维护一个列表， defaultClientIp其实只是一个保险，当获取不到的时候做一个妥协
-        if (!Objects.equals(tokenUserClaim.getCredit(), host) && !tokenUserClaim.ignoreCredit()) {
-            log.error("当前请求ip和token不匹配， 当前: {}, token: {}", host, tokenUserClaim);
-            throw new AccessDeniedException("更换登录地址，需要重新登录！");
+        final String userAgent = WebUtil.getUserAgent(request);
+        if (!Objects.equals(tokenUserClaim.getCredit(), userAgent)) {
+            log.error("请求环境已变更， 当前: {}, user-agent: {}", userAgent, tokenUserClaim);
+            throw new AccessDeniedException("请求环境已变更， 请重新登录！");
         }
 
         UserClaim storeUser = userClaimService.getStoreUserInfo(tokenUserClaim);
