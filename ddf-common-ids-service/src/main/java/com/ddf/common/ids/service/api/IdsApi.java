@@ -7,7 +7,6 @@ import com.ddf.common.ids.service.model.common.SegmentBufferView;
 import com.ddf.common.ids.service.service.impl.segment.model.LeafAlloc;
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * <p>Ids feign api</p >
@@ -65,7 +64,7 @@ public interface IdsApi {
      * @param number
      * @return
      */
-    IdsMultiListData getMultiIds(@PathVariable("key") String key, Integer number);
+    IdsMultiListData getMultiIds(String key, Integer number);
 
     /**
      * 获取号段模式缓存信息
