@@ -9,7 +9,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.core.util.ResourceUrlUtils;
 import com.ddf.boot.common.ext.oss.config.AliOssPolicyDTO;
 import com.ddf.boot.common.ext.oss.config.BucketProperty;
@@ -25,11 +25,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -39,21 +36,25 @@ import org.springframework.stereotype.Component;
  * @date 2020/10/12 13:33
  */
 @Slf4j
-@Component
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class OssHelper {
 
     /**
      * @see OssBeanAutoConfiguration
      */
-    private final IAcsClient defaultAcsClient;
+    private IAcsClient defaultAcsClient;
 
     /**
      * @see OssBeanAutoConfiguration
      */
-    private final OSS defaultOssClient;
+    private OSS defaultOssClient;
 
-    private final OssProperties ossProperties;
+    private OssProperties ossProperties;
+
+    public OssHelper(IAcsClient defaultAcsClient, OSS defaultOssClient, OssProperties ossProperties) {
+        this.defaultAcsClient = defaultAcsClient;
+        this.defaultOssClient = defaultOssClient;
+        this.ossProperties = ossProperties;
+    }
 
     /**
      * 主存储桶配置

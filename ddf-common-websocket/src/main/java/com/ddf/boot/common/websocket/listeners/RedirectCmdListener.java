@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.listeners;
 
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
 import com.ddf.boot.common.websocket.model.MessageRequest;

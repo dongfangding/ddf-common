@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.interceptor;
 
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.Message;
 
 /**

@@ -1,6 +1,6 @@
 package com.ddf.boot.common.websocket.exception;
 
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 
 /**
  * 客户端重复请求异常

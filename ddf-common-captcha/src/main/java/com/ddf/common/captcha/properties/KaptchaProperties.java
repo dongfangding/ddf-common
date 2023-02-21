@@ -1,18 +1,17 @@
 package com.ddf.common.captcha.properties;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * <p>description</p >
+ * <p>基于google的Kaptcha验证码属性</p >
  *
  * @author Snowball
  * @version 1.0
  * @date 2021/03/02 15:07
  */
 @Data
-@ConfigurationProperties(prefix = "customs.kaptcha")
 public class KaptchaProperties {
+
     /**
      * 宽度
      */

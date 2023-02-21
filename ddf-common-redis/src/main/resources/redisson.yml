@@ -1,0 +1,30 @@
+# https://github.com/redisson/redisson/wiki/2.-%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95#26-%E5%8D%95redis%E8%8A%82%E7%82%B9%E6%A8%A1%E5%BC%8F
+---
+singleServerConfig:
+  # 下面连接相关的属性使用原生的redis连接配置方式，这样可以将连接信息托管到配置中心
+  # address: "redis://127.0.0.1:6379"
+  # database: 0
+  # password: null
+  clientName: null
+  # 最小空闲连接数， 这个会占用redis的客户端连接数
+  connectionMinimumIdleSize: 8
+  # 连接池大小
+  connectionPoolSize: 64
+  # 连接空闲超时，单位：毫秒,如果当前连接池里的连接数量超过了最小空闲连接数，而同时有连接空闲时间超过了该数值，那么这些连接将会自动被关闭，并从连接池里去掉。时间单位是毫秒
+  idleConnectionTimeout: 60000
+  # 单个连接最大订阅数量
+  subscriptionsPerConnection: 10
+  # 节点发布和订阅连接的最小空闲连接数，这个会占用redis的客户端连接数
+  subscriptionConnectionMinimumIdleSize: 2
+  # 服务节点里用于发布和订阅连接的连接池最大容量。连接池的连接数量自动弹性伸缩。
+  subscriptionConnectionPoolSize: 50
+  # 连接超时，单位：毫秒
+  connectTimeout: 10000
+  # 命令等待超时，单位：毫秒
+  timeout: 3000
+  # 命令失败重试次数,如果尝试达到 retryAttempts（命令失败重试次数） 仍然不能将命令发送至某个指定的节点时，将抛出错误。如果尝试在此限制之内发送成功，则开始启用 timeout（命令等待超时） 计时
+  retryAttempts: 3
+  # 命令重试发送时间间隔，单位：毫秒
+  retryInterval: 1500
+  dnsMonitoringInterval: 5000
+codec: !<org.redisson.codec.JsonJacksonCodec> {}

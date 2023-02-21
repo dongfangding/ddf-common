@@ -1,12 +1,18 @@
 package com.ddf.boot.common.redis.helper;
 
 import cn.hutool.core.util.IdUtil;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
+import com.ddf.boot.common.redis.response.HashIncrementCheckResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -49,6 +55,69 @@ public class RedisTemplateHelper {
                         System.currentTimeMillis() + "-" + IdUtil.randomUUID()
                 ));
         return Objects.equals("1", result);
+    }
+
+    /**
+     * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
+     * 业务方面的单位时间逻辑次数控制
+     *
+     * @param key            缓存key
+     * @param maxCount       单位时间内最大访问次数
+     * @param expiredAt      过期的具体时间点
+     * @return
+     */
+    public boolean sliderWindowAccessExpiredAt(final String key, final long maxCount, final Date expiredAt) {
+        Long expiredSeconds = 0L;
+        Date now = new Date();
+        if (expiredAt.compareTo(now) > 0) {
+            expiredSeconds = (expiredAt.getTime() / 1000) - (now.getTime() / 1000);
+        }
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(
+                        RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(expiredSeconds),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()
+                ));
+        return Objects.equals("1", result);
+    }
+
+    /**
+     * 提供一体化的判断，满足条件执行，不满足抛出异常
+     *
+     * @param key
+     * @param maxCount
+     * @param windowInSecond
+     * @param supplier
+     * @param exceptionCode
+     * @param <T>
+     * @return
+     */
+    public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+        final boolean b = sliderWindowAccess(key, maxCount, windowInSecond);
+        if (b) {
+            return supplier.get();
+        }
+        throw new BusinessException(exceptionCode);
+    }
+
+    /**
+     * 提供一体化的判断，满足条件执行，不满足抛出异常
+     *
+     * @param key
+     * @param maxCount
+     * @param expiredAt
+     * @param supplier
+     * @param exceptionCode
+     * @param <T>
+     * @return
+     */
+    public <T> T sliderWindowAccessExpiredAtCheckException(final String key, final long maxCount, final Date expiredAt, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+        final boolean b = sliderWindowAccessExpiredAt(key, maxCount, expiredAt);
+        if (b) {
+            return supplier.get();
+        }
+        throw new BusinessException(exceptionCode);
     }
 
     /**
@@ -151,5 +220,44 @@ public class RedisTemplateHelper {
             return Boolean.FALSE;
         }
         return limiter.tryAcquire();
+    }
+
+
+    /**
+     * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
+     *
+     * @param key     要操作的key
+     * @param hashKey 要操作的hash key
+     * @param step    每次自增的值
+     * @param limit   自增上限值，超过这个值不会继续自增
+     * @return
+     */
+    public HashIncrementCheckResponse hashIncrAndCheck(String key, String hashKey, Long step, Long limit) {
+        final long result = Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK, Collections.singletonList(key),
+                        hashKey, String.valueOf(step), String.valueOf(limit), String.valueOf(TimeUnit.DAYS.toSeconds(1))
+                )));
+        return HashIncrementCheckResponse.builder()
+                .result(result)
+                .actualResult(result > limit ? (result - step) : result)
+                .build();
+    }
+
+    /**
+     * 对一个hash结构的hash key的value进行自增取模求整运算，并返回取模后的整数值，运算后取模消耗的值会被减掉
+     * 使用场景
+     * 比如每次获取3个碎片，当自增到10个碎片后就可以合成一个完整的东西，合成后当前值要减去消耗的数值
+     *
+     *
+     * @param key     要操作的key
+     * @param hashKey 要操作的hash key
+     * @param step    每次自增的值
+     * @param module  模数
+     * @return
+     */
+    public Integer hashIncreaseRoundingReduce(String key, String hashKey, Long step, Long module) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREASE_ROUNDING_REDUCE,
+                Collections.singletonList(key), hashKey, step + "", module + "");
+        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 }

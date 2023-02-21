@@ -6,7 +6,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
+        <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+        <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
+        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+<!--        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>-->
+        <!-- nacos starter使用的一个类在2.4就被移除了，除非自己重写starter修改，这里考虑到应该还有其它大量的三方库可能都会有兼容问题，因此不再使用这个版本 -->
+        <!--<spring-boot.version>2.5.7</spring-boot.version>-->
+        <spring-boot.version>2.3.9.RELEASE</spring-boot.version>
+        <spring-cloud.version>2.2.9.RELEASE</spring-cloud.version>
         <mybatis.version>3.3.0</mybatis.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
@@ -17,17 +28,24 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.2.4</hutool.version>
+        <hutool.version>5.8.11</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
-        <dubbo.version>2.7.3</dubbo.version>
-        <lombok.version>1.18.10</lombok.version>
+        <dubbo.version>2.7.14</dubbo.version>
+        <lombok.version>1.18.24</lombok.version>
         <mysql.version>8.0.16</mysql.version>
-        <!--        <guava.version>28.1-jre</guava.version>-->
-        <guava.version>20.0</guava.version>
-        <http-client.version>4.5.10</http-client.version>
+                <guava.version>30.0-jre</guava.version>
+        <!--<guava.version>20.0</guava.version>-->
+        <http-client.version>4.5.13</http-client.version>
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.24</druid.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
+        <reflectasm.version>1.11.9</reflectasm.version>
+        <jdeferred.version>2.0.0</jdeferred.version>
+        <jackson-datatype.version>2.9.8</jackson-datatype.version>
+        <validation.version>2.0.2</validation.version>
+        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+        <pagehelper.version>1.4.2</pagehelper.version>
+        <canel.version>1.1.2</canel.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,7 +53,92 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
+
+    <distributionManagement>
+        <repository>
+            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
+            <id>nexus_release</id>
+            <name>Release Repository of nexus_release</name>
+            <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_release/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>nexus_snapshot</id>
+            <name>Snapshot Repository of nexus_snapshot</name>
+            <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>nexus-public</id>
+            <!-- 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
+             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>-->
+            <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>cloudera-repos</id>
+            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus-public</id>
+            <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>cloudera-repos</id>
+            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -47,6 +150,19 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- 升级时用来验证一些属性，正常使用时不要引入 -->
+<!--            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-properties-migrator</artifactId>
+                <scope>runtime</scope>
+            </dependency>-->
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-configuration-processor</artifactId>
@@ -55,10 +171,22 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
                 <scope>provided</scope>
+                <version>${lombok.version}</version>
             </dependency>
 
             <dependency>
@@ -112,7 +240,55 @@
 
             <dependency>
                 <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-cache</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-http</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-dfa</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-json</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-setting</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-system</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-socket</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
 
@@ -193,7 +369,7 @@
 
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo</artifactId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
                 <version>${dubbo.version}</version>
             </dependency>
 
@@ -229,34 +405,73 @@
                 <version>${mapstruct.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>reflectasm</artifactId>
+                <version>${reflectasm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdeferred.v2</groupId>
+                <artifactId>jdeferred-core</artifactId>
+                <version>${jdeferred.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${validation.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+
+            <!-- 用于刷新配置 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-context</artifactId>
+                <version>${spring-cloud.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.otter</groupId>
+                <artifactId>canal.client</artifactId>
+                <version>${canel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>logback-classic</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>logback-core</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-
-    <distributionManagement>
-        <repository>
-            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
-            <id>nexus_release</id>
-            <name>Release Repository of nexus_release</name>
-            <url>http://106.15.10.135:8800/repository/nexus_release/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus_snapshot</id>
-            <name>Snapshot Repository of nexus_snapshot</name>
-            <url>http://106.15.10.135:8800/repository/nexus_snapshot/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <modules>
+        <module>ddf-common-api</module>
         <module>ddf-common-core</module>
+        <module>ddf-common-swagger</module>
+        <module>ddf-common-authentication</module>
+        <module>ddf-common-ids-service</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
         <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
         <module>ddf-common-mybatis-plus</module>
-        <module>ddf-common-model</module>
         <module>ddf-common-distributed-lock</module>
-        <module>ddf-common-ids</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
         <module>ddf-common-zookeeper</module>
@@ -269,25 +484,111 @@
         <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
+        <module>ddf-common-es</module>
+        <module>ddf-common-trace</module>
+        <module>common-ons</module>
+        <module>ddf-common-nacos</module>
+        <module>ddf-common-vps</module>
+        <module>ddf-common-mqtt</module>
+        <module>ddf-common-log4j</module>
+        <module>ddf-common-canal</module>
     </modules>
 
-
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                            </exclude>
+                        </excludes>
+                        <fork>true</fork>
+                        <classifier>exec</classifier>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                                <goal>build-info</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <!--<phase>verify</phase>-->
+                            <phase>install</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <compilerArgument>-parameters</compilerArgument>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <skip>true</skip>
+                        </includes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven.release.plugin.version}</version>
+                    <configuration>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-archetype-plugin</artifactId>
+                    <version>${maven.archetype.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <phase>deploy</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

@@ -1,11 +1,10 @@
 package com.ddf.boot.common.limit.ratelimit.handler;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.ddf.boot.common.core.exception200.BusinessException;
+import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.authentication.util.UserContextUtil;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.SpringContextHolder;
-import com.ddf.boot.common.core.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
@@ -123,23 +122,23 @@ public class RateLimitAspect {
             }
             // 属性检查
             rateLimitProperties.check();
-            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            // 获取限流最大令牌桶数量
+            Integer max = annotation.max() == rateLimitProperties.getMax() ? rateLimitProperties.getMax() : annotation.max();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, max)) {
                 continue;
             }
             // 获取key生成器
             final String keyGenerator = StringUtils.isBlank(annotation.keyGenerator()) ?
-                    rateLimitProperties.getKeyGenerators() : annotation.keyGenerator();
+                    rateLimitProperties.getKeyGenerator() : annotation.keyGenerator();
             if (StringUtils.isBlank(keyGenerator)) {
                 return;
             }
 
             // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
             String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getCredit());
-            // 获取限流最大令牌桶数量
-            Integer max = annotation.max() == 0 ? rateLimitProperties.getMax() : annotation.max();
             // 获取令牌恢复速率
-            Integer rate = annotation.rate() == 0 ? rateLimitProperties.getRate() : annotation.rate();
-            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rateLimitProperties.getMax())) {
+            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() : annotation.rate();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, rate)) {
                 return;
             }
 
@@ -151,8 +150,8 @@ public class RateLimitAspect {
             // 生成限流的key
             String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
             if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
-                log.error("接口【{}-{}-{}】超过限流组件[{}]预定流量，过滤请求， 对应参数【{}】, 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                        currentMethod.getName(), keyGenerator, JsonUtil.asString(AopUtil.getParamMap(joinPoint))
+                log.error("接口【{}-{}-{}】超过限流组件{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>", identityNo, currentClass.getName(),
+                        currentMethod.getName(), keyGenerator, key, AopUtil.serializeParam(joinPoint)
                 );
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }

@@ -4,7 +4,6 @@ import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
 import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import java.util.Objects;
@@ -89,7 +88,7 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      */
     private RequestValue getRequestMapValue(JoinPoint jointPoint) {
         final RequestValue requestValue = new RequestValue();
-        requestValue.setValue(JsonUtil.asString(AopUtil.getParamMap(jointPoint)));
+        requestValue.setValue(AopUtil.serializeParam(jointPoint));
         requestValue.setCurrentTime(System.currentTimeMillis());
         return requestValue;
     }

@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.core.model.QueryParam;
+
+import com.ddf.boot.common.api.model.common.QueryParam;
 
 /**
  * @author dongfang.ding on 2019/1/24

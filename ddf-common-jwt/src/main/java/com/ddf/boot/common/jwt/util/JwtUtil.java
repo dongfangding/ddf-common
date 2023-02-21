@@ -1,13 +1,9 @@
 package com.ddf.boot.common.jwt.util;
 
-import cn.hutool.core.convert.Convert;
-import com.ddf.boot.common.core.model.UserClaim;
-import com.ddf.boot.common.core.util.JsonUtil;
-import com.ddf.boot.common.core.util.SpringContextHolder;
-import com.ddf.boot.common.core.util.WebUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.jwt.config.JwtProperties;
-import com.ddf.boot.common.jwt.consts.JwtConstant;
-import com.ddf.boot.common.jwt.exception.UserClaimMissionException;
+import com.ddf.boot.common.jwt.model.UserClaim;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -16,40 +12,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.KeyException;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.util.AntPathMatcher;
 
 /**
  * Jwt的工具类
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
  * @date 2019-12-07 16:45
@@ -66,13 +38,6 @@ public class JwtUtil {
      * 而导致jws失效，这里提供一个忽略值
      */
     private static final int ALLOWED_CLOCK_SKEW_SECONDS = 120;
-
-
-    /**
-     * 由于Jwt要判断客户端的IP，但是在RpcContext中有可能会获取不到（不知道为啥，就是有一次没有获取到），现在为了
-     * 保险，如果没有获取到给个默认值；如果是默认值也算IP 匹配
-     */
-    public static final List<String> DEFAULT_CLIENT_IP = Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 
 
     /**
@@ -172,90 +137,95 @@ public class JwtUtil {
         return JsonUtil.toBean(body.getSubject(), UserClaim.class);
     }
 
-    /**
-     * 获取用户uid
-     *
-     * @return
-     */
-    public static String getUserId() throws UserClaimMissionException {
-        return getByContext().getUserId();
-    }
+//    /**
+//     * 获取用户uid
+//     *
+//     * @return
+//     */
+//    public static String getUserId() {
+//        return getByContext().getUserId();
+//    }
+//
+//    /**
+//     * 尝试获取用户uid
+//     *
+//     * @return
+//     */
+//    public static String tryGetUserId() {
+//        try {
+//            return getByContext().getUserId();
+//        } catch (UserClaimMissionException e) {
+//            return UserClaim.defaultUser().getUserId();
+//        }
+//    }
 
-    /**
-     * 尝试获取用户uid
-     *
-     * @return
-     */
-    public static String tryGetUserId() {
-        try {
-            return getByContext().getUserId();
-        } catch (UserClaimMissionException e) {
-            return UserClaim.defaultUser().getUserId();
-        }
-    }
-
-    /**
-     * 获取当前用户信息，如果没有获取到用户信息会抛出异常
-     *
-     * @return
-     * @throws UserClaimMissionException
-     */
-    public static UserClaim getByContext() throws UserClaimMissionException {
-        return getByContext(true);
-    }
-
-
-    private static UserClaim getByContext(boolean necessary) throws UserClaimMissionException {
-        Object headerUser;
-        try {
-            headerUser = WebUtil.getCurRequest().getAttribute(JwtConstant.HEADER_USER);
-            if (headerUser == null) {
-                headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
-            }
-        } catch (Exception e) {
-            headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
-        }
-        if (headerUser == null) {
-            if (necessary) {
-                throw new UserClaimMissionException("无法获取当前用户信息！");
-            }
-            return UserClaim.defaultUser();
-        }
-        return JsonUtil.toBean(Convert.toStr(headerUser), UserClaim.class);
-    }
-
-
-    /**
-     * 获取当前用户信息，如果没有获取到用户信息，会返回默认用户信息
-     *
-     * @return com.ddf.boot.common.jwt.model.UserClaim
-     * @author dongfang.ding
-     * @date 2019/12/9 0009 16:23
-     **/
-    public static UserClaim getByContextNotNecessary() {
-        try {
-            return getByContext(false);
-        } catch (Exception e) {
-            return UserClaim.defaultUser();
-        }
-    }
-
-    /**
-     * 获取客户端ip
-     *
-     * @return
-     */
-    public static String getHost() {
-        try {
-            return WebUtil.getHost();
-        } catch (Exception e) {
-            String clientIp = RpcContext.getContext().getAttachment(JwtConstant.CLIENT_IP);
-            if (clientIp == null) {
-                return DEFAULT_CLIENT_IP.get(0);
-            }
-            return clientIp;
-        }
-    }
+//    /**
+//     * 获取当前用户信息，如果没有获取到用户信息会抛出异常
+//     *
+//     * @return
+//     */
+//    public static UserClaim getByContext() {
+//        return getByContext(true);
+//    }
+//
+//
+//    /**
+//     * 从上下文中获取用户信息， 这个上下文可能是多个上下文， 如http请求头， RpcContext等
+//     *
+//     * @param necessary
+//     * @return
+//     */
+//    private static UserClaim getByContext(boolean necessary) {
+//        Object headerUser;
+//        try {
+//            headerUser = WebUtil.getCurRequest().getAttribute(JwtConstant.HEADER_USER);
+//            if (headerUser == null) {
+//                headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
+//            }
+//        } catch (Exception e) {
+//            headerUser = RpcContext.getContext().getAttachment(JwtConstant.HEADER_USER);
+//        }
+//        if (headerUser == null) {
+//            if (necessary) {
+//                throw new UserClaimMissionException("无法获取当前用户信息！");
+//            }
+//            return UserClaim.defaultUser();
+//        }
+//        return JsonUtil.toBean(Convert.toStr(headerUser), UserClaim.class);
+//    }
+//
+//
+//    /**
+//     * 获取当前用户信息，如果没有获取到用户信息，会返回默认用户信息
+//     *
+//     * @return com.ddf.boot.common.jwt.model.UserClaim
+//     * @author dongfang.ding
+//     * @date 2019/12/9 0009 16:23
+//     **/
+//    public static UserClaim getByContextNotNecessary() {
+//        try {
+//            return getByContext(false);
+//        } catch (Exception e) {
+//            return UserClaim.defaultUser();
+//        }
+//    }
+//
+//    /**
+//     * 获取客户端ip
+//     *
+//     * @return
+//     */
+//    public static String getHost() {
+//        try {
+//            return WebUtil.getHost();
+//        } catch (Exception e) {
+//            String clientIp = RpcContext.getContext().getAttachment(JwtConstant.CLIENT_IP);
+//            if (clientIp == null) {
+//                return DEFAULT_CLIENT_IP.get(0);
+//            }
+//            return clientIp;
+//        }
+//    }
 
 
     /**

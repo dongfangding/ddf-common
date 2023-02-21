@@ -4,8 +4,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -19,17 +23,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
 /**
  * 自定义参数解析器用以支持同一个参数支持application/json和application/x-www-form-urlencoded解析
  *
- * 使用的时候直接在入参处使用注解@MultiArgumentResolver
- *
- * @see MultiArgumentResolver
  * @author Snowball
  * @version 1.0
  * @date 2020/08/31 19:00
+ * @see MultiArgumentResolver
  */
-@Component
-public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgumentResolver  {
+@Slf4j
+public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgumentResolver, ApplicationContextAware,
+        SmartInitializingSingleton {
+
+    private ApplicationContext applicationContext;
 
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+
+    public MultiArgumentResolverMethodProcessor() {
+    }
+
 
     private static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -107,5 +116,15 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
             throw new HttpMediaTypeNotSupportedException("支持Content-Type" + SUPPORT_CONTENT_TYPE_LIST.toString());
         }
         return true;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        this.requestMappingHandlerAdapter = applicationContext.getBean(RequestMappingHandlerAdapter.class);
     }
 }

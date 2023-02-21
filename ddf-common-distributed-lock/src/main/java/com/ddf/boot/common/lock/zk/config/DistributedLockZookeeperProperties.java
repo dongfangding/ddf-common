@@ -2,7 +2,6 @@ package com.ddf.boot.common.lock.zk.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * zookeeper客户端配置
@@ -10,10 +9,15 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:43
  **/
-@Component
-@ConfigurationProperties(prefix = "distributed.lock.zookeeper")
+@ConfigurationProperties(prefix = "customs.distributed.lock.zookeeper")
 @Data
 public class DistributedLockZookeeperProperties {
+
+    /**
+     * 是否启用分布式锁
+     */
+    private boolean enable;
+
     /**
      * 根默认
      */

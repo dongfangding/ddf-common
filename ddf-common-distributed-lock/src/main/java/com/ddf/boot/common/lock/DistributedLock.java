@@ -4,29 +4,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 分布式锁接口$
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
+ * 分布式锁接口
  *
  * @author dongfang.ding
  * @date 2020/3/13 0013 16:30
@@ -35,6 +13,7 @@ public interface DistributedLock {
 
     /**
      * 针对多个路径进行格式化，用以符合zk node格式
+     * zk分布式锁时使用
      *
      * @param path
      * @return
@@ -46,66 +25,78 @@ public interface DistributedLock {
     /**
      * 默认等待时间 10s
      */
-    Integer DEFAULT_ACQUIRE_TIME = 10;
+    Integer DEFAULT_ACQUIRE_TIME = 1000;
     /**
      * 默认等待时间 单位
      */
-    TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
+    TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     /**
-     * 尝试获取锁并执行业务
+     * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
      *
-     * @param lockPath
-     * @param time
-     * @param timeUnit
-     * @param handleData
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则返回null
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R tryLock(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception;
+
+
+    /**
+     * 指定等待时间加锁并执行业务
+     *
+     * @param lockKey        锁
+     * @param time           加锁等待时间
+     * @param timeUnit       加锁等待时间单位
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+            BusinessHandler<R> failureHandler) throws Exception;
+
+    /**
+     * 等待默认时间加锁并执行业务
+     *
+     * @param lockKey        锁
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
+            throws Exception;
+
+    /**
+     * 上锁路径格式化， zk专用
+     *
+     * @param lockKey
      * @return
      */
-    Boolean tryLock(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
+    default String formatLockKey(String lockKey) {
+        return lockKey;
+    }
 
     /**
-     * 只需要一个执行成功，通过将阻塞的时间设置一个非常短的时间，保证同一个业务有一个加锁成功之后，其它服务不需要继续阻塞获取锁， 加锁失败直接返回false,
-     *
-     * @param lockPath
-     * @param handleData
-     * @return
+     * 执行业务方法
      */
-    boolean lockWorkOnce(String lockPath, HandlerBusiness handleData);
-
-    /**
-     * 加锁并执行业务
-     *
-     * @param lockPath   zk节点路径
-     * @param time       等待获取锁的时间
-     * @param timeUnit   单位
-     * @param handleData 具体业务
-     */
-    void lockWork(String lockPath, int time, TimeUnit timeUnit, HandlerBusiness handleData);
-
-    /**
-     * 加锁并执行业务- 加锁默认等待10s获取不到锁抛出异常IllegalStateException
-     *
-     * @param lockPath   zk节点路径
-     * @param handleData 具体业务
-     * @return
-     */
-    void lockWork(String lockPath, HandlerBusiness handleData);
-
-    /**
-     * 上锁路径格式化
-     *
-     * @param lockPath
-     * @return
-     */
-    String formatLockPath(String lockPath);
-
-
-
     @FunctionalInterface
-    interface HandlerBusiness {
+    interface BusinessHandler<R> {
+
         /**
          * 执行业务
+         *
+         * @return
+         * @throws Exception
          */
-        void handle() throws Exception;
+        R handle() throws Exception;
     }
 }

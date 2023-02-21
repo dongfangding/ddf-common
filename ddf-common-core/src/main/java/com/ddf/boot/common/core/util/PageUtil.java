@@ -1,21 +1,18 @@
 package com.ddf.boot.common.core.util;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ddf.boot.common.core.model.Order;
-import com.ddf.boot.common.core.model.PageRequest;
-import com.ddf.boot.common.core.model.PageResult;
-import java.util.ArrayList;
-import java.util.Collections;
+import com.ddf.boot.common.api.model.common.PageRequest;
+import com.ddf.boot.common.api.model.common.PageResult;
+import com.github.pagehelper.ISelect;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import java.util.List;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 
 /**
@@ -28,46 +25,14 @@ import org.springframework.lang.Nullable;
 public class PageUtil {
 
     /**
-     * 构造基于mybatis的基本分页对象
+     * 空分页
      *
-     * @param <T>
+     * @param <E>
      * @return
      */
-    public static <T> Page<T> toMybatis(PageRequest pageRequest) {
-        int pageNum = 0;
-        int pageSize = 0;
-        if (!pageRequest.isUnPaged()) {
-            pageNum = pageRequest.getPageNum();
-            pageSize = pageRequest.getPageSize();
-        }
-        Page<T> objectPage = new Page<>(pageNum, pageSize);
-        if (CollUtil.isNotEmpty(pageRequest.getOrders())) {
-            objectPage.addOrder(toMybatisOrder(pageRequest));
-        }
-        return objectPage;
+    public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
+        return new PageResult<>(pageNum, pageSize);
     }
-
-
-    /**
-     * 构建mybatis排序对象 FIXME 经测试，排序方式，会被最后一条记录给覆盖。所以并没有如现在数据格式设计的如此，可以为每个字段都定义排序类型，所以现在写这么复杂并没有什么卵用
-     *
-     * @return
-     */
-    private static List<OrderItem> toMybatisOrder(PageRequest pageRequest) {
-        if (CollUtil.isEmpty(pageRequest.getOrders())) {
-            return Collections.emptyList();
-        }
-        List<OrderItem> orderItemList = new ArrayList<>();
-        for (Order order : pageRequest.getOrders()) {
-            if (Sort.Direction.ASC.equals(order.getDirection())) {
-                orderItemList.addAll(OrderItem.ascs(order.getColumn()));
-            } else {
-                orderItemList.addAll(OrderItem.descs(order.getColumn()));
-            }
-        }
-        return orderItemList;
-    }
-
 
     /**
      * 空分页
@@ -75,8 +40,9 @@ public class PageUtil {
      * @param <E>
      * @return
      */
-    public static <E> PageResult<E> empty() {
-        return new PageResult<>(PageRequest.DEFAULT_PAGE_NUM, PageRequest.DEFAULT_PAGE_SIZE);
+    public static <E> PageResult<E> empty(PageRequest pageRequest) {
+        pageRequest.checkArgument();
+        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
     }
 
     /**
@@ -89,10 +55,114 @@ public class PageUtil {
      * @return
      */
     public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
+        pageRequest.checkArgument();
         if (pageRequest.isUnPaged()) {
             return new PageResult<>(pageRequest.getPageNum(), total, total, content);
         }
         return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize(), total, content);
+    }
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
+     *
+     * @param pageRequest
+     * @param select
+     * @param poClazz
+     * @return
+     * @param <E>
+     * @param <R>
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz) {
+        return startPage(pageRequest, select, poClazz, null);
+    }
+
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
+     *
+     * @param pageRequest
+     * @param select
+     * @param poClazz     原始查询出来的对象
+     * @param voClazz     要转换的对象
+     * @param <E>
+     * @param <R>
+     * @return
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz,
+            @Nullable Class<R> voClazz) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        // 转换为自定义对象
+        if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
+            List<R> rtnList = (List<R>) pageInfo.getList();
+            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), rtnList);
+        } else {
+            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), Convert.toList(voClazz, pageInfo.getList()));
+        }
+    }
+
+
+    /**
+     * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 需要自己提供转换方法
+     *
+     * @param pageRequest
+     * @param select
+     * @param function
+     * @return
+     * @param <E>
+     * @param <R>
+     */
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, Function<List<E>, List<R>> function) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        final PageResult<R> result = new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal());
+        result.setContent(function.apply(pageInfo.getList()));
+        return result;
+    }
+
+
+    /**
+     * 使用PageHelper分页， 转换为自己的分页对象， 但是不转换实体对象
+     *
+     *
+     * @param pageRequest
+     * @param select
+     * @return
+     * @param <E>
+     */
+    public static <E> PageResult<E> startPage(PageRequest pageRequest, ISelect select) {
+        // 查询出原始对象
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+                .doSelectPageInfo(select);
+        if (pageInfo.getSize() <= 0) {
+            return empty(pageRequest);
+        }
+        return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    /**
+     * 构造基于mybatis的基本分页对象
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> Page<T> toMybatis(PageRequest pageRequest) {
+        int pageNum = 0;
+        int pageSize = 0;
+        pageRequest.checkArgument();
+        if (!pageRequest.isUnPaged()) {
+            pageNum = pageRequest.getPageNum();
+            pageSize = pageRequest.getPageSize();
+        }
+        return new Page<>(pageNum, pageSize);
     }
 
     /**
@@ -123,7 +193,7 @@ public class PageUtil {
             @Nullable Class<R> voClazz) {
         final List<T> list = page.getRecords();
         if (CollectionUtil.isEmpty(list)) {
-            return empty();
+            return empty((int) page.getCurrent(), (int) page.getSize());
         }
         if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
             List<R> rtnList = (List<R>) list;
@@ -133,13 +203,13 @@ public class PageUtil {
         }
     }
 
-
     /**
      * 构造基于spring-data基本分页对象
      *
      * @return
      */
     public static Pageable toSpringData(PageRequest pageRequest) {
+        pageRequest.checkArgument();
         if (pageRequest.isUnPaged()) {
             return Pageable.unpaged();
         }
@@ -180,7 +250,7 @@ public class PageUtil {
      *
      *  final Page<UserDynamicDTO> page = userDynamicService.searchUserDynamic(request);
      *  PageUtil.convertMybatis(page, (list) -> {
-     *  List<UserDynamicResponse> responseList = new ArrayList<>(list.size());
+     *      List<UserDynamicResponse> responseList = new ArrayList<>(list.size());
      *      for (UserDynamicDTO dto : list) {
      *          final UserDynamicResponse response = new UserDynamicResponse();
      *      }
@@ -196,6 +266,19 @@ public class PageUtil {
     public static <E, R> PageResult<R> convertMybatis(@NotNull IPage<E> page, Function<List<E>, List<R>> function) {
         final PageResult<R> result = new PageResult<>(page.getCurrent(), page.getSize(), page.getTotal());
         result.setContent(function.apply(page.getRecords()));
+        return result;
+    }
+
+    /**
+     * 从spring-data分页结果对象转换为自定义分页结果对象
+     *
+     * @param page
+     * @param <E>
+     * @return
+     */
+    public static <E> PageResult<E> convertFromSpringData(@NotNull org.springframework.data.domain.Page<E> page) {
+        final PageResult<E> result = new PageResult<E>(page.getNumber(), page.getSize(), page.getTotalElements());
+        result.setContent(page.getContent());
         return result;
     }
 }

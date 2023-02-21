@@ -1,8 +1,13 @@
 package com.ddf.boot.common.core.logaccess;
 
+import cn.hutool.core.collection.CollUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.core.util.AopUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -53,6 +58,8 @@ public class AccessLogAspect {
 
     @Autowired(required = false)
     private SlowEventAction slowEventAction;
+    @Autowired(required = false)
+    private Map<String, AccessFilterChain> accessFilterChainMap;
 
     @Autowired
     private ThreadPoolTaskExecutor defaultThreadPool;
@@ -78,29 +85,37 @@ public class AccessLogAspect {
         // 获取当前方法名
         MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
         // 获取请求参数
-        Map<String, Object> paramMap = AopUtil.getParamMap(joinPoint);
-        String paramJson = JsonUtil.asString(paramMap);
-        // 调用起始时间
-        long beforeTime = System.currentTimeMillis();
+        String paramJson = "";
         // 执行方法
-        //        try {
-        Object proceed = joinPoint.proceed();
-        long consumerTime = System.currentTimeMillis() - beforeTime;
-        // 打印返回值和接口耗时
-        logger.debug("[{}]-[{}]请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(), pointMethod.getName(),
-                paramJson, JsonUtil.asString(proceed), consumerTime
-        );
-        // 执行慢接口逻辑判断
-        dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
-        return proceed;
-/*        } catch (Throwable throwable) {
-            logger.debug("[{}]-[{}]请求参数: {}, 执行出现异常！", pointClass.getName(), pointMethod.getName(),
-                    JsonUtil.asString(paramMap), throwable);
-            // fixme 本意是想拦截到异常之类打印出来，或者做些别的处理，但是catch之后怎么抛出原来的异常呢？
-            // 这里不能抛出原来的异常会影响很多异常对应的状态码处理，只能暂时不catch了
-            // 不能丢失自定义异常的code码
-            throw new GlobalCustomizeException(throwable.getMessage());
-        }*/
+        try {
+            paramJson = AopUtil.serializeParam(joinPoint);
+            // 调用起始时间
+            long beforeTime = System.currentTimeMillis();
+            if (CollUtil.isNotEmpty(accessFilterChainMap)) {
+                final List<AccessFilterChain> chainList = accessFilterChainMap.values()
+                        .stream()
+                        .sorted(Comparator.comparingInt(AccessFilterChain::getOrder))
+                        .collect(Collectors.toList());
+                for (AccessFilterChain chain : chainList) {
+                    if (!chain.filter(joinPoint, pointClass, pointMethod)) {
+                        break;
+                    }
+                }
+            }
+            Object proceed = joinPoint.proceed();
+            long consumerTime = System.currentTimeMillis() - beforeTime;
+            // 打印返回值和接口耗时
+            logger.info("[{}]-[{}]请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(), pointMethod.getName(),
+                    paramJson, JsonUtil.asString(proceed), consumerTime
+            );
+            // 执行慢接口逻辑判断
+            dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
+            return proceed;
+        } catch (Exception throwable) {
+            logger.error("[{}]-[{}]请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(), pointMethod.getName(),
+                    paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable), throwable);
+            throw throwable;
+        }
     }
 
     /**

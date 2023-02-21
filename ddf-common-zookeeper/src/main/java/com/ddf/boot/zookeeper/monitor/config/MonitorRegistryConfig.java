@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
@@ -24,13 +25,13 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.retry.RetryNTimes;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,10 +45,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MonitorRegistryConfig implements InitializingBean {
 
+    private CuratorFramework client;
+
     @Autowired
     private MonitorProperties monitorProperties;
-    @Autowired
-    private CuratorFramework client;
     @Autowired
     private EnvironmentHelper environmentHelper;
     @Autowired(required = false)
@@ -70,11 +71,10 @@ public class MonitorRegistryConfig implements InitializingBean {
      *
      * @return
      */
-    @Bean(initMethod = "start", destroyMethod = "close")
-    public CuratorFramework client() {
+    public void initClient() {
         log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-        return CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
+       this.client =  CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
                 monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy
         );
     }
@@ -86,6 +86,7 @@ public class MonitorRegistryConfig implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        initClient();
         List<MonitorNode> monitors = monitorProperties.getMonitors();
         if (CollUtil.isEmpty(monitors)) {
             return;
@@ -120,26 +121,20 @@ public class MonitorRegistryConfig implements InitializingBean {
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
 
-    public static void main(String[] args) {
-        double singlePrice = 0.8d;
-        int firstNum = 2;
-        int upLimit = 100;
-        int totalPayNum = 0;
-        int totalPayDay = 0;
-        int tryPayNum = 0;
-        while (totalPayNum < upLimit) {
-            if (totalPayNum == 0) {
-                tryPayNum = 1;
-            } else {
-                tryPayNum = totalPayNum * 2;
-            }
-            if (tryPayNum > upLimit) {
-                break;
-            }
-            totalPayNum = tryPayNum;
-            totalPayDay ++;
-        }
-        System.out.printf("共买类%d天%d个苹果， 平均每天话费%s", totalPayDay, totalPayNum, (totalPayNum) * 0.8 / totalPayDay);
+    public static void main(String[] args) throws Exception {
+        final CuratorFramework framework = CuratorFrameworkFactory.newClient("www.snowball.fans:2181", 4000, 40000,
+                new RetryNTimes(3, 2000)
+        );
+        framework.start();
+        framework.create()
+                .creatingParentsIfNeeded()
+                .withMode(CreateMode.PERSISTENT)
+                .forPath("/persistent_demo");
+
+        framework.create()
+                .withTtl(5000)
+                .withMode(CreateMode.PERSISTENT_SEQUENTIAL_WITH_TTL)
+                .forPath("/ttl_demo");
     }
 
 
@@ -309,11 +304,12 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 检查节点是否存在
      */
+    @SneakyThrows
     private void checkNodeExist() {
-        zookeeperDistributedLock.lockWorkOnce(DistributedLock.formatPath(CHECK_NODE_LOCK_PATH), () -> {
+        zookeeperDistributedLock.lockWork(DistributedLock.formatPath(CHECK_NODE_LOCK_PATH), () -> {
             List<MonitorNode> monitors = monitorProperties.getMonitors();
             if (CollUtil.isEmpty(monitors)) {
-                return;
+                return null;
             }
             ChildData childData;
             String monitorPath;
@@ -335,7 +331,7 @@ public class MonitorRegistryConfig implements InitializingBean {
                     } else {
                         Collection<String> disjunction = CollUtil.disjunction(Arrays.asList(allNodes), nodes);
                         if (CollUtil.isEmpty(disjunction)) {
-                            return;
+                            return null;
                         }
                         // 回调节点事件
                         callbackNode(monitorPath, monitor, disjunction);
@@ -346,7 +342,8 @@ public class MonitorRegistryConfig implements InitializingBean {
                     }
                 }
             }
-        });
+            return null;
+        }, () -> {return null;});
     }
 
     private void callbackNode(String monitorPath, MonitorNode monitor, Collection<String> allNodes) throws Exception {

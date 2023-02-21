@@ -71,6 +71,7 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
             // TODO 对RequestContent参数进行校验
         } catch (Exception e) {
             log.error("解码失败", e);
+            ctx.close();
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.ddf.boot.common.mybatis.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.ddf.boot.common.authentication.util.UserContextUtil;
 import com.ddf.boot.common.core.model.BaseDomain;
-import com.ddf.boot.common.core.util.UserContextUtil;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;

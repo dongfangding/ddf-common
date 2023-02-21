@@ -1,9 +1,7 @@
 package com.ddf.boot.common.sentinel.exception;
 
-import com.ddf.boot.common.core.exception200.AbstractExceptionHandler;
+import com.ddf.boot.common.api.model.common.response.response.ResponseData;
 import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
-import com.ddf.boot.common.core.response.ResponseData;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * sentinel流控异常处理类$
@@ -24,7 +22,6 @@ public class SentinelExceptionHandlerMapping implements ExceptionHandlerMapping 
      *
      * @param exception
      * @return 如果当前异常不是自己要处理的类型，请返回{@code null}
-     * @see AbstractExceptionHandler#handlerException(Exception, HttpServletRequest, HttpServletResponse)
      */
     @Override
     public ResponseData<?> handlerException(Exception exception) {

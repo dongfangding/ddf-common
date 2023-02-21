@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
-import com.ddf.boot.common.core.exception200.ServerErrorException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
+import com.ddf.boot.common.api.util.JsonUtil;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;

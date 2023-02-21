@@ -82,9 +82,15 @@ public class GlobalProperties {
 
     /**
      * AES 秘钥
+     * 最基本要求，采用对称分组密码体制， 秘钥长度的最少支持为128、192、256位，即16、24、32个字节
      *
      * @see com.ddf.boot.common.core.util.SecureUtil
      */
     private String aesSecret;
+
+    /**
+     * 签名算法秘钥, 目前使用的HMAC256, 秘钥最好是256位,即32个字节
+     */
+    private String signSecret;
 
 }

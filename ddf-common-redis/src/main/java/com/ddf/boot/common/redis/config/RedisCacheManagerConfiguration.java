@@ -67,7 +67,8 @@ public class RedisCacheManagerConfiguration {
     public CacheManager redisCacheManager(@Value("${spring.application.name}") String applicationName,
             CacheProperties cacheProperties, RedisConnectionFactory connectionFactory) {
 
-        RedisCacheWriter cacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
+        // 如何测试lockingRedisCacheWriter和nonLockingRedisCacheWriter的区别???
+        RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
 
         RedisCacheConfiguration defaultCacheConfig = createConfiguration(cacheProperties, applicationName);
 

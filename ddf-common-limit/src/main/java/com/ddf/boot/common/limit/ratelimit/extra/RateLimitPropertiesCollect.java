@@ -45,7 +45,7 @@ public interface RateLimitPropertiesCollect {
      * @param properties
      */
     default void copyToProperties(RateLimitProperties properties) {
-        properties.setKeyGenerators(getKeyGenerators());
+        properties.setKeyGenerator(getKeyGenerators());
         properties.setMax(getMax());
         properties.setRate(getRate());
     }

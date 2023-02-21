@@ -1,9 +1,15 @@
 package com.ddf.boot.common.lock.zk.config;
 
+import com.ddf.boot.common.lock.DistributedLock;
+import com.ddf.boot.common.lock.zk.impl.ZookeeperDistributedLock;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,13 +20,21 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/3/13 0013 16:53
  **/
 @Configuration
+@Slf4j
+@EnableConfigurationProperties(value = {DistributedLockZookeeperProperties.class})
+@ConditionalOnProperty(prefix = "customs.distributed.lock.zookeeper", value = "enable", havingValue = "true")
 public class CuratorFrameworkConfig {
 
-    @Autowired
-    private DistributedLockZookeeperProperties distributedLockZookeeperProperties;
+    private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
+
+    public CuratorFrameworkConfig(DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
+        this.distributedLockZookeeperProperties = distributedLockZookeeperProperties;
+    }
 
     @Bean(initMethod = "start", destroyMethod = "close")
+    @ConditionalOnMissingBean
     public CuratorFramework curatorFramework() {
+        log.info("开始初始化分布式锁zk客户端工具");
         return CuratorFrameworkFactory.newClient(
                 distributedLockZookeeperProperties.getConnectString(),
                 distributedLockZookeeperProperties.getSessionTimeoutMs(),
@@ -31,4 +45,9 @@ public class CuratorFrameworkConfig {
         );
     }
 
+    @Bean(name = ZookeeperDistributedLock.BEAN_NAME)
+    @ConditionalOnMissingBean(name = "zookeeperDistributedLock")
+    public DistributedLock zookeeperDistributedLock(@Autowired CuratorFramework curatorFramework) {
+        return new ZookeeperDistributedLock(curatorFramework, distributedLockZookeeperProperties);
+    }
 }

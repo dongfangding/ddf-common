@@ -1,7 +1,7 @@
 package com.ddf.boot.common.websocket.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.websocket.constant.WebsocketConst;
 import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;

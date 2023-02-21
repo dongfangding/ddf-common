@@ -1,6 +1,6 @@
 package com.ddf.boot.common.limit.ratelimit.keygenerator;
 
-import com.ddf.boot.common.core.util.UserContextUtil;
+import com.ddf.boot.common.authentication.util.UserContextUtil;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
@@ -34,7 +34,8 @@ public class IdentityRateLimitKeyGenerator implements RateLimitKeyGenerator {
     @Override
     public String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties) {
         // 身份标识
-        String identityNo = StringUtils.defaultIfBlank(StringUtils.defaultIfBlank(UserContextUtil.getUserId(),
+        String identityNo = StringUtils.defaultIfBlank(StringUtils.defaultIfBlank(
+                UserContextUtil.getUserId(),
                 UserContextUtil.getCredit()), getPrefix());
         // 获取当前拦截类
         final Class<?> currentClass = joinPoint.getSignature()

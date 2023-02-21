@@ -1,8 +1,7 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.ddf.boot.common.core.constant.ITreeTagCollection;
-import com.ddf.boot.common.core.model.BaseDomain;
+import com.ddf.boot.common.api.constraint.collect.ITreeTagCollection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,20 +26,19 @@ public class TreeConvertUtil {
      *
      * @param domainList
      * @param function
-     * @param <T>
      * @return
      */
-    public static <T extends BaseDomain> List<ITreeTagCollection> convert(List<T> domainList, Function<T, ITreeTagCollection> function) {
+    public static <T extends ITreeTagCollection> List<T> convert(List<ITreeTagCollection> domainList, Function<ITreeTagCollection, T> function) {
         if (CollectionUtil.isEmpty(domainList)) {
             return Collections.emptyList();
         }
-        Map<String, ITreeTagCollection> dataMap = new LinkedHashMap<>(domainList.size());
-        for (T domain : domainList) {
-            dataMap.put(String.valueOf(domain.getId()), function.apply(domain));
+        Map<String, T> dataMap = new LinkedHashMap<>(domainList.size());
+        for (ITreeTagCollection domain : domainList) {
+            dataMap.put(domain.getTreeId(), function.apply(domain));
         }
-        List<ITreeTagCollection> responseList = new ArrayList<>();
-        for (Map.Entry<String, ITreeTagCollection> entry : dataMap.entrySet()) {
-            ITreeTagCollection currentNode = entry.getValue();
+        List<T> responseList = new ArrayList<>();
+        for (Map.Entry<String, T> entry : dataMap.entrySet()) {
+            T currentNode = entry.getValue();
             // 如果当前节点是根节点，直接添加到返回列表中
             if (currentNode.isRoot()) {
                 responseList.add(currentNode);

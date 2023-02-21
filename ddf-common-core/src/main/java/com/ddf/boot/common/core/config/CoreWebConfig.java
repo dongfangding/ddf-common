@@ -1,9 +1,9 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.encode.BCryptPasswordEncoder;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.core.resolver.QueryParamArgumentResolver;
-import com.ddf.boot.common.core.util.SpringContextHolder;
 import java.util.List;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -78,6 +78,30 @@ public class CoreWebConfig implements WebMvcConfigurer {
         return new QueryParamArgumentResolver();
     }
 
+    @Bean
+    public MultiArgumentResolverMethodProcessor multiArgumentResolverMethodProcessor() {
+        return new MultiArgumentResolverMethodProcessor();
+    }
+
+
+    /**
+     * 为了解决controllerAdvice包装返回结果返回String, 消息转换器会直接将对象强转为String报错的问题，这里强制把jackson序列化转换器放在
+     * 第一个，这样对象也会被序列化返回，就不会存在这个问题。
+     *
+     * 但是有时候还是会报这个错误，比如直接在浏览器地址栏输入。这是因为， 在处理返回值的时候， mvc会判断当前请求要返回的MediaType，
+     * 而jackson序列化工具必须是application/json等才会使用，如果选择了text/html, 那么还是会报错。这个时候携带请求头Content-Type:application/json就可以了。
+     * 具体代码见下
+     *
+     * 配置消息转换器的代码在
+     * org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#getMessageConverters()
+     *     org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#configureMessageConverters(java.util.List)
+     *     org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#extendMessageConverters(java.util.List)
+     *
+     * 使用消息转换器判断MediaType的地方在
+     * org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor#writeWithMessageConverters(java.lang.Object, org.springframework.core.MethodParameter, org.springframework.http.server.ServletServerHttpRequest, org.springframework.http.server.ServletServerHttpResponse)
+     *
+     * @param converters
+     */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(0, new MappingJackson2HttpMessageConverter());
@@ -101,7 +125,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     @Deprecated
     public void addCorsMappings(CorsRegistry registry) {
         // 这种由于拦截器的顺序问题无法处理项目内部有自定义拦截器且内部出现异常的问题
-        // registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+//         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
     }
 
     /**
@@ -115,7 +139,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
         // Possibly...
         // config.applyPermitDefaultValues()
-        config.setAllowCredentials(true);
+        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
+        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
+        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
+        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
+        config.setAllowCredentials(false);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -140,7 +168,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(SpringContextHolder.getBean(MultiArgumentResolverMethodProcessor.class));
+        resolvers.add(multiArgumentResolverMethodProcessor());
         resolvers.add(queryParamArgumentResolver());
     }
 
@@ -168,5 +196,11 @@ public class CoreWebConfig implements WebMvcConfigurer {
         threadPoolScheduler.setPoolSize(Runtime.getRuntime().availableProcessors());
         threadPoolScheduler.setRemoveOnCancelPolicy(true);
         return threadPoolScheduler;
+    }
+
+    @Bean
+    @Primary
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

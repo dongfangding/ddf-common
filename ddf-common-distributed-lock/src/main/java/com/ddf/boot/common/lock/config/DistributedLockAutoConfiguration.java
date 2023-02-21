@@ -1,7 +1,9 @@
 package com.ddf.boot.common.lock.config;
 
-import org.springframework.context.annotation.ComponentScan;
+import com.ddf.boot.common.lock.redis.config.RedisLockConfiguration;
+import com.ddf.boot.common.lock.zk.config.CuratorFrameworkConfig;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * 自动配置类$
@@ -10,6 +12,6 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/8/16 0016 13:48
  */
 @Configuration
-@ComponentScan("com.ddf.boot.common.lock")
+@Import(value = {CuratorFrameworkConfig.class, RedisLockConfiguration.class})
 public class DistributedLockAutoConfiguration {
 }

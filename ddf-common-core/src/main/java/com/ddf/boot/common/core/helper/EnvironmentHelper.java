@@ -1,5 +1,7 @@
 package com.ddf.boot.common.core.helper;
 
+import com.ddf.boot.common.core.enumration.EnvironmentProfileEnum;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,7 @@ public class EnvironmentHelper {
 
     /**
      * 判断目标环境是否存在于当前激活的环境变量中
-     * 只有有一个值匹配当前激活的环境变量，就满足该判断
+     * 只要有一个值匹配当前激活的环境变量，就满足该判断
      *
      * @param targetProfile
      * @return boolean
@@ -58,7 +60,7 @@ public class EnvironmentHelper {
         }
         for (String activeProfile : profileList) {
             for (String target : targetProfile) {
-                if (activeProfile.equals(target)) {
+                if (activeProfile.equalsIgnoreCase(target)) {
                     return true;
                 }
             }
@@ -82,5 +84,14 @@ public class EnvironmentHelper {
      */
     public String getApplicationName() {
         return environment.getProperty("spring.application.name");
+    }
+
+    /**
+     * 是否生产环境
+     *
+     * @return
+     */
+    public boolean isProdProfile() {
+        return checkIsExistOr(Lists.newArrayList(EnvironmentProfileEnum.PRO.getCode()));
     }
 }

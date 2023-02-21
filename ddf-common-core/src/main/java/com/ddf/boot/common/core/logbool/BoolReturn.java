@@ -1,6 +1,5 @@
 package com.ddf.boot.common.core.logbool;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,7 +11,6 @@ import lombok.experimental.Accessors;
  * @date 2020/06/12 15:11
  */
 @Data
-@ApiModel("boolean返回类型")
 @Accessors(chain = true)
 public class BoolReturn {
 
