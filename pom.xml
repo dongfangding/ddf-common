@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
@@ -462,25 +463,26 @@
 
     <modules>
         <module>ddf-common-api</module>
+        <module>ddf-common-log4j</module>
         <module>ddf-common-core</module>
+        <module>ddf-common-zookeeper</module>
+        <module>ddf-common-ids-service</module>
+        <module>ddf-common-mybatis-plus</module>
+        <module>ddf-common-redis</module>
         <module>ddf-common-swagger</module>
         <module>ddf-common-authentication</module>
-        <module>ddf-common-ids-service</module>
+        <module>ddf-common-jwt</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
-        <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
-        <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
-        <module>ddf-common-zookeeper</module>
         <module>ddf-common-third-party</module>
         <module>ddf-common-script</module>
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
         <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-redis</module>
         <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
@@ -490,7 +492,6 @@
         <module>ddf-common-nacos</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
-        <module>ddf-common-log4j</module>
         <module>ddf-common-canal</module>
     </modules>
 
