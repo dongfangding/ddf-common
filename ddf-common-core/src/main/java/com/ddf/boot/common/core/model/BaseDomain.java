@@ -1,10 +1,5 @@
 package com.ddf.boot.common.core.model;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.Version;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -17,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 
 /**
  * 通用基类
@@ -62,24 +58,24 @@ public class BaseDomain {
     public static final Integer IS_DEL_LOGIC_VALID_VALUE = 0;
 
 
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     @Id
     protected Long id;
 
-    @TableField(value = "create_by", fill = FieldFill.INSERT)
+//    @TableField(value = "create_by", fill = FieldFill.INSERT)
     protected String createBy;
 
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
+//    @TableField(value = "create_time", fill = FieldFill.INSERT)
     @CreatedDate
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     protected LocalDateTime createTime;
 
-    @TableField(value = "modify_by", fill = FieldFill.INSERT_UPDATE)
+//    @TableField(value = "modify_by", fill = FieldFill.INSERT_UPDATE)
     protected String modifyBy;
 
-    @TableField(value = "modify_time", fill = FieldFill.INSERT_UPDATE)
+//    @TableField(value = "modify_time", fill = FieldFill.INSERT_UPDATE)
     @LastModifiedDate
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -97,8 +93,8 @@ public class BaseDomain {
     protected Integer isDel = 0;
 
     @Version
-    @TableField(fill = FieldFill.INSERT)
-    @org.springframework.data.annotation.Version
+//    @TableField(fill = FieldFill.INSERT)
+//    @org.springframework.data.annotation.Version
     protected Integer version = 1;
 
 }

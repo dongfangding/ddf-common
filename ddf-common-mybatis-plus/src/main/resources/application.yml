@@ -1,0 +1,8 @@
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+  global-config:
+    db-config:
+      id-type: AUTO
+  mapper-locations: classpath*:/mapper/**/*.xml
