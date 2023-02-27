@@ -13,7 +13,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.omg.CORBA.SystemException;
 
 /**
  * <p>description</p >
@@ -103,10 +102,8 @@ public class TraceAspect {
             }
             return result;
         } catch (Exception throwable) {
-            if (!(throwable instanceof SystemException)) {
-                log.error("{}#{}请求参数: {}, 执行出现异常！异常消息==>", pointClass.getName(), pointMethod.getName(),
-                        AopUtil.serializeParam(joinPoint), throwable);
-            }
+            log.error("{}#{}请求参数: {}, 执行出现异常！异常消息==>", pointClass.getName(), pointMethod.getName(),
+                    AopUtil.serializeParam(joinPoint), throwable);
             throw throwable;
         }
     }
