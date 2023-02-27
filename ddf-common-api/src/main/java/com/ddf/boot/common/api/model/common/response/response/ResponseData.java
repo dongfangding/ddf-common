@@ -65,7 +65,7 @@ public class ResponseData<T> {
     /**
      * 扩展字段
      * 比如在某些情况下正常逻辑返回的是data
-     * 某些异常逻辑下返回的是另外一套数据
+     * 某些异常逻辑下返回的是另外一套数据, 比如现在用户余额不足， 需要返回到底缺多少， 然后还提供一系列数据来说明怎么来购买
      */
     private Object extra;
 
@@ -76,6 +76,15 @@ public class ResponseData<T> {
         this.stack = stack;
         this.timestamp = timestamp;
         this.data = data;
+    }
+
+    public ResponseData(String code, String message, String stack, long timestamp, T data, Object extra) {
+        this.code = code;
+        this.message = message;
+        this.stack = stack;
+        this.timestamp = timestamp;
+        this.data = data;
+        this.extra = extra;
     }
 
     /**
@@ -115,6 +124,19 @@ public class ResponseData<T> {
      */
     public static <T> ResponseData<T> failure(String code, String message, String stack) {
         return new ResponseData<>(code, message, stack, System.currentTimeMillis(), null);
+    }
+
+    /**
+     * 失败返回消息方法
+     *
+     * @param code
+     * @param message
+     * @param stack
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(String code, String message, String stack, Object extra) {
+        return new ResponseData<>(code, message, stack, System.currentTimeMillis(), null, extra);
     }
 
 
