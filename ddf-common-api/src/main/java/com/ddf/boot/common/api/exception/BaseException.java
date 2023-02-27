@@ -56,7 +56,8 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(Throwable throwable) {
         super(throwable);
-        initCallback(defaultCallback(), throwable);
+        this.code = defaultCallback().getCode();
+        this.description = throwable.getMessage();
     }
 
 
@@ -67,7 +68,7 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode.getDescription());
-        initCallback(baseCallbackCode, null);
+        initCallback(null, baseCallbackCode);
     }
 
     /**
@@ -78,7 +79,7 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(BaseCallbackCode baseCallbackCode, Object extra) {
         super(baseCallbackCode.getDescription());
-        initCallback(baseCallbackCode, extra);
+        initCallback(null, baseCallbackCode, extra);
     }
 
     /**
@@ -90,19 +91,20 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
-        initCallback(baseCallbackCode, params);
+        initCallback(null, baseCallbackCode, params);
     }
 
     /**
      * 同上，但是额外提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
      * 占位字符串采用{0} {1}这种角标方式
      *
+     * @param extra
      * @param baseCallbackCode
      * @param params
      */
-    public BaseException(BaseCallbackCode baseCallbackCode, Object extra, Object... params) {
+    public BaseException(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
-        initCallback(baseCallbackCode, extra, params);
+        initCallback(extra, baseCallbackCode, params);
     }
 
     /**
@@ -140,9 +142,9 @@ public abstract class BaseException extends RuntimeException {
     }
 
 
-    private void initCallback(BaseCallbackCode baseCallbackCode, Object extra, Object... params) {
-        this.baseCallbackCode = baseCallbackCode;
+    private void initCallback(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
         this.extra = extra;
+        this.baseCallbackCode = baseCallbackCode;
         initCallback(
                 baseCallbackCode.getCode() == null ? defaultCallback().getCode() : baseCallbackCode.getCode(),
                 // 如果是默认状态码生效， 基本上说明使用方没有按照错误码体系走， 那么就不去解析， 直接使用传入的description
