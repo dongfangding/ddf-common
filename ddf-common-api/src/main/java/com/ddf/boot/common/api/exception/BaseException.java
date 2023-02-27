@@ -40,6 +40,14 @@ public abstract class BaseException extends RuntimeException {
     @Getter
     private BaseCallbackCode baseCallbackCode;
 
+    /**
+     * 扩展数据字段
+     * 有这样一种需求，比如抛出异常的情况下还是要额外返回一些数据。
+     * 比如现在说用户余额不足，但是我不仅是在消息中返回缺多少钱，而且还要返回一整个相关的数据，让前端可以处理更加复杂的逻辑，而这需要返回与这个
+     * 异常相关的业务数据，就可以放到这个对象里来
+     */
+    @Getter
+    private Object extra;
 
     /**
      * 用来包装其它异常来转换为自定义异常
@@ -51,6 +59,7 @@ public abstract class BaseException extends RuntimeException {
         initCallback(defaultCallback(), throwable);
     }
 
+
     /**
      * 推荐使用的系统自定义的一套体系的异常使用方式，传入异常错误码类
      *
@@ -58,7 +67,18 @@ public abstract class BaseException extends RuntimeException {
      */
     public BaseException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode.getDescription());
-        initCallback(baseCallbackCode);
+        initCallback(baseCallbackCode, null);
+    }
+
+    /**
+     * 推荐使用的系统自定义的一套体系的异常使用方式，传入异常错误码类
+     *
+     * @param baseCallbackCode
+     * @param extra
+     */
+    public BaseException(BaseCallbackCode baseCallbackCode, Object extra) {
+        super(baseCallbackCode.getDescription());
+        initCallback(baseCallbackCode, extra);
     }
 
     /**
@@ -74,6 +94,18 @@ public abstract class BaseException extends RuntimeException {
     }
 
     /**
+     * 同上，但是额外提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     * 占位字符串采用{0} {1}这种角标方式
+     *
+     * @param baseCallbackCode
+     * @param params
+     */
+    public BaseException(BaseCallbackCode baseCallbackCode, Object extra, Object... params) {
+        super(MessageFormat.format(baseCallbackCode.getDescription(), params));
+        initCallback(baseCallbackCode, extra, params);
+    }
+
+    /**
      * 只简单抛出消息异常
      *
      * @param description
@@ -81,7 +113,7 @@ public abstract class BaseException extends RuntimeException {
     public BaseException(String description) {
         super(description);
         this.description = description;
-        initCallback(defaultCallback());
+        this.code = defaultCallback().getCode();
     }
 
     /**
@@ -108,8 +140,9 @@ public abstract class BaseException extends RuntimeException {
     }
 
 
-    private void initCallback(BaseCallbackCode baseCallbackCode, Object... params) {
+    private void initCallback(BaseCallbackCode baseCallbackCode, Object extra, Object... params) {
         this.baseCallbackCode = baseCallbackCode;
+        this.extra = extra;
         initCallback(
                 baseCallbackCode.getCode() == null ? defaultCallback().getCode() : baseCallbackCode.getCode(),
                 // 如果是默认状态码生效， 基本上说明使用方没有按照错误码体系走， 那么就不去解析， 直接使用传入的description
@@ -130,19 +163,6 @@ public abstract class BaseException extends RuntimeException {
         this.params = params;
         this.description = StrUtil.isNotBlank(description) ? MessageFormat.format(description, params) : "";
     }
-
-
-    /**
-     * 处理接收其它异常时初始化状态码和消息
-     *
-     * @param baseCallbackCode
-     * @param throwable
-     */
-    private void initCallback(BaseCallbackCode baseCallbackCode, Throwable throwable) {
-        this.code = code == null ? defaultCallback().getCode() : code;
-        this.description = throwable.getMessage();
-    }
-
 
     /**
      * 当前异常默认响应状态码
