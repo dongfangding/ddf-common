@@ -14,11 +14,9 @@
         <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-<!--        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>-->
         <!-- nacos starter使用的一个类在2.4就被移除了，除非自己重写starter修改，这里考虑到应该还有其它大量的三方库可能都会有兼容问题，因此不再使用这个版本 -->
         <!--<spring-boot.version>2.5.7</spring-boot.version>-->
-        <spring-boot.version>2.3.9.RELEASE</spring-boot.version>
-        <spring-cloud.version>2.2.9.RELEASE</spring-cloud.version>
+        <spring-boot.version>2.6.11</spring-boot.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
@@ -53,7 +51,8 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2-SNAPSHOT</version>
+    <!-- 1.0.2-2611-SNAPSHOT, 中间部分代表spring-boot的版本，2611，即2.6.11 -->
+    <version>1.0.2-2611-SNAPSHOT</version>
 
     <distributionManagement>
         <repository>
@@ -417,14 +416,6 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
             </dependency>
-
-            <!-- 用于刷新配置 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-context</artifactId>
-                <version>${spring-cloud.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.client</artifactId>
