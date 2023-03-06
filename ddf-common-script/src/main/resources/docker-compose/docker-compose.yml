@@ -1,0 +1,195 @@
+version: "3"
+networks:
+  customize_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
+services:
+  mysql:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: Aa&123456
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.2
+    ports:
+      - "3306:3306"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./mysql/data/:/var/lib/mysql:rw/
+      - ./mysql/logs/:/var/log/mysql:rw/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    restart: always
+
+
+  redis:
+    image: redis:6.0.17
+    container_name: redis
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.3
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - "./redis:/data:rw"
+    command: "redis-server /data/redis.conf"
+    ports:
+      - "6379:6379"
+    restart: always
+
+  zookeeper:
+    image: zookeeper:3.6.4
+    restart: always
+    container_name: zookeeper
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.4
+    ports:
+      - "2181:2181"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./zookeeper/conf:/conf
+      - ./zookeeper/data:/data:rw
+      - ./zookeeper/datalog:/datalog:rw
+
+  rabbitmq:
+    image: rabbitmq:3.11.9-management
+    container_name: rabbitmq
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.10
+    restart: always
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: Aa&123456
+  
+  mongo:
+    image: mongo:6.0.4
+    container_name: mongo
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.11
+    restart: always
+    environment:
+      # mongo的用户名和密码
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: Aa&123456
+    ports:
+      - "27017:27017"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./mongo/configdb:/data/configdb
+      - ./mongo/db:/data/db:rw
+    command: "mongod --config /data/configdb/mongod.conf"
+
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    container_name: es
+    restart: always
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.12
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs/db:rw
+      - ./elasticsearch/config:/usr/share/elasticsearch/config
+
+  rocketmq-namesrv:
+    image: rocketmqinc/rocketmq-namesrv:4.5.0-alpine
+    container_name: rocketmq-namesrv
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.15
+    restart: always
+    environment:
+      MAX_HEAP_SIZE: 512M
+    ports:
+      - "9876:9876"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./rocketmq/namesrv/logs:/root/logs:rw
+      - ./rocketmq/namesrv/store:/root/store:rw
+  
+  rocketmq-broker:
+    image: rocketmqinc/rocketmq-broker:4.5.0-alpine
+    container_name: rocketmq-broker
+    restart: always
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.20
+    depends_on:
+      - rocketmq-namesrv
+    environment:
+      MAX_HEAP_SIZE: 512M
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./rocketmq/broker/logs:/root/logs:rw
+      - ./rocketmq/broker/store:/root/store:rw
+      - ./rocketmq/broker/conf:/root/rocketmq-4.5.0/conf
+    command: sh mqbroker -c /root/rocketmq-4.5.0/conf/broker.conf
+
+  rocketmq-console:
+    image: styletang/rocketmq-console-ng
+    container_name: rocketmq-console
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.25
+    ports:
+      - "8804:8080"
+    depends_on:
+      - rocketmq-namesrv
+    environment:
+      JAVA_OPTS: -Xms256M -Xmx512M -Dlogging.level.root=info -Drocketmq.namesrv.addr=rocketmq_namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+
+  xxl-job-admin:
+    image: xuxueli/xxl-job-admin:2.3.1
+    container_name: xxl-job-admin
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.26
+    ports:
+      - "8808:8080"
+    volumes:
+      - ./xxl-job:/data/applogs
+    depends_on:
+      - mysql
+    environment:
+      JAVA_OPTS: -Xms256M -Xmx512M
+      PARAMS: --spring.datasource.url=jdbc:mysql://mysql:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=Aa&123456 --xxl.job.accessToken=Aa&123456
+
+  nacos:
+    image: nacos/nacos-server:v2.0.4-slim
+    container_name: nacos
+    networks:
+      customize_net:
+        ipv4_address: 172.19.0.27
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9555:9555"
+    volumes:
+      - ./nacos/conf:/home/nacos/conf
+      - ./nacos/logs:/home/nacos/logs
+    depends_on:
+      - mysql
+    environment:
+      JVM_XMS: 512M
+      JVM_XMX: 512M
+      MODE: standalone
