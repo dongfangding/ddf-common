@@ -2,18 +2,19 @@ package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * 邮件发送工具类
@@ -41,15 +42,16 @@ import org.springframework.stereotype.Component;
  *
  * @author dongfang.ding on 2018/5/31
  */
-@Component
+@Slf4j
 public class MailUtil {
 
-    private final Logger log = LoggerFactory.getLogger(MailUtil.class);
+    private static final JavaMailSenderImpl mailSender;
+    private static final MailProperties mailProperties;
 
-    @Autowired(required = false)
-    private JavaMailSenderImpl mailSender;
-    @Autowired(required = false)
-    private MailProperties mailProperties;
+    static {
+        mailSender = SpringContextHolder.getBeanWithStatic(JavaMailSenderImpl.class);
+        mailProperties = SpringContextHolder.getBeanWithStatic(MailProperties.class);
+    }
 
     /**
      * 发送带附件的和支持html格式内容的邮件内容
@@ -60,7 +62,9 @@ public class MailUtil {
      * @param attachment 附件
      * @throws MessagingException
      */
-    public void sendMimeMail(String[] sendTo, String[] cc, String subject, String content, Map<String, File> attachment) {
+    public static void sendMimeMail(String[] sendTo, String[] cc, String subject, String content, Map<String, File> attachment) {
+        Assert.notNull(mailSender, "未配置邮件相关参数");
+        Assert.notNull(mailProperties, "未配置邮件相关参数");
         // 1、创建一个复杂的消息邮件
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper;
@@ -94,13 +98,45 @@ public class MailUtil {
         mailSender.send(mimeMessage);
     }
 
-    public void sendMimeMail(String[] sendTo, String subject, String content) {
+    public static void sendMimeMail(String[] sendTo, String subject, String content) {
         sendMimeMail(sendTo, null, subject, content, null);
     }
 
 
-    public void sendMimeMail(String[] sendTo, String[] cc, String subject, String content) {
+    public static void sendMimeMail(String[] sendTo, String[] cc, String subject, String content) {
         sendMimeMail(sendTo, cc, subject, content, null);
+    }
+
+
+
+    /**
+     * 发送带附件的和支持html格式内容的邮件内容
+     *
+     * @param sendTo
+     * @param cc
+     * @param subject
+     * @param content
+     * @param files
+     */
+    public static void sendMimeMailWithHuTool(Collection<String> sendTo, Collection<String> cc, String subject, String content, File... files) {
+        try {
+            cn.hutool.extra.mail.MailUtil.send(sendTo, cc, null, subject, content, true, files);
+        } catch (Exception e) {
+            log.error("邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}", sendTo,
+                    cc, subject, content);
+            throw new BusinessException(BaseErrorCallbackCode.MAIL_SEND_FAILURE);
+        }
+    }
+
+    /**
+     * 简单发送邮件
+     *
+     * @param sendTo
+     * @param subject
+     * @param content
+     */
+    public static void sendMimeMailWithHuTool(String sendTo, String subject, String content) {
+        sendMimeMailWithHuTool(Lists.newArrayList(sendTo), null, subject, content);
     }
 
 }

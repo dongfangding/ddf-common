@@ -26,7 +26,7 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.8.11</hutool.version>
+        <hutool.version>5.8.12</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
@@ -44,6 +44,7 @@
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
         <pagehelper.version>1.4.3</pagehelper.version>
+        <mail.version>mail</mail.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -430,6 +431,12 @@
                         <groupId>ch.qos.logback</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${mail.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
