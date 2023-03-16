@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.2-2611-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,7 @@
     </description>
 
     <properties>
-        <xxl-job-version>2.2.0</xxl-job-version>
+        <xxl-job-version>2.3.1</xxl-job-version>
     </properties>
 
     <dependencies>

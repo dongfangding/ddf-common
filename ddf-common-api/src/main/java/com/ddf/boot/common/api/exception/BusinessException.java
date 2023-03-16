@@ -44,12 +44,23 @@ public class BusinessException extends BaseException {
     }
 
     /**
+     * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
+     *
+     * @param extra
+     * @param baseCallbackCode
+     * @param params
+     */
+    public BusinessException(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
+        super(extra, baseCallbackCode, params);
+    }
+
+    /**
      * 当前异常默认响应状态码
      *
      * @return
      */
     @Override
     public BaseCallbackCode defaultCallback() {
-        return BaseErrorCallbackCode.SERVER_ERROR;
+        return BaseErrorCallbackCode.BIZ_EXCEPTION;
     }
 }

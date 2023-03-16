@@ -42,7 +42,6 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         if (metaObject.getOriginalObject() instanceof BaseDomain) {
-            log.info("start insert fill ....");
             // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
             this.strictInsertFill(metaObject, "createBy", String.class, UserContextUtil.getUserId());
             this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, LocalDateTime.now());
@@ -52,7 +51,7 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
             // 采用这种方式如果没有值的话，在新增的时候给个默认值
             Object version = metaObject.getValue("version");
             if (null == version) {
-                this.strictInsertFill(metaObject, "version", Long.class, 1);
+                this.strictInsertFill(metaObject, "version", Long.class, 1L);
             }
         }
     }
@@ -68,7 +67,6 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
                         bindingParamKey) instanceof BaseDomain;
             }
             if (isFill) {
-                log.info("start update fill ....");
                 // 切记切记，这里是filedName，是实体属性字段名，而不是数据库列名
                 this.strictUpdateFill(metaObject, "modifyBy", String.class, UserContextUtil.getUserId());
                 this.strictUpdateFill(metaObject, "modifyTime", LocalDateTime.class, LocalDateTime.now());

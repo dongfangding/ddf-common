@@ -87,6 +87,7 @@ public abstract class AbstractExceptionHandler {
 
         String exceptionCode;
         String message;
+        Object extra = null;
         if (exception instanceof BaseException) {
             BaseException baseException = (BaseException) exception;
             exceptionCode = baseException.getCode();
@@ -98,6 +99,7 @@ public abstract class AbstractExceptionHandler {
             }
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(), description, locale);
+            extra = baseException.getExtra();
         } else if (exception instanceof IllegalArgumentException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
             message = exception.getMessage();
@@ -128,7 +130,7 @@ public abstract class AbstractExceptionHandler {
                 NetUtil.getLocalhostStr()
         );
         return ResponseData.failure(exceptionCode, message,
-                ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception)
+                ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception), extra
         );
     }
 

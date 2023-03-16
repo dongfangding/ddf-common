@@ -44,4 +44,9 @@ public interface RedisLuaScript {
      * hash自增时进行取模运算后反减运算消耗值，结果返回取整后的值
      */
     RedisScript<String> HASH_INCREASE_ROUNDING_REDUCE = RedisScript.of(new ClassPathResource("lua/HashIncreaseRoundingReduce.lua"), String.class);
+
+    /**
+     * 基于zset实现的存储最大历史的容器
+     */
+    RedisScript<String> MAX_CAPACITY_HISTORY_CONTAINER = RedisScript.of(new ClassPathResource("lua/MaxCapacityHistoryContainer.lua"), String.class);
 }

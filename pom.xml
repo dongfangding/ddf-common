@@ -4,21 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
         <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-<!--        <spring-boot.version>2.2.5.RELEASE</spring-boot.version>-->
         <!-- nacos starter使用的一个类在2.4就被移除了，除非自己重写starter修改，这里考虑到应该还有其它大量的三方库可能都会有兼容问题，因此不再使用这个版本 -->
         <!--<spring-boot.version>2.5.7</spring-boot.version>-->
-        <spring-boot.version>2.3.9.RELEASE</spring-boot.version>
-        <spring-cloud.version>2.2.9.RELEASE</spring-cloud.version>
-        <mybatis.version>3.3.0</mybatis.version>
+        <spring-boot.version>2.6.11</spring-boot.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
@@ -28,11 +26,11 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.8.11</hutool.version>
+        <hutool.version>5.8.12</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
-        <mysql.version>8.0.16</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
                 <guava.version>30.0-jre</guava.version>
         <!--<guava.version>20.0</guava.version>-->
         <http-client.version>4.5.13</http-client.version>
@@ -44,8 +42,9 @@
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <validation.version>2.0.2</validation.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
-        <pagehelper.version>1.4.2</pagehelper.version>
         <canel.version>1.1.2</canel.version>
+        <pagehelper.version>1.4.3</pagehelper.version>
+        <mail.version>mail</mail.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -53,7 +52,8 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2-SNAPSHOT</version>
+    <!-- 1.0.2-2611-SNAPSHOT, 中间部分代表spring-boot的版本，2611，即2.6.11 -->
+    <version>1.0.2-2611-SNAPSHOT</version>
 
     <distributionManagement>
         <repository>
@@ -292,21 +292,10 @@
                 <version>${hutool.version}</version>
             </dependency>
 
-            <!-- 引入mybatis-plus -->
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-autoconfigure</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-jdbc</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/p6spy/p6spy -->
@@ -428,20 +417,6 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
             </dependency>
-
-            <!-- 用于刷新配置 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-context</artifactId>
-                <version>${spring-cloud.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.client</artifactId>
@@ -457,30 +432,37 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${mail.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>ddf-common-api</module>
+        <module>ddf-common-log4j</module>
         <module>ddf-common-core</module>
+        <module>ddf-common-zookeeper</module>
+        <module>ddf-common-ids-service</module>
+        <module>ddf-common-mybatis-plus</module>
+        <module>ddf-common-redis</module>
         <module>ddf-common-swagger</module>
         <module>ddf-common-authentication</module>
-        <module>ddf-common-ids-service</module>
+        <module>ddf-common-jwt</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
-        <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
-        <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
-        <module>ddf-common-zookeeper</module>
         <module>ddf-common-third-party</module>
         <module>ddf-common-script</module>
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
         <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-redis</module>
         <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
@@ -490,7 +472,6 @@
         <module>ddf-common-nacos</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
-        <module>ddf-common-log4j</module>
         <module>ddf-common-canal</module>
     </modules>
 
