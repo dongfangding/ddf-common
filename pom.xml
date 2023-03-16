@@ -27,7 +27,7 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.8.11</hutool.version>
+        <hutool.version>5.8.12</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
@@ -45,6 +45,7 @@
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
         <pagehelper.version>1.4.3</pagehelper.version>
+        <mail.version>1.6.2</mail.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -85,22 +86,10 @@
             </snapshots>
         </repository>
         <repository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/central</url>
             <snapshots>
                 <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>cloudera-repos</id>
-            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
             </snapshots>
         </repository>
     </repositories>
@@ -119,22 +108,10 @@
             </snapshots>
         </pluginRepository>
         <pluginRepository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/central</url>
             <snapshots>
                 <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cloudera-repos</id>
-            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -416,14 +393,6 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
             </dependency>
-
-            <!-- 用于刷新配置 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-context</artifactId>
-                <version>${spring-cloud.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.client</artifactId>
@@ -439,30 +408,37 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${mail.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>ddf-common-api</module>
+        <module>ddf-common-log4j</module>
         <module>ddf-common-core</module>
+        <module>ddf-common-zookeeper</module>
+        <module>ddf-common-ids-service</module>
+        <module>ddf-common-mybatis-plus</module>
+        <module>ddf-common-redis</module>
         <module>ddf-common-swagger</module>
         <module>ddf-common-authentication</module>
-        <module>ddf-common-ids-service</module>
+        <module>ddf-common-jwt</module>
         <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
-        <module>ddf-common-jwt</module>
         <module>ddf-common-security</module>
-        <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
-        <module>ddf-common-zookeeper</module>
         <module>ddf-common-third-party</module>
         <module>ddf-common-script</module>
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
         <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-redis</module>
         <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
@@ -472,7 +448,6 @@
         <module>ddf-common-nacos</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
-        <module>ddf-common-log4j</module>
         <module>ddf-common-canal</module>
     </modules>
 
