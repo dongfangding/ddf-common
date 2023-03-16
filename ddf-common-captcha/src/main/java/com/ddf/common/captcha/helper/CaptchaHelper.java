@@ -55,7 +55,7 @@ public class CaptchaHelper {
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
         this.captchaService = captchaService;
-        captchaCacheService = CaptchaServiceFactory.getCache(captchaProperties.getCacheType().name());
+        this.captchaCacheService = CaptchaServiceFactory.getCache(captchaProperties.getCacheType().name());
     }
 
     /**

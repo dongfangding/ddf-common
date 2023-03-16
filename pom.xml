@@ -44,7 +44,7 @@
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
         <pagehelper.version>1.4.3</pagehelper.version>
-        <mail.version>mail</mail.version>
+        <mail.version>1.6.2</mail.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -86,22 +86,10 @@
             </snapshots>
         </repository>
         <repository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/central</url>
             <snapshots>
                 <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>cloudera-repos</id>
-            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
             </snapshots>
         </repository>
     </repositories>
@@ -120,22 +108,10 @@
             </snapshots>
         </pluginRepository>
         <pluginRepository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/libs-milestone</url>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/central</url>
             <snapshots>
                 <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>cloudera-repos</id>
-            <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
