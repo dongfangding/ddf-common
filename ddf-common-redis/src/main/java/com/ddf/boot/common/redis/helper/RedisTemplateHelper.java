@@ -260,4 +260,21 @@ public class RedisTemplateHelper {
                 Collections.singletonList(key), hashKey, step + "", module + "");
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
+
+    /**
+     * 基于zset实现的存储最大历史的容器
+     * -- 该脚本的作用是提供一个保留最大长度的容器，如果达到最大容器大小最开始存储的数据会丢失。
+     * -- 场景举例，比如保留用户进房历史，最多保留20个。那么member就是主播的id, score就可以用进房时间
+     *
+     * @param key
+     * @param maxSize
+     * @param member
+     * @param score
+     * @return
+     */
+    public Integer maxCapacityHistoryContainer(String key, Long maxSize, String member, Double score) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_CAPACITY_HISTORY_CONTAINER,
+                Collections.singletonList(key), maxSize + "", member, score + "");
+        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
+    }
 }
