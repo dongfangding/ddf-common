@@ -1,8 +1,11 @@
 package com.ddf.boot.common.xxl.executor.handler;
 
-import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -11,33 +14,35 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import org.springframework.stereotype.Component;
 
 /**
  * XxlJob开发示例（Bean模式）
- * <p>
+ *
  * 开发步骤：
- * 1、在Spring Bean实例中，开发Job方法，方式格式要求为 "public ReturnT<String> execute(String param)"
- * 2、为Job方法添加注解 "@XxlJob(value="自定义jobhandler名称", init = "JobHandler初始化方法", destroy = "JobHandler销毁方法")"，注解value值对应的是调度中心新建任务的JobHandler属性的值。
- * 3、执行日志：需要通过 "XxlJobHelper.log" 打印执行日志；
+ *      1、任务开发：在Spring Bean实例中，开发Job方法；
+ *      2、注解配置：为Job方法添加注解 "@XxlJob(value="自定义jobhandler名称", init = "JobHandler初始化方法", destroy = "JobHandler销毁方法")"，注解value值对应的是调度中心新建任务的JobHandler属性的值。
+ *      3、执行日志：需要通过 "XxlJobHelper.log" 打印执行日志；
+ *      4、任务结果：默认任务结果为 "成功" 状态，不需要主动设置；如有诉求，比如设置任务结果为失败，可以通过 "XxlJobHelper.handleFail/handleSuccess" 自主设置任务结果；
  *
  * @author xuxueli 2019-12-11 21:52:51
  */
 @Component
 public class SampleXxlJob {
+    private static Logger logger = LoggerFactory.getLogger(SampleXxlJob.class);
+
 
     /**
      * 1、简单任务示例（Bean模式）
      */
     @XxlJob("demoJobHandler")
-    public ReturnT<String> demoJobHandler(String param) throws Exception {
+    public void demoJobHandler() throws Exception {
         XxlJobHelper.log("XXL-JOB, Hello World.");
 
         for (int i = 0; i < 5; i++) {
             XxlJobHelper.log("beat at:" + i);
             TimeUnit.SECONDS.sleep(2);
         }
-        return ReturnT.SUCCESS;
+        // default success
     }
 
 
@@ -45,15 +50,16 @@ public class SampleXxlJob {
      * 2、分片广播任务
      */
     @XxlJob("shardingJobHandler")
-    public ReturnT<String> shardingJobHandler(String param) throws Exception {
+    public void shardingJobHandler() throws Exception {
 
         // 分片参数
-        final int shardIndex = XxlJobHelper.getShardIndex();
-        final int total = XxlJobHelper.getShardTotal();
-        XxlJobHelper.log("分片参数：当前分片序号 = {}, 总分片数 = {}", shardIndex, total);
+        int shardIndex = XxlJobHelper.getShardIndex();
+        int shardTotal = XxlJobHelper.getShardTotal();
+
+        XxlJobHelper.log("分片参数：当前分片序号 = {}, 总分片数 = {}", shardIndex, shardTotal);
 
         // 业务逻辑
-        for (int i = 0; i < total; i++) {
+        for (int i = 0; i < shardTotal; i++) {
             if (i == shardIndex) {
                 XxlJobHelper.log("第 {} 片, 命中分片开始处理", i);
             } else {
@@ -61,7 +67,6 @@ public class SampleXxlJob {
             }
         }
 
-        return ReturnT.SUCCESS;
     }
 
 
@@ -69,14 +74,20 @@ public class SampleXxlJob {
      * 3、命令行任务
      */
     @XxlJob("commandJobHandler")
-    public ReturnT<String> commandJobHandler(String param) throws Exception {
-        String command = param;
+    public void commandJobHandler() throws Exception {
+        String command = XxlJobHelper.getJobParam();
         int exitValue = -1;
 
         BufferedReader bufferedReader = null;
         try {
             // command process
-            Process process = Runtime.getRuntime().exec(command);
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command(command);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            //Process process = Runtime.getRuntime().exec(command);
+
             BufferedInputStream bufferedInputStream = new BufferedInputStream(process.getInputStream());
             bufferedReader = new BufferedReader(new InputStreamReader(bufferedInputStream));
 
@@ -98,33 +109,38 @@ public class SampleXxlJob {
         }
 
         if (exitValue == 0) {
-            return ReturnT.SUCCESS;
+            // default success
         } else {
-            return new ReturnT<String>(ReturnT.FAIL.getCode(), "command exit value(" + exitValue + ") is failed");
+            XxlJobHelper.handleFail("command exit value("+exitValue+") is failed");
         }
+
     }
 
 
     /**
      * 4、跨平台Http任务
-     * 参数示例：
-     * "url: http://www.baidu.com\n" +
-     * "method: get\n" +
-     * "data: content\n";
+     *  参数示例：
+     *      "url: http://www.baidu.com\n" +
+     *      "method: get\n" +
+     *      "data: content\n";
      */
     @XxlJob("httpJobHandler")
-    public ReturnT<String> httpJobHandler(String param) throws Exception {
+    public void httpJobHandler() throws Exception {
 
         // param parse
-        if (param == null || param.trim().length() == 0) {
-            XxlJobHelper.log("param[" + param + "] invalid.");
-            return ReturnT.FAIL;
+        String param = XxlJobHelper.getJobParam();
+        if (param==null || param.trim().length()==0) {
+            XxlJobHelper.log("param["+ param +"] invalid.");
+
+            XxlJobHelper.handleFail();
+            return;
         }
+
         String[] httpParams = param.split("\n");
         String url = null;
         String method = null;
         String data = null;
-        for (String httpParam : httpParams) {
+        for (String httpParam: httpParams) {
             if (httpParam.startsWith("url:")) {
                 url = httpParam.substring(httpParam.indexOf("url:") + 4).trim();
             }
@@ -137,14 +153,19 @@ public class SampleXxlJob {
         }
 
         // param valid
-        if (url == null || url.trim().length() == 0) {
-            XxlJobHelper.log("url[" + url + "] invalid.");
-            return ReturnT.FAIL;
+        if (url==null || url.trim().length()==0) {
+            XxlJobHelper.log("url["+ url +"] invalid.");
+
+            XxlJobHelper.handleFail();
+            return;
         }
-        if (method == null || !Arrays.asList("GET", "POST").contains(method)) {
-            XxlJobHelper.log("method[" + method + "] invalid.");
-            return ReturnT.FAIL;
+        if (method==null || !Arrays.asList("GET", "POST").contains(method)) {
+            XxlJobHelper.log("method["+ method +"] invalid.");
+
+            XxlJobHelper.handleFail();
+            return;
         }
+        boolean isPostMethod = method.equals("POST");
 
         // request
         HttpURLConnection connection = null;
@@ -156,7 +177,7 @@ public class SampleXxlJob {
 
             // connection setting
             connection.setRequestMethod(method);
-            connection.setDoOutput(true);
+            connection.setDoOutput(isPostMethod);
             connection.setDoInput(true);
             connection.setUseCaches(false);
             connection.setReadTimeout(5 * 1000);
@@ -169,7 +190,7 @@ public class SampleXxlJob {
             connection.connect();
 
             // data
-            if (data != null && data.trim().length() > 0) {
+            if (isPostMethod && data!=null && data.trim().length()>0) {
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
                 dataOutputStream.write(data.getBytes("UTF-8"));
                 dataOutputStream.flush();
@@ -192,10 +213,13 @@ public class SampleXxlJob {
             String responseMsg = result.toString();
 
             XxlJobHelper.log(responseMsg);
-            return ReturnT.SUCCESS;
+
+            return;
         } catch (Exception e) {
             XxlJobHelper.log(e);
-            return ReturnT.FAIL;
+
+            XxlJobHelper.handleFail();
+            return;
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -215,8 +239,15 @@ public class SampleXxlJob {
      * 5、生命周期任务示例：任务初始化与销毁时，支持自定义相关逻辑；
      */
     @XxlJob(value = "demoJobHandler2", init = "init", destroy = "destroy")
-    public ReturnT<String> demoJobHandler2(String param) throws Exception {
+    public void demoJobHandler2() throws Exception {
         XxlJobHelper.log("XXL-JOB, Hello World.");
-        return ReturnT.SUCCESS;
     }
+    public void init(){
+        logger.info("init");
+    }
+    public void destroy(){
+        logger.info("destroy");
+    }
+
+
 }
