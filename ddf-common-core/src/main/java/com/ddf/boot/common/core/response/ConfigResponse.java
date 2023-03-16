@@ -2,7 +2,7 @@ package com.ddf.boot.common.core.response;
 
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.ddf.boot.common.core.util.JsonUtil;
+import com.ddf.boot.common.api.util.JsonUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
