@@ -121,7 +121,8 @@ public class RandomExtUtil {
     }
 
     /**
-     * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题
+     * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题, 这个更多的考虑的是在一定范围内的随机,因此平均也不那么平均,
+     * 但是保持在控制范围内的随机
      *
      * @param totalValue 总金额
      * @param packSize   分包数量
@@ -178,6 +179,31 @@ public class RandomExtUtil {
      */
     public static int[] averagePack(int totalValue, int packSize, int fixedValue) {
         return averagePack(totalValue, packSize, fixedValue, false);
+    }
+
+    /**
+     * 也是一种平均分包，但多了一些近似绝对平均的属性在里面
+     *
+     * @param totalAmount
+     * @param packSize
+     * @param fixedAmount
+     * @return
+     */
+    public static int[] averageApproximatelyAbsolute(int totalAmount, int packSize, int fixedAmount) {
+        int[] average = new int[10];
+        // 绝对平均值
+        int absoluteAverage = totalAmount / packSize;
+        // 已分配的值
+        int assignment = 0;
+        for (int i = 0; i < packSize; i++) {
+            average[i] = RandomUtil.randomInt(fixedAmount, absoluteAverage + 1);
+            assignment += average[i];
+        }
+        int remaining = totalAmount - assignment;
+        for (int i = 0; i < remaining; i++) {
+            average[i % packSize] = average[Math.max(0, i % packSize)] + 1;
+        }
+        return average;
     }
 
     public static void main(String[] args) {
