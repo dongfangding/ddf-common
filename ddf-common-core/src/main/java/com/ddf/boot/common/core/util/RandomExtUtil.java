@@ -8,7 +8,10 @@ import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -115,6 +118,94 @@ public class RandomExtUtil {
             }
         }
         return rtnList;
+    }
+
+    /**
+     * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题
+     *
+     * @param totalValue 总金额
+     * @param packSize    分包数量
+     * @param fixedValue 每个分包保底数值
+     * @return
+     */
+    public static int[] averagePack(int totalValue, int packSize, int fixedValue, boolean distinct) {
+        // 可以用来随机的金额，保底要去除掉， 这部分不参与随机
+        int randomAmount = totalValue - fixedValue * packSize;
+        // 最终红包金额
+        int[] amount = new int[10];
+        if (randomAmount < 0) {
+            return amount;
+        }
+        if (randomAmount == 0) {
+            for (int i = 0; i < packSize; i++) {
+                amount[i] = fixedValue;
+            }
+            return amount;
+        }
+        // 平均分布的数值区间
+        int[] segment = new int[10];
+        // 随机出来红包大小数量-1数值间隙， 注意，这里并不是最终红包金额，只是数字的平均分布
+        for (int i = 0; i < packSize - 1; i++) {
+            segment[i] = RandomUtil.randomInt(1, randomAmount + 1);
+        }
+        // 最后一个数字用最大值
+        segment[9] = randomAmount;
+
+        // 必须从小到大对数值排序
+        Arrays.sort(segment);
+        Set<Integer> distinctAmountSet = new HashSet<>();
+        // 根据计算出的数值分布区间的差值 + 保底的金额计算出来红包的最终金额
+        for (int i = 0, temp = 0; i < segment.length; i++) {
+            amount[i] = (segment[i] - temp + fixedValue);
+            temp = segment[i];
+            distinctAmountSet.add(amount[i]);
+        }
+        if (distinct && distinctAmountSet.size() != packSize) {
+            return averagePack(totalValue, packSize, fixedValue, distinct);
+        }
+        return amount;
+    }
+
+
+    /**
+     * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题
+     *
+     * @param totalValue 总金额
+     * @param packSize    分包数量
+     * @param fixedValue 每个分包保底数值
+     * @return
+     */
+    public static int[] averagePack(int totalValue, int packSize, int fixedValue) {
+        // 可以用来随机的金额，保底要去除掉， 这部分不参与随机
+        int randomAmount = totalValue - fixedValue * packSize;
+        // 最终红包金额
+        int[] amount = new int[10];
+        if (randomAmount < 0) {
+            return amount;
+        }
+        if (randomAmount == 0) {
+            for (int i = 0; i < packSize; i++) {
+                amount[i] = fixedValue;
+            }
+            return amount;
+        }
+        // 平均分布的数值区间
+        int[] segment = new int[10];
+        // 随机出来红包大小数量-1数值间隙， 注意，这里并不是最终红包金额，只是数字的平均分布
+        for (int i = 0; i < packSize - 1; i++) {
+            segment[i] = RandomUtil.randomInt(1, randomAmount + 1);
+        }
+        // 最后一个数字用最大值
+        segment[9] = randomAmount;
+
+        // 必须从小到大对数值排序
+        Arrays.sort(segment);
+        // 根据计算出的数值分布区间的差值 + 保底的金额计算出来红包的最终金额
+        for (int i = 0, temp = 0; i < segment.length; i++) {
+            amount[i] = (segment[i] - temp + fixedValue);
+            temp = segment[i];
+        }
+        return amount;
     }
 
     public static void main(String[] args) {
