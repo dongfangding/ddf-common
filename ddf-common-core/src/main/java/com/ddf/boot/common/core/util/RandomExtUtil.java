@@ -206,6 +206,23 @@ public class RandomExtUtil {
         return average;
     }
 
+
+    /**
+     * 用来计算每singValue获得一次奖励机会， 通过这种方式可以不需要保存上次发放奖励的分数也能算出来当前能够获得多少机会
+     * 缺点：
+     *  1. 如果某一次数值用掉了也获得了机会，但是业务奖励给失败了，这里再算一次，用之前的分数就会丢失
+     *  2. 如果用户的积分在不同区间给的奖励不一样，虽然次数相同，但是奖励不同，那也不行，这里只会以最后的分值来返回次数而已
+     *
+     * @param afterValue  最后数值
+     * @param beforeValue 之前的数值
+     * @param singleValue 每获得一次机会需要的数值
+     * @return
+     */
+    public Long calcRewardTimes(Long afterValue, Long beforeValue, Long singleValue) {
+        // 每5关获得一次奖励（注意，如果真的出现这种情况，只会以最后一次排名发放奖励）
+        return (afterValue - beforeValue / singleValue * singleValue) / singleValue;
+    }
+
     public static void main(String[] args) {
         final List<DefaultWeightProportion> proportions = Lists.newArrayList(
                 DefaultWeightProportion.of("1", 10d),
