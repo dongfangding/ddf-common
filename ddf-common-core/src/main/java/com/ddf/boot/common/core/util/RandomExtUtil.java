@@ -5,6 +5,7 @@ import com.ddf.boot.common.api.model.common.DefaultWeightProportion;
 import com.ddf.boot.common.api.model.common.WeightProportion;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -221,6 +222,18 @@ public class RandomExtUtil {
     public Long calcRewardTimes(Long afterValue, Long beforeValue, Long singleValue) {
         // 每5关获得一次奖励（注意，如果真的出现这种情况，只会以最后一次排名发放奖励）
         return (afterValue - beforeValue / singleValue * singleValue) / singleValue;
+    }
+
+    /**
+     * 根据时间戳生成小数位数值， 时间戳越小，值越大
+     *
+     * @param time
+     * @return
+     */
+    public static BigDecimal calcPointScoreByTime(long time) {
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(
+                10, Math.negateExact(String.valueOf(time).length())));
+        return new BigDecimal("1.0").subtract(decimal);
     }
 
     public static void main(String[] args) {

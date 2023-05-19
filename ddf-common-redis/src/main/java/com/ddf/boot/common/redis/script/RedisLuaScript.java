@@ -49,4 +49,10 @@ public interface RedisLuaScript {
      * 基于zset实现的存储最大历史的容器
      */
     RedisScript<String> MAX_CAPACITY_HISTORY_CONTAINER = RedisScript.of(new ClassPathResource("lua/MaxCapacityHistoryContainer.lua"), String.class);
+
+    /**
+     * 基于zset实现整数位带时间戳的
+     */
+    RedisScript<String> ZSET_INCR_WITH_TIME = RedisScript.of(new ClassPathResource("lua/ZsetIncrWithTime.lua"), String.class);
+
 }

@@ -7,6 +7,7 @@ import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.response.HashIncrementCheckResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -276,5 +277,26 @@ public class RedisTemplateHelper {
         final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_CAPACITY_HISTORY_CONTAINER,
                 Collections.singletonList(key), maxSize + "", member, score + "");
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
+    }
+
+    /**
+     * 支持根据时间计算小数位完成同score排名的自增，分数相同，完成时间越靠前，生成的小数位越大，从而让积分靠前，注意只支持整数业务
+     *
+     * @param key
+     * @param score
+     * @param member
+     * @return
+     */
+    public Long zIncrByWithTime(String key, Long score, String member) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_INCR_WITH_TIME,
+                Collections.singletonList(key), member, score + "", calcPointScoreByTime(System.currentTimeMillis()) + "");
+        // 舍弃小数位
+        return StringUtils.isNotBlank(execute) ? Long.parseLong(execute.toString().split("\\.")[0]) : 0L;
+    }
+
+    public static BigDecimal calcPointScoreByTime(long time) {
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(
+                10, Math.negateExact(String.valueOf(time).length())));
+        return new BigDecimal("1.0").subtract(decimal);
     }
 }
