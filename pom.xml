@@ -26,7 +26,7 @@
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.8.12</hutool.version>
+        <hutool.version>5.8.19</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
         <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
