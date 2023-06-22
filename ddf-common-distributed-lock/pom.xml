@@ -5,12 +5,14 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.2-2611-SNAPSHOT</version>
+        <version>1.0.2-2613-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <curator.version>5.1.0</curator.version>
     </properties>
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.2-2611-SNAPSHOT</version>
+        <version>1.0.2-2613-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +13,9 @@
     <description>第三方扩展工具包</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
         <aliyun-sms.version>4.5.3</aliyun-sms.version>
     </properties>

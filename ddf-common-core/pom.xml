@@ -5,13 +5,19 @@
     <parent>
         <groupId>com.ddf.common</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>1.0.2-2611-SNAPSHOT</version>
+        <version>1.0.2-2613-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-core</artifactId>
     <description>基础包</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <build>
         <finalName>ddf-common-core</finalName>

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.2-2611-SNAPSHOT</version>
+        <version>1.0.2-2613-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,6 +14,9 @@
     </description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <xxl-job-version>2.3.1</xxl-job-version>
     </properties>
 
