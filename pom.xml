@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <java.version>8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
         <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-        <!-- nacos starter使用的一个类在2.4就被移除了，除非自己重写starter修改，这里考虑到应该还有其它大量的三方库可能都会有兼容问题，因此不再使用这个版本 -->
-        <!--<spring-boot.version>2.5.7</spring-boot.version>-->
-        <spring-boot.version>2.6.11</spring-boot.version>
+        <!-- 再升级为2.7的话自动配置类格式就改了，虽然兼容但要注意后续可能会作废，
+        META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports -->
+        <spring-boot.version>2.6.13</spring-boot.version>
         <p6spy.version>3.8.2</p6spy.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-ui.version>2.9.2</swagger-ui.version>
@@ -31,8 +31,7 @@
         <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
         <mysql.version>8.0.28</mysql.version>
-                <guava.version>30.0-jre</guava.version>
-        <!--<guava.version>20.0</guava.version>-->
+        <guava.version>30.0-jre</guava.version>
         <http-client.version>4.5.13</http-client.version>
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.24</druid.version>
@@ -52,12 +51,12 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <!-- 1.0.2-2611-SNAPSHOT, 中间部分代表spring-boot的版本，2611，即2.6.11 -->
-    <version>1.0.2-2611-SNAPSHOT</version>
+    <!-- 1.0.2-2613-SNAPSHOT, 中间部分代表spring-boot的版本，2613，即2.6.13 -->
+    <version>1.0.2-2613-SNAPSHOT</version>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
-            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
+            &lt;!&ndash; 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 &ndash;&gt;
             <id>nexus_release</id>
             <name>Release Repository of nexus_release</name>
             <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_release/</url>
@@ -73,8 +72,8 @@
     <repositories>
         <repository>
             <id>nexus-public</id>
-            <!-- 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
-             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>-->
+            &lt;!&ndash; 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
+             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>&ndash;&gt;
             <url>http://cn-sh-txy.starryfrp.com:14181/repository/nexus_public/</url>
             <releases>
                 <enabled>true</enabled>
@@ -114,7 +113,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories>-->
 
     <dependencyManagement>
         <dependencies>
