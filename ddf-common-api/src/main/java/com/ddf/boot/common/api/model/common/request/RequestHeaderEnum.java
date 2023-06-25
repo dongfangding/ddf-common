@@ -47,7 +47,13 @@ public enum RequestHeaderEnum {
     /**
      * 纬度
      */
-    LATITUDE("latitude")
+    LATITUDE("latitude"),
+
+    /**
+     * 客户端ip(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
+     */
+    CLIENT_IP_FROM_GATEWAY("client_ip_from_gateway"),
+
 
     ;
     private final String name;

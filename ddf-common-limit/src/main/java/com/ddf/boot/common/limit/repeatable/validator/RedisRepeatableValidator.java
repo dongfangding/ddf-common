@@ -2,9 +2,9 @@ package com.ddf.boot.common.limit.repeatable.validator;
 
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
 import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
+import com.ddf.boot.common.mvc.util.AopUtil;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;

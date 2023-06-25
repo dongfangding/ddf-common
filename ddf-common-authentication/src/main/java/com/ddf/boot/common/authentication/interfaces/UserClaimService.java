@@ -1,6 +1,6 @@
 package com.ddf.boot.common.authentication.interfaces;
 
-import com.ddf.boot.common.authentication.model.UserClaim;
+import com.ddf.boot.common.api.model.authentication.UserClaim;
 import javax.servlet.http.HttpServletRequest;
 
 /**

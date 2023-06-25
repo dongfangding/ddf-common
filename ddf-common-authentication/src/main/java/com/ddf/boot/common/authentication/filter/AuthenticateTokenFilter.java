@@ -3,20 +3,20 @@ package com.ddf.boot.common.authentication.filter;
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
+import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
+import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.model.common.RequestContext;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.consts.AuthenticateConstant;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
-import com.ddf.boot.common.authentication.model.AuthenticateCheckResult;
-import com.ddf.boot.common.authentication.model.UserClaim;
-import com.ddf.boot.common.authentication.util.TokenUtil;
 import com.ddf.boot.common.authentication.util.UserContextUtil;
+import com.ddf.boot.common.core.authentication.AuthenticationProperties;
+import com.ddf.boot.common.core.authentication.TokenUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.WebUtil;
+import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -31,7 +31,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * 拦截请求处理用户认证信息
@@ -40,7 +40,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @date 2019-12-07 16:45
  */
 @Slf4j
-public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
+public class AuthenticateTokenFilter implements HandlerInterceptor {
 
     public static final String BEAN_NAME = "authenticateTokenFilter";
 
@@ -183,6 +183,7 @@ public class AuthenticateTokenFilter extends HandlerInterceptorAdapter {
                 .latitude(new BigDecimal(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LATITUDE.getName()), "0")))
                 .requestUri(request.getRequestURI())
                 .clientIp(WebUtil.getHost())
+                .clientIpFromGateway(request.getHeader(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName()))
                 .build());
     }
 

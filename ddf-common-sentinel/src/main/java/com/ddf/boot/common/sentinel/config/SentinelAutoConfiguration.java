@@ -5,7 +5,7 @@ import com.alibaba.csp.sentinel.adapter.spring.webmvc.SentinelWebTotalIntercepto
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcConfig;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcTotalConfig;
 import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;
-import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
+import com.ddf.boot.common.mvc.exception200.ExceptionHandlerMapping;
 import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMapping;
 import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMappingHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -24,9 +24,14 @@ public class RequestContext implements Serializable {
     private static final long serialVersionUID = -7528108356364083934L;
 
     /**
-     * 客户端ip
+     * 客户端ip，当前服务从请求对象中自己获取的
      */
     private String clientIp;
+
+    /**
+     * 通过网关传过来的客户端ip, 两个ip在不同的场景下自己决定用哪个值才是对的
+     */
+    private String clientIpFromGateway;
 
     /**
      * 请求路径

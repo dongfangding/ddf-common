@@ -1,8 +1,8 @@
 package com.ddf.boot.common.limit.ratelimit.keygenerator;
 
-import com.ddf.boot.common.core.util.WebUtil;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
+import com.ddf.boot.common.mvc.util.WebUtil;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;

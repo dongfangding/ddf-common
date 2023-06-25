@@ -1,7 +1,7 @@
 package com.ddf.boot.common.sentinel.exception;
 
 import com.ddf.boot.common.api.model.common.response.response.ResponseData;
-import com.ddf.boot.common.core.exception200.ExceptionHandlerMapping;
+import com.ddf.boot.common.mvc.exception200.ExceptionHandlerMapping;
 
 /**
  * sentinel流控异常处理类$

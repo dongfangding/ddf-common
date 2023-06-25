@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.util;
 
+import java.util.List;
 import org.springframework.util.AntPathMatcher;
 
 /**
@@ -19,30 +20,29 @@ public enum GlobalAntMatcher {
     /**
      * 对外提供的单例对象
      */
-    private AntPathMatcher antPathMatcher;
+    private static AntPathMatcher antPathMatcher;
 
-    /**
-     * 构造
-     */
-    GlobalAntMatcher() {
-        create();
-    }
 
     /**
      * 构造实例
      */
-    public void create() {
+    public static void create() {
         if (antPathMatcher == null) {
             antPathMatcher = new AntPathMatcher();
         }
     }
+
+    static {
+        create();
+    }
+
 
     /**
      * 将实例返回
      *
      * @return
      */
-    public AntPathMatcher getAntPathMatcher() {
+    public static AntPathMatcher getAntPathMatcher() {
         return antPathMatcher;
     }
 
@@ -54,7 +54,23 @@ public enum GlobalAntMatcher {
      * @param path
      * @return
      */
-    public boolean match(String pattern, String path) {
+    public static boolean match(String pattern, String path) {
         return antPathMatcher.match(pattern, path);
+    }
+
+    /**
+     * 转接方法
+     *
+     * @param patterns
+     * @param path
+     * @return
+     */
+    public static boolean match(List<String> patterns, String path) {
+        for (String pattern : patterns) {
+            if (antPathMatcher.match(pattern, path)) {
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
     }
 }

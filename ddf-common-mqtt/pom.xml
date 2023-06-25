@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>com.ddf.common</groupId>
-            <artifactId>ddf-common-core</artifactId>
+            <artifactId>ddf-common-mvc</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

@@ -1,8 +1,8 @@
 package com.ddf.boot.common.mq.aop;
 
-import com.ddf.boot.common.core.util.AopUtil;
 import com.ddf.boot.common.mq.helper.MqMessageHelper;
 import com.ddf.boot.common.mq.listener.MqEventListener;
+import com.ddf.boot.common.mvc.util.AopUtil;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;

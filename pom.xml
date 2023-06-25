@@ -448,6 +448,7 @@
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
         <module>ddf-common-canal</module>
+        <module>ddf-common-mvc</module>
     </modules>
 
     <build>

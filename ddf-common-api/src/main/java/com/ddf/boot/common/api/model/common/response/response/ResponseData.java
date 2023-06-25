@@ -1,5 +1,6 @@
 package com.ddf.boot.common.api.model.common.response.response;
 
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import java.util.Objects;
@@ -111,6 +112,17 @@ public class ResponseData<T> {
                 BaseErrorCallbackCode.COMPLETE.getCode(),
                 BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), null
         );
+    }
+
+    /**
+     * 失败返回消息方法
+     *
+     * @param baseCallbackCode
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode) {
+        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(), "", System.currentTimeMillis(), null);
     }
 
     /**
