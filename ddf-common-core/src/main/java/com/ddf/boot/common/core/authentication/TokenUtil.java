@@ -7,6 +7,7 @@ import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.core.constant.CoreExceptionCode;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.PreconditionUtil;
@@ -26,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenUtil {
 
-    private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBean(EnvironmentHelper.class);
+    private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBeanWithStatic(EnvironmentHelper.class);
     private static final TokenCache TOKEN_CACHE = SpringContextHolder.getBeanWithStatic(TokenCache.class);
 
     /**
@@ -46,7 +47,7 @@ public class TokenUtil {
      * @return
      */
     public static String getTokenKey(String uid) {
-        return String.format(TOKEN_KEY, ENVIRONMENT_HELPER.getApplicationName(), uid);
+        return String.format(TOKEN_KEY, Objects.isNull(ENVIRONMENT_HELPER) ? "" : ENVIRONMENT_HELPER.getApplicationName(), uid);
     }
 
     /**
@@ -78,11 +79,11 @@ public class TokenUtil {
             final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
             claim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             if (Objects.isNull(claim)) {
-                throw new UnauthorizedException("无法获取到用户信息");
+                throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
             }
         } catch (Exception e) {
             log.error("token解析失败, ", e);
-            throw new UnauthorizedException("token解析失败");
+            throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
         return claim;
     }
@@ -99,11 +100,11 @@ public class TokenUtil {
         UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
         String userId = userClaim.getUserId();
         final boolean bool = SecureUtil.bCryptMatch(userId, authenticateToken.getUserIdToken());
-        PreconditionUtil.checkArgument(bool, new UnauthorizedException("被伪造的身份信息签名"));
+        PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
         if (Objects.nonNull(TOKEN_CACHE)) {
             final String cacheToken = TOKEN_CACHE.getToken(userId);
-            PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException("登录信息已失效，请重新登录~"));
-            PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException("已过期的凭据认证，请重新登录~"));
+            PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+            PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
         }
         return AuthenticateCheckResult.of(authenticateToken, userClaim);
     }
