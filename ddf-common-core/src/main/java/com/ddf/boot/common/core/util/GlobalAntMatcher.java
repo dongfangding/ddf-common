@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.collection.CollUtil;
 import java.util.List;
 import org.springframework.util.AntPathMatcher;
 
@@ -66,6 +67,9 @@ public enum GlobalAntMatcher {
      * @return
      */
     public static boolean match(List<String> patterns, String path) {
+        if (CollUtil.isEmpty(patterns)) {
+            return Boolean.FALSE;
+        }
         for (String pattern : patterns) {
             if (antPathMatcher.match(pattern, path)) {
                 return Boolean.TRUE;
