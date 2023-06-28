@@ -1,6 +1,6 @@
 package com.ddf.boot.common.authentication.interfaces;
 
-import com.ddf.boot.common.core.authentication.AuthenticationProperties;
+import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
