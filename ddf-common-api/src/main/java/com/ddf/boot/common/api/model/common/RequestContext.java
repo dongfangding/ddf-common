@@ -72,4 +72,11 @@ public class RequestContext implements Serializable {
      * 纬度
      */
     private BigDecimal latitude;
+
+    /**
+     * 从请求头中获取到的用户id, 存在网关时使用
+     */
+    private String userIdFromGateway;
+
+
 }
