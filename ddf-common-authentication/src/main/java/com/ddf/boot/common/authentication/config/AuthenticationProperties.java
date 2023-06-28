@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.authentication;
+package com.ddf.boot.common.authentication.config;
 
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
