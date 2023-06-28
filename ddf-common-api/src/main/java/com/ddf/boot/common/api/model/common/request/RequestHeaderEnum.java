@@ -54,6 +54,15 @@ public enum RequestHeaderEnum {
      */
     CLIENT_IP_FROM_GATEWAY("client_ip_from_gateway"),
 
+    /**
+     * 用户id(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
+     */
+    USER_ID_FROM_GATEWAY("user_id_from_gateway"),
+
+    /**
+     * 链路追踪id(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
+     */
+    TRACE_ID_FROM_GATEWAY("trace_id_from_gateway"),
 
     ;
     private final String name;
