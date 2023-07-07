@@ -94,7 +94,10 @@ public abstract class AbstractExceptionHandler {
             // 解析异常类消息代码，并根据当前Local格式化资源文件
             Locale locale = httpServletRequest.getLocale();
             String description = baseException.getDescription();
-            if (!Objects.equals(baseException.defaultCallback(), baseException.getBaseCallbackCode())) {
+            // 有些走了自定义异常基类的，但是没有走这个接口赋值，就不会有值，比如throw new BadRequestException("bad_request", "xx不能为空)
+            if (Objects.isNull(baseException.getBaseCallbackCode())) {
+                description = baseException.getDescription();
+            } else {
                 description = baseException.getBaseCallbackCode().getBizMessage();
             }
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
