@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class XxlJobConfig {
 
     /**
-     * 使用应用名作为执行器名称
+     * 使用应用名作为执行器名称, 配置后，在打开xxl-job-admin的控制台之后，在执行器管理界面要手动添加对应名称的执行期，这样才会自动注册
      */
     public static final String APP_NAME_AUTO = "auto";
 

@@ -35,11 +35,11 @@ public class PageUtil {
      * 空分页
      *
      * @param <E>
-     * @return
+     * @returnµ
      */
     public static <E> PageResult<E> empty(PageRequest pageRequest) {
         pageRequest.checkArgument();
-        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize());
+        return new PageResult<>(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive());
     }
 
     /**
@@ -54,9 +54,9 @@ public class PageUtil {
     public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
         pageRequest.checkArgument();
         if (pageRequest.isUnPaged()) {
-            return new PageResult<>(pageRequest.getPageNum(), total, total, content);
+            return new PageResult<>(pageRequest.getPageNumAdaptive(), total, total, content);
         }
-        return new PageResult<>(pageRequest.getPageNum(), pageRequest.getPageSize(), total, content);
+        return new PageResult<>(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive(), total, content);
     }
 
     /**
@@ -112,7 +112,7 @@ public class PageUtil {
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz,
             @Nullable Class<R> voClazz) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
                 .doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
@@ -139,7 +139,7 @@ public class PageUtil {
      */
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, Function<List<E>, List<R>> function) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
                 .doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
@@ -161,7 +161,7 @@ public class PageUtil {
      */
     public static <E> PageResult<E> startPage(PageRequest pageRequest, ISelect select) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize())
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
                 .doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
@@ -181,7 +181,7 @@ public class PageUtil {
         }
         // spring-data的分页从0开始
         return org.springframework.data.domain.PageRequest.of(
-                (int) pageRequest.getPageNum() - 1, (int) pageRequest.getPageSize());
+                (int) pageRequest.getPageNumAdaptive() - 1, (int) pageRequest.getPageSizeAdaptive());
     }
 
     /**

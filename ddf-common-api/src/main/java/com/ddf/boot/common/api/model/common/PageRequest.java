@@ -2,11 +2,12 @@ package com.ddf.boot.common.api.model.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.util.Assert;
 
 /**
  * <p>分页请求通用接口
- * 请求参数类可以实现这个接口，来获得分页参数对象信息， 当然由于这个默认实现了{@code getPageNum}和{@code getPageSize}，
+ * 请求参数类可以实现这个接口，来获得分页参数对象信息， 当然由于这个默认实现了{@code getPageNumAdaptive}和{@code getPageSizeAdaptive}，
  * 不要忘了在自己的请求参数里加上这两个属性， 否则无法接收参数，只能使用默认值了
  * </p >
  *
@@ -27,6 +28,25 @@ public interface PageRequest {
      */
     default Boolean isUnPaged() {
         return false;
+    }
+
+
+    /**
+     * 实际使用用这个，能够解决默认值问题
+     *
+     * @return
+     */
+    default Integer getPageNumAdaptive() {
+        return ObjectUtils.defaultIfNull(getPageNum(), DEFAULT_PAGE_NUM);
+    }
+
+    /**
+     * 实际使用用这个，能够解决默认值问题
+     *
+     * @return
+     */
+    default Integer getPageSizeAdaptive() {
+        return ObjectUtils.defaultIfNull(getPageSize(), DEFAULT_PAGE_NUM);
     }
 
     /**
@@ -54,8 +74,8 @@ public interface PageRequest {
      */
     default Integer getStartIndex() {
         checkArgument();
-        int pageNum = getPageNum();
-        int pageSize = getPageSize();
+        int pageNum = getPageNumAdaptive();
+        int pageSize = getPageSizeAdaptive();
         if (pageNum < 1) {
             pageNum = 1;
         }
@@ -72,7 +92,7 @@ public interface PageRequest {
      */
     default Integer getEndIndex() {
         checkArgument();
-        return getStartIndex() + getPageSize();
+        return getStartIndex() + getPageSizeAdaptive();
     }
 
     /**
@@ -80,8 +100,8 @@ public interface PageRequest {
      *
      */
     default void checkArgument() {
-        Assert.notNull(getPageNum(), "pageNum不能为空");
-        Assert.notNull(getPageSize(), "pageSize不能为空");
+        Assert.notNull(getPageNumAdaptive(), "pageNum不能为空");
+        Assert.notNull(getPageSizeAdaptive(), "pageSize不能为空");
     }
 
     @Data

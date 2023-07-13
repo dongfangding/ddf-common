@@ -1,5 +1,4 @@
 package com.ddf.boot.common.api.model.common.response.response;
-
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.ddf.boot.common.api.util.JsonUtil;
@@ -23,79 +22,98 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Accessors(chain = true)
 @Slf4j
-public class ConfigResponse {
+public class ConfigResponse<T> {
 
-    private Map<String, Constructor> constructorMap = new ConcurrentHashMap<>();
+    private static Map<String, Constructor> constructorMap = new ConcurrentHashMap<>();
+
+    private static final ConfigResponse EMPTY_CONFIG = new ConfigResponse();
 
     /**
-     * 配置ID
+     * 配置code
      */
-    private Integer id;
+    private String code;
 
     /**
      * 配置 json
      */
-    private String configJsonStr;
+    private String configJson;
+
+    /**
+     * 配置json对应数据对象
+     */
+    private Class<T> configJsonClazz;
+
+    /**
+     * 配置描述
+     */
+    private String desc;
+
+    public static <T> ConfigResponse<T> empty() {
+        return EMPTY_CONFIG;
+    }
+
+    /**
+     * 判定当前配置是否是空对象
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return this == EMPTY_CONFIG;
+    }
 
     /**
      * 获取配置
      *
-     * @param classType
-     * @param <T>
      * @return
      */
-    public <T> T getConfig(Class<T> classType) {
-        if (ObjectUtil.isEmpty(configJsonStr)) {
+    public T resolveConfig() {
+        if (ObjectUtil.isEmpty(configJson)) {
             return null;
         }
-        if (NumberUtil.isNumber(configJsonStr)) {
-            return getBox(classType);
+        if (NumberUtil.isNumber(configJson)) {
+            return resolveBox();
         }
-        if (classType.isAssignableFrom(List.class)) {
-            return JsonUtil.toBean(configJsonStr, classType);
+        if (configJsonClazz.isAssignableFrom(List.class)) {
+            return JsonUtil.toBean(configJson, configJsonClazz);
         }
-        return JsonUtil.toBean(configJsonStr, classType);
+        return JsonUtil.toBean(configJson, configJsonClazz);
     }
 
 
     /**
-     * 获取列表配置
+     * 获取列表配置bi
      *
-     * @param classType
-     * @param <T>
      * @return
      */
-    public <T> List<T> getListConfig(Class<T> classType) {
-        if (ObjectUtil.isEmpty(configJsonStr)) {
+    public List<T> resolveListConfig() {
+        if (ObjectUtil.isEmpty(configJson)) {
             return Collections.emptyList();
         }
-        return JsonUtil.toList(configJsonStr, classType);
+        return JsonUtil.toList(configJson, configJsonClazz);
     }
 
     /**
      * 获取基本数据类型的装箱类型
-     * @param classType
-     * @param <T>
      * @return
      */
-    private <T> T getBox(Class<T> classType) {
+    private T resolveBox() {
         try {
-            final String className = classType.getName();
+            final String className = configJsonClazz.getName();
             Constructor<T> constructor;
             if (constructorMap.containsKey(className)) {
                 constructor = constructorMap.get(className);
             } else {
-                constructor = classType.getConstructor(String.class);
+                constructor = configJsonClazz.getConstructor(String.class);
                 constructorMap.put(className, constructor);
             }
             try {
-                return constructor.newInstance(configJsonStr);
+                return constructor.newInstance(configJson);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                log.error("转换异常", e);
+                log.error("[获取配置对象]-转换异常", e);
                 return null;
             }
         } catch (NoSuchMethodException e) {
-            log.error("转换异常", e);
+            log.error("[获取配置对象]-转换异常", e);
             return null;
         }
     }
