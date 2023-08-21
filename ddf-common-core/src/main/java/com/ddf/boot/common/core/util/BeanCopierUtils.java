@@ -1,8 +1,11 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.collection.CollUtil;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,6 +49,9 @@ public class BeanCopierUtils {
      * @return
      */
     public static <T> T copy(Object sourceInstance, Class<T> targetClass, Converter converter) {
+        if (Objects.isNull(sourceInstance)) {
+            return null;
+        }
         Assert.notNull(sourceInstance, "sourceInstance must not be null");
         Assert.notNull(targetClass, "targetClass must not be null");
         T target;
@@ -96,6 +102,9 @@ public class BeanCopierUtils {
      */
     public static <T> List<T> copy(List<?> sourceInstanceList, Class<T> targetClass, Converter converter,
             boolean needSort) {
+        if (CollUtil.isEmpty(sourceInstanceList)) {
+            return new ArrayList<>();
+        }
         Assert.notNull(sourceInstanceList, "sourceInstanceList must not be null");
         Assert.notNull(targetClass, "targetClass must not be null");
         Stream<?> stream;
