@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.2-2613-SNAPSHOT</version>
+        <version>1.0.1-jdk17-SNAPSHOT</version>m
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -37,7 +37,7 @@
             <artifactId>spring-boot-starter-validation</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>spring-boot-starter-logging</artifactId>
+                    <artifactId>spring-boot-starter-logging</artifactId>yao
                     <groupId>org.springframework.boot</groupId>
                 </exclusion>
             </exclusions>
