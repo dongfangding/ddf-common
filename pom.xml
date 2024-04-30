@@ -3,8 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
+        <global.version>1.0.1-jdk17-SNAPSHOT</global.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>8</java.version>
+        <java.version>17</java.version>
+        <common.version></common.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
@@ -14,36 +16,38 @@
         <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-        <!-- 再升级为2.7的话自动配置类格式就改了，虽然兼容但要注意后续可能会作废，
-        META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports -->
-        <spring-boot.version>2.6.13</spring-boot.version>
-        <p6spy.version>3.8.2</p6spy.version>
-        <swagger.version>2.9.2</swagger.version>
-        <swagger-ui.version>2.9.2</swagger-ui.version>
-        <swagger-annotation-models-version>1.5.21</swagger-annotation-models-version>
-        <netty.version>4.1.42.Final</netty.version>
+        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <spring-boot.version>2.7.6</spring-boot.version>
+        <spring-cloud-context.version>3.1.5</spring-cloud-context.version>
+        <dubbo.version>2.7.14</dubbo.version>
+        <reflectasm.version>1.11.9</reflectasm.version>
+        <jdeferred.version>2.0.0</jdeferred.version>
+        <jackson-datatype.version>2.9.8</jackson-datatype.version>
+        <jakarta.validation.version>2.0.2</jakarta.validation.version>
+        <netty.version>4.1.77.Final</netty.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
         <hutool.version>5.8.12</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
-        <dubbo.version>2.7.14</dubbo.version>
         <lombok.version>1.18.24</lombok.version>
         <mysql.version>8.0.28</mysql.version>
         <guava.version>30.0-jre</guava.version>
         <http-client.version>4.5.13</http-client.version>
         <http-core.version>4.4.12</http-core.version>
         <druid.version>1.1.24</druid.version>
-        <mapstruct.version>1.2.0.Final</mapstruct.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
-        <validation.version>2.0.2</validation.version>
-        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+        <jakarta-validation.version>2.0.2</jakarta-validation.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
         <pagehelper.version>1.4.3</pagehelper.version>
         <mail.version>1.6.2</mail.version>
+        <caffeine.version>2.9.3</caffeine.version>
+        <mybatis.version>2.3.0</mybatis.version>
+        <sharding-jdbc.version>5.1.0</sharding-jdbc.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -384,7 +388,7 @@
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
-                <version>${validation.version}</version>
+                <version>${jakarta-validation.version}</version>
             </dependency>
 
             <dependency>
@@ -449,6 +453,7 @@
         <module>ddf-common-mqtt</module>
         <module>ddf-common-canal</module>
         <module>ddf-common-mvc</module>
+        <module>ddf-common-dependencies</module>
     </modules>
 
     <build>
