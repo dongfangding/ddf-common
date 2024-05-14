@@ -2,12 +2,15 @@ package com.ddf.boot.common.mvc.logaccess;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.mvc.exception200.AbstractExceptionHandler;
 import com.ddf.boot.common.mvc.util.AopUtil;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -63,8 +66,11 @@ public class AccessLogAspect {
 
     @Autowired
     private ThreadPoolTaskExecutor defaultThreadPool;
+    @Autowired
+    private GlobalProperties globalProperties;
 
-    @Pointcut(value = "execution(public * com..controller..*(..))")
+    // @Pointcut(value = "execution(public * com..controller..*(..)) || execution(public * com..provider..*(..))")
+    @Pointcut(value = "@annotation(com.boot.common.mvc.logaccess.Log) || @within(com.boot.common.mvc.logaccess.Log)")
     public void pointCut() {
     }
 
@@ -84,18 +90,21 @@ public class AccessLogAspect {
         Class<?> pointClass = AopUtil.getJoinPointClass(joinPoint);
         // 获取当前方法名
         MethodSignature pointMethod = AopUtil.getJoinPointMethod(joinPoint);
+        Log logAnnotation = pointMethod.getMethod().getAnnotation(Log.class);
+        if (Objects.isNull(logAnnotation)) {
+            logAnnotation = pointClass.getAnnotation(Log.class);
+        }
         // 获取请求参数
         String paramJson = "";
+        String logName = StringUtils.defaultIfBlank(logAnnotation.desc(), "");
         // 执行方法
         try {
             paramJson = AopUtil.serializeParam(joinPoint);
             // 调用起始时间
             long beforeTime = System.currentTimeMillis();
             if (CollUtil.isNotEmpty(accessFilterChainMap)) {
-                final List<AccessFilterChain> chainList = accessFilterChainMap.values()
-                        .stream()
-                        .sorted(Comparator.comparingInt(AccessFilterChain::getOrder))
-                        .collect(Collectors.toList());
+                final List<AccessFilterChain> chainList = accessFilterChainMap.values().stream().sorted(
+                        Comparator.comparingInt(AccessFilterChain::getOrder)).collect(Collectors.toList());
                 for (AccessFilterChain chain : chainList) {
                     if (!chain.filter(joinPoint, pointClass, pointMethod)) {
                         break;
@@ -103,17 +112,38 @@ public class AccessLogAspect {
                 }
             }
             Object proceed = joinPoint.proceed();
-            long consumerTime = System.currentTimeMillis() - beforeTime;
-            // 打印返回值和接口耗时
-            logger.info("[{}]-[{}]请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(), pointMethod.getName(),
-                    paramJson, JsonUtil.asString(proceed), consumerTime
-            );
-            // 执行慢接口逻辑判断
-            dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
+            try {
+                long consumerTime = System.currentTimeMillis() - beforeTime;
+                // 打印返回值和接口耗时
+                if (globalProperties.isGlobalLogPrintDetails()
+                        || logAnnotation.printParams() && logAnnotation.printResult()) {
+                    logger.info("[{}]-[{}]{}请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(),
+                            pointMethod.getName(), logName, paramJson, JsonUtil.asString(proceed), consumerTime
+                    );
+                } else if (logAnnotation.printParams()) {
+                    logger.info("[{}]-[{}]{}请求参数: {}, 执行结束, 共耗时: [{}ms]", pointClass.getName(),
+                            pointMethod.getName(), logName, paramJson, consumerTime
+                    );
+                } else if (logAnnotation.printResult()) {
+                    logger.info("[{}]-[{}]{}执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(),
+                            pointMethod.getName(), logName, JsonUtil.asString(proceed), consumerTime
+                    );
+                }
+                // 执行慢接口逻辑判断
+                dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
+            } catch (Exception e) {
+                logger.info("[{}]-[{}]{}日志拦截处理失败", pointClass.getName(), pointMethod.getName(), logName, e);
+            }
             return proceed;
         } catch (Exception throwable) {
-            logger.error("[{}]-[{}]请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(), pointMethod.getName(),
-                    paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable), throwable);
+            final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
+            if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
+                    throwable.getClass().getName())) {
+                logger.error("[{}]-[{}]{}请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(),
+                        pointMethod.getName(), logName, paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable),
+                        throwable
+                );
+            }
             throw throwable;
         }
     }
@@ -125,7 +155,7 @@ public class AccessLogAspect {
      * @param methodName
      * @param consumerTime
      */
-    private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
+    public void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
         long slowTime = logAspectConfiguration.getSlowTime();
         if (consumerTime > slowTime && slowEventAction != null && !checkIgnore(className)) {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制

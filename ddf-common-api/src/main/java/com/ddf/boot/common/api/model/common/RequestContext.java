@@ -3,6 +3,8 @@ package com.ddf.boot.common.api.model.common;
 import com.ddf.boot.common.api.enums.OsEnum;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,7 +48,12 @@ public class RequestContext implements Serializable {
     /**
      * 版本号
      */
-    private Integer version;
+    private String version;
+
+    /**
+     * 内部版本号
+     */
+    private Long versionCode;
 
     /**
      * 设备号
@@ -64,6 +71,11 @@ public class RequestContext implements Serializable {
     private OsEnum os;
 
     /**
+     * 应用渠道， 如苹果商店， 应用宝之类的
+     */
+    private String channel;
+
+    /**
      * 经度
      */
     private BigDecimal longitude;
@@ -78,5 +90,9 @@ public class RequestContext implements Serializable {
      */
     private String userIdFromGateway;
 
+    /**
+     * 自定义属性
+     */
+    private Map<String, Object> properties = new HashMap<>();
 
 }

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.constant;
 
+
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 
 /**

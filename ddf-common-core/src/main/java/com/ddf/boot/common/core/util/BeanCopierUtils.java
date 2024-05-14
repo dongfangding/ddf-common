@@ -1,6 +1,5 @@
 package com.ddf.boot.common.core.util;
 
-import cn.hutool.core.collection.CollUtil;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +101,7 @@ public class BeanCopierUtils {
      */
     public static <T> List<T> copy(List<?> sourceInstanceList, Class<T> targetClass, Converter converter,
             boolean needSort) {
-        if (CollUtil.isEmpty(sourceInstanceList)) {
+        if (sourceInstanceList == null || sourceInstanceList.isEmpty()) {
             return new ArrayList<>();
         }
         Assert.notNull(sourceInstanceList, "sourceInstanceList must not be null");

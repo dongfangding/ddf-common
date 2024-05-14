@@ -226,7 +226,7 @@ public class EntityGenerateUtil {
     public static StringBuffer initClass(String packageName, String tableName, String tableRemarks, String className) {
         StringBuffer sbl = new StringBuffer(200);
         sbl.append("package ").append(packageName).append(";").append(TWO_LINE);
-        sbl.append("import com.ddf.scaffold.fw.model.BaseDomain;").append(LINE);
+        sbl.append("import com.scaffold.fw.model.BaseDomain;").append(LINE);
         sbl.append("import lombok.*;").append(LINE);
         sbl.append("import javax.persistence.*;").append(LINE);
         sbl.append("import io.swagger.annotations.ApiModel;").append(LINE);
@@ -235,7 +235,7 @@ public class EntityGenerateUtil {
         sbl.append(LINE);
         sbl.append("/**").append(LINE);
         sbl.append(" * ").append(tableRemarks).append(LINE);
-        sbl.append(" * @author {@link com.ddf.scaffold.fw.model.EntityGenerateUtil}").append(" ").append(
+        sbl.append(" * @author {@link com.nvwa.scaffold.fw.model.EntityGenerateUtil}").append(" ").append(
                 new java.util.Date()).append(LINE);
         sbl.append(" */").append(LINE);
         sbl.append("@Entity").append(LINE);

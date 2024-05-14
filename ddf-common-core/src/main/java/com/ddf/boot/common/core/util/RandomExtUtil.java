@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,6 +119,29 @@ public class RandomExtUtil {
                 }
             }
         }
+        return rtnList;
+    }
+
+
+    /**
+     * 这个的实现更加简单且高效，但效果应该是等同于{@link #generateAllByWeight}效果的。
+     * 权重即使重复次数，将数据重复生成后，最后打乱，其实和所谓的权重效果是一样的。
+     *
+     * @param sources
+     * @param clazz
+     * @return
+     * @param <T>
+     */
+    public static <T extends WeightProportion> List<T> generateAllByShuffle(List<T> sources, Class<T> clazz) {
+        // 使用一个默认实现来拷贝属性， 不影响到原对象数据
+        List<T> tempList = BeanCopierUtils.copy(sources, clazz);
+        List<T> rtnList = new ArrayList<>();
+        for (T t : tempList) {
+            for (int i = 0; i < t.getWeight().intValue(); i++) {
+                rtnList.add(t);
+            }
+        }
+        Collections.shuffle(rtnList);
         return rtnList;
     }
 

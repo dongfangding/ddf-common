@@ -14,7 +14,7 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     /**
      * 异常状态码，可持续补充
      */
-    // 枚举定义里也可以不指定状态码，这样就会使用每个自定义异常内的通用状态码 com.ddf.boot.common.core.exception200.BaseException.defaultCallback
+    // 枚举定义里也可以不指定状态码，这样就会使用每个自定义异常内的通用状态码 com.nvwa.boot.common.core.exception200.BaseException.defaultCallback
     /**
      * 用户异常体系状态码定义
      */
@@ -42,7 +42,10 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     SIGN_TIMESTAMP_ERROR("SIGN_TIMESTAMP_ERROR", "签名校验失败，数据已过期"),
 
     MAIL_SEND_FAILURE("MAIL_SEND_FAILURE", "邮件发送失败"),
-    SERIALIZE_PARAM_ERROR("JSON_SERIALIZER_FILED", "序列化参数失败， 请检查是否有入参对象无法序列化[com.ddf.boot.common.core.util.AopUtil.getSerializableParamMap]"),
+    SERIALIZE_PARAM_ERROR(
+            "JSON_SERIALIZER_FILED",
+            "序列化参数失败， 请检查是否有入参对象无法序列化[com.nvwa.boot.common.core.util.AopUtil.getSerializableParamMap]"
+    ),
 
     JSON_SERIALIZER_FILED("JSON_SERIALIZER_FILED", "Json序列化失败"),
     JSON_DESERIALIZER_FILED("JSON_DESERIALIZER_FILED", "Json反序列化失败"),
@@ -63,7 +66,9 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE("REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE", "redis key参数与模板不匹配"),
     REDIS_SHARDING_KEY_NOT_MATCH_ARGS("REDIS_SHARDING_KEY_NOT_MATCH_ARGS", "redis路由key定义变量与实际参数不匹配"),
 
-    ;
+    PARAM_ERROR("PARAM_ERROR", "参数错误"),
+
+    DUPLICATE_KEY("DUPLICATE_KEY", "资源重复", "违反唯一约束");
 
     /**
      * 异常code码

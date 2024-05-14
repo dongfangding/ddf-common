@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.authentication;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
 import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
@@ -82,7 +83,6 @@ public class TokenUtil {
                 throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
             }
         } catch (Exception e) {
-            log.error("token解析失败, ", e);
             throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
         return claim;
@@ -95,20 +95,27 @@ public class TokenUtil {
      * @return
      */
     public static AuthenticateCheckResult checkToken(String token) {
-        final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
-        final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
-        UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
-        String userId = userClaim.getUserId();
-        final boolean bool = SecureUtil.bCryptMatch(userId, authenticateToken.getUserIdToken());
-        PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
-        if (Objects.nonNull(TOKEN_CACHE)) {
-            final String cacheToken = TOKEN_CACHE.getToken(userId);
-            PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
-            PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+        try {
+            final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
+            final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
+            UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
+            String userId = userClaim.getUserId();
+            // 这个散列密码计算器计算复杂度在网关层使用，会严重使用cpu， 导致cpu拉满
+            // final boolean bool = SecureUtil.bCryptMatch(userId, authenticateToken.getUserIdToken());
+            // PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
+            if (Objects.nonNull(TOKEN_CACHE)) {
+                final String cacheToken = TOKEN_CACHE.getToken(userId);
+                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+            }
+            return AuthenticateCheckResult.of(authenticateToken, userClaim);
+        } catch (Exception e) {
+            if(e instanceof UnauthorizedException){
+                throw e;
+            }
+            throw new BusinessException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
-        return AuthenticateCheckResult.of(authenticateToken, userClaim);
     }
-
 
     /**
      * 刷新用户token和过期时间

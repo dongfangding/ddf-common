@@ -22,6 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -67,7 +68,8 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (Exception e) {
             logger.error("json序列化异常, obj = {}", obj, e);
-            throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            throw new BusinessException(e);
         }
     }
 
@@ -138,6 +140,9 @@ public final class JsonUtil {
      */
     public static <T> T toBean(String json, JavaType type) {
         try {
+            if (StringUtils.isBlank(json)) {
+                return null;
+            }
             return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
             logger.error("json反序列化异常, json = {}, type = {}", json, type, e);
@@ -157,7 +162,8 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象序列化字节异常, obj = {}", obj, e);
-            throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            throw new BusinessException(e);
         }
     }
 
@@ -185,6 +191,9 @@ public final class JsonUtil {
     @SneakyThrows
     public static <T> List<T> toList(String json, Class<T> beanType) {
         try {
+            if (StringUtils.isBlank(json)) {
+                return Lists.newArrayList();
+            }
             TypeFactory typeFactory = OBJECT_MAPPER.getTypeFactory();
             return OBJECT_MAPPER.readValue(json, typeFactory.constructCollectionType(List.class, beanType));
         } catch (Exception e) {
@@ -236,7 +245,8 @@ public final class JsonUtil {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("json序列化异常, obj = {}", obj, e);
-            throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
+            throw new BusinessException(e);
         }
     }
 

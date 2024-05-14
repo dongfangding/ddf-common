@@ -1,6 +1,6 @@
 package com.ddf.boot.common.mvc.exception200;
 
-import com.ddf.boot.common.api.model.common.response.response.ResponseData;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @date 2020/11/22 0022 22:11
  */
 @Component
-@RestControllerAdvice(basePackages = "com.ddf.boot.common")
+@RestControllerAdvice(basePackages = "com.nvwa.boot.common")
 public class CommonExceptionAdvice extends AbstractExceptionHandler {
 
     /**

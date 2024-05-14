@@ -5,12 +5,16 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +37,19 @@ public class DateUtils {
      * 时间转换为int的日格式
      */
     public static final DateTimeFormatter DAY_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    /**
+     * 时间转换为int的日格式
+     */
+    public static final DateTimeFormatter HOUR_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHH");
     /**
      * 时间转换为int的月格式
      */
     public static final DateTimeFormatter MONTH_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMM");
+
+    public static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+
+    public static final String DATE_TIME = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 获取本月第一天
@@ -45,6 +58,36 @@ public class DateUtils {
      */
     public static Date getMonthFirstDate(Date time) {
         return DateUtil.beginOfMonth(time);
+    }
+
+    /**
+     * 获取本月第一天秒时间戳
+     *
+     * @param timestampSeconds 秒时间戳
+     * @return Date
+     */
+    public static Long getMonthFirstSeconds(Long timestampSeconds) {
+        return getMonthFirstDate(new Date(timestampSeconds * 1000)).getTime() / 1000;
+    }
+
+    /**
+     * 根据指定月份获取本月第一天秒时间戳
+     *
+     * @param month 月格式化形式，格式为yyyyMM
+     * @return Date
+     */
+    public static Long getMonthFirstSecondsByDayFormatter(Integer month) {
+        return LocalDate.parse(month + "01", DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
+    }
+
+    /**
+     * 根据指定天获取本天第一天秒时间戳
+     *
+     * @param monthDay 天格式化形式，格式为yyyyMMdd
+     * @return Date
+     */
+    public static Long getDayFirstSecondsByDayFormatter(Integer monthDay) {
+        return LocalDate.parse(String.valueOf(monthDay), DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
     }
 
     /**
@@ -69,6 +112,22 @@ public class DateUtils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    /**
+     * 今天的开始时间戳
+     * @return
+     */
+    public static Long getStartTimestamp(){
+        return LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toEpochSecond();
+    }
+
+    /**
+     * 今天的结束时间戳
+     * @return
+     */
+    public static Long getEndTimestamp(){
+        return getStartTimestamp() + 86399L;
     }
 
     /**
@@ -214,6 +273,12 @@ public class DateUtils {
         return Objects.isNull(instant) ? null : instant.toEpochMilli();
     }
 
+
+    public static Long toDefaultSeconds(LocalDateTime localDateTime) {
+        Instant instant = toDefaultInstant(localDateTime);
+        return Objects.isNull(instant) ? null : instant.toEpochMilli() / 1000;
+    }
+
     /**
      * 使用北京时区LocalDateTime转秒时间戳
      *
@@ -325,13 +390,43 @@ public class DateUtils {
         return System.currentTimeMillis() / 1000;
     }
 
+
     /**
      * 当前年月日
-     *
      * @return
      */
     public static Integer currentYearMonthDay() {
         return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.now()));
+    }
+
+    /**
+     * 当前年月日
+     * @param calibration 0 今天 -1 昨天 1 明天
+     * @return
+     */
+    public static Integer currentYearMonthDay(int calibration) {
+        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.now().plusDays(calibration)));
+    }
+
+    /**
+     * 当前年月日 小时
+     * @param calibration 0 今天 -1 昨天 1 明天
+     * @return
+     */
+    public static Integer currentYearMonthDayHour(int calibration) {
+        return Integer.parseInt(HOUR_INTEGER_FORMATTER.format(LocalDateTime.now().plusHours(calibration)));
+    }
+
+    /**
+     * 当前年份周
+     *
+     * @param calibration 校准
+     * @return {@link Integer}
+     */
+    public static Integer currentYearWeek(int calibration){
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int weekNumber = LocalDate.now().plusWeeks(calibration).get(weekFields.weekOfWeekBasedYear());
+        return weekNumber;
     }
 
     /**
@@ -344,12 +439,54 @@ public class DateUtils {
     }
 
     /**
+     * 当前年月日
+     * @return  '20231212'
+     */
+    public static String formatYmd(){
+        return DAY_INTEGER_FORMATTER.format(LocalDate.now());
+    }
+
+    /**
+     * 当前年月
+     * @return  '202312'
+     */
+    public static String currentYm(){
+        return MONTH_INTEGER_FORMATTER.format(LocalDate.now());
+    }
+
+    /**
+     * 根据秒时间戳格式化当前年月
+     *
+     * @return
+     */
+    public static Integer formatYearMonthDayBySeconds(Long seconds) {
+        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
+    }
+
+    /**
      * 当前年月
      *
      * @return
      */
     public static Integer currentYearMonth() {
         return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now()));
+    }
+    /**
+     * 当前年月
+     * @param calibration 0 单月 -1 上个月 1 下个月
+     * @return
+     */
+    public static Integer currentYearMonth(int calibration) {
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now().plusMonths(calibration)));
+    }
+
+    /**
+     * 根据秒时间戳格式化当前年月
+     *
+     * @return
+     */
+    public static Integer formatYearMonthBySeconds(Long seconds) {
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
     }
 
     /**
@@ -381,6 +518,15 @@ public class DateUtils {
     }
 
     /**
+     * 将秒标准格式化输出
+     * @param seconds
+     * @return
+     */
+    public static String standardFormatSeconds(Long seconds, DateTimeFormatter formatter){
+        return formatter.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+    }
+
+    /**
      * 将毫秒标准格式化输出
      *
      * @param millis
@@ -388,6 +534,28 @@ public class DateUtils {
      */
     public static String standardFormatMillis(Long millis) {
         return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
+    }
+
+    public static String formatDate(Date date, String format){
+        return new SimpleDateFormat(format).format(date);
+    }
+
+    /**
+     * 格式化时间
+     * @param time
+     * @param format
+     * @return
+     */
+    public static String formatDate(LocalDateTime time, DateTimeFormatter format){
+        return format.format(time);
+    }
+
+    /**
+     * 格式化时间
+     * @return 'yyyy-MM-dd HH:mm:ss'
+     */
+    public static String formatDate(Date date){
+        return new SimpleDateFormat(DATE_TIME).format(date);
     }
 
     /**
@@ -428,5 +596,35 @@ public class DateUtils {
     public static long calcPassedTodaySeconds(long timeSeconds) {
         final LocalDateTime localDateTime = ofSeconds(timeSeconds);
         return timeSeconds - toZhCnSeconds(getStartOfDay(localDateTime));
+    }
+
+    /**
+     * 获取前后指定小时的 时间戳
+     * @param day
+     * @param hour
+     * @return
+     */
+    public static long assignDateSeconds(int day, int hour){
+        return LocalDateTime.of(LocalDate.now().plusDays(day), LocalTime.of(hour, 0))
+                .atZone(ZoneId.systemDefault()).toEpochSecond();
+    }
+
+    /**
+     * 今天日期往后推NUM天
+     * @param num
+     * @param pattern
+     * @return
+     */
+    public static String getDateFormatByPlus(int num,String pattern){
+        return LocalDateTime.now().plusDays(num).format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * LocalDateTime 转 Date
+     * @param localDateTime
+     * @return
+     */
+    public static Date asDate(LocalDateTime localDateTime){
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

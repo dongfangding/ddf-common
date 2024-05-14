@@ -1,14 +1,19 @@
 package com.ddf.boot.common.mvc.exception200;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.net.NetUtil;
+import com.ddf.boot.common.api.consts.AlarmLog;
+import com.ddf.boot.common.api.exception.AlarmException;
+import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
-import com.ddf.boot.common.api.model.common.response.response.ResponseData;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.mvc.util.WebUtil;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -20,17 +25,17 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 /**
  * <p>description</p >
  * <p>
  * <p>
- * FIXME 这种方式，无法决定系统使用方的basePackages， 所以这里暂时用了com
  * <p>
  * 也可以将该类定义为抽象普通类，不再交给spring管理， 然后应用使用方自己定义拦截规则， 继承这个类， 使用父类的逻辑，这里只提供逻辑
  * 这么做，至少也能保证如果在微服务项目中的话，可以统一管理多个模块的异常处理机制
@@ -62,10 +67,28 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-        // 这个可选的日志处理器会在异常时打印异常日志， 如果已经处理了，这里就不要重复打印了, 但是有些异常还未进入方法，不会被切面，这里加判断就会导致异常栈打印不出来
-//        if (!SpringContextHolder.containsBeanType(AccessLogAspect.class)) {
-            log.error("全局异常捕捉到服务异常: ", exception);
-//        }
+        String body = "";
+        ContentCachingRequestWrapper contentCachingRequestWrapper = org.springframework.web.util.WebUtils.getNativeRequest(
+                httpServletRequest, ContentCachingRequestWrapper.class);
+        if (Objects.nonNull(contentCachingRequestWrapper)) {
+            body = new String(contentCachingRequestWrapper.getContentAsByteArray());
+        }
+        final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
+        if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
+                exception.getClass().getName())) {
+            log.error("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
+                    httpServletRequest.getRequestURI(), httpServletRequest.getParameterMap(), body, exception
+            );
+        } else {
+            // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
+            log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
+                    httpServletRequest.getRequestURI(), httpServletRequest.getParameterMap(), body, exception
+            );
+        }
+        if (exception instanceof AlarmException) {
+            AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", httpServletRequest.getRequestURI(), exception);
+        }
+        //        }
         // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
         boolean ignoreErrorStack = false;
         List<String> ignoreErrorTraceProfile = globalProperties.getIgnoreErrorTraceProfile();
@@ -76,7 +99,7 @@ public abstract class AbstractExceptionHandler {
 
         // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         if (exceptionHandlerMapping != null) {
-            ResponseData<?> responseData = exceptionHandlerMapping.handlerException(exception);
+            ResponseData<?> responseData = exceptionHandlerMapping.takeOverException(exception);
             if (responseData != null) {
                 if (ignoreErrorStack) {
                     responseData.setStack(null);
@@ -94,11 +117,13 @@ public abstract class AbstractExceptionHandler {
             // 解析异常类消息代码，并根据当前Local格式化资源文件
             Locale locale = httpServletRequest.getLocale();
             String description = baseException.getDescription();
-            // 有些走了自定义异常基类的，但是没有走这个接口赋值，就不会有值，比如throw new BadRequestException("bad_request", "xx不能为空)
-            if (Objects.isNull(baseException.getBaseCallbackCode())) {
-                description = baseException.getDescription();
-            } else {
-                description = baseException.getBaseCallbackCode().getBizMessage();
+            if (!Objects.equals(baseException.defaultCallback(), baseException.getBaseCallbackCode())) {
+                // 有些走了自定义异常基类的，但是没有走这个接口赋值，就不会有值，比如throw new BadRequestException("bad_request", "xx不能为空)
+                if (Objects.isNull(baseException.getBaseCallbackCode())) {
+                    description = baseException.getDescription();
+                } else {
+                    description = baseException.getBaseCallbackCode().getBizMessage();
+                }
             }
             // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
             message = messageSource.getMessage(baseException.getCode(), baseException.getParams(), description, locale);
@@ -109,14 +134,21 @@ public abstract class AbstractExceptionHandler {
         } else if (exception instanceof MultipartException) {
             exceptionCode = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getCode();
             message = exception.getMessage();
-        } else if (exception instanceof MethodArgumentNotValidException) {
+        } else if (exception instanceof BindException) {
             exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
-            MethodArgumentNotValidException exception1 = (MethodArgumentNotValidException) exception;
-            message = exception1.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(
-                    Collectors.joining(";"));
+            message = ((BindException) exception).getBindingResult().getAllErrors().stream().map(
+                    ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+        } else if (exception instanceof org.springframework.dao.DuplicateKeyException
+                || exception instanceof SQLIntegrityConstraintViolationException) {
+            exceptionCode = BaseErrorCallbackCode.DUPLICATE_KEY.getCode();
+            message = BaseErrorCallbackCode.DUPLICATE_KEY.getBizMessage();
+        } else if (exceptionHandlerMapping != null) {
+            final BaseCallbackCode baseCallbackCode = exceptionHandlerMapping.resolveException(exception);
+            exceptionCode = baseCallbackCode.getCode();
+            message = baseCallbackCode.getBizMessage();
         } else {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
-            message = exception.getMessage();
+            message = "请求失败，请联系客服人员~";
         }
 
         if (globalProperties.isExceptionCodeToResponseStatus()) {
@@ -156,7 +188,8 @@ public abstract class AbstractExceptionHandler {
                 }
                 // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
                 return SpringContextHolder.getBean(MessageSource.class).getMessage(baseException.getCode(),
-                        baseException.getParams(), description, locale);
+                        baseException.getParams(), description, locale
+                );
             }
             return exception.getMessage();
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.authentication;
 
+
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 

@@ -44,6 +44,13 @@ public interface RedisKeyConstraint {
     RedisKeyTypeEnum getRedisKeyType();
 
     /**
+     * 缓存中存取的数据对应的对象类型
+     *
+     * @return
+     */
+    Class getClazz();
+
+    /**
      * 获取key的分片规则
      *
      * @return

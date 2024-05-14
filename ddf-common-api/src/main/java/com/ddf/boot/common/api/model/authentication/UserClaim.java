@@ -12,10 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 /**
- *
  * 生成token的用户信息对象
  *
  * @author dongfang.ding
@@ -23,7 +21,6 @@ import lombok.experimental.Accessors;
  */
 @Data
 @NoArgsConstructor
-@Accessors(chain = true)
 @Builder
 @AllArgsConstructor
 public class UserClaim implements Serializable {
@@ -73,6 +70,11 @@ public class UserClaim implements Serializable {
      * 仅支持字符格式，如果要放入复杂对象，请自行序列化
      */
     private String detail;
+
+    /**
+     * 自定义的其它属性
+     */
+    private Map<String, Object> properties = new HashMap<>();
 
     public UserClaim(String userId, String username) {
         this.userId = userId;

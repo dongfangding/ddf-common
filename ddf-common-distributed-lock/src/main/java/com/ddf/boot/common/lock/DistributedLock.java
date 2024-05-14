@@ -1,7 +1,7 @@
 package com.ddf.boot.common.lock;
 
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 分布式锁接口
@@ -32,10 +32,10 @@ public interface DistributedLock {
     TimeUnit DEFAULT_ACQUIRE_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     /**
-     * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
+     * 尝试获取锁并执行业务, 非阻塞的获取到，最大等待时间waitTime之后还获取不到锁的话会返回失败， 如果想要获取不到立马失败， waitTime可以指定为0
      *
      * @param lockKey        锁
-     * @param time           加锁等待时间
+     * @param waitTime       加锁等待时间
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
@@ -43,15 +43,30 @@ public interface DistributedLock {
      * @return
      * @throws Exception
      */
-    <R> R tryLock(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+    <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
             BusinessHandler<R> failureHandler) throws Exception;
+
+    /**
+     * 只立马尝试一次获取锁，获取不到就返回失败， redis的实现，获取到使用看门狗续期
+     *
+     * @param lockKey        锁
+     * @param successHandler 加锁成功回调
+     * @param failureHandler 加锁失败回调， 如果未提供则返回null
+     * @param <R>
+     * @return
+     * @throws Exception
+     */
+    default <R> R tryLockOnce(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
+            throws Exception {
+        return tryLock(lockKey, 0, TimeUnit.SECONDS, successHandler, failureHandler);
+    }
 
 
     /**
-     * 指定等待时间加锁并执行业务
+     * 指定加锁时间并执行业务， leaseTime是获取到锁的最大持有时间，如果获取不到锁，会一直尝试获取
      *
      * @param lockKey        锁
-     * @param time           加锁等待时间
+     * @param leaseTime      最大持有锁时间
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
@@ -59,11 +74,11 @@ public interface DistributedLock {
      * @return
      * @throws Exception
      */
-    <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+    <R> R lockWork(String lockKey, int leaseTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
             BusinessHandler<R> failureHandler) throws Exception;
 
     /**
-     * 等待默认时间加锁并执行业务
+     * 持有默认时间加锁并执行业务，如果获取不到锁，会一直尝试获取，这个如果是redis实现的话，即使用看门狗来续期时间
      *
      * @param lockKey        锁
      * @param successHandler 加锁成功回调

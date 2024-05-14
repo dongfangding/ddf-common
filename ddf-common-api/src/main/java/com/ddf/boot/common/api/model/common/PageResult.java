@@ -52,6 +52,8 @@ public class PageResult<E> implements Serializable {
      * @return
      */
     public boolean isEmpty() {
+//        return total == 0 || CollectionUtils.isEmpty(content);
+        // 如redis等其它数据源无法处理total
         return total == 0 || CollectionUtils.isEmpty(content);
     }
 

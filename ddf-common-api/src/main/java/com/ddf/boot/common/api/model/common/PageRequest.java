@@ -46,7 +46,7 @@ public interface PageRequest {
      * @return
      */
     default Integer getPageSizeAdaptive() {
-        return ObjectUtils.defaultIfNull(getPageSize(), DEFAULT_PAGE_NUM);
+        return ObjectUtils.defaultIfNull(getPageSize(), DEFAULT_PAGE_SIZE);
     }
 
     /**

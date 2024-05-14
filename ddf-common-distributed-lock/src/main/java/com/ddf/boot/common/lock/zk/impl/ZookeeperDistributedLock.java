@@ -38,7 +38,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
      *
      * @param lockKey        锁
-     * @param time           加锁等待时间
+     * @param waitTime           加锁等待时间
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
@@ -47,13 +47,13 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @throws Exception
      */
     @Override
-    public <R> R tryLock(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+    public <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
             BusinessHandler<R> failureHandler) throws Exception {
         String formatLockKey = formatLockKey(lockKey);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);
-        if (!lock.acquire(time, timeUnit)) {
+        if (!lock.acquire(waitTime, timeUnit)) {
             log.warn("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms",
-                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(waitTime));
             if (Objects.nonNull(failureHandler)) {
                 log.warn("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
                 return failureHandler.handle();
@@ -77,7 +77,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * 指定等待时间加锁并执行业务
      *
      * @param lockKey        锁
-     * @param time           加锁等待时间
+     * @param leaseTime           加锁等待时间
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
@@ -86,14 +86,14 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @throws Exception
      */
     @Override
-    public <R> R lockWork(String lockKey, int time, TimeUnit timeUnit, BusinessHandler<R> successHandler,
+    public <R> R lockWork(String lockKey, int leaseTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
             BusinessHandler<R> failureHandler) throws Exception {
         String formatLockKey = formatLockKey(lockKey);
         InterProcessMutex lock = new InterProcessMutex(client, formatLockKey);
         ;
-        if (!lock.acquire(time, timeUnit)) {
+        if (!lock.acquire(leaseTime, timeUnit)) {
             log.warn("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms",
-                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(time));
+                    Thread.currentThread().getName(), lockKey, timeUnit.toMillis(leaseTime));
             if (Objects.nonNull(failureHandler)) {
                 log.warn("zk-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
                 return failureHandler.handle();

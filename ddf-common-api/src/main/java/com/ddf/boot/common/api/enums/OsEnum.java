@@ -28,9 +28,11 @@ public enum OsEnum {
     IOS,
 
     /**
-     * 安卓
+     * pc
      */
-    PC
+    PC,
+
+    H5
 
     ;
 

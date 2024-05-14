@@ -35,9 +35,22 @@ public enum RequestHeaderEnum {
     NONCE("nonce"),
 
     /**
-     * 版本号
+     * 版本号（外显）
+     * eg: 1.1.1
      */
     VERSION("version"),
+
+    /**
+     * 版本号（内部）
+     * 之后做版本控制使用
+     * eg: 10
+     */
+    VERSION_CODE("versioncode"),
+
+    /**
+     * 应用渠道，如IOS的应用APPLE_STORE, 安卓则是各大应用商店，用于标识当前客户端下载自哪个平台
+     */
+    CHANNEL("channel"),
 
     /**
      * 经度

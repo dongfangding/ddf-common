@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.util.SecureUtil;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,11 +65,10 @@ public class GlobalProperties {
      */
     private boolean exceptionCodeToResponseStatus;
 
-
     /**
      * rsa 通用秘钥
      *
-     * @see com.ddf.boot.common.core.util.SecureUtil
+     * @see SecureUtil
      */
     private String rsaPrivateKey;
 
@@ -76,7 +76,7 @@ public class GlobalProperties {
     /**
      * rsa rsa通用公钥
      *
-     * @see com.ddf.boot.common.core.util.SecureUtil
+     * @see SecureUtil
      */
     private String rsaPublicKey;
 
@@ -84,7 +84,7 @@ public class GlobalProperties {
      * AES 秘钥
      * 最基本要求，采用对称分组密码体制， 秘钥长度的最少支持为128、192、256位，即16、24、32个字节
      *
-     * @see com.ddf.boot.common.core.util.SecureUtil
+     * @see SecureUtil
      */
     private String aesSecret;
 
@@ -92,5 +92,17 @@ public class GlobalProperties {
      * 签名算法秘钥, 目前使用的HMAC256, 秘钥最好是256位,即32个字节
      */
     private String signSecret;
+
+    /**
+     * 是否开启全局的日志打印详情（默认关闭， 先精准控制日志行为，线上排查问题时，可临时开启）
+     */
+    private boolean globalLogPrintDetails;
+
+    /**
+     * 要忽略的打印异常日志的异常完全类型
+     * 在日志拦截和全局异常处理中，会拦截所有的异常然后打印日志，如果匹配某些异常，则不打印日志。
+     * 如com.boot.common.api.exception.BusinessException
+     */
+    private List<String> ignoreLogExceptionClassName;
 
 }

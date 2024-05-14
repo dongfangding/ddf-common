@@ -2,9 +2,13 @@ package com.ddf.boot.common.mvc.config;
 
 import com.ddf.boot.common.core.encode.BCryptPasswordEncoder;
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
+import com.ddf.boot.common.mvc.filter.CachingRequestBodyFilter;
 import com.ddf.boot.common.mvc.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.mvc.resolver.QueryParamArgumentResolver;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +24,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -68,6 +69,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableCaching
 public class CoreWebConfig implements WebMvcConfigurer {
 
+    @PostConstruct
+    public void init() {
+        // 解决druid日志报警discard long time none received connection问题，但是这个不一定有用，要放在启动脚本里才能保证最先识别
+        System.setProperty("druid.mysql.usePingMethod", "false");
+    }
+
     /**
      * 注册解析器
      *
@@ -87,16 +94,16 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 为了解决controllerAdvice包装返回结果返回String, 消息转换器会直接将对象强转为String报错的问题，这里强制把jackson序列化转换器放在
      * 第一个，这样对象也会被序列化返回，就不会存在这个问题。
-     *
+     * <p>
      * 但是有时候还是会报这个错误，比如直接在浏览器地址栏输入。这是因为， 在处理返回值的时候， mvc会判断当前请求要返回的MediaType，
      * 而jackson序列化工具必须是application/json等才会使用，如果选择了text/html, 那么还是会报错。这个时候携带请求头Content-Type:application/json就可以了。
      * 具体代码见下
-     *
+     * <p>
      * 配置消息转换器的代码在
      * org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#getMessageConverters()
-     *     org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#configureMessageConverters(java.util.List)
-     *     org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#extendMessageConverters(java.util.List)
-     *
+     * org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#configureMessageConverters(java.util.List)
+     * org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#extendMessageConverters(java.util.List)
+     * <p>
      * 使用消息转换器判断MediaType的地方在
      * org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor#writeWithMessageConverters(java.lang.Object, org.springframework.core.MethodParameter, org.springframework.http.server.ServletServerHttpRequest, org.springframework.http.server.ServletServerHttpResponse)
      *
@@ -125,32 +132,35 @@ public class CoreWebConfig implements WebMvcConfigurer {
     @Deprecated
     public void addCorsMappings(CorsRegistry registry) {
         // 这种由于拦截器的顺序问题无法处理项目内部有自定义拦截器且内部出现异常的问题
-//         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
+        //         registry.addMapping("/**").allowCredentials(false).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
     }
 
     /**
      * 处理全局跨域
      * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-cors-filter
      *
+     *
+     * 使用Spring-Cloud-Gateway的时候不允许多重跨域，网关层已经处理了，这里直接去掉
+     *
      * @return
      */
-    @Bean
-    public CorsFilter corsRegistration() {
-        CorsConfiguration config = new CorsConfiguration();
-        // Possibly...
-        // config.applyPermitDefaultValues()
-        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
-        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
-        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
-        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
-        config.setAllowCredentials(false);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+    //    @Bean
+    //    public CorsFilter corsRegistration() {
+    //        CorsConfiguration config = new CorsConfiguration();
+    //        // Possibly...
+    //        // config.applyPermitDefaultValues()
+    //        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
+    //        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
+    //        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
+    //        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
+    //        config.setAllowCredentials(false);
+    //        config.addAllowedOrigin("*");
+    //        config.addAllowedHeader("*");
+    //        config.addAllowedMethod("*");
+    //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //        source.registerCorsConfiguration("/**", config);
+    //        return new CorsFilter(source);
+    //    }
 
     /**
      * 配置静态资源映射路径
@@ -200,7 +210,29 @@ public class CoreWebConfig implements WebMvcConfigurer {
 
     @Bean
     @Primary
+    @ConditionalOnMissingBean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+    /**
+     * 解决body不能重复读取问题
+     * <p>
+     * String body = "";
+     * ContentCachingRequestWrapper contentCachingRequestWrapper = org.springframework.web.util.WebUtils.getNativeRequest(
+     * httpServletRequest, ContentCachingRequestWrapper.class);
+     * if (Objects.nonNull(contentCachingRequestWrapper)) {
+     * body = new String(contentCachingRequestWrapper.getContentAsByteArray());
+     * }
+     *
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean<CachingRequestBodyFilter> filterRegistration() {
+        FilterRegistrationBean<CachingRequestBodyFilter> registration = new FilterRegistrationBean<>(
+                new CachingRequestBodyFilter());
+        registration.setOrder(2);
+        return registration;
     }
 }

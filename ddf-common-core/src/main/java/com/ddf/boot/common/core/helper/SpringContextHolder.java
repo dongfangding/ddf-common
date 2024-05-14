@@ -31,7 +31,7 @@ public class SpringContextHolder {
      * 下面的判空就是这个工具类存在的意义， 虽然在spring环境中这里一定不为空，但是我可能有一些工具类，
      * 需要获取系统配置类然后使用这个类获取， 但是我又希望这个类，可以提供在spring环境中的调试，
      * 如果满足这样的话， 属性初始化就必须写在静态代码块中，而这样的话工具类中使用这个类的时候applicationContext就会为空，然后空指针影响调试
-     * 可参考该类 com.ddf.boot.common.websocket.util.WsSecureUtil
+     * 可参考该类 com.nvwa.boot.common.websocket.util.WsSecureUtil
      *
      * @param requiredType
      * @param <T>

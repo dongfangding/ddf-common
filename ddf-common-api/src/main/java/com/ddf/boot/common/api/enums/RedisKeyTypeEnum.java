@@ -15,7 +15,9 @@ public enum RedisKeyTypeEnum {
     STRING,
     LIST,
     HASH,
+    HASH_KEY,
     SET,
     ZSET,
-    BIT
+    BIT,
+    GEO
 }

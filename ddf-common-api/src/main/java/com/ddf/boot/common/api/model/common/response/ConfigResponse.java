@@ -1,4 +1,5 @@
-package com.ddf.boot.common.api.model.common.response.response;
+package com.ddf.boot.common.api.model.common.response;
+
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.ddf.boot.common.api.util.JsonUtil;

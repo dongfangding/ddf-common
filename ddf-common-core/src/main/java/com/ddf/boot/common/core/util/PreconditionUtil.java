@@ -85,7 +85,7 @@ public class PreconditionUtil {
      * @param callbackCode
      * @param args
      */
-    static void checkArgumentAndFormat(boolean expression, @NonNull BaseCallbackCode callbackCode, Object... args) {
+    public static void checkArgumentAndFormat(boolean expression, @NonNull BaseCallbackCode callbackCode, Object... args) {
         checkArgument(expression, callbackCode.getCode(), MessageFormat.format(callbackCode.getDescription(), args));
     }
 

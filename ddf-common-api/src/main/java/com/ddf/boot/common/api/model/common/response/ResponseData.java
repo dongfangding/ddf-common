@@ -1,4 +1,4 @@
-package com.ddf.boot.common.api.model.common.response.response;
+package com.ddf.boot.common.api.model.common.response;
 
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
@@ -103,6 +103,30 @@ public class ResponseData<T> {
     }
 
     /**
+     * 成功返回数据方法 - 自定义成功提示语
+     *
+     * @param data  数据
+     * @param desc  提示语
+     */
+    public static <T> ResponseData<T> success(T data, String desc) {
+        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), desc, "", System.currentTimeMillis(), data);
+    }
+
+    /**
+     * 成功返回数据方法
+     *
+     * @param data
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> success(T data, Object extra) {
+        return new ResponseData<>(
+                BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), data, extra
+        );
+    }
+
+    /**
      * 返回空数据
      *
      * @return
@@ -123,6 +147,17 @@ public class ResponseData<T> {
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode) {
         return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(), "", System.currentTimeMillis(), null);
+    }
+
+    /**
+     * 失败返回消息方法
+     *
+     * @param baseCallbackCode
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode, Object extra) {
+        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(), "", System.currentTimeMillis(), null, extra);
     }
 
     /**
