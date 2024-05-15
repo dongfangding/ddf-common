@@ -25,6 +25,7 @@ public class CaptchaRequest implements Serializable {
     /**
      * 验证码类型
      */
+    @Builder.Default
     private CaptchaType captchaType = CaptchaType.MATH;
 
 }

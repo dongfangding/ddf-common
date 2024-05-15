@@ -5,8 +5,6 @@
 -- Time: 14:47
 -- To change this template use File | Settings | File Templates.
 --
--- string 的key
-local stringKey = KEYS[1]
 -- 对value的变动补偿， 可以为负数
 local step = tonumber(ARGV[1])
 -- 过期时间

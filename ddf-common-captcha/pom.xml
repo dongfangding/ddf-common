@@ -11,12 +11,11 @@
     <description>验证码生成器模块</description>
 
     <artifactId>ddf-common-captcha</artifactId>
+    <version>1.0.1-jdk17-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <kaptcha-version>2.3.2</kaptcha-version>
-        <anji-plus.version>1.2.9</anji-plus.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -24,7 +23,7 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
@@ -32,7 +31,6 @@
         <dependency>
             <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
-            <version>${kaptcha-version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>javax.servlet-api</artifactId>
@@ -44,13 +42,12 @@
         <dependency>
             <groupId>com.anji-plus</groupId>
             <artifactId>spring-boot-starter-captcha</artifactId>
-            <version>${anji-plus.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-redis</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
         </dependency>
 
         <dependency>

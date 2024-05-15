@@ -3,20 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
+        <artifactId>ddf-common</artifactId>
         <version>1.0.1-jdk17-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <curator.version>5.1.0</curator.version>
     </properties>
 
     <artifactId>ddf-common-distributed-lock</artifactId>
+    <version>1.0.1-jdk17-SNAPSHOT</version>
     <description>分布式锁实现</description>
 
     <dependencies>
@@ -24,14 +23,13 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>${project.parent.version}</version>
-            <optional>true</optional>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.ddf.common</groupId>
-            <artifactId>ddf-common-core</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>ddf-common-redis</artifactId>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -42,7 +40,6 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>
@@ -54,7 +51,6 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-client</artifactId>
-            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>
@@ -66,7 +62,6 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
-            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>

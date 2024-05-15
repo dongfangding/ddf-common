@@ -1,6 +1,7 @@
 package com.ddf.boot.common.core.util;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,8 @@ public class BeanCopierUtils {
         Assert.notNull(targetClass, "targetClass must not be null");
         T target;
         try {
-            target = targetClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            target = targetClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(
                     String.format("Create new instance of %s failed: %s", targetClass, e.getMessage()));
         }

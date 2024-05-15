@@ -20,7 +20,7 @@ public class ApplicationNamedKeyGenerator {
 
     private static final String GLOBAL_NAME = "global";
 
-    private static final String applicationName = SpringContextHolder.getApplicationContext().getEnvironment().getProperty("spring.application.name");
+    private static final String APPLICATION_NAME = SpringContextHolder.getApplicationContext().getEnvironment().getProperty("spring.application.name");
 
     /**
      * 拼凑key
@@ -41,7 +41,7 @@ public class ApplicationNamedKeyGenerator {
      */
     public static String genKey(boolean ignoreApplicationName, @NonNull String... keys) {
         String[] params = new String[keys.length + 1];
-        params[0] = ignoreApplicationName ? GLOBAL_NAME : applicationName;
+        params[0] = ignoreApplicationName ? GLOBAL_NAME : APPLICATION_NAME;
         System.arraycopy(keys, 0, params, 1, params.length - 1);
         return JOINER.join(params);
     }

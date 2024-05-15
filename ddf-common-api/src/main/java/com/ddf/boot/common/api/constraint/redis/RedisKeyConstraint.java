@@ -5,6 +5,7 @@ import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.PatternUtil;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -70,7 +71,7 @@ public interface RedisKeyConstraint {
         if (PatternUtil.findChildStrCount(template, TEMPLATE_SPLIT_CHAR) != args.length) {
             throw new BusinessException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
         }
-        return String.format(template, args);
+        return String.format(template, Arrays.stream(args).toArray());
     }
 
     /**
@@ -84,6 +85,6 @@ public interface RedisKeyConstraint {
         if (Objects.isNull(shardingRule)) {
             return getKey(args);
         }
-        return String.join("_", String.format(getTemplate(), args), shardingRule.getSharding(args));
+        return String.join("_", String.format(getTemplate(), Arrays.stream(args).toArray()), shardingRule.getSharding(args));
     }
 }

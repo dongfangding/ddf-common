@@ -23,14 +23,14 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-mvc</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
         </dependency>
 
         <dependency>

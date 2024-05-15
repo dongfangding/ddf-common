@@ -15,7 +15,8 @@ public interface RedisLuaScript {
     /**
      * 基于令牌桶算法的分布式限流
      */
-    RedisScript<String> TOKEN_BUCKET_RATE_LIMIT = RedisScript.of(new ClassPathResource("lua/tokenBucketRateLimit.lua"), String.class);
+    RedisScript<String> TOKEN_BUCKET_RATE_LIMIT = RedisScript.of(
+            new ClassPathResource("lua/tokenBucketRateLimit.lua"), String.class);
 
     /**
      * 对String类型的key进行递增递减并设置剩余过期时间的原子脚本
@@ -38,21 +39,55 @@ public interface RedisLuaScript {
     /**
      * 基于hash结构的自增并增加上限判定的通用脚本
      */
-    RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
+    RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(
+            new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
 
     /**
      * hash自增时进行取模运算后反减运算消耗值，结果返回取整后的值
      */
-    RedisScript<String> HASH_INCREASE_ROUNDING_REDUCE = RedisScript.of(new ClassPathResource("lua/HashIncreaseRoundingReduce.lua"), String.class);
+    RedisScript<String> HASH_INCREASE_ROUNDING_REDUCE = RedisScript.of(
+            new ClassPathResource("lua/HashIncreaseRoundingReduce.lua"), String.class);
 
     /**
      * 基于zset实现的存储最大历史的容器
      */
-    RedisScript<String> MAX_CAPACITY_HISTORY_CONTAINER = RedisScript.of(new ClassPathResource("lua/MaxCapacityHistoryContainer.lua"), String.class);
+    RedisScript<String> MAX_CAPACITY_HISTORY_CONTAINER = RedisScript.of(
+            new ClassPathResource("lua/MaxCapacityHistoryContainer.lua"), String.class);
 
     /**
      * 基于zset实现整数位带时间戳的
      */
-    RedisScript<String> ZSET_INCR_WITH_TIME = RedisScript.of(new ClassPathResource("lua/ZsetIncrWithTime.lua"), String.class);
+    RedisScript<String> ZSET_INCR_WITH_TIME = RedisScript.of(
+            new ClassPathResource("lua/ZsetIncrWithTime.lua"), String.class);
+
+    /**
+     * 基于String实现对一个key进行ttl带有上限值的累加操作，用来实现某些倒计时，又可以增加倒计时的场景
+     */
+    RedisScript<String> STRING_TTL_INCR_WITH_LIMIT = RedisScript.of(
+            new ClassPathResource("lua/TtlIncrWithLimit.lua"), String.class);
+
+    /**
+     * 基于Hash对hashkey进行value的判断， 如果为预期值则删除，否则不删除
+     */
+    RedisScript<String> HASH_DELETE_WITH_CHECK_VALUE = RedisScript.of(
+            new ClassPathResource("lua/HashDeleteWithCheckValue.lua"), String.class);
+
+    /**
+     * 基于String进行value的判断， 如果为预期值则删除，否则不删除
+     */
+    RedisScript<String> STRING_DELETE_WITH_CHECK_VALUE = RedisScript.of(
+            new ClassPathResource("lua/StringDeleteWithCheckValue.lua"), String.class);
+
+    /**
+     * 该脚本的作用是对hash的hashkey进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
+     */
+    RedisScript<String> HASH_INCR_WITH_FIRST_SET_TTL = RedisScript.of(
+            new ClassPathResource("lua/HashIncrWithFirstSetTtl.lua"), String.class);
+
+    /**
+     * 该脚本的作用类似于对集合进行最大值判断，当达到最后值后，将组成当前最大值的所有子元素以及对应的数量返回
+     */
+    RedisScript<String> MAX_ELEMENT_DICT = RedisScript.of(
+            new ClassPathResource("lua/MaxElementDict.lua"), String.class);
 
 }

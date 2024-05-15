@@ -13,8 +13,8 @@ public class ConstUtil {
 
     public static final String FALSE_STR = "0";
     public static final String TRUE_STR = "1";
-    public static final Byte FALSE_BYTE = new Byte(FALSE_STR);
-    public static final Byte TRUE_BYTE = new Byte(TRUE_STR);
+    public static final Byte FALSE_BYTE = Byte.parseByte(FALSE_STR);
+    public static final Byte TRUE_BYTE = Byte.parseByte(TRUE_STR);
     public static final String STRING_COLON = ":";
     public static final String STRING_DOT = ".";
     public static final String STRING_PERCENT = "%";

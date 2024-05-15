@@ -72,7 +72,7 @@ public class RedisTopic {
      *
      * @param listener for messages
      * @return locally unique listener id
-     * @see org.redisson.api.listener.MessageListener
+     * @see MessageListener
      */
     public <T> int addListener(Class<T> type, MessageListener<? extends T> listener) {
         int result = topic.addListener(type, listener);

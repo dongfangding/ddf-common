@@ -74,6 +74,7 @@ public class UserClaim implements Serializable {
     /**
      * 自定义的其它属性
      */
+    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
     public UserClaim(String userId, String username) {

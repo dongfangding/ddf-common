@@ -39,8 +39,8 @@ public class LeakyBucketRateLimitRequest {
      *
      * @return
      */
-    public static LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder builder() {
-        return new LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder();
+    public static LeakyBucketRateLimitRequestBuilder builder() {
+        return new LeakyBucketRateLimitRequestBuilder();
     }
 
     public static class LeakyBucketRateLimitRequestBuilder {
@@ -76,29 +76,29 @@ public class LeakyBucketRateLimitRequest {
         private boolean ignorePrefix;
 
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder key(String key) {
+        public LeakyBucketRateLimitRequestBuilder key(String key) {
             this.key = key;
             return this;
         }
 
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder rate(long rate) {
+        public LeakyBucketRateLimitRequestBuilder rate(long rate) {
             this.rate = rate;
             return this;
         }
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder rateIntervalSeconds(
+        public LeakyBucketRateLimitRequestBuilder rateIntervalSeconds(
                 long rateIntervalSeconds) {
             this.rateIntervalSeconds = rateIntervalSeconds;
             return this;
         }
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder permits(long permits) {
+        public LeakyBucketRateLimitRequestBuilder permits(long permits) {
             this.permits = permits;
             return this;
         }
 
-        public LeakyBucketRateLimitRequest.LeakyBucketRateLimitRequestBuilder ignorePrefix(boolean ignorePrefix) {
+        public LeakyBucketRateLimitRequestBuilder ignorePrefix(boolean ignorePrefix) {
             this.ignorePrefix = ignorePrefix;
             return this;
         }

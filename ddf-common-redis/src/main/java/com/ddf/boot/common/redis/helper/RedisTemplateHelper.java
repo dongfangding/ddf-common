@@ -3,17 +3,23 @@ package com.ddf.boot.common.redis.helper;
 import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.redis.ext.RedisBloomFilter;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.response.HashIncrementCheckResponse;
+import com.ddf.boot.common.redis.response.StringTtlIncrWithLimitResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
+import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
@@ -36,6 +42,21 @@ public class RedisTemplateHelper {
     public RedisTemplateHelper(StringRedisTemplate stringRedisTemplate, RedissonClient redissonClient) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.redissonClient = redissonClient;
+    }
+
+    /**
+     * 构造布隆过滤器
+     *
+     * @param name               redis key name
+     * @param expectedInsertions 预计容器数量
+     * @param falseProbability   允许误差率 0~1
+     * @param <T>
+     * @return
+     */
+    public <T> RedisBloomFilter<T> createRedisBloomFilter(String name, long expectedInsertions,
+            double falseProbability) {
+        RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(name);
+        return new RedisBloomFilter<>(name, bloomFilter, expectedInsertions, falseProbability);
     }
 
     /**
@@ -62,9 +83,9 @@ public class RedisTemplateHelper {
      * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
      * 业务方面的单位时间逻辑次数控制
      *
-     * @param key            缓存key
-     * @param maxCount       单位时间内最大访问次数
-     * @param expiredAt      过期的具体时间点
+     * @param key       缓存key
+     * @param maxCount  单位时间内最大访问次数
+     * @param expiredAt 过期的具体时间点
      * @return
      */
     public boolean sliderWindowAccessExpiredAt(final String key, final long maxCount, final Date expiredAt) {
@@ -74,8 +95,7 @@ public class RedisTemplateHelper {
             expiredSeconds = (expiredAt.getTime() / 1000) - (now.getTime() / 1000);
         }
         final String result = String.valueOf(
-                stringRedisTemplate.execute(
-                        RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
                         String.valueOf(maxCount), String.valueOf(expiredSeconds),
                         String.valueOf(System.currentTimeMillis()),
                         System.currentTimeMillis() + "-" + IdUtil.randomUUID()
@@ -94,7 +114,8 @@ public class RedisTemplateHelper {
      * @param <T>
      * @return
      */
-    public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+    public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond,
+            Supplier<T> supplier, BaseCallbackCode exceptionCode) {
         final boolean b = sliderWindowAccess(key, maxCount, windowInSecond);
         if (b) {
             return supplier.get();
@@ -113,7 +134,8 @@ public class RedisTemplateHelper {
      * @param <T>
      * @return
      */
-    public <T> T sliderWindowAccessExpiredAtCheckException(final String key, final long maxCount, final Date expiredAt, Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+    public <T> T sliderWindowAccessExpiredAtCheckException(final String key, final long maxCount, final Date expiredAt,
+            Supplier<T> supplier, BaseCallbackCode exceptionCode) {
         final boolean b = sliderWindowAccessExpiredAt(key, maxCount, expiredAt);
         if (b) {
             return supplier.get();
@@ -161,8 +183,7 @@ public class RedisTemplateHelper {
      * @param request
      */
     public boolean tokenBucketRateLimitAcquire(RateLimitRequest request) {
-        final String result = String.valueOf(stringRedisTemplate.execute(
-                RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
+        final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
                 Collections.singletonList(request.getKey()), String.valueOf(request.getMax()),
                 String.valueOf(request.getRate()), String.valueOf(System.currentTimeMillis())
         ));
@@ -238,17 +259,14 @@ public class RedisTemplateHelper {
                 stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK, Collections.singletonList(key),
                         hashKey, String.valueOf(step), String.valueOf(limit), String.valueOf(TimeUnit.DAYS.toSeconds(1))
                 )));
-        return HashIncrementCheckResponse.builder()
-                .result(result)
-                .actualResult(result > limit ? (result - step) : result)
-                .build();
+        return HashIncrementCheckResponse.builder().result(result).actualResult(
+                result > limit ? (result - step) : result).build();
     }
 
     /**
      * 对一个hash结构的hash key的value进行自增取模求整运算，并返回取模后的整数值，运算后取模消耗的值会被减掉
      * 使用场景
      * 比如每次获取3个碎片，当自增到10个碎片后就可以合成一个完整的东西，合成后当前值要减去消耗的数值
-     *
      *
      * @param key     要操作的key
      * @param hashKey 要操作的hash key
@@ -258,7 +276,8 @@ public class RedisTemplateHelper {
      */
     public Integer hashIncreaseRoundingReduce(String key, String hashKey, Long step, Long module) {
         final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREASE_ROUNDING_REDUCE,
-                Collections.singletonList(key), hashKey, step + "", module + "");
+                Collections.singletonList(key), hashKey, String.valueOf(step), String.valueOf(module)
+        );
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 
@@ -275,9 +294,11 @@ public class RedisTemplateHelper {
      */
     public Integer maxCapacityHistoryContainer(String key, Long maxSize, String member, Double score) {
         final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_CAPACITY_HISTORY_CONTAINER,
-                Collections.singletonList(key), maxSize + "", member, score + "");
+                Collections.singletonList(key), String.valueOf(maxSize), member, String.valueOf(score)
+        );
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
+
 
     /**
      * 支持根据时间计算小数位完成同score排名的自增，分数相同，完成时间越靠前，生成的小数位越大，从而让积分靠前，注意只支持整数业务
@@ -289,14 +310,118 @@ public class RedisTemplateHelper {
      */
     public Long zIncrByWithTime(String key, Long score, String member) {
         final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_INCR_WITH_TIME,
-                Collections.singletonList(key), member, score + "", calcPointScoreByTime(System.currentTimeMillis()) + "");
+                Collections.singletonList(key), member, String.valueOf(score),
+                String.valueOf(calcPointScoreByTime(System.currentTimeMillis()))
+        );
         // 舍弃小数位
-        return StringUtils.isNotBlank(execute) ? Long.parseLong(execute.toString().split("\\.")[0]) : 0L;
+        return StringUtils.isNotBlank(execute) ? Long.parseLong(execute.split("\\.")[0]) : 0L;
+    }
+
+    /**
+     * 基于string实现的对一个key进行ttl续期操作，用来实现某些倒计时，又可以增加倒计时的场景
+     *
+     * @param key
+     * @param incrTtl
+     * @param maxTtl
+     * @return
+     */
+    public StringTtlIncrWithLimitResponse stringTtlIncrWithLimit(String key, Integer incrTtl, Integer maxTtl) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.STRING_TTL_INCR_WITH_LIMIT,
+                Collections.singletonList(key), String.valueOf(incrTtl), String.valueOf(maxTtl)
+        );
+        final StringTtlIncrWithLimitResponse response = new StringTtlIncrWithLimitResponse();
+        response.setTtl(0);
+        response.setFull(false);
+        if (StringUtils.isBlank(execute)) {
+            return response;
+        }
+        final String[] split = execute.split("-");
+        response.setFull(Objects.equals("1", split[0]));
+        response.setTtl(Integer.parseInt(split[1]));
+        return response;
+    }
+
+
+    /**
+     * 基于Hash对hashkey进行value的判断， 如果为预期值则删除，否则不删除
+     *
+     * @param key
+     * @param hashKey
+     * @param checkValue
+     * @return
+     */
+    public Integer hashDeleteWithCheckValue(String key, String hashKey, String checkValue) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_DELETE_WITH_CHECK_VALUE,
+                Collections.singletonList(key), hashKey, checkValue
+        );
+        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
+    }
+
+    /**
+     * 基于String进行value的判断， 如果为预期值则删除，否则不删除
+     *
+     * @param key
+     * @param checkValue
+     * @return
+     */
+    public Integer stringDeleteWithCheckValue(String key, String checkValue) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.STRING_DELETE_WITH_CHECK_VALUE,
+                Collections.singletonList(key), checkValue
+        );
+        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
+    }
+
+
+    /**
+     * 对hash的hashkey进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
+     *
+     * @param key
+     * @param hashKey
+     * @param step
+     * @param ttlSeconds
+     * @return
+     */
+    public Long hashIncrWithFirstSetTtl(String key, String hashKey, Long step, Long ttlSeconds) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCR_WITH_FIRST_SET_TTL,
+                Collections.singletonList(key), hashKey, step, ttlSeconds
+        );
+        return Long.parseLong(execute);
+    }
+
+
+    /**
+     * 该脚本的作用类似于对集合进行最大值判断，当达到最后值后，将组成当前最大值的所有子元素以及对应的数量返回
+     *
+     * @param maxElementKey 当前集合元素数量的key, string结构
+     * @param elementKey    存储子元素的key， hash结构， hash key为identity
+     * @param completeSeq   每次集合数量满一次，这个数量便+1
+     * @param identity      elementKey的hashKey
+     * @param increaseValue 本次增加的数量
+     * @param maxValue      最大允许的数量
+     * @return
+     */
+    public Map<String, String> maxElementDict(String maxElementKey, String elementKey, String completeSeq,
+            String identity, Long increaseValue, Long maxValue) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_ELEMENT_DICT,
+                Lists.newArrayList(maxElementKey, elementKey, completeSeq), identity, increaseValue, maxValue
+        );
+        if (StringUtils.isBlank(execute)) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> map = new HashMap<>();
+        final String[] teamList = execute.split(";");
+        for (String s : teamList) {
+            if (StringUtils.isBlank(s)) {
+                continue;
+            }
+            final String[] split = s.split(":");
+            map.put(split[0], split[1]);
+        }
+        return map;
     }
 
     public static BigDecimal calcPointScoreByTime(long time) {
-        final BigDecimal decimal = new BigDecimal(time * Math.pow(
-                10, Math.negateExact(String.valueOf(time).length())));
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(10, Math.negateExact(String.valueOf(time).length())));
         return new BigDecimal("1.0").subtract(decimal);
     }
 }

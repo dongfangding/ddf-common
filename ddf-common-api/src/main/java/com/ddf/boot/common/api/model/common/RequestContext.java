@@ -93,6 +93,7 @@ public class RequestContext implements Serializable {
     /**
      * 自定义属性
      */
+    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
 }

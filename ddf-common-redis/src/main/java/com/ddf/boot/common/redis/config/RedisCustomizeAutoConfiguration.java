@@ -1,17 +1,21 @@
 package com.ddf.boot.common.redis.config;
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.redis.helper.GeoHelper;
+import com.ddf.boot.common.redis.helper.RedisCommandHelper;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import com.ddf.boot.common.redis.serializer.ObjectStringRedisSerializer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
 import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
 import org.redisson.spring.starter.RedissonAutoConfigurationCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,6 +51,8 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     private RedissonCustomizeProperties redissonCustomizeProperties;
     @Autowired
     private RedisProperties redisProperties;
+    @Autowired
+    private EnvironmentHelper environmentHelper;
 
     /**
      * 注册redis扩展方法类
@@ -89,6 +95,11 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         return template;
     }
 
+    @Bean
+    public RedisCommandHelper redisCommandHelper(StringRedisTemplate stringRedisTemplate) {
+        return new RedisCommandHelper(stringRedisTemplate);
+    }
+
     /**
      * 注册geo帮助类
      *
@@ -110,7 +121,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     @Override
     public void customize(Config configuration) {
         if (StrUtil.isNotBlank(redissonCustomizeProperties.getCodec())) {
-            configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).newInstance());
+            configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).getDeclaredConstructor().newInstance());
         } else {
             configuration.setCodec(new JsonJacksonCodec());
         }
@@ -129,9 +140,13 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
                     .addNodeAddress(nodes)
                     .setPassword(redisProperties.getPassword());
         } else {
-            configuration.useSingleServer().setAddress(getPrefix() + redisProperties.getHost() + ":" + redisProperties.getPort())
+            final SingleServerConfig singleServerConfig = configuration.useSingleServer();
+            singleServerConfig.setAddress(getPrefix() + redisProperties.getHost() + ":" + redisProperties.getPort())
                     .setDatabase(redisProperties.getDatabase())
                     .setPassword(redisProperties.getPassword());
+            if (StringUtils.isBlank(singleServerConfig.getClientName())) {
+                singleServerConfig.setClientName(environmentHelper.getApplicationName());
+            }
         }
     }
 

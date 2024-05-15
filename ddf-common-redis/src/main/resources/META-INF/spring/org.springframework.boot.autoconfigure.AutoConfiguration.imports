@@ -1,0 +1,2 @@
+com.ddf.boot.common.redis.config.RedisCustomizeAutoConfiguration
+com.ddf.boot.common.redis.config.ExtraRedissonAutoConfiguration

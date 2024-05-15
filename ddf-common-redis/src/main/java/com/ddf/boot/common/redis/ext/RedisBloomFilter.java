@@ -50,7 +50,7 @@ public class RedisBloomFilter<T> {
         return new RedisBloomFilter<>(name, bloomFilter, expectedInsertions, falseProbability);
     }
 
-    private RedisBloomFilter(String name, RBloomFilter<T> bloomFilter, long expectedInsertions,
+    public RedisBloomFilter(String name, RBloomFilter<T> bloomFilter, long expectedInsertions,
             double falseProbability) {
         this.name = name;
         this.bloomFilter = bloomFilter;

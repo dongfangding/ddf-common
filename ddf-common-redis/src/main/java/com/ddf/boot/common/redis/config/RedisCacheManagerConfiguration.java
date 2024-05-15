@@ -21,19 +21,19 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 /**
  * <p>enable caching redis cache config</p >
  * <p></p>
- *
+ * <p>
  * 开启缓存， 默认是事务提交之后执行， 可选condition进行判断是否执行
  * <pre class="code">
  * &#64;Cacheable(cacheNames = SpringCacheManager.CacheName.CLUB_INFO_DB,
  *      condition = "#property1 == #property2",
- *      key = "T(com.ddf.boot.common.redis.constant.SpringCacheManager).
+ *      key = "T(constant.com.boot.common.redis.SpringCacheManager).
  *          genCacheKeyDemo(#property1, #property1)")
  * public Object getByProperties(String property1, String property2) {
  *      return xxxDao.getByProperties(property1, property2);
  * }
  * </pre>
  * <p></p>
- *
+ * <p>
  * 牵扯到更新缓存的地方删除缓存
  * <pre class="code">
  * &#64;Caching(evict = {
@@ -45,9 +45,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
  *      return xxxDao.update(property1, property2);
  * }
  * </pre>
- *
- *
- *
  *
  * @author Mitchell
  * @version 1.0
@@ -70,21 +67,22 @@ public class RedisCacheManagerConfiguration {
         // 如何测试lockingRedisCacheWriter和nonLockingRedisCacheWriter的区别???
         RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
 
-        RedisCacheConfiguration defaultCacheConfig = createConfiguration(cacheProperties, applicationName);
+        RedisCacheConfiguration defaultCacheConfig = createConfiguration(
+                cacheProperties, applicationName, Duration.ofSeconds(60 * 60));
 
         RedisCacheManager.RedisCacheManagerBuilder redisCacheManagerBuilder =
-                RedisCacheManager.RedisCacheManagerBuilder.fromCacheWriter(cacheWriter)
-                        .cacheDefaults(defaultCacheConfig);
+                RedisCacheManager.RedisCacheManagerBuilder.fromCacheWriter(cacheWriter).cacheDefaults(
+                        defaultCacheConfig).withCacheConfiguration(
+                        "anotherCacheName", createConfiguration(cacheProperties, "", Duration.ofHours(1)));
 
         return redisCacheManagerBuilder.build();
     }
 
-    private RedisCacheConfiguration createConfiguration(CacheProperties cacheProperties, String applicationName) {
+    private RedisCacheConfiguration createConfiguration(CacheProperties cacheProperties, String applicationName,
+            Duration ttl) {
         CacheProperties.Redis redisProperties = cacheProperties.getRedis();
         // Key prefix.
         String prefixKeys = ObjectUtil.defaultIfNull(redisProperties.getKeyPrefix(), applicationName + ":");
-        // Entry expiration. By default the entries never expire.
-        Duration ttl = ObjectUtil.defaultIfNull(redisProperties.getTimeToLive(), Duration.ofSeconds(60 * 60));
 
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
