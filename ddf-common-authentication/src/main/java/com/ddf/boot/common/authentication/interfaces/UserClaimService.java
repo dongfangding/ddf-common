@@ -2,6 +2,8 @@ package com.ddf.boot.common.authentication.interfaces;
 
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
 
 /**
  * 提供一个接口让调用方实现，来将用户的最新数据信息加载进来，这样模块才能验证信息
@@ -10,6 +12,15 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2019-12-07 16:45
  */
 public interface UserClaimService {
+
+
+    /**
+     * 认证校验前的操作, 比如黑名单拉黑操作等
+     *
+     * @param request
+     * @param response
+     */
+    void before(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
@@ -32,7 +43,7 @@ public interface UserClaimService {
      * @param userClaim
      * @return
      */
-    UserClaim getStoreUserInfo(UserClaim userClaim);
+    UserClaim getStoreUserInfo(HttpServletRequest request, UserClaim userClaim);
 
     /**
      * 验证通过后预留一个接口允许客户端对用户做一些事情；

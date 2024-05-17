@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -67,12 +68,7 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-        String body = "";
-        ContentCachingRequestWrapper contentCachingRequestWrapper = org.springframework.web.util.WebUtils.getNativeRequest(
-                httpServletRequest, ContentCachingRequestWrapper.class);
-        if (Objects.nonNull(contentCachingRequestWrapper)) {
-            body = new String(contentCachingRequestWrapper.getContentAsByteArray());
-        }
+        String body = WebUtil.readBodyRepeat(httpServletRequest);
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
         if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
                 exception.getClass().getName())) {

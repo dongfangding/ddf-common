@@ -2,11 +2,10 @@
 <!-- Log4j 2.x 配置文件 -->
 <Configuration status="warn" strict="true">
     <Properties>
-        <Property name="LOG_BASE_DIR">/data/log/app/</Property>
-        <Property name="CONSOLE_LOG_PATTERN">%clr{[%d{yyyy-MM-dd HH:mm:ss.SSS}]}{faint} %clr{%level}{magenta}
-            %clr{[%t]}{faint} %clr{%c{1.}}{cyan} %clr{-}{faint} %m%n%xwEx
-        </Property>
-        <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] %level [%t] %c{1.} - %msg%n</Property>
+        <Property name="application_name">river</Property>
+        <Property name="LOG_BASE_DIR">/data/logs/${application_name}</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}} %clr{[%t]} %clr{%-5p} %clr{%c(%L)} %clr{%m%n}</Property>
+        <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] %-5p [%X{client_ip}#%X{imei}#%X{user_id}#%X{trace_id}] %c{1.} - %msg%n </Property>
     </Properties>
 
     <Appenders>
@@ -16,9 +15,9 @@
             <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
         </Console>
 
-        <RollingRandomAccessFile name="INFO_FILE" fileName="${LOG_BASE_DIR}/game.log"
-                                 filePattern="${LOG_BASE_DIR}/app-%d{yyyy-MM-dd}.log">
-            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <RollingRandomAccessFile name="INFO_FILE" fileName="${LOG_BASE_DIR}/${application_name}.log"
+                                 filePattern="${LOG_BASE_DIR}/${application_name}-%d{yyyy-MM-dd}.log">
+            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
@@ -30,9 +29,9 @@
             <DefaultRolloverStrategy max="30"/>
         </RollingRandomAccessFile>
 
-        <RollingRandomAccessFile name="WARN_FILE" fileName="${LOG_BASE_DIR}/app-warn.log"
-                                 filePattern="${LOG_BASE_DIR}/app-warn-%d{yyyy-MM-dd}.log">
-            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <RollingRandomAccessFile name="WARN_FILE" fileName="${LOG_BASE_DIR}/${application_name}-warn.log"
+                                 filePattern="${LOG_BASE_DIR}/${application_name}-warn-%d{yyyy-MM-dd}.log">
+            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
@@ -44,9 +43,9 @@
             <DefaultRolloverStrategy max="30"/>
         </RollingRandomAccessFile>
 
-        <RollingRandomAccessFile name="ERROR_FILE" fileName="${LOG_BASE_DIR}/app-error.log"
-                                 filePattern="${LOG_BASE_DIR}/app-error-%d{yyyy-MM-dd}.log">
-            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <RollingRandomAccessFile name="ERROR_FILE" fileName="${LOG_BASE_DIR}/${application_name}-error.log"
+                                 filePattern="${LOG_BASE_DIR}/${application_name}-error-%d{yyyy-MM-dd}-error.log">
+            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
             <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
@@ -58,13 +57,13 @@
             <DefaultRolloverStrategy max="30"/>
         </RollingRandomAccessFile>
 
-        <!-- 不同业务逻辑打印到不同文件中 -->
-        <RollingRandomAccessFile name="appSingleAppender" fileName="${LOG_BASE_DIR}/app-single.log"
-                                 filePattern="${LOG_BASE_DIR}/app-single-%d{yyyy-MM-dd}.log">
-            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+        <!-- 用户一些告警相关的日志，在日志中进行埋点，单独记录，方便追溯 -->
+        <RollingRandomAccessFile name="ALARM_FILE" fileName="${LOG_BASE_DIR}/${application_name}-alarm.log"
+                                 filePattern="${LOG_BASE_DIR}/${application_name}-alarm-%d{yyyy-MM-dd}.log">
+            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
-            <PatternLayout pattern="${sys:ONLY_MESSAGE_LOG_PATTERN}"/>
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
             <Policies>
                 <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
                 <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
@@ -82,10 +81,8 @@
             <AppenderRef ref="WARN_FILE"/>
             <AppenderRef ref="ERROR_FILE"/>
         </asyncRoot>
-
-        <Logger name="appSingleLogger" level="INFO">
-            <AppenderRef ref="appSingleAppender"/>
-        </Logger>
+        <asyncLogger name="ALARM_FILE" level="INFO" additivity="false" includeLocation="true" >
+            <AppenderRef ref="ALARM_FILE"/>
+        </asyncLogger>
     </Loggers>
-
 </Configuration>

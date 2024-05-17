@@ -3,14 +3,17 @@ package com.ddf.boot.common.mvc.util;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.constant.GlobalConstants;
+import com.ddf.boot.common.mvc.config.CoreWebConfig;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 /**
  * Web层辅助工具类
@@ -161,5 +164,23 @@ public class WebUtil {
     public static String getHeader(String headerName) {
         HttpServletRequest request = getCurRequest();
         return StrUtil.blankToDefault(request.getHeader(headerName), "");
+    }
+
+
+    /**
+     * 获取可重复读取的body
+     *
+     * @see CoreWebConfig#filterRegistration()
+     * @param httpServletRequest
+     * @return
+     */
+    public static String readBodyRepeat(HttpServletRequest httpServletRequest) {
+        String body = "";
+        ContentCachingRequestWrapper contentCachingRequestWrapper = org.springframework.web.util.WebUtils.getNativeRequest(
+                httpServletRequest, ContentCachingRequestWrapper.class);
+        if (Objects.nonNull(contentCachingRequestWrapper)) {
+            body = new String(contentCachingRequestWrapper.getContentAsByteArray());
+        }
+        return body;
     }
 }

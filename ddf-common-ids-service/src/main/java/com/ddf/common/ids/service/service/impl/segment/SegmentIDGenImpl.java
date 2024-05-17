@@ -116,7 +116,7 @@ public class SegmentIDGenImpl implements IDGen {
 
     private void updateCacheFromDb() {
         logger.info("update cache from db");
-        StopWatch sw = new Slf4JStopWatch();
+        final StopWatch sw = new StopWatch();
         try {
             List<String> dbTags = dao.getAllTags();
             if (dbTags == null || dbTags.isEmpty()) {
@@ -249,8 +249,7 @@ public class SegmentIDGenImpl implements IDGen {
             } else {
                 nextStep = nextStep / 2 >= buffer.getMinStep() ? nextStep / 2 : nextStep;
             }
-            logger.info(
-                    "leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(),
+            logger.info("leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(),
                     String.format("%.2f", ((double) duration / (1000 * 60))), nextStep
             );
             LeafAlloc temp = new LeafAlloc();

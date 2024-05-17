@@ -12,9 +12,7 @@ import com.ddf.boot.common.api.exception.BaseCallbackCode;
  */
 public enum CoreExceptionCode implements BaseCallbackCode {
 
-    ILLEGAL_TOKEN("ILLEGAL_TOKEN", "token格式不合法"),
-    FORGE_TOKEN("FORGE_TOKEN", "伪造身份信息"),
-    TOKEN_EXPIRED("TOKEN_EXPIRED", "已过期的登录信息，请重新登录")
+
 
     ;
 

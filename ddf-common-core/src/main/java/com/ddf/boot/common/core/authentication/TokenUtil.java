@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.authentication;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
 import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
@@ -80,10 +81,10 @@ public class TokenUtil {
             final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
             claim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             if (Objects.isNull(claim)) {
-                throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
+                throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
             }
         } catch (Exception e) {
-            throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
+            throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
         }
         return claim;
     }
@@ -105,15 +106,15 @@ public class TokenUtil {
             // PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
             if (Objects.nonNull(TOKEN_CACHE)) {
                 final String cacheToken = TOKEN_CACHE.getToken(userId);
-                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
-                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);
         } catch (Exception e) {
             if(e instanceof UnauthorizedException){
                 throw e;
             }
-            throw new BusinessException(CoreExceptionCode.ILLEGAL_TOKEN);
+            throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
         }
     }
 

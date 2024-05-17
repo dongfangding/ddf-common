@@ -2,8 +2,8 @@ package com.ddf.boot.common.authentication.interfaces.impl;
 
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
+import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.RedisTemplateSupport;
-import com.ddf.boot.common.core.authentication.AuthenticationProperties;
 import com.ddf.boot.common.core.authentication.TokenCache;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
