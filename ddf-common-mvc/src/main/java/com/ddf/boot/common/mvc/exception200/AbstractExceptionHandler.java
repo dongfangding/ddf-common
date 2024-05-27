@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -95,6 +96,9 @@ public abstract class AbstractExceptionHandler {
 
         // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         if (exceptionHandlerMapping != null) {
+            // 仅仅支持通知异常，提供一个回调的机制
+            exceptionHandlerMapping.notifyException(httpServletRequest, exception);
+            // 这里可以接管异常返回值， 如果为null, 继续走本类的逻辑，如果不为空， 则走实现里返回的
             ResponseData<?> responseData = exceptionHandlerMapping.takeOverException(exception);
             if (responseData != null) {
                 if (ignoreErrorStack) {
@@ -104,8 +108,8 @@ public abstract class AbstractExceptionHandler {
             }
         }
 
-        String exceptionCode;
-        String message;
+        String exceptionCode = "";
+        String message = "";
         Object extra = null;
         if (exception instanceof BaseException) {
             BaseException baseException = (BaseException) exception;
@@ -139,10 +143,14 @@ public abstract class AbstractExceptionHandler {
             exceptionCode = BaseErrorCallbackCode.DUPLICATE_KEY.getCode();
             message = BaseErrorCallbackCode.DUPLICATE_KEY.getBizMessage();
         } else if (exceptionHandlerMapping != null) {
-            final BaseCallbackCode baseCallbackCode = exceptionHandlerMapping.resolveException(exception);
-            exceptionCode = baseCallbackCode.getCode();
-            message = baseCallbackCode.getBizMessage();
-        } else {
+            final BaseCallbackCode baseCallbackCode = exceptionHandlerMapping.resolveOtherException(exception);
+            if (Objects.nonNull(baseCallbackCode)) {
+                exceptionCode = baseCallbackCode.getCode();
+                message = baseCallbackCode.getBizMessage();
+            }
+        }
+
+        if (StringUtils.isBlank(exceptionCode)) {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
             message = "请求失败，请联系客服人员~";
         }

@@ -15,13 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 public interface ExceptionHandlerMapping {
 
     /**
-     * 捕捉到的异常给实现方自定义实现返回数据
+     * 通知异常，不提供返回值，有异常就触发，可以实现做一些异常的提醒之类的
+     */
+    default void notifyException(HttpServletRequest request, Exception exception) {
+    }
+
+
+    /**
+     * 捕捉到的异常给实现方自定义实现返回数据, 这个是可以完全接管内部异常实现的，如果返回的不是null, 就直接返回给客户端了
      *
      * @param exception
      * @return 如果当前异常不是自己要处理的类型，请返回{@code null}
      * @see AbstractExceptionHandler#handlerException(Exception, HttpServletRequest, HttpServletResponse)
      */
-    ResponseData<?> takeOverException(Exception exception);
+    default ResponseData<?> takeOverException(Exception exception) {
+        // 默认不接管异常
+        return null;
+    }
 
 
     /**
@@ -30,8 +40,8 @@ public interface ExceptionHandlerMapping {
      * @param exception
      * @return
      */
-    BaseCallbackCode resolveException(Exception exception);
-
-
+    default BaseCallbackCode resolveOtherException(Exception exception) {
+        return null;
+    }
 
 }
