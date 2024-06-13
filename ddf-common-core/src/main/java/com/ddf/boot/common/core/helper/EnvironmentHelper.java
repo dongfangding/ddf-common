@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.helper;
 
 import com.ddf.boot.common.core.enumration.EnvironmentProfileEnum;
 import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,5 +94,14 @@ public class EnvironmentHelper {
      */
     public boolean isProdProfile() {
         return checkIsExistOr(Lists.newArrayList(EnvironmentProfileEnum.PRO.getCode()));
+    }
+
+    /**
+     * 是否生产环境
+     *
+     * @return
+     */
+    public String getProfileStr() {
+        return Arrays.toString(environment.getActiveProfiles());
     }
 }

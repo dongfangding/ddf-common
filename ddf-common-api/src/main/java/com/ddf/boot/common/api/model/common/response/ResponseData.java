@@ -46,6 +46,7 @@ public class ResponseData<T> {
      * 返回消息代码
      */
     private String code;
+
     /**
      * 返回消息
      */

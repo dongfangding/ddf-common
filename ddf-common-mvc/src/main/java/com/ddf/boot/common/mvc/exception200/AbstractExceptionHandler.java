@@ -2,6 +2,7 @@ package com.ddf.boot.common.mvc.exception200;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.net.NetUtil;
 import com.ddf.boot.common.api.consts.AlarmLog;
 import com.ddf.boot.common.api.exception.AlarmException;
@@ -10,12 +11,17 @@ import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.core.config.GlobalProperties;
+import com.ddf.boot.common.core.event.GlobalExceptionEvent;
+import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.mvc.util.WebUtil;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -57,6 +64,8 @@ public abstract class AbstractExceptionHandler {
     private EnvironmentHelper environmentHelper;
     @Autowired(required = false)
     private MessageSource messageSource;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 处理异常类，某些异常类需要特殊处理，在具体根据当前异常去判断是否是期望的异常类型,
@@ -71,19 +80,23 @@ public abstract class AbstractExceptionHandler {
             HttpServletResponse response) {
         String body = WebUtil.readBodyRepeat(httpServletRequest);
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
+        final String uri = httpServletRequest.getRequestURI();
+        final Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
+        boolean shouldTriggerExceptionEvent = false;
         if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
                 exception.getClass().getName())) {
             log.error("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
-                    httpServletRequest.getRequestURI(), httpServletRequest.getParameterMap(), body, exception
+                    uri, parameterMap, body, exception
             );
+            shouldTriggerExceptionEvent = true;
         } else {
             // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
             log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
-                    httpServletRequest.getRequestURI(), httpServletRequest.getParameterMap(), body, exception
+                    uri, parameterMap, body, exception
             );
         }
         if (exception instanceof AlarmException) {
-            AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", httpServletRequest.getRequestURI(), exception);
+            AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", uri, exception);
         }
         //        }
         // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
@@ -94,6 +107,19 @@ public abstract class AbstractExceptionHandler {
             ignoreErrorStack = true;
         }
 
+        final GlobalExceptionEventPayload payload = new GlobalExceptionEventPayload();
+        payload.setUrl(uri);
+        payload.setParameterMap(parameterMap);
+        payload.setBody(body);
+        try {
+            payload.setHost(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException ignore) {
+            log.error("无法获取当前主机信息", ignore);
+        }
+        payload.setApplicationName(environmentHelper.getApplicationName());
+        payload.setProfile(environmentHelper.getProfileStr());
+        payload.setTimestamps(System.currentTimeMillis());
+
         // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         if (exceptionHandlerMapping != null) {
             // 仅仅支持通知异常，提供一个回调的机制
@@ -103,6 +129,11 @@ public abstract class AbstractExceptionHandler {
             if (responseData != null) {
                 if (ignoreErrorStack) {
                     responseData.setStack(null);
+                }
+                payload.setErrorMessage(responseData.getMessage());
+                // 基于事件的话，可以多订阅多实现
+                if (shouldTriggerExceptionEvent) {
+                    applicationEventPublisher.publishEvent(new GlobalExceptionEvent(this, payload));
                 }
                 return responseData;
             }
@@ -168,6 +199,11 @@ public abstract class AbstractExceptionHandler {
         String extraServerMessage = String.format("[%s:%s]", environmentHelper.getApplicationName(),
                 NetUtil.getLocalhostStr()
         );
+        // 基于事件的话，可以多订阅多实现
+        payload.setErrorMessage(ExceptionUtil.stacktraceToString(exception));
+        if (shouldTriggerExceptionEvent) {
+            applicationEventPublisher.publishEvent(new GlobalExceptionEvent(this, payload));
+        }
         return ResponseData.failure(exceptionCode, message,
                 ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception), extra
         );
