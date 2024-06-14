@@ -46,8 +46,6 @@ public class TableScan {
     private TableNotify tableNotify;
     @Autowired(required = false)
     private DataSource dataSource;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @PostConstruct
     public void scan() {
