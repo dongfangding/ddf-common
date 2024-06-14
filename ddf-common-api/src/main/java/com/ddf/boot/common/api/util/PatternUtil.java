@@ -59,4 +59,24 @@ public class PatternUtil {
         }
         return count;
     }
+
+
+    /**
+     * 从数据库连接地址中取出数据库名
+     *
+     * @param dbUrl
+     * @return
+     */
+    public static String extractDatabaseName(String dbUrl) {
+        // 正则表达式匹配数据库名
+        String regex = "jdbc:mysql://[^/]+/([^?]+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(dbUrl);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            throw new IllegalArgumentException("Invalid database URL format.");
+        }
+    }
 }

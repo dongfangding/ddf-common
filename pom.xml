@@ -43,13 +43,9 @@
         <module>ddf-common-core</module>
         <module>ddf-common-zookeeper</module>
         <module>ddf-common-ids-service</module>
-        <module>ddf-common-mybatis-plus</module>
         <module>ddf-common-redis</module>
         <module>ddf-common-authentication</module>
-        <module>ddf-common-jwt</module>
-        <module>ddf-common-mq</module>
         <module>ddf-common-websocket</module>
-        <module>ddf-common-security</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
@@ -58,7 +54,6 @@
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
         <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-mybatis-generator</module>
         <module>ddf-common-limit</module>
         <module>ddf-common-captcha</module>
         <module>ddf-common-es</module>
@@ -70,7 +65,7 @@
         <module>ddf-common-canal</module>
         <module>ddf-common-mvc</module>
         <module>ddf-common-sharding</module>
-        <module>ddf-common-authentication-resolver</module>
+        <module>ddf-common-alarm</module>
     </modules>
 
 
