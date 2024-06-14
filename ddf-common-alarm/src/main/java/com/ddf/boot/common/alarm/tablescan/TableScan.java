@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +142,8 @@ public class TableScan {
                                 createTableSql = createTableSql.replace(table, nextMonthTableName);
                                 createTableSql = createTableSql.replaceAll(autoIncrementRegex, autoIncrementReset);
                                 try {
-                                    jdbcTemplate.execute(createTableSql);
+                                    final Statement createStatement = conn.createStatement();
+                                    createStatement.executeUpdate(createTableSql);
                                 } catch (Exception e) {
                                     log.error("分表扫描告警-自动创建表失败, url = {}, createTableSql = {}", url,
                                             createTableSql, e
