@@ -1,8 +1,11 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.collection.CollUtil;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.util.Map;
 import javax.net.ssl.SSLException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -52,7 +55,7 @@ public class HttpClientUtil {
 
     public static CloseableHttpClient getHttpClient() {
         HttpRequestRetryHandler httpRequestRetryHandler = (e, i, httpContext) -> {
-            System.out.println("try httpRequestRetryHandler o: " + i);
+            log.info("try httpRequestRetryHandler o: " + i);
             if (i >= 3) {
                 // Do not retry if over max retry count
                 return false;
@@ -95,6 +98,44 @@ public class HttpClientUtil {
         StringEntity postEntity = new StringEntity(postData, "UTF-8");
         httpPost.addHeader("Content-Type", "application/json");
         httpPost.setEntity(postEntity);
+        return executePost(httpPost);
+    }
+
+    /**
+     * 发送json的字符串,允许添加HttpHeader
+     *
+     * @param url      请求url
+     * @param postData 请求体
+     * @return 返回字符串
+     */
+    public static String postJson(String url, String postData, Map<String, String> headers) {
+        HttpPost httpPost = new HttpPost(url);
+        // 得指明使用UTF-8编码，
+        StringEntity postEntity = new StringEntity(postData, "UTF-8");
+        httpPost.addHeader("Content-Type", "application/json");
+        httpPost.setEntity(postEntity);
+        if (CollUtil.isNotEmpty(headers)) {
+            headers.forEach(httpPost::addHeader);
+        }
+        return executePost(httpPost);
+    }
+
+    /**
+     * 发送post QueryString请求
+     *
+     * @param url      请求url
+     * @param postData 请求体
+     * @return 返回字符串
+     */
+    public static String postQueryString(String url, String postData, Map<String, String> headers) {
+        HttpPost httpPost = new HttpPost(url);
+        // 得指明使用UTF-8编码，
+        StringEntity postEntity = new StringEntity(postData, "UTF-8");
+        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        httpPost.setEntity(postEntity);
+        if (CollUtil.isNotEmpty(headers)) {
+            headers.forEach(httpPost::addHeader);
+        }
         return executePost(httpPost);
     }
 
@@ -144,5 +185,45 @@ public class HttpClientUtil {
         }
         return result;
     }
+
+
+
+    // 计算并获取CheckSum
+    public static String getCheckSum(String appSecret, String nonce, String curTime) {
+        return encode("sha1", appSecret + nonce + curTime);
+    }
+
+    // 计算并获取md5值
+    public static String getMD5(String requestBody) {
+        return encode("md5", requestBody);
+    }
+
+    private static String encode(String algorithm, String value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+            messageDigest.update(value.getBytes());
+            return getFormattedText(messageDigest.digest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String getFormattedText(byte[] bytes) {
+        int len = bytes.length;
+        StringBuilder buf = new StringBuilder(len * 2);
+        for (int j = 0; j < len; j++) {
+            buf.append(HEX_DIGITS[(bytes[j] >> 4) & 0x0f]);
+            buf.append(HEX_DIGITS[bytes[j] & 0x0f]);
+        }
+        return buf.toString();
+    }
+
+    private static final char[] HEX_DIGITS = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
 }
 

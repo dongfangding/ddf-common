@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>随机工具类</p >
@@ -23,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @version 1.0
  * @date 2022/09/21 16:31
  */
+@Slf4j
 public class RandomExtUtil {
 
     final static DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
@@ -41,7 +43,8 @@ public class RandomExtUtil {
         if (maxLength < format.length() + separator.length()) {
             throw new IllegalArgumentException("length长度不支持");
         }
-        return String.join(separator, format, RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
+        return String.join(
+                separator, format, RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
     }
 
     /**
@@ -52,6 +55,28 @@ public class RandomExtUtil {
      */
     public static boolean hitPercent(int proportion) {
         return RandomUtil.randomInt(100) < proportion;
+    }
+
+
+
+    /**
+     * 自使用的double区间随机， 普通double随机的问题在于，随机出来的double小数位太长了，
+     * 这个方法自动判断截止的区间的数字的小数位，然后与它的小数位长度保持一致
+     *
+     * @return
+     */
+    public static Double randomDoubleSelfAdaption(double min, double max) {
+        final String endStr = String.valueOf(max);
+        int decimalPlace= 0;
+        if (endStr.contains(".")) {
+            final String[] split = endStr.split("\\.");
+            decimalPlace = split[1].length();
+        }
+        // 用于计算的中间值
+        final int tmp = (int) Math.pow(10, decimalPlace);
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        // 等比例方法后再求整，这样就把放大的后的小数位前移了指定位置，然后后面的小数位全部舍弃了
+        return Math.floor(random.nextDouble(min, max) * tmp) / tmp;
     }
 
     /**
@@ -71,9 +96,7 @@ public class RandomExtUtil {
      */
     public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
         // 先求出这批数据的总权重
-        final double totalWeight = sources.stream()
-                .mapToDouble(WeightProportion::getWeight)
-                .sum();
+        final double totalWeight = sources.stream().mapToDouble(WeightProportion::getWeight).sum();
         // 先随机出一个数值
         double randomNum = ThreadLocalRandom.current().nextDouble(totalWeight);
         for (T source : sources) {
@@ -85,14 +108,57 @@ public class RandomExtUtil {
         return null;
     }
 
+
+    /**
+     * 基于权重的中奖概率判定, 另外一种算法
+     *
+     * @param ratioInfos
+     * @param divisor
+     * @return
+     */
+    public static DefaultWeightProportion hitWeightProportion2(List<DefaultWeightProportion> ratioInfos,
+            Double divisor) {
+        // 产生随机数
+        final double randomNumber = Math.random();
+        double start;
+        double end = 0;
+        try {
+            // 根据随机数在所有奖品分布的区域并确定所抽奖品
+            for (int i = 0; i < ratioInfos.size(); i++) {
+                final DefaultWeightProportion config = ratioInfos.get(i);
+                start = (i == 0 ? 0 : end);
+                end += config.getWeight() / divisor;
+                // 落在区间内,恭喜中奖了
+                if (randomNumber >= start && randomNumber < end) {
+                    return config;
+                }
+            }
+        } catch (Exception e) {
+            log.error("getLuckyRation divisor={} >>> 生成抽奖随机数出错，出错原因:", divisor, e);
+        }
+        return null;
+    }
+
+    /**
+     * 抽奖
+     *
+     * @param ratioInfos
+     * @return
+     */
+    public static DefaultWeightProportion hitWeightProportion2(List<DefaultWeightProportion> ratioInfos) {
+        final Double totalDividend = ratioInfos.stream().map(DefaultWeightProportion::getWeight).reduce(
+                0d, Double::sum);
+        return hitWeightProportion2(ratioInfos, totalDividend);
+    }
+
     /**
      * 根据权重次数重新生成数据，生成后的数据长度等于数据的权重之和，用以一些权重规则上的数据列表生成。
      * 注意这种情况下的权重只支持整形，如果存在小数，自己等比例放大
-     *
+     * <p>
      * 比如
      * list[0] 权重10
      * list[1] 权重5
-     *
+     * <p>
      * 则最终会生成15条数据， 生成的顺序根据权重来判定，每次生成后当前权重减少1
      *
      * @return
@@ -102,9 +168,7 @@ public class RandomExtUtil {
         List<T> tempList = BeanCopierUtils.copy(sources, clazz);
         List<T> rtnList = new ArrayList<>();
         // 先求出这批数据的总权重，这种情况下的数据只支持整形
-        final int totalWeight = tempList.stream()
-                .mapToInt(obj -> obj.getWeight().intValue())
-                .sum();
+        final int totalWeight = tempList.stream().mapToInt(obj -> obj.getWeight().intValue()).sum();
         int randomNum;
         // 将所有的数据都随机出来，总权重即是总次数
         for (int i = totalWeight; i > 0; i--) {
@@ -129,8 +193,8 @@ public class RandomExtUtil {
      *
      * @param sources
      * @param clazz
-     * @return
      * @param <T>
+     * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByShuffle(List<T> sources, Class<T> clazz) {
         // 使用一个默认实现来拷贝属性， 不影响到原对象数据
@@ -198,7 +262,7 @@ public class RandomExtUtil {
      * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题
      *
      * @param totalValue 总金额
-     * @param packSize    分包数量
+     * @param packSize   分包数量
      * @param fixedValue 每个分包保底数值
      * @return
      */
@@ -235,8 +299,8 @@ public class RandomExtUtil {
     /**
      * 用来计算每singValue获得一次奖励机会， 通过这种方式可以不需要保存上次发放奖励的分数也能算出来当前能够获得多少机会
      * 缺点：
-     *  1. 如果某一次数值用掉了也获得了机会，但是业务奖励给失败了，这里再算一次，用之前的分数就会丢失
-     *  2. 如果用户的积分在不同区间给的奖励不一样，虽然次数相同，但是奖励不同，那也不行，这里只会以最后的分值来返回次数而已
+     * 1. 如果某一次数值用掉了也获得了机会，但是业务奖励给失败了，这里再算一次，用之前的分数就会丢失
+     * 2. 如果用户的积分在不同区间给的奖励不一样，虽然次数相同，但是奖励不同，那也不行，这里只会以最后的分值来返回次数而已
      *
      * @param afterValue  最后数值
      * @param beforeValue 之前的数值
@@ -255,16 +319,13 @@ public class RandomExtUtil {
      * @return
      */
     public static BigDecimal calcPointScoreByTime(long time) {
-        final BigDecimal decimal = new BigDecimal(time * Math.pow(
-                10, Math.negateExact(String.valueOf(time).length())));
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(10, Math.negateExact(String.valueOf(time).length())));
         return new BigDecimal("1.0").subtract(decimal);
     }
 
     public static void main(String[] args) {
-        final List<DefaultWeightProportion> proportions = Lists.newArrayList(
-                DefaultWeightProportion.of("1", 10d),
-                DefaultWeightProportion.of("2", 20d),
-                DefaultWeightProportion.of("3", 30d),
+        final List<DefaultWeightProportion> proportions = Lists.newArrayList(DefaultWeightProportion.of("1", 10d),
+                DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
                 DefaultWeightProportion.of("4", 40d)
         );
         int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
@@ -272,18 +333,24 @@ public class RandomExtUtil {
         for (int i = 0; i < 1000; i++) {
             temp = hitWeightProportion(proportions);
             if (Objects.equal("1", temp.getKey())) {
-                count1 ++;
+                count1++;
             } else if (Objects.equal("2", temp.getKey())) {
-                count2 ++;
+                count2++;
             } else if (Objects.equal("3", temp.getKey())) {
-                count3 ++;
+                count3++;
             } else if (Objects.equal("4", temp.getKey())) {
-                count4 ++;
+                count4++;
             }
         }
         System.out.println("count1 = " + count1);
         System.out.println("count2 = " + count2);
         System.out.println("count3 = " + count3);
         System.out.println("count4 = " + count4);
+
+        System.out.println(randomDoubleSelfAdaption(0.1, 0.9));
+        System.out.println(randomDoubleSelfAdaption(0.11, 0.21));
+        System.out.println(randomDoubleSelfAdaption(0.111, 0.211));
+        System.out.println(randomDoubleSelfAdaption(0.11111, 0.211111));
+
     }
 }
