@@ -1,7 +1,7 @@
 package com.ddf.boot.common.sentinel.exception;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.ddf.boot.common.api.model.common.response.response.ResponseData;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 
 /**
  * sentinel异常扩展处理器, 这里将这里单独抽出来是因为异常接管只允许一个实现， 这里如果默认实现的话， 应用层又想使用这个逻辑， 又想加自己的，

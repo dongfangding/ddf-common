@@ -27,8 +27,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +114,6 @@ public class SegmentIDGenImpl implements IDGen {
 
     private void updateCacheFromDb() {
         logger.info("update cache from db");
-        final StopWatch sw = new StopWatch();
         try {
             List<String> dbTags = dao.getAllTags();
             if (dbTags == null || dbTags.isEmpty()) {
@@ -157,7 +154,6 @@ public class SegmentIDGenImpl implements IDGen {
         } catch (Exception e) {
             logger.warn("update cache from db exception", e);
         } finally {
-            sw.stop("updateCacheFromDb");
         }
     }
 
@@ -219,7 +215,6 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     public void updateSegmentFromDb(String key, Segment segment) {
-        StopWatch sw = new Slf4JStopWatch();
         SegmentBuffer buffer = segment.getBuffer();
         LeafAlloc leafAlloc;
         if (!buffer.isInitOk()) {
@@ -268,7 +263,6 @@ public class SegmentIDGenImpl implements IDGen {
         segment.setMax(leafAlloc.getMaxId());
         segment.setStep(buffer.getStep());
         segment.setFillLength(buffer.getFillLength());
-        sw.stop("updateSegmentFromDb", key + " " + segment);
     }
 
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {

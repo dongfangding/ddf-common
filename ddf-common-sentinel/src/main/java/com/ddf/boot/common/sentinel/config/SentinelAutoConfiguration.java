@@ -5,10 +5,7 @@ import com.alibaba.csp.sentinel.adapter.spring.webmvc.SentinelWebTotalIntercepto
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcConfig;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcTotalConfig;
 import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;
-import com.ddf.boot.common.mvc.exception200.ExceptionHandlerMapping;
-import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMapping;
 import com.ddf.boot.common.sentinel.exception.SentinelExceptionHandlerMappingHandler;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -80,20 +77,6 @@ public class SentinelAutoConfiguration implements WebMvcConfigurer {
     public SentinelExceptionHandlerMappingHandler sentinelExceptionHandlerMappingHandler() {
         return new SentinelExceptionHandlerMappingHandler();
     }
-
-    /**
-     * 注册异常接管类，由于只能有一个， 不能影响应用端再接管
-     *
-     * @param sentinelExceptionHandlerMappingHandler
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean(value = {ExceptionHandlerMapping.class})
-    public ExceptionHandlerMapping sentinelExceptionHandlerMapping(
-            SentinelExceptionHandlerMappingHandler sentinelExceptionHandlerMappingHandler) {
-        return new SentinelExceptionHandlerMapping(sentinelExceptionHandlerMappingHandler);
-    }
-
 
     /**
      * 接口请求后会被拦截到控制台的---簇点链路上， 可以不适用@SentinelResource注解， 区别是， 如果接口调用链上没有生命是的@SentinelResource资源，
