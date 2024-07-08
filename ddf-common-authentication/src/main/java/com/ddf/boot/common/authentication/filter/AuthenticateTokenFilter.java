@@ -1,7 +1,5 @@
 package com.ddf.boot.common.authentication.filter;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.http.server.HttpServerRequest;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
@@ -21,7 +19,7 @@ import com.ddf.boot.common.authentication.util.UserContextUtil;
 import com.ddf.boot.common.core.authentication.TokenUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
-import com.ddf.boot.common.core.util.IdsUtil;
+import com.ddf.boot.common.core.util.IdsUtils;
 import com.ddf.boot.common.core.util.SignatureUtils;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
@@ -35,23 +33,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import jdk.vm.ci.meta.MemoryAccessProvider;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.bootstrap.HttpServer;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.Nullable;
-import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.servlet.HandlerInterceptor;
-import reactor.core.publisher.Mono;
 
 /**
  * 拦截请求处理用户认证信息
@@ -215,7 +207,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @return
      */
     private String generateTraceId(String userId) {
-        return String.join("-", userId, IdsUtil.getNextStrId());
+        return String.join("-", userId, IdsUtils.getNextStrId());
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsGroupCreateRequest;
-import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.boot.common.core.util.PreconditionUtils;
 import com.ddf.common.ons.console.constant.GroupTypeEnum;
 import java.io.Serializable;
 import java.util.Objects;
@@ -62,7 +62,7 @@ public class ConsoleOnsGroupCreateRequest implements EnvRequest, UserRequest, Se
         if (Objects.isNull(groupId) || (!groupId.startsWith("GID-") && !groupId.startsWith("GID_"))) {
             throw new IllegalArgumentException("Group ID 必须以 “GID_” 或者 “GID-” 开头。");
         }
-        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
+        PreconditionUtils.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
         return new OnsGroupCreateRequest()
                 .setInstanceId(instanceId)
                 .setGroupId(groupId)

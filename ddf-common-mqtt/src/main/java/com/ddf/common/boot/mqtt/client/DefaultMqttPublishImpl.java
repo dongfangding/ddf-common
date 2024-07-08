@@ -2,8 +2,8 @@ package com.ddf.common.boot.mqtt.client;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.boot.common.core.util.IdsUtils;
+import com.ddf.boot.common.core.util.PreconditionUtils;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
@@ -41,10 +41,10 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
      */
     @Override
     public <T extends MessageBody> void publish(MqttMessageRequest<T> request) {
-        PreconditionUtil.requiredParamCheck(request);
+        PreconditionUtils.requiredParamCheck(request);
         final MqttMessage message = new MqttMessage();
         final MqttMessageControl control = request.getControl();
-        message.setId((int) IdsUtil.getNextLongId());
+        message.setId((int) IdsUtils.getNextLongId());
         message.setQos(control.getQos().getQos());
         message.setRetained(control.getRetain());
 

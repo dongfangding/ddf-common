@@ -43,7 +43,7 @@ import org.springframework.util.Assert;
  * @author dongfang.ding on 2018/5/31
  */
 @Slf4j
-public class MailUtil {
+public class MailUtils {
 
     private static final JavaMailSenderImpl mailSender;
     private static final MailProperties mailProperties;

@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/08/14 17:42
  */
 @Slf4j
-public class LocalCacheUtil {
+public class LocalCacheUtils {
 
     /**
      * 查询guava缓存

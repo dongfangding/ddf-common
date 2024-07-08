@@ -1,7 +1,7 @@
 package com.ddf.boot.netty.broker.message;
 
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.IdsUtil;
+import com.ddf.boot.common.core.util.IdsUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
@@ -120,7 +120,8 @@ public class RequestContent<T> implements Serializable {
      * @return
      */
     public static <T> RequestContent<T> request(String cmd, T content) {
-        return new RequestContent<>(IdsUtil.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null,
+        return new RequestContent<>(
+                IdsUtils.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null,
                 System.currentTimeMillis(), content
         );
     }

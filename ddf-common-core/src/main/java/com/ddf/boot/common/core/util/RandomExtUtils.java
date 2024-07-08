@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2022/09/21 16:31
  */
 @Slf4j
-public class RandomExtUtil {
+public class RandomExtUtils {
 
     final static DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
 

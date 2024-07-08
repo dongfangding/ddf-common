@@ -20,7 +20,7 @@ import org.springframework.lang.NonNull;
  * @version 1.0
  * @date 2020/10/23 18:38
  */
-public class PreconditionUtil {
+public class PreconditionUtils {
 
     /**
      * Validator instances can be pooled and shared by the implementation.
@@ -108,7 +108,7 @@ public class PreconditionUtil {
      * @param request
      */
     public static <T> void requiredParamCheck(T request) {
-        PreconditionUtil.checkArgument(
+        PreconditionUtils.checkArgument(
                 Objects.nonNull(request), BaseErrorCallbackCode.BAD_REQUEST
         );
         Set<ConstraintViolation<T>> constraintViolations = VALIDATOR.validate(request);

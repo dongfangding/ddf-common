@@ -19,7 +19,7 @@ import org.springframework.lang.Nullable;
  * @version 1.0
  * @date 2021/02/21 22:43
  */
-public class PageUtil {
+public class PageUtils {
 
     /**
      * 空分页

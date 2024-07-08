@@ -12,8 +12,8 @@ import com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.boot.common.core.util.IdsUtils;
+import com.ddf.boot.common.core.util.PreconditionUtils;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
@@ -101,7 +101,7 @@ public class CaptchaHelper {
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
 //        result.setImageBase64(result.getOriginalImageBase64());
-        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
+        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtils.getNextStrId();
         result.setUuid(uuid);
         captchaCacheService.set(uuid, text, captchaProperties.getKeyExpiredSeconds());
         return result;
@@ -131,7 +131,7 @@ public class CaptchaHelper {
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
 //        result.setImageBase64(result.getOriginalImageBase64());
-        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
+        final String token = CAPTCHA_KEY_PREFIX + IdsUtils.getNextStrId();
         result.setUuid(token);
         captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());
         return result;
@@ -186,8 +186,8 @@ public class CaptchaHelper {
             }
         } else {
             final String verifyCode = captchaCacheService.get(request.getUuid());
-            PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
-            PreconditionUtil.checkArgument(
+            PreconditionUtils.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
+            PreconditionUtils.checkArgument(
                     java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
         }
         return Boolean.TRUE;

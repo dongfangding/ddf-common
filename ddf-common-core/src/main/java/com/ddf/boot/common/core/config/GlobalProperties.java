@@ -1,6 +1,6 @@
 package com.ddf.boot.common.core.config;
 
-import com.ddf.boot.common.core.util.SecureUtil;
+import com.ddf.boot.common.core.util.SecureUtils;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,7 +68,7 @@ public class GlobalProperties {
     /**
      * rsa 通用秘钥
      *
-     * @see SecureUtil
+     * @see SecureUtils
      */
     private String rsaPrivateKey;
 
@@ -76,7 +76,7 @@ public class GlobalProperties {
     /**
      * rsa rsa通用公钥
      *
-     * @see SecureUtil
+     * @see SecureUtils
      */
     private String rsaPublicKey;
 
@@ -84,7 +84,7 @@ public class GlobalProperties {
      * AES 秘钥
      * 最基本要求，采用对称分组密码体制， 秘钥长度的最少支持为128、192、256位，即16、24、32个字节
      *
-     * @see SecureUtil
+     * @see SecureUtils
      */
     private String aesSecret;
 

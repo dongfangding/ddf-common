@@ -1,7 +1,7 @@
 package com.ddf.boot.common.rocketmq.helper;
 
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.IdsUtil;
+import com.ddf.boot.common.core.util.IdsUtils;
 import com.ddf.boot.common.rocketmq.dto.MessageRequest;
 import com.ddf.boot.common.rocketmq.dto.RocketMQDestination;
 import java.util.Objects;
@@ -76,7 +76,7 @@ public class RocketMQHelper {
     public void syncSend(final RocketMQDestination destination, final Object msg, @Nullable String keys) {
         String destinationStr = destination.toDestination();
         if (Objects.isNull(keys)) {
-            keys = destinationStr + "_" + IdsUtil.getNextStrId();
+            keys = destinationStr + "_" + IdsUtils.getNextStrId();
         }
 
         Message<?> message = MessageBuilder.withPayload(msg)

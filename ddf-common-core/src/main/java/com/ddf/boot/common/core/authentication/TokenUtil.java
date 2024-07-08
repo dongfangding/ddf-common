@@ -9,11 +9,10 @@ import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.constant.CoreExceptionCode;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.PreconditionUtil;
-import com.ddf.boot.common.core.util.SecureUtil;
+import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.SecureUtils;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +60,7 @@ public class TokenUtil {
     public static AuthenticateToken createToken(UserClaim userClaim) {
         final String originUserClaimStr = JsonUtil.asString(userClaim);
         final AuthenticateToken authenticateToken = AuthenticateToken.of(
-                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.encryptHexByAES(originUserClaimStr));
+                SecureUtils.bCryptEncoder(userClaim.getUserId()), SecureUtils.aesEncryptHex(originUserClaimStr));
         if (Objects.nonNull(TOKEN_CACHE)) {
             TOKEN_CACHE.setToken(userClaim, authenticateToken);
         }
@@ -78,7 +77,7 @@ public class TokenUtil {
         UserClaim claim;
         try {
             final AuthenticateToken tokenObj = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
+            final String originDetailsToken = SecureUtils.aesDecryptStr(tokenObj.getDetailsToken());
             claim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             if (Objects.isNull(claim)) {
                 throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
@@ -98,7 +97,7 @@ public class TokenUtil {
     public static AuthenticateCheckResult checkToken(String token) {
         try {
             final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
+            final String originDetailsToken = SecureUtils.aesDecryptStr(authenticateToken.getDetailsToken());
             UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             String userId = userClaim.getUserId();
             // 这个散列密码计算器计算复杂度在网关层使用，会严重使用cpu， 导致cpu拉满
@@ -106,8 +105,8 @@ public class TokenUtil {
             // PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
             if (Objects.nonNull(TOKEN_CACHE)) {
                 final String cacheToken = TOKEN_CACHE.getToken(userId);
-                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
-                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
+                PreconditionUtils.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
+                PreconditionUtils.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);
         } catch (Exception e) {

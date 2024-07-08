@@ -247,7 +247,7 @@ public class ResponseData<T> {
 
   提供bean拷贝工具
 
-- com.ddf.boot.common.core.util.IdsUtil
+- com.ddf.boot.common.core.util.IdsUtils
   基于Hutool单机版直接使用的雪花id
 
 - com.ddf.boot.common.core.util.JsonUtil

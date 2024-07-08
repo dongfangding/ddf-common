@@ -23,6 +23,12 @@ public class AppApplication {
 }
 ```
 
+
+## 实现接口
+1. 实现接口com.ddf.boot.common.authentication.interfaces.UserClaimService
+
+实现后可获得服务内部用户信息，用于对比
+
 ## 获取解析后的上下文数据
 
 更多信息请参考类`com.banma.sunshine.authentication.annotation.util.UserContextUtil`

@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author dongfang.ding on 2018/12/31
  */
 @Slf4j
-public class StringExtUtil {
+public class StringExtUtils {
 
     private static final String UNION_PAY_LOGIN_PASSWORD_POOL = "abcdefghijklmnopqrstuvwxyz";
     private static final String UNION_PAY_LOGIN_PASSWORD_CHAR = "@#*";

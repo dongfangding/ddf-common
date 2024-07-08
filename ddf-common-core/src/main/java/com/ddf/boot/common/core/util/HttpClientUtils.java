@@ -33,7 +33,7 @@ import org.apache.http.util.EntityUtils;
  * @date 2023/10/19 23:29
  **/
 @Slf4j
-public class HttpClientUtil {
+public class HttpClientUtils {
     private static final PoolingHttpClientConnectionManager CM;
     private static final RequestConfig REQUEST_CONFIG;
 
@@ -50,7 +50,7 @@ public class HttpClientUtil {
                 .setExpectContinueEnabled(true)// 重点参数
                 .setConnectionRequestTimeout(10000).build();
 
-        CLIENT = HttpClientUtil.getHttpClient();
+        CLIENT = HttpClientUtils.getHttpClient();
     }
 
     public static CloseableHttpClient getHttpClient() {

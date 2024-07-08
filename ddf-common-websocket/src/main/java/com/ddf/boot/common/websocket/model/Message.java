@@ -1,8 +1,8 @@
 package com.ddf.boot.common.websocket.model;
 
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.SecureUtil;
-import com.ddf.boot.common.core.util.StringExtUtil;
+import com.ddf.boot.common.core.util.SecureUtils;
+import com.ddf.boot.common.core.util.StringExtUtils;
 import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -138,7 +138,7 @@ public class Message<T> {
      * @return
      */
     public static Message<String> echo(String payload) {
-        return new Message<>(Type.RESPONSE, StringExtUtil.randomString(64), SEND_MODEL_SERVER,
+        return new Message<>(Type.RESPONSE, StringExtUtils.randomString(64), SEND_MODEL_SERVER,
                 InternalCmdEnum.PONG.name(), payload, null
         );
     }
@@ -209,7 +209,7 @@ public class Message<T> {
             return null;
         }
         String body = JsonUtil.asString(message.getBody());
-        String sign = com.ddf.boot.common.core.util.SecureUtil.signWithHMac(body, message.getCmd());
+        String sign = SecureUtils.signWithHMac(body, message.getCmd());
         message.addExtra("sign", sign);
         return message;
     }
@@ -224,7 +224,7 @@ public class Message<T> {
      * @return
      */
     public static <T> Message<T> request(String cmd, String clientChannel, T body) {
-        return new Message<>(Type.REQUEST, StringExtUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
+        return new Message<>(Type.REQUEST, StringExtUtils.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
     }
 
     /**
@@ -328,12 +328,12 @@ public class Message<T> {
         if (StringUtils.isBlank(textMessagePayload)) {
             return null;
         }
-        String decrypt = SecureUtil.privateDecryptFromBcd(textMessagePayload);
+        String decrypt = SecureUtils.rsaPrivateDecryptStr(textMessagePayload);
         log.debug("解密后数据: {}", decrypt);
         Message<?> message = JsonUtil.toBean(decrypt, Message.class);
         String signStr = message.getExtraMap().get("sign");
         log.debug("报文中加签值: {}", signStr);
-        String dataSign = SecureUtil.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd());
+        String dataSign = SecureUtils.signWithHMac(JsonUtil.asString(message.getBody()), message.getCmd());
         log.debug("对数据解密后重新加签: {}", dataSign);
         if (!Objects.equals(signStr, dataSign)) {
             log.error("验签不通过！！报文中加签值: {}, 实际加签值: {}", signStr, dataSign);

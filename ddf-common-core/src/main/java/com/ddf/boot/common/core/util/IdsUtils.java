@@ -41,7 +41,7 @@ import com.ddf.boot.common.core.helper.SpringContextHolder;
  * @author dongfang.ding
  * @date 2019/12/9 0009 11:35
  */
-public class IdsUtil {
+public class IdsUtils {
 
     private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBean(GlobalProperties.class);
 

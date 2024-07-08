@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @date 2021/03/02 10:25
  */
-public class TreeConvertUtil {
+public class TreeConvertUtils {
 
 
     /**

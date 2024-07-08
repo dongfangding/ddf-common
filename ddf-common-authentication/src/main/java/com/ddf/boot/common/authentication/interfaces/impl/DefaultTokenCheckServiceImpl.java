@@ -8,15 +8,13 @@ import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
-import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.boot.common.core.util.PreconditionUtils;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.server.ServerWebExchange;
 
 /**
  * <p>description</p >
@@ -42,8 +40,8 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
     @Override
     public UserClaim customizeCheck(HttpServletRequest request, AuthenticateCheckResult authenticateCheckResult) {
         final UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
-        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
-        PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
+        PreconditionUtils.checkArgument(Objects.nonNull(tokenUserClaim), BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
+        PreconditionUtils.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
                 BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
         // credit校验
         final String credit = StringUtils.defaultIfBlank(request.getHeader(authenticationProperties.getCreditHeaderName()),
@@ -54,7 +52,7 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
         }
         // 获取最新用户信息
         UserClaim storeUser = userClaimService.getStoreUserInfo(request, tokenUserClaim);
-        PreconditionUtil.checkArgument(!storeUser.isDisabled(), new UnauthorizedException(BaseErrorCallbackCode.USER_IN_BLACK));
+        PreconditionUtils.checkArgument(!storeUser.isDisabled(), new UnauthorizedException(BaseErrorCallbackCode.USER_IN_BLACK));
         return storeUser;
     }
 }

@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  * @version 1.0
  * @date 2022/12/16 23:17
  */
-public class ObjectUtil {
+public class ObjectUtils {
 
     /**
      * 检查并且获取值

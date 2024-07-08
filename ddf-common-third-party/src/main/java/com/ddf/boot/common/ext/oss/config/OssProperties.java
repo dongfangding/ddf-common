@@ -1,8 +1,8 @@
 package com.ddf.boot.common.ext.oss.config;
 
 import cn.hutool.core.collection.CollUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
-import com.ddf.boot.common.core.util.SecureUtil;
+import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.SecureUtils;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import lombok.Data;
@@ -104,15 +104,15 @@ public class OssProperties implements InitializingBean {
         Preconditions.checkArgument(StringUtils.isNotBlank(roleArn), "roleArn不能为空");
         final List<BucketProperty> buckets = this.getBuckets();
         boolean includePrimary = buckets.size() == 1 || buckets.stream().filter(BucketProperty::isPrimary).count() == 1;
-        PreconditionUtil.checkArgument(includePrimary, "请且只能配置一个主存储桶， 参考属性primary");
+        PreconditionUtils.checkArgument(includePrimary, "请且只能配置一个主存储桶， 参考属性primary");
         boolean isDecrypt = false;
         for (BucketProperty property : this.getBuckets()) {
             Preconditions.checkArgument(StringUtils.isNotBlank(property.getBucketName()), "请检查bucket配置");
             if (this.isSecret()) {
                 // 在运行时解密存储
                 if (!isDecrypt) {
-                    this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
-                    this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
+                    this.setAccessKeyId(SecureUtils.aesDecryptStr(this.getAccessKeyId()));
+                    this.setAccessKeySecret(SecureUtils.aesDecryptStr(this.getAccessKeySecret()));
                     isDecrypt = true;
                 }
             }
