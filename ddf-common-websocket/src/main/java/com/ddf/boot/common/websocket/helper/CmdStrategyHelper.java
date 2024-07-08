@@ -1,7 +1,6 @@
 package com.ddf.boot.common.websocket.helper;
 
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.mq.helper.RabbitTemplateHelper;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.MessageRequest;
@@ -22,8 +21,6 @@ import org.springframework.web.socket.TextMessage;
 public class CmdStrategyHelper {
     @Autowired
     private ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool;
-    @Autowired
-    private RabbitTemplateHelper rabbitTemplateHelper;
 
     /**
      * 记录日志并发送消息
