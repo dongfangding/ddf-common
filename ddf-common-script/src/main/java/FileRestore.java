@@ -109,12 +109,22 @@ public class FileRestore {
                         // 创建目标路径的父目录（如果不存在）
                         Files.createDirectories(targetPath.getParent());
 
+                        // 移动文件夹前删除图片文件
+                        File[] filesInFolder = folder.listFiles();
+                        if (filesInFolder != null) {
+                            for (File file : filesInFolder) {
+                                if (isImageFile(file)) {
+                                    file.delete();
+                                }
+                            }
+                        }
+
                         // 移动文件夹
                         Path sourcePath = folder.toPath();
                         Files.move(sourcePath, targetPath);
 
                         // 删除空源文件夹
-                        //                        Files.delete(sourcePath);
+                        Files.delete(sourcePath);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -189,5 +199,23 @@ public class FileRestore {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * 判断文件是否是图片文件的方法
+     *
+     * @param file
+     * @return
+     */
+    private boolean isImageFile(File file) {
+        String[] imageExtensions = new String[] { "jpg", "jpeg", "png", "gif", "bmp" };
+        String fileName = file.getName().toLowerCase();
+        for (String extension : imageExtensions) {
+            if (fileName.endsWith("." + extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
