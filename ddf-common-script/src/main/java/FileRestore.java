@@ -26,7 +26,7 @@ public class FileRestore {
 
     public static void main(String[] args) {
         String baseTargetDirectory = "D:/迅雷下载/backup";
-        deleteRepeatFileByMd5(new String[] {"D:/迅雷下载/QQ空间备份_1041765757/Albums"}, baseTargetDirectory);
+        packageMonitorVideo(new String[] {"D:/文件/整理/监控"}, baseTargetDirectory);
     }
 
     /**
@@ -87,7 +87,7 @@ public class FileRestore {
      *
      * @param directories
      */
-    public void packageMonitorVideo(String[] directories, String targetDirector) {
+    public static void packageMonitorVideo(String[] directories, String targetDirector) {
         for (String directory : directories) {
             File sourceDir = new File(directory);
             File[] folders = sourceDir.listFiles(File::isDirectory);
@@ -109,15 +109,9 @@ public class FileRestore {
                         // 创建目标路径的父目录（如果不存在）
                         Files.createDirectories(targetPath.getParent());
 
-                        // 移动文件夹前删除图片文件
-                        File[] filesInFolder = folder.listFiles();
-                        if (filesInFolder != null) {
-                            for (File file : filesInFolder) {
-                                if (isImageFile(file)) {
-                                    file.delete();
-                                }
-                            }
-                        }
+
+                        // 深层遍历并删除图片文件
+                        deleteImageFilesRecursively(folder);
 
                         // 移动文件夹
                         Path sourcePath = folder.toPath();
@@ -208,7 +202,7 @@ public class FileRestore {
      * @param file
      * @return
      */
-    private boolean isImageFile(File file) {
+    private static boolean isImageFile(File file) {
         String[] imageExtensions = new String[] { "jpg", "jpeg", "png", "gif", "bmp" };
         String fileName = file.getName().toLowerCase();
         for (String extension : imageExtensions) {
@@ -217,5 +211,22 @@ public class FileRestore {
             }
         }
         return false;
+    }
+
+    /**
+     * 递归遍历目录并删除图片文件
+     * @param directory
+     */
+    private static void deleteImageFilesRecursively(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteImageFilesRecursively(file);
+                } else if (isImageFile(file)) {
+                    file.delete();
+                }
+            }
+        }
     }
 }
