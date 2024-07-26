@@ -25,8 +25,8 @@ import java.util.Set;
 public class FileRestore {
 
     public static void main(String[] args) {
-        String baseTargetDirectory = "D:/迅雷下载/backup";
-        packageMonitorVideo(new String[] {"D:/文件/整理/监控"}, baseTargetDirectory);
+        String baseTargetDirectory = "G:/监控/客厅2";
+        packageMonitorVideo2(new String[] {"G:/客厅俯瞰"}, baseTargetDirectory);
     }
 
     /**
@@ -66,6 +66,52 @@ public class FileRestore {
                             Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 适用于所有监控视频在一起的文件， 文件格式为video_0005_0_10_20240629145104_20240629145641.mp4
+     * 解决问题， 按照文件名解析时间进行归档
+     * 1. 一级目录到月202401
+     * 2. 再创建二级目录到天20240112
+     * 3. 再创建三级目录到小时2024011223
+     * 3. 将源文件夹转移到三级目录下
+     *
+     * @param directories
+     * @param baseTargetDirectory
+     */
+    public static void packageMonitorVideo2(String[] directories, String baseTargetDirectory) {
+        for (String directory : directories) {
+            try {
+                Files.walkFileTree(Paths.get(directory), new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        // video_0881_0_10_20240628194426_20240628195010.mp4
+                        String fileName = file.getFileName().toString();
+                        if (!fileName.startsWith("video")) {
+                            return FileVisitResult.CONTINUE;
+                        }
+                        final String[] split = fileName.split("_");
+                        String dateStr = split[4];
+                        String month = dateStr.substring(0, 6);
+                        String day = dateStr.substring(0, 8);
+                        // 创建层级目录
+                        Path targetPath = Paths.get(baseTargetDirectory, month, day);
+                        if (!Files.exists(targetPath)) {
+                            Files.createDirectories(targetPath);
+                        }
+
+                        // 移动文件到目标日期目录
+                        Path targetPathFile = targetPath.resolve(file.getFileName());
+                        Files.move(file, targetPathFile, StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         return FileVisitResult.CONTINUE;
                     }
                 });
@@ -124,7 +170,6 @@ public class FileRestore {
                     e.printStackTrace();
                 }
             }
-
             System.out.println("All folders moved successfully.");
         }
     }
