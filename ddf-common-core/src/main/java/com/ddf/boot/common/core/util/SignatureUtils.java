@@ -23,6 +23,35 @@ import org.springframework.util.ObjectUtils;
 public class SignatureUtils {
 
     /**
+     * map转查询串
+     *
+     * @param dataMap
+     * @return
+     */
+    public static String mapToQueryString(Map<String, Object> dataMap) {
+        // 1. 参数名按照ASCII码表升序排序
+        String[] keys = dataMap.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
+
+        // 2. 按照排序拼接参数名与参数值
+        StringBuilder paramBuffer = new StringBuilder();
+        Object obj;
+        for (String key : keys) {
+            obj = dataMap.get(key);
+            // 排除参数为空的和以及签名字段
+            if (ObjectUtils.isEmpty(obj)) {
+                paramBuffer.append(key).append("=");
+                continue;
+            }
+            if (!paramBuffer.isEmpty()) {
+                paramBuffer.append("&");
+            }
+            paramBuffer.append(key).append("=").append(obj);
+        }
+        return paramBuffer.toString();
+    }
+
+    /**
      * ascii 升序排序参数
      *
      * @param data

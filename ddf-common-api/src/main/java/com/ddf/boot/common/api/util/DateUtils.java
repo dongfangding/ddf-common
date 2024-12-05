@@ -1,8 +1,11 @@
 package com.ddf.boot.common.api.util;
-
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -16,9 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
 
 /**
  * <p>描述</p>
@@ -32,11 +32,15 @@ public class DateUtils {
 
     public static final String TIME_SPLIT = ":";
 
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter STANDARD_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static final DateTimeFormatter STANDARD_NUMBER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     /**
      * 时间转换为int的日格式
      */
     public static final DateTimeFormatter DAY_INTEGER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    public static final DateTimeFormatter DAY_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * 时间转换为int的日格式
@@ -300,6 +304,16 @@ public class DateUtils {
     }
 
     /**
+     * 时间戳转  LocalDate
+     * @param seconds
+     * @return
+     */
+    public static LocalDate toLocalDate(long seconds) {
+        Instant instant = Instant.ofEpochSecond(seconds);
+        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
      * 根据毫秒转换为标准北京时间
      *
      * @param millis
@@ -464,6 +478,15 @@ public class DateUtils {
     }
 
     /**
+     * 根据秒时间戳格式化当前年月
+     *
+     * @return
+     */
+    public static String formatYmdBySeconds(Long seconds) {
+        return DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8")));
+    }
+
+    /**
      * 当前年月
      *
      * @return
@@ -503,8 +526,8 @@ public class DateUtils {
      *
      * @return
      */
-    public static DateTimeFormatter getFormatter() {
-        return FORMATTER;
+    public static DateTimeFormatter getStandardFormatter() {
+        return STANDARD_FORMATTER;
     }
 
     /**
@@ -514,7 +537,7 @@ public class DateUtils {
      * @return
      */
     public static String standardFormatSeconds(Long seconds) {
-        return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
     }
 
     /**
@@ -533,7 +556,18 @@ public class DateUtils {
      * @return
      */
     public static String standardFormatMillis(Long millis) {
-        return FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
+        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
+    }
+
+
+    /**
+     * 将秒标准数字格式化输出
+     *
+     * @param seconds
+     * @return
+     */
+    public static String standardNumberFormatSeconds(Long seconds) {
+        return STANDARD_NUMBER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
     }
 
     public static String formatDate(Date date, String format){
