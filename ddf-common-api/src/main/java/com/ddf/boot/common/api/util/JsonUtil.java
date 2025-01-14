@@ -1,7 +1,8 @@
 package com.ddf.boot.common.api.util;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
-import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -68,8 +69,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (Exception e) {
             logger.error("json序列化异常, obj = {}", obj, e);
-            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
-            throw new BusinessException(e);
+            throw new ServerErrorException(e);
         }
     }
 
@@ -146,7 +146,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.readValue(json, type);
         } catch (IOException e) {
             logger.error("json反序列化异常, json = {}, type = {}", json, type, e);
-            throw new BusinessException(BaseErrorCallbackCode.JSON_DESERIALIZER_FILED);
+            throw new ServerErrorException(BaseErrorCallbackCode.JSON_DESERIALIZER_FILED);
         }
     }
 
@@ -162,8 +162,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             logger.error("对象序列化字节异常, obj = {}", obj, e);
-            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
-            throw new BusinessException(e);
+            throw new ServerErrorException(e);
         }
     }
 
@@ -198,7 +197,7 @@ public final class JsonUtil {
             return OBJECT_MAPPER.readValue(json, typeFactory.constructCollectionType(List.class, beanType));
         } catch (Exception e) {
             logger.error("json反序列化集合异常, json = {}, type = {}", json, beanType, e);
-            throw new BusinessException(BaseErrorCallbackCode.JSON_DESERIALIZER_FILED);
+            throw new ServerErrorException(BaseErrorCallbackCode.JSON_DESERIALIZER_FILED);
         }
     }
 
@@ -245,8 +244,7 @@ public final class JsonUtil {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("json序列化异常, obj = {}", obj, e);
-            // throw new BusinessException(BaseErrorCallbackCode.JSON_SERIALIZER_FILED);
-            throw new BusinessException(e);
+            throw new ServerErrorException(e);
         }
     }
 

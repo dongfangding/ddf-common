@@ -28,7 +28,7 @@ import org.springframework.util.CollectionUtils;
  *      <li>4. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
  *       在关闭单例池时执行到{@link DefaultSingletonBeanRegistry#destroySingletons()}时有个属性{@link DefaultSingletonBeanRegistry#disposableBeans},
  *       销毁的时候是按照这个顺序来定义的，而且这个属性本身有序，这个属性里存的bean都是实现了Spring生命周期相关方法的bean,
- *       具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(java.lang.String, java.lang.Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
+ *       具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(String, Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
  *  <p></p>
  *
  *  <p>
@@ -43,7 +43,7 @@ import org.springframework.util.CollectionUtils;
  * <p>1. 如果是web项目， 停机无法解决流量继续转发进来的问题， 如nginx, 需要配合运维手段将发布机器从nginx负载中下线</p>
  * <p>2. 如果是Dubbo项目，需要先执行Dubbo的优雅停机，确保先将提供者从注册中心移除，不再有新的消费者请求进来</p>
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/08/15 13:02
  */

@@ -13,31 +13,28 @@ import org.springframework.context.MessageSource;
  * @version 1.0
  * @date 2020/06/17 15:55
  */
+@Getter
 public abstract class BaseException extends RuntimeException {
 
     /**
      * 异常code码
      */
-    @Getter
     private String code;
 
     /**
      * 异常消息
      */
-    @Getter
     private String description;
 
     /**
      * 某些消息需要提供占位符希望运行时填充数据，这里可以传入占位符对应的参数
      * 注意格式化参数使用的是{@link MessageSource}， 所以请注意原展位参数需使用{0} {1} 方式
      */
-    @Getter
     private Object[] params;
 
     /**
      * 保存业务异常相关信息的类
      */
-    @Getter
     private BaseCallbackCode baseCallbackCode;
 
     /**
@@ -46,7 +43,6 @@ public abstract class BaseException extends RuntimeException {
      * 比如现在说用户余额不足，但是我不仅是在消息中返回缺多少钱，而且还要返回一整个相关的数据，让前端可以处理更加复杂的逻辑，而这需要返回与这个
      * 异常相关的业务数据，就可以放到这个对象里来
      */
-    @Getter
     private Object extra;
 
     /**
@@ -167,9 +163,18 @@ public abstract class BaseException extends RuntimeException {
     }
 
     /**
-     * 当前异常默认响应状态码
+     * 当前异常默认响应状态码，作用如下
+     * 1. 当抛出异常时没有指定错误码，使用该默认错误码
+     * 2. 当异常消息返回给客户端时，使用该错误码的bizMessage来代替原始异常内容返回给客户端，用来隐藏系统异常信息
      *
      * @return
      */
     public abstract BaseCallbackCode defaultCallback();
+
+    /**
+     * 当前异常是否会模糊异常详细信息， 如果为true的话，则会使用{@link #defaultCallback()}来代替原始异常消息
+     *
+     * @return
+     */
+    public abstract boolean isMaskErrorDetails();
 }

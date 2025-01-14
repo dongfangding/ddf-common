@@ -60,10 +60,6 @@ public class UserClaim implements Serializable {
      */
     private String remarks;
 
-    /**
-     * 是否禁用用户
-     */
-    private boolean disabled;
 
     /**
      * 预留的详细信息字段，使用方可以将自己想要放置的数据放到这个字段中；到时候想使用的时候可以自行解析回来
@@ -74,7 +70,6 @@ public class UserClaim implements Serializable {
     /**
      * 自定义的其它属性
      */
-    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
     public UserClaim(String userId, String username) {
@@ -82,15 +77,6 @@ public class UserClaim implements Serializable {
         this.username = username;
     }
 
-    /**
-     * 返回默认用户，无用户信息
-     *
-     * @return
-     * @see UserClaim#defaultUser
-     */
-    public static UserClaim defaultUser() {
-        return DEFAULT_USER;
-    }
 
     /**
      * 创建mock用户

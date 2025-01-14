@@ -1,7 +1,7 @@
 package com.ddf.boot.common.api.constraint.redis;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
-import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <p>数值类型的分片规则</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2023/02/06 15:21
  */
@@ -32,13 +32,13 @@ public class NumberShardingRule implements RedisShardingRule<Integer, Integer> {
     @Override
     public String getSharding(String... args) {
         if (shardingKeyInArgsIndex >= args.length) {
-            throw new BusinessException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
+            throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
         }
         final String arg = args[shardingKeyInArgsIndex];
         try {
             return (Integer.parseInt(arg) % shardingMod) + "";
         } catch (Exception e) {
-            throw new BusinessException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS, e);
+            throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS, e);
         }
     }
 }

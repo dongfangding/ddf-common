@@ -3,7 +3,7 @@ package com.ddf.boot.common.api.consts;
 /**
  * <p>api常亮类</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2023/02/27 17:23
  */

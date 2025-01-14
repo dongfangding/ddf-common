@@ -31,6 +31,11 @@ public class ConsumeException extends BaseException {
         return BaseErrorCallbackCode.SERVER_ERROR;
     }
 
+    @Override
+    public boolean isMaskErrorDetails() {
+        return true;
+    }
+
     public ConsumeException(String code, String message) {
         super(code, message);
         this.code = code;

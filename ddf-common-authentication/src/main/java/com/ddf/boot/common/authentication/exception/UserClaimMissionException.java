@@ -25,4 +25,9 @@ public class UserClaimMissionException extends BaseException {
     public BaseCallbackCode defaultCallback() {
         return BaseErrorCallbackCode.UNAUTHORIZED;
     }
+
+    @Override
+    public boolean isMaskErrorDetails() {
+        return false;
+    }
 }

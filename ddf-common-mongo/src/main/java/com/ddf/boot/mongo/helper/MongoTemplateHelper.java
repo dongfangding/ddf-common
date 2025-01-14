@@ -1,9 +1,9 @@
 package com.ddf.boot.mongo.helper;
 
-import com.ddf.boot.common.api.model.common.PageRequest;
+import com.ddf.boot.common.api.model.common.request.PageRequest;
 import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
-import com.ddf.boot.common.core.util.PageUtils;
+import com.ddf.boot.common.core.util.PageUtil;
 import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -46,18 +46,18 @@ public class MongoTemplateHelper {
             @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         if (count <= 0) {
-            return PageUtils.empty(pageRequest);
+            return PageUtil.empty(pageRequest);
         }
         if (!pageRequest.isUnPaged()) {
-            Pageable pageable = PageUtils.toSpringData(pageRequest);
+            Pageable pageable = PageUtil.toSpringData(pageRequest);
             query.with(pageable);
         }
         List<T> dbList = mongoTemplate.find(query, poClazz);
         if (voClazz == null || poClazz.getName().equals(voClazz.getName())) {
             List<R> rtnList = (List<R>) dbList;
-            return PageUtils.ofPageRequest(pageRequest, count, rtnList);
+            return PageUtil.ofPageRequest(pageRequest, count, rtnList);
         } else {
-            return PageUtils.ofPageRequest(pageRequest, count, BeanCopierUtils.copy(dbList, voClazz));
+            return PageUtil.ofPageRequest(pageRequest, count, BeanCopierUtils.copy(dbList, voClazz));
         }
     }
 
@@ -93,7 +93,7 @@ public class MongoTemplateHelper {
     public <T, R> Page<R> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
-        Pageable pageable = PageUtils.toSpringData(pageRequest);
+        Pageable pageable = PageUtil.toSpringData(pageRequest);
         if (count <= 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }

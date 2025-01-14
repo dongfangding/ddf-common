@@ -3,7 +3,7 @@ package com.ddf.boot.common.api.model.captcha;
 /**
  * <p>验证码类型</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/07/12 14:33
  */

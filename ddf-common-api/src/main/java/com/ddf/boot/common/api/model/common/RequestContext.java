@@ -2,7 +2,6 @@ package com.ddf.boot.common.api.model.common;
 
 import com.ddf.boot.common.api.enums.OsEnum;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>存储请求相关的参数的上下文对象</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/01/14 17:17
  */
@@ -46,14 +45,14 @@ public class RequestContext implements Serializable {
     private String sign;
 
     /**
-     * 版本号
-     */
-    private String version;
-
-    /**
      * 内部版本号
      */
     private Long versionCode;
+
+    /**
+     * 版本名称
+     */
+    private String version;
 
     /**
      * 设备号
@@ -66,9 +65,24 @@ public class RequestContext implements Serializable {
     private Long nonce;
 
     /**
+     * 软件当前语言
+     */
+    private String appLanguage;
+
+    /**
+     * 设备系统当前语言
+     */
+    private String systemLanguage;
+
+    /**
      * 客户端类型
      */
     private OsEnum os;
+
+    /**
+     * 操作系统版本
+     */
+    private String osVersion;
 
     /**
      * 应用渠道， 如苹果商店， 应用宝之类的
@@ -76,14 +90,24 @@ public class RequestContext implements Serializable {
     private String channel;
 
     /**
-     * 经度
+     * 设备运营商
      */
-    private BigDecimal longitude;
+    private String simOperator;
 
     /**
-     * 纬度
+     * 是否使用了代理
      */
-    private BigDecimal latitude;
+    private Boolean useProxy;
+
+    /**
+     * 是否使用了vpn
+     */
+    private Boolean useVpn;
+
+    /**
+     * 设备时区
+     */
+    private String timeZone;
 
     /**
      * 从请求头中获取到的用户id, 存在网关时使用
@@ -91,9 +115,38 @@ public class RequestContext implements Serializable {
     private String userIdFromGateway;
 
     /**
+     * 设备型号
+     */
+    private String deviceMode;
+
+    /**
+     * h5版本
+     */
+    private String h5Version;
+
+    /**
+     *  ios的idfa
+     */
+    private String iosIdfa;
+
+    /**
+     * Android oa_id
+     */
+    private String oaId;
+
+    /**
+     * Android android_id
+     */
+    private String androidId;
+
+    /**
+     * 是否网关转发
+     */
+    private Boolean isGatewayDispatch = Boolean.FALSE;
+
+    /**
      * 自定义属性
      */
-    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
 }

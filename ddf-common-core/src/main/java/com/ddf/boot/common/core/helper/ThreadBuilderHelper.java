@@ -181,8 +181,8 @@ public class ThreadBuilderHelper {
      * @param maxPoolSize
      * @return
      */
-    public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int corePoolSize,
-            int maxPoolSize, int keepAliveSeconds, boolean gracefulShutdown) {
+    public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int keepAliveSeconds, int corePoolSize,
+            int maxPoolSize, boolean gracefulShutdown) {
         ThreadFactory namedThreadFactory = new CustomizableThreadFactory(prefix);
         ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(corePoolSize,
                 namedThreadFactory

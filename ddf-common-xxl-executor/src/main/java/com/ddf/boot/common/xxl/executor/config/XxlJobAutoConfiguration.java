@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import static com.ddf.boot.common.xxl.executor.config.XxlJobConfig.APP_NAME_AUTO;
-
 /**
  * <p>description</p >
  * <p>
@@ -63,7 +61,7 @@ public class XxlJobAutoConfiguration {
      */
     private String getAppName() {
         String appName = xxlJobConfig.getAppName();
-        if (appName != null && Objects.equals(APP_NAME_AUTO, appName)) {
+        if (appName != null && Objects.equals(XxlJobConfig.APP_NAME_AUTO, appName)) {
             return environment.getProperty("spring.application.name");
         }
         return appName;

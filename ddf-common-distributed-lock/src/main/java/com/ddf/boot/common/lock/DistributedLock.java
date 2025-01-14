@@ -1,7 +1,7 @@
 package com.ddf.boot.common.lock;
 
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 分布式锁接口

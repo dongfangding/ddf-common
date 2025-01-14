@@ -2,7 +2,7 @@ package com.ddf.boot.common.ext.oss.config;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.core.util.PreconditionUtils;
-import com.ddf.boot.common.core.util.SecureUtils;
+import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import lombok.Data;
@@ -111,8 +111,8 @@ public class OssProperties implements InitializingBean {
             if (this.isSecret()) {
                 // 在运行时解密存储
                 if (!isDecrypt) {
-                    this.setAccessKeyId(SecureUtils.aesDecryptStr(this.getAccessKeyId()));
-                    this.setAccessKeySecret(SecureUtils.aesDecryptStr(this.getAccessKeySecret()));
+                    this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
+                    this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
                     isDecrypt = true;
                 }
             }

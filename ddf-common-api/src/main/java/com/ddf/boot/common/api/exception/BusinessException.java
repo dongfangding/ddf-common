@@ -1,7 +1,8 @@
 package com.ddf.boot.common.api.exception;
 
 /**
- * <p>通用业务异常，只提供预定义的消息状态码构造函数</p >
+ * 通用业务异常，这个异常用在一般是业务上的规则不允许的操作
+ * 这个异常用在打的消息都是反馈给用户看的，否则不要使用这个异常，如系统内部或者框架层面的不要使用这个异常
  *
  * @author dongfang.ding
  * @version 1.0
@@ -55,12 +56,19 @@ public class BusinessException extends BaseException {
     }
 
     /**
-     * 当前异常默认响应状态码
+     * 当前异常默认响应状态码，作用如下
+     * 1. 当抛出异常时没有指定错误码，使用该默认错误码
+     * 2. 当异常消息返回给客户端时，使用该错误码的bizMessage来代替原始异常内容返回给客户端，用来隐藏系统异常信息
      *
      * @return
      */
     @Override
     public BaseCallbackCode defaultCallback() {
         return BaseErrorCallbackCode.BIZ_EXCEPTION;
+    }
+
+    @Override
+    public boolean isMaskErrorDetails() {
+        return false;
     }
 }

@@ -121,7 +121,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     @Override
     public void customize(Config configuration) {
         if (StrUtil.isNotBlank(redissonCustomizeProperties.getCodec())) {
-            configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).getDeclaredConstructor().newInstance());
+            configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).newInstance());
         } else {
             configuration.setCodec(new JsonJacksonCodec());
         }

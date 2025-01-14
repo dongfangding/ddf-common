@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
  * <p>针对业务字段值进行有效值校验
  * </p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/02/26 10:53
  */

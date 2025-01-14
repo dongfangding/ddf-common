@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>token校验返回对象</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/05/25 10:37
  */

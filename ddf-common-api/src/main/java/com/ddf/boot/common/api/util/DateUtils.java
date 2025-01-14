@@ -1,11 +1,8 @@
 package com.ddf.boot.common.api.util;
+
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
-
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -19,12 +16,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 
 /**
  * <p>描述</p>
  *
  * @author network
- * @version 1.0: DateUtils.java
  * @date 2020/11/13 10:27
  */
 @Slf4j
@@ -56,6 +56,16 @@ public class DateUtils {
     public static final String DATE_TIME = "yyyy-MM-dd HH:mm:ss";
 
     /**
+     * 上海时区
+     */
+    public static final ZoneId GLOBAL_ZONE_ID = ZoneId.of("Asia/Shanghai");
+
+    /**
+     * 全局默认东八区时区
+     */
+    public static final ZoneOffset DEFAULT_GMT = ZoneOffset.of("+8");
+
+    /**
      * 获取本月第一天
      *
      * @return Date
@@ -81,7 +91,8 @@ public class DateUtils {
      * @return Date
      */
     public static Long getMonthFirstSecondsByDayFormatter(Integer month) {
-        return LocalDate.parse(month + "01", DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
+        return LocalDate.parse(month + "01", DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8))
+                .toInstant().getEpochSecond();
     }
 
     /**
@@ -91,7 +102,8 @@ public class DateUtils {
      * @return Date
      */
     public static Long getDayFirstSecondsByDayFormatter(Integer monthDay) {
-        return LocalDate.parse(String.valueOf(monthDay), DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
+        return LocalDate.parse(String.valueOf(monthDay), DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(
+                ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
     }
 
     /**
@@ -105,6 +117,7 @@ public class DateUtils {
 
     /**
      * 获取日期的起始时间 如某天 00:00:00
+     *
      * @param time
      * @return
      */
@@ -120,22 +133,44 @@ public class DateUtils {
 
     /**
      * 今天的开始时间戳
+     *
      * @return
      */
-    public static Long getStartTimestamp(){
-        return LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toEpochSecond();
+    public static Long getTodayStartTimeSeconds() {
+        return LocalDate.now().atStartOfDay().atZone(GLOBAL_ZONE_ID).toEpochSecond();
     }
 
     /**
      * 今天的结束时间戳
+     *
      * @return
      */
-    public static Long getEndTimestamp(){
-        return getStartTimestamp() + 86399L;
+    public static Long getTodayEndTimeSeconds() {
+        return getTodayStartTimeSeconds() + TimeUnit.HOURS.toSeconds(24) - 1;
+    }
+
+    /**
+     * 获取今天还剩多少秒
+     *
+     * @return
+     */
+    public static Long getRemainingSecondsOfToday() {
+        return getTodayEndTimeSeconds() - DateUtils.currentTimeSeconds();
+    }
+
+
+    /**
+     * 获取当天时间在今天开始时间后已过去多少秒
+     *
+     * @return
+     */
+    public static Long getPastSecondsOfStartToday() {
+        return DateUtils.currentTimeSeconds() - getTodayStartTimeSeconds();
     }
 
     /**
      * 获取日期的结束时间 如某天 23:59:59
+     *
      * @param time
      * @return
      */
@@ -176,9 +211,7 @@ public class DateUtils {
             return 0;
         }
         DateTime dateTime = new DateTime(birthDay.getTime());
-        return (int) DateTime.now()
-                .between(dateTime)
-                .betweenYear(false);
+        return (int) DateTime.now().between(dateTime).betweenYear(false);
     }
 
     /**
@@ -205,7 +238,7 @@ public class DateUtils {
         final int[] hourMinute = checkHourMinute(hourMinuteStr);
         int hour = hourMinute[0];
         int minute = hourMinute[1];
-        return hour * 60 * 60 * 1000 + minute * 60 * 1000;
+        return (long) hour * 60 * 60 * 1000 + (long) minute * 60 * 1000;
     }
 
 
@@ -245,13 +278,17 @@ public class DateUtils {
     }
 
     /**
-     * 使用系统默认时区LocalDateTime转Instant
+     * 使用全局设置时区LocalDateTime转Instant
      *
      * @param localDateTime
      * @return
      */
     public static Instant toZhCnInstant(LocalDateTime localDateTime) {
-        return Objects.isNull(localDateTime) ? null : localDateTime.atZone(ZoneId.of("Asia/Shanghai")).toInstant();
+        if (Objects.isNull(localDateTime)) {
+            return null;
+        } else {
+            return localDateTime.atZone(GLOBAL_ZONE_ID).toInstant();
+        }
     }
 
 
@@ -290,7 +327,7 @@ public class DateUtils {
      * @return
      */
     public static Long toZhCnSeconds(LocalDateTime localDateTime) {
-        return localDateTime.toEpochSecond(ZoneOffset.of("+8"));
+        return localDateTime.toEpochSecond(DEFAULT_GMT);
     }
 
     /**
@@ -300,17 +337,18 @@ public class DateUtils {
      * @return
      */
     public static LocalDateTime ofSeconds(long seconds) {
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8"));
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), DEFAULT_GMT);
     }
 
     /**
      * 时间戳转  LocalDate
+     *
      * @param seconds
      * @return
      */
     public static LocalDate toLocalDate(long seconds) {
         Instant instant = Instant.ofEpochSecond(seconds);
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        return instant.atZone(GLOBAL_ZONE_ID).toLocalDate();
     }
 
     /**
@@ -320,7 +358,7 @@ public class DateUtils {
      * @return
      */
     public static LocalDateTime ofMillis(long millis) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8"));
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), DEFAULT_GMT);
     }
 
     /**
@@ -407,6 +445,7 @@ public class DateUtils {
 
     /**
      * 当前年月日
+     *
      * @return
      */
     public static Integer currentYearMonthDay() {
@@ -415,6 +454,7 @@ public class DateUtils {
 
     /**
      * 当前年月日
+     *
      * @param calibration 0 今天 -1 昨天 1 明天
      * @return
      */
@@ -424,6 +464,7 @@ public class DateUtils {
 
     /**
      * 当前年月日 小时
+     *
      * @param calibration 0 今天 -1 昨天 1 明天
      * @return
      */
@@ -437,7 +478,7 @@ public class DateUtils {
      * @param calibration 校准
      * @return {@link Integer}
      */
-    public static Integer currentYearWeek(int calibration){
+    public static Integer currentYearWeek(int calibration) {
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int weekNumber = LocalDate.now().plusWeeks(calibration).get(weekFields.weekOfWeekBasedYear());
         return weekNumber;
@@ -454,17 +495,19 @@ public class DateUtils {
 
     /**
      * 当前年月日
-     * @return  '20231212'
+     *
+     * @return '20231212'
      */
-    public static String formatYmd(){
+    public static String formatYmd() {
         return DAY_INTEGER_FORMATTER.format(LocalDate.now());
     }
 
     /**
      * 当前年月
-     * @return  '202312'
+     *
+     * @return '202312'
      */
-    public static String currentYm(){
+    public static String currentYm() {
         return MONTH_INTEGER_FORMATTER.format(LocalDate.now());
     }
 
@@ -474,7 +517,8 @@ public class DateUtils {
      * @return
      */
     public static Integer formatYearMonthDayBySeconds(Long seconds) {
-        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
+        return Integer.parseInt(
+                DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
     }
 
     /**
@@ -487,6 +531,16 @@ public class DateUtils {
     }
 
     /**
+     * 根据毫秒时间戳格式化当前年月
+     *
+     * @param milli
+     * @return
+     */
+    public static String formatYmdByMilli(Long milli) {
+        return DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.of("+8")));
+    }
+
+    /**
      * 当前年月
      *
      * @return
@@ -494,8 +548,10 @@ public class DateUtils {
     public static Integer currentYearMonth() {
         return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now()));
     }
+
     /**
      * 当前年月
+     *
      * @param calibration 0 单月 -1 上个月 1 下个月
      * @return
      */
@@ -509,7 +565,8 @@ public class DateUtils {
      * @return
      */
     public static Integer formatYearMonthBySeconds(Long seconds) {
-        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.of("+8"))));
     }
 
     /**
@@ -537,16 +594,17 @@ public class DateUtils {
      * @return
      */
     public static String standardFormatSeconds(Long seconds) {
-        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), DEFAULT_GMT));
     }
 
     /**
      * 将秒标准格式化输出
+     *
      * @param seconds
      * @return
      */
-    public static String standardFormatSeconds(Long seconds, DateTimeFormatter formatter){
-        return formatter.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+    public static String standardFormatSeconds(Long seconds, DateTimeFormatter formatter) {
+        return formatter.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), DEFAULT_GMT));
     }
 
     /**
@@ -556,7 +614,7 @@ public class DateUtils {
      * @return
      */
     public static String standardFormatMillis(Long millis) {
-        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.of("+8")));
+        return STANDARD_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), DEFAULT_GMT));
     }
 
 
@@ -567,28 +625,30 @@ public class DateUtils {
      * @return
      */
     public static String standardNumberFormatSeconds(Long seconds) {
-        return STANDARD_NUMBER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.of("+8")));
+        return STANDARD_NUMBER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), DEFAULT_GMT));
     }
 
-    public static String formatDate(Date date, String format){
+    public static String formatDate(Date date, String format) {
         return new SimpleDateFormat(format).format(date);
     }
 
     /**
      * 格式化时间
+     *
      * @param time
      * @param format
      * @return
      */
-    public static String formatDate(LocalDateTime time, DateTimeFormatter format){
+    public static String formatDate(LocalDateTime time, DateTimeFormatter format) {
         return format.format(time);
     }
 
     /**
      * 格式化时间
+     *
      * @return 'yyyy-MM-dd HH:mm:ss'
      */
-    public static String formatDate(Date date){
+    public static String formatDate(Date date) {
         return new SimpleDateFormat(DATE_TIME).format(date);
     }
 
@@ -605,6 +665,7 @@ public class DateUtils {
 
     /**
      * 获取日期的起始时间 如某天 00:00:00
+     *
      * @param time
      * @return
      */
@@ -614,6 +675,7 @@ public class DateUtils {
 
     /**
      * 获取日期的结束时间 如某天 23:59:59
+     *
      * @param time
      * @return
      */
@@ -634,31 +696,34 @@ public class DateUtils {
 
     /**
      * 获取前后指定小时的 时间戳
+     *
      * @param day
      * @param hour
      * @return
      */
-    public static long assignDateSeconds(int day, int hour){
-        return LocalDateTime.of(LocalDate.now().plusDays(day), LocalTime.of(hour, 0))
-                .atZone(ZoneId.systemDefault()).toEpochSecond();
+    public static long assignDateSeconds(int day, int hour) {
+        return LocalDateTime.of(LocalDate.now().plusDays(day), LocalTime.of(hour, 0)).atZone(GLOBAL_ZONE_ID)
+                .toEpochSecond();
     }
 
     /**
      * 今天日期往后推NUM天
+     *
      * @param num
      * @param pattern
      * @return
      */
-    public static String getDateFormatByPlus(int num,String pattern){
+    public static String getDateFormatByPlus(int num, String pattern) {
         return LocalDateTime.now().plusDays(num).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
      * LocalDateTime 转 Date
+     *
      * @param localDateTime
      * @return
      */
-    public static Date asDate(LocalDateTime localDateTime){
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    public static Date asDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(GLOBAL_ZONE_ID).toInstant());
     }
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2024/06/05 19:23
  */
@@ -27,6 +27,7 @@ public class GlobalExceptionEventPayload {
      * 请求体
      */
     private String body;
+
 
     /**
      * 当前主机地址
@@ -49,9 +50,33 @@ public class GlobalExceptionEventPayload {
     private Long timestamps;
 
     /**
+     * 错误码
+     */
+    private String errorCode;
+
+    /**
      * 异常信息
      */
     private String errorMessage;
 
+    /**
+     * 设备号
+     */
+    private String imei;
+
+    /**
+     * uid,
+     */
+    private String uid;
+
+    /**
+     * os
+     */
+    private String os;
+
+    /**
+     * 是否网关转发
+     */
+    private Boolean isGatewayDispatch = Boolean.FALSE;
 
 }

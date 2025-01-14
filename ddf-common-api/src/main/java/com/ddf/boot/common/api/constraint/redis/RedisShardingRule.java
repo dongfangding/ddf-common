@@ -3,7 +3,7 @@ package com.ddf.boot.common.api.constraint.redis;
 /**
  * <p>redis分片key规则定义</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2023/02/06 15:18
  */

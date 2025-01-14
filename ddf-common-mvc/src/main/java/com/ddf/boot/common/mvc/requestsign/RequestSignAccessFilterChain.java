@@ -6,7 +6,7 @@ import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.common.request.BaseSign;
 import com.ddf.boot.common.core.config.GlobalProperties;
-import com.ddf.boot.common.core.util.SignatureUtils;
+import com.ddf.boot.common.core.util.SignatureUtil;
 import com.ddf.boot.common.mvc.logaccess.AccessFilterChain;
 import com.ddf.boot.common.mvc.util.AopUtil;
 import java.util.Map;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/01/13 21:27
  */
@@ -107,7 +107,7 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
                 throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
         }
-        result = SignatureUtils.verifySelfSignature(data, sign, keySecret);
+        result = SignatureUtil.verifySelfSignature(data, sign, keySecret);
         if (!result) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }

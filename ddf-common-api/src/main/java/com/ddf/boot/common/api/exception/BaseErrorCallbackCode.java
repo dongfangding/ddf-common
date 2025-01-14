@@ -41,10 +41,12 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     SIGN_TIMESTAMP_ERROR("SIGN_TIMESTAMP_ERROR", "签名校验失败，数据已过期"),
 
+    ILLEGAL_TOKEN("ILLEGAL_TOKEN", "非法Token"),
+
     MAIL_SEND_FAILURE("MAIL_SEND_FAILURE", "邮件发送失败"),
     SERIALIZE_PARAM_ERROR(
             "JSON_SERIALIZER_FILED",
-            "序列化参数失败， 请检查是否有入参对象无法序列化[com.ddf.boot.common.core.util.AopUtil.getSerializableParamMap]"
+            "序列化参数失败， 请检查是否有入参对象无法序列化[com.nvwa.boot.common.core.util.AopUtil.getSerializableParamMap]"
     ),
 
     JSON_SERIALIZER_FILED("JSON_SERIALIZER_FILED", "Json序列化失败"),
@@ -52,13 +54,13 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     COMPLETE("200", "请求成功"),
 
-    BAD_REQUEST("BAD_REQUEST", "错误请求"),
+    BAD_REQUEST("BAD_REQUEST", "错误请求", "错误请求"),
 
     UNAUTHORIZED("401", "未通过认证"),
 
-    ACCESS_FORBIDDEN("403", "权限未通过，访问被拒绝"),
+    ACCESS_FORBIDDEN("403", "权限未通过，访问被拒绝", "权限未通过，访问被拒绝"),
 
-    SERVER_ERROR("500", "服务端异常"),
+    SERVER_ERROR("SERVER_ERROR", "服务端异常", "请求失败，请联系客服人员~"),
 
     BIZ_EXCEPTION("BIZ_EXCEPTION", "业务异常"),
     UPLOAD_FILE_ERROR("UPLOAD_FILE_ERROR", "文件上传失败"),
@@ -67,15 +69,32 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     REDIS_SHARDING_KEY_NOT_MATCH_ARGS("REDIS_SHARDING_KEY_NOT_MATCH_ARGS", "redis路由key定义变量与实际参数不匹配"),
 
     PARAM_ERROR("PARAM_ERROR", "参数错误"),
-
+    PARAM_MISSING("PARAM_MISSING", "参数丢失"),
+    ILLEGAL_PARAM("ILLEGAL_PARAM", "参数不合法"),
     ILLEGAL_REQUEST("ILLEGAL_REQUEST", "请求不合法"),
-    USER_INFO_EXPIRED_OR_NOT_EXIST("USER_INFO_EXPIRED_OR_NOT_EXIST", "用户信息已失效，请重新登录"),
-    ILLEGAL_TOKEN("ILLEGAL_TOKEN", "token格式不合法"),
-    FORGE_TOKEN("FORGE_TOKEN", "伪造身份信息"),
-    TOKEN_EXPIRED("TOKEN_EXPIRED", "已过期的登录信息，请重新登录"),
-    USER_IN_BLACK("USER_IN_BLACK", "您的账号已被封禁"),
 
-    DUPLICATE_KEY("DUPLICATE_KEY", "资源重复", "违反唯一约束");
+    DUPLICATE_KEY("DUPLICATE_KEY", "违反唯一约束", "已存在相同的记录"),
+
+    ENTRY_NOT_EXISTS("ENTRY_NOT_EXISTS", "数据不存在", "操作的资源不存在"),
+
+    ILLEGAL_OPERATE("ILLEGAL_OPERATE", "不允许的操作", "不允许执行该操作"),
+    /**
+     * 验证码异常
+     */
+    VERIFY_CODE_EXPIRED("VERIFY_CODE_EXPIRED", "验证码已过期"),
+    VERIFY_CODE_NOT_MATCH("VERIFY_CODE_NOT_MATCH", "验证码不匹配"),
+    DATA_EXPIRED("DATA_EXPIRED", "数据已过期，请重新尝试"),
+    PLEASE_SLOW_DOWN("PLEASE_SLOW_DOWN", "手速太快啦~"),
+    VERSION_CONTROL("VERSION_CONTROL", "请更新至最新版本再使用该功能!"),
+    ILLEGAL_EMAIL("ILLEGAL_EMAIL", "邮箱格式不正确"),
+    NO_SUPPORT_EMAIL_AREA("NO_SUPPORT_EMAIL_AREA", "不支持的邮箱区域"),
+    ILLEGAL_PASSWORD("ILLEGAL_PASSWORD", "ILLEGAL_PASSWORD"),
+    REQUEST_TOO_MANY("REQUEST_TOO_MANY", "请求已达上限"),
+    USER_INFO_EXPIRED_OR_NOT_EXIST("USER_INFO_EXPIRED_OR_NOT_EXIST", "用户信息已失效，请重新登录"),
+
+
+
+    ;
 
     /**
      * 异常code码

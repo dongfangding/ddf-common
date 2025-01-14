@@ -32,6 +32,11 @@ public class OnsClientExecuteException extends BaseException {
         return BaseErrorCallbackCode.SERVER_ERROR;
     }
 
+    @Override
+    public boolean isMaskErrorDetails() {
+        return true;
+    }
+
     public OnsClientExecuteException(String message, Throwable cause) {
         super(ONS_COMMON_CODE, message, cause);
     }

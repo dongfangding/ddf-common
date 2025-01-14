@@ -52,7 +52,6 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
         }
         // 获取最新用户信息
         UserClaim storeUser = userClaimService.getStoreUserInfo(request, tokenUserClaim);
-        PreconditionUtils.checkArgument(!storeUser.isDisabled(), new UnauthorizedException(BaseErrorCallbackCode.USER_IN_BLACK));
         return storeUser;
     }
 }

@@ -14,7 +14,7 @@ import javax.validation.Payload;
 /**
  * <p>身份证号码验证器</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/02/26 11:56
  */
@@ -29,7 +29,7 @@ public @interface IdCard {
      *
      * @return
      */
-    String message() default "手机号不合法";
+    String message() default "身份证号不合法";
 
     /**
      * 有效值, 默认0 和 1

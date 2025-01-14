@@ -1,6 +1,6 @@
 package com.ddf.boot.common.ext.sms.aliyun.config;
 
-import com.ddf.boot.common.core.util.SecureUtils;
+import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Preconditions;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,6 @@ public class AliYunSmsProperties implements InitializingBean {
      * 是否加密accessKeyId、accessKeySecret
      * 如果加密，则使用系统自带的AES算法进行解密
      *
-     * @see SecureUtils
      */
     private boolean secretAccessKey;
 
@@ -91,8 +90,8 @@ public class AliYunSmsProperties implements InitializingBean {
                 "请检查sms配置属性"
         );
         if (secretAccessKey) {
-            this.setAccessKeyId(SecureUtils.aesDecryptStr(this.getAccessKeyId()));
-            this.setAccessKeySecret(SecureUtils.aesDecryptStr(this.getAccessKeySecret()));
+            this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
+            this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
         }
     }
 

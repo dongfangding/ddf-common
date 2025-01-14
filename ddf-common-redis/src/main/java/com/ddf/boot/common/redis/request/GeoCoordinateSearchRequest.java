@@ -11,7 +11,7 @@ import org.redisson.api.GeoUnit;
 /**
  * <p>GEO基于坐标查询对象参数包装</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/04/23 16:14
  */

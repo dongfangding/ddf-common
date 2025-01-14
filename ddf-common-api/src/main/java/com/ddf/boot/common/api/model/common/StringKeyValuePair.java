@@ -1,7 +1,9 @@
 package com.ddf.boot.common.api.model.common;
 
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * String格式的键值对$
@@ -10,6 +12,8 @@ import lombok.Data;
  * @date 2020/10/26 0026 22:23
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class StringKeyValuePair implements Serializable {
 
     private static final long serialVersionUID = 4058628306908404491L;

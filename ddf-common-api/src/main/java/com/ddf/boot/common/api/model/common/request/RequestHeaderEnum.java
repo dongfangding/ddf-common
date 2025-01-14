@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 /**
  * <p>请求头通用参数枚举</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/12/31 17:56
  */
@@ -17,6 +17,20 @@ public enum RequestHeaderEnum {
      * 加签字段
      */
     SIGN("sign"),
+
+
+    /**
+     * 版本号（内部）
+     * 之后做版本控制使用
+     * eg: 10
+     */
+    VERSION_CODE("version_code"),
+
+    /**
+     * 版本号名称（版本）
+     * eg: 1.0.0
+     */
+    VERSION("version"),
 
     /**
      * 客户端操作系统， 如 pc/ios/android
@@ -29,38 +43,81 @@ public enum RequestHeaderEnum {
      */
     IMEI("imei"),
 
+
     /**
      * 防重放字段， 毫秒时间戳
      */
     NONCE("nonce"),
 
     /**
-     * 版本号（外显）
-     * eg: 1.1.1
+     * APP设置的语言
      */
-    VERSION("version"),
+    APP_LANGUAGE("app_language"),
 
     /**
-     * 版本号（内部）
-     * 之后做版本控制使用
-     * eg: 10
+     * 系统当前语言
      */
-    VERSION_CODE("versioncode"),
+    SYSTEM_LANGUAGE("system_language"),
 
     /**
-     * 应用渠道，如IOS的应用APPLE_STORE, 安卓则是各大应用商店，用于标识当前客户端下载自哪个平台
+     * 运营商
      */
-    CHANNEL("channel"),
+    SIM_OPERATOR("sim_operator"),
 
     /**
-     * 经度
+     * 是否使用了代理
      */
-    LONGITUDE("longitude"),
+    USE_PROXY("use_proxy"),
 
     /**
-     * 纬度
+     * 是否使用VPN
      */
-    LATITUDE("latitude"),
+    USE_VPN("use_vpn"),
+
+
+    /**
+     * 时区
+     */
+    TIME_ZONE("time_zone"),
+
+    /**
+     * 移动设备系统版本
+     */
+    OS_VERSION("os_version"),
+
+    /**
+     * 设备型号
+     */
+    DEVICE_MODE("device_mode"),
+
+
+    /**
+     * h5版本号
+     */
+    H5_VERSION("h5_version"),
+
+
+    /**
+     * ios的idfa
+     */
+    IOS_IDFA("ios_idfa"),
+
+
+    /**
+     * Android oa_id
+     */
+    OA_ID("oa_id"),
+
+    /**
+     * Android android_id
+     */
+    ANDROID_ID("android_id"),
+
+    /**
+     * 客户端ip
+     */
+    CLIENT_IP("client_ip"),
+
 
     /**
      * 客户端ip(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
@@ -76,6 +133,17 @@ public enum RequestHeaderEnum {
      * 链路追踪id(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
      */
     TRACE_ID_FROM_GATEWAY("trace_id_from_gateway"),
+
+    /**
+     * 广告渠道（下载渠道）
+     */
+    AD_CHANNEL("ad_channel"),
+
+    /**
+     * 是否网关调用
+     */
+    IS_GATEWAY_DISPATCH("is_gateway_dispatch")
+
 
     ;
     private final String name;

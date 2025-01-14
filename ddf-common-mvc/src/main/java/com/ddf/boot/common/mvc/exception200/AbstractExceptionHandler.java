@@ -1,20 +1,20 @@
 package com.ddf.boot.common.mvc.exception200;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.core.net.NetUtil;
 import com.ddf.boot.common.api.consts.AlarmLog;
 import com.ddf.boot.common.api.exception.AlarmException;
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
+import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.event.GlobalExceptionEvent;
 import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
+import com.ddf.boot.common.mvc.util.MessageSourceUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -28,18 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 /**
  * <p>description</p >
@@ -62,8 +59,6 @@ public abstract class AbstractExceptionHandler {
     private ExceptionHandlerMapping exceptionHandlerMapping;
     @Autowired
     private EnvironmentHelper environmentHelper;
-    @Autowired(required = false)
-    private MessageSource messageSource;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -78,34 +73,28 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-        String body = WebUtil.readBodyRepeat(httpServletRequest);
+        String body = WebUtil.readBody(httpServletRequest);
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
         final String uri = httpServletRequest.getRequestURI();
         final Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
+        // 是否要触发异常事件
         boolean shouldTriggerExceptionEvent = false;
         if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
                 exception.getClass().getName())) {
-            log.error("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
-                    uri, parameterMap, body, exception
+            log.error("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ", uri,
+                    parameterMap, body, exception
             );
             shouldTriggerExceptionEvent = true;
         } else {
             // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
-            log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ",
-                    uri, parameterMap, body, exception
+            log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ", uri,
+                    parameterMap, body, exception
             );
         }
         if (exception instanceof AlarmException) {
             AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", uri, exception);
         }
         //        }
-        // 是否将当前错误堆栈信息返回，默认返回，但提供某些环境下隐藏信息
-        boolean ignoreErrorStack = false;
-        List<String> ignoreErrorTraceProfile = globalProperties.getIgnoreErrorTraceProfile();
-        if (CollectionUtil.isNotEmpty(ignoreErrorTraceProfile) && environmentHelper.checkIsExistOr(
-                ignoreErrorTraceProfile)) {
-            ignoreErrorStack = true;
-        }
 
         final GlobalExceptionEventPayload payload = new GlobalExceptionEventPayload();
         payload.setUrl(uri);
@@ -127,9 +116,6 @@ public abstract class AbstractExceptionHandler {
             // 这里可以接管异常返回值， 如果为null, 继续走本类的逻辑，如果不为空， 则走实现里返回的
             ResponseData<?> responseData = exceptionHandlerMapping.takeOverException(exception);
             if (responseData != null) {
-                if (ignoreErrorStack) {
-                    responseData.setStack(null);
-                }
                 payload.setErrorMessage(responseData.getMessage());
                 // 基于事件的话，可以多订阅多实现
                 if (shouldTriggerExceptionEvent) {
@@ -138,53 +124,31 @@ public abstract class AbstractExceptionHandler {
                 return responseData;
             }
         }
-
-        String exceptionCode = "";
-        String message = "";
-        Object extra = null;
-        if (exception instanceof BaseException) {
-            BaseException baseException = (BaseException) exception;
-            exceptionCode = baseException.getCode();
-            // 解析异常类消息代码，并根据当前Local格式化资源文件
-            Locale locale = httpServletRequest.getLocale();
-            String description = baseException.getDescription();
-            if (!Objects.equals(baseException.defaultCallback(), baseException.getBaseCallbackCode())) {
-                // 有些走了自定义异常基类的，但是没有走这个接口赋值，就不会有值，比如throw new BadRequestException("bad_request", "xx不能为空)
-                if (Objects.isNull(baseException.getBaseCallbackCode())) {
-                    description = baseException.getDescription();
-                } else {
-                    description = baseException.getBaseCallbackCode().getBizMessage();
-                }
+        Locale locale = new Locale("en");
+        final String appLanguage = httpServletRequest.getHeader(RequestHeaderEnum.APP_LANGUAGE.getName());
+        try {
+            if (StringUtils.isNotBlank(appLanguage)) {
+                locale = new Locale(appLanguage);
             }
-            // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
-            message = messageSource.getMessage(baseException.getCode(), baseException.getParams(), description, locale);
-            extra = baseException.getExtra();
-        } else if (exception instanceof IllegalArgumentException) {
-            exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
-            message = exception.getMessage();
-        } else if (exception instanceof MultipartException) {
-            exceptionCode = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getCode();
-            message = exception.getMessage();
-        } else if (exception instanceof BindException) {
-            exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
-            message = ((BindException) exception).getBindingResult().getAllErrors().stream().map(
-                    ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-        } else if (exception instanceof org.springframework.dao.DuplicateKeyException
-                || exception instanceof SQLIntegrityConstraintViolationException) {
-            exceptionCode = BaseErrorCallbackCode.DUPLICATE_KEY.getCode();
-            message = BaseErrorCallbackCode.DUPLICATE_KEY.getBizMessage();
-        } else if (exceptionHandlerMapping != null) {
-            final BaseCallbackCode baseCallbackCode = exceptionHandlerMapping.resolveOtherException(exception);
-            if (Objects.nonNull(baseCallbackCode)) {
-                exceptionCode = baseCallbackCode.getCode();
-                message = baseCallbackCode.getBizMessage();
-            }
+        } catch (Exception e) {
+            log.error("解析App语言失败， 默认为繁体语种, header app_language = {}", appLanguage, e);
         }
+        // 解析异常
+        final ExceptionResolveResult exceptionResolveResult = resolveExceptionMessage(exception);
+        String exceptionCode = exceptionResolveResult.exceptionCode;
+        String formatDefaultMessage = exceptionResolveResult.formatDefaultMessage;
+        String formatCode = exceptionResolveResult.formatCode;
+        Object[] formatParams = exceptionResolveResult.formatParams;
+        String subMessage = exceptionResolveResult.subMessage;
+        Object extra = exceptionResolveResult.extra;
 
         if (StringUtils.isBlank(exceptionCode)) {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
-            message = "请求失败，请联系客服人员~";
+            formatDefaultMessage = BaseErrorCallbackCode.SERVER_ERROR.getBizMessage();
         }
+        // 根据异常资源文件格式化消息，找不到的话，使用默认异常本身的消息
+        String finalMessage = MessageSourceUtil.getMessage(
+                StringUtils.defaultIfBlank(formatCode, exceptionCode), formatParams, formatDefaultMessage, locale);
 
         if (globalProperties.isExceptionCodeToResponseStatus()) {
             String numberRegex = "\\d+";
@@ -195,18 +159,21 @@ public abstract class AbstractExceptionHandler {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
         }
-        // 附加服务消息
-        String extraServerMessage = String.format("[%s:%s]", environmentHelper.getApplicationName(),
-                NetUtil.getLocalhostStr()
-        );
-        // 基于事件的话，可以多订阅多实现
+        payload.setErrorCode(exceptionCode);
         payload.setErrorMessage(ExceptionUtil.stacktraceToString(exception));
+        try {
+            payload.setImei(httpServletRequest.getHeader(RequestHeaderEnum.IMEI.getName()));
+            payload.setOs(httpServletRequest.getHeader(RequestHeaderEnum.OS.getName()));
+            payload.setUid(httpServletRequest.getHeader(RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName()));
+            payload.setIsGatewayDispatch(Boolean.parseBoolean(StringUtils.defaultIfBlank(httpServletRequest.getHeader(RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName()), "false")));
+        } catch (Exception ignored) {
+
+        }
+        // 基于事件的话，可以多订阅多实现
         if (shouldTriggerExceptionEvent) {
             applicationEventPublisher.publishEvent(new GlobalExceptionEvent(this, payload));
         }
-        return ResponseData.failure(exceptionCode, message,
-                ignoreErrorStack ? "" : extraServerMessage + ":" + ExceptionUtils.getStackTrace(exception), extra
-        );
+        return ResponseData.failure(exceptionCode, finalMessage, subMessage, extra);
     }
 
 
@@ -216,25 +183,76 @@ public abstract class AbstractExceptionHandler {
      * @param exception
      * @return
      */
-    public static String resolveExceptionMessage(Exception exception) {
+    public static ExceptionResolveResult resolveExceptionMessage(Exception exception) {
         try {
-            if (exception instanceof BaseException) {
-                BaseException baseException = (BaseException) exception;
-                // 解析异常类消息代码，并根据当前Local格式化资源文件
-                Locale locale = WebUtil.getCurRequest().getLocale();
-                String description = baseException.getDescription();
-                if (Objects.nonNull(baseException.getBaseCallbackCode())) {
-                    description = baseException.getBaseCallbackCode().getBizMessage();
+            final ExceptionHandlerMapping exceptionHandlerMapping = SpringContextHolder.getBeanWithStatic(
+                    ExceptionHandlerMapping.class);
+            String exceptionCode = "";
+            // 原始异常描述
+            String subMessage = exception.getMessage();
+            Object extra = null;
+
+            Object[] formatParams = new Object[] {};
+            String formatCode = "";
+            String formatDefaultMessage = "";
+            if (exception instanceof BaseException baseException) {
+                // 默认的异常状态码
+                final BaseCallbackCode defaultCallbackCode = baseException.defaultCallback();
+                exceptionCode = baseException.getCode();
+                formatCode = baseException.getCode();
+                extra = baseException.getExtra();
+                subMessage = baseException.getDescription();
+                formatDefaultMessage = baseException.getDescription();
+                formatParams = baseException.getParams();
+                if (!Objects.equals(defaultCallbackCode, baseException.getBaseCallbackCode())) {
+                    // 有些走了自定义异常基类的，但是没有走这个接口赋值，就不会有值，比如throw new BadRequestException("bad_request", "xx不能为空)
+                    if (Objects.isNull(baseException.getBaseCallbackCode())) {
+                        formatDefaultMessage = baseException.getDescription();
+                    } else {
+                        formatDefaultMessage = baseException.getBaseCallbackCode().getBizMessage();
+                    }
                 }
-                // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
-                return SpringContextHolder.getBean(MessageSource.class).getMessage(baseException.getCode(),
-                        baseException.getParams(), description, locale
-                );
+                // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件, 根据不同异常，有些基于模糊化异常内容的目的，会使用默认状态码去格式化消息
+                if (baseException.isMaskErrorDetails()) {
+                    formatCode = defaultCallbackCode.getCode();
+                    formatDefaultMessage = defaultCallbackCode.getBizMessage();
+                }
+            } else if (exception instanceof IllegalArgumentException) {
+                exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
+                formatDefaultMessage = BaseErrorCallbackCode.BAD_REQUEST.getBizMessage();
+            } else if (exception instanceof MultipartException) {
+                exceptionCode = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getCode();
+                formatDefaultMessage = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getBizMessage();
+            } else if (exception instanceof BindException) {
+                exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
+                final BindingResult result = ((BindException) exception).getBindingResult();
+                subMessage = result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(
+                        Collectors.joining(";"));
+                formatDefaultMessage = BaseErrorCallbackCode.BAD_REQUEST.getBizMessage();
+                formatCode = result.getAllErrors().get(0).getDefaultMessage();
+            } else if (exception instanceof org.springframework.dao.DuplicateKeyException
+                    || exception instanceof SQLIntegrityConstraintViolationException) {
+                exceptionCode = BaseErrorCallbackCode.DUPLICATE_KEY.getCode();
+                formatDefaultMessage = BaseErrorCallbackCode.DUPLICATE_KEY.getBizMessage();
+            } else if (exceptionHandlerMapping != null) {
+                final BaseCallbackCode baseCallbackCode = exceptionHandlerMapping.resolveOtherException(exception);
+                if (Objects.nonNull(baseCallbackCode)) {
+                    exceptionCode = baseCallbackCode.getCode();
+                    formatDefaultMessage = baseCallbackCode.getBizMessage();
+                }
             }
-            return exception.getMessage();
+            return new ExceptionResolveResult(
+                    exceptionCode, formatCode, formatDefaultMessage, formatParams, subMessage, extra);
         } catch (Exception e) {
             log.error("解析异常消息时失败, 原始异常消息 = {}", exception, e);
-            return exception.getMessage();
+            return new ExceptionResolveResult(BaseErrorCallbackCode.SERVER_ERROR.getCode(),
+                    BaseErrorCallbackCode.SERVER_ERROR.getCode(), BaseErrorCallbackCode.SERVER_ERROR.getDescription(),
+                    new Object[] {}, BaseErrorCallbackCode.SERVER_ERROR.getBizMessage(), null
+            );
         }
+    }
+
+    public record ExceptionResolveResult(String exceptionCode, String formatCode, String formatDefaultMessage,
+                                         Object[] formatParams, String subMessage, Object extra) {
     }
 }

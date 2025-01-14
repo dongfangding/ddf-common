@@ -3,7 +3,6 @@ package com.ddf.boot.common.mvc.util;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.constant.GlobalConstants;
-import com.ddf.boot.common.mvc.config.CoreWebConfig;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Objects;
@@ -168,16 +167,16 @@ public class WebUtil {
 
 
     /**
-     * 获取可重复读取的body
+     * 读取body
      *
-     * @see CoreWebConfig#filterRegistration()
      * @param httpServletRequest
      * @return
      */
-    public static String readBodyRepeat(HttpServletRequest httpServletRequest) {
+    public static String readBody(HttpServletRequest httpServletRequest) {
         String body = "";
-        ContentCachingRequestWrapper contentCachingRequestWrapper = org.springframework.web.util.WebUtils.getNativeRequest(
-                httpServletRequest, ContentCachingRequestWrapper.class);
+        ContentCachingRequestWrapper contentCachingRequestWrapper =
+                org.springframework.web.util.WebUtils.getNativeRequest(
+                        httpServletRequest, ContentCachingRequestWrapper.class);
         if (Objects.nonNull(contentCachingRequestWrapper)) {
             body = new String(contentCachingRequestWrapper.getContentAsByteArray());
         }

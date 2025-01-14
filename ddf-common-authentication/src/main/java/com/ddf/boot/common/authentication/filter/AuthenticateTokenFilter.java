@@ -19,8 +19,8 @@ import com.ddf.boot.common.authentication.util.UserContextUtil;
 import com.ddf.boot.common.core.authentication.TokenUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
-import com.ddf.boot.common.core.util.IdsUtils;
-import com.ddf.boot.common.core.util.SignatureUtils;
+import com.ddf.boot.common.core.util.IdsUtil;
+import com.ddf.boot.common.core.util.SignatureUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
@@ -164,7 +164,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param request
      */
     private void resolveBodySignData(HttpServletRequest request) {
-        final String body = WebUtil.readBodyRepeat(request);
+        final String body = WebUtil.readBody(request);
         Map dataMap = StringUtils.isNotBlank(body) ? JsonUtil.toBean(body, Map.class) : new HashMap();
         validSign(request, dataMap);
     }
@@ -195,7 +195,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             return;
         }
         if (!(authenticateProperties.isMockSignEnabled() && Objects.equals(authenticateProperties.getMockSign(), sign))
-                && !SignatureUtils.verifySelfSignature(data, sign, authenticateProperties.getSignSecret())) {
+                && !SignatureUtil.verifySelfSignature(data, sign, authenticateProperties.getSignSecret())) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
     }
@@ -207,7 +207,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @return
      */
     private String generateTraceId(String userId) {
-        return String.join("-", userId, IdsUtils.getNextStrId());
+        return String.join("-", userId, IdsUtil.getNextStrId());
     }
 
     /**
@@ -261,17 +261,12 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         UserContextUtil.setRequestContext(RequestContext.builder()
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
-                .channel(request.getHeader(RequestHeaderEnum.CHANNEL.getName()))
                 .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
                 .nonce(Long.parseLong(
                         ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
                 .version(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION.getName()), "1.0.0"))
                 .versionCode(Long.parseLong(
                         ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION_CODE.getName()), "0")))
-                .longitude(new BigDecimal(
-                        ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LONGITUDE.getName()), "0")))
-                .latitude(new BigDecimal(
-                        ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.LATITUDE.getName()), "0")))
                 .requestUri(request.getRequestURI())
                 .clientIp(request.getHeader(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName()))
                 .clientIpFromGateway(request.getHeader(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName()))

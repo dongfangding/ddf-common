@@ -2,16 +2,15 @@ package com.ddf.boot.common.api.constraint.redis;
 
 import com.ddf.boot.common.api.enums.RedisKeyTypeEnum;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
-import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.api.util.PatternUtil;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * <p>redis key的约束模板</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2023/02/06 14:07
  */
@@ -69,9 +68,9 @@ public interface RedisKeyConstraint {
     default String getKey(String... args) {
         String template = getTemplate();
         if (PatternUtil.findChildStrCount(template, TEMPLATE_SPLIT_CHAR) != args.length) {
-            throw new BusinessException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
+            throw new ServerErrorException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
         }
-        return String.format(template, Arrays.stream(args).toArray());
+        return String.format(template, args);
     }
 
     /**
@@ -85,6 +84,6 @@ public interface RedisKeyConstraint {
         if (Objects.isNull(shardingRule)) {
             return getKey(args);
         }
-        return String.join("_", String.format(getTemplate(), Arrays.stream(args).toArray()), shardingRule.getSharding(args));
+        return String.join("_", String.format(getTemplate(), args), shardingRule.getSharding(args));
     }
 }

@@ -43,6 +43,12 @@ public interface RedisLuaScript {
             new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
 
     /**
+     * 基于String结构的自增并增加上限判定的通用脚本
+     */
+    RedisScript<String> STRING_INCREMENT_CHECK = RedisScript.of(
+            new ClassPathResource("lua/StringIncrementWithLimitCheck.lua"), String.class);
+
+    /**
      * hash自增时进行取模运算后反减运算消耗值，结果返回取整后的值
      */
     RedisScript<String> HASH_INCREASE_ROUNDING_REDUCE = RedisScript.of(

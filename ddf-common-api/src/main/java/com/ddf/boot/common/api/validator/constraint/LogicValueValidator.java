@@ -13,13 +13,12 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>针对业务字段值进行有效值校验
  * </p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/02/26 10:53
  */
@@ -41,7 +40,7 @@ public @interface LogicValueValidator {
      *
      * @return
      */
-    String[] values() default {"0", "1"};
+    int[] values() default {0, 1};
 
     /**
      * 即使用不到也要保留，否则会报错
@@ -59,12 +58,12 @@ public @interface LogicValueValidator {
      * 验证器实现
      *
      */
-    class ActiveValidatorImpl implements ConstraintValidator<LogicValueValidator, String> {
+    class ActiveValidatorImpl implements ConstraintValidator<LogicValueValidator, Integer> {
 
         /**
          * 有效值
          **/
-        private Set<String> values = Collections.emptySet();
+        private Set<Integer> values = Collections.emptySet();
 
         /**
          * 初始化参数
@@ -75,7 +74,7 @@ public @interface LogicValueValidator {
         public void initialize(LogicValueValidator constraintAnnotation) {
             if (constraintAnnotation.values().length > 0) {
                 values = new HashSet<>(constraintAnnotation.values().length);
-                for (String value : constraintAnnotation.values()) {
+                for (int value : constraintAnnotation.values()) {
                     values.add(value);
                 }
             }
@@ -88,8 +87,8 @@ public @interface LogicValueValidator {
          * @return {@code false} if {@code value} does not pass the constraint
          */
         @Override
-        public boolean isValid(String value, ConstraintValidatorContext context) {
-            return StringUtils.isBlank(value) || values.contains(value);
+        public boolean isValid(Integer value, ConstraintValidatorContext context) {
+            return Objects.isNull(value) || values.contains(value);
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.ddf.boot.common.api.constraint.redis;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
-import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.exception.ServerErrorException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <p>基于字符最后位数字符来进行redis key的分片策略</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2023/02/06 15:24
  */
@@ -33,7 +33,7 @@ public class StringLastCharShardingRule implements RedisShardingRule<Integer, In
     @Override
     public String getSharding(String... args) {
         if (shardingKeyInArgsIndex >= args.length) {
-            throw new BusinessException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
+            throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
         }
         final String arg = args[shardingKeyInArgsIndex];
         if (shardingMod >= arg.length()) {

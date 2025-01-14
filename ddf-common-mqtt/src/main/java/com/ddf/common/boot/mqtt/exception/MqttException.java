@@ -31,4 +31,9 @@ public class MqttException extends BaseException {
     public BaseCallbackCode defaultCallback() {
         return BaseErrorCallbackCode.DEMO_BLA_BLA;
     }
+
+    @Override
+    public boolean isMaskErrorDetails() {
+        return true;
+    }
 }

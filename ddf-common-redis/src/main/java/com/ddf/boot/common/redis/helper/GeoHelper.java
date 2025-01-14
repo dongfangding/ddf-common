@@ -21,7 +21,7 @@ import org.redisson.config.Config;
 /**
  * <p>基于地理空间的的帮助类</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/04/23 15:08
  */
@@ -241,7 +241,7 @@ public class GeoHelper {
     public static void main(String[] args) {
         final Config config = new Config();
         config.useSingleServer()
-                .setAddress("redis://www.snowball.fans:6379")
+                .setAddress("redis://www.rebot.fans:6379")
                 .setPassword("Dongfang.ding_redis");
         config.setCodec(new JsonJacksonCodec());
         final RedissonClient redisson = Redisson.create(config);

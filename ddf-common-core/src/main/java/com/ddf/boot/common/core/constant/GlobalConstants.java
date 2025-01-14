@@ -41,7 +41,7 @@ public class GlobalConstants {
     /**
      * 基础包
      */
-    public static final String CORE_BASE_PACKAGE = "com.ddf.boot.common.core";
+    public static final String CORE_BASE_PACKAGE = "com.boot.common.core";
 
     /**
      * byte类型的true,适用于所有Byte类型是否的判断

@@ -27,7 +27,7 @@ public class ConfigResponse<T> {
 
     private static Map<String, Constructor> constructorMap = new ConcurrentHashMap<>();
 
-    private static final ConfigResponse EMPTY_CONFIG = new ConfigResponse<>();
+    private static final ConfigResponse EMPTY_CONFIG = new ConfigResponse();
 
     /**
      * 配置code

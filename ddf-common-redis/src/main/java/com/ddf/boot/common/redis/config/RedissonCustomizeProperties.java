@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 参考org.redisson.spring.starter.RedissonAutoConfiguration
  * </p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/04/25 10:54
  */

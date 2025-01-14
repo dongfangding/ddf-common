@@ -208,6 +208,14 @@ public class CoreWebConfig implements WebMvcConfigurer {
         return threadPoolScheduler;
     }
 
+    @Bean
+    @Primary
+    @ConditionalOnMissingBean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
     /**
      * 解决body不能重复读取问题
      * <p>

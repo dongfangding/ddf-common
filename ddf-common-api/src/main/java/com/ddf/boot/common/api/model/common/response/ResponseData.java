@@ -46,15 +46,16 @@ public class ResponseData<T> {
      * 返回消息代码
      */
     private String code;
-
     /**
-     * 返回消息
+     * 返回消息（很多场景下是被模糊化的提示，主要用来做toast）
      */
     private String message;
+
     /**
-     * 错误堆栈信息
+     * 实际消息（不需要做toast用，只是联调时能够知道具体消息）
      */
-    private String stack;
+    private String subMessage;
+
     /**
      * 响应时间
      */
@@ -72,18 +73,18 @@ public class ResponseData<T> {
     private Object extra;
 
 
-    public ResponseData(String code, String message, String stack, long timestamp, T data) {
+    public ResponseData(String code, String message, String subMessage, long timestamp, T data) {
         this.code = code;
         this.message = message;
-        this.stack = stack;
+        this.subMessage = subMessage;
         this.timestamp = timestamp;
         this.data = data;
     }
 
-    public ResponseData(String code, String message, String stack, long timestamp, T data, Object extra) {
+    public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra) {
         this.code = code;
         this.message = message;
-        this.stack = stack;
+        this.subMessage = subMessage;
         this.timestamp = timestamp;
         this.data = data;
         this.extra = extra;
@@ -98,19 +99,21 @@ public class ResponseData<T> {
      */
     public static <T> ResponseData<T> success(T data) {
         return new ResponseData<>(
-                BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), data
+                BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), data
         );
     }
 
     /**
      * 成功返回数据方法 - 自定义成功提示语
      *
-     * @param data  数据
-     * @param desc  提示语
+     * @param data 数据
+     * @param desc 提示语
      */
     public static <T> ResponseData<T> success(T data, String desc) {
-        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), desc, "", System.currentTimeMillis(), data);
+        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
+                desc, System.currentTimeMillis(), data
+        );
     }
 
     /**
@@ -121,9 +124,8 @@ public class ResponseData<T> {
      * @return
      */
     public static <T> ResponseData<T> success(T data, Object extra) {
-        return new ResponseData<>(
-                BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), data, extra
+        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), data, extra
         );
     }
 
@@ -133,9 +135,8 @@ public class ResponseData<T> {
      * @return
      */
     public static ResponseData<Void> empty() {
-        return new ResponseData<>(
-                BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), "", System.currentTimeMillis(), null
+        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
+                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), null
         );
     }
 
@@ -147,7 +148,9 @@ public class ResponseData<T> {
      * @return
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode) {
-        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(), "", System.currentTimeMillis(), null);
+        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(),
+                baseCallbackCode.getDescription(), System.currentTimeMillis(), null
+        );
     }
 
     /**
@@ -158,7 +161,9 @@ public class ResponseData<T> {
      * @return
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode, Object extra) {
-        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(), "", System.currentTimeMillis(), null, extra);
+        return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(),
+                baseCallbackCode.getDescription(), System.currentTimeMillis(), null, extra
+        );
     }
 
     /**
@@ -166,12 +171,11 @@ public class ResponseData<T> {
      *
      * @param code
      * @param message
-     * @param stack
      * @param <T>
      * @return
      */
-    public static <T> ResponseData<T> failure(String code, String message, String stack) {
-        return new ResponseData<>(code, message, stack, System.currentTimeMillis(), null);
+    public static <T> ResponseData<T> failure(String code, String message) {
+        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null);
     }
 
     /**
@@ -179,12 +183,35 @@ public class ResponseData<T> {
      *
      * @param code
      * @param message
-     * @param stack
      * @param <T>
      * @return
      */
-    public static <T> ResponseData<T> failure(String code, String message, String stack, Object extra) {
-        return new ResponseData<>(code, message, stack, System.currentTimeMillis(), null, extra);
+    public static <T> ResponseData<T> failure(String code, String message, String subMessage) {
+        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null);
+    }
+
+    /**
+     * 失败返回消息方法
+     *
+     * @param code
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(String code, String message, Object extra) {
+        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null, extra);
+    }
+
+    /**
+     * 失败返回消息方法
+     *
+     * @param code
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra) {
+        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra);
     }
 
 

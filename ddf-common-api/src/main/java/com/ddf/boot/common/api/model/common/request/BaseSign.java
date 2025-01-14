@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 未使用基础类， 让请求类继承的方式，而是通过接口
  * </p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/01/04 20:04
  */

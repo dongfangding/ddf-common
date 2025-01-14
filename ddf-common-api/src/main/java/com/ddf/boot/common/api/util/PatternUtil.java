@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * <p>正则表达式工具类</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/09/13 20:08
  */

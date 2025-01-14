@@ -247,7 +247,7 @@ public class ResponseData<T> {
 
   提供bean拷贝工具
 
-- com.ddf.boot.common.core.util.IdsUtils
+- com.ddf.boot.common.core.util.IdsUtil
   基于Hutool单机版直接使用的雪花id
 
 - com.ddf.boot.common.core.util.JsonUtil
@@ -267,7 +267,7 @@ public class ResponseData<T> {
 - com.ddf.boot.common.core.util.WebUtil
   提供提供获取HttpServlet对象及常用方法
 
-- com.ddf.boot.common.core.util.VerifyCodeUtils
+- com.ddf.boot.common.core.util.VerifyCodeUtil
   网上摘录的验证码生成工具
 
 ## ddf-common-distributed-lock

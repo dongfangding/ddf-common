@@ -6,7 +6,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 /**
  * <p>由于拦截只需要拦截一次，但是可能会做不同的业务，如果每个业务都写一个aop，也是很烦的，这里在拦截后提供一个接口，会去调用实现</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/12/31 15:33
  */

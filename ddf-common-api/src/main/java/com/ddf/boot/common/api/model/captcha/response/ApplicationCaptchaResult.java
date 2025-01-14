@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * <p>验证码应用返回结果，屏蔽某些关键信息</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
      * @date 2021/03/02 16:`19`
  */

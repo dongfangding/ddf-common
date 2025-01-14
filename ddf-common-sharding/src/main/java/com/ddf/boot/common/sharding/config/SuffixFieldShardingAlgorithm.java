@@ -8,7 +8,7 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.StandardSharding
 /**
  * <p>按照后缀名分表， 直接取分表字段的值拼接到逻辑表后缀</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @since 2023/07/20 20:02
  */

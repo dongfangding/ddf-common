@@ -140,7 +140,7 @@ public class AccessLogAspect {
             if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
                     throwable.getClass().getName())) {
                 logger.error("[{}]-[{}]{}请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(),
-                        pointMethod.getName(), logName, paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable),
+                        pointMethod.getName(), logName, paramJson, AbstractExceptionHandler.resolveExceptionMessage(throwable).formatDefaultMessage(),
                         throwable
                 );
             }
@@ -155,7 +155,7 @@ public class AccessLogAspect {
      * @param methodName
      * @param consumerTime
      */
-    public void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
+    private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
         long slowTime = logAspectConfiguration.getSlowTime();
         if (consumerTime > slowTime && slowEventAction != null && !checkIgnore(className)) {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制

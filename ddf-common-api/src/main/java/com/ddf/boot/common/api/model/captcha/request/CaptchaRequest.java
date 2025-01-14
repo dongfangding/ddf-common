@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>验证码请求类</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2021/07/12 14:32
  */
@@ -25,7 +25,6 @@ public class CaptchaRequest implements Serializable {
     /**
      * 验证码类型
      */
-    @Builder.Default
     private CaptchaType captchaType = CaptchaType.MATH;
 
 }

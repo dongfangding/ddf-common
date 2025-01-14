@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ExceptionHandlerMapping {
 
+
     /**
      * 通知异常，不提供返回值，有异常就触发，可以实现做一些异常的提醒之类的
      */
@@ -43,5 +44,4 @@ public interface ExceptionHandlerMapping {
     default BaseCallbackCode resolveOtherException(Exception exception) {
         return null;
     }
-
 }

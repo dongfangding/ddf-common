@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * <p>简单的基于redisson去创建多redis客户端，注意只支持单机连接方式</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @since 2023/10/06 18:09
  */

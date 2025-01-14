@@ -12,7 +12,7 @@ import com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.util.IdsUtils;
+import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtils;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
@@ -101,7 +101,7 @@ public class CaptchaHelper {
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
 //        result.setImageBase64(result.getOriginalImageBase64());
-        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtils.getNextStrId();
+        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setUuid(uuid);
         captchaCacheService.set(uuid, text, captchaProperties.getKeyExpiredSeconds());
         return result;
@@ -131,7 +131,7 @@ public class CaptchaHelper {
         }
         result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
 //        result.setImageBase64(result.getOriginalImageBase64());
-        final String token = CAPTCHA_KEY_PREFIX + IdsUtils.getNextStrId();
+        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
         result.setUuid(token);
         captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());
         return result;

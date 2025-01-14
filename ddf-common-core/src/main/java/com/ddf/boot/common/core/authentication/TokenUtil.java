@@ -2,17 +2,18 @@ package com.ddf.boot.common.core.authentication;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
 import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.core.constant.CoreExceptionCode;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.PreconditionUtils;
-import com.ddf.boot.common.core.util.SecureUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.boot.common.core.util.SecureUtil;
+import com.google.common.base.Throwables;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <p>token生成工具</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2022/05/24 22:29
  */
@@ -31,25 +32,8 @@ public class TokenUtil {
     private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBeanWithStatic(EnvironmentHelper.class);
     private static final TokenCache TOKEN_CACHE = SpringContextHolder.getBeanWithStatic(TokenCache.class);
 
-    /**
-     * token key
-     * %s application name 对应环境变量spring.application.name
-     * %s uid
-     */
-    private static final String TOKEN_KEY = "%s:authentication:token:%s";
-
-
     private TokenUtil() {}
 
-    /**
-     * 获取token key规则
-     *
-     * @param uid
-     * @return
-     */
-    public static String getTokenKey(String uid) {
-        return String.format(TOKEN_KEY, Objects.isNull(ENVIRONMENT_HELPER) ? "" : ENVIRONMENT_HELPER.getApplicationName(), uid);
-    }
 
     /**
      * 生成token规则
@@ -60,7 +44,7 @@ public class TokenUtil {
     public static AuthenticateToken createToken(UserClaim userClaim) {
         final String originUserClaimStr = JsonUtil.asString(userClaim);
         final AuthenticateToken authenticateToken = AuthenticateToken.of(
-                SecureUtils.bCryptEncoder(userClaim.getUserId()), SecureUtils.aesEncryptHex(originUserClaimStr));
+                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.encryptHexByAES(originUserClaimStr));
         if (Objects.nonNull(TOKEN_CACHE)) {
             TOKEN_CACHE.setToken(userClaim, authenticateToken);
         }
@@ -77,13 +61,13 @@ public class TokenUtil {
         UserClaim claim;
         try {
             final AuthenticateToken tokenObj = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtils.aesDecryptStr(tokenObj.getDetailsToken());
+            final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
             claim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             if (Objects.isNull(claim)) {
-                throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
+                throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
             }
         } catch (Exception e) {
-            throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
+            throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
         return claim;
     }
@@ -97,23 +81,21 @@ public class TokenUtil {
     public static AuthenticateCheckResult checkToken(String token) {
         try {
             final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtils.aesDecryptStr(authenticateToken.getDetailsToken());
+            final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
             UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             String userId = userClaim.getUserId();
-            // 这个散列密码计算器计算复杂度在网关层使用，会严重使用cpu， 导致cpu拉满
-            // final boolean bool = SecureUtil.bCryptMatch(userId, authenticateToken.getUserIdToken());
-            // PreconditionUtil.checkArgument(bool, new UnauthorizedException(CoreExceptionCode.FORGE_TOKEN));
             if (Objects.nonNull(TOKEN_CACHE)) {
                 final String cacheToken = TOKEN_CACHE.getToken(userId);
-                PreconditionUtils.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
-                PreconditionUtils.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(BaseErrorCallbackCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);
         } catch (Exception e) {
             if(e instanceof UnauthorizedException){
                 throw e;
             }
-            throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
+            log.error("[{}].checkToken().called with exception => token:{},e:{}","解析token失败",token, Throwables.getStackTraceAsString(e));
+            throw new BusinessException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
     }
 
@@ -127,5 +109,11 @@ public class TokenUtil {
         if (Objects.nonNull(TOKEN_CACHE)) {
             TOKEN_CACHE.refreshToken(userId, token);
         }
+    }
+
+    public static void main(String[] args) {
+        final AuthenticateCheckResult result = TokenUtil.checkToken(
+                "$2a$10$GsXo2QZoLmQaRAR9S7S.MOcXCbvTiErPRMAX1unXM7sbMIbME.TpW<=>ad8c782851e20c70f1d25dfab92d0ee4f7de2424ba092721b9a38152ce1cc8ebe6c2b4e4c7d4c295f28ac741d0f63d74f6194fdabdb44e2cd9da1d2fcd8a517f1a827a2a9f3e77e9786118c2bee942e85d419d76768afeac3103d7bd92f27fbf");
+        System.out.println("result = " + result);
     }
 }
