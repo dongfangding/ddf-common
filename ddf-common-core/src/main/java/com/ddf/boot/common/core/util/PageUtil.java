@@ -1,8 +1,8 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.convert.Convert;
-import com.ddf.boot.common.api.model.common.PageResult;
 import com.ddf.boot.common.api.model.common.request.PageRequest;
+import com.ddf.boot.common.api.model.common.response.PageResult;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;

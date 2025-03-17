@@ -10,7 +10,6 @@ import lombok.Setter;
  * 接口如果太慢的话，提供一个回调接口，由使用方自己去实现自己的处理机制
  *
  * @author dongfang.ding on 2019/3/13
- * @see AccessLogAspect#dealSlowTimeHandler(String, String, long)
  * <p>
  * _ooOoo_
  * o8888888o

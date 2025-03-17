@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>验证码请求类</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2021/07/12 14:32
  */

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * <p>请求验签</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2021/12/01 14:07
  */

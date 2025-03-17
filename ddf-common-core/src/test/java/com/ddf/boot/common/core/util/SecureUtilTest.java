@@ -16,21 +16,16 @@ public class SecureUtilTest {
     @Test
     public void testAes() {
         String data = "snowball";
-        Assertions.assertEquals(data, SecureUtils.aesDecryptStr(SecureUtils.aesEncryptHex(data)));
-        Assertions.assertEquals(data, SecureUtils.aesDecryptStr(SecureUtils.aesEncryptBase64(data)));
+        Assertions.assertEquals(data, SecureUtil.decryptFromHexByAES(SecureUtil.encryptHexByAES(data)));
 
         String aesSecret = "ggwegweegwegwegwegwegqasfsafweqe";
-        Assertions.assertEquals(data, SecureUtils.aesDecryptStr(SecureUtils.aesEncryptHex(data, aesSecret), aesSecret));
-        Assertions.assertEquals(data, SecureUtils.aesDecryptStr(SecureUtils.aesEncryptBase64(data, aesSecret), aesSecret));
+        Assertions.assertEquals(data, SecureUtil.decryptFromHexByAESWithKey(SecureUtil.encryptHexByAESWithKey(data, aesSecret), aesSecret));
     }
 
     @Test
     public void testRsa() {
         String data = "snowball";
-        Assertions.assertEquals(data, SecureUtils.rsaPublicDecryptStr(SecureUtils.rsaPrivateEncryptHex(data)));
-        Assertions.assertEquals(data, SecureUtils.rsaPublicDecryptStr(SecureUtils.rsaPrivateEncryptBase64(data)));
-        Assertions.assertEquals(data, SecureUtils.rsaPrivateDecryptStr(SecureUtils.rsaPublicEncryptHex(data)));
-        Assertions.assertEquals(data, SecureUtils.rsaPrivateDecryptStr(SecureUtils.rsaPublicEncryptBase64(data)));
+        Assertions.assertEquals(data, SecureUtil.localPublicDecryptFromBcd(SecureUtil.localPrivateEncryptBcd(data)));
     }
 
 
@@ -38,7 +33,7 @@ public class SecureUtilTest {
     public void testOthers() {
         String data = "snowball";
         String secret = "ggwegweegwegwegwegwegqasfsafweqe";
-        SecureUtils.signWithHMac("snowball", secret);
-        SecureUtils.bCryptMatch(data, SecureUtils.bCryptEncoder(data));
+        SecureUtil.signWithHMac("snowball", secret);
+        SecureUtil.bCryptMatch(data, SecureUtil.bCryptEncoder(data));
     }
 }

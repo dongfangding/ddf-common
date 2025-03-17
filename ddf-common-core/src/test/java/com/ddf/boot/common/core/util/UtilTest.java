@@ -14,7 +14,7 @@ public class UtilTest {
 
     @Test
     public void testCityUtil() {
-        System.out.println(CityUtils.getProvinceByCity("丹东市"));
-        System.out.println(CityUtils.getProvinceByCity("亳州市"));
+        System.out.println(CityUtil.getProvinceByCity("丹东市"));
+        System.out.println(CityUtil.getProvinceByCity("亳州市"));
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
  * <p>描述</p>
  *
  * @author network
+ * @version 1.0: DateUtils.java
  * @date 2020/11/13 10:27
  */
 @Slf4j
@@ -424,13 +425,35 @@ public class DateUtils {
      *
      * @return String
      **/
-    public static String getWeekEnd() {
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
-        cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK));
-        cal.add(Calendar.DAY_OF_WEEK, 1);
-        Date time = cal.getTime();
-        return new SimpleDateFormat("yyyy-MM-dd").format(time);
+    public static LocalDateTime getWeekEnd() {
+        return DateUtil.endOfWeek(new Date()).toLocalDateTime();
+    }
+
+    /**
+     * 获取本周的最后一天
+     *
+     * @return String
+     **/
+    public static LocalDateTime getWeekEnd(Long currentSeconds) {
+        return DateUtil.endOfWeek(new Date(currentSeconds * 1000)).toLocalDateTime();
+    }
+
+    /**
+     * 获取本周的最后一天, 格式化为yyyyMMdd
+     *
+     * @return String
+     **/
+    public static Integer getWeekEndFormatYmd() {
+        return Integer.parseInt(DateUtil.endOfWeek(new Date()).toLocalDateTime().format(DAY_INTEGER_FORMATTER));
+    }
+
+    /**
+     * 根据当前时间秒，获取本周的最后一天, 格式化为yyyyMMdd
+     *
+     * @return String
+     **/
+    public static Integer getWeekEndFormatYmd(Long currentSeconds) {
+        return Integer.parseInt(getWeekEnd(currentSeconds).format(DAY_INTEGER_FORMATTER));
     }
 
     /**
@@ -439,7 +462,8 @@ public class DateUtils {
      * @return
      */
     public static Long currentTimeSeconds() {
-        return System.currentTimeMillis() / 1000;
+        //        return System.currentTimeMillis() / 1000;
+        return Instant.now().getEpochSecond();
     }
 
 

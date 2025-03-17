@@ -1,6 +1,6 @@
 package com.ddf.common.ids.service.api.impl;
 
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.ids.service.api.IdsApi;
 import com.ddf.common.ids.service.config.properties.IdsProperties;
 import com.ddf.common.ids.service.exception.IdsErrorCodeEnum;
@@ -186,7 +186,7 @@ public class IdsApiImpl implements IdsApi {
     }
 
     private void checkSegment() {
-        PreconditionUtils.checkArgument(Objects.nonNull(segmentIDGen), IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
+        PreconditionUtil.checkArgument(Objects.nonNull(segmentIDGen), IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
     }
 
 }

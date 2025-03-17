@@ -7,7 +7,7 @@ import com.ddf.boot.common.api.model.authentication.UserClaim;
 /**
  * <p>用来管理认证token缓存的接口</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @since 2023/06/25 13:10
  */

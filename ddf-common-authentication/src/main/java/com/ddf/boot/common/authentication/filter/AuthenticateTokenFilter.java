@@ -8,7 +8,7 @@ import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.api.exception.UnauthorizedException;
 import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
-import com.ddf.boot.common.api.model.common.RequestContext;
+import com.ddf.boot.common.api.model.common.dto.RequestContext;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
@@ -23,12 +23,12 @@ import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.SignatureUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +41,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.Nullable;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -83,25 +86,33 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String url = request.getServletPath();
-        // 解析请求头
-        resolveRequestContext(request);
+        // 通用请求头解析
+        final Map<String, String> clientHeaderMap = resolveClientHeaders(request, null);
+        // 自定义请求头解析， 处理过程中可以额外添加请求头，最终会被统一添加到请求头中
+        final Map<String, String> customizeHeaderMap = new HashMap<>();
         if (SYSTEM_IGNORE_PATH.contains(url)) {
             return true;
         }
+        // 开放接口校验，比如提供给外部的回调接口
         final RequestContext requestContext = UserContextUtil.getRequestContext();
         final List<String> openIgnores = authenticateProperties.getOpenIgnores();
         if (GlobalAntMatcher.match(openIgnores, url)) {
             return true;
         }
-        if (StringUtils.isAnyBlank(request.getHeader(RequestHeaderEnum.OS.getName()),
-                request.getHeader(RequestHeaderEnum.IMEI.getName()),
-                request.getHeader(RequestHeaderEnum.NONCE.getName()),
-                request.getHeader(RequestHeaderEnum.VERSION.getName()),
-                request.getHeader(RequestHeaderEnum.VERSION_CODE.getName())
-        )) {
-            throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_REQUEST);
+        // 必传请求头校验， 放在开放接口校验之后
+        final Map<String, RequestHeaderEnum> requiredClientHeaders = RequestHeaderEnum.getRequiredClientHeaders();
+        for (String name : requiredClientHeaders.keySet()) {
+            if (StringUtils.isBlank(request.getHeader(name))) {
+                throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_REQUEST);
+            }
         }
-        userClaimService.before(request, response);
+        if (userClaimService == null) {
+            throw new NoSuchBeanDefinitionException(UserClaimService.class);
+        }
+
+        // token校验前置校验
+        userClaimService.beforeTokenVerify(request, response, clientHeaderMap, customizeHeaderMap);
+
         String clientIp = requestContext.getClientIp();
         final String token = request.getHeader(authenticateProperties.getTokenHeaderName());
         request.setAttribute(AuthenticateConstant.CLIENT_IP, clientIp);
@@ -121,14 +132,13 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
                 throw new BusinessException(BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
             }
         }
-        if (userClaimService == null) {
-            throw new NoSuchBeanDefinitionException(UserClaimService.class);
-        }
+        // 添加服务端请求头
+        clientHeaderMap.putAll(resolveServerHeaders(request, userClaim));
         // 填充认证接口前置属性
         userClaimService.storeRequest(request, clientIp);
 
         // 预留认证通过后置接口
-        userClaimService.afterVerifySuccess(userClaim);
+        userClaimService.afterVerifySuccess(request, userClaim, clientHeaderMap, customizeHeaderMap);
 
         // 重放简单校验
         final long nonce = Long.parseLong(Objects.requireNonNull(request.getHeader(RequestHeaderEnum.NONCE.getName())));
@@ -145,6 +155,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         } else {
             resolveQueryParamsSignData(request);
         }
+
+        final HashMap<String, String> allHeaderMap = new HashMap<>(clientHeaderMap);
+        allHeaderMap.putAll(customizeHeaderMap);
+        // 自定义token校验
 
         // 塞入最新用户数据
         UserContextUtil.setUserClaim(userClaim);
@@ -176,8 +190,11 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param request
      */
     private void resolveQueryParamsSignData(HttpServletRequest request) {
-        final Map<String, Object> data = request.getParameterMap().entrySet().stream().collect(
-                Collectors.toMap(Map.Entry::getKey, val -> val.getValue()[0]));
+        final Map<String, Object> data = request
+                .getParameterMap()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, val -> val.getValue()[0]));
         validSign(request, data);
     }
 
@@ -253,25 +270,51 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     }
 
     /**
-     * 解析请求上下文
+     * 解析客户端请求头
      *
      * @param request
+     * @param userClaim
+     * @return
      */
-    public void resolveRequestContext(HttpServletRequest request) {
-        UserContextUtil.setRequestContext(RequestContext.builder()
-                .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
-                .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
-                .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
-                .nonce(Long.parseLong(
-                        ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
-                .version(ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION.getName()), "1.0.0"))
-                .versionCode(Long.parseLong(
-                        ObjectUtils.defaultIfNull(request.getHeader(RequestHeaderEnum.VERSION_CODE.getName()), "0")))
-                .requestUri(request.getRequestURI())
-                .clientIp(request.getHeader(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName()))
-                .clientIpFromGateway(request.getHeader(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName()))
-                .userIdFromGateway(request.getHeader(RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName()))
-                .build());
+    private Map<String, String> resolveClientHeaders(HttpServletRequest request, UserClaim userClaim) {
+        Map<String, String> clientHeaderMap = new HashMap<>();
+        // 处理客户端传递的约定好的请求头
+        final Map<String, RequestHeaderEnum> clientHeaders = RequestHeaderEnum.getAllClientHeaders();
+        clientHeaders.forEach((name, obj) -> {
+            clientHeaderMap.put(name, Optional
+                    .ofNullable(request.getHeader(name))
+                    .orElse(obj.getDefaultValue()));
+        });
+        return clientHeaderMap;
+    }
+
+    /**
+     * 解析服务端内部请求头
+     *
+     * @param request
+     * @param userClaim
+     * @return
+     */
+    private Map<String, String> resolveServerHeaders(HttpServletRequest request, UserClaim userClaim) {
+        Map<String, String> serverHeaderMap = new HashMap<>();
+        // 处理服务端内部的请求头
+        serverHeaderMap.put(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName(), WebUtil.getHost());
+        serverHeaderMap.put(
+                RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName(),
+                Objects.nonNull(userClaim) ? userClaim.getUserId() : request.getHeader(RequestHeaderEnum.IMEI.getName())
+        );
+        serverHeaderMap.put(
+                RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName(),
+                RequestHeaderEnum.IS_GATEWAY_DISPATCH.getDefaultValue()
+        );
+        serverHeaderMap.put(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
+                Objects.nonNull(userClaim) ? userClaim.getUserId() :
+                        request.getHeader(RequestHeaderEnum.IMEI.getName())));
+        serverHeaderMap.put(
+                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getName(),
+                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getDefaultValue()
+        );
+        return serverHeaderMap;
     }
 
     public void resolveRequestContext() {

@@ -28,9 +28,9 @@ import org.apache.http.util.EntityUtils;
 
 
 /**
- * 默认全局 http client util
+ * http client util
  *
- * @author snowball
+ * @author rebot
  * @date 2023/10/19 23:29
  **/
 @Slf4j
@@ -42,15 +42,13 @@ public class HttpClientUtil {
 
     static {
         CM = new PoolingHttpClientConnectionManager();
-        // 多个路由共用的最大连接数
-        CM.setMaxTotal(100);
-        // 每个路由（一个路由是由目标域名（host）+ 端口号 + 协议组成）最大连接数
+        CM.setMaxTotal(100);// 多线程调用注意配置，根据线程数设定
         CM.setDefaultMaxPerRoute(50);
         CM.setValidateAfterInactivity(60000);
 
         REQUEST_CONFIG = RequestConfig.custom().setSocketTimeout(10000)// 数据传输过程中数据包之间间隔的最大时间
                 .setConnectTimeout(10000)// 连接建立时间，三次握手完成时间
-                .setExpectContinueEnabled(false)// http1.1协议下的语义，且当传输大文件时有比较好的效果，可以开启true
+                .setExpectContinueEnabled(true)// 重点参数
                 .setConnectionRequestTimeout(10000).build();
 
         CLIENT = HttpClientUtil.getHttpClient();
@@ -105,7 +103,7 @@ public class HttpClientUtil {
     }
 
 
-    public static String post(String url, List<Header> headers) {
+    public static String post(String url,  List<Header> headers) {
         HttpPost httpPost = new HttpPost(url);
         // 得指明使用UTF-8编码，
         Header[] headersArray = headers.toArray(new Header[headers.size()]);
@@ -175,7 +173,7 @@ public class HttpClientUtil {
             response = CLIENT.execute(post);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                log.error("http工具请求-请求发送失败, url = {},statusCode:{}", post.getRequestLine(), statusCode);
+                log.error("http工具请求-请求发送失败, url = {},statusCode:{}", post.getRequestLine(),statusCode);
                 return result;
             }
             HttpEntity resEntity = response.getEntity();

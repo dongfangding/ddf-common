@@ -43,7 +43,7 @@ import org.springframework.util.CollectionUtils;
  * <p>1. 如果是web项目， 停机无法解决流量继续转发进来的问题， 如nginx, 需要配合运维手段将发布机器从nginx负载中下线</p>
  * <p>2. 如果是Dubbo项目，需要先执行Dubbo的优雅停机，确保先将提供者从注册中心移除，不再有新的消费者请求进来</p>
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2021/08/15 13:02
  */

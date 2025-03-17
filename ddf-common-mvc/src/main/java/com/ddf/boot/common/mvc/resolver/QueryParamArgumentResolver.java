@@ -2,7 +2,7 @@ package com.ddf.boot.common.mvc.resolver;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.ddf.boot.common.api.model.common.QueryParam;
+import com.ddf.boot.common.api.model.common.dto.QueryParam;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.ContextKey;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -84,7 +84,8 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
         if (StrUtil.isBlank(queryParamsStr)) {
             return Collections.emptyList();
         }
-        final List<QueryParam> params = JsonUtil.getInstance()
+        final List<QueryParam> params = JsonUtil
+                .getInstance()
                 .readValue(queryParamsStr, new TypeReference<List<QueryParam>>() {
                     @Override
                     public Type getType() {

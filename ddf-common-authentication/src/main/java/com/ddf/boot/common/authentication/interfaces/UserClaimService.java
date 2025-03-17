@@ -1,6 +1,8 @@
 package com.ddf.boot.common.authentication.interfaces;
 
 import com.ddf.boot.common.api.model.authentication.UserClaim;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -20,7 +22,9 @@ public interface UserClaimService {
      * @param request
      * @param response
      */
-    void before(HttpServletRequest request, HttpServletResponse response);
+    default void beforeTokenVerify(HttpServletRequest request, HttpServletResponse response,
+            Map<String, String> headerMap, Map<String, String> customizeHeaderMap) {
+    }
 
 
     /**
@@ -38,6 +42,20 @@ public interface UserClaimService {
 
 
     /**
+     * 验证通过后预留一个接口允许客户端对用户做一些事情；
+     * 如可以将用户放在自行选择的安全框架上下文中
+     *
+     * @param request
+     * @param userClaim
+     * @param headerMap
+     * @param customizeHeaderMap
+     */
+    default void afterVerifySuccess(HttpServletRequest request, UserClaim userClaim, Map<String, String> headerMap,
+            Map<String, String> customizeHeaderMap) {
+
+    }
+
+    /**
      * Jwt将token中的用户信息，传递给调用方，需要调用方实现这个接口来将数据库中的最新用户数据返回过来
      *
      * @param userClaim
@@ -45,13 +63,20 @@ public interface UserClaimService {
      */
     UserClaim getStoreUserInfo(HttpServletRequest request, UserClaim userClaim);
 
-    /**
-     * 验证通过后预留一个接口允许客户端对用户做一些事情；
-     * 如可以将用户放在自行选择的安全框架上下文中
-     *
-     * @param userClaim
-     */
-    default void afterVerifySuccess(UserClaim userClaim) {
 
+    /**
+     * 请求分发前，所有自己服务的流程已经走完，开始将请求分发到下游服务
+     *
+     * @param request
+     * @param response
+     * @param userClaim
+     * @param headerMap
+     * @param customizeHeaderMap
+     * @return
+     */
+    default ResponseData<Object> beforeDispatch(HttpServletRequest request, HttpServletResponse response,
+            UserClaim userClaim, Map<String, String> headerMap, Map<String, String> customizeHeaderMap) {
+        return ResponseData.success(null);
     }
+
 }

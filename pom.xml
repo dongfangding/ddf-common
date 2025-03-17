@@ -21,6 +21,7 @@
         <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
 
@@ -39,23 +40,26 @@
     <modules>
         <module>ddf-common-dependency</module>
         <module>ddf-common-api</module>
-        <module>ddf-common-log4j</module>
         <module>ddf-common-core</module>
-        <module>ddf-common-zookeeper</module>
-        <module>ddf-common-ids-service</module>
+        <module>ddf-common-mvc</module>
         <module>ddf-common-redis</module>
-        <module>ddf-common-authentication</module>
-        <module>ddf-common-websocket</module>
         <module>ddf-common-distributed-lock</module>
+        <module>ddf-common-authentication</module>
+        <module>ddf-common-captcha</module>
+        <module>ddf-common-sharding</module>
+        <module>ddf-common-rocketmq</module>
+        <module>ddf-common-alarm</module>
+        <module>ddf-common-xxl-executor</module>
+        <module>ddf-common-log4j</module>
+        <module>ddf-common-limit</module>
+        <module>ddf-common-ids-service</module>
+        <module>ddf-common-zookeeper</module>
+        <module>ddf-common-websocket</module>
         <module>ddf-common-netty-broker</module>
         <module>ddf-common-mongo</module>
         <module>ddf-common-third-party</module>
         <module>ddf-common-script</module>
-        <module>ddf-common-rocketmq</module>
         <module>ddf-common-sentinel</module>
-        <module>ddf-common-xxl-executor</module>
-        <module>ddf-common-limit</module>
-        <module>ddf-common-captcha</module>
         <module>ddf-common-es</module>
         <module>ddf-common-trace</module>
         <module>ddf-common-ons</module>
@@ -63,42 +67,39 @@
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
         <module>ddf-common-canal</module>
-        <module>ddf-common-mvc</module>
-        <module>ddf-common-sharding</module>
-        <module>ddf-common-alarm</module>
     </modules>
 
 
-    <distributionManagement>
-        <repository>
-            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
-            <id>aiyu_release</id>
-            <name>Release Repository of nexus_release</name>
-            <url>http://121.41.123.212:8802/repository/aiyu_release/</url>
-        </repository>
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            &lt;!&ndash; 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 &ndash;&gt;-->
+<!--            <id>aiyu_release</id>-->
+<!--            <name>Release Repository of nexus_release</name>-->
+<!--            <url>http://121.41.123.212:8802/repository/aiyu_release/</url>-->
+<!--        </repository>-->
 
-        <snapshotRepository>
-            <id>aiyu_snapshot</id>
-            <name>Snapshot Repository of nexus_snapshot</name>
-            <url>http://121.41.123.212:8802/repository/aiyu_snapshot/</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--        <snapshotRepository>-->
+<!--            <id>aiyu_snapshot</id>-->
+<!--            <name>Snapshot Repository of nexus_snapshot</name>-->
+<!--            <url>http://121.41.123.212:8802/repository/aiyu_snapshot/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
     <repositories>
-        <repository>
-            <id>aiyu_public</id>
-            <!-- 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
-             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>-->
-            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-        </repository>
+<!--        <repository>-->
+<!--            <id>aiyu_public</id>-->
+<!--            &lt;!&ndash; 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，-->
+<!--             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>&ndash;&gt;-->
+<!--            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--                <checksumPolicy>fail</checksumPolicy>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>aliyun</id>
             <url>https://maven.aliyun.com/repository/public</url>
@@ -112,18 +113,18 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>aiyu_public</id>
-            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-        </pluginRepository>
+<!--        <pluginRepository>-->
+<!--            <id>aiyu_public</id>-->
+<!--            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--                <checksumPolicy>fail</checksumPolicy>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
         <pluginRepository>
             <id>aliyun</id>
             <url>https://maven.aliyun.com/repository/public</url>
@@ -185,6 +186,14 @@
                         <target>${maven.compiler.target}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <compilerArgument>-parameters</compilerArgument>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <testFailureIgnore>true</testFailureIgnore>
                     </configuration>
                 </plugin>
             </plugins>

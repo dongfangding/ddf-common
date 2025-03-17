@@ -32,7 +32,7 @@ redis.call('ZADD', KEYS[1], currentTime, currentValue)
 
 -- 如果是首次插入记录，设置键的过期时间
 if (currentCount == 0) then
-    redis.call('EXPIRE', KEYS[1], windowIntervalMills)
+    redis.call('EXPIRE', KEYS[1], windowIntervalMills / 1000)
 end
 
 return cjson.encode({ limited = 0, currentCount = currentCount + 1, maxCount = maxCount })

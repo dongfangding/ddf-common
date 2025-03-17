@@ -1,7 +1,8 @@
 package com.ddf.boot.common.authentication.util;
 
 import com.ddf.boot.common.api.model.authentication.UserClaim;
-import com.ddf.boot.common.api.model.common.RequestContext;
+import com.ddf.boot.common.api.model.common.dto.RequestContext;
+import java.util.HashMap;
 
 ;
 

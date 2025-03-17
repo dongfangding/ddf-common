@@ -76,8 +76,9 @@ public class MailUtil {
             if (cc != null && cc.length > 0) {
                 helper.setBcc(cc);
             }
+            final Map<String, String> properties = mailProperties.getProperties();
             // 经过测试，这个必须要写，而且必须要和配置的邮箱认证的用户名一致
-            helper.setFrom(mailProperties.getUsername());
+            helper.setFrom(properties.get("from"));
 
             // 上传文件
             if (attachment != null && !attachment.isEmpty()) {

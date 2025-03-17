@@ -3,6 +3,7 @@ package com.ddf.boot.common.api.model.common.response;
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BusinessException;
+import com.ddf.boot.common.api.jackson.JsonIgnoreProfile;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,6 +55,7 @@ public class ResponseData<T> {
     /**
      * 实际消息（不需要做toast用，只是联调时能够知道具体消息）
      */
+    @JsonIgnoreProfile(profile = {"pro", "prod"})
     private String subMessage;
 
     /**
@@ -72,6 +74,14 @@ public class ResponseData<T> {
      */
     private Object extra;
 
+    /**
+     * 这个是异常消息模板里的占位符的填充内容，
+     * 比如你今日发送短信已超过{0}次， 那么{0}就是占位符， 对应的就是params， 这个是异常消息模型里的字段。
+     * 但是现在一般是跨服务调用， a调用b， b抛出异常，被包装出来后，a服务根据返回值调用com.boot.common.api.model.common.response.response.ResponseData#requiredSuccess()
+     * 之后， 再次抛出异常，会丢失这个填充内容，因此需要再全局异常里把这个内容放进来，这样上层才可以再次抛出这个异常并填充这个内容
+     */
+    private Object[] formatParams;
+
 
     public ResponseData(String code, String message, String subMessage, long timestamp, T data) {
         this.code = code;
@@ -88,6 +98,16 @@ public class ResponseData<T> {
         this.timestamp = timestamp;
         this.data = data;
         this.extra = extra;
+    }
+
+    public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra, Object[] formatParams) {
+        this.code = code;
+        this.message = message;
+        this.subMessage = subMessage;
+        this.timestamp = timestamp;
+        this.data = data;
+        this.extra = extra;
+        this.formatParams = formatParams;
     }
 
     /**
@@ -214,6 +234,18 @@ public class ResponseData<T> {
         return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra);
     }
 
+    /**
+     * 失败返回消息方法
+     *
+     * @param code
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra, Object[] formatParams) {
+        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra, formatParams);
+    }
+
 
     /**
      * 判断返回结果是否是成功
@@ -234,7 +266,7 @@ public class ResponseData<T> {
         if (isSuccess()) {
             return data;
         }
-        throw new BusinessException(code, message);
+        throw new BusinessException(code, message, formatParams);
     }
 
 

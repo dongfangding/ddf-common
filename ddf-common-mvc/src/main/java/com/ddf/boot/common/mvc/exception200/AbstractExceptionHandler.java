@@ -173,7 +173,7 @@ public abstract class AbstractExceptionHandler {
         if (shouldTriggerExceptionEvent) {
             applicationEventPublisher.publishEvent(new GlobalExceptionEvent(this, payload));
         }
-        return ResponseData.failure(exceptionCode, finalMessage, subMessage, extra);
+        return ResponseData.failure(exceptionCode, finalMessage, subMessage, extra, formatParams);
     }
 
 

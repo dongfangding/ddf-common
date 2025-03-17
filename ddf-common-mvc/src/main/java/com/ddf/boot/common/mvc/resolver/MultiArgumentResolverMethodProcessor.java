@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
 /**
  * 自定义参数解析器用以支持同一个参数支持application/json和application/x-www-form-urlencoded解析
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2020/08/31 19:00
  * @see MultiArgumentResolver

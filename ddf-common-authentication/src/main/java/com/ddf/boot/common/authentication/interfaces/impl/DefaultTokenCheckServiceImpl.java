@@ -8,7 +8,7 @@ import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +40,8 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
     @Override
     public UserClaim customizeCheck(HttpServletRequest request, AuthenticateCheckResult authenticateCheckResult) {
         final UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
-        PreconditionUtils.checkArgument(Objects.nonNull(tokenUserClaim), BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
-        PreconditionUtils.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
+        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
+        PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
                 BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
         // credit校验
         final String credit = StringUtils.defaultIfBlank(request.getHeader(authenticationProperties.getCreditHeaderName()),

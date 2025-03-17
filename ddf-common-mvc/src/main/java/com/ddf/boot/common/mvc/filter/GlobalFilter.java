@@ -10,7 +10,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  * <p>全局预定义的拦截器， 在这个拦截器里做一些通用处理，然后再暴露接口，方便外部织入有顺序的filter</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2022/01/14 17:37
  */

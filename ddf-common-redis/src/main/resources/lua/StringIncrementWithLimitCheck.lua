@@ -7,7 +7,7 @@ if (result > limit) then
     redis.call('INCRBY', KEYS[1], -step)
     return cjson.encode({ limited = 1, currentCount = limit, maxCount = limit })
 end
--- 首次的话设置过期时间，result - step == 0表示首次
+-- 首次的话设置过期时间，result - step == 0简单表示首次，如果数值来回浮动也会造成表达式满足，比如+6 + 4 - 10
 if (ARGV[3] ~= nil and tonumber(ARGV[3]) > 0 and (result - step) == 0) then
     redis.call('EXPIRE', KEYS[1], tonumber(ARGV[3]))
 end

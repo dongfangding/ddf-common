@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * <p>验证码返回结果</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
      * @date 2021/03/02 16:`19`
  */

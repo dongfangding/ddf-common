@@ -2,7 +2,6 @@ package com.ddf.boot.common.api.util;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.ServerErrorException;
-import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
