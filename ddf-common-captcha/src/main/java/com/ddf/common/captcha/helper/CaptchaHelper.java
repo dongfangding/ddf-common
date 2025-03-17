@@ -13,7 +13,7 @@ import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
@@ -186,8 +186,8 @@ public class CaptchaHelper {
             }
         } else {
             final String verifyCode = captchaCacheService.get(request.getUuid());
-            PreconditionUtils.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
-            PreconditionUtils.checkArgument(
+            PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
+            PreconditionUtil.checkArgument(
                     java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
         }
         return Boolean.TRUE;

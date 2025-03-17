@@ -10,7 +10,7 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.ddf.boot.common.api.exception.ServerErrorException;
-import com.ddf.boot.common.core.util.ResourceUrlUtils;
+import com.ddf.boot.common.core.util.ResourceUrlUtil;
 import com.ddf.boot.common.ext.oss.config.AliOssPolicyDTO;
 import com.ddf.boot.common.ext.oss.config.BucketProperty;
 import com.ddf.boot.common.ext.oss.config.OssBeanAutoConfiguration;
@@ -152,7 +152,7 @@ public class OssHelper {
      * @return
      */
     public String getOssObjectRealUrl(String prefix, String objectKey) {
-        return ResourceUrlUtils.wrapAbsolutePath(prefix, objectKey);
+        return ResourceUrlUtil.wrapAbsolutePath(prefix, objectKey);
     }
 
 

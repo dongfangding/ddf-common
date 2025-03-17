@@ -22,7 +22,7 @@ import com.aliyun.ons20190214.models.OnsTopicListResponse;
 import com.ddf.boot.common.api.model.common.response.PageResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.ons.console.config.EnvClientProperties;
 import com.ddf.common.ons.console.constant.ConsoleConstants;
 import com.ddf.common.ons.console.model.ConsoleOnsDLQMessageGetByIdRequest;
@@ -109,7 +109,7 @@ public class OnsClientOperations {
       初始化属性
      */
     static {
-        PreconditionUtils.checkArgument(Objects.nonNull(CURRENT_ENV), new IllegalArgumentException("当前环境信息获取失败......"));
+        PreconditionUtil.checkArgument(Objects.nonNull(CURRENT_ENV), new IllegalArgumentException("当前环境信息获取失败......"));
         CURRENT_ENV = CURRENT_ENV.toUpperCase();
         ENV_CLIENT_MAP = SpringContextHolder.getBeansOfType(Client.class);
         Preconditions.checkArgument(!CollectionUtils.isEmpty(ENV_CLIENT_MAP), new OnsClientExecuteException("多环境ONS客户端初始化失败"));
@@ -212,7 +212,7 @@ public class OnsClientOperations {
      */
     @SneakyThrows
     private static <R> Map<String, R> envAction(int qps, EnvRequest request, BiFunction<Client, String, R> function) {
-        PreconditionUtils.requiredParamCheck(request);
+        PreconditionUtil.requiredParamCheck(request);
         Set<String> envList = request.getEnvList();
         if (CollectionUtils.isEmpty(envList)) {
             envList = ENV_CLIENT_PROPERTIES.getClients().keySet();

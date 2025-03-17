@@ -2,7 +2,7 @@ package com.ddf.common.boot.mqtt.config;
 
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
 import com.ddf.common.boot.mqtt.client.MqttPublishClient;
@@ -55,7 +55,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
-        PreconditionUtils.checkArgument(Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
+        PreconditionUtil.checkArgument(Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
         // 存入到全局变量中
         GlobalStorage.clientConfig = clientConfig;
         GlobalStorage.SYSTEM_CLIENT_ID_PREFIX = clientConfig.getClientIdPrefix();
@@ -64,7 +64,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 默认使用mqtt 的 tcp 来进行连接
         final String protocol = MQTTProtocolEnum.MQTT_TCP.getProtocol();
         final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(protocol);
-        PreconditionUtils.checkArgument(Objects.nonNull(connectionConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR);
+        PreconditionUtil.checkArgument(Objects.nonNull(connectionConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR);
 
         final String url = connectionConfig.getUrl();
         MqttClient mqttClient;

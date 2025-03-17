@@ -1,7 +1,7 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsTopicCreateRequest;
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.ons.console.constant.TopicMessageType;
 import java.io.Serializable;
 import java.util.Objects;
@@ -63,8 +63,8 @@ public class ConsoleOnsTopicCreateRequest implements EnvRequest, UserRequest, Se
      * @return
      */
     public OnsTopicCreateRequest toSdkRequest(String instanceId) {
-        PreconditionUtils.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
-        PreconditionUtils.checkArgument(Objects.nonNull(TopicMessageType.getByValue(messageType)), new IllegalArgumentException("消息类型值有误"));
+        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
+        PreconditionUtil.checkArgument(Objects.nonNull(TopicMessageType.getByValue(messageType)), new IllegalArgumentException("消息类型值有误"));
         return new OnsTopicCreateRequest()
                 .setTopic(topic)
                 .setMessageType(messageType)

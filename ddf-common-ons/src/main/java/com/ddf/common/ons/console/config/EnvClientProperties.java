@@ -1,6 +1,6 @@
 package com.ddf.common.ons.console.config;
 
-import com.ddf.boot.common.core.util.PreconditionUtils;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +40,7 @@ public class EnvClientProperties {
      */
     private LinkedHashMap<String, ClientProperties> clients;
 
+
     /**
      * Ons SDK客户端初始化相关参数配置
      */
@@ -67,9 +68,11 @@ public class EnvClientProperties {
         private String instanceId;
 
         public void checkRequired() {
-            PreconditionUtils.checkArgument(
+            PreconditionUtil.checkArgument(
                     Objects.nonNull(accessKeyId) && Objects.nonNull(accessKeySecret) && Objects.nonNull(endpoint)
-                            && Objects.nonNull(instanceId), new IllegalArgumentException("Ons SDK客户端初始化参数配置有误"));
+                            && Objects.nonNull(instanceId),
+                    new IllegalArgumentException("Ons SDK客户端初始化参数配置有误")
+            );
         }
     }
 
