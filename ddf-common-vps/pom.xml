@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>ddf-common</artifactId>
-        <groupId>com.ddf.common.boot</groupId>
+        <groupId>com.ddf.common</groupId>
         <version>1.0.1-jdk17-SNAPSHOT</version>
     </parent>
 
@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ddf.common.boot</groupId>
+            <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-mvc</artifactId>
             <version>1.0.1-jdk17-SNAPSHOT</version>
             <optional>true</optional>
