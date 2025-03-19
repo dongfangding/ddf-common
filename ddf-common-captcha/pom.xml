@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ddf-common</artifactId>
-        <groupId>com.ddf.common</groupId>
+        <groupId>com.ddf.common.boot</groupId>
         <version>1.0.1-jdk17-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>com.ddf.common.boot</groupId>
             <artifactId>ddf-common-core</artifactId>
             <version>1.0.1-jdk17-SNAPSHOT</version>
             <optional>true</optional>
@@ -45,7 +45,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>com.ddf.common.boot</groupId>
             <artifactId>ddf-common-redis</artifactId>
             <version>1.0.1-jdk17-SNAPSHOT</version>
         </dependency>
