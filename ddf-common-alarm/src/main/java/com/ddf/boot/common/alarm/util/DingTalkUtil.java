@@ -58,7 +58,7 @@ public class DingTalkUtil {
             String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)),"UTF-8");
             System.out.println(sign);
             //sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
-            String url = String.format("https://oapi.dingtalk.com/robot/send?sign=%s&timestamp=%s&access_token=%s",
+            String url = String.format("https://oapi.dingtalk.com/snowball/send?sign=%s&timestamp=%s&access_token=%s",
                     sign, timestamp, accessToken
             );
             DingTalkClient client = new DefaultDingTalkClient(url);
