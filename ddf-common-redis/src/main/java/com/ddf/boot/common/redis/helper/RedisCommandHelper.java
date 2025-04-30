@@ -563,7 +563,7 @@ public class RedisCommandHelper {
      * @param fields
      * @return
      */
-    public Long hDelete(String key, String... fields) {
+    public Long hDelete(String key, Object... fields) {
         return redisTemplate
                 .opsForHash()
                 .delete(key, fields);

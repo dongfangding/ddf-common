@@ -30,16 +30,16 @@ public class TreeConvertUtil {
      * @param domainList
      * @return
      */
-    public static <T extends ITreeTagCollection<T>> List<T> convert(List<T> domainList) {
+    public static <K, T extends ITreeTagCollection<K, T>> List<T> convert(List<T> domainList) {
         if (CollectionUtil.isEmpty(domainList)) {
             return Collections.emptyList();
         }
-        Map<Long, T> dataMap = new LinkedHashMap<>(domainList.size());
+        Map<K, T> dataMap = new LinkedHashMap<>(domainList.size());
         for (T domain : domainList) {
             dataMap.put(domain.getTreeId(), domain);
         }
         List<T> responseList = new ArrayList<>();
-        for (Map.Entry<Long, T> entry : dataMap.entrySet()) {
+        for (Map.Entry<K, T> entry : dataMap.entrySet()) {
             T currentNode = entry.getValue();
             // 如果当前节点是根节点，直接添加到返回列表中
             if (currentNode.isRoot()) {
@@ -49,6 +49,7 @@ public class TreeConvertUtil {
                 if (Objects.nonNull(currentNode.getTreeParentId())) {
                     final T t = dataMap.get(currentNode.getTreeParentId());
                     if (Objects.nonNull(t)) {
+                        // 初始化children的时候必须是一个集合，不能为null， 因为没有暴露set方法，这里没办法new一个set回去
                         t.getChildren().add(currentNode);
                     }
                 }
@@ -60,7 +61,7 @@ public class TreeConvertUtil {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor(staticName = "of")
-    public static class Node implements ITreeTagCollection<Node> {
+    public static class Node implements ITreeTagCollection<Long, Node> {
 
         private String name;
 

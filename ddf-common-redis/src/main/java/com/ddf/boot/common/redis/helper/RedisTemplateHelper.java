@@ -8,6 +8,7 @@ import com.ddf.boot.common.redis.ext.RedisBloomFilter;
 import com.ddf.boot.common.redis.request.LeakyBucketRateLimitRequest;
 import com.ddf.boot.common.redis.request.RateLimitRequest;
 import com.ddf.boot.common.redis.response.AccessLimitResponse;
+import com.ddf.boot.common.redis.response.HashIncrementPersistLimitValueResponse;
 import com.ddf.boot.common.redis.response.StringTtlIncrWithLimitResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBloomFilter;
@@ -72,12 +74,33 @@ public class RedisTemplateHelper {
         final String result = String.valueOf(
                 stringRedisTemplate.execute(
                         RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
-                        String.valueOf(maxCount), String.valueOf(windowInSecond * 1000),
+                        String.valueOf(maxCount), String.valueOf(TimeUnit.SECONDS.toMillis(windowInSecond)),
                         String.valueOf(System.currentTimeMillis()),
                         System.currentTimeMillis() + "-" + IdUtil.randomUUID()
                 ));
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
+
+
+    /**
+     * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
+     * 业务方面的单位时间逻辑次数控制
+     *
+     * @param key            缓存key
+     * @param maxCount       单位时间内最大访问次数
+     * @param windowInMillions 窗口时间，单位毫秒
+     * @return
+     */
+    public AccessLimitResponse sliderWindowAccessMillions(final String key, final long maxCount, final int windowInMillions) {
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(windowInMillions),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()
+                ));
+        return JsonUtil.toBean(result, AccessLimitResponse.class);
+    }
+
 
     /**
      * 包装{@link RedisTemplateHelper#sliderWindowAccess(String, long, int)}提供一体化的判断，满足条件执行，不满足抛出异常
@@ -117,7 +140,8 @@ public class RedisTemplateHelper {
      * @return
      */
     public boolean tokenBucketRateLimitAcquire(String key, Integer max, Integer rate) {
-        return tokenBucketRateLimitAcquire(RateLimitRequest.builder().key(key).max(max).rate(rate).ignorePrefix(true)
+        return tokenBucketRateLimitAcquire(RateLimitRequest
+                .builder().key(key).max(max).rate(rate).ignorePrefix(true)
                 .build());
     }
 
@@ -207,13 +231,39 @@ public class RedisTemplateHelper {
      * @param expireSeconds 对key设置最大的过期时间
      * @return
      */
-    public AccessLimitResponse hashIncrWithLimit(String key, String hashKey, Long step, Long limit,
+    public AccessLimitResponse hashIncreaseCheck(String key, String hashKey, Long step, Long limit,
             Long expireSeconds) {
         final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK,
                 Collections.singletonList(key), hashKey, String.valueOf(step), String.valueOf(limit),
                 String.valueOf(expireSeconds)
         );
         return JsonUtil.toBean(result, AccessLimitResponse.class);
+    }
+
+
+    /**
+     * 基于hash结构的自增（正负值）进行上下限判定，如果超出上下限，则将值设置为对应的上下限值
+     *
+     * @param key           要操作的key
+     * @param hashKey       要操作的hash key
+     * @param step          每次自增的值
+     * @param minValue      小于这个值，则将值设置为这个值
+     * @param maxValue      大于这个值，则将值设置为这个值
+     * @param expireSeconds 对key设置最大的过期时间
+     * @param maxValue      自增上限值，超过这个值不会继续自增
+     * @param expireSeconds 对key设置最大的过期时间
+     * @return
+     * @return
+     */
+    public HashIncrementPersistLimitValueResponse hashIncrPersistLimitValue(String key, String hashKey, Double step,
+            Long minValue, Long maxValue, Long expireSeconds) {
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_PERSIST_LIMIT_VALUE,
+                Collections.singletonList(key), hashKey, String.valueOf(step),
+                Objects.nonNull(minValue) ? String.valueOf(minValue) : "",
+                Objects.nonNull(maxValue) ? String.valueOf(maxValue) : "",
+                Objects.nonNull(expireSeconds) ? String.valueOf(expireSeconds) : ""
+        );
+        return JsonUtil.toBean(result, HashIncrementPersistLimitValueResponse.class);
     }
 
     /**
@@ -230,7 +280,7 @@ public class RedisTemplateHelper {
      */
     public <T> T hashIncrWithLimitCheckException(String key, String hashKey, Long step, Long limit, Long expireSeconds,
             Supplier<T> supplier, BaseCallbackCode exceptionCode) {
-        final boolean isLimit = hashIncrWithLimit(key, hashKey, step, limit, expireSeconds).isLimited();
+        final boolean isLimit = hashIncreaseCheck(key, hashKey, step, limit, expireSeconds).isLimited();
         if (isLimit) {
             throw new BusinessException(exceptionCode);
         }
@@ -435,6 +485,16 @@ public class RedisTemplateHelper {
             map.put(split[0], split[1]);
         }
         return map;
+    }
+
+    public Long hashIncrFloatRoundDecimal(String key, String elementKey, Double step) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCR_FLOAT_ROUND_DECIMAL,
+                Lists.newArrayList(key), elementKey, step.toString()
+        );
+        if (Objects.isNull(execute)) {
+            return 0L;
+        }
+        return Long.parseLong(execute);
     }
 
     public static BigDecimal calcPointScoreByTime(long time) {

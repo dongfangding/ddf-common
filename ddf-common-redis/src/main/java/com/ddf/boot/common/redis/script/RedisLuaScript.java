@@ -40,7 +40,13 @@ public interface RedisLuaScript {
      * 基于hash结构的自增并增加上限判定的通用脚本
      */
     RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(
-            new ClassPathResource("lua/HashIncrementCheck.lua"), String.class);
+            new ClassPathResource("lua/HashIncreaseCheck.lua"), String.class);
+
+    /**
+     * 基于hash结构的自增，但是当达到上限时，会将值设置为上限值，而不是回滚本次增加的值
+     */
+    RedisScript<String> HASH_INCREMENT_PERSIST_LIMIT_VALUE = RedisScript.of(
+            new ClassPathResource("lua/HashIncreasePersistLimitValue.lua"), String.class);
 
     /**
      * 基于String结构的自增并增加上限判定的通用脚本
@@ -95,5 +101,12 @@ public interface RedisLuaScript {
      */
     RedisScript<String> MAX_ELEMENT_DICT = RedisScript.of(
             new ClassPathResource("lua/MaxElementDict.lua"), String.class);
+
+    /**
+     * 小数位递增，计算出整数位，返回整数位，并且存储的值减去整数位
+     */
+    RedisScript<String> HASH_INCR_FLOAT_ROUND_DECIMAL = RedisScript.of(
+            new ClassPathResource("lua/HashIncrFloatRoundDecimal.lua"), String.class);
+
 
 }

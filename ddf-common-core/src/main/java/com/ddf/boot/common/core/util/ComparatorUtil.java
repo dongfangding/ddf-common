@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.util;
 
+import com.ddf.boot.common.core.model.IndexComparatorElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -54,7 +55,7 @@ public class ComparatorUtil {
      * System.out.println(compareWithWeakReplaceLast("a,b,c,q,x,y,z", "d,b,e,f,z"));
      * 输出
      * [第0位: 'a' 被替换为 'd', 第2位: 'c' 被替换为 'e', 第3位: 'q' 被替换为 'f', 第4位: 'x' (删除), 第5位: 'y' (删除)]
-     * <p>
+     *
      * 最终逻辑流程如下：
      * 先处理新增/删除：按内容差集来判断。
      * 最后尝试找出成对的一增一删且索引相近的 → 视为替换
