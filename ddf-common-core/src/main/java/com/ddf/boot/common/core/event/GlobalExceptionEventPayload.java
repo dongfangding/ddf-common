@@ -65,7 +65,7 @@ public class GlobalExceptionEventPayload {
     private String imei;
 
     /**
-     * uid,
+     * 从网关获取的用户唯一标识符
      */
     private String uid;
 

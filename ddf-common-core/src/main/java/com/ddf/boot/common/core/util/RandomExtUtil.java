@@ -68,7 +68,7 @@ public class RandomExtUtil {
      * @return
      */
     public static boolean hitPercent(int proportion) {
-        return RandomUtil.randomInt(1, 101) < proportion;
+        return RandomUtil.randomInt(0, 100) < proportion;
     }
 
     /**
@@ -78,7 +78,7 @@ public class RandomExtUtil {
      * @return
      */
     public static boolean hitPercent(double proportion) {
-        return RandomUtil.randomDouble(1, 101) < proportion;
+        return RandomUtil.randomDouble(0, 100) < proportion;
     }
 
     /**
