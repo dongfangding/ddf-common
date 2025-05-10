@@ -1,7 +1,3 @@
-## .gitignore for Grails 1.2 and 1.3
-# .gitignore for maven
-target/
-*.releaseBackup
 # web application files
 #/web-app/WEB-INF
 # IDE support files
@@ -35,8 +31,6 @@ target/
 # "temporary" build files
 target/
 out/
-# other
-*.iws
 #.gitignore for java
 *.class
 # Package Files #
@@ -96,4 +90,3 @@ Icon
 *_copy.htm
 *_copy.html
 *.pdb
-ddf-common-core/src/main/java/com/ddf/boot/common/exception/EntityGenerateUtil.java
