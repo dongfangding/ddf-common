@@ -42,6 +42,12 @@
             <version>1.0.1-jdk17-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-redis</artifactId>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

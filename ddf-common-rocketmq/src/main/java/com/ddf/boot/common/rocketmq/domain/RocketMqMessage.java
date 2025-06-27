@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 /**
  * 火箭mq消息
  *
- * @author rebot
+ * @author snowball
  * @date 2023/10/09
  */
 @Data

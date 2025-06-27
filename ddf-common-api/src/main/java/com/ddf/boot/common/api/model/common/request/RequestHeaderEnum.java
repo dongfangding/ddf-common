@@ -8,7 +8,7 @@ import lombok.Getter;
 /**
  * <p>请求头通用参数枚举</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2021/12/31 17:56
  */

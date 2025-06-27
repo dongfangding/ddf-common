@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <p>配置响应类</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2020/10/09 14:23
  */

@@ -8,7 +8,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2024/06/06 10:40
  */
@@ -22,6 +22,6 @@ public class AlarmThreadConfig {
      */
     @Bean
     public ThreadPoolTaskExecutor globalExceptionExecutor() {
-        return ThreadBuilderHelper.buildThreadExecutor("global-exception-alarm-executor", 600, 1000, true);
+        return ThreadBuilderHelper.buildThreadExecutor("global-exception-alarm-executor", 600, 1000, false);
     }
 }

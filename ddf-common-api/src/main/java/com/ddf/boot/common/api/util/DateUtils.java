@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,8 +93,11 @@ public class DateUtils {
      * @return Date
      */
     public static Long getMonthFirstSecondsByDayFormatter(Integer month) {
-        return LocalDate.parse(month + "01", DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(ZoneOffset.ofHours(8))
-                .toInstant().getEpochSecond();
+        return LocalDate
+                .parse(month + "01", DateUtils.DAY_INTEGER_FORMATTER)
+                .atStartOfDay(ZoneOffset.ofHours(8))
+                .toInstant()
+                .getEpochSecond();
     }
 
     /**
@@ -103,8 +107,11 @@ public class DateUtils {
      * @return Date
      */
     public static Long getDayFirstSecondsByDayFormatter(Integer monthDay) {
-        return LocalDate.parse(String.valueOf(monthDay), DateUtils.DAY_INTEGER_FORMATTER).atStartOfDay(
-                ZoneOffset.ofHours(8)).toInstant().getEpochSecond();
+        return LocalDate
+                .parse(String.valueOf(monthDay), DateUtils.DAY_INTEGER_FORMATTER)
+                .atStartOfDay(ZoneOffset.ofHours(8))
+                .toInstant()
+                .getEpochSecond();
     }
 
     /**
@@ -138,7 +145,11 @@ public class DateUtils {
      * @return
      */
     public static Long getTodayStartTimeSeconds() {
-        return LocalDate.now().atStartOfDay().atZone(GLOBAL_ZONE_ID).toEpochSecond();
+        return LocalDate
+                .now()
+                .atStartOfDay()
+                .atZone(GLOBAL_ZONE_ID)
+                .toEpochSecond();
     }
 
     /**
@@ -212,7 +223,10 @@ public class DateUtils {
             return 0;
         }
         DateTime dateTime = new DateTime(birthDay.getTime());
-        return (int) DateTime.now().between(dateTime).betweenYear(false);
+        return (int) DateTime
+                .now()
+                .between(dateTime)
+                .betweenYear(false);
     }
 
     /**
@@ -275,7 +289,9 @@ public class DateUtils {
      * @return
      */
     public static Instant toDefaultInstant(LocalDateTime localDateTime) {
-        return Objects.isNull(localDateTime) ? null : localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return Objects.isNull(localDateTime) ? null : localDateTime
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
 
     /**
@@ -288,7 +304,9 @@ public class DateUtils {
         if (Objects.isNull(localDateTime)) {
             return null;
         } else {
-            return localDateTime.atZone(GLOBAL_ZONE_ID).toInstant();
+            return localDateTime
+                    .atZone(GLOBAL_ZONE_ID)
+                    .toInstant();
         }
     }
 
@@ -349,7 +367,9 @@ public class DateUtils {
      */
     public static LocalDate toLocalDate(long seconds) {
         Instant instant = Instant.ofEpochSecond(seconds);
-        return instant.atZone(GLOBAL_ZONE_ID).toLocalDate();
+        return instant
+                .atZone(GLOBAL_ZONE_ID)
+                .toLocalDate();
     }
 
     /**
@@ -406,7 +426,9 @@ public class DateUtils {
     public static Date nextYearFirstDay() {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
-        return DateUtil.beginOfYear(instance).getTime();
+        return DateUtil
+                .beginOfYear(instance)
+                .getTime();
     }
 
     /**
@@ -417,7 +439,9 @@ public class DateUtils {
     public static Date nextYearEndDay() {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
-        return DateUtil.endOfYear(instance).getTime();
+        return DateUtil
+                .endOfYear(instance)
+                .getTime();
     }
 
     /**
@@ -426,7 +450,9 @@ public class DateUtils {
      * @return String
      **/
     public static LocalDateTime getWeekEnd() {
-        return DateUtil.endOfWeek(new Date()).toLocalDateTime();
+        return DateUtil
+                .endOfWeek(new Date())
+                .toLocalDateTime();
     }
 
     /**
@@ -435,7 +461,9 @@ public class DateUtils {
      * @return String
      **/
     public static LocalDateTime getWeekEnd(Long currentSeconds) {
-        return DateUtil.endOfWeek(new Date(currentSeconds * 1000)).toLocalDateTime();
+        return DateUtil
+                .endOfWeek(new Date(currentSeconds * 1000))
+                .toLocalDateTime();
     }
 
     /**
@@ -444,7 +472,10 @@ public class DateUtils {
      * @return String
      **/
     public static Integer getWeekEndFormatYmd() {
-        return Integer.parseInt(DateUtil.endOfWeek(new Date()).toLocalDateTime().format(DAY_INTEGER_FORMATTER));
+        return Integer.parseInt(DateUtil
+                .endOfWeek(new Date())
+                .toLocalDateTime()
+                .format(DAY_INTEGER_FORMATTER));
     }
 
     /**
@@ -463,7 +494,9 @@ public class DateUtils {
      */
     public static Long currentTimeSeconds() {
         //        return System.currentTimeMillis() / 1000;
-        return Instant.now().getEpochSecond();
+        return Instant
+                .now()
+                .getEpochSecond();
     }
 
 
@@ -483,7 +516,9 @@ public class DateUtils {
      * @return
      */
     public static Integer currentYearMonthDay(int calibration) {
-        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime.now().plusDays(calibration)));
+        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(LocalDateTime
+                .now()
+                .plusDays(calibration)));
     }
 
     /**
@@ -493,7 +528,9 @@ public class DateUtils {
      * @return
      */
     public static Integer currentYearMonthDayHour(int calibration) {
-        return Integer.parseInt(HOUR_INTEGER_FORMATTER.format(LocalDateTime.now().plusHours(calibration)));
+        return Integer.parseInt(HOUR_INTEGER_FORMATTER.format(LocalDateTime
+                .now()
+                .plusHours(calibration)));
     }
 
     /**
@@ -504,7 +541,10 @@ public class DateUtils {
      */
     public static Integer currentYearWeek(int calibration) {
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
-        int weekNumber = LocalDate.now().plusWeeks(calibration).get(weekFields.weekOfWeekBasedYear());
+        int weekNumber = LocalDate
+                .now()
+                .plusWeeks(calibration)
+                .get(weekFields.weekOfWeekBasedYear());
         return weekNumber;
     }
 
@@ -580,7 +620,9 @@ public class DateUtils {
      * @return
      */
     public static Integer currentYearMonth(int calibration) {
-        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now().plusMonths(calibration)));
+        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime
+                .now()
+                .plusMonths(calibration)));
     }
 
     /**
@@ -726,7 +768,11 @@ public class DateUtils {
      * @return
      */
     public static long assignDateSeconds(int day, int hour) {
-        return LocalDateTime.of(LocalDate.now().plusDays(day), LocalTime.of(hour, 0)).atZone(GLOBAL_ZONE_ID)
+        return LocalDateTime
+                .of(LocalDate
+                        .now()
+                        .plusDays(day), LocalTime.of(hour, 0))
+                .atZone(GLOBAL_ZONE_ID)
                 .toEpochSecond();
     }
 
@@ -738,7 +784,10 @@ public class DateUtils {
      * @return
      */
     public static String getDateFormatByPlus(int num, String pattern) {
-        return LocalDateTime.now().plusDays(num).format(DateTimeFormatter.ofPattern(pattern));
+        return LocalDateTime
+                .now()
+                .plusDays(num)
+                .format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
@@ -748,6 +797,47 @@ public class DateUtils {
      * @return
      */
     public static Date asDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(GLOBAL_ZONE_ID).toInstant());
+        return Date.from(localDateTime
+                .atZone(GLOBAL_ZONE_ID)
+                .toInstant());
+    }
+
+    /**
+     * 判断两个时间戳是否是同一天
+     *
+     * @param startTimeSeconds
+     * @param endTimeSeconds
+     * @return
+     */
+    public static boolean isSameDay(long startTimeSeconds, long endTimeSeconds) {
+        LocalDate day1 = Instant
+                .ofEpochSecond(startTimeSeconds)
+                .atZone(GLOBAL_ZONE_ID)
+                .toLocalDate();
+        LocalDate day2 = Instant
+                .ofEpochSecond(endTimeSeconds)
+                .atZone(GLOBAL_ZONE_ID)
+                .toLocalDate();
+        return day1.equals(day2);
+    }
+
+    /**
+     * 计算两个秒时间戳之间的自然日间隔
+     *
+     * @param startTimeSeconds
+     * @param endTimeSeconds
+     * @return
+     */
+    public static long betweenDays(Long startTimeSeconds, Long endTimeSeconds) {
+        // 转换为 LocalDate（自然日）
+        LocalDate date1 = Instant
+                .ofEpochSecond(startTimeSeconds)
+                .atZone(GLOBAL_ZONE_ID)
+                .toLocalDate();
+        LocalDate date2 = Instant
+                .ofEpochSecond(endTimeSeconds)
+                .atZone(GLOBAL_ZONE_ID)
+                .toLocalDate();
+        return ChronoUnit.DAYS.between(date1, date2);
     }
 }

@@ -19,10 +19,12 @@ import com.ddf.boot.common.mvc.util.WebUtil;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,31 +79,44 @@ public abstract class AbstractExceptionHandler {
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
         final String uri = httpServletRequest.getRequestURI();
         final Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
+        Map<String, String> clientHeaderMap = new HashMap<>();
+        // 处理客户端传递的约定好的请求头
+        final Map<String, RequestHeaderEnum> clientHeaders = RequestHeaderEnum.getAllClientHeaders();
+        clientHeaders.forEach((name, obj) -> {
+            clientHeaderMap.put(
+                    name, Optional
+                            .ofNullable(httpServletRequest.getHeader(name))
+                            .orElse(obj.getDefaultValue()));
+        });
         // 是否要触发异常事件
         boolean shouldTriggerExceptionEvent = false;
-        if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
-                exception.getClass().getName())) {
-            log.error("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ", uri,
-                    parameterMap, body, exception
+        if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(exception
+                .getClass()
+                .getName())) {
+            log.error(
+                    "全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
+                    uri, parameterMap, clientHeaderMap, body, exception
             );
             shouldTriggerExceptionEvent = true;
         } else {
             // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
-            log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, 异常堆栈: ", uri,
-                    parameterMap, body, exception
+            log.info(
+                    "全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, , clientHeaders = {}, 异常堆栈: ",
+                    uri, parameterMap, clientHeaderMap, body, exception
             );
         }
         if (exception instanceof AlarmException) {
             AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", uri, exception);
         }
-        //        }
 
         final GlobalExceptionEventPayload payload = new GlobalExceptionEventPayload();
         payload.setUrl(uri);
         payload.setParameterMap(parameterMap);
         payload.setBody(body);
         try {
-            payload.setHost(InetAddress.getLocalHost().getHostAddress());
+            payload.setHost(InetAddress
+                    .getLocalHost()
+                    .getHostAddress());
         } catch (UnknownHostException ignore) {
             log.error("无法获取当前主机信息", ignore);
         }
@@ -165,7 +180,13 @@ public abstract class AbstractExceptionHandler {
             payload.setImei(httpServletRequest.getHeader(RequestHeaderEnum.IMEI.getName()));
             payload.setOs(httpServletRequest.getHeader(RequestHeaderEnum.OS.getName()));
             payload.setUid(httpServletRequest.getHeader(RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName()));
-            payload.setIsGatewayDispatch(Boolean.parseBoolean(StringUtils.defaultIfBlank(httpServletRequest.getHeader(RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName()), "false")));
+            payload.setIsGatewayDispatch(Boolean.parseBoolean(StringUtils.defaultIfBlank(
+                    httpServletRequest.getHeader(RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName()), "false")));
+            payload.setVersionCode(Integer.parseInt(
+                    StringUtils.defaultIfBlank(httpServletRequest.getHeader(RequestHeaderEnum.VERSION_CODE.getName()),
+                            "0"
+                    )));
+            payload.setClientHeaderMap(clientHeaderMap);
         } catch (Exception ignored) {
 
         }
@@ -209,7 +230,9 @@ public abstract class AbstractExceptionHandler {
                     if (Objects.isNull(baseException.getBaseCallbackCode())) {
                         formatDefaultMessage = baseException.getDescription();
                     } else {
-                        formatDefaultMessage = baseException.getBaseCallbackCode().getBizMessage();
+                        formatDefaultMessage = baseException
+                                .getBaseCallbackCode()
+                                .getBizMessage();
                     }
                 }
                 // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件, 根据不同异常，有些基于模糊化异常内容的目的，会使用默认状态码去格式化消息
@@ -226,10 +249,16 @@ public abstract class AbstractExceptionHandler {
             } else if (exception instanceof BindException) {
                 exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
                 final BindingResult result = ((BindException) exception).getBindingResult();
-                subMessage = result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(
-                        Collectors.joining(";"));
+                subMessage = result
+                        .getAllErrors()
+                        .stream()
+                        .map(ObjectError::getDefaultMessage)
+                        .collect(Collectors.joining(";"));
                 formatDefaultMessage = BaseErrorCallbackCode.BAD_REQUEST.getBizMessage();
-                formatCode = result.getAllErrors().get(0).getDefaultMessage();
+                formatCode = result
+                        .getAllErrors()
+                        .get(0)
+                        .getDefaultMessage();
             } else if (exception instanceof org.springframework.dao.DuplicateKeyException
                     || exception instanceof SQLIntegrityConstraintViolationException) {
                 exceptionCode = BaseErrorCallbackCode.DUPLICATE_KEY.getCode();

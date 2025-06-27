@@ -3,7 +3,7 @@ package com.ddf.boot.common.rocketmq.constant;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author rebot
+ * @author snowball
  * @description:
  * @date 2023/10/9 14:02
  */

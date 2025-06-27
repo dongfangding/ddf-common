@@ -30,7 +30,7 @@ import org.apache.http.util.EntityUtils;
 /**
  * http client util
  *
- * @author rebot
+ * @author snowball
  * @date 2023/10/19 23:29
  **/
 @Slf4j

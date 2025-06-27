@@ -3,7 +3,7 @@ package com.ddf.boot.common.api.model.common.dto;
 /**
  * <p>基于权重的概率判定属性类接口定义</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2022/09/21 16:41
  */

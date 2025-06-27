@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * 消息负载
  *
- * @author rebot
+ * @author snowball
  * @date 2023/10/09
  */
 @Data

@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 /**
  * <p>对象工具类</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2022/12/16 23:17
  */

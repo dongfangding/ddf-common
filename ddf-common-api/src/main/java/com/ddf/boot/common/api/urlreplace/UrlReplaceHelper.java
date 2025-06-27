@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.URLUtil;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -42,6 +44,7 @@ public class UrlReplaceHelper implements BeanFactoryPostProcessor {
         try {
             final StaticProperties bean = beanFactory.getBean(StaticProperties.class);
             final Map<String, List<String>> resourceProxyHosts = bean.getResourceProxyHosts();
+            final List<String> ignoreHosts = ObjectUtils.defaultIfNull(bean.getIgnoreHosts(), new ArrayList<>());
             if (StringUtils.isBlank(value) || CollUtil.isEmpty(resourceProxyHosts) || !resourceProxyHosts.containsKey(
                     bucket)) {
                 return value;
@@ -63,8 +66,12 @@ public class UrlReplaceHelper implements BeanFactoryPostProcessor {
                     currentTextAfterReplace = resourceProxyHost + (singleValue.startsWith("/") ? "" : "/")
                             + singleValue;
                 } else {
-                    currentTextAfterReplace = singleValue.replace(
-                            uri.getScheme() + "://" + uri.getHost(), resourceProxyHost);
+                    if (ignoreHosts.contains(uri.getHost())) {
+                        currentTextAfterReplace = singleValue;
+                    } else {
+                        currentTextAfterReplace = singleValue.replace(
+                                uri.getScheme() + "://" + uri.getHost(), resourceProxyHost);
+                    }
                 }
                 allTextAfterReplace.append(currentTextAfterReplace);
                 if (i < multipleValue.length - 1) {
@@ -72,7 +79,6 @@ public class UrlReplaceHelper implements BeanFactoryPostProcessor {
                 }
             }
             return allTextAfterReplace.toString();
-
         } catch (Exception e) {
             log.error("连接全局替换出现异常", e);
         }

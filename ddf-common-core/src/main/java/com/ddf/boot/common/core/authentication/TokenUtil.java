@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * <p>token生成工具</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2022/05/24 22:29
  */

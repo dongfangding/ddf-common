@@ -3,7 +3,7 @@ package com.ddf.boot.common.core.constant;
 /**
  * <p>id收集器</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2021/03/02 11:04
  */

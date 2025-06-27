@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>验证码校验参数类</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2021/07/12 15:16
  */

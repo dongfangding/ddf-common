@@ -142,10 +142,11 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
 
         // 重放简单校验
         final long nonce = Long.parseLong(Objects.requireNonNull(request.getHeader(RequestHeaderEnum.NONCE.getName())));
-        if (nonce < System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(5)) {
+        final long currentTimeMillis = System.currentTimeMillis();
+        if (nonce < currentTimeMillis - TimeUnit.MINUTES.toMillis(5)
+                || nonce > currentTimeMillis + TimeUnit.MINUTES.toMillis(5)) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
-
         // 签名校验
         final String contentType = request.getContentType();
         final MediaType mediaType = MediaType.parseMediaType(contentType);

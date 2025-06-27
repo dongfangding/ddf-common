@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * <p>description</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2024/06/05 19:23
  */
@@ -78,5 +78,16 @@ public class GlobalExceptionEventPayload {
      * 是否网关转发
      */
     private Boolean isGatewayDispatch = Boolean.FALSE;
+
+    /**
+     * 版本code
+     */
+    private Integer versionCode;
+
+    /**
+     * 客户端请求头
+     */
+    private Map<String, String> clientHeaderMap;
+
 
 }

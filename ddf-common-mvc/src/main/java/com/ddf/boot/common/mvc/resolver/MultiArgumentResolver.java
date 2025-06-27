@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * 同一个参数支持application/json和application/x-www-form-urlencoded
  *
  * @see MultiArgumentResolverMethodProcessor
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @date 2020/08/31 18:57
  */

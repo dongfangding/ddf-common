@@ -1,12 +1,14 @@
 package com.ddf.boot.common.alarm.config;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * <p>description</p >
+ * <p>Lark配置</p >
  *
  * @author snowball
  * @version 1.0
@@ -15,13 +17,8 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @RefreshScope
 @Configuration
-@ConfigurationProperties(prefix = "customs.alarm.dingtalk")
-public class DingTalkProperties {
-
-    /**
-     * 每日发送数量限制
-     */
-    private Integer dailyLimit = 100;
+@ConfigurationProperties(prefix = "customs.alarm.lark")
+public class LarkProperties {
 
     /**
      * 业务告警-资源告警机器人
@@ -35,6 +32,8 @@ public class DingTalkProperties {
 
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Properties {
 
         /**
@@ -43,9 +42,11 @@ public class DingTalkProperties {
         private boolean enabled = true;
 
         /**
-         * 访问token
+         * webhook地址全路径
+         * Lark webhook固定地址为https://open.larksuite.com/open-apis/bot/v2/hook/，
+         * 然后新增机器人之后还会有一个动态的url后缀，如https://open.larksuite.com/open-apis/bot/v2/hook/ccds-deff-wewe-eww-dsss
          */
-        private String accessToken;
+        private String webhookUrl;
 
         /**
          * 加签密钥

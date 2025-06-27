@@ -10,12 +10,6 @@ import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * url替换反序列化
- *
- * @author snowball
- * @date 2020/9/25 0025 11:56
- **/
 @Configuration
 @Slf4j
 public class UrlReplaceDeserialize extends JsonDeserializer<String> implements ContextualDeserializer {
@@ -48,6 +42,9 @@ public class UrlReplaceDeserialize extends JsonDeserializer<String> implements C
             if (urlReplace != null) {
                 return new UrlReplaceDeserialize(urlReplace.bucket());
             }
+        }
+        if (property == null) {
+            return ctxt.findNonContextualValueDeserializer(ctxt.getTypeFactory().constructType(String.class));
         }
         return ctxt.findNonContextualValueDeserializer(property.getType());
     }

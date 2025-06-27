@@ -3,7 +3,7 @@ package com.ddf.boot.common.alarm.util;
 /**
  * <p>description</p >
  *
- * @author Snowball
+ * @author snowball
  * @version 1.0
  * @date 2024/06/13 11:17
  */
@@ -15,7 +15,8 @@ public class NotifyStrUtil {
      * @param tableName
      * @return
      */
-    public static String getOriginBaseTableNameFromMonth(String tableName) {
+    public String getOriginBaseTableNameFromMonth(String tableName) {
         return tableName.substring(0, tableName.lastIndexOf("_"));
     }
+
 }
