@@ -52,7 +52,7 @@
         <curator.version>5.1.0</curator.version>
         <ons.version>1.0.0</ons.version>
         <ons-client.version>1.8.7.1.Final</ons-client.version>
-        <xxl-job-version>2.3.1</xxl-job-version>
+        <xxl-job-version>2.4.2</xxl-job-version>
         <disruptor.version>3.4.4</disruptor.version>
     </properties>
 
