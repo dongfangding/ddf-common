@@ -23,7 +23,7 @@
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
         <netty.version>4.1.77.Final</netty.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.10.7</jwt.version>
