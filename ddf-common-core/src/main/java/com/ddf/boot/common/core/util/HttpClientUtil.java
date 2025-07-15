@@ -1,7 +1,7 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.collection.CollUtil;
 import java.io.InterruptedIOException;
-import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +9,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.SSLException;
-
-import org.apache.http.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Consts;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,11 +32,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
-
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.RuntimeUtil;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HttpClientUtil {
@@ -239,11 +240,11 @@ public class HttpClientUtil {
             }
         } catch (Exception e) {
             log.error("HTTP请求异常 - url: {}", request.getURI(), e);
-            String host = request
-                    .getURI()
-                    .getHost();
-            String pingResult = RuntimeUtil.execForStr("ping -c 3 " + host);
-            log.error("HTTP请求异常 - url: {}, ping: {}", request.getURI(), pingResult, e);
+//            String host = request
+//                    .getURI()
+//                    .getHost();
+//            String pingResult = RuntimeUtil.execForStr("ping -c 3 " + host);
+            log.error("HTTP请求异常 - url: {}, ping: {}", request.getURI(), "", e);
         }
         return result;
     }
