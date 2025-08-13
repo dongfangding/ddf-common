@@ -2,9 +2,9 @@ package com.ddf.boot.common.alarm.dingtalk;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.alarm.config.DingTalkProperties;
-import com.ddf.boot.common.alarm.tablescan.TableAutoCreateNotifyInfo;
-import com.ddf.boot.common.alarm.tablescan.TableNotExistNotifyInfo;
-import com.ddf.boot.common.alarm.tablescan.TableNotify;
+import com.ddf.boot.common.alarm.rule.tablescan.TableAutoCreateNotifyInfo;
+import com.ddf.boot.common.alarm.rule.tablescan.TableNotExistNotifyInfo;
+import com.ddf.boot.common.alarm.rule.tablescan.TableNotify;
 import com.ddf.boot.common.alarm.util.DingTalkUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -12,6 +12,7 @@ import com.ddf.boot.common.api.util.DateUtils;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.event.GlobalExceptionEvent;
 import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     private final DingTalkProperties dingTalkProperties;
     private final ExceptionAlarmProperties exceptionAlarmProperties;
     private final LarkProperties larkProperties;
+    private final EnvironmentHelper environmentHelper;
 
     @Override
     public void onApplicationEvent(GlobalExceptionEvent event) {
@@ -153,7 +155,8 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
      */
     private void sendToLark(GlobalExceptionEventPayload payload) {
         try {
-            final LarkProperties.Properties propertiesBizResource = larkProperties.getCodeException();
+            final String applicationName = environmentHelper.getApplicationName();
+            final LarkProperties.Properties propertiesBizResource = larkProperties.getCodeProperties(applicationName);
             if (!propertiesBizResource.isEnabled()) {
                 return;
             }

@@ -40,13 +40,19 @@
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
             <version>1.0.1-jdk17-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-redis</artifactId>
             <version>1.0.1-jdk17-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ddf.common</groupId>
+            <artifactId>ddf-common-log4j</artifactId>
+            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

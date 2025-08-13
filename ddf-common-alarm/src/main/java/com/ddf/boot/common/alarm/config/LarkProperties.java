@@ -1,8 +1,11 @@
 package com.ddf.boot.common.alarm.config;
 
+import cn.hutool.core.collection.CollUtil;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,11 @@ public class LarkProperties {
      */
    private Properties codeException;
 
+    /**
+     * 自定义映射告警机器人配置
+     */
+    private Map<String, Properties> mappingException;
+
 
     @Data
     @NoArgsConstructor
@@ -52,5 +60,37 @@ public class LarkProperties {
          * 加签密钥
          */
         private String secret;
+
+        public static Properties defaultInstance() {
+            final Properties value = new Properties();
+            value.setEnabled(false);
+            return value;
+        }
+    }
+
+    /**
+     * 获取告警机器人配置
+     *
+     * @param mappingCode
+     * @return
+     */
+    public Properties getCodeProperties(String mappingCode) {
+        if (CollUtil.isNotEmpty(mappingException) && mappingException.containsKey(mappingCode)) {
+            return mappingException.get(mappingCode);
+        }
+        return ObjectUtils.defaultIfNull(codeException, Properties.defaultInstance());
+    }
+
+    /**
+     * 获取告警机器人配置
+     *
+     * @param mappingCode
+     * @return
+     */
+    public Properties getBizProperties(String mappingCode) {
+        if (CollUtil.isNotEmpty(mappingException) && mappingException.containsKey(mappingCode)) {
+            return mappingException.get(mappingCode);
+        }
+        return ObjectUtils.defaultIfNull(bizResource, Properties.defaultInstance());
     }
 }

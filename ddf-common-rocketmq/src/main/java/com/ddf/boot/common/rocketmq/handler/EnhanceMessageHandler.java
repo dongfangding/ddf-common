@@ -145,7 +145,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             long costTime = System.currentTimeMillis() - now;
             log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG,message.getMessageId(),messageJson, costTime);
         } catch (Exception e) {
-            log.error("[{}] 消息id:{}消费异常,e:{}",TAG, message.getMessageId(), Throwables.getStackTraceAsString(e));
+            log.info("[{}] 消息id:{}消费异常,e:{}",TAG, message.getMessageId(), Throwables.getStackTraceAsString(e));
             // 是捕获异常还是抛出，由子类决定
             if (throwException()) {
                 // 抛出异常，由DefaultMessageListenerConcurrently类处理

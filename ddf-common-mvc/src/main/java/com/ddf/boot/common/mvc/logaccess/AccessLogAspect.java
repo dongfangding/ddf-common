@@ -104,7 +104,7 @@ public class AccessLogAspect {
             long beforeTime = System.currentTimeMillis();
             if (CollUtil.isNotEmpty(accessFilterChainMap)) {
                 final List<AccessFilterChain> chainList = accessFilterChainMap.values().stream().sorted(
-                        Comparator.comparingInt(AccessFilterChain::getOrder)).collect(Collectors.toList());
+                        Comparator.comparingInt(AccessFilterChain::getOrder)).toList();
                 for (AccessFilterChain chain : chainList) {
                     if (!chain.filter(joinPoint, pointClass, pointMethod)) {
                         break;

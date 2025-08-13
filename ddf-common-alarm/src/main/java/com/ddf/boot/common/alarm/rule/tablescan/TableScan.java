@@ -1,4 +1,4 @@
-package com.ddf.boot.common.alarm.tablescan;
+package com.ddf.boot.common.alarm.rule.tablescan;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.util.DateUtils;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * <p>description</p >

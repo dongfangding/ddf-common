@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.util.RandomUtil;
 import com.ddf.boot.common.api.model.common.dto.DefaultWeightProportion;
+import com.ddf.boot.common.api.model.common.dto.ObjectKeyValuePair;
 import com.ddf.boot.common.api.model.common.dto.WeightProportion;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * <p>随机工具类</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2022/09/21 16:31
  */
@@ -58,7 +59,7 @@ public class RandomExtUtil {
             throw new IllegalArgumentException("length长度不支持");
         }
         return String.join(
-                separator, format, RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
+            separator, format, RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
     }
 
     /**
@@ -82,6 +83,27 @@ public class RandomExtUtil {
     }
 
     /**
+     * 0~1概率判定
+     *
+     * @param proportion
+     * @return
+     */
+    public static boolean hitProbability(double proportion) {
+        return RandomUtil.randomDouble(0, 1) < proportion;
+    }
+
+    /**
+     * 百分比概率命中判定， 同时返回随机到的概率值
+     *
+     * @param proportion
+     * @return
+     */
+    public static ObjectKeyValuePair<Double, Boolean> hitPercentWithProbability(double proportion) {
+        final double randomDouble = RandomUtil.randomDouble(0, 100);
+        return ObjectKeyValuePair.of(randomDouble, randomDouble < proportion);
+    }
+
+    /**
      * 基于权重的中奖概率判定
      *
      * @return
@@ -89,13 +111,13 @@ public class RandomExtUtil {
     public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
         // 先求出这批数据的总权重
         final double totalWeight = sources
-                .stream()
-                .mapToDouble(WeightProportion::getWeightValue)
-                .sum();
+            .stream()
+            .mapToDouble(WeightProportion::getWeightValue)
+            .sum();
         // 先随机出一个数值
         double randomNum = ThreadLocalRandom
-                .current()
-                .nextDouble(totalWeight);
+            .current()
+            .nextDouble(totalWeight);
         for (T source : sources) {
             if ((randomNum -= source.getWeightValue()) < 0) {
                 return source;
@@ -123,18 +145,18 @@ public class RandomExtUtil {
         List<T> rtnList = new ArrayList<>();
         // 先求出这批数据的总权重，这种情况下的数据只支持整形
         final int totalWeight = tempList
-                .stream()
-                .mapToInt(obj -> obj
-                        .getWeightValue()
-                        .intValue())
-                .sum();
+            .stream()
+            .mapToInt(obj -> obj
+                .getWeightValue()
+                .intValue())
+            .sum();
         int randomNum;
         // 将所有的数据都随机出来，总权重即是总次数
         for (int i = totalWeight; i > 0; i--) {
             // 先随机出一个数值
             randomNum = ThreadLocalRandom
-                    .current()
-                    .nextInt(i);
+                .current()
+                .nextInt(i);
             for (T source : tempList) {
                 if ((randomNum -= source.getWeightValue()) < 0) {
                     // 每中奖一次自己的权重就减少1次
@@ -163,8 +185,8 @@ public class RandomExtUtil {
         List<T> rtnList = new ArrayList<>();
         for (T t : tempList) {
             for (int i = 0; i < t
-                    .getWeightValue()
-                    .intValue(); i++) {
+                .getWeightValue()
+                .intValue(); i++) {
                 rtnList.add(t);
             }
         }
@@ -282,16 +304,19 @@ public class RandomExtUtil {
      * @return
      */
     public static BigDecimal calcPointScoreByTime(long time) {
-        final BigDecimal decimal = new BigDecimal(time * Math.pow(10, Math.negateExact(String
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(
+            10, Math.negateExact(String
                 .valueOf(time)
-                .length())));
+                .length())
+        ));
         return new BigDecimal("1.0").subtract(decimal);
     }
 
     public static void main(String[] args) {
-        final List<DefaultWeightProportion> proportions = Lists.newArrayList(DefaultWeightProportion.of("1", 10d),
-                DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
-                DefaultWeightProportion.of("4", 40d)
+        final List<DefaultWeightProportion> proportions = Lists.newArrayList(
+            DefaultWeightProportion.of("1", 10d),
+            DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
+            DefaultWeightProportion.of("4", 40d)
         );
         int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
         WeightProportion temp;
@@ -333,20 +358,20 @@ public class RandomExtUtil {
         } else {
             if (pastTime >= 15 + (isLuck.get() ? 10 : 5) + 5) {
                 System.out.printf(
-                        "%s: 结算完成, 开始下一轮, roundId = %s\n\n", new Date(currentSeconds * 1000), roundId.get());
+                    "%s: 结算完成, 开始下一轮, roundId = %s\n\n", new Date(currentSeconds * 1000), roundId.get());
                 startRound(roundId, startSeconds, isLuck, currentSeconds);
             } else if (pastTime >= 15 + (isLuck.get() ? 10 : 5)) {
                 System.out.printf(
-                        "%s: 战斗结束，开始结算, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
+                    "%s: 战斗结束，开始结算, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
             } else if (pastTime >= 15) {
                 System.out.printf(
-                        "%s: 投注结束，开始战斗, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
+                    "%s: 投注结束，开始战斗, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
             }
         }
     }
 
     private static void startRound(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck,
-            long currentSeconds) {
+        long currentSeconds) {
         roundId.incrementAndGet();
         startSeconds.set(currentSeconds);
         System.out.printf("%s: 开启新场次, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
@@ -362,5 +387,20 @@ public class RandomExtUtil {
      */
     public static String randomLetters(int length) {
         return RandomUtil.randomString(BASE_CHAR, length);
+    }
+
+    /**
+     * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    public static Integer randomInt(int start, int end) {
+        if (start == end) {
+            return start;
+        }
+        final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
+        return localRandom.nextInt(start, end);
     }
 }

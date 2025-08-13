@@ -1,4 +1,4 @@
-package com.ddf.boot.common.alarm.tablescan;
+package com.ddf.boot.common.alarm.rule.tablescan;
 
 /**
  * <p>description</p >

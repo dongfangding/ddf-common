@@ -1,7 +1,9 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.RuntimeUtil;
 import java.io.InterruptedIOException;
+import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.Header;
@@ -33,6 +36,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * http client 工具类
+ *
+ * @author snowball
+ * @date 2025/8/13 16:31
+ **/
 @Slf4j
 public class HttpClientUtil {
     /**
@@ -118,22 +127,26 @@ public class HttpClientUtil {
     private static void printState() {
         Executors
                 .newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(() -> {
-                    final PoolingHttpClientConnectionManager cm = HttpClientUtil.CM;
-                    final Set<HttpRoute> routes = cm.getRoutes();
-                    for (HttpRoute route : routes) {
-                        log.info(
-                                "连接池状态: total={}, defaultRoute={}, route = {}, available={}, leased={}, pending={}", cm
-                                        .getTotalStats()
-                                        .getMax(), cm.getDefaultMaxPerRoute(), route.toString(), cm
-                                        .getStats(route)
-                                        .getAvailable(), cm
-                                        .getStats(route)
-                                        .getLeased(), cm
-                                        .getStats(route)
-                                        .getPending());
-                    }
-                }, 30, 30, TimeUnit.SECONDS);
+                .scheduleAtFixedRate(
+                        () -> {
+                            final PoolingHttpClientConnectionManager cm = HttpClientUtil.CM;
+                            final Set<HttpRoute> routes = cm.getRoutes();
+                            for (HttpRoute route : routes) {
+                                log.info(
+                                        "连接池状态: total={}, defaultRoute={}, route = {}, available={}, leased={}, pending={}",
+                                        cm
+                                                .getTotalStats()
+                                                .getMax(), cm.getDefaultMaxPerRoute(), route.toString(), cm
+                                                .getStats(route)
+                                                .getAvailable(), cm
+                                                .getStats(route)
+                                                .getLeased(), cm
+                                                .getStats(route)
+                                                .getPending()
+                                );
+                            }
+                        }, 30, 30, TimeUnit.SECONDS
+                );
     }
 
     private static void applyHeaders(HttpRequestBase request, Map<String, String> headers) {
@@ -240,12 +253,37 @@ public class HttpClientUtil {
             }
         } catch (Exception e) {
             log.error("HTTP请求异常 - url: {}", request.getURI(), e);
-//            String host = request
-//                    .getURI()
-//                    .getHost();
-//            String pingResult = RuntimeUtil.execForStr("ping -c 3 " + host);
-            log.error("HTTP请求异常 - url: {}, ping: {}", request.getURI(), "", e);
+            String host = request
+                    .getURI()
+                    .getHost();
+            String pingResult = RuntimeUtil.execForStr("ping -c 3 " + host);
+            log.error("HTTP请求异常 - url: {}, ping: {}", request.getURI(), pingResult, e);
         }
         return result;
+    }
+
+    @Data
+    public static class ShuMeiCaptchaCheckRequest implements Serializable {
+
+        private String accessKey;
+
+        private Data data;
+
+
+        @lombok.Data
+        public static class Data {
+
+            private String rid;
+
+            private String ip;
+
+            private String tokenId;
+
+            private String deviceId;
+
+            private String expectedMode;
+
+            private String expectedAppId;
+        }
     }
 }

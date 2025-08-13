@@ -108,5 +108,10 @@ public interface RedisLuaScript {
     RedisScript<String> HASH_INCR_FLOAT_ROUND_DECIMAL = RedisScript.of(
             new ClassPathResource("lua/HashIncrFloatRoundDecimal.lua"), String.class);
 
+    /**
+     * 基于zset实现的范围删除
+     */
+    RedisScript<String> ZSET_RANGEBYSCORE_ZREM = RedisScript.of(
+            new ClassPathResource("lua/zset_rangebyscore_zrem.lua"), String.class);
 
 }

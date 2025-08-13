@@ -13,9 +13,11 @@ import com.ddf.boot.common.redis.response.StringTtlIncrWithLimitResponse;
 import com.ddf.boot.common.redis.script.RedisLuaScript;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -495,6 +497,25 @@ public class RedisTemplateHelper {
             return 0L;
         }
         return Long.parseLong(execute);
+    }
+
+    /**
+     * 范围查询并删除
+     *
+     * @param key
+     * @param min
+     * @param max
+     * @return
+     */
+    public List<String> zsetRangeByscoreZrem(String key, Long min, Long max) {
+        final String execute = stringRedisTemplate.execute(
+                RedisLuaScript.ZSET_RANGEBYSCORE_ZREM,
+                Lists.newArrayList(key), min.toString(), max.toString()
+        );
+        if (StringUtils.isBlank(execute) || "{}".equals(execute)) {
+            return new ArrayList<>();
+        }
+        return JsonUtil.toBean(execute, List.class, String.class);
     }
 
     public static BigDecimal calcPointScoreByTime(long time) {
