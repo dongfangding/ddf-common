@@ -1,7 +1,7 @@
 package com.ddf.boot.common.trace.extra;
 
 import com.ddf.boot.common.trace.context.Identity;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 提供一个获取用户信息的默认实现

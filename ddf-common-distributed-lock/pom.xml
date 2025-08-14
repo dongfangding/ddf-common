@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.ddf.common</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>1.0.1-jdk17-SNAPSHOT</version>
+        <version>1.0.1-boot302-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
@@ -15,7 +15,7 @@
     </properties>
 
     <artifactId>ddf-common-distributed-lock</artifactId>
-    <version>1.0.1-jdk17-SNAPSHOT</version>
+    <version>1.0.1-boot302-SNAPSHOT</version>
     <description>分布式锁实现</description>
 
     <dependencies>
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <version>1.0.1-boot302-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-redis</artifactId>
-            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <version>1.0.1-boot302-SNAPSHOT</version>
         </dependency>
 
         <dependency>

@@ -1,12 +1,12 @@
 package com.ddf.boot.common.mvc.filter;
 
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
@@ -22,8 +22,8 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 public class CachingRequestBodyFilter extends GenericFilterBean {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(jakarta.servlet.ServletRequest request, jakarta.servlet.ServletResponse response,
+            jakarta.servlet.FilterChain chain) throws IOException, jakarta.servlet.ServletException {
         HttpServletRequest currentRequest = (HttpServletRequest) request;
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(currentRequest);
         chain.doFilter(wrappedRequest, response);

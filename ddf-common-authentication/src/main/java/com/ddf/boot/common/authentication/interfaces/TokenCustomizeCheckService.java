@@ -2,7 +2,7 @@ package com.ddf.boot.common.authentication.interfaces;
 
 import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>在通用的校验规则上可以实现该接口实现自己的校验规则</p >

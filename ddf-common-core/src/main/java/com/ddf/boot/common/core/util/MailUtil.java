@@ -1,13 +1,14 @@
 package com.ddf.boot.common.core.util;
 
+
+
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
+import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -58,7 +59,6 @@ public class MailUtil {
      * @param subject    主题
      * @param content    内容
      * @param attachment 附件
-     * @throws MessagingException
      */
     public static void sendMimeMail(String[] sendTo, String[] cc, String subject, String content,
             Map<String, File> attachment) {
@@ -85,15 +85,17 @@ public class MailUtil {
                 attachment.forEach((attachmentFilename, file) -> {
                     try {
                         helper.addAttachment(attachmentFilename, file);
-                    } catch (MessagingException e) {
-                        log.error("邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}", Arrays.toString(sendTo),
-                                Arrays.toString(cc), subject, content
+                    } catch (jakarta.mail.MessagingException e) {
+                        log.error(
+                                "邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}",
+                                Arrays.toString(sendTo), Arrays.toString(cc), subject, content
                         );
                     }
                 });
             }
         } catch (Exception e) {
-            log.error("邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}", Arrays.toString(sendTo),
+            log.error(
+                    "邮件发送失败, sendTo = {}, cc = {}, subject = {}, content = {}", Arrays.toString(sendTo),
                     Arrays.toString(cc), subject, content
             );
             throw new ServerErrorException(BaseErrorCallbackCode.MAIL_SEND_FAILURE);

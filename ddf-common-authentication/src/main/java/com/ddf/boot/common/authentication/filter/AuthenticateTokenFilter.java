@@ -23,6 +23,8 @@ import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.SignatureUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -311,10 +311,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         serverHeaderMap.put(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
                 Objects.nonNull(userClaim) ? userClaim.getUserId() :
                         request.getHeader(RequestHeaderEnum.IMEI.getName())));
-        serverHeaderMap.put(
-                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getName(),
-                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getDefaultValue()
-        );
         return serverHeaderMap;
     }
 

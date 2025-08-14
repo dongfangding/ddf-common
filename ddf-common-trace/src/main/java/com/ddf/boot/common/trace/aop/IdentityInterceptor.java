@@ -5,12 +5,12 @@ import com.ddf.boot.common.trace.context.QlTraceContext;
 import com.ddf.boot.common.trace.context.TraceProcess;
 import com.ddf.boot.common.trace.extra.IdentityCollectService;
 import com.ddf.boot.common.trace.util.TraceContextUtil;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * 处理trace上下文
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @date 2021/8/20 18:51
  **/
 @Slf4j
-public class IdentityInterceptor extends HandlerInterceptorAdapter {
+public class IdentityInterceptor implements HandlerInterceptor {
 
     private final IdentityCollectService identityCollectService;
 
@@ -38,18 +38,24 @@ public class IdentityInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String traceId = StringUtils.defaultIfBlank(TraceContextUtil.getSkyWalkingTraceId(), TraceContextUtil.defaultTraceId());
-        final ContextDomain contextDomain = ContextDomain.builder()
+        String traceId = StringUtils.defaultIfBlank(
+                TraceContextUtil.getSkyWalkingTraceId(), TraceContextUtil.defaultTraceId());
+        final ContextDomain contextDomain = ContextDomain
+                .builder()
                 .traceId(traceId)
                 .identity(identityCollectService.get(request))
                 .traceProcess(TraceProcess.defaultInstance())
                 .build();
         QlTraceContext.setContextDomain(contextDomain);
-        MDC.put(QlTraceContext.USER_ID, contextDomain.getIdentity().getUid() + "");
+        MDC.put(
+                QlTraceContext.USER_ID, contextDomain
+                        .getIdentity()
+                        .getUid() + ""
+        );
         MDC.put(QlTraceContext.TRACE_ID, traceId);
         return Boolean.TRUE;
     }
- 
+
     /**
      * 释放
      *
@@ -60,10 +66,10 @@ public class IdentityInterceptor extends HandlerInterceptorAdapter {
      * @throws Exception
      */
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
         QlTraceContext.remove();
         MDC.remove(QlTraceContext.USER_ID);
         MDC.remove(QlTraceContext.TRACE_ID);
-        super.afterCompletion(request, response, handler, ex);
     }
 }

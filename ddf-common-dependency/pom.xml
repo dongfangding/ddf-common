@@ -6,7 +6,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common-dependency</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-jdk17-SNAPSHOT</version>
+    <version>1.0.1-boot302-SNAPSHOT</version>
     <name>ddf-common-dependency</name>
     <description>依赖统一管理</description>
 
@@ -15,8 +15,8 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.7.6</spring-boot.version>
-        <spring-cloud-context.version>3.1.5</spring-cloud-context.version>
+        <spring-boot.version>3.0.2</spring-boot.version>
+        <spring-cloud-context.version>4.0.0</spring-cloud-context.version>
         <dubbo.version>2.7.14</dubbo.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
@@ -54,6 +54,7 @@
         <ons-client.version>1.8.7.1.Final</ons-client.version>
         <xxl-job-version>2.3.1</xxl-job-version>
         <disruptor.version>3.4.4</disruptor.version>
+        <servlet.version>6.0.0</servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -403,6 +404,13 @@
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
             </dependency>
 
             <!-- 适配JDK升级 start ============================== -->

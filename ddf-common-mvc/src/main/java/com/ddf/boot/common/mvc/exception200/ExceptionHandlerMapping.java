@@ -2,8 +2,8 @@ package com.ddf.boot.common.mvc.exception200;
 
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>将捕获的异常暴露出去，允许实现方实现接口根据这个异常自定义返回数据</p >

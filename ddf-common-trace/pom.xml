@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.1-jdk17-SNAPSHOT</version>
+        <version>1.0.1-boot302-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-mvc</artifactId>
-            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <version>1.0.1-boot302-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
@@ -60,8 +60,8 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

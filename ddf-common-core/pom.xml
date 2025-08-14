@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.ddf.common</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>1.0.1-jdk17-SNAPSHOT</version>
+        <version>1.0.1-boot302-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-core</artifactId>
-    <version>1.0.1-jdk17-SNAPSHOT</version>
+    <version>1.0.1-boot302-SNAPSHOT</version>
     <description>基础包</description>
 
     <properties>
@@ -33,17 +33,12 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-api</artifactId>
-            <version>1.0.1-jdk17-SNAPSHOT</version>
+            <version>1.0.1-boot302-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
         </dependency>
 
         <dependency>

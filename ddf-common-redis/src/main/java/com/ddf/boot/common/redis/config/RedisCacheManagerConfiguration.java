@@ -88,7 +88,7 @@ public class RedisCacheManagerConfiguration {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                         new GenericJackson2JsonRedisSerializer()))
                 .entryTtl(ttl)
-                .prefixKeysWith(prefixKeys);
+                .computePrefixWith(cacheName -> prefixKeys + cacheName);
 
         // Allow caching null values.
         if (!redisProperties.isCacheNullValues()) {
