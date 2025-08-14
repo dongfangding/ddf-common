@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <description>基于netty实现的消息代理服务器</description>
     <artifactId>ddf-common-netty-broker</artifactId>
-
+    <version>1.0.1-boot302-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -11,7 +11,7 @@
 
     <artifactId>ddf-common-third-party</artifactId>
     <description>第三方扩展工具包</description>
-
+    <version>1.0.1-boot302-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
