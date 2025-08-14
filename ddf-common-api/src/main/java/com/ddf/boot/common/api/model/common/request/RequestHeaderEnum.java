@@ -60,11 +60,6 @@ public enum RequestHeaderEnum {
     SYSTEM_LANGUAGE("system_language", false, true, ""),
 
     /**
-     * 运营商
-     */
-    SIM_OPERATOR("sim_operator", false, true, ""),
-
-    /**
      * 是否使用了代理
      */
     USE_PROXY("use_proxy", true, true, "false"),
@@ -95,17 +90,11 @@ public enum RequestHeaderEnum {
      */
     H5_VERSION("h5_version", false, true, ""),
 
-
     /**
      * ios的idfa
      */
     IOS_IDFA("ios_idfa", false, true, ""),
 
-
-    /**
-     * Android oa_id
-     */
-    OA_ID("oa_id", false, true, ""),
 
     /**
      * Android android_id
@@ -143,18 +132,9 @@ public enum RequestHeaderEnum {
     IS_GATEWAY_DISPATCH("is_gateway_dispatch", false, false, "true"),
 
     /**
-     * 是否运营后台配置的白名单设备
-     */
-    IS_CONSOLE_WHITELIST_IMEI("is_console_whitelist_imei", false, false, "false"),
-
-    /**
-     * 账号是否被封（风控服务提供），被封之后，除开登录以外其他都会被拒绝
-     */
-    IS_BANNED("is_banned", false, false, "false"),
-    /**
      * 是否模拟器， 0否1是
      */
-    SIMULATOR("simulator", false, true, "false"),
+    SIMULATOR("is_simulator", false, true, "false"),
 
     ;
     /**
