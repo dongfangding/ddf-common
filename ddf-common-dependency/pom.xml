@@ -469,13 +469,13 @@
             <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
             <id>aiyu_release</id>
             <name>Release Repository of nexus_release</name>
-            <url>http://121.41.123.212:8802/repository/aiyu_release/</url>
+            <url>http://xxxx:8802/repository/aiyu_release/</url>
         </repository>
 
         <snapshotRepository>
             <id>aiyu_snapshot</id>
             <name>Snapshot Repository of nexus_snapshot</name>
-            <url>http://121.41.123.212:8802/repository/aiyu_snapshot/</url>
+            <url>http://xxxx:8802/repository/aiyu_snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -484,7 +484,7 @@
             <id>aiyu_public</id>
             <!-- 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
              然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>-->
-            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>
+            <url>http://xxxx:8802/repository/aiyu_public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -509,7 +509,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>aiyu_public</id>
-            <url>http://121.41.123.212:8802/repository/aiyu_public/</url>
+            <url>http://xxxx:8802/repository/aiyu_public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
