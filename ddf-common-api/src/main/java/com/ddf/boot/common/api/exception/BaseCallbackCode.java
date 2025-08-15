@@ -1,5 +1,9 @@
 package com.ddf.boot.common.api.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * <p>异常消息代码统一接口</p >
  *
@@ -30,5 +34,35 @@ public interface BaseCallbackCode {
      */
     default String getBizMessage() {
         return getDescription();
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor(staticName = "of")
+    class DefaultBaseCallbackCode implements BaseCallbackCode {
+
+        private String code;
+        private String description;
+        private String bizMessage;
+
+
+        @Override
+        public String getCode() {
+            return code;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getBizMessage() {
+            return bizMessage;
+        }
+
+        public static BaseCallbackCode of(String code, String description) {
+            return of(code, description, description);
+        }
     }
 }
