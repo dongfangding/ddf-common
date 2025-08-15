@@ -311,10 +311,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         serverHeaderMap.put(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
                 Objects.nonNull(userClaim) ? userClaim.getUserId() :
                         request.getHeader(RequestHeaderEnum.IMEI.getName())));
-        serverHeaderMap.put(
-                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getName(),
-                RequestHeaderEnum.IS_CONSOLE_WHITELIST_IMEI.getDefaultValue()
-        );
         return serverHeaderMap;
     }
 

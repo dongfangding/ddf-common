@@ -6,11 +6,11 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.1-jdk17-SNAPSHOT</version>
+        <version>boot276-2025.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ddf-common-sharding</artifactId>
-    <version>1.0.1-jdk17-SNAPSHOT</version>
+    <version>boot276-2025.1.0-SNAPSHOT</version>
     <description>分库分表模块</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
