@@ -6,7 +6,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common-dependency</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-boot302-SNAPSHOT</version>
+    <version>boot302-2025.1.0-SNAPSHOT</version>
     <name>ddf-common-dependency</name>
     <description>依赖统一管理</description>
 

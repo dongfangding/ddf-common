@@ -5,10 +5,10 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>1.0.1-boot302-SNAPSHOT</version>
+        <version>boot302-2025.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.1-boot302-SNAPSHOT</version>
+    <version>boot302-2025.1.0-SNAPSHOT</version>
     <artifactId>ddf-common-script</artifactId>
     <description>存放一些项目用到的脚本</description>
 
