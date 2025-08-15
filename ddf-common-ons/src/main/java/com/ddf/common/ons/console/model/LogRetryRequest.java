@@ -1,7 +1,7 @@
 package com.ddf.common.ons.console.model;
 
-import com.google.common.base.Objects;
 import com.ddf.common.ons.console.constant.RetryChannelEnum;
+import com.google.common.base.Objects;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

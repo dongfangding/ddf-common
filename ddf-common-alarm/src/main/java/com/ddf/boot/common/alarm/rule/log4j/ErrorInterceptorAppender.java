@@ -3,7 +3,6 @@ package com.ddf.boot.common.alarm.rule.log4j;
 import com.ddf.boot.common.alarm.config.LarkProperties;
 import com.ddf.boot.common.alarm.util.LarkUtil;
 import com.ddf.boot.common.api.util.DateUtils;
-import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;

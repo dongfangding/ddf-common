@@ -2,14 +2,10 @@ package com.ddf.boot.common.mvc.permissionscan;
 
 import com.ddf.boot.common.core.util.TreeConvertUtil;
 import com.google.common.collect.Sets;
-import java.awt.Menu;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 @Slf4j
