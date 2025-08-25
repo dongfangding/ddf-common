@@ -1,6 +1,5 @@
 package com.ddf.boot.common.authentication.filter;
 
-import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
 import com.ddf.boot.common.api.exception.BusinessException;
@@ -36,16 +35,12 @@ import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.Nullable;
-import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**

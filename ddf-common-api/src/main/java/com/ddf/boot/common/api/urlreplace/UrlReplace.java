@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 /**
  * 标识要替换的文案， 仅支持jackson
  *
- * @author robot
+ * @author snowball
  * @date 2020/9/25 0025 11:54
  **/
 @Target({ElementType.FIELD})

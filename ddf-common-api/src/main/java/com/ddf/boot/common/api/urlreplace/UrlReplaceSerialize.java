@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 功能描述:数据脱敏序列化
  *
- * @author robot
+ * @author snowball
  * @date 2020/9/25 0025 11:56
  **/
 @Configuration
