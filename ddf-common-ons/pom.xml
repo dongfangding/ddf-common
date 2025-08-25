@@ -5,12 +5,12 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>boot276-2025.1.0.RELEASE</version>
+        <version>boot276-2025.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-ons</artifactId>
-    <version>boot276-2025.1.0.RELEASE</version>
+    <version>boot276-2025.2.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-mvc</artifactId>
-            <version>boot276-2025.1.0.RELEASE</version>
+            <version>boot276-2025.2.0-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
         <dependency>
