@@ -4,6 +4,7 @@ import cn.hutool.core.util.ReflectUtil;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -164,6 +165,16 @@ public class RequestContext implements Serializable {
      * 是否模拟器， 0否1是
      */
     private Boolean isSimulator = Boolean.FALSE;
+
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
 
     /**
      * 自定义属性
