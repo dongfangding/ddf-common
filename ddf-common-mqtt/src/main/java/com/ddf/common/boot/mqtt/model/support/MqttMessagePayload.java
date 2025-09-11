@@ -1,14 +1,11 @@
 package com.ddf.common.boot.mqtt.model.support;
 
-import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
-import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
-import com.ddf.common.boot.mqtt.model.support.body.TextMessageBody;
+import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
 import java.io.Serializable;
 import lombok.Data;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
 
 /**
  * <p>发送的mqtt的实际消息对象， 该对象通过发送消息请求对象构建,舍弃了一些无必要参数，同时增加了一些自己作为服务端代码的一些参数</p >
@@ -19,7 +16,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  * @date 2022/03/19 18:24
  */
 @Data
-public class MqttMessagePayload<T> implements Serializable {
+public class MqttMessagePayload implements Serializable {
 
     private static final long serialVersionUID = 1516322558409231083L;
 
@@ -69,11 +66,11 @@ public class MqttMessagePayload<T> implements Serializable {
     /**
      * 消息body
      *
-     * 注意这个值来源于{@link MqttMessageRequest#getBody()}
+     * 注意这个值来源于{@link InnerMqttMessageRequest#getBody()}
      * 这里的T舍弃了限定符， 是为了避免对象序列化之后，由于多态无法反序列化问题。
      * 如果要支持，会把这一块搞发非常复杂，目前应该没有必要
      */
-    private T body;
+    private String body;
 
     /**
      * 通过外部发送消息的请求对象转换为实际要发送mqtt message的payload
@@ -81,11 +78,10 @@ public class MqttMessagePayload<T> implements Serializable {
      *
      * @param request
      * @param serverClientId
-     * @param <T>
      * @return
      */
-    public static <T extends MessageBody> MqttMessagePayload<T> fromMessageRequest(MqttMessageRequest<T> request, String serverClientId) {
-        final MqttMessagePayload<T> payload = new MqttMessagePayload<>();
+    public static MqttMessagePayload fromMessageRequest(InnerMqttMessageRequest request, String serverClientId) {
+        final MqttMessagePayload payload = new MqttMessagePayload();
         payload.setHeader(request.getHeader());
         payload.setMessageCode(request.getMessageCode());
         payload.setContentType(request.getContentType());
@@ -99,18 +95,5 @@ public class MqttMessagePayload<T> implements Serializable {
         payload.setServerInfo(serverInfo);
 
         return payload;
-    }
-
-    public static void main(String[] args) {
-        final MqttMessageRequest<TextMessageBody> request = new MqttMessageRequest<>();
-        final TextMessageBody body = new TextMessageBody();
-        body.setMsg("haha");
-        request.setBody(body);
-        request.setMessageCode("didi");
-        final MqttMessagePayload<TextMessageBody> payload = MqttMessagePayload.fromMessageRequest(request, "111");
-        String str = JsonUtil.asString(payload);
-        System.out.println("str = " + str);
-        final MqttMessagePayload<TextMessageBody> request1 = JsonUtil.toBean(str, MqttMessagePayload.class);
-        System.out.println("request1 = " + request1);
     }
 }

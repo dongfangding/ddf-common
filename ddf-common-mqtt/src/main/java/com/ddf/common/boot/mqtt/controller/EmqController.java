@@ -1,8 +1,11 @@
 package com.ddf.common.boot.mqtt.controller;
 
+import com.ddf.boot.common.api.model.common.response.ResponseData;
+import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.extra.EmqClientAuthenticate;
+import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.ConnectionInfoRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.EmqAclRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.EmqAuthenticateRequest;
@@ -10,11 +13,15 @@ import com.ddf.common.boot.mqtt.model.response.ConnectionInfoResponse;
 import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,15 +38,45 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2022/03/22 14:46
  */
 @RestController
-@RequestMapping("emq/module/")
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequestMapping("/mqtt/proxy")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
 public class EmqController {
 
     private final EmqConnectionProperties emqConnectionProperties;
+    private final MqttClient mqttClient;
+    private final MqttPublishClient mqttPublishClient;
 
     @Autowired(required = false)
     private EmqClientAuthenticate emqClientAuthenticate;
+
+    /**
+     * 演示发送消息，非正式使用
+     *
+     * @param message
+     * @return
+     * @throws MqttException
+     */
+    @GetMapping("send")
+    public ResponseData<String> send(String message) throws MqttException {
+        final MqttMessage mqttMessage = new MqttMessage();
+        mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
+        mqttClient.publish("test", mqttMessage);
+        return ResponseData.success("true");
+    }
+
+
+    /**
+     * 原始发布消息，忽略处理一些规则，使用String接受参数，否则无法反序列化，定制化的接口在这个上层包装再处理
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("publish")
+    public ResponseData<Boolean> publish(@RequestBody InnerMqttMessageRequest request) {
+        mqttPublishClient.publish(request);
+        return ResponseData.success(true);
+    }
 
     /**
      * 获取emq连接信息
@@ -54,7 +91,8 @@ public class EmqController {
         if (Objects.isNull(protocolEnum)) {
             return ConnectionInfoResponse.of(protocol, null, "不支持的协议地址");
         }
-        final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(protocol);
+        final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(
+                protocol);
         String url = Objects.isNull(connectionConfig) ? "" : connectionConfig.getUrl();
         return ConnectionInfoResponse.of(protocol, url, "成功");
     }
@@ -73,13 +111,16 @@ public class EmqController {
             final String clientId = client.getClientIdPrefix();
 
             // 服务端用户
-            if (request.getClientId().startsWith(clientId)) {
+            if (request
+                    .getClientId()
+                    .startsWith(clientId)) {
                 if (StringUtils.isAllBlank(username, password)) {
                     EmqHttpResponseUtil.success(response, "服务端未配置用户名和密码无需校验，服务端连接认证通过");
                     return;
                 }
                 // 匹配用户名和密码
-                if (Objects.equals(username, request.getUsername()) && Objects.equals(password, request.getPassword())) {
+                if (Objects.equals(username, request.getUsername()) && Objects.equals(
+                        password, request.getPassword())) {
                     EmqHttpResponseUtil.success(response, "服务端连接认证通过");
                 } else {
                     EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
@@ -130,7 +171,9 @@ public class EmqController {
      */
     @PostMapping("acl")
     public void acl(@RequestBody EmqAclRequest request, HttpServletResponse response) {
-        if (request.getTopic().contains(GlobalStorage.WILDCARD_CHARACTER)) {
+        if (request
+                .getTopic()
+                .contains(GlobalStorage.WILDCARD_CHARACTER)) {
             EmqHttpResponseUtil.error(response, "普通用户ACL未认证通过");
         }
         // 普通用户（一般为客户端）不允许直接使用调用底层的连接进行发布，必须请求服务端接口，服务端接口使用超级用户进行发布数据
