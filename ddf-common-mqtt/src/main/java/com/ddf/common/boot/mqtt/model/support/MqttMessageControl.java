@@ -36,10 +36,10 @@ public class MqttMessageControl implements Serializable {
     /**
      * 历史记录中是否显示该消息
      */
-    private Boolean show = Boolean.TRUE;
+    private Boolean show = Boolean.FALSE;
 
     /**
      * 是否持久化
      */
-    private Boolean persistence = Boolean.TRUE;
+    private Boolean persistence = Boolean.FALSE;
 }

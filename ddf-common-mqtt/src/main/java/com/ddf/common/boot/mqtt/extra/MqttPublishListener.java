@@ -1,7 +1,7 @@
 package com.ddf.common.boot.mqtt.extra;
 
 import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
 
 /**
  * <p>消息发送事件监听</p >
@@ -17,16 +17,14 @@ public interface MqttPublishListener {
      *
      * @param message 已经构建好的MqttMessage对象
      * @param payload 携带的数据保温
-     * @param <T>
      */
-    <T> void beforePublish(MqttMessage message, MqttMessagePayload<T> payload);
+    void beforePublish(MqttMessage message, MqttMessagePayload payload);
 
     /**
      * 消息发送完成后时间，可以做消息落地业务
      *
      * @param message 已经构建好的MqttMessage对象
      * @param payload 携带的数据保温
-     * @param <T>
      */
-    <T> void afterPublish(MqttMessage message, MqttMessagePayload<T> payload);
+    void afterPublish(MqttMessage message, MqttMessagePayload payload);
 }

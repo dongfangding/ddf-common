@@ -1,6 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support;
 
-import com.ddf.common.boot.mqtt.model.request.MqttMessageRequest;
+import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -81,7 +81,7 @@ public class MqttMessageRecord implements Serializable {
 
     /**
      * 最终发送出去的topic
-     * @see MqttMessageRequest#getTopic()
+     * @see InnerMqttMessageRequest#getTopic()
      */
     private String topicUrl;
 

@@ -1,15 +1,15 @@
-package com.ddf.common.boot.mqtt.model.support.topic;
+package com.ddf.common.boot.mqttclient.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 
 /**
- * <p>抽象的通用点对点topic类，主要为了定义通用前缀， 其它点对点topic可以继承该类，往下追加区分业务前缀</p >
+ * <p>抽象的通用群组topic类，主要为了定义通用前缀， 其它点对点topic可以继承该类，往下追加区分业务前缀</p >
  *
  * @author Snowball
  * @version 1.0
  * @date 2022/10/28 17:15
  */
-public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
+public abstract class AbstractGroupMqttTopic implements MqttTopicDefine {
 
     /**
      * 获取身份id
@@ -36,7 +36,7 @@ public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
     public abstract MqttTopicDefine convertTopicObj(String fullTopic);
 
     /**
-     * 获取包装的BizTopicPrefix， 主要是为了自定义处理前缀问题，比如加/开头
+     * 获取包装的BizTopicPrefix， 主要是为了处理前缀问题
      *
      * @return
      */
@@ -52,7 +52,7 @@ public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
     public String getTopicPrefix() {
         return String.join(
                 GlobalStorage.TOPIC_SEPARATOR,
-                GlobalStorage.getSystemClientIdPrefix(), GlobalStorage.POINT_TO_POINT_TOPIC_PREFIX,
+                GlobalStorage.getSystemClientIdPrefix(), GlobalStorage.GROUP_TOPIC_PREFIX,
                 getBoxedBizTopicPrefix()
         );
     }

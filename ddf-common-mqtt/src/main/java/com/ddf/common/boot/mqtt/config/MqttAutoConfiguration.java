@@ -11,16 +11,19 @@ import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +58,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
-        PreconditionUtil.checkArgument(Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
+        PreconditionUtil.checkArgument(
+                Objects.nonNull(clientConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_CLIENT_MISS);
         // 存入到全局变量中
         GlobalStorage.clientConfig = clientConfig;
         GlobalStorage.SYSTEM_CLIENT_ID_PREFIX = clientConfig.getClientIdPrefix();
@@ -63,8 +67,10 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
         // 默认使用mqtt 的 tcp 来进行连接
         final String protocol = MQTTProtocolEnum.MQTT_TCP.getProtocol();
-        final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(protocol);
-        PreconditionUtil.checkArgument(Objects.nonNull(connectionConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR);
+        final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(
+                protocol);
+        PreconditionUtil.checkArgument(
+                Objects.nonNull(connectionConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR);
 
         final String url = connectionConfig.getUrl();
         MqttClient mqttClient;
@@ -76,13 +82,14 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         }
 
         // 客户端连接配置
-        MqttConnectOptions connOpts = new MqttConnectOptions();
+        MqttConnectionOptions connOpts = new MqttConnectionOptions();
         connOpts.setUserName(clientConfig.getUsername());
-        connOpts.setPassword(clientConfig.getPassword().toCharArray());
+        connOpts.setPassword(clientConfig
+                .getPassword()
+                .getBytes(StandardCharsets.UTF_8));
         connOpts.setKeepAliveInterval(60);
-        connOpts.setMaxInflight(10);
         connOpts.setConnectionTimeout(0);
-        connOpts.setCleanSession(true);
+        connOpts.setCleanStart(true);
         connOpts.setAutomaticReconnect(true);
         try {
             mqttClient.connect(connOpts);
@@ -94,19 +101,22 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 设置回调
         MqttClient finalMqttClient = mqttClient;
         mqttClient.setCallback(new MqttCallback() {
-
             /**
              * 连接断开回调
              *
-             * @param cause the reason behind the loss of connection.
              */
             @Override
-            public void connectionLost(Throwable cause) {
+            public void disconnected(MqttDisconnectResponse disconnectResponse) {
                 try {
                     finalMqttClient.reconnect();
                 } catch (MqttException e) {
                     log.error("mqtt tcp 重新连接客户端失败， protocol = {}, url = {}", protocol, url, e);
                 }
+            }
+
+            @Override
+            public void mqttErrorOccurred(MqttException exception) {
+
             }
 
             /**
@@ -133,8 +143,18 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              * @param token the delivery token associated with the message.
              */
             @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
+            public void deliveryComplete(IMqttToken token) {
                 // 消息确认
+            }
+
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+
+            }
+
+            @Override
+            public void authPacketArrived(int reasonCode, MqttProperties properties) {
+
             }
         });
         return mqttClient;
@@ -147,7 +167,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    public MqttDefinition mqttDefinition(MqttClient mqttClient, @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
+    public MqttDefinition mqttDefinition(MqttClient mqttClient,
+            @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
         return new DefaultMqttPublishImpl(mqttClient, listenerMap);
     }
 

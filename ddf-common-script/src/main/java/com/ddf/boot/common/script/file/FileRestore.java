@@ -27,8 +27,8 @@ import java.util.Set;
 public class FileRestore {
 
     public static void main(String[] args) {
-        String baseTargetDirectory = "G:/监控/客厅2";
-        packageMonitorVideo2(new String[] {"G:/客厅俯瞰"}, baseTargetDirectory);
+        String baseTargetDirectory = "D:/文件整理/整理";
+        computerReadAndMoveFileToMonth(new String[] {"D:/文件整理/小了多"}, baseTargetDirectory);
     }
 
     /**
@@ -57,6 +57,9 @@ public class FileRestore {
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         } else {
                             String month = fileName.substring(3, 9);
+                            if (fileName.startsWith("VID_")) {
+                                month = fileName.substring(4, 10);
+                            }
                             // 创建月目录
                             Path monthDir = Paths.get(baseTargetDirectory, month);
                             if (!Files.exists(monthDir)) {

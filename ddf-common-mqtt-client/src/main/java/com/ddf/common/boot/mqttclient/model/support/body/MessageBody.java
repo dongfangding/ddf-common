@@ -1,4 +1,4 @@
-package com.ddf.common.boot.mqtt.model.support.body;
+package com.ddf.common.boot.mqttclient.model.support.body;
 
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import java.io.Serializable;
