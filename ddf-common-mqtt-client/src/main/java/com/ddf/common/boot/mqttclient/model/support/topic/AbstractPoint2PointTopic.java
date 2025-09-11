@@ -1,4 +1,4 @@
-package com.ddf.common.boot.mqtt.model.support.topic;
+package com.ddf.common.boot.mqttclient.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 

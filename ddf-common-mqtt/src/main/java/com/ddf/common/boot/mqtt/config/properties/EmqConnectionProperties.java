@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2022/03/18 13:46
  */
-@ConfigurationProperties(prefix = "emq.config")
+@ConfigurationProperties(prefix = "customizer.emq.config")
 @Data
 @Component
 public class EmqConnectionProperties {

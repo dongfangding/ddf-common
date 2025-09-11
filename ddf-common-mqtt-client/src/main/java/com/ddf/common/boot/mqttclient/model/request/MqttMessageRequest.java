@@ -1,9 +1,9 @@
-package com.ddf.common.boot.mqtt.model.request;
+package com.ddf.common.boot.mqttclient.model.request;
 
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
-import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
-import com.ddf.common.boot.mqtt.model.support.topic.MqttTopicDefine;
+import com.ddf.common.boot.mqttclient.model.support.body.MessageBody;
+import com.ddf.common.boot.mqttclient.model.support.topic.MqttTopicDefine;
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,6 +36,9 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
      * 可以根据这个字段来判断来决定如何序列化，当然下面还有一个message_code字段是业务类型，根据场景决定可能也是可以使用的，
      * 使用方自己决定即可，这里只是预留字段
      *
+     * 因为有一种场景，比如聊天室里的历史消息，每个都是不同的业务，消息存储的时候是一个大json， 反序列化的时候，就很难知道是哪个对象。
+     * 要么使用messageCode字段判断业务，然后硬编码去反序列化，这里可以提供一个字段直接将类写进去，反序列化的时候直接使用就行
+     *
      * @return
      */
     private String deserializeType;
@@ -50,6 +53,8 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
      */
     @NotNull(message = "topic不能为空")
     private MqttTopicDefine topic;
+
+//    private String topic;
 
     /**
      * 消息代码，  用来标识这个消息具体是做什么用的， 这个字段能够让一个topic服务更多的业务
@@ -85,7 +90,7 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
      *      那么这部分消息就必然要持久化。但是通用方法在做这部分的逻辑时只能直接序列化扩展字段， 这样就需要外部来自己反序列化解析了。
      * 2. 与1的问题相似， 除了通用字段，聊天的核心信息由于内容不同，对象属性也不同，所以通用模块方法里如果做历史数据保存的功能只能整体序列化整个
      *   body对象， 那么也得需要外部进行反序列化。然后取一页数据，每条都可能面临不同的对象反序列化规则，还得根据message_code来进行不同对象的反序列化，
-     *   实在是有些麻烦
+     *   实在是有些麻烦， 新增字段deserializeType来处理反序列化问题
      *
      * 3. 业务聊天记录有要显示的需求的是否业务方自己也保存一份， 通用模块保存的只是站在消息持久化的视角上。业务方如果也保存的话，就能设计出一张冗余表，
      *      字段与业务一一对应，不同的message_code不同的字段有值， 这样字段虽然是冗余的，但是取数据的时候，省去了繁琐的反序列化问题，但是保存的时候

@@ -136,6 +136,16 @@ public enum RequestHeaderEnum {
      */
     SIMULATOR("is_simulator", false, true, "false"),
 
+    /**
+     * 经度
+     */
+    LONGITUDE("longitude", false, true, "0"),
+
+    /**
+     * 纬度
+     */
+    LATITUDE("latitude", false, true, "0"),
+
     ;
     /**
      * header name

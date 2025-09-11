@@ -78,9 +78,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
      * 返回true，则由rocketmq机制自动重试
      * false：消费异常(如果没有开启重试则消息会被自动ack)
      */
-    protected boolean throwException() {
-        return false;
-    }
+    abstract protected boolean throwException();
 
     /**
      * 最大重试次数
@@ -140,7 +138,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
         }
         try {
             long now = System.currentTimeMillis();
-            T data = JsonUtil.toBean(JsonUtil.toJson(message.getData()), getMsgOriginalClazzType());
+            T data = message.getData();
             handleMessage(data);
             long costTime = System.currentTimeMillis() - now;
             log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG,message.getMessageId(),messageJson, costTime);

@@ -49,12 +49,12 @@ public class GlobalStorage {
     /**
      * 点对点通用topic前缀
      */
-    public static final String POINT_TO_POINT_TOPIC_PREFIX = TOPIC_SEPARATOR + "point";
+    public static final String POINT_TO_POINT_TOPIC_PREFIX = TOPIC_SEPARATOR + "POINT";
 
     /**
      * 群组通用topic前缀
      */
-    public static final String GROUP_TOPIC_PREFIX = TOPIC_SEPARATOR + "group";
+    public static final String GROUP_TOPIC_PREFIX = TOPIC_SEPARATOR + "GROUP";
 
     /**
      * 通知类topic前缀
