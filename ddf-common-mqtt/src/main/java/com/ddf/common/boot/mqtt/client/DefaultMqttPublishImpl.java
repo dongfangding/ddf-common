@@ -1,11 +1,13 @@
 package com.ddf.common.boot.mqtt.client;
 
 import cn.hutool.core.collection.CollUtil;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
+import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +41,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
      * @param request
      */
     @Override
-    public void publish(InnerMqttMessageRequest request) {
+    public ResponseData<MqttMessageResponse> publish(InnerMqttMessageRequest request) {
         PreconditionUtil.requiredParamCheck(request);
         final MqttMessage message = new MqttMessage();
         final MqttMessageControl control = request.getControl();
@@ -71,5 +73,8 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                 bean.afterPublish(message, payload);
             });
         }
+        final MqttMessageResponse messageResponse = new MqttMessageResponse();
+        messageResponse.setServerClientInfo(payload.getServerInfo());
+        return ResponseData.success(messageResponse);
     }
 }

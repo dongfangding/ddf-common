@@ -22,4 +22,9 @@ public class ServerClientInfo implements Serializable {
      * 发送时的时间戳
      */
     private Long timestamp;
+
+    /**
+     * 消息唯一id
+     */
+    private String messageId;
 }
