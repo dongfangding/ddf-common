@@ -79,7 +79,7 @@ public interface RedisLuaScript {
             new ClassPathResource("lua/TtlIncrWithLimit.lua"), String.class);
 
     /**
-     * 基于Hash对hashkey进行value的判断， 如果为预期值则删除，否则不删除
+     * 基于Hash对field进行value的判断， 如果为预期值则删除，否则不删除
      */
     RedisScript<String> HASH_DELETE_WITH_CHECK_VALUE = RedisScript.of(
             new ClassPathResource("lua/HashDeleteWithCheckValue.lua"), String.class);
@@ -91,7 +91,7 @@ public interface RedisLuaScript {
             new ClassPathResource("lua/StringDeleteWithCheckValue.lua"), String.class);
 
     /**
-     * 该脚本的作用是对hash的hashkey进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
+     * 该脚本的作用是对hash的field进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
      */
     RedisScript<String> HASH_INCR_WITH_FIRST_SET_TTL = RedisScript.of(
             new ClassPathResource("lua/HashIncrWithFirstSetTtl.lua"), String.class);
@@ -108,10 +108,32 @@ public interface RedisLuaScript {
     RedisScript<String> HASH_INCR_FLOAT_ROUND_DECIMAL = RedisScript.of(
             new ClassPathResource("lua/HashIncrFloatRoundDecimal.lua"), String.class);
 
+
     /**
      * 基于zset实现的范围删除
      */
     RedisScript<String> ZSET_RANGEBYSCORE_ZREM = RedisScript.of(
             new ClassPathResource("lua/zset_rangebyscore_zrem.lua"), String.class);
+
+
+    /**
+     * 基于hash结构的批量自增并增加上限判定的通用脚本, 对同一个key的多个field进行自增判断,
+     */
+    RedisScript<String> HASH_BATCH_INCREMENT_CHECK = RedisScript.of(
+            new ClassPathResource("lua/HashBatchIncreaseCheck.lua"), String.class);
+
+
+    /**
+     * 基于hash结构的批量自增并增加上限判定的通用脚本, 对同一个key的多个field进行自增判断,
+     */
+    RedisScript<String> MULTIPLE_HASH_BATCH_INCREMENT_CHECK = RedisScript.of(
+            new ClassPathResource("lua/MultipleHashIncreaseCheck.lua"), String.class);
+
+    /**
+     * 基于zset实现的zadd操作，当score大于已有值时才会更新
+     */
+    RedisScript<String> ZSET_ZADD_WITH_MAX_CHECK = RedisScript.of(
+            new ClassPathResource("lua/zadd_with_max_check.lua"), String.class);
+
 
 }
