@@ -1034,6 +1034,12 @@ public class RedisCommandHelper {
                 .isMember(key, value);
     }
 
+    public Map<Object, Boolean> sIsMember(String key, Object... values) {
+        return redisTemplate
+                .opsForSet()
+                .isMember(key, values);
+    }
+
     /**
      * 获取两个集合的交集
      *

@@ -27,7 +27,7 @@ import org.springframework.core.Ordered;
 @Configurable
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableConfigurationProperties({OssProperties.class})
-@ConditionalOnProperty(prefix = "customs.ext.oss", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "customizer.infra.ext.oss", value = "enable", havingValue = "true")
 public class OssBeanAutoConfiguration {
 
     /**

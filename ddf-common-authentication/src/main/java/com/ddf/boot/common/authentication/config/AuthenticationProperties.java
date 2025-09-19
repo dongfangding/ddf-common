@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @date 2019-12-07 16:45
  */
-@ConfigurationProperties(prefix = "customs.ext.authentication")
+@ConfigurationProperties(prefix = "customizer.infra.ext.authentication")
 @Data
 @NoArgsConstructor
 @RefreshScope

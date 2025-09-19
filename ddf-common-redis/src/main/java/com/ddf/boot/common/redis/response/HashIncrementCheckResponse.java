@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>基于hash的自增且上限判定返回类</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
  * @date 2022/09/27 18:09
  */

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @date 2019/9/2 17:08
  */
 @Component
-@ConfigurationProperties(prefix = "customs.response-body-advice")
+@ConfigurationProperties(prefix = "customizer.infra.response-body-advice")
 @Getter
 @Setter
 public class CommonResponseBodyAdviceProperties {

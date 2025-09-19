@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2021/11/29 23:58
  */
-//@NacosConfigurationProperties(prefix = "customs.jwt")
+//@NacosConfigurationProperties(prefix = "customizer.infra.jwt")
 @Data
 @NoArgsConstructor
 @Component

@@ -11,15 +11,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/02/23 14:46
  */
 @Data
-@ConfigurationProperties(prefix = "customs.ids")
+@ConfigurationProperties(prefix = "customizer.infra.ids")
 public class IdsProperties {
 
-    public static final String IDS_PROPERTIES_PREFIX = "customs.ids";
+    public static final String IDS_PROPERTIES_PREFIX = "customizer.infra.ids";
 
     /**
      * 名称， 雪花id时会作为存储数据的前缀节点
      */
-    private String name = "customs.ids";
+    private String name = "customizer.infra.ids";
 
     /**
      * 可以设定一个起始时间戳，可以达到混淆实际输出雪花id中包含的时间

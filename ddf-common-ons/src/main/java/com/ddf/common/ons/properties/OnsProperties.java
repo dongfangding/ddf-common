@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/08/26 14:11
  */
 @Data
-@ConfigurationProperties(prefix = "customs.ons")
+@ConfigurationProperties(prefix = "customizer.infra.ons")
 public class OnsProperties {
 
     /**

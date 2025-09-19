@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support;
 
+import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
@@ -92,6 +93,7 @@ public class MqttMessagePayload implements Serializable {
         final ServerClientInfo serverInfo = new ServerClientInfo();
         serverInfo.setClientId(serverClientId);
         serverInfo.setTimestamp(System.currentTimeMillis());
+        serverInfo.setMessageId(IdsUtil.getNextStrId());
         payload.setServerInfo(serverInfo);
 
         return payload;

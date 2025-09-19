@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/10/09 10:38
  */
 @Data
-@ConfigurationProperties(prefix = "customs.zookeeper.monitor")
+@ConfigurationProperties(prefix = "customizer.infra.zookeeper.monitor")
 @Component
 public class MonitorProperties {
 

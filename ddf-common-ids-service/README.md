@@ -17,20 +17,22 @@
 `com.ddf.common.ids.service.config.properties.IdsProperties`
 
 ```yaml
-customs:
-  ids:
-    name: ids_demo # 雪花id名称，会作为zk和本地目录存储workId路径中的一部分
-    beginTimestamp: 1609430400000 # 相对的一个起始时间戳，能够用来混淆生产出来的雪花ID的时间戳部分的数据
-    zkAddress: ${zk_addr} # zookeeper连接地址
-    zkPort: 2181 # 端口，注意不是zookeeper的连接端口，是客户端上报数据时的节点组成的一部分，使用ip+port, 可以解决同一台机器多个服务问题
+customizer:
+  infra:
+      ids:
+        name: ids_demo # 雪花id名称，会作为zk和本地目录存储workId路径中的一部分
+        beginTimestamp: 1609430400000 # 相对的一个起始时间戳，能够用来混淆生产出来的雪花ID的时间戳部分的数据
+        zkAddress: ${zk_addr} # zookeeper连接地址
+        zkPort: 2181 # 端口，注意不是zookeeper的连接端口，是客户端上报数据时的节点组成的一部分，使用ip+port, 可以解决同一台机器多个服务问题
 ```
 
 ## 号段模式
 配置类首先开启号段模式
 ```yaml
-customs:
-  ids:
-    segmentEnable: true
+customizer:
+  infra:
+    ids:
+      segmentEnable: true
 ```
 
 号段模式建表语句

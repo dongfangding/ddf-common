@@ -53,7 +53,7 @@ import org.springframework.util.CollectionUtils;
  **/
 @Configuration
 @EnableConfigurationProperties(ExtraRedisProperties.class)
-@ConditionalOnProperty(prefix = "customs.redis.extra-multi", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "customizer.infra.redis.extra-multi", value = "enable", havingValue = "true")
 public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     private static final String REDIS_PROTOCOL_PREFIX = "redis://";
     private static final String REDISS_PROTOCOL_PREFIX = "rediss://";

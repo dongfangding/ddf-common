@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 @EnableConfigurationProperties(value = {DistributedLockRedisProperties.class})
-@ConditionalOnProperty(prefix = "customs.distributed.lock.redis", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "customizer.infra.distributed.lock.redis", value = "enable", havingValue = "true")
 public class RedisLockConfiguration {
 
     private final DistributedLockRedisProperties distributedLockRedisProperties;

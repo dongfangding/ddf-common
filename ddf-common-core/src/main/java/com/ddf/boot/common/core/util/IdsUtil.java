@@ -4,6 +4,9 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
+import java.util.UUID;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 本地雪花id生成器
@@ -43,7 +46,7 @@ import com.ddf.boot.common.core.helper.SpringContextHolder;
  */
 public class IdsUtil {
 
-    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBean(GlobalProperties.class);
+    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(GlobalProperties.class);
 
     /**
      * 获取string格式的id
@@ -74,4 +77,18 @@ public class IdsUtil {
         return snowflake.nextId();
     }
 
+
+    /**
+     * 在雪花的基础上附加更加长的字符串id
+     *
+     * @return 字符串格式的id
+     * @author dongfang.ding
+     * @date 2019/12/9 0009 11:38
+     **/
+    public static String getUniqueId() {
+        return getNextStrId() + UUID
+                .randomUUID()
+                .toString()
+                .replaceAll("-", "");
+    }
 }

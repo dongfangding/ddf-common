@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @RefreshScope
 @Configuration
-@ConfigurationProperties(prefix = "customs.alarm.dingtalk")
+@ConfigurationProperties(prefix = "customizer.infra.alarm.dingtalk")
 public class DingTalkProperties {
 
     /**

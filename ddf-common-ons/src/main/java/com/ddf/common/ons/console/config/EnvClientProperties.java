@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/05/17 13:32
  */
 @Data
-@ConfigurationProperties(prefix = "customs.ons.console")
+@ConfigurationProperties(prefix = "customizer.infra.ons.console")
 public class EnvClientProperties {
 
     public static final String CLIENTS_PROPERTY_NAME = "clients";
