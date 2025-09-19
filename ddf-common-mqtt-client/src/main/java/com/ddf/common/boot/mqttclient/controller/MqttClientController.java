@@ -5,6 +5,7 @@ import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
+import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
 import com.ddf.common.boot.mqttclient.model.request.MqttMessageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +37,10 @@ public class MqttClientController {
      * @return
      */
     @PostMapping("publish")
-    public ResponseData<Boolean> publish(@RequestBody MqttMessageRequest request) {
+    public ResponseData<MqttMessageResponse> publish(@RequestBody MqttMessageRequest request) {
         final InnerMqttMessageRequest innerMqttMessageRequest = BeanCopierUtils.copy(request, InnerMqttMessageRequest.class);
         innerMqttMessageRequest.setTopic(request.getTopic().getFullTopic());
         innerMqttMessageRequest.setBody(JsonUtil.toJson(request.getBody()));
-        mqttPublishClient.publish(innerMqttMessageRequest);
-        return ResponseData.success(true);
+        return mqttPublishClient.publish(innerMqttMessageRequest);
     }
 }

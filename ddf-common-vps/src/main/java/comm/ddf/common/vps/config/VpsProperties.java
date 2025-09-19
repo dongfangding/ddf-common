@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @date 2021/12/01 19:36
  */
 @Component
-@ConfigurationProperties(prefix = "customs.vps")
+@ConfigurationProperties(prefix = "customizer.infra.vps")
 @Data
 public class VpsProperties {
 

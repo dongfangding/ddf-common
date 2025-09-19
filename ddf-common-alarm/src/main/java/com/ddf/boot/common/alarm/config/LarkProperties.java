@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @RefreshScope
 @Configuration
-@ConfigurationProperties(prefix = "customs.alarm.lark")
+@ConfigurationProperties(prefix = "customizer.infra.alarm.lark")
 public class LarkProperties {
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 @EnableConfigurationProperties(value = {DistributedLockZookeeperProperties.class})
-@ConditionalOnProperty(prefix = "customs.distributed.lock.zookeeper", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "customizer.infra.distributed.lock.zookeeper", value = "enable", havingValue = "true")
 public class CuratorFrameworkConfig {
 
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;

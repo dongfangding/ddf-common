@@ -10,6 +10,7 @@ import com.ddf.common.boot.mqtt.model.request.emq.ConnectionInfoRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.EmqAclRequest;
 import com.ddf.common.boot.mqtt.model.request.emq.EmqAuthenticateRequest;
 import com.ddf.common.boot.mqtt.model.response.ConnectionInfoResponse;
+import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
 import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
@@ -73,9 +74,8 @@ public class EmqController {
      * @return
      */
     @PostMapping("publish")
-    public ResponseData<Boolean> publish(@RequestBody InnerMqttMessageRequest request) {
-        mqttPublishClient.publish(request);
-        return ResponseData.success(true);
+    public ResponseData<MqttMessageResponse> publish(@RequestBody InnerMqttMessageRequest request) {
+        return mqttPublishClient.publish(request);
     }
 
     /**

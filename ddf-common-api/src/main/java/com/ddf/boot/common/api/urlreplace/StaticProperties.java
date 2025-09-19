@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2024/01/08 15:09
  */
-@ConfigurationProperties(prefix = "customs.cloud.static")
+@ConfigurationProperties(prefix = "customizer.infra.cloud.static")
 @Data
 @NoArgsConstructor
 @RefreshScope

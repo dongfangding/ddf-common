@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "customs.ext.oss")
+@ConfigurationProperties(prefix = "customizer.infra.ext.oss")
 public class OssProperties implements InitializingBean {
 
     /**

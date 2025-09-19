@@ -1,4 +1,4 @@
--- 该脚本的作用是对hash的hashKey进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
+-- 该脚本的作用是对hash的field进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
 local member = ARGV[1]
 local val = ARGV[2]
 local ttl = ARGV[3]
