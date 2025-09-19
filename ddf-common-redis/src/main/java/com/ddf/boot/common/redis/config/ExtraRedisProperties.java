@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @Data
-@ConfigurationProperties(prefix = "customs.redis.extra-multi")
+@ConfigurationProperties(prefix = "customizer.infra.redis.extra-multi")
 public class ExtraRedisProperties {
 
     /**

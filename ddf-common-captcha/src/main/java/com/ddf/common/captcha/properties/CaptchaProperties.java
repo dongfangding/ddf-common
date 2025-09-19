@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContextAware;
  * @date 2021/03/02 15:07
  */
 @Data
-@ConfigurationProperties(prefix = "customs.captcha")
+@ConfigurationProperties(prefix = "customizer.infra.captcha")
 @AutoConfigureBefore(value = {
         AjCaptchaServiceAutoConfiguration.class, AjCaptchaAutoConfiguration.class})
 public class CaptchaProperties implements ApplicationContextAware {

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "customs.ext.sms")
+@ConfigurationProperties(prefix = "customizer.infra.ext.sms")
 public class AliYunSmsProperties implements InitializingBean {
 
     public static final String DEFAULT_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";

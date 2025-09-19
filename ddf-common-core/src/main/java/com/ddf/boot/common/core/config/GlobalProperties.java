@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding on 2019/1/25
  */
 @Component
-@ConfigurationProperties(prefix = "customs.global-properties")
+@ConfigurationProperties(prefix = "customizer.infra.global-properties")
 @Getter
 @Setter
 @RefreshScope

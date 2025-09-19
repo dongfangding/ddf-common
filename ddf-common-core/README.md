@@ -83,9 +83,10 @@
    由于目前设计的异常基类都必须包含一个code字段， 因此系统在`com.ddf.boot.common.core.config.GlobalProperties#exceptionCodeToResponseStatus`提供了一个属性，可以在出现异常时，将异常的状态码作为http的状态码返回，你只需要定义自己的异常，将异常的状态码定义成想要返回的http状态码即可
 
    ```yaml
-   customs:  # 自定义的属性最好都写在custom前缀下，方便辨认
-     global-properties:
-       exceptionCodeToResponseStatus: true
+   customizer: # 自定义的属性最好都写在customizer前缀下，方便辨认
+     infra:  
+       global-properties:
+         exceptionCodeToResponseStatus: true
    ```
 
 3. 异常时我想要返回给前端详细的异常堆栈，方便前端出现问题，直接将异常堆栈抛出来，而不用每次查询日志怎么办？
@@ -97,11 +98,12 @@
    如下为当profile为pre或prod时，该异常堆栈不会返回
 
    ```yaml
-   customs:  # 自定义的属性最好都写在custom前缀下，方便辨认
-     global-properties:
-       ignoreErrorTraceProfile:  # 过滤将异常堆栈信息输出打前端接口返回值的环境
-         - pre
-         - prod
+    customizer: # 自定义的属性最好都写在customizer前缀下，方便辨认
+      infra:  
+        global-properties:
+          ignoreErrorTraceProfile:  # 过滤将异常堆栈信息输出打前端接口返回值的环境
+            - pre
+            - prod
    ```
 
 ### 统一返回对象
@@ -136,10 +138,11 @@ public class ResponseData<T> {
   当控制器层返回的对象全类名包含在配置列表中时， 统一返回对象将不会继续执行包装逻辑
 
   ```yaml
-  customs:
-    response-body-advice:
-      ignoreReturnType:
-        -- 要忽略的类的全类名
+  customizer:
+    infra:
+      response-body-advice:
+        ignoreReturnType:
+        - 要忽略的类的全类名
   ```
 
  
