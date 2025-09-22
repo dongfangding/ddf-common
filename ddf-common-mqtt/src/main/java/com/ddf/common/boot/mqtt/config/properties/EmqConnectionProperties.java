@@ -25,6 +25,11 @@ import org.springframework.stereotype.Component;
 public class EmqConnectionProperties {
 
     /**
+     * 是否开启
+     */
+    private boolean enable;
+
+    /**
      * 连接地址
      */
     private List<ConnectionConfig> connectionUrls;
