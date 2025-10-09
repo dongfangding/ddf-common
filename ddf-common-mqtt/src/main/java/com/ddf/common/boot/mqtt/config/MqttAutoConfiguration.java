@@ -56,7 +56,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.emq.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
@@ -169,7 +169,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.emq.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttClient mqttClient,
             @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
         return new DefaultMqttPublishImpl(mqttClient, listenerMap);
@@ -182,7 +182,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.emq.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttPublishClient mqttPublishClient(MqttDefinition mqttDefinition) {
         return new MqttPublishClient(mqttDefinition);
     }
