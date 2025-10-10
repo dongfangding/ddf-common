@@ -1,7 +1,6 @@
 package com.ddf.boot.common.redis.config;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.ddf.boot.common.redis.constant.SpringCacheManager;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
@@ -48,7 +47,7 @@ public class LocalCacheConfiguration {
      * <p>
      * 若有特定需求，建议另启 {@link SimpleCacheManager}
      */
-    @Bean(name = SpringCacheManager.CacheManagerBeanName.LOCAL)
+    @Bean(name = "localCacheManager")
     public CacheManager localCacheManager(CacheProperties cacheProperties) {
         CacheProperties.Caffeine caffeine = cacheProperties.getCaffeine();
  
