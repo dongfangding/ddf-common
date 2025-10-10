@@ -7,15 +7,11 @@ import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServi
 import com.ddf.boot.common.authentication.interfaces.impl.TokenCacheImpl;
 import com.ddf.boot.common.core.authentication.TokenCache;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 认证模块的自动配置类类
@@ -25,31 +21,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @ComponentScan(basePackages = "com.ddf.boot.common.authentication")
-public class AuthenticationAutoConfiguration implements WebMvcConfigurer {
-
-    @Autowired(required = false)
-    private AuthenticateTokenFilter authenticateTokenFilter;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        if (Objects.nonNull(authenticateTokenFilter)) {
-            registry
-                    .addInterceptor(authenticateTokenFilter)
-                    .addPathPatterns("/**");
-        }
-    }
+public class AuthenticationAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnBean(value = {AuthenticateTokenFilter.class})
+    @ConditionalOnBean(AuthenticateTokenFilter.class)
+    @ConditionalOnMissingBean(TokenCustomizeCheckService.class)
     public TokenCustomizeCheckService defaultTokenCheckServiceImpl(AuthenticationProperties authenticationProperties,
             UserClaimService userClaimService) {
         return new DefaultTokenCheckServiceImpl(authenticationProperties, userClaimService);
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnBean(value = {AuthenticateTokenFilter.class})
+    @ConditionalOnBean(AuthenticateTokenFilter.class)
+    @ConditionalOnMissingBean(TokenCustomizeCheckService.class)
     public TokenCache tokenCacheImpl(AuthenticationProperties authenticationProperties,
             EnvironmentHelper environmentHelper) {
         return new TokenCacheImpl(authenticationProperties, environmentHelper);
