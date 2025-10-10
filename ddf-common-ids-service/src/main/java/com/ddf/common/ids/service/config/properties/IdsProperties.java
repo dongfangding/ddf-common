@@ -42,4 +42,9 @@ public class IdsProperties {
      */
     private boolean segmentEnable;
 
+    /**
+     * 雪花id模式是否开启
+     */
+    private boolean snowflakeEnable;
+
 }

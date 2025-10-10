@@ -5,8 +5,6 @@ import cn.hutool.core.util.IdUtil;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.util.UUID;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 本地雪花id生成器

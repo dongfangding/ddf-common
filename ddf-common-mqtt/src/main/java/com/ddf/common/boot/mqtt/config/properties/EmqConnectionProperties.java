@@ -19,10 +19,15 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @date 2022/03/18 13:46
  */
-@ConfigurationProperties(prefix = "customizer.emq.config")
+@ConfigurationProperties(prefix = "customizer.infra.mqtt.config")
 @Data
 @Component
 public class EmqConnectionProperties {
+
+    /**
+     * 是否开启
+     */
+    private boolean enable;
 
     /**
      * 连接地址

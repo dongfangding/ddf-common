@@ -46,18 +46,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
  * }
  * </pre>
  *
- * @author Mitchell
- * @version 1.0
- * @date 2021/1/14 10:21
+ * @author robot
  */
 @EnableCaching
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CacheProperties.class)
+@Slf4j
 public class RedisCacheManagerConfiguration {
-
-    @Slf4j
-    static class Logger {
-    }
 
     @Bean
     @Primary
@@ -70,9 +65,10 @@ public class RedisCacheManagerConfiguration {
         RedisCacheConfiguration defaultCacheConfig = createConfiguration(
                 cacheProperties, applicationName, Duration.ofSeconds(60 * 60));
 
-        RedisCacheManager.RedisCacheManagerBuilder redisCacheManagerBuilder =
-                RedisCacheManager.RedisCacheManagerBuilder.fromCacheWriter(cacheWriter).cacheDefaults(
-                        defaultCacheConfig).withCacheConfiguration(
+        RedisCacheManager.RedisCacheManagerBuilder redisCacheManagerBuilder = RedisCacheManager.RedisCacheManagerBuilder
+                .fromCacheWriter(cacheWriter)
+                .cacheDefaults(defaultCacheConfig)
+                .withCacheConfiguration(
                         "anotherCacheName", createConfiguration(cacheProperties, "", Duration.ofHours(1)));
 
         return redisCacheManagerBuilder.build();
@@ -84,7 +80,8 @@ public class RedisCacheManagerConfiguration {
         // Key prefix.
         String prefixKeys = ObjectUtil.defaultIfNull(redisProperties.getKeyPrefix(), applicationName + ":");
 
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+        RedisCacheConfiguration config = RedisCacheConfiguration
+                .defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                         new GenericJackson2JsonRedisSerializer()))
                 .entryTtl(ttl)
@@ -93,15 +90,15 @@ public class RedisCacheManagerConfiguration {
         // Allow caching null values.
         if (!redisProperties.isCacheNullValues()) {
             config = config.disableCachingNullValues();
-            Logger.log.warn("======> ${spring.cache.redis.cache-null-values} is false, not recommended. <======");
+            log.warn("======> ${spring.cache.redis.cache-null-values} is false, not recommended. <======");
         }
         // Whether to use the key prefix when writing to Redis.
         if (!redisProperties.isUseKeyPrefix()) {
             config = config.disableKeyPrefix();
-            Logger.log.warn("======> ${spring.cache.redis.use-key-prefix} is false, not recommended. <======");
+            log.warn("======> ${spring.cache.redis.use-key-prefix} is false, not recommended. <======");
         }
 
-        Logger.log.info("======> spring redis cache , prefix keys={}, ttl={} <======", prefixKeys, ttl);
+        log.info("======> spring redis cache , prefix keys={}, ttl={} <======", prefixKeys, ttl);
         return config;
     }
 }

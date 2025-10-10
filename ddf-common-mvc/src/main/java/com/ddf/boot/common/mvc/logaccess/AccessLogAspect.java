@@ -69,7 +69,7 @@ public class AccessLogAspect {
     private GlobalProperties globalProperties;
 
     // @Pointcut(value = "execution(public * com..controller..*(..)) || execution(public * com..provider..*(..))")
-    @Pointcut(value = "@annotation(com.boot.common.mvc.logaccess.Log) || @within(com.boot.common.mvc.logaccess.Log)")
+    @Pointcut(value = "@annotation(com.ddf.boot.common.mvc.logaccess.Log) || @within(com.ddf.boot.common.mvc.logaccess.Log)")
     public void pointCut() {
     }
 
