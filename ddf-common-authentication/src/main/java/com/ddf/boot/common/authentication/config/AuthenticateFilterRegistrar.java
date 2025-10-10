@@ -2,6 +2,7 @@ package com.ddf.boot.common.authentication.config;
 
 import com.ddf.boot.common.authentication.annotation.EnableAuthenticate;
 import com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter;
+import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServiceImpl;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
