@@ -1467,6 +1467,24 @@ public class RedisCommandHelper {
         return returnList;
     }
 
+
+    public Map<String, Double> batchZScore(List<String> keys, String member) {
+        final List<Object> valueList = executePipelined(connection -> {
+            for (String key : keys) {
+                connection.zScore(key.getBytes(StandardCharsets.UTF_8), member.getBytes(StandardCharsets.UTF_8));
+            }
+            return null;
+        });
+        Map<String, Double> scoreMap = new HashMap<>();
+        for (int i = 0; i < keys.size(); i++) {
+            scoreMap.put(keys.get(i), Double.parseDouble(Optional
+                    .ofNullable(valueList.get(i))
+                    .orElse(0)
+                    .toString()));
+        }
+        return scoreMap;
+    }
+
     /**
      * 根据Score值查询集合元素, 从大到小排序
      *
@@ -1768,6 +1786,29 @@ public class RedisCommandHelper {
         Map<String, Long> sizeMap = new HashMap<>();
         for (int i = 0; i < keys.size(); i++) {
             sizeMap.put(keys.get(i), Long.parseLong(Optional
+                    .ofNullable(valueList.get(i))
+                    .orElse(0)
+                    .toString()));
+        }
+        return sizeMap;
+    }
+
+    /**
+     * 批量zrank
+     *
+     * @param members
+     * @return
+     */
+    public Map<String, Integer> batchZRank(String key, List<String> members) {
+        final List<Object> valueList = executePipelined(connection -> {
+            for (String member : members) {
+                connection.zRevRank(key.getBytes(StandardCharsets.UTF_8), member.getBytes(StandardCharsets.UTF_8));
+            }
+            return null;
+        });
+        Map<String, Integer> sizeMap = new HashMap<>();
+        for (int i = 0; i < members.size(); i++) {
+            sizeMap.put(members.get(i), Integer.parseInt(Optional
                     .ofNullable(valueList.get(i))
                     .orElse(0)
                     .toString()));

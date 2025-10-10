@@ -58,7 +58,7 @@ public class IdsServiceAutoConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
     public IDGen segmentIDGen(@Autowired IDAllocDao idAllocDao) {
-        return  new SegmentIDGenImpl(idAllocDao, idsProperties);
+        return new SegmentIDGenImpl(idAllocDao, idsProperties);
     }
 
     /**
@@ -67,12 +67,9 @@ public class IdsServiceAutoConfiguration {
      * @return
      */
     @Bean
-    public IdsApi idsApi(@Autowired(required = false) IDGen segmentIDGen) {
-        if (!idsProperties.isSegmentEnable()) {
-            return new IdsApiImpl(idsProperties, snowflakeService(), null);
-        } else {
-            return new IdsApiImpl(idsProperties, snowflakeService(), segmentIDGen);
-        }
+    public IdsApi idsApi(@Autowired(required = false) IDGen segmentIDGen,
+            @Autowired(required = false) SnowflakeService snowflakeService) {
+        return new IdsApiImpl(idsProperties, snowflakeService, segmentIDGen);
     }
 
     /**
@@ -81,6 +78,7 @@ public class IdsServiceAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable", havingValue = "true")
     public IDGen snowflakeIDGen() {
         return new SnowflakeIDGenImpl(idsProperties);
     }
@@ -91,6 +89,7 @@ public class IdsServiceAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable", havingValue = "true")
     public SnowflakeService snowflakeService() {
         return new SnowflakeService(snowflakeIDGen());
     }

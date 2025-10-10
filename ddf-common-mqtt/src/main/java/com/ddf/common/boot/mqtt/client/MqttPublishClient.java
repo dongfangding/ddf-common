@@ -3,7 +3,6 @@ package com.ddf.common.boot.mqtt.client;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
-import com.ddf.common.boot.mqtt.model.support.body.MessageBody;
 
 /**
  * <p>对外暴露的的Client工具</p >

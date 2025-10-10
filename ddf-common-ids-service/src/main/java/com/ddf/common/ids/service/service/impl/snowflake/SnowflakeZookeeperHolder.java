@@ -19,7 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -53,7 +53,9 @@ public class SnowflakeZookeeperHolder {
 
     public boolean init() {
         try {
-            CuratorFramework curator = createWithOptions(connectionString, new RetryUntilElapsed(1000, 4), 10000, 6000);
+            System.setProperty("zookeeper.clientCnxnSocketNIO.pingIntervalMs", "5000");
+            System.setProperty("zookeeper.clientCnxnSocket", "org.apache.zookeeper.ClientCnxnSocketNetty");
+            CuratorFramework curator = createWithOptions(connectionString, new ExponentialBackoffRetry(1000, 3), 10000, 30000);
             curator.start();
             Stat stat = curator.checkExists().forPath(PATH_FOREVER);
             if (stat == null) {

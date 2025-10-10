@@ -27,6 +27,7 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,6 +56,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
@@ -167,6 +169,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttClient mqttClient,
             @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
         return new DefaultMqttPublishImpl(mqttClient, listenerMap);
@@ -179,6 +182,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttPublishClient mqttPublishClient(MqttDefinition mqttDefinition) {
         return new MqttPublishClient(mqttDefinition);
     }
