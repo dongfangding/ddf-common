@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService {
 
+    public static final String BEAN_NAME = "defaultTokenCheckServiceImpl";
+
     private final AuthenticationProperties authenticationProperties;
     private final UserClaimService userClaimService;
 

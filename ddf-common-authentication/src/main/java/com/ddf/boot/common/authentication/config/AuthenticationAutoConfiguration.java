@@ -1,8 +1,17 @@
 package com.ddf.boot.common.authentication.config;
 
 import com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter;
+import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
+import com.ddf.boot.common.authentication.interfaces.UserClaimService;
+import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServiceImpl;
+import com.ddf.boot.common.authentication.interfaces.impl.TokenCacheImpl;
+import com.ddf.boot.common.core.authentication.TokenCache;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,7 +33,25 @@ public class AuthenticationAutoConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         if (Objects.nonNull(authenticateTokenFilter)) {
-            registry.addInterceptor(authenticateTokenFilter).addPathPatterns("/**");
+            registry
+                    .addInterceptor(authenticateTokenFilter)
+                    .addPathPatterns("/**");
         }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(value = {AuthenticateTokenFilter.class})
+    public TokenCustomizeCheckService defaultTokenCheckServiceImpl(AuthenticationProperties authenticationProperties,
+            UserClaimService userClaimService) {
+        return new DefaultTokenCheckServiceImpl(authenticationProperties, userClaimService);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(value = {AuthenticateTokenFilter.class})
+    public TokenCache tokenCacheImpl(AuthenticationProperties authenticationProperties,
+            EnvironmentHelper environmentHelper) {
+        return new TokenCacheImpl(authenticationProperties, environmentHelper);
     }
 }
