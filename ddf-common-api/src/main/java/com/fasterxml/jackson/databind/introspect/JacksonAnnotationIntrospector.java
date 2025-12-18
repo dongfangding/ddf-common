@@ -316,7 +316,7 @@ public class JacksonAnnotationIntrospector
                 }
             }
         }
-        
+
         // and then stitch them together if and as necessary
         for (int i = 0, end = enumValues.length; i < end; ++i) {
             String defName = enumValues[i].name();
@@ -1702,7 +1702,7 @@ public class JacksonAnnotationIntrospector
         if (defaultImpl != null && defaultImpl != JsonTypeInfo.None.class && !defaultImpl.isAnnotation()) {
             typeInfo = typeInfo.withDefaultImpl(defaultImpl);
         }
-        
+
         b = b.init(typeInfo, idRes);
         return b;
     }

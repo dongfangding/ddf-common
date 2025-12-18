@@ -1,7 +1,6 @@
 package com.ddf.boot.common.api.jackson;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotation;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,7 +10,7 @@ import java.lang.annotation.Target;
  *
  * 对原有JsonIgnore的不足进行扩充，现在可以根据不同的环境来决定是否忽略字段
  *
- * @see JacksonAnnotationIntrospector#_isIgnorable(com.fasterxml.jackson.databind.introspect.Annotated)
+// * @see JacksonAnnotationIntrospector#_isIgnorable(com.fasterxml.jackson.databind.introspect.Annotated)
  * @author snowball
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})

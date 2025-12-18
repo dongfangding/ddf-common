@@ -67,11 +67,12 @@
             </dependency>
 
             <!-- 升级时用来验证一些属性，正常使用时不要引入 -->
-            <!--            <dependency>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-properties-migrator</artifactId>
-                            <scope>runtime</scope>
-                        </dependency>-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-properties-migrator</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>compile</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -113,7 +114,7 @@
 
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
 
