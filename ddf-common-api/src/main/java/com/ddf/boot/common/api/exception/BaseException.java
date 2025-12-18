@@ -1,9 +1,9 @@
 package com.ddf.boot.common.api.exception;
 
-import cn.hutool.core.util.StrUtil;
 import java.text.MessageFormat;
 import java.util.Objects;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 
 /**
@@ -159,7 +159,7 @@ public abstract class BaseException extends RuntimeException {
     private void initCallback(String code, String description, Object... params) {
         this.code = code == null ? defaultCallback().getCode() : code;
         this.params = params;
-        this.description = StrUtil.isNotBlank(description) ? MessageFormat.format(description, params) : "";
+        this.description = StringUtils.isNotBlank(description) ? MessageFormat.format(description, params) : "";
     }
 
     /**

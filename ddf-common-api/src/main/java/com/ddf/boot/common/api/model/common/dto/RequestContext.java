@@ -1,8 +1,8 @@
 package com.ddf.boot.common.api.model.common.dto;
 
-import cn.hutool.core.util.ReflectUtil;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
+import com.ddf.boot.common.api.util.ReflectUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -199,7 +199,7 @@ public class RequestContext implements Serializable {
                 Pattern pattern = Pattern.compile("_(.)");
                 final String fieldName = getRequestContextFieldName(pattern, headerEnum);
                 try {
-                    ReflectUtil.setFieldValue(context, fieldName, value);
+                    ReflectUtils.setFiledValue(context, fieldName, value, true);
                 } catch (Exception e) {
                     log.error("RequestContext设置属性失败，属性名：{}， value = {}", fieldName, value, e);
                     // 如果没有对应的字段就存入 properties

@@ -1,8 +1,7 @@
 package com.ddf.boot.common.api.model.common.response;
 
-import cn.hutool.core.util.NumberUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.api.util.NumberUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -12,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * <p>配置响应类</p >
@@ -68,7 +68,7 @@ public class ConfigResponse<T> {
      * @return
      */
     public T resolveConfig() {
-        if (ObjectUtil.isEmpty(configJson)) {
+        if (ObjectUtils.isEmpty(configJson)) {
             return null;
         }
         if (NumberUtil.isNumber(configJson)) {
@@ -87,7 +87,7 @@ public class ConfigResponse<T> {
      * @return
      */
     public List<T> resolveListConfig() {
-        if (ObjectUtil.isEmpty(configJson)) {
+        if (ObjectUtils.isEmpty(configJson)) {
             return Collections.emptyList();
         }
         return JsonUtil.toList(configJson, configJsonClazz);

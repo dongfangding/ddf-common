@@ -1,7 +1,7 @@
 package com.ddf.boot.common.api.model.authentication;
 
 
-import cn.hutool.core.util.ReflectUtil;
+import com.ddf.boot.common.api.util.ReflectUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -100,11 +100,11 @@ public class UserClaim implements Serializable {
     public Map<String, Object> toMap() {
         Map<String, Object> claimMap = new HashMap<>(16);
         Class<? extends UserClaim> aClass = this.getClass();
-        Field[] fields = ReflectUtil.getFields(aClass);
+        Field[] fields = ReflectUtils.getFields(aClass);
         if (fields.length > 0) {
             for (Field field : fields) {
                 try {
-                    Method method = ReflectUtil.getMethod(
+                    Method method = ReflectUtils.getMethod(
                             aClass,
                             "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1)
                     );

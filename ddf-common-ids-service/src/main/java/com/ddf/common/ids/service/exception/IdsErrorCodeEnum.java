@@ -40,29 +40,4 @@ public enum IdsErrorCodeEnum implements BaseCallbackCode {
         this.description = description;
         this.bizMessage = "id获取异常";
     }
-
-    /**
-     * 响应状态码
-     *
-     * @return
-     */
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * 响应消息
-     *
-     * @return
-     */
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getBizMessage() {
-        return bizMessage;
-    }
 }

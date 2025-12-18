@@ -7,20 +7,21 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>boot302-2025.1.0-SNAPSHOT</version>
+    <version>boot358-2025.12-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
-        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-        <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
-        <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
-        <maven.sonar.plugin.version>3.5.0.1254</maven.sonar.plugin.version>
-        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
-        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <!-- maven版本使用3.9.6以上版本 -->
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+        <maven.archetype.plugin.version>3.3.0</maven.archetype.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <maven.release.plugin.version>3.3.0</maven.release.plugin.version>
+        <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
+        <maven.sonar.plugin.version>5.5.0.6356</maven.sonar.plugin.version>
         <maven.test.skip>true</maven.test.skip>
     </properties>
 
@@ -30,7 +31,7 @@
             <dependency>
                 <groupId>com.ddf.common</groupId>
                 <artifactId>ddf-common-dependency</artifactId>
-                <version>boot302-2025.1.0-SNAPSHOT</version>
+                <version>boot358-2025.12-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -60,7 +61,6 @@
         <module>ddf-common-third-party</module>
         <module>ddf-common-script</module>
         <module>ddf-common-es</module>
-        <module>ddf-common-trace</module>
         <module>ddf-common-ons</module>
         <module>ddf-common-nacos</module>
         <module>ddf-common-vps</module>
@@ -131,5 +131,14 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+
+        <pluginRepository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+
     </pluginRepositories>
 </project>

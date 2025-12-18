@@ -1,7 +1,6 @@
 package com.ddf.boot.common.api.validator.constraint;
 
 import cn.hutool.core.lang.Validator;
-import cn.hutool.core.util.StrUtil;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +10,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>是否为有效手机号校验器</p >
@@ -59,10 +59,10 @@ public @interface Mobile {
         @Override
         public boolean isValid(String value, ConstraintValidatorContext context) {
             // 为空时不进行逻辑校验
-            if (StrUtil.isBlank(value)) {
+            if (StringUtils.isBlank(value)) {
                 return Boolean.TRUE;
             }
-            return Validator.isMatchRegex(Validator.MOBILE, value);
+            return Validator.isMobile(value);
         }
     }
 }

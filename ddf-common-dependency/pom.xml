@@ -6,55 +6,54 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common-dependency</artifactId>
     <packaging>pom</packaging>
-    <version>boot302-2025.1.0-SNAPSHOT</version>
+    <version>boot358-2025.12-SNAPSHOT</version>
     <name>ddf-common-dependency</name>
     <description>依赖统一管理</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.0.2</spring-boot.version>
+        <spring-boot.version>3.5.8</spring-boot.version>
         <spring-cloud-context.version>4.0.0</spring-cloud-context.version>
-        <dubbo.version>2.7.14</dubbo.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
-        <netty.version>4.1.77.Final</netty.version>
+        <netty.version>4.1.115.Final</netty.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <dozer.version>6.4.1</dozer.version>
         <aspectj.version>1.9.4</aspectj.version>
-        <jwt.version>0.10.7</jwt.version>
-        <hutool.version>5.8.12</hutool.version>
+        <jwt.version>0.12.6</jwt.version>
+        <hutool.version>5.8.42</hutool.version>
         <commons-codec.version>1.11</commons-codec.version>
-        <lombok.version>1.18.24</lombok.version>
-        <mysql.version>8.0.28</mysql.version>
-        <guava.version>30.0-jre</guava.version>
+        <lombok.version>1.18.36</lombok.version>
+        <mysql.version>9.1.0</mysql.version>
+        <guava.version>33.3.1-jre</guava.version>
         <http-client.version>4.5.13</http-client.version>
         <http-core.version>4.4.12</http-core.version>
-        <druid.version>1.2.19</druid.version>
+        <druid.version>1.2.24</druid.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <jakarta-validation.version>2.0.2</jakarta-validation.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
-        <pagehelper.version>1.4.3</pagehelper.version>
+        <pagehelper.version>2.1.0</pagehelper.version>
         <mail.version>1.6.2</mail.version>
         <caffeine.version>2.9.3</caffeine.version>
-        <mybatis.version>2.3.0</mybatis.version>
+        <mybatis.version>3.0.4</mybatis.version>
         <sharding-jdbc.version>5.1.0</sharding-jdbc.version>
-        <redisson.version>3.18.0</redisson.version>
+        <redisson.version>3.40.0</redisson.version>
         <kaptcha-version>2.3.2</kaptcha-version>
         <anji-plus.version>1.2.9</anji-plus.version>
         <curator.version>5.1.0</curator.version>
         <ons.version>1.0.0</ons.version>
         <ons-client.version>1.8.7.1.Final</ons-client.version>
-        <xxl-job-version>2.3.1</xxl-job-version>
+        <xxl-job-version>2.4.2</xxl-job-version>
         <disruptor.version>3.4.4</disruptor.version>
-        <servlet.version>6.0.0</servlet.version>
+        <servlet.version>6.1.0</servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -107,10 +106,9 @@
             </dependency>
 
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -244,12 +242,6 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo-spring-boot-starter</artifactId>
-                <version>${dubbo.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -406,13 +398,13 @@
                 <version>${disruptor.version}</version>
             </dependency>
 
-
+            <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
             <dependency>
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
-                <version>6.0.0</version>
+                <version>${servlet.version}</version>
+                <scope>provided</scope>
             </dependency>
-
             <!-- 适配JDK升级 start ============================== -->
             <!-- 适配jdk升级到9及以上，移除了 javax.xml.bind (JAXB) 的问题; javax需要从外部引入 -->
             <!--JAXB (JSR 222) java.xml.bind，JAXBUtil相关 模块的接口 API，如：import javax.xml.bind.annotation.XmlElement; -->
@@ -461,39 +453,40 @@
             </dependency>
             <!-- 适配JDK升级 end ============================== -->
         </dependencies>
+
     </dependencyManagement>
 
 
     <distributionManagement>
-        <repository>
-            <!-- 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 -->
-            <id>aiyu_release</id>
-            <name>Release Repository of nexus_release</name>
-            <url>http://xxxx:8802/repository/aiyu_release/</url>
-        </repository>
+<!--        <repository>-->
+<!--            &lt;!&ndash; 注意这里的id要和settings.xml中配置servers节点下的server里的id一致，因为要找到对应的账号信息 &ndash;&gt;-->
+<!--            <id>aiyu_release</id>-->
+<!--            <name>Release Repository of nexus_release</name>-->
+<!--            <url>http://xxxx:8802/repository/aiyu_release/</url>-->
+<!--        </repository>-->
 
-        <snapshotRepository>
-            <id>aiyu_snapshot</id>
-            <name>Snapshot Repository of nexus_snapshot</name>
-            <url>http://xxxx:8802/repository/aiyu_snapshot/</url>
-        </snapshotRepository>
+<!--        <snapshotRepository>-->
+<!--            <id>aiyu_snapshot</id>-->
+<!--            <name>Snapshot Repository of nexus_snapshot</name>-->
+<!--            <url>http://xxxx:8802/repository/aiyu_snapshot/</url>-->
+<!--        </snapshotRepository>-->
     </distributionManagement>
 
     <repositories>
-        <repository>
-            <id>aiyu_public</id>
-            <!-- 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，
-             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>-->
-            <url>http://xxxx:8802/repository/aiyu_public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-        </repository>
+<!--        <repository>-->
+<!--            <id>aiyu_public</id>-->
+<!--            &lt;!&ndash; 这里要和settings里的mirrors节点下的某一个mirror的url对应起来， 一般在settings.xml中配置的这个地址，都是在nexus中的一个group地址，-->
+<!--             然后将自己私服的release库地址和snapshot库地址都添加到这个组中， 即上面<distributionManagement>下<repository>和<snapshotRepository>&ndash;&gt;-->
+<!--            <url>http://xxxx:8802/repository/aiyu_public/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--                <checksumPolicy>fail</checksumPolicy>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>aliyun</id>
             <url>https://maven.aliyun.com/repository/public</url>
@@ -507,21 +500,28 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>aiyu_public</id>
-            <url>http://xxxx:8802/repository/aiyu_public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-        </pluginRepository>
+<!--        <pluginRepository>-->
+<!--            <id>aiyu_public</id>-->
+<!--            <url>http://xxxx:8802/repository/aiyu_public/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--                <checksumPolicy>fail</checksumPolicy>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
         <pluginRepository>
             <id>aliyun</id>
             <url>https://maven.aliyun.com/repository/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/release</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -543,8 +543,9 @@
                                 <artifactId>spring-boot-configuration-processor</artifactId>
                             </exclude>
                         </excludes>
-                        <fork>true</fork>
-                        <classifier>exec</classifier>
+                        <image>
+                            <builder>paketobuildpacks/builder-optimised:latest</builder>
+                        </image>
                     </configuration>
                     <executions>
                         <execution>
@@ -558,13 +559,40 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <parameters>true</parameters>
+                        <release>${java.version}</release>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <testFailureIgnore>true</testFailureIgnore>
+                        <argLine>-Djdk.traceVirtualThreadLocals=false</argLine>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven.source.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
-                            <!--<phase>verify</phase>-->
-                            <phase>install</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>jar-no-fork</goal>
                             </goals>
@@ -574,22 +602,8 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.plugin.version}</version>
-                    <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                        <compilerArgument>-parameters</compilerArgument>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.surefire.plugin.version}</version>
-                    <configuration>
-                        <testFailureIgnore>true</testFailureIgnore>
-                    </configuration>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.4</version>
                 </plugin>
             </plugins>
         </pluginManagement>

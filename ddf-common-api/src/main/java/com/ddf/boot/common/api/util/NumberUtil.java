@@ -1,6 +1,8 @@
 package com.ddf.boot.common.api.util;
 
+import com.fasterxml.jackson.core.io.NumberInput;
 import java.math.BigDecimal;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /***
  * 数字精度处理工具类
@@ -73,5 +75,14 @@ public class NumberUtil {
      */
     public static boolean isNullOrZero(Number number){
         return null == number || number.longValue() == 0;
+    }
+
+     /**
+     * 是否是数字
+     * @param str
+     * @return
+     */
+    public static boolean isNumber(String str){
+        return NumberUtils.isCreatable(str);
     }
 }

@@ -2,7 +2,6 @@ package com.ddf.boot.common.api.util;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.NumberUtil;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -426,9 +425,7 @@ public class DateUtils {
     public static Date nextYearFirstDay() {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
-        return DateUtil
-                .beginOfYear(instance)
-                .getTime();
+        return DateUtil.beginOfYear(instance.getTime());
     }
 
     /**
@@ -440,8 +437,7 @@ public class DateUtils {
         final Calendar instance = Calendar.getInstance();
         instance.set(Calendar.YEAR, DateUtil.year(new Date()) + 1);
         return DateUtil
-                .endOfYear(instance)
-                .getTime();
+                .endOfYear(instance.getTime());
     }
 
     /**
@@ -769,9 +765,11 @@ public class DateUtils {
      */
     public static long assignDateSeconds(int day, int hour) {
         return LocalDateTime
-                .of(LocalDate
-                        .now()
-                        .plusDays(day), LocalTime.of(hour, 0))
+                .of(
+                        LocalDate
+                                .now()
+                                .plusDays(day), LocalTime.of(hour, 0)
+                )
                 .atZone(GLOBAL_ZONE_ID)
                 .toEpochSecond();
     }
