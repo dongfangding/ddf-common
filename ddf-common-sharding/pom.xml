@@ -16,31 +16,83 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <sharding-jdbc.version>5.2.1</sharding-jdbc.version>
     </properties>
 
     <dependencies>
         <!-- 没看懂这个starter为什么引了那么多依赖，甚至还有elastic-job的 -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>elasticjob-lite-core</artifactId>
-                    <groupId>org.apache.shardingsphere.elasticjob</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>shardingsphere-db-discovery-core</artifactId>
-                    <groupId>org.apache.shardingsphere</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>shardingsphere-db-discovery-spring-boot-starter</artifactId>
-                    <groupId>org.apache.shardingsphere</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>shardingsphere-schedule-core</artifactId>
-                    <groupId>org.apache.shardingsphere</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>shardingsphere-sharding-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-shadow-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-db-discovery-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-encrypt-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-readwrite-splitting-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-spring-boot-starter-infra</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-transaction-spring</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-parser-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-sql-translator-spring-boot-starter</artifactId>
+            <version>${sharding-jdbc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
 
         <dependency>

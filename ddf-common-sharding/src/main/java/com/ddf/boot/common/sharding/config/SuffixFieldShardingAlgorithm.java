@@ -1,6 +1,9 @@
 package com.ddf.boot.common.sharding.config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
@@ -12,6 +15,7 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.StandardSharding
  * @version 1.0
  * @since 2023/07/20 20:02
  */
+@Slf4j
 public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<Integer> {
 
     /**
@@ -35,16 +39,37 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
 
     @Override
     public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Integer> value) {
-        return null;
+        if (collection.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final String first = collection.iterator().next();
+        final String baseTableName = first.substring(0, first.lastIndexOf("_"));
+
+        // 不支持跨表的范围查询，依然保持和单表一样固定用一个
+        final Integer suffix = value.getValueRange().lowerEndpoint();
+
+        String targetTable = baseTableName + "_" + suffix;
+
+        if (collection.contains(targetTable)) {
+            return Collections.singletonList(targetTable);
+        }
+        return Collections.emptyList();
     }
 
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public String getType() {
+        return "SUFFIX_FIELD_SHARDING_ALGORITHM";
+    }
+
+    @Override
+    public Properties getProps() {
         return null;
+    }
+
+    @Override
+    public void init(Properties properties) {
+
     }
 }
