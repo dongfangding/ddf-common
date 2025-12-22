@@ -6,20 +6,19 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common-dependency</artifactId>
     <packaging>pom</packaging>
-    <version>boot358-2025.12-SNAPSHOT</version>
+    <version>boot3.3-2025.1-SNAPSHOT</version>
     <name>ddf-common-dependency</name>
     <description>依赖统一管理</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.5.8</spring-boot.version>
+        <spring-boot.version>3.3.6</spring-boot.version>
         <spring-cloud-context.version>4.0.0</spring-cloud-context.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
-        <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
         <netty.version>4.1.115.Final</netty.version>
         <commons-lang3.version>3.9</commons-lang3.version>
@@ -36,7 +35,6 @@
         <druid.version>1.2.24</druid.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
-        <jackson-datatype.version>2.9.8</jackson-datatype.version>
         <jakarta-validation.version>2.0.2</jakarta-validation.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>

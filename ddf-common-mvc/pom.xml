@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.ddf.common</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>boot358-2025.12-SNAPSHOT</version>
+        <version>boot3.3-2025.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>ddf-common-mvc</artifactId>
-    <version>boot358-2025.12-SNAPSHOT</version>
+    <version>boot3.3-2025.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot358-2025.12-SNAPSHOT</version>
+            <version>boot3.3-2025.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

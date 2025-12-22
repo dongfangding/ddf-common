@@ -5,12 +5,12 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>boot358-2025.12-SNAPSHOT</version>
+        <version>boot3.3-2025.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-zookeeper</artifactId>
-    <version>boot358-2025.12-SNAPSHOT</version>
+    <version>boot3.3-2025.1-SNAPSHOT</version>
     <description>zk使用相关工具</description>
 
     <properties>
@@ -25,14 +25,14 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot358-2025.12-SNAPSHOT</version>
+            <version>boot3.3-2025.1-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-distributed-lock</artifactId>
-            <version>boot358-2025.12-SNAPSHOT</version>
+            <version>boot3.3-2025.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

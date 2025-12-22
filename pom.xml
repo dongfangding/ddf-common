@@ -7,7 +7,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>boot358-2025.12-SNAPSHOT</version>
+    <version>boot3.3-2025.1-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
@@ -31,7 +31,7 @@
             <dependency>
                 <groupId>com.ddf.common</groupId>
                 <artifactId>ddf-common-dependency</artifactId>
-                <version>boot358-2025.12-SNAPSHOT</version>
+                <version>boot3.3-2025.1-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -46,13 +46,13 @@
         <module>ddf-common-redis</module>
         <module>ddf-common-distributed-lock</module>
         <module>ddf-common-authentication</module>
-        <module>ddf-common-captcha</module>
         <module>ddf-common-sharding</module>
         <module>ddf-common-rocketmq</module>
         <module>ddf-common-alarm</module>
         <module>ddf-common-xxl-executor</module>
         <module>ddf-common-log4j</module>
         <module>ddf-common-limit</module>
+        <module>ddf-common-captcha</module>
         <module>ddf-common-ids-service</module>
         <module>ddf-common-zookeeper</module>
         <module>ddf-common-websocket</module>
@@ -62,7 +62,6 @@
         <module>ddf-common-script</module>
         <module>ddf-common-es</module>
         <module>ddf-common-ons</module>
-        <module>ddf-common-nacos</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
         <module>ddf-common-canal</module>
