@@ -4,7 +4,7 @@ import com.anji.captcha.config.AjCaptchaAutoConfiguration;
 import com.anji.captcha.config.AjCaptchaServiceAutoConfiguration;
 import com.anji.captcha.properties.AjCaptchaProperties;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;

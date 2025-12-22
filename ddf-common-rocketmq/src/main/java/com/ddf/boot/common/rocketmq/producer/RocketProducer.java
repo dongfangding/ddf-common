@@ -5,7 +5,7 @@ import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
 import com.google.common.base.Throwables;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendCallback;

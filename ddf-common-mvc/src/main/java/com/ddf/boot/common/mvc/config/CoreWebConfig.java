@@ -6,7 +6,7 @@ import com.ddf.boot.common.mvc.filter.CachingRequestBodyFilter;
 import com.ddf.boot.common.mvc.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.mvc.resolver.QueryParamArgumentResolver;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;

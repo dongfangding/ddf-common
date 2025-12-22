@@ -64,6 +64,7 @@
         <module>ddf-common-ons</module>
         <module>ddf-common-vps</module>
         <module>ddf-common-mqtt</module>
+        <module>ddf-common-mqtt-client</module>
         <module>ddf-common-canal</module>
     </modules>
 
