@@ -56,6 +56,8 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     BAD_REQUEST("BAD_REQUEST", "错误请求", "错误请求"),
 
+    RESOURCE_REQUEST_ERROR("RESOURCE_REQUEST_ERROR", "资源请求错误", "资源请求错误"),
+
     UNAUTHORIZED("401", "未通过认证"),
 
     ACCESS_FORBIDDEN("403", "权限未通过，访问被拒绝", "权限未通过，访问被拒绝"),

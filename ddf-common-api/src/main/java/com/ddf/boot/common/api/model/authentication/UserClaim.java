@@ -2,6 +2,7 @@ package com.ddf.boot.common.api.model.authentication;
 
 
 import com.ddf.boot.common.api.util.ReflectUtils;
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UserClaim implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6557510720376811244L;
 
     public static final String CLAIM_USER_ID = "userId";

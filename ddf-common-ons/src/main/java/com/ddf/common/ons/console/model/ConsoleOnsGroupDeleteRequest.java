@@ -1,9 +1,10 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsGroupDeleteRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Set;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ConsoleOnsGroupDeleteRequest implements EnvRequest, UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1025899637278278369L;
 
     /**

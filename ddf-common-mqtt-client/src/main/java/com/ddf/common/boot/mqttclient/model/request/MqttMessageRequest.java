@@ -5,9 +5,9 @@ import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqttclient.model.support.body.MessageBody;
 import com.ddf.common.boot.mqttclient.model.support.topic.MqttTopicDefine;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**

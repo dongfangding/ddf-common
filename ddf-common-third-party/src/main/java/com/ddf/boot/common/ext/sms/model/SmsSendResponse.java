@@ -1,5 +1,6 @@
 package com.ddf.boot.common.ext.sms.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SmsSendResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1516322558409231083L;
 
     /**

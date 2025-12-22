@@ -3,6 +3,7 @@ package com.ddf.common.ons.console.model;
 import com.aliyun.ons20190214.models.OnsGroupListRequest;
 import com.ddf.common.ons.console.config.EnvClientProperties;
 import com.ddf.common.ons.console.constant.GroupTypeEnum;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ import lombok.Data;
 @Data
 public class ConsoleOnsGroupListRequest implements UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5424208858377211727L;
 
     /**

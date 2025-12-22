@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 本地事务执行器抽象类
@@ -27,7 +27,7 @@ public class LocalTransactionExecutorImpl implements LocalTransactionExecuter {
         TransactionStatus transactionStatus;
         try {
             String routeKey = msg.getUserProperties(TransactionConst.TRANSACTION_BIZ_ROUTE_KEY);
-            if(StringUtils.isEmpty(routeKey) || Objects.isNull(BizTransactionExecutorPool.get(routeKey))) {
+            if(ObjectUtils.isEmpty(routeKey) || Objects.isNull(BizTransactionExecutorPool.get(routeKey))) {
                 LOGGER.error("没有找到对应消息的事务处理器, routeKey = {}, msg = {}", routeKey, msg);
             }
             boolean isSuccess = BizTransactionExecutorPool.get(routeKey).execute(msg, arg);

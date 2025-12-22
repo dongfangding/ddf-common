@@ -4,6 +4,7 @@ import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
@@ -19,6 +20,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 @Data
 public class MqttMessagePayload implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1516322558409231083L;
 
     private MqttMessagePayload() {

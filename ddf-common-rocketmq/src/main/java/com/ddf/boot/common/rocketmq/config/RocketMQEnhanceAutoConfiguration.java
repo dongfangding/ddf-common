@@ -40,8 +40,7 @@ public class RocketMQEnhanceAutoConfiguration {
         CompositeMessageConverter compositeMessageConverter = (CompositeMessageConverter) converter.getMessageConverter();
         List<MessageConverter> messageConverterList = compositeMessageConverter.getConverters();
         for (MessageConverter messageConverter : messageConverterList) {
-            if(messageConverter instanceof MappingJackson2MessageConverter){
-                MappingJackson2MessageConverter jackson2MessageConverter = (MappingJackson2MessageConverter) messageConverter;
+            if(messageConverter instanceof MappingJackson2MessageConverter jackson2MessageConverter){
                 ObjectMapper objectMapper = jackson2MessageConverter.getObjectMapper();
                 objectMapper.registerModules(new JavaTimeModule());
             }

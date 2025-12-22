@@ -78,8 +78,8 @@ public class IndexComparatorElement {
     @Override
     public String toString() {
         if (isChange()) {
-            return String.format("第%d位: '%s' 被替换为 '%s'", index, beforeValue, value);
+            return "第%d位: '%s' 被替换为 '%s'".formatted(index, beforeValue, value);
         }
-        return String.format("第%d位: '%s' (%s)", index, value, renderStatus());
+        return "第%d位: '%s' (%s)".formatted(index, value, renderStatus());
     }
 }

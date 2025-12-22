@@ -1,6 +1,7 @@
 package com.ddf.boot.common.rocketmq.producer;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor_ =@Autowired)
 @Component
 public class RocketProducer {
 
@@ -123,8 +124,8 @@ public class RocketProducer {
                 RocketMQHeaders.KEYS, message.getMessageId()).build();
         SendResult sendResult = template.syncSend(destination, sendMessage);
         // 此处为了方便查看给日志转了json，根据选择选择日志记录方式，例如ELK采集
-        log.info("[{}] [{}] 同步消息[{}]发送结果[{}]", TAG, destination, JSONObject.toJSON(message),
-                JSONObject.toJSON(sendResult)
+        log.info("[{}] [{}] 同步消息[{}]发送结果[{}]", TAG, destination, JsonUtil.toJson(message),
+                JsonUtil.toJson(sendResult)
         );
         return sendResult;
     }
@@ -135,7 +136,7 @@ public class RocketProducer {
                 RocketMQHeaders.KEYS, message.getMessageId()).build();
         SendResult sendResult = template.syncSendDelayTimeSeconds(destination, sendMessage, delayTime);
         log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayTime,
-                JSONObject.toJSON(message), JSONObject.toJSON(sendResult)
+                JsonUtil.toJson(message), JsonUtil.toJson(sendResult)
         );
         return sendResult;
     }

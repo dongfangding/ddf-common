@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqttclient.model.support.body;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -12,5 +13,6 @@ import lombok.Data;
  */
 @Data
 public class TextMessageBody extends AbstractMessageBody implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8362001043321300029L;
 }

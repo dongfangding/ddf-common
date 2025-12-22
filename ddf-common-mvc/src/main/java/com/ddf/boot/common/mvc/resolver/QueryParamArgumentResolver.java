@@ -57,8 +57,7 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
         boolean isList = List.class.equals(parameter.getParameterType());
         if (isList) {
             Type genericType = parameter.getGenericParameterType();
-            if (genericType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genericType;
+            if (genericType instanceof ParameterizedType parameterizedType) {
                 Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
                 return actualTypeArgument.getTypeName().equals(QueryParam.class.getName());
             }

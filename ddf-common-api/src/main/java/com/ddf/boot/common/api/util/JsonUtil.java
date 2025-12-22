@@ -61,8 +61,8 @@ public final class JsonUtil {
     public static String toJson(Object obj) {
         if (ObjectUtils.isEmpty(obj)) {
             return StringUtils.EMPTY;
-        } else if (obj instanceof String) {
-            return (String) obj;
+        } else if (obj instanceof String string) {
+            return string;
         }
         try {
             return OBJECT_MAPPER.writeValueAsString(obj);
@@ -233,8 +233,8 @@ public final class JsonUtil {
     public static String toJson(Object obj, Include strategy) {
         if (ObjectUtils.isEmpty(obj)) {
             return StringUtils.EMPTY;
-        } else if (obj instanceof String) {
-            return (String) obj;
+        } else if (obj instanceof String string) {
+            return string;
         }
         try {
             ObjectMapper mapper = newInstance();

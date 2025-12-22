@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqttclient.model.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.Data;
 @Builder
 public class MqttTopicCreateResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4975529829966473617L;
 
     /**

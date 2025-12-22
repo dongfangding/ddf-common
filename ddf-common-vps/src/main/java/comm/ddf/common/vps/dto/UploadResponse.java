@@ -3,6 +3,7 @@ package comm.ddf.common.vps.dto;
 import com.github.tobato.fastdfs.domain.fdfs.DefaultThumbImageConfig;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.upload.ThumbImage;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ import lombok.Data;
 @Data
 public class UploadResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4365909723660880167L;
 
     /**

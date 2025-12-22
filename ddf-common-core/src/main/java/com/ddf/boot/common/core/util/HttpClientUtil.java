@@ -1,10 +1,15 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.RuntimeUtil;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BusinessException;
+import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,27 +19,28 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.HttpRoute;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 
 /**
  * http client 工具类
@@ -62,15 +68,21 @@ public class HttpClientUtil {
     private static final CloseableHttpClient CLIENT;
 
     static {
+        int defaultTimeoutMillis = 10000;
+        // 1. 创建连接配置
+        ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                // 建立连接超时
+                .setConnectTimeout(Timeout.ofSeconds(10))
+                // 超过这个时间的连接使用前要校验一次连接是否还能用，所以如果对方服务设置了最大的keep-alive小于这个值，可能会存在问题，要单独处理,目前增加了NoHttpResponseException的重试
+                .setValidateAfterInactivity(TimeValue.ofSeconds(30))
+                .build();
         CM = new PoolingHttpClientConnectionManager();
         // 最多缓存连接池数量
         CM.setMaxTotal(300);
         // 每个主机支持的最大并发连接数，共享最大缓存连接数量上限
         CM.setDefaultMaxPerRoute(50);
-        // 超过这个时间的连接使用前要校验一次连接是否还能用，所以如果对方服务设置了最大的keep-alive小于这个值，可能会存在问题，要单独处理,目前增加了NoHttpResponseException的重试
-        CM.setValidateAfterInactivity(60000);
+        CM.setDefaultConnectionConfig(connectionConfig);
 
-        int defaultTimeoutMillis = 10000;
         DEFAULT_REQUEST_CONFIG = buildRequestConfig(defaultTimeoutMillis);
         REQUEST_CONFIG_MAP.put(defaultTimeoutMillis, DEFAULT_REQUEST_CONFIG);
 
@@ -80,24 +92,61 @@ public class HttpClientUtil {
     }
 
     private static CloseableHttpClient createHttpClient() {
-        HttpRequestRetryHandler retryHandler = (exception, executionCount, context) -> {
-            if (executionCount >= 3) {
+        // 显式实现 HttpRequestRetryStrategy 接口
+        HttpRequestRetryStrategy retryStrategy = new HttpRequestRetryStrategy() {
+            @Override
+            public boolean retryRequest(HttpRequest request, IOException exception, int execCount,
+                    HttpContext context) {
+                // 1. 超过重试次数则停止
+                if (execCount >= 3) {
+                    return false;
+                }
+
+                // 2. 掉线或网络中断重试
+                if (exception instanceof NoHttpResponseException || exception instanceof InterruptedIOException) {
+                    return true;
+                }
+
+                // 3. 域名解析失败或 SSL 握手失败不重试
+                if (exception instanceof UnknownHostException || exception instanceof SSLException) {
+                    return false;
+                }
+
+                // 4. 幂等性判定
+                // 如果请求不包含实体（如 GET），通常认为重试是安全的
+                // HC5 中通过是否实现 HttpEntityContainer 接口来判断
+                if (!(request instanceof HttpEntityContainer)) {
+                    return true;
+                }
+
                 return false;
             }
-            if (exception instanceof NoHttpResponseException || exception instanceof InterruptedIOException) {
-                return true;
-            }
-            if (exception instanceof UnknownHostException || exception instanceof SSLException) {
+
+            @Override
+            public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
+                if (execCount >= 3) {
+                    return false;
+                }
+                int status = response.getCode();
+                // 常见重试场景：503 (服务不可用) 或 429 (请求过多/限流)
+                if (status == HttpStatus.SC_SERVICE_UNAVAILABLE || status == 429) {
+                    return true;
+                }
                 return false;
             }
-            HttpClientContext clientContext = HttpClientContext.adapt(context);
-            HttpRequest request = clientContext.getRequest();
-            return !(request instanceof HttpEntityEnclosingRequest);
+
+            /**
+             * 决定重试之间的等待时间
+             */
+            @Override
+            public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
+                return TimeValue.ofSeconds(execCount * 1L);
+            }
         };
 
         return HttpClients
                 .custom()
-                .setRetryHandler(retryHandler)
+                .setRetryStrategy(retryStrategy)
                 .setConnectionManager(CM)
                 .setDefaultRequestConfig(DEFAULT_REQUEST_CONFIG)
                 .build();
@@ -109,11 +158,9 @@ public class HttpClientUtil {
         }
         final RequestConfig requestConfig = RequestConfig.custom()
                 // 连接建立后的数据读取超时时间
-                .setSocketTimeout(timeoutMillis)
-                // 建立tcp连接的超时时间
-                .setConnectTimeout(timeoutMillis)
+                .setResponseTimeout(timeoutMillis, TimeUnit.MILLISECONDS)
                 // 从连接池中获取连接的超时时间
-                .setConnectionRequestTimeout(1000)
+                .setConnectionRequestTimeout(1000, TimeUnit.MILLISECONDS)
                 // 是否启用 HTTP 的 Expect: 100-Continue 机制，用于在发送POST/PUT请求体之前检查服务器是否可以处理请求
                 .setExpectContinueEnabled(true)
                 .build();
@@ -149,7 +196,7 @@ public class HttpClientUtil {
                 );
     }
 
-    private static void applyHeaders(HttpRequestBase request, Map<String, String> headers) {
+    private static void applyHeaders(HttpUriRequestBase request, Map<String, String> headers) {
         if (CollUtil.isNotEmpty(headers)) {
             headers.forEach(request::addHeader);
         }
@@ -176,7 +223,7 @@ public class HttpClientUtil {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(config);
         httpPost.addHeader("Content-Type", "application/json");
-        httpPost.setEntity(new StringEntity(postData, Consts.UTF_8));
+        httpPost.setEntity(new StringEntity(postData, StandardCharsets.UTF_8));
         applyHeaders(httpPost, headers);
         return execute(httpPost);
     }
@@ -195,7 +242,7 @@ public class HttpClientUtil {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(config);
         httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-        httpPost.setEntity(new StringEntity(postData, Consts.UTF_8));
+        httpPost.setEntity(new StringEntity(postData, StandardCharsets.UTF_8));
         applyHeaders(httpPost, headers);
         return execute(httpPost);
     }
@@ -235,31 +282,34 @@ public class HttpClientUtil {
     }
 
     // ----------------- EXECUTE -----------------
-    private static String execute(HttpRequestBase request) {
-        String result = "";
-        // try-with-resources 自动 close()
-        try (CloseableHttpResponse response = CLIENT.execute(request)) {
-            final StatusLine statusLine = response.getStatusLine();
-            int statusCode = statusLine.getStatusCode();
-            if (statusCode != HttpStatus.SC_OK) {
-                log.error("HTTP请求失败 - url: {}, 状态码: {}", request.getURI(), statusCode);
-                return result;
-            }
-            HttpEntity resEntity = response.getEntity();
-            if (resEntity != null) {
-                result = EntityUtils.toString(resEntity, Consts.UTF_8);
-                // 主动释放连接回连接池
-                EntityUtils.consume(resEntity);
-            }
-        } catch (Exception e) {
-            log.error("HTTP请求异常 - url: {}", request.getURI(), e);
-            String host = request
-                    .getURI()
-                    .getHost();
-            String pingResult = RuntimeUtil.execForStr("ping -c 3 " + host);
-            log.error("HTTP请求异常 - url: {}, ping: {}", request.getURI(), pingResult, e);
+    private static String execute(HttpUriRequestBase request) {
+        final URI uri;
+        try {
+            uri = request.getUri();
+        } catch (URISyntaxException e) {
+            log.error("HTTP请求失败, 解析路径错误 - request: {}", request, e);
+            throw new BusinessException(BaseErrorCallbackCode.RESOURCE_REQUEST_ERROR);
         }
-        return result;
+        try {
+            // 使用 ResponseHandler 自动管理资源释放
+            return CLIENT.execute(
+                    request, response -> {
+                        int statusCode = response.getCode();
+                        if (statusCode != HttpStatus.SC_OK) {
+                            log.error("HTTP请求失败 - url: {}, 状态码: {}", uri, statusCode);
+                            // 必须消费掉 Entity 以便释放连接
+                            EntityUtils.consume(response.getEntity());
+                            return "";
+                        }
+
+                        HttpEntity resEntity = response.getEntity();
+                        return resEntity != null ? EntityUtils.toString(resEntity, StandardCharsets.UTF_8) : "";
+                    }
+            );
+        } catch (Exception e) {
+            log.error("HTTP请求异常 - url: {}", uri, e);
+            throw new BusinessException(BaseErrorCallbackCode.RESOURCE_REQUEST_ERROR);
+        }
     }
 
     @Data

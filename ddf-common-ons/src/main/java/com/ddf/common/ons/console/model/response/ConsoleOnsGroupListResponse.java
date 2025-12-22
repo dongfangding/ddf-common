@@ -2,6 +2,7 @@ package com.ddf.common.ons.console.model.response;
 
 import com.aliyun.ons20190214.models.OnsGroupListResponse;
 import com.aliyun.ons20190214.models.OnsGroupListResponseBody;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ConsoleOnsGroupListResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7844010129175423472L;
 
     /**

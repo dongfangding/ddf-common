@@ -1,5 +1,6 @@
 package com.ddf.common.ons.console.model.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConsoleOnsDLQMessagePageQueryByGroupResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3606151399446161194L;
 
     /**

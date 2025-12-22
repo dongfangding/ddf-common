@@ -1,5 +1,6 @@
 package com.ddf.boot.common.api.model.authentication;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(staticName = "of")
 public class AuthenticateToken implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1516322558409231083L;
 
     private static final String SPLIT = ".";

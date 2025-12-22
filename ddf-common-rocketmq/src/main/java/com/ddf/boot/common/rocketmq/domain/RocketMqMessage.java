@@ -1,5 +1,6 @@
 package com.ddf.boot.common.rocketmq.domain;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.util.Assert;
 @AllArgsConstructor
 public class RocketMqMessage implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5484128488254938570L;
 
     public static final String WRAPPER_BIZ_ID_SEPARATOR = "#";

@@ -1,5 +1,6 @@
 package com.ddf.common.ids.service.model.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import lombok.Data;
 @Data
 public class DecodeSnowflakeIdData implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1036666729538599808L;
 
     /**

@@ -1,8 +1,9 @@
 package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -51,6 +52,7 @@ import lombok.Data;
 @Data
 public class EmqAuthenticateRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6593260244631866442L;
 
     // auth.http.auth_req.params = clientId=%c,username=%u,password=%P

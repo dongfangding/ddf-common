@@ -264,7 +264,7 @@ public class DateUtils {
      */
     public static int[] checkHourMinute(String hourMinuteStr) {
         if (StringUtils.isBlank(hourMinuteStr) || !hourMinuteStr.contains(TIME_SPLIT)) {
-            throw new IllegalArgumentException(String.format("[%s]没有格式有误，没有包含%s", hourMinuteStr, TIME_SPLIT));
+            throw new IllegalArgumentException("[%s]没有格式有误，没有包含%s".formatted(hourMinuteStr, TIME_SPLIT));
         }
         final String[] split = hourMinuteStr.split(TIME_SPLIT);
         if (split.length != 2 || !NumberUtil.isNumber(split[0].trim()) || !NumberUtil.isNumber(split[1].trim())) {
@@ -273,10 +273,10 @@ public class DateUtils {
         final int hour = Integer.parseInt(split[0].trim());
         final int minute = Integer.parseInt(split[1].trim());
         if (hour < 0 || hour > 23) {
-            throw new IllegalArgumentException(String.format("【%s】小时只能位于0到23之间", hour));
+            throw new IllegalArgumentException("【%s】小时只能位于0到23之间".formatted(hour));
         }
         if (minute < 0 || minute > 59) {
-            throw new IllegalArgumentException(String.format("【%s】分钟只能位于0到59之间", minute));
+            throw new IllegalArgumentException("【%s】分钟只能位于0到59之间".formatted(minute));
         }
         return new int[] {hour, minute};
     }

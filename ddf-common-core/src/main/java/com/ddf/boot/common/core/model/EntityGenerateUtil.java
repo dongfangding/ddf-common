@@ -67,7 +67,7 @@ public class EntityGenerateUtil {
      * @throws Exception
      */
     private static Connection getConnection() throws Exception {
-        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+        Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding"
                 + "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
     }
@@ -166,9 +166,9 @@ public class EntityGenerateUtil {
         )) {
             String sourceStr = sbl.toString();
             if (isDateImport) {
-                sourceStr = String.format(sourceStr, "import java.util.Date;" + LINE);
+                sourceStr = sourceStr.formatted("import java.util.Date;" + LINE);
             } else {
-                sourceStr = String.format(sourceStr, "");
+                sourceStr = sourceStr.formatted("");
             }
             outputStreamWriter.write(sourceStr);
         }

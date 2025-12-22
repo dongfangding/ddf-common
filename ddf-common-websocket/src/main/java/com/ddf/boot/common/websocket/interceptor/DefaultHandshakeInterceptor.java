@@ -192,7 +192,7 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
             long now = System.currentTimeMillis();
             if (Math.abs(now - handshakeParam.getCurrentTimeStamp()) > webSocketProperties.getValidAuthTimeStamp()) {
                 log.error("认证参数已过期{}==>{}", now, handshakeParam.getCurrentTimeStamp());
-                response.getBody().write(String.format("认证参数已过期%s==>%s", now, handshakeParam.getCurrentTimeStamp())
+                response.getBody().write("认证参数已过期%s==>%s".formatted(now, handshakeParam.getCurrentTimeStamp())
                         .getBytes(StandardCharsets.UTF_8));
                 return false;
             }

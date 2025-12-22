@@ -1,5 +1,6 @@
 package com.ddf.boot.common.api.model.common.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ObjectKeyValuePair<K, V> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1974507147453838012L;
 
     /**

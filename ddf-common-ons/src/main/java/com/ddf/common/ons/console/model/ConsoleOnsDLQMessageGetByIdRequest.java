@@ -1,8 +1,9 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsDLQMessageGetByIdRequest;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 public class ConsoleOnsDLQMessageGetByIdRequest implements UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4145719272314986680L;
 
     /**

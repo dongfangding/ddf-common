@@ -3,11 +3,12 @@ package com.ddf.common.ons.console.model;
 import com.aliyun.ons20190214.models.OnsTopicCreateRequest;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.ons.console.constant.TopicMessageType;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 @Accessors(chain = true)
 public class ConsoleOnsTopicCreateRequest implements EnvRequest, UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8649656233831333991L;
 
     /**

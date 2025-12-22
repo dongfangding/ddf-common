@@ -83,7 +83,7 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
 
         OnsMessageListenerAno annotation = clazz.getAnnotation(OnsMessageListenerAno.class);
 
-        String containerBeanName = String.format("%s#%s", BaseOnsListenerContainer.class.getName(),
+        String containerBeanName = "%s#%s".formatted(BaseOnsListenerContainer.class.getName(),
                 counter.incrementAndGet());
 
         GenericApplicationContext genericApplicationContext = (GenericApplicationContext) applicationContext;

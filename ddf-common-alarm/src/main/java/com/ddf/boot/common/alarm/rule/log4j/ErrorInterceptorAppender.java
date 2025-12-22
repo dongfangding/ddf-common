@@ -70,11 +70,10 @@ public class ErrorInterceptorAppender extends AbstractAppender {
                 } catch (UnknownHostException ignore) {
                 }
                 LarkUtil.sendTextMsgType(
-                        properties.getWebhookUrl(), properties.getSecret(), String.format(
-                                "[%s]-[%s(%s)]-[%s]: %s", DateUtils.standardFormatSeconds(event
-                                        .getInstant()
-                                        .getEpochSecond()), applicationName, host, loggerName, formattedMessage
-                        ), true
+                        properties.getWebhookUrl(), properties.getSecret(), "[%s]-[%s(%s)]-[%s]: %s".formatted(DateUtils.standardFormatSeconds(event
+                        .getInstant()
+                        .getEpochSecond()), applicationName, host, loggerName, formattedMessage
+                ), true
                 );
             });
         } catch (Exception e) {

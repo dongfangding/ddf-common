@@ -1,11 +1,13 @@
 package com.ddf.common.ids.service.model.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
 @Data
 public class SegmentBufferView implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1994351347114212849L;
 
     private String key;

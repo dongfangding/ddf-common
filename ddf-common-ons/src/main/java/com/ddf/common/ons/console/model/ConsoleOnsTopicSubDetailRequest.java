@@ -2,7 +2,7 @@ package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsTopicSubDetailRequest;
 import com.ddf.common.ons.console.config.EnvClientProperties;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**

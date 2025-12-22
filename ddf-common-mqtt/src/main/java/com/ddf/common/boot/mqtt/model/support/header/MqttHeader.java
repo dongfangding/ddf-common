@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqtt.model.support.header;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import lombok.Data;
 @Data
 public class MqttHeader implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4813011310202804454L;
 
     public static MqttHeader DEFAULT;

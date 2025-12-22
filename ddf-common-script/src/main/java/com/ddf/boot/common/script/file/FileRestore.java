@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -41,14 +40,14 @@ public class FileRestore {
         String notVidVideoPath = baseTargetDirectory + "/not_vid";
         for (String directory : directories) {
             try {
-                Files.walkFileTree(Paths.get(directory), new SimpleFileVisitor<>() {
+                Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         // 获取文件创建时间
                         String fileName = file.getFileName().toString();
                         if (!fileName.startsWith("VID")) {
                             // 如果文件名不是以"VID"开头，移动到not_vid目录
-                            Path notVidPath = Paths.get(notVidVideoPath);
+                            Path notVidPath = Path.of(notVidVideoPath);
                             if (!Files.exists(notVidPath)) {
                                 Files.createDirectories(notVidPath);
                             }
@@ -61,7 +60,7 @@ public class FileRestore {
                                 month = fileName.substring(4, 10);
                             }
                             // 创建月目录
-                            Path monthDir = Paths.get(baseTargetDirectory, month);
+                            Path monthDir = Path.of(baseTargetDirectory, month);
                             if (!Files.exists(monthDir)) {
                                 Files.createDirectories(monthDir);
                             }
@@ -95,7 +94,7 @@ public class FileRestore {
     public static void packageMonitorVideo2(String[] directories, String baseTargetDirectory) {
         for (String directory : directories) {
             try {
-                Files.walkFileTree(Paths.get(directory), new SimpleFileVisitor<>() {
+                Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         // video_0881_0_10_20240628194426_20240628195010.mp4
@@ -108,7 +107,7 @@ public class FileRestore {
                         String month = dateStr.substring(0, 6);
                         String day = dateStr.substring(0, 8);
                         // 创建层级目录
-                        Path targetPath = Paths.get(baseTargetDirectory, month, day);
+                        Path targetPath = Path.of(baseTargetDirectory, month, day);
                         if (!Files.exists(targetPath)) {
                             Files.createDirectories(targetPath);
                         }
@@ -155,7 +154,7 @@ public class FileRestore {
                                 0, Math.min(sourceFolderName.length(), 8)); // 前8位作为二级目录
 
                         // 构建目标路径
-                        Path targetPath = Paths.get(targetDirector, firstLevelDir, secondLevelDir, sourceFolderName);
+                        Path targetPath = Path.of(targetDirector, firstLevelDir, secondLevelDir, sourceFolderName);
 
                         // 创建目标路径的父目录（如果不存在）
                         Files.createDirectories(targetPath.getParent());
@@ -184,7 +183,7 @@ public class FileRestore {
         Set<String> md5Set = new HashSet<>();
         for (String directory : directories) {
             try {
-                Files.walkFileTree(Paths.get(directory), new SimpleFileVisitor<>() {
+                Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         final File realFile = file.toFile();
@@ -193,7 +192,7 @@ public class FileRestore {
                             md5Set.add(md5);
                             return FileVisitResult.CONTINUE;
                         }
-                        Path deleteDir = Paths.get(backupDeleteDirector);
+                        Path deleteDir = Path.of(backupDeleteDirector);
                         if (!Files.exists(deleteDir)) {
                             Files.createDirectories(deleteDir);
                         }
@@ -237,7 +236,7 @@ public class FileRestore {
             // 转换为十六进制字符串
             StringBuilder md5 = new StringBuilder();
             for (byte b : md5Bytes) {
-                md5.append(String.format("%02x", b));
+                md5.append("%02x".formatted(b));
             }
             return md5.toString();
         } catch (Exception e) {

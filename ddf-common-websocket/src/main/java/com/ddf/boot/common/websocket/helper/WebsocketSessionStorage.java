@@ -21,7 +21,7 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -304,7 +304,7 @@ public class WebsocketSessionStorage {
                 );
             } else {
                 messageResponse = MessageResponse.failure(message.getRequestId(), MessageResponse.SERVER_CODE_ERROR,
-                        String.format("客户端针对请求[%s]响应了非成功状态码[%s]，但是没有告诉我原因^_^", message.getRequestId(),
+                        "客户端针对请求[%s]响应了非成功状态码[%s]，但是没有告诉我原因^_^".formatted(message.getRequestId(),
                                 message.getCode()
                         )
                 );

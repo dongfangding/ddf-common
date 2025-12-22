@@ -58,7 +58,7 @@ public class BeanCopierUtils {
             target = targetClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(
-                    String.format("Create new instance of %s failed: %s", targetClass, e.getMessage()));
+                    "Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
         }
         copy(sourceInstance, target, converter);
         return target;
@@ -161,7 +161,7 @@ public class BeanCopierUtils {
             CONSTRUCTOR_ACCESS_CACHE.put(targetClass.toString(), constructorAccess);
         } catch (Exception e) {
             throw new RuntimeException(
-                    String.format("Create new instance of %s failed: %s", targetClass, e.getMessage()));
+                    "Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
         }
         return constructorAccess;
     }

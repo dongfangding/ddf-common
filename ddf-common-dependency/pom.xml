@@ -15,8 +15,8 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.3.6</spring-boot.version>
-        <spring-cloud-context.version>4.0.0</spring-cloud-context.version>
+        <spring-boot.version>3.3.13</spring-boot.version>
+        <spring-cloud-context.version>4.1.6</spring-cloud-context.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
@@ -26,20 +26,18 @@
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.42</hutool.version>
-        <commons-codec.version>1.11</commons-codec.version>
-        <lombok.version>1.18.36</lombok.version>
+        <commons-codec.version>1.17.2</commons-codec.version>
+        <lombok.version>1.18.42</lombok.version>
         <mysql.version>9.1.0</mysql.version>
         <guava.version>33.3.1-jre</guava.version>
-        <http-client.version>4.5.13</http-client.version>
-        <http-core.version>4.4.12</http-core.version>
         <druid.version>1.2.24</druid.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
-        <jakarta-validation.version>2.0.2</jakarta-validation.version>
+        <jakarta-validation.version>3.0.2</jakarta-validation.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <canel.version>1.1.2</canel.version>
         <pagehelper.version>2.1.0</pagehelper.version>
-        <mail.version>1.6.2</mail.version>
+        <mail.version>2.1.5</mail.version>
         <caffeine.version>2.9.3</caffeine.version>
         <mybatis.version>3.0.4</mybatis.version>
         <redisson.version>3.52.0</redisson.version>
@@ -51,24 +49,26 @@
         <xxl-job-version>2.4.2</xxl-job-version>
         <disruptor.version>3.4.4</disruptor.version>
         <servlet.version>6.1.0</servlet.version>
+        <fastjson2.version>2.0.53</fastjson2.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- 升级时用来验证一些属性，正常使用时不要引入 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-properties-migrator</artifactId>
                 <version>${spring-boot.version}</version>
-                <scope>compile</scope>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -249,20 +249,6 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${http-client.version}</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${http-core.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>reflectasm</artifactId>
@@ -303,8 +289,8 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sun.mail</groupId>
-                <artifactId>javax.mail</artifactId>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
                 <version>${mail.version}</version>
             </dependency>
 
@@ -396,6 +382,12 @@
                 <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet.version}</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
             </dependency>
         </dependencies>
 

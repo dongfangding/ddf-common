@@ -303,7 +303,7 @@ public class OnsClientOperations {
         final List<String> cacheClientIdList = getOnsConsumerClientIdListFromCache(request.getGroupId());
         if (CollectionUtils.isEmpty(cacheClientIdList)) {
             throw new OnsClientExecuteException(
-                    String.format("无法获取消费者ClientId, 暂时不可推送！InstanceId: %s, GroupId: %s", CURRENT_ENV_INSTANCE_ID,
+                    "无法获取消费者ClientId, 暂时不可推送！InstanceId: %s, GroupId: %s".formatted(CURRENT_ENV_INSTANCE_ID,
                             request.getGroupId()
                     ));
         }

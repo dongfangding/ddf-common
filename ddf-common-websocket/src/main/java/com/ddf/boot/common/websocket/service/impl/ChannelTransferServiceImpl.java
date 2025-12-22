@@ -127,7 +127,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             save(buildChannelTransfer(authPrincipal, message, request, webSocketSessionWrapper, messageRequest));
         } catch (Exception e) {
             throw new ClientRepeatRequestException(
-                    String.format("客户端重复对同一数据[%s]发送相同指令！", messageRequest.getLogicPrimaryKey()));
+                    "客户端重复对同一数据[%s]发送相同指令！".formatted(messageRequest.getLogicPrimaryKey()));
         }
         return true;
     }
@@ -274,10 +274,10 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
         queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
         ChannelTransfer record = getOne(queryWrapper);
         if (record == null) {
-            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
+            throw new BusinessException("【%s】没有对应的日志记录，无法处理！".formatted(requestId));
         }
         if (StringUtils.isBlank(record.getBusinessData())) {
-            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
+            throw new BusinessException("日志【%s】中的业务对象数据丢失！".formatted(requestId));
         }
         return record.getBusinessData();
     }

@@ -1,6 +1,7 @@
 package com.ddf.boot.common.api.model.captcha.request;
 
 import com.ddf.boot.common.api.model.captcha.CaptchaType;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CaptchaRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7363856377652909090L;
 
     /**

@@ -3,6 +3,7 @@ package com.ddf.boot.common.api.model.common.dto;
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.ReflectUtils;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestContext implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7528108356364083934L;
 
     /**

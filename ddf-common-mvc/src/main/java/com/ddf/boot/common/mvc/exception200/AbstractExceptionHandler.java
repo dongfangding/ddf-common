@@ -246,9 +246,9 @@ public abstract class AbstractExceptionHandler {
             } else if (exception instanceof MultipartException) {
                 exceptionCode = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getCode();
                 formatDefaultMessage = BaseErrorCallbackCode.UPLOAD_FILE_ERROR.getBizMessage();
-            } else if (exception instanceof BindException) {
+            } else if (exception instanceof BindException bindException) {
                 exceptionCode = BaseErrorCallbackCode.BAD_REQUEST.getCode();
-                final BindingResult result = ((BindException) exception).getBindingResult();
+                final BindingResult result = bindException.getBindingResult();
                 subMessage = result
                         .getAllErrors()
                         .stream()

@@ -2,6 +2,7 @@ package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsTopicListRequest;
 import com.ddf.common.ons.console.config.EnvClientProperties;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8499670135779906009L;
 
     /**

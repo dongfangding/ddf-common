@@ -1,6 +1,6 @@
 package com.ddf.boot.common.ext.oss.config;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**

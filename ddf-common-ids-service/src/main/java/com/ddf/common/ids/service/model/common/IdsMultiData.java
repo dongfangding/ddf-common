@@ -1,5 +1,6 @@
 package com.ddf.common.ids.service.model.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -14,6 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class IdsMultiData implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1760809172296914265L;
 
 

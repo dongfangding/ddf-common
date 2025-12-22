@@ -19,12 +19,10 @@ public class EnvironmentIsolationProcessor implements BeanPostProcessor {
      */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if(bean instanceof DefaultRocketMQListenerContainer){
-
-            DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) bean;
-
-            if(rocketEnhanceProperties.isEnabledIsolation() && StringUtils.hasText(rocketEnhanceProperties.getEnvironment())){
-                container.setTopic(String.join("_", container.getTopic(),rocketEnhanceProperties.getEnvironment()));
+        if (bean instanceof DefaultRocketMQListenerContainer container) {
+            if (rocketEnhanceProperties.isEnabledIsolation() && StringUtils.hasText(
+                    rocketEnhanceProperties.getEnvironment())) {
+                container.setTopic(String.join("_", container.getTopic(), rocketEnhanceProperties.getEnvironment()));
             }
             return container;
         }

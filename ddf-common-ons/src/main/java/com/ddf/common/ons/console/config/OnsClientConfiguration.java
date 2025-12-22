@@ -62,7 +62,7 @@ public class OnsClientConfiguration implements SmartInitializingSingleton, Appli
                     return new Client(config);
                 } catch (Exception e) {
                     throw new IllegalStateException(
-                            String.format("初始化ONS SDK Client异常， env: %s, props: %s", env, prop), e);
+                            "初始化ONS SDK Client异常， env: %s, props: %s".formatted(env, prop), e);
                 }
             });
         });

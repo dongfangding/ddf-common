@@ -1,6 +1,7 @@
 package comm.ddf.common.vps.dto;
 
 import com.github.tobato.fastdfs.domain.upload.ThumbImage;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class UploadRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8223899801722847573L;
 
     /**

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.redis.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HashIncrementPersistLimitValueResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3718353983577760216L;
 
     // limited = 1, actualStep = minValue - (result - step), currentValue = minValue

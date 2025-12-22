@@ -45,7 +45,7 @@ public class TokenCacheImpl implements TokenCache {
      * @return
      */
     public String getTokenKey(String uid) {
-        return String.format(TOKEN_KEY, environmentHelper.getApplicationName(), uid);
+        return TOKEN_KEY.formatted(environmentHelper.getApplicationName(), uid);
     }
 
     @PostConstruct

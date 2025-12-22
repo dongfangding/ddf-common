@@ -3,6 +3,7 @@ package com.ddf.common.ons.console.model.response;
 import com.aliyun.ons20190214.models.OnsTopicSubDetailResponse;
 import com.aliyun.ons20190214.models.OnsTopicSubDetailResponseBody;
 import com.ddf.common.ons.enume.MessageModel;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ConsoleOnsTopicSubListResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2847357762600183099L;
 
     /**

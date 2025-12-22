@@ -1,9 +1,10 @@
 package com.ddf.boot.common.api.model.captcha.request;
 
 import com.ddf.boot.common.api.model.captcha.CaptchaType;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CaptchaCheckRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3230860053971294858L;
 
     /**

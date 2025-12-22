@@ -2,12 +2,13 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsDLQMessagePageQueryByGroupIdRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 
@@ -21,6 +22,7 @@ import lombok.Data;
 @Data
 public class ConsoleOnsDLQMessagePageQueryByGroupIdRequest implements UserRequest, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8160563221855666519L;
 
     /**

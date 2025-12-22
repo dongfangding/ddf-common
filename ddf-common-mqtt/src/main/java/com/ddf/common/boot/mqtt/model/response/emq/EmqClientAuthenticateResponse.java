@@ -1,5 +1,6 @@
 package com.ddf.common.boot.mqtt.model.response.emq;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ import lombok.Data;
 @Data
 public class EmqClientAuthenticateResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6593260244631866442L;
 
     /**

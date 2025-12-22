@@ -78,7 +78,7 @@ public class MessageSourceUtil {
             log.error("MessageSource未配置");
             return "";
         }
-        String cacheKey = String.format("%s:%s", locale.toString(), code);
+        String cacheKey = "%s:%s".formatted(locale.toString(), code);
         if (Objects.isNull(args) || args.length == 0) {
             if (CACHE.containsKey(cacheKey)) {
                 return CACHE.get(cacheKey);

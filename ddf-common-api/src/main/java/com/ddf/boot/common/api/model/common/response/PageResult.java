@@ -1,6 +1,7 @@
 package com.ddf.boot.common.api.model.common.response;
 
 import com.ddf.boot.common.api.model.common.request.PageRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageResult<E> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 9056411043515781783L;
 
     /**

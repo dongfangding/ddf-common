@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -176,7 +176,7 @@ public class WsMessageServiceImpl implements WsMessageService {
             return MessageResponse.fastFailure("请传入指令的发送模式， SINGLE, BATCH, ALL!");
         }
         if (request.getLoginType() == null) {
-            String format = String.format("请传入认证身份的登录方式[%s]", Arrays.toString(AuthPrincipal.LoginType.values()));
+            String format = "请传入认证身份的登录方式[%s]".formatted(Arrays.toString(AuthPrincipal.LoginType.values()));
             return MessageResponse.fastFailure(format);
         }
         return null;
@@ -253,7 +253,7 @@ public class WsMessageServiceImpl implements WsMessageService {
         // 校验是否可以发送指令
         if (!canSend(request, authPrincipal)) {
             return MessageResponse.fastFailure(
-                    String.format("[%s]-[%s]指令未达到发送间隔或今日次数已超限！", accessKeyId, request.getCmd()));
+                    "[%s]-[%s]指令未达到发送间隔或今日次数已超限！".formatted(accessKeyId, request.getCmd()));
         }
 
         if (!request.isRedirect()) {

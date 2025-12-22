@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -49,6 +50,7 @@ import lombok.Data;
 @Data
 public class EmqAclRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 991952346243210859L;
 
     // auth.http.acl_req.params = action=%A,username=%u,clientId=%c,clientIp=%a,topic=%t

@@ -1,7 +1,7 @@
 package com.ddf.boot.common.api.util;
 
-import com.fasterxml.jackson.core.io.NumberInput;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /***
@@ -10,7 +10,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class NumberUtil {
 
     public static BigDecimal disposeAccuracy(Double value){
-        return BigDecimal.valueOf(value).setScale(BigDecimal.ROUND_CEILING,BigDecimal.ROUND_DOWN);
+        return BigDecimal.valueOf(value).setScale(BigDecimal.ROUND_CEILING, RoundingMode.DOWN);
     }
 
     /**

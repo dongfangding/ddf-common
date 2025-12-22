@@ -1,5 +1,6 @@
 package com.ddf.boot.common.redis.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import lombok.Data;
 @Data
 public class StringTtlIncrWithLimitResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1516322558409231083L;
 
     /**

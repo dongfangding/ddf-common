@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqttclient.model.support.topic;
 
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
+import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class Im2PointMqttTopic extends AbstractPoint2PointTopic {
 
+    @Serial
     private static final long serialVersionUID = 5668777228627540185L;
 
     /**

@@ -151,8 +151,8 @@ public class SignatureUtil {
             return false;
         }
         Map<String, Object> map;
-        if (data instanceof Map) {
-            map = (Map) data;
+        if (data instanceof Map map1) {
+            map = map1;
         } else {
             String str = JsonUtil.asString(data);
             map = JsonUtil.toBean(str, Map.class);

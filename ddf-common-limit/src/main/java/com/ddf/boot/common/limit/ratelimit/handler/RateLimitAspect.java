@@ -114,7 +114,7 @@ public class RateLimitAspect {
             // 自己在方法级别设置自己的限流规则就行了
             if (rateLimitProperties.isCloudRefresh()) {
                 if (Objects.isNull(rateLimitPropertiesCollect)) {
-                    throw new NoSuchBeanDefinitionException(String.format("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]",
+                    throw new NoSuchBeanDefinitionException("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]".formatted(
                             RateLimitPropertiesCollect.class.getName()));
                 }
                 // 使用外部接口类填充全局属性
@@ -144,7 +144,7 @@ public class RateLimitAspect {
 
             // 强制性校验，避免隐藏错误
             if (!KEY_GENERATOR_MAP.containsKey(keyGenerator)) {
-                throw new NoSuchBeanDefinitionException(String.format("限流组件[%s]不存在", keyGenerator));
+                throw new NoSuchBeanDefinitionException("限流组件[%s]不存在".formatted(keyGenerator));
             }
 
             // 生成限流的key
@@ -179,8 +179,8 @@ public class RateLimitAspect {
             }
             Expression expression = parser.parseExpression(annotation.condition());
             final Object value = expression.getValue(context);
-            if (value instanceof Boolean) {
-                return (boolean) value;
+            if (value instanceof Boolean boolean1) {
+                return boolean1;
             }
         }
         return true;

@@ -1,6 +1,6 @@
 package com.ddf.boot.common.rocketmq.handler;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.ddf.boot.common.rocketmq.constant.EnhanceMessageConstant;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;

@@ -6,7 +6,7 @@ import com.aliyun.openservices.ons.api.transaction.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 本地事务回查实现
@@ -25,7 +25,7 @@ public class LocalTransactionCheckerImpl implements LocalTransactionChecker {
        TransactionStatus transactionStatus = TransactionStatus.RollbackTransaction;
        try {
            String routeKey = msg.getUserProperties(TransactionConst.TRANSACTION_BIZ_ROUTE_KEY);
-           if(StringUtils.isEmpty(routeKey)) {
+           if(ObjectUtils.isEmpty(routeKey)) {
                LOGGER.error("BizId of Message(MessageId:[{}]) is empty", messageId);
            } else {
                boolean isSuccess = BizResultCheckerPool.get(routeKey).isSuccess(msg);

@@ -1,9 +1,10 @@
 package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
@@ -16,6 +17,7 @@ import lombok.Data;
 @Data
 public class ConnectionInfoRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4198990057387176980L;
 
     /**

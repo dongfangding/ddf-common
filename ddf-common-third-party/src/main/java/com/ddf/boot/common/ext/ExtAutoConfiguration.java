@@ -1,6 +1,7 @@
 package com.ddf.boot.common.ext;
 
 import com.ddf.boot.common.ext.oss.config.OssBeanAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Import;
  * @version 1.0
  * @date 2020/10/12 13:35
  */
+@AutoConfiguration
 @ComponentScan("com.ddf.boot.common.ext")
 @Import(value = {OssBeanAutoConfiguration.class})
 public class ExtAutoConfiguration {

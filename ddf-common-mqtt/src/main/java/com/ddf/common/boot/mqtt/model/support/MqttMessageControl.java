@@ -1,6 +1,7 @@
 package com.ddf.common.boot.mqtt.model.support;
 
 import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import lombok.Data;
 @Data
 public class MqttMessageControl implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5649107898855362417L;
 
     public static MqttMessageControl DEFAULT;

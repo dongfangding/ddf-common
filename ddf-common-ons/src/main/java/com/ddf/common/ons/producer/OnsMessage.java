@@ -1,6 +1,7 @@
 package com.ddf.common.ons.producer;
 
 import com.ddf.common.ons.console.util.OnsConsoleUtil;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ import org.springframework.util.Assert;
 @AllArgsConstructor
 public class OnsMessage implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5484128488254938570L;
 
     public static final String WRAPPER_BIZ_ID_SEPARATOR = "#";

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.api.model.common.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -40,6 +41,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class QueryParam<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3340461020433145490L;
 
     /**

@@ -27,7 +27,7 @@ public class JinHuaUtil {
             System.out.println();
             final JinHuaCardTypeEnum resolve = JinHuaCardTypeEnum.resolve(card.getCardType());
             System.out.printf("cardType: %s, cardScore: %s%n",
-                    String.format("%s:(%s)", resolve.getType(), resolve.getDesc()), card.getCardScore()
+                    "%s:(%s)".formatted(resolve.getType(), resolve.getDesc()), card.getCardScore()
             );
             System.out.println("具体牌型如下: ");
             final List<PokerCard> cards = card.getCards();

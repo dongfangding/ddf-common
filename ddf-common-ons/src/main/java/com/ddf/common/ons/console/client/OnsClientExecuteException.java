@@ -68,8 +68,8 @@ public class OnsClientExecuteException extends BaseException {
      * @param cause
      */
     public static OnsClientExecuteException convertTeaException(Throwable cause, String env) {
-        if (cause instanceof TeaException) {
-            final String code = ((TeaException) cause).getCode();
+        if (cause instanceof TeaException exception) {
+            final String code = exception.getCode();
             final OnsBizErrorCodeEnum codeEnum = OnsBizErrorCodeEnum.getByValue(code);
             if (Objects.nonNull(codeEnum)) {
                 return new OnsClientExecuteException(ONS_COMMON_CODE, env + ": " + codeEnum.getDescription(), cause);
