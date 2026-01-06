@@ -14,5 +14,5 @@ import lombok.Data;
 @Data
 public class MqttMessageResponse implements Serializable {
 
-    private ServerClientInfo serverClientInfo;
+    private ServerClientInfo serverInfo;
 }

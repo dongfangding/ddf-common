@@ -3,6 +3,7 @@ package com.ddf.common.boot.mqtt.client;
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.api.util.MessagePackUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
@@ -46,12 +47,19 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         final MqttMessage message = new MqttMessage();
         final MqttMessageControl control = request.getControl();
         message.setId((int) IdsUtil.getNextLongId());
-        message.setQos(control.getQos().getQos());
+        message.setQos(control
+                .getQos()
+                .getQos());
         message.setRetained(control.getRetain());
+        if (request
+                .getTopic()
+                .startsWith("/")) {
+            throw new IllegalArgumentException("topic must not start with /");
+        }
 
         // 将请求对象转换为实际的mqtt message payload
         final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
-        message.setPayload(JsonUtil.asString(payload).getBytes(StandardCharsets.UTF_8));
+        message.setPayload(MessagePackUtil.writeValueAsBytes(payload));
 
         // 预留的发送前置处理监听
         if (CollUtil.isNotEmpty(listenerMap)) {
@@ -59,16 +67,14 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                 bean.beforePublish(message, payload);
             });
         }
-        boolean result = false;
         try {
-            mqttClient.publish(request.getTopic().startsWith("/") ? request.getTopic() : "/" + request.getTopic(), message);
-            result = true;
+            mqttClient.publish(request.getTopic(), message);
         } catch (MqttException e) {
-            // todo 返回对象告知失败
             log.error("mqtt消息发送失败, 消息内容 = {}", JsonUtil.asString(request));
+            return ResponseData.failure("mqtt_error", e.getMessage());
         }
         // 预留的发送成功处理监听
-        if (result && CollUtil.isNotEmpty(listenerMap)) {
+        if (CollUtil.isNotEmpty(listenerMap)) {
             listenerMap.forEach((beanName, bean) -> {
                 bean.afterPublish(message, payload);
             });

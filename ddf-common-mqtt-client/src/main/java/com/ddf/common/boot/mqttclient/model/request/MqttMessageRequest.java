@@ -1,7 +1,7 @@
 package com.ddf.common.boot.mqttclient.model.request;
 
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
-import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
+import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
 import com.ddf.common.boot.mqttclient.model.support.body.MessageBody;
 import com.ddf.common.boot.mqttclient.model.support.topic.MqttTopicDefine;
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class MqttMessageRequest<T extends MessageBody> implements Serializable {
     /**
      * 基础请求头， 当然由于预留了扩展字段， 应该没有必要继承这个类继续扩展了，请使用扩展字段来存储自定义的字段
      */
-    private MqttHeader header = MqttHeader.DEFAULT;
+    private MqttBaseHeader header = MqttBaseHeader.DEFAULT;
 
     /**
      * 消息类型，比如文本、图片、视频等，用于一些消息的渲染处理， 此值留空，由使用方决定用处

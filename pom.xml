@@ -7,7 +7,7 @@
     <groupId>com.ddf.common</groupId>
     <artifactId>ddf-common</artifactId>
     <packaging>pom</packaging>
-    <version>boot276-2025.1.0-SNAPSHOT</version>
+    <version>boot276-2025.2.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
@@ -30,7 +30,7 @@
             <dependency>
                 <groupId>com.ddf.common</groupId>
                 <artifactId>ddf-common-dependency</artifactId>
-                <version>boot276-2025.1.0-SNAPSHOT</version>
+                <version>boot276-2025.2.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
