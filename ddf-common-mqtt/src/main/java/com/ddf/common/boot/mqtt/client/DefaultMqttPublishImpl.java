@@ -80,7 +80,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             });
         }
         final MqttMessageResponse messageResponse = new MqttMessageResponse();
-        messageResponse.setServerClientInfo(payload.getServerInfo());
+        messageResponse.setServerInfo(payload.getServerInfo());
         return ResponseData.success(messageResponse);
     }
 }
