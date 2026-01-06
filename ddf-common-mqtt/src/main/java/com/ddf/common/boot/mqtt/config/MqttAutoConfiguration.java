@@ -77,6 +77,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         final String url = connectionConfig.getUrl();
         MqttClient mqttClient;
         try {
+            // 发送消息质量大于0的消息时， 在broker未回执前，会存在内存中，new MemoryPersistence()，这样速度极快，但需要注意分配足够的内存。
+            // 如果使用磁盘，性能会下降。
             mqttClient = new MqttClient(url, emqConnectionProperties.getClientId(), new MemoryPersistence());
         } catch (MqttException e) {
             log.error("mqtt tcp 创建客户端失败， protocol = {}, url = {}", protocol, url, e);
@@ -93,15 +95,18 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         connOpts.setConnectionTimeout(0);
         connOpts.setCleanStart(true);
         connOpts.setAutomaticReconnect(true);
+        // 设置回调要在 connect 之前，确保不会丢失首次连接成功的通知
+        setupMqttCallback(mqttClient);
         try {
             mqttClient.connect(connOpts);
         } catch (MqttException e) {
-            log.error("mqtt tcp 连接客户端失败， protocol = {}, url = {}", protocol, url, e);
-            return mqttClient;
+            log.warn("mqtt tcp 连接客户端失败， 将由后台自动重连尝试: protocol = {}, url = {}", protocol, url, e);
         }
+        return mqttClient;
+    }
 
-        // 设置回调
-        MqttClient finalMqttClient = mqttClient;
+
+    private void setupMqttCallback(MqttClient mqttClient) {
         mqttClient.setCallback(new MqttCallback() {
             /**
              * 连接断开回调
@@ -109,16 +114,15 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              */
             @Override
             public void disconnected(MqttDisconnectResponse disconnectResponse) {
-                try {
-                    finalMqttClient.reconnect();
-                } catch (MqttException e) {
-                    log.error("mqtt tcp 重新连接客户端失败， protocol = {}, url = {}", protocol, url, e);
-                }
+                log.error(
+                        "mqtt tcp 重新连接客户端失败， returnCode = {}, reasonString = {}",
+                        disconnectResponse.getReturnCode(), disconnectResponse.getReasonString()
+                );
             }
 
             @Override
             public void mqttErrorOccurred(MqttException exception) {
-
+                log.error("mqtt 运行异常", exception);
             }
 
             /**
@@ -151,7 +155,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
-
+                log.info("mqtt 连接成功: {}, 是否为重连: {}", serverURI, reconnect);
             }
 
             @Override
@@ -159,7 +163,6 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
             }
         });
-        return mqttClient;
     }
 
     /**
@@ -198,6 +201,6 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.applicationContext = context;
     }
 }
