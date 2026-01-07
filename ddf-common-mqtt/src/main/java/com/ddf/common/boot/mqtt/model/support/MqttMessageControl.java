@@ -47,4 +47,9 @@ public class MqttMessageControl implements Serializable {
      * 发送方是否接收该消息
      */
     private Boolean includeSender = Boolean.FALSE;
+
+     /**
+      * 是否异步发送
+      */
+    private Boolean async = Boolean.FALSE;
 }

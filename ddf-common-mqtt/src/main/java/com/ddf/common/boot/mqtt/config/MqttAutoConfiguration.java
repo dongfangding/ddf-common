@@ -2,6 +2,7 @@ package com.ddf.common.boot.mqtt.config;
 
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -29,6 +31,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -36,6 +39,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * <p>mqtt client 配置类</p >
@@ -97,6 +101,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         connOpts.setConnectionTimeout(30);
         // 最大重连延迟10秒
         connOpts.setMaxReconnectDelay(10000);
+        // 重连后，清除之前的会话信息。因为目前使用的内存new MemoryPersistence()来处理qos>0的消息回执状态， 不清楚的话，可能会内存爆掉。
+        // 如果对消息质量要求比较高，同时启动磁盘来处理消息的话，这里可以改为false，这样即使重启也能继续处理之前的消息
         connOpts.setCleanStart(true);
         connOpts.setAutomaticReconnect(true);
         // 设置回调要在 connect 之前，确保不会丢失首次连接成功的通知
@@ -179,8 +185,41 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttClient mqttClient,
             ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
-            EmqConnectionProperties mqttProperties) {
-        return new DefaultMqttPublishImpl(mqttClient, listenerMap.getIfAvailable(), mqttProperties);
+            EmqConnectionProperties emqConnectionProperties) {
+        return new DefaultMqttPublishImpl(mqttClient, listenerMap.getIfAvailable(), emqConnectionProperties);
+    }
+
+    /**
+     * qos 0 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos0Executors")
+    public ThreadPoolTaskExecutor qos0Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos0-executors-", 10, 100);
+    }
+
+    /**
+     * qos 1 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos1Executors")
+    public ThreadPoolTaskExecutor qos1Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos1-executors-", 10, 100);
+    }
+
+    /**
+     * qos 2 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos2Executors")
+    public ThreadPoolTaskExecutor qos2Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos2-executors-", 10, 100);
     }
 
     /**

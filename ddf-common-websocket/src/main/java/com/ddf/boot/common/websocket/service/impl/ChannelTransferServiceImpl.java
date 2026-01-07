@@ -1,117 +1,105 @@
-//package com.ddf.boot.common.websocket.service.impl;
-//
-//import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-//import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-//import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-//import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-//import com.ddf.boot.common.api.exception.BusinessException;
-//import com.ddf.boot.common.api.util.JsonUtil;
-//import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
-//import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
-//import com.ddf.boot.common.websocket.helper.CmdAction;
-//import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
-//import com.ddf.boot.common.websocket.mapper.ChannelTransferMapper;
-//import com.ddf.boot.common.websocket.model.AuthPrincipal;
-//import com.ddf.boot.common.websocket.model.ChannelTransfer;
-//import com.ddf.boot.common.websocket.model.Message;
-//import com.ddf.boot.common.websocket.model.MessageRequest;
-//import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
-//import com.ddf.boot.common.websocket.service.ChannelTransferService;
-//import com.google.common.collect.Lists;
-//import java.util.ArrayList;
-//import java.util.Calendar;
-//import java.util.Date;
-//import java.util.GregorianCalendar;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.concurrent.ConcurrentHashMap;
-//import org.apache.commons.lang3.StringUtils;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Propagation;
-//import org.springframework.transaction.annotation.Transactional;
-//
-///**
-// * 通道传输接口实现
-// *
-// * @author dongfang.ding
-// * @date 2019/8/23 9:45
-// */
-//@Service
-//public class ChannelTransferServiceImpl implements ChannelTransferService {
-//
-//    /**
-//     * 批量创建本机所有设备的消息记录
-//     *
-//     * @param values         [AuthPrincipal该设备的认证，String 发送的内容，{@link Message}对象的json形式]
-//     * @param messageRequest
-//     * @return
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public <T> Map<AuthPrincipal, String> batchRecordRequest(
-//            ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values, MessageRequest<T> messageRequest) {
-//        if (values == null || messageRequest.getCmd() == null) {
-//            return null;
-//        }
-//        Map<AuthPrincipal, String> messageMap = new HashMap<>(values.size());
-//        List<ChannelTransfer> channelTransfers = new ArrayList<>(values.size());
-//        for (Map.Entry<AuthPrincipal, WebSocketSessionWrapper> entry : values.entrySet()) {
-//            WebSocketSessionWrapper value = entry.getValue();
-//            if (WebSocketSessionWrapper.STATUS_OFF_LINE.equals(value.getStatus())) {
-//                continue;
-//            }
-//            AuthPrincipal authPrincipal = entry.getKey();
-//            CmdAction cmdAction = new CmdAction();
-//            Message<T> message = cmdAction.push(messageRequest.getCmd(), messageRequest.getClientChannel(),
-//                    messageRequest.getPayload()
-//            );
-//            String messageStr = JsonUtil.asString(message);
-//            channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
-//            messageMap.put(authPrincipal, messageStr);
-//        }
+package com.ddf.boot.common.websocket.service.impl;
+
+import com.ddf.boot.common.api.util.JsonUtil;
+import com.ddf.boot.common.websocket.helper.CmdAction;
+import com.ddf.boot.common.websocket.model.AuthPrincipal;
+import com.ddf.boot.common.websocket.model.ChannelTransfer;
+import com.ddf.boot.common.websocket.model.Message;
+import com.ddf.boot.common.websocket.model.MessageRequest;
+import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
+import com.ddf.boot.common.websocket.service.ChannelTransferService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * 通道传输接口实现
+ *
+ * @author dongfang.ding
+ * @date 2019/8/23 9:45
+ */
+@Service
+public class ChannelTransferServiceImpl implements ChannelTransferService {
+
+    /**
+     * 批量创建本机所有设备的消息记录
+     *
+     * @param values         [AuthPrincipal该设备的认证，String 发送的内容，{@link Message}对象的json形式]
+     * @param messageRequest
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public <T> Map<AuthPrincipal, String> batchRecordRequest(
+            ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values, MessageRequest<T> messageRequest) {
+        if (values == null || messageRequest.getCmd() == null) {
+            return null;
+        }
+        Map<AuthPrincipal, String> messageMap = new HashMap<>(values.size());
+        List<ChannelTransfer> channelTransfers = new ArrayList<>(values.size());
+        for (Map.Entry<AuthPrincipal, WebSocketSessionWrapper> entry : values.entrySet()) {
+            WebSocketSessionWrapper value = entry.getValue();
+            if (WebSocketSessionWrapper.STATUS_OFF_LINE.equals(value.getStatus())) {
+                continue;
+            }
+            AuthPrincipal authPrincipal = entry.getKey();
+            CmdAction cmdAction = new CmdAction();
+            Message<T> message = cmdAction.push(messageRequest.getCmd(), messageRequest.getClientChannel(),
+                    messageRequest.getPayload()
+            );
+            String messageStr = JsonUtil.asString(message);
+            channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
+            messageMap.put(authPrincipal, messageStr);
+        }
 //        Lists.partition(channelTransfers, 500).forEach(ls -> saveBatch(ls));
-//        return messageMap;
-//    }
-//
-//    private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request,
-//            WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
-//        ChannelTransfer channelTransfer = new ChannelTransfer();
-//        channelTransfer.setCmd(message.getCmd());
-//        channelTransfer.setRequestId(message.getRequestId());
-//        channelTransfer.setRequest(request);
-//        channelTransfer.setFullRequestResponse(toJsonArr(request));
-//        channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
-//        channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
-//        channelTransfer.setAccessKeyName(authPrincipal.getAccessKeyName());
-//        channelTransfer.setAuthCode(authPrincipal.getAuthCode());
-//        channelTransfer.setClientChannel(message.getClientChannel());
-//        channelTransfer.setLoginType(authPrincipal.getLoginType().name());
-//        channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
-//        if (messageRequest != null) {
-//            channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
-//            channelTransfer.setOperatorId(messageRequest.getOperatorId());
-//            channelTransfer.setLogicPrimaryKey(messageRequest.getLogicPrimaryKey());
-//
-//        }
-//        channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
-//        channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
-//        return channelTransfer;
-//    }
-//
-//    /**
-//     * 记录请求数据
-//     *
-//     * @param authPrincipal
-//     * @param request
-//     * @param message
-//     * @param messageRequest
-//     * @return
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-//    public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message,
-//            MessageRequest<Q> messageRequest) {
+        return messageMap;
+    }
+
+    private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request,
+            WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
+        ChannelTransfer channelTransfer = new ChannelTransfer();
+        channelTransfer.setCmd(message.getCmd());
+        channelTransfer.setRequestId(message.getRequestId());
+        channelTransfer.setRequest(request);
+        channelTransfer.setFullRequestResponse(toJsonArr(request));
+        channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_SERVER);
+        channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
+        channelTransfer.setAccessKeyName(authPrincipal.getAccessKeyName());
+        channelTransfer.setAuthCode(authPrincipal.getAuthCode());
+        channelTransfer.setClientChannel(message.getClientChannel());
+        channelTransfer.setLoginType(authPrincipal.getLoginType().name());
+        channelTransfer.setStatus(ChannelTransfer.STATUS_SEND);
+        if (messageRequest != null) {
+            channelTransfer.setBusinessData(JsonUtil.asString(message.getBody()));
+            channelTransfer.setOperatorId(messageRequest.getOperatorId());
+            channelTransfer.setLogicPrimaryKey(messageRequest.getLogicPrimaryKey());
+
+        }
+        channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
+        channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
+        return channelTransfer;
+    }
+
+    /**
+     * 记录请求数据
+     *
+     * @param authPrincipal
+     * @param request
+     * @param message
+     * @param messageRequest
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message,
+            MessageRequest<Q> messageRequest) {
+        return false;
 //        if (InternalCmdEnum.PING.equals(message.getCmd())) {
 //            return true;
 //        }
@@ -129,19 +117,20 @@
 //                    String.format("客户端重复对同一数据[%s]发送相同指令！", messageRequest.getLogicPrimaryKey()));
 //        }
 //        return true;
-//    }
-//
-//    /**
-//     * 记录响应日志
-//     *
-//     * @param authPrincipal
-//     * @param requestId
-//     * @param response
-//     * @return
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-//    public <T> int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message<T> message) {
+    }
+
+    /**
+     * 记录响应日志
+     *
+     * @param authPrincipal
+     * @param requestId
+     * @param response
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public <T> int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message<T> message) {
+        return 0;
 //        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(
 //                message.getCmd()))) {
 //            // ignore
@@ -203,21 +192,22 @@
 //        updateWrapper.eq(ChannelTransfer::getId, exist.getId());
 //        update(null, updateWrapper);
 //        return 0;
-//    }
-//
-//    /**
-//     * 将处理状态更新为成功或失败
-//     *
-//     * @param message
-//     * @param isSuccess
-//     * @param errorMessage
-//     * @param response
-//     * @return
-//     */
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response,
-//            String serverSend) {
+    }
+
+    /**
+     * 将处理状态更新为成功或失败
+     *
+     * @param message
+     * @param isSuccess
+     * @param errorMessage
+     * @param response
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response,
+            String serverSend) {
+        return false;
 //        if (message == null || StringUtils.isBlank(message.getRequestId())) {
 //            return false;
 //        }
@@ -245,124 +235,128 @@
 //            }
 //        }
 //        return update(null, updateWrapper);
-//    }
-//
-//    private ChannelTransfer getByRequestId(String requestId) {
-////        if (StringUtils.isBlank(requestId)) {
-////            return null;
-////        }
-////        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-////        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-////        return getOne(queryWrapper);
-//    }
-//
-//
-//    /**
-//     * 根据requestId获取报文请求时的业务对象
-//     *
-//     * @param requestId
-//     * @return
-//     */
-//    @Override
-//    public String getPayloadByRequestId(String requestId) {
-////        if (StringUtils.isBlank(requestId)) {
-////            throw new BusinessException("requestId不存在，无法处理业务!");
-////        }
-////
-////        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-////        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-////        ChannelTransfer record = getOne(queryWrapper);
-////        if (record == null) {
-////            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
-////        }
-////        if (StringUtils.isBlank(record.getBusinessData())) {
-////            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
-////        }
-////        return record.getBusinessData();
-//    }
-//
-//    /**
-//     * 获取指定设备该指定上一次下发指令的历史数据
-//     *
-//     * @param deviceNumber
-//     * @param cmd
-//     * @return
-//     */
-//    @Override
-//    public ChannelTransfer getPreLog(String deviceNumber, String cmd) {
-////        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
-////            return null;
-////        }
-////        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-////        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
-////        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
-////        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
-////        channelTransferWrapper.last("limit 1");
-////        return getOne(channelTransferWrapper);
-//    }
-//
-//
-//    /**
-//     * 获取指定设备该指定上一次下发指令的历史数据,这里固定只查今天的数据，
-//     * 这样只要查一次就能满足今天的发送次数和最新的一次；如果今天没有，那么也需要知道上次的发送时间；肯定是要发送的，
-//     * 这里如果是牵扯到第一天和第二天短时间内时间跨度不满足发送间隔的话，我觉得这个问题可以忽略
-//     *
-//     * @param deviceNumber
-//     * @param cmd
-//     * @param successCount 是否只有成功的才计数
-//     * @return
-//     */
-//    @Override
-//    public List<ChannelTransfer> getTodayLog(String deviceNumber, String cmd, boolean successCount) {
-////        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
-////            return null;
-////        }
-////        Date date = new Date();
-////        Calendar calendar = new GregorianCalendar();
-////        calendar.setTime(date);
-////        calendar.set(Calendar.HOUR_OF_DAY, 0);
-////        calendar.set(Calendar.MINUTE, 0);
-////        calendar.set(Calendar.SECOND, 0);
-////        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-////        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
-////        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
-////        if (successCount) {
-////            // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
-////            channelTransferWrapper.eq(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
-////        }
-////        channelTransferWrapper.ge(ChannelTransfer::getCreateTime, calendar.getTime());
-////        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
-////        return list(channelTransferWrapper);
-//    }
-//
-//    /**
-//     * 对完整报文做特殊处理
-//     *
-//     * @param content
-//     * @return
-//     */
-//    private static String toJsonArr(String... content) {
-//        if (content == null || content.length == 0) {
-//            return "[]";
+    }
+
+    private ChannelTransfer getByRequestId(String requestId) {
+//        if (StringUtils.isBlank(requestId)) {
+//            return null;
 //        }
-//        return "[" + StringUtils.join(content, ",") + "]";
-//    }
-//
-//
-//    /**
-//     * 通过字符串拼接的方式将最新的报文放入完整保温数组中
-//     *
-//     * @param oldValue
-//     * @param content
-//     * @return
-//     */
-//    private static String appendJsonArr(String oldValue, String... content) {
-//        if (StringUtils.isBlank(oldValue)) {
-//            return toJsonArr(content);
+//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//        return getOne(queryWrapper);
+        return null;
+    }
+
+
+    /**
+     * 根据requestId获取报文请求时的业务对象
+     *
+     * @param requestId
+     * @return
+     */
+    @Override
+    public String getPayloadByRequestId(String requestId) {
+//        if (StringUtils.isBlank(requestId)) {
+//            throw new BusinessException("requestId不存在，无法处理业务!");
 //        }
-//        if (content == null || content.length == 0) {
-//            return oldValue;
+//
+//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//        ChannelTransfer record = getOne(queryWrapper);
+//        if (record == null) {
+//            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
 //        }
-//        return oldValue.substring(0, oldValue.length() - 1) + "," + StringUtils.join(content, ",") + "]";
-//    }
-//}
+//        if (StringUtils.isBlank(record.getBusinessData())) {
+//            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
+//        }
+//        return record.getBusinessData();
+        return "";
+    }
+
+    /**
+     * 获取指定设备该指定上一次下发指令的历史数据
+     *
+     * @param deviceNumber
+     * @param cmd
+     * @return
+     */
+    @Override
+    public ChannelTransfer getPreLog(String deviceNumber, String cmd) {
+//        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+//            return null;
+//        }
+//        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+//        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
+//        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+//        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+//        channelTransferWrapper.last("limit 1");
+//        return getOne(channelTransferWrapper);
+        return null;
+    }
+
+
+    /**
+     * 获取指定设备该指定上一次下发指令的历史数据,这里固定只查今天的数据，
+     * 这样只要查一次就能满足今天的发送次数和最新的一次；如果今天没有，那么也需要知道上次的发送时间；肯定是要发送的，
+     * 这里如果是牵扯到第一天和第二天短时间内时间跨度不满足发送间隔的话，我觉得这个问题可以忽略
+     *
+     * @param deviceNumber
+     * @param cmd
+     * @param successCount 是否只有成功的才计数
+     * @return
+     */
+    @Override
+    public List<ChannelTransfer> getTodayLog(String deviceNumber, String cmd, boolean successCount) {
+//        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+//            return null;
+//        }
+//        Date date = new Date();
+//        Calendar calendar = new GregorianCalendar();
+//        calendar.setTime(date);
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+//        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
+//        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+//        if (successCount) {
+//            // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
+//            channelTransferWrapper.eq(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
+//        }
+//        channelTransferWrapper.ge(ChannelTransfer::getCreateTime, calendar.getTime());
+//        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+//        return list(channelTransferWrapper);
+        return null;
+    }
+
+    /**
+     * 对完整报文做特殊处理
+     *
+     * @param content
+     * @return
+     */
+    private static String toJsonArr(String... content) {
+        if (content == null || content.length == 0) {
+            return "[]";
+        }
+        return "[" + StringUtils.join(content, ",") + "]";
+    }
+
+
+    /**
+     * 通过字符串拼接的方式将最新的报文放入完整保温数组中
+     *
+     * @param oldValue
+     * @param content
+     * @return
+     */
+    private static String appendJsonArr(String oldValue, String... content) {
+        if (StringUtils.isBlank(oldValue)) {
+            return toJsonArr(content);
+        }
+        if (content == null || content.length == 0) {
+            return oldValue;
+        }
+        return oldValue.substring(0, oldValue.length() - 1) + "," + StringUtils.join(content, ",") + "]";
+    }
+}

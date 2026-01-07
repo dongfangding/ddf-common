@@ -51,6 +51,21 @@ public class EmqConnectionProperties {
      */
     private Integer publishRateLimit = 5000;
 
+    /**
+     * qos = 0 消息执行线程池bean name, 如果不指定则为默认的
+     */
+    private String qos0Executors = "qos0Executors";
+    /**
+     * qos = 1 消息执行线程池bean name
+     */
+    private String qos1Executors = "qos1Executors";
+
+    /**
+     * qos = 2 消息执行线程池bean name
+     */
+    private String qos2Executors = "qos2Executors";
+
+
 
     /**
      * 连接配置类
