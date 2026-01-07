@@ -12,6 +12,7 @@ import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -174,8 +176,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttClient mqttClient,
-            @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
-        return new DefaultMqttPublishImpl(mqttClient, listenerMap);
+            ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
+            EmqConnectionProperties mqttProperties) {
+        return new DefaultMqttPublishImpl(mqttClient, listenerMap.getIfAvailable(), mqttProperties);
     }
 
     /**

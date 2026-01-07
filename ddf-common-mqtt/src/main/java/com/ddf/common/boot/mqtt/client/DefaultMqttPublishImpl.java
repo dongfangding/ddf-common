@@ -6,6 +6,7 @@ import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.api.util.MessagePackUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
+import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 
 /**
  * <p>description</p >
@@ -30,10 +32,12 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     private final MqttClient mqttClient;
     private final Map<String, MqttPublishListener> listenerMap;
+    private final EmqConnectionProperties mqttProperties;
 
-    public DefaultMqttPublishImpl(MqttClient mqttClient, Map<String, MqttPublishListener> listenerMap) {
+    public DefaultMqttPublishImpl(MqttClient mqttClient, Map<String, MqttPublishListener> listenerMap, EmqConnectionProperties mqttProperties    ) {
         this.mqttClient = mqttClient;
         this.listenerMap = listenerMap;
+        this.mqttProperties = mqttProperties;
     }
 
     /**
@@ -59,7 +63,11 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
         // 将请求对象转换为实际的mqtt message payload
         final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
-        message.setPayload(MessagePackUtil.writeValueAsBytes(payload));
+        final byte[] bytes = MessagePackUtil.writeValueAsBytes(payload);
+        if (bytes.length > mqttProperties.getMaxPayloadSize()) {
+            throw new IllegalArgumentException("mqtt消息payload大小超过最大限制： " + mqttProperties.getMaxPayloadSize());
+        }
+        message.setPayload(bytes);
 
         // 预留的发送前置处理监听
         if (CollUtil.isNotEmpty(listenerMap)) {

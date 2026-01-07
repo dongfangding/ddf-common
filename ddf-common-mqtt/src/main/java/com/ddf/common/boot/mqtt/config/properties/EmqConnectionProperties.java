@@ -39,6 +39,13 @@ public class EmqConnectionProperties {
      */
     private ClientConfig client;
 
+
+    /**
+     * 最大payload大小，默认256k, 由于原生emq超过大小会断开连接，这里做一个拦截， 避免错误超过大小，将连接断开了。
+     * 但是要注意，emq自己的设置大小一定要大于这里的值。
+     */
+    private Integer maxPayloadSize = 256 * 1024;
+
     /**
      * 连接配置类
      */

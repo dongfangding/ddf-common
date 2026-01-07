@@ -85,16 +85,16 @@ public class EmqController {
      * @return
      */
     @GetMapping("getConnectionInfo")
-    public ConnectionInfoResponse getConnectionInfo(ConnectionInfoRequest request) {
+    public ResponseData<ConnectionInfoResponse> getConnectionInfo(ConnectionInfoRequest request) {
         final String protocol = request.getProtocol();
         final MQTTProtocolEnum protocolEnum = MQTTProtocolEnum.resolve(protocol);
         if (Objects.isNull(protocolEnum)) {
-            return ConnectionInfoResponse.of(protocol, null, "不支持的协议地址");
+            return ResponseData.failure("protocol not support", "protocol not support");
         }
         final EmqConnectionProperties.ConnectionConfig connectionConfig = emqConnectionProperties.getConnectionUrl(
                 protocol);
         String url = Objects.isNull(connectionConfig) ? "" : connectionConfig.getUrl();
-        return ConnectionInfoResponse.of(protocol, url, "成功");
+        return ResponseData.success(ConnectionInfoResponse.of(protocol, url));
     }
 
     /**
