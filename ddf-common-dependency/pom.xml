@@ -50,6 +50,7 @@
         <disruptor.version>3.4.4</disruptor.version>
         <servlet.version>6.1.0</servlet.version>
         <fastjson2.version>2.0.53</fastjson2.version>
+        <msgpack.version>0.9.3</msgpack.version>
     </properties>
 
     <dependencyManagement>
@@ -388,6 +389,12 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.msgpack</groupId>
+                <artifactId>jackson-dataformat-msgpack</artifactId>
+                <version>${msgpack.version}</version>
             </dependency>
         </dependencies>
 

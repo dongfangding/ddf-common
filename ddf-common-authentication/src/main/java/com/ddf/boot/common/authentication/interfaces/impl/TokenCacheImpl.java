@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TokenCacheImpl implements TokenCache {
 
+    public static final String BEAN_NAME = "tokenCacheImpl";
+
     private StringRedisTemplate stringRedisTemplate = RedisTemplateSupport.defaultRedisTemplate();
     private final AuthenticationProperties authenticationProperties;
     private final EnvironmentHelper environmentHelper;

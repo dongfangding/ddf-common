@@ -1,8 +1,5 @@
 package com.ddf.boot.common.websocket.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +11,6 @@ import lombok.ToString;
  *
  * @author dongfang.ding
  */
-@TableName(value = "log_channel_transfer")
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,7 +47,6 @@ public class ChannelTransfer {
      */
     public static final Integer STATUS_FAILURE = 4;
 
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**

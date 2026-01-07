@@ -33,9 +33,4 @@ public class ConnectionInfoResponse implements Serializable {
      * tcp://localhost:1883
      */
     private String url;
-
-    /**
-     * 原因
-     */
-    private String msg;
 }

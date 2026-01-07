@@ -11,6 +11,8 @@ import org.redisson.api.RedissonClient;
 
 /**
  * <p>基于redisson实现分布式锁</p >
+ * <p>
+ * https://redisson.pro/docs/data-and-services/locks-and-synchronizers/#lock
  *
  * @author Snowball
  * @version 1.0
@@ -37,8 +39,8 @@ public class RedisDistributedLock implements DistributedLock {
     }
 
     /**
-     * 尝试获取锁并执行业务, 这个获取锁是非阻塞的，意味着获取锁时如果获取不到会直接失败，但是这个也是有等待时间的，如果time > 0的话，
-     * 锁里面的业务代码执行时间小于指定的等待时间，依然是可以获取到锁的
+     * 尝试获取锁并执行业务, 这个获取锁在指定的 waitTime 内是阻塞等待的。
+     * 如果在 waitTime 时间内未获取到锁，则返回失败。
      *
      * @param lockKey        锁
      * @param waitTime       加锁等待时间
@@ -50,31 +52,31 @@ public class RedisDistributedLock implements DistributedLock {
      */
     @Override
     public <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
-            BusinessHandler<R> failureHandler) throws Exception {
+            BusinessHandler<R> failureHandler) {
         RLock lock = redissonClient.getLock(lockKey);
-        // tryLock默认leaseTime是-1， 有看门狗续期机制， 也可以调用指定的leaseTime的
-        // boolean locked = lock.tryLock(waitTime, 10, timeUnit);
-        boolean locked = lock.tryLock(waitTime, timeUnit);
+        boolean locked = false;
+        try {
+            // tryLock 默认leaseTime是-1， 有看门狗续期机制，只有在指定了 leaseTime (第三个参数) 时才会禁用看门狗。
+            // 此处未指定 leaseTime，默认使用看门狗机制。
+            // tryLock 会抛出 InterruptedException，表示等待锁的过程中线程被中断
+            locked = lock.tryLock(waitTime, timeUnit);
+        } catch (InterruptedException e) {
+            // 恢复中断状态，供后续代码或框架判断线程状态
+            Thread
+                    .currentThread()
+                    .interrupt();
+            log.warn("redisson-获取锁时线程被中断, lockKey = {}", lockKey);
+        }
         if (!locked) {
-            log.warn("redisson-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
             if (Objects.nonNull(failureHandler)) {
-                log.warn(
-                        "redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(),
-                        lockKey
-                );
                 return failureHandler.handle();
             }
             return null;
         }
         try {
             return successHandler.handle();
-        } catch (Exception e) {
-            log.error(
-                    "redisson-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey,
-                    e
-            );
-            throw e;
         } finally {
+            // 确保只由持有锁的线程释放锁，防止锁超时后被误释放
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
@@ -84,41 +86,41 @@ public class RedisDistributedLock implements DistributedLock {
     /**
      * redisson加锁的实现是 如有必要，如果锁被持有那么就会一直阻塞一直等到拿到锁.
      * leaseTime是拿到锁之后多久释放锁，使用这个特性看门狗会失效
+     * 注意：由于 lock.lock() 是阻塞的，此方法除非抛出异常，否则必然会执行 successHandler。
      *
      * @param lockKey        锁
      * @param leaseTime      锁获取到之后多久释放锁
      * @param timeUnit       锁获取到之后多久释放锁
      * @param successHandler 加锁成功回调
-     * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
+     * @param failureHandler 加锁失败回调（注：在完全阻塞模式下，此参数基本无效，除非 lock 抛出异常）
      * @return
      * @throws Exception
      */
     @Override
     public <R> R lockWork(String lockKey, int leaseTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
-            BusinessHandler<R> failureHandler) throws Exception {
+            BusinessHandler<R> failureHandler) {
         RLock lock = redissonClient.getLock(lockKey);
-        lock.lock(leaseTime, timeUnit);
-        if (lock.isHeldByCurrentThread()) {
-            try {
-                return successHandler.handle();
-            } catch (Exception e) {
-                log.error(
-                        "redisson-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(),
-                        lockKey, e
-                );
-                throw e;
-            } finally {
-                if (lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
+        try {
+            // 该方法会一直阻塞直到获取锁成功或发生异常
+            lock.lock(leaseTime, timeUnit);
+        } catch (Exception e) {
+            log.error(
+                    "redisson-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread
+                            .currentThread()
+                            .getName(), lockKey, e
+            );
+            if (Objects.nonNull(failureHandler)) {
+                return failureHandler.handle();
             }
         }
-        log.warn("redisson-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
-        if (Objects.nonNull(failureHandler)) {
-            log.warn("redisson-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
-            return failureHandler.handle();
+
+        try {
+            return successHandler.handle();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-        throw new LockingAcquireException(lockKey);
     }
 
     /**
@@ -131,33 +133,26 @@ public class RedisDistributedLock implements DistributedLock {
      * @throws Exception
      */
     @Override
-    public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
-            throws Exception {
+    public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) {
         RLock lock = redissonClient.getLock(lockKey);
-        lock.lock();
-        if (lock.isHeldByCurrentThread()) {
-            try {
-                return successHandler.handle();
-            } catch (Exception e) {
-                log.error(
-                        "redisson看门狗-加锁执行业务失败, thread = {}, lockKey = {}", Thread.currentThread().getName(),
-                        lockKey, e
-                );
-                throw e;
-            } finally {
-                if (lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
+        try {
+            // 默认阻塞式获取锁，并启用看门狗续期
+            lock.lock();
+        } catch (Exception e) {
+            log.error("redisson看门狗-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread
+                    .currentThread()
+                    .getName(), lockKey, e
+            );
+            if (Objects.nonNull(failureHandler)) {
+                return failureHandler.handle();
             }
         }
-        log.warn("redisson看门狗-尝试获取锁失败, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
-        if (Objects.nonNull(failureHandler)) {
-            log.warn(
-                    "redisson看门狗-执行加锁失败回调, thread = {}, lockKey = {}", Thread.currentThread().getName(),
-                    lockKey
-            );
-            return failureHandler.handle();
+        try {
+            return successHandler.handle();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-        throw new LockingAcquireException(lockKey);
     }
 }
