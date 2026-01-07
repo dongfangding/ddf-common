@@ -55,24 +55,15 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                 .getQos()
                 .getQos());
         message.setRetained(control.getRetain());
-        if (request
-                .getTopic()
-                .startsWith("/")) {
-            throw new IllegalArgumentException("topic must not start with /");
-        }
-
         // 将请求对象转换为实际的mqtt message payload
         final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
         final byte[] bytes = MessagePackUtil.writeValueAsBytes(payload);
-        if (bytes.length > mqttProperties.getMaxPayloadSize()) {
-            throw new IllegalArgumentException("mqtt消息payload大小超过最大限制： " + mqttProperties.getMaxPayloadSize());
-        }
         message.setPayload(bytes);
 
         // 预留的发送前置处理监听
         if (CollUtil.isNotEmpty(listenerMap)) {
             listenerMap.forEach((beanName, bean) -> {
-                bean.beforePublish(message, payload);
+                bean.beforePublish(message, payload, request);
             });
         }
         try {

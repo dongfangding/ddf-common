@@ -94,7 +94,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
                 .getPassword()
                 .getBytes(StandardCharsets.UTF_8));
         connOpts.setKeepAliveInterval(60);
-        connOpts.setConnectionTimeout(0);
+        connOpts.setConnectionTimeout(30);
+        // 最大重连延迟10秒
+        connOpts.setMaxReconnectDelay(10000);
         connOpts.setCleanStart(true);
         connOpts.setAutomaticReconnect(true);
         // 设置回调要在 connect 之前，确保不会丢失首次连接成功的通知

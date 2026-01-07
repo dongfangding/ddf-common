@@ -47,6 +47,12 @@ public class EmqConnectionProperties {
     private Integer maxPayloadSize = 256 * 1024;
 
     /**
+     * 单机发布消息限流
+     */
+    private Integer publishRateLimit = 5000;
+
+
+    /**
      * 连接配置类
      */
     @Data
@@ -56,6 +62,7 @@ public class EmqConnectionProperties {
 
         /**
          * 协议
+         *
          * @see MQTTProtocolEnum#getProtocol()
          */
         private String protocol;
@@ -96,7 +103,9 @@ public class EmqConnectionProperties {
      * @return
      */
     public ConnectionConfig getConnectionUrl(String protocol) {
-        Map<String, ConnectionConfig> protocolMap = connectionUrls.stream().collect(Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
+        Map<String, ConnectionConfig> protocolMap = connectionUrls
+                .stream()
+                .collect(Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
         return protocolMap.get(protocol);
     }
 
@@ -106,7 +115,9 @@ public class EmqConnectionProperties {
      * @return
      */
     public String getClientId() {
-        return String.join("-", getClient().getClientIdPrefix(), NetUtil.getLocalhostStr() + "",
-                GlobalStorage.APPLICATION_PORT + "");
+        return String.join(
+                "-", getClient().getClientIdPrefix(), NetUtil.getLocalhostStr() + "",
+                GlobalStorage.APPLICATION_PORT + ""
+        );
     }
 }
