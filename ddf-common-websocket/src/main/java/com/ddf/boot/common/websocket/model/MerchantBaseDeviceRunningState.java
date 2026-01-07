@@ -1,6 +1,5 @@
 package com.ddf.boot.common.websocket.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.ddf.boot.common.core.model.BaseDomain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -76,7 +75,6 @@ public class MerchantBaseDeviceRunningState extends BaseDomain {
     /**
      * 区分是请求还是响应数据
      */
-    @TableField(exist = false)
     private boolean responseFlag;
 
 }

@@ -14,5 +14,10 @@ import lombok.Data;
 @Data
 public class MqttMessageResponse implements Serializable {
 
-    private ServerClientInfo serverClientInfo;
+    private ServerClientInfo serverInfo;
+
+    /**
+     * 是否异步发送， 如果异步发送，在调用publish前就会返回预消息
+     */
+    private boolean async;
 }

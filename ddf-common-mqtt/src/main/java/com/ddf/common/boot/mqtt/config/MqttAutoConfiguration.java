@@ -2,6 +2,7 @@ package com.ddf.common.boot.mqtt.config;
 
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
@@ -12,8 +13,10 @@ import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -26,7 +29,9 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +39,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * <p>mqtt client 配置类</p >
@@ -77,6 +83,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         final String url = connectionConfig.getUrl();
         MqttClient mqttClient;
         try {
+            // 发送消息质量大于0的消息时， 在broker未回执前，会存在内存中，new MemoryPersistence()，这样速度极快，但需要注意分配足够的内存。
+            // 如果使用磁盘，性能会下降。
             mqttClient = new MqttClient(url, emqConnectionProperties.getClientId(), new MemoryPersistence());
         } catch (MqttException e) {
             log.error("mqtt tcp 创建客户端失败， protocol = {}, url = {}", protocol, url, e);
@@ -90,18 +98,25 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
                 .getPassword()
                 .getBytes(StandardCharsets.UTF_8));
         connOpts.setKeepAliveInterval(60);
-        connOpts.setConnectionTimeout(0);
+        connOpts.setConnectionTimeout(30);
+        // 最大重连延迟10秒
+        connOpts.setMaxReconnectDelay(10000);
+        // 重连后，清除之前的会话信息。因为目前使用的内存new MemoryPersistence()来处理qos>0的消息回执状态， 不清楚的话，可能会内存爆掉。
+        // 如果对消息质量要求比较高，同时启动磁盘来处理消息的话，这里可以改为false，这样即使重启也能继续处理之前的消息
         connOpts.setCleanStart(true);
         connOpts.setAutomaticReconnect(true);
+        // 设置回调要在 connect 之前，确保不会丢失首次连接成功的通知
+        setupMqttCallback(mqttClient);
         try {
             mqttClient.connect(connOpts);
         } catch (MqttException e) {
-            log.error("mqtt tcp 连接客户端失败， protocol = {}, url = {}", protocol, url, e);
-            return mqttClient;
+            log.warn("mqtt tcp 连接客户端失败， 将由后台自动重连尝试: protocol = {}, url = {}", protocol, url, e);
         }
+        return mqttClient;
+    }
 
-        // 设置回调
-        MqttClient finalMqttClient = mqttClient;
+
+    private void setupMqttCallback(MqttClient mqttClient) {
         mqttClient.setCallback(new MqttCallback() {
             /**
              * 连接断开回调
@@ -109,16 +124,15 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              */
             @Override
             public void disconnected(MqttDisconnectResponse disconnectResponse) {
-                try {
-                    finalMqttClient.reconnect();
-                } catch (MqttException e) {
-                    log.error("mqtt tcp 重新连接客户端失败， protocol = {}, url = {}", protocol, url, e);
-                }
+                log.error(
+                        "mqtt tcp 重新连接客户端失败， returnCode = {}, reasonString = {}",
+                        disconnectResponse.getReturnCode(), disconnectResponse.getReasonString()
+                );
             }
 
             @Override
             public void mqttErrorOccurred(MqttException exception) {
-
+                log.error("mqtt 运行异常", exception);
             }
 
             /**
@@ -151,7 +165,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
-
+                log.info("mqtt 连接成功: {}, 是否为重连: {}", serverURI, reconnect);
             }
 
             @Override
@@ -159,7 +173,6 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
             }
         });
-        return mqttClient;
     }
 
     /**
@@ -171,8 +184,42 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttClient mqttClient,
-            @Autowired(required = false) Map<String, MqttPublishListener> listenerMap) {
-        return new DefaultMqttPublishImpl(mqttClient, listenerMap);
+            ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
+            EmqConnectionProperties emqConnectionProperties) {
+        return new DefaultMqttPublishImpl(mqttClient, listenerMap.getIfAvailable(), emqConnectionProperties);
+    }
+
+    /**
+     * qos 0 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos0Executors")
+    public ThreadPoolTaskExecutor qos0Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos0-executors-", 10, 100);
+    }
+
+    /**
+     * qos 1 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos1Executors")
+    public ThreadPoolTaskExecutor qos1Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos1-executors-", 10, 100);
+    }
+
+    /**
+     * qos 2 消息发送线程池
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "qos2Executors")
+    public ThreadPoolTaskExecutor qos2Executors() {
+        return ThreadBuilderHelper.buildThreadExecutor("qos2-executors-", 10, 100);
     }
 
     /**
@@ -198,6 +245,6 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.applicationContext = context;
     }
 }

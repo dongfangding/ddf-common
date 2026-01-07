@@ -1,27 +1,14 @@
 package com.ddf.boot.common.websocket.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.websocket.enumu.InternalCmdEnum;
-import com.ddf.boot.common.websocket.exception.ClientRepeatRequestException;
 import com.ddf.boot.common.websocket.helper.CmdAction;
-import com.ddf.boot.common.websocket.helper.WebsocketSessionStorage;
-import com.ddf.boot.common.websocket.mapper.ChannelTransferMapper;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ChannelTransfer;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.MessageRequest;
 import com.ddf.boot.common.websocket.model.WebSocketSessionWrapper;
 import com.ddf.boot.common.websocket.service.ChannelTransferService;
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2019/8/23 9:45
  */
 @Service
-public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMapper, ChannelTransfer>
-        implements ChannelTransferService {
+public class ChannelTransferServiceImpl implements ChannelTransferService {
 
     /**
      * 批量创建本机所有设备的消息记录
@@ -71,7 +57,7 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
             channelTransfers.add(buildChannelTransfer(authPrincipal, message, messageStr, value, messageRequest));
             messageMap.put(authPrincipal, messageStr);
         }
-        Lists.partition(channelTransfers, 500).forEach(ls -> saveBatch(ls));
+//        Lists.partition(channelTransfers, 500).forEach(ls -> saveBatch(ls));
         return messageMap;
     }
 
@@ -113,23 +99,24 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public <T, Q> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<T> message,
             MessageRequest<Q> messageRequest) {
-        if (InternalCmdEnum.PING.equals(message.getCmd())) {
-            return true;
-        }
-        if (authPrincipal == null || StringUtils.isAnyBlank(request, message.getRequestId())) {
-            return false;
-        }
-        WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
-        if (webSocketSessionWrapper == null) {
-            return false;
-        }
-        try {
-            save(buildChannelTransfer(authPrincipal, message, request, webSocketSessionWrapper, messageRequest));
-        } catch (Exception e) {
-            throw new ClientRepeatRequestException(
-                    String.format("客户端重复对同一数据[%s]发送相同指令！", messageRequest.getLogicPrimaryKey()));
-        }
-        return true;
+        return false;
+//        if (InternalCmdEnum.PING.equals(message.getCmd())) {
+//            return true;
+//        }
+//        if (authPrincipal == null || StringUtils.isAnyBlank(request, message.getRequestId())) {
+//            return false;
+//        }
+//        WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
+//        if (webSocketSessionWrapper == null) {
+//            return false;
+//        }
+//        try {
+//            save(buildChannelTransfer(authPrincipal, message, request, webSocketSessionWrapper, messageRequest));
+//        } catch (Exception e) {
+//            throw new ClientRepeatRequestException(
+//                    String.format("客户端重复对同一数据[%s]发送相同指令！", messageRequest.getLogicPrimaryKey()));
+//        }
+//        return true;
     }
 
     /**
@@ -143,67 +130,68 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public <T> int recordResponse(AuthPrincipal authPrincipal, String requestId, String response, Message<T> message) {
-        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(
-                message.getCmd()))) {
-            // ignore
-            return 0;
-        }
-        if (StringUtils.isBlank(response)) {
-            return -1;
-        }
-        WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
-        if (webSocketSessionWrapper == null) {
-            return -1;
-        }
-        ChannelTransfer channelTransfer = new ChannelTransfer();
-        // 数据转换失败，则无法获取requestId，对这种数据做插入备份
-        if (message == null || Message.Type.REQUEST.equals(message.getType())) {
-            channelTransfer.setRequest(response);
-            channelTransfer.setFullRequestResponse(toJsonArr(response));
-            channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
-            channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
-            channelTransfer.setAuthCode(authPrincipal.getAuthCode());
-            channelTransfer.setLoginType(authPrincipal.getLoginType().name());
-            channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
-            if (message == null) {
-                channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);
-            } else {
-                channelTransfer.setRequestId(requestId);
-                channelTransfer.setCmd(message.getCmd());
-                LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-                queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-                ChannelTransfer exist = getOne(queryWrapper);
-                if (exist != null) {
-                    return 1;
-                }
-            }
-            channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
-            channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
-            save(channelTransfer);
-            return 0;
-        }
-        if (StringUtils.isAnyBlank(requestId)) {
-            return -1;
-        }
-        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-        ChannelTransfer exist = getOne(queryWrapper);
-        if (exist == null) {
-            return -1;
-        }
-        if (!exist.getStatus().equals(ChannelTransfer.STATUS_SEND) && !exist.getStatus().equals(
-                ChannelTransfer.STATUS_FAILURE)) {
-            return 1;
-        }
-        LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
-        updateWrapper.set(ChannelTransfer::getResponse, response);
-        updateWrapper.set(ChannelTransfer::getFullRequestResponse,
-                appendJsonArr(exist.getFullRequestResponse(), response)
-        );
-        updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_RECEIVED);
-        updateWrapper.eq(ChannelTransfer::getId, exist.getId());
-        update(null, updateWrapper);
         return 0;
+//        if (message != null && (InternalCmdEnum.PING.equals(message.getCmd()) || InternalCmdEnum.PONG.equals(
+//                message.getCmd()))) {
+//            // ignore
+//            return 0;
+//        }
+//        if (StringUtils.isBlank(response)) {
+//            return -1;
+//        }
+//        WebSocketSessionWrapper webSocketSessionWrapper = WebsocketSessionStorage.get(authPrincipal);
+//        if (webSocketSessionWrapper == null) {
+//            return -1;
+//        }
+//        ChannelTransfer channelTransfer = new ChannelTransfer();
+//        // 数据转换失败，则无法获取requestId，对这种数据做插入备份
+//        if (message == null || Message.Type.REQUEST.equals(message.getType())) {
+//            channelTransfer.setRequest(response);
+//            channelTransfer.setFullRequestResponse(toJsonArr(response));
+//            channelTransfer.setSendFlag(ChannelTransfer.SEND_FLAG_CLIENT);
+//            channelTransfer.setAccessKeyId(authPrincipal.getAccessKeyId());
+//            channelTransfer.setAuthCode(authPrincipal.getAuthCode());
+//            channelTransfer.setLoginType(authPrincipal.getLoginType().name());
+//            channelTransfer.setStatus(ChannelTransfer.STATUS_RECEIVED);
+//            if (message == null) {
+//                channelTransfer.setStatus(ChannelTransfer.STATUS_FAILURE);
+//            } else {
+//                channelTransfer.setRequestId(requestId);
+//                channelTransfer.setCmd(message.getCmd());
+//                LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//                queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//                ChannelTransfer exist = getOne(queryWrapper);
+//                if (exist != null) {
+//                    return 1;
+//                }
+//            }
+//            channelTransfer.setServerAddress(webSocketSessionWrapper.getServerAddress());
+//            channelTransfer.setClientAddress(webSocketSessionWrapper.getClientAddress());
+//            save(channelTransfer);
+//            return 0;
+//        }
+//        if (StringUtils.isAnyBlank(requestId)) {
+//            return -1;
+//        }
+//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//        ChannelTransfer exist = getOne(queryWrapper);
+//        if (exist == null) {
+//            return -1;
+//        }
+//        if (!exist.getStatus().equals(ChannelTransfer.STATUS_SEND) && !exist.getStatus().equals(
+//                ChannelTransfer.STATUS_FAILURE)) {
+//            return 1;
+//        }
+//        LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
+//        updateWrapper.set(ChannelTransfer::getResponse, response);
+//        updateWrapper.set(ChannelTransfer::getFullRequestResponse,
+//                appendJsonArr(exist.getFullRequestResponse(), response)
+//        );
+//        updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_RECEIVED);
+//        updateWrapper.eq(ChannelTransfer::getId, exist.getId());
+//        update(null, updateWrapper);
+//        return 0;
     }
 
     /**
@@ -219,42 +207,44 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
     @Transactional(rollbackFor = Exception.class)
     public <T> boolean updateToComplete(Message<T> message, boolean isSuccess, String errorMessage, String response,
             String serverSend) {
-        if (message == null || StringUtils.isBlank(message.getRequestId())) {
-            return false;
-        }
-        if (InternalCmdEnum.PING.equals(message.getCmd())) {
-            return true;
-        }
-        LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
-        if (isSuccess) {
-            updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
-        } else {
-            updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_FAILURE);
-        }
-        if (errorMessage != null && errorMessage.length() > 1000) {
-            errorMessage = errorMessage.substring(0, 1000);
-        }
-        updateWrapper.set(ChannelTransfer::getErrorMessage, errorMessage);
-        updateWrapper.eq(ChannelTransfer::getRequestId, message.getRequestId());
-        if (response != null) {
-            updateWrapper.set(ChannelTransfer::getResponse, response);
-            ChannelTransfer exist = getByRequestId(message.getRequestId());
-            if (exist != null) {
-                updateWrapper.set(ChannelTransfer::getFullRequestResponse,
-                        appendJsonArr(exist.getFullRequestResponse(), response, serverSend)
-                );
-            }
-        }
-        return update(null, updateWrapper);
+        return false;
+//        if (message == null || StringUtils.isBlank(message.getRequestId())) {
+//            return false;
+//        }
+//        if (InternalCmdEnum.PING.equals(message.getCmd())) {
+//            return true;
+//        }
+//        LambdaUpdateWrapper<ChannelTransfer> updateWrapper = Wrappers.lambdaUpdate();
+//        if (isSuccess) {
+//            updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
+//        } else {
+//            updateWrapper.set(ChannelTransfer::getStatus, ChannelTransfer.STATUS_FAILURE);
+//        }
+//        if (errorMessage != null && errorMessage.length() > 1000) {
+//            errorMessage = errorMessage.substring(0, 1000);
+//        }
+//        updateWrapper.set(ChannelTransfer::getErrorMessage, errorMessage);
+//        updateWrapper.eq(ChannelTransfer::getRequestId, message.getRequestId());
+//        if (response != null) {
+//            updateWrapper.set(ChannelTransfer::getResponse, response);
+//            ChannelTransfer exist = getByRequestId(message.getRequestId());
+//            if (exist != null) {
+//                updateWrapper.set(ChannelTransfer::getFullRequestResponse,
+//                        appendJsonArr(exist.getFullRequestResponse(), response, serverSend)
+//                );
+//            }
+//        }
+//        return update(null, updateWrapper);
     }
 
     private ChannelTransfer getByRequestId(String requestId) {
-        if (StringUtils.isBlank(requestId)) {
-            return null;
-        }
-        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-        return getOne(queryWrapper);
+//        if (StringUtils.isBlank(requestId)) {
+//            return null;
+//        }
+//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//        return getOne(queryWrapper);
+        return null;
     }
 
 
@@ -266,20 +256,21 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     public String getPayloadByRequestId(String requestId) {
-        if (StringUtils.isBlank(requestId)) {
-            throw new BusinessException("requestId不存在，无法处理业务!");
-        }
-
-        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-        ChannelTransfer record = getOne(queryWrapper);
-        if (record == null) {
-            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
-        }
-        if (StringUtils.isBlank(record.getBusinessData())) {
-            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
-        }
-        return record.getBusinessData();
+//        if (StringUtils.isBlank(requestId)) {
+//            throw new BusinessException("requestId不存在，无法处理业务!");
+//        }
+//
+//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
+//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
+//        ChannelTransfer record = getOne(queryWrapper);
+//        if (record == null) {
+//            throw new BusinessException(String.format("【%s】没有对应的日志记录，无法处理！", requestId));
+//        }
+//        if (StringUtils.isBlank(record.getBusinessData())) {
+//            throw new BusinessException(String.format("日志【%s】中的业务对象数据丢失！", requestId));
+//        }
+//        return record.getBusinessData();
+        return "";
     }
 
     /**
@@ -291,15 +282,16 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     public ChannelTransfer getPreLog(String deviceNumber, String cmd) {
-        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
-            return null;
-        }
-        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
-        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
-        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
-        channelTransferWrapper.last("limit 1");
-        return getOne(channelTransferWrapper);
+//        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+//            return null;
+//        }
+//        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+//        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
+//        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+//        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+//        channelTransferWrapper.last("limit 1");
+//        return getOne(channelTransferWrapper);
+        return null;
     }
 
 
@@ -315,25 +307,26 @@ public class ChannelTransferServiceImpl extends ServiceImpl<ChannelTransferMappe
      */
     @Override
     public List<ChannelTransfer> getTodayLog(String deviceNumber, String cmd, boolean successCount) {
-        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
-            return null;
-        }
-        Date date = new Date();
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
-        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
-        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
-        if (successCount) {
-            // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
-            channelTransferWrapper.eq(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
-        }
-        channelTransferWrapper.ge(ChannelTransfer::getCreateTime, calendar.getTime());
-        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
-        return list(channelTransferWrapper);
+//        if (StringUtils.isAnyBlank(deviceNumber, cmd)) {
+//            return null;
+//        }
+//        Date date = new Date();
+//        Calendar calendar = new GregorianCalendar();
+//        calendar.setTime(date);
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        LambdaQueryWrapper<ChannelTransfer> channelTransferWrapper = Wrappers.lambdaQuery();
+//        channelTransferWrapper.eq(ChannelTransfer::getAccessKeyId, deviceNumber);
+//        channelTransferWrapper.eq(ChannelTransfer::getCmd, cmd);
+//        if (successCount) {
+//            // 有效次数为拿到成功的为基准，其实这个状态加上也会有一些问题，可能会导致次数超限啊，没有响应啊之类的
+//            channelTransferWrapper.eq(ChannelTransfer::getStatus, ChannelTransfer.STATUS_SUCCESS);
+//        }
+//        channelTransferWrapper.ge(ChannelTransfer::getCreateTime, calendar.getTime());
+//        channelTransferWrapper.orderByDesc(ChannelTransfer::getCreateTime);
+//        return list(channelTransferWrapper);
+        return null;
     }
 
     /**

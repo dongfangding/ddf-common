@@ -1,8 +1,10 @@
 package com.ddf.common.boot.mqtt.model.support;
 
+import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
-import com.ddf.common.boot.mqtt.model.support.header.MqttHeader;
+import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
+import com.ddf.common.boot.mqtt.model.support.header.MqttHeaderMsg;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
 import java.io.Serializable;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class MqttMessagePayload implements Serializable {
     /**
      * 基础请求头， 当然由于预留了扩展字段， 应该没有必要继承这个类继续扩展了，请使用扩展字段来存储自定义的字段
      */
-    private MqttHeader header;
+    private MqttHeaderMsg header;
 
     /**
      * 服务端作为mqtt客户端时发送时附带的一些数据
@@ -83,12 +85,20 @@ public class MqttMessagePayload implements Serializable {
      */
     public static MqttMessagePayload fromMessageRequest(InnerMqttMessageRequest request, String serverClientId) {
         final MqttMessagePayload payload = new MqttMessagePayload();
-        payload.setHeader(request.getHeader());
+        MqttHeaderMsg headerMsg = BeanCopierUtils.copy(request.getHeader(), MqttHeaderMsg.class);
+        payload.setHeader(headerMsg);
         payload.setMessageCode(request.getMessageCode());
         payload.setContentType(request.getContentType());
         payload.setDeserializeType(request.getDeserializeType());
         payload.setBizType(request.getBizType());
         payload.setBody(request.getBody());
+
+        // 将控制类的一些参数赋值到请求头中，方便消息持久化后可以根据这些参数来判断是否需要处理该消息
+        final MqttMessageControl control = request.getControl();
+        headerMsg.setQos(control.getQos().getQos());
+        headerMsg.setRetain(control.getRetain());
+        headerMsg.setShow(control.getShow());
+        headerMsg.setIncludeSender(control.getIncludeSender());
 
         final ServerClientInfo serverInfo = new ServerClientInfo();
         serverInfo.setClientId(serverClientId);

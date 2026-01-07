@@ -315,38 +315,42 @@ public class MonitorRegistryConfig implements InitializingBean {
             String monitorPath;
             for (MonitorNode monitor : monitors) {
                 monitorPath = getMonitorPath(monitor);
-                String data = new String(client.getData().forPath(monitor.getMonitorPath()), StandardCharsets.UTF_8);
-                if (StringUtils.isBlank(data)) {
-                    continue;
-                }
-                // 监听节点创建的所有节点历史记录
-                String[] allNodes = data.split(DATA_SPLIT_CHAR);
-                List<String> nodes = client.getChildren().forPath(monitor.getMonitorPath());
-                if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                    if (CollUtil.isEmpty(nodes)) {
-                        // 回调节点事件
-                        callbackNode(monitorPath, monitor, Arrays.asList(allNodes.clone()));
-                        // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
-                        client.setData().forPath(monitor.getMonitorPath(), null);
-                    } else {
-                        Collection<String> disjunction = CollUtil.disjunction(Arrays.asList(allNodes), nodes);
-                        if (CollUtil.isEmpty(disjunction)) {
-                            return null;
-                        }
-                        // 回调节点事件
-                        callbackNode(monitorPath, monitor, disjunction);
-                        // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
-                        client.setData().forPath(monitor.getMonitorPath(),
-                                StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8)
-                        );
+                try {
+                    String data = new String(client.getData().forPath(monitor.getMonitorPath()), StandardCharsets.UTF_8);
+                    if (StringUtils.isBlank(data)) {
+                        continue;
                     }
+                    // 监听节点创建的所有节点历史记录
+                    String[] allNodes = data.split(DATA_SPLIT_CHAR);
+                    List<String> nodes = client.getChildren().forPath(monitor.getMonitorPath());
+                    if (CollUtil.isNotEmpty(nodeEventListeners)) {
+                        if (CollUtil.isEmpty(nodes)) {
+                            // 回调节点事件
+                            callbackNode(monitorPath, monitor, Arrays.asList(allNodes.clone()));
+                            // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
+                            client.setData().forPath(monitor.getMonitorPath(), null);
+                        } else {
+                            Collection<String> disjunction = CollUtil.disjunction(Arrays.asList(allNodes), nodes);
+                            if (CollUtil.isEmpty(disjunction)) {
+                                return null;
+                            }
+                            // 回调节点事件
+                            callbackNode(monitorPath, monitor, disjunction);
+                            // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
+                            client.setData().forPath(monitor.getMonitorPath(),
+                                    StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8)
+                            );
+                        }
+                    }
+                } catch (Exception e) {
+                        log.error("节点检查时发现[{}]被删除时出现异常", monitorPath, e);
                 }
             }
             return null;
         }, () -> {return null;});
     }
 
-    private void callbackNode(String monitorPath, MonitorNode monitor, Collection<String> allNodes) throws Exception {
+    private void callbackNode(String monitorPath, MonitorNode monitor, Collection<String> allNodes) {
         ChildData childData;
         // 回调所有节点的监听事件
         for (String currNode : allNodes) {
@@ -358,6 +362,9 @@ public class MonitorRegistryConfig implements InitializingBean {
                 // fixme 节点不存在的时候把数据删掉， 但是这一块比较复杂，如果真的采取以当前数据判断覆盖的话，容易产生数据错误，会把当前程序以外同时新增或删除的节点给覆盖掉， 所以如果不用父节点存数据的话，
                 // 直接用另外一个节点存全部节点，使用path来处理就会简单很多
                 continue;
+            } catch (Exception e) {
+                log.error("节点检查时发现[{}]被删除时出现异常", currNode, e);
+                throw new RuntimeException(e);
             }
             log.debug("节点检查时发现[{}]被删除", childData.getPath());
             if (CollUtil.isNotEmpty(nodeEventListeners)) {

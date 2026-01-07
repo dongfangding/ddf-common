@@ -44,7 +44,7 @@ public interface DistributedLock {
      * @throws Exception
      */
     <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
-            BusinessHandler<R> failureHandler) throws Exception;
+            BusinessHandler<R> failureHandler);
 
     /**
      * 只立马尝试一次获取锁，获取不到就返回失败， redis的实现，获取到使用看门狗续期
@@ -56,8 +56,7 @@ public interface DistributedLock {
      * @return
      * @throws Exception
      */
-    default <R> R tryLockOnce(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
-            throws Exception {
+    default <R> R tryLockOnce(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) {
         return tryLock(lockKey, 0, TimeUnit.SECONDS, successHandler, failureHandler);
     }
 
@@ -75,7 +74,7 @@ public interface DistributedLock {
      * @throws Exception
      */
     <R> R lockWork(String lockKey, int leaseTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
-            BusinessHandler<R> failureHandler) throws Exception;
+            BusinessHandler<R> failureHandler);
 
     /**
      * 持有默认时间加锁并执行业务，如果获取不到锁，会一直尝试获取，这个如果是redis实现的话，即使用看门狗来续期时间
@@ -87,8 +86,7 @@ public interface DistributedLock {
      * @return
      * @throws Exception
      */
-    <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler)
-            throws Exception;
+    <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler);
 
     /**
      * 上锁路径格式化， zk专用
@@ -110,8 +108,8 @@ public interface DistributedLock {
          * 执行业务
          *
          * @return
-         * @throws Exception
+         * @throws
          */
-        R handle() throws Exception;
+        R handle();
     }
 }

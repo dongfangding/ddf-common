@@ -1,7 +1,6 @@
 package com.ddf.boot.common.websocket.service;
 
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.ChannelTransfer;
 import com.ddf.boot.common.websocket.model.Message;
@@ -17,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author dongfang.ding
  * @date 2019/8/23 9:45
  */
-public interface ChannelTransferService extends IService<ChannelTransfer> {
+public interface ChannelTransferService  {
 
     /**
      * 批量创建本机所有设备的消息记录
