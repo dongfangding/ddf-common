@@ -1,24 +1,19 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
+package com.ddf.common.captcha.config;
 
-package com.anji.captcha.config;
 
 import com.anji.captcha.model.common.CaptchaTypeEnum;
 import com.anji.captcha.model.common.Const;
-import com.anji.captcha.properties.AjCaptchaProperties;
 import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.service.impl.CaptchaServiceFactory;
 import com.anji.captcha.util.Base64Utils;
 import com.anji.captcha.util.ImageUtils;
 import com.anji.captcha.util.StringUtils;
+import com.ddf.common.captcha.properties.AjCaptchaProperties;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,17 +23,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
 
-
-/**
- *
- * 更改原实现，允许同时存在两个验证码实现类，这样可以通过外部参数处理同时支持两种验证码
- *
- * @author snowball
- * @date 2022/9/2 18:53
- **/
 @Configuration
+@Slf4j
 public class AjCaptchaServiceAutoConfiguration {
-    private static Logger logger = LoggerFactory.getLogger(AjCaptchaServiceAutoConfiguration.class);
+
 
     public AjCaptchaServiceAutoConfiguration() {
     }
@@ -81,7 +69,7 @@ public class AjCaptchaServiceAutoConfiguration {
     }
 
     private Properties buildProperties(AjCaptchaProperties prop) {
-        logger.info("自定义配置项：{}", prop.toString());
+        log.info("自定义配置项：{}", prop.toString());
         Properties config = new Properties();
         config.put("captcha.cacheType", prop.getCacheType().name());
         config.put("captcha.water.mark", prop.getWaterMark());

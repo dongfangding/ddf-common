@@ -73,6 +73,7 @@ public class TableScan {
                 );
                 if (StringUtils.isAnyBlank(url, username, password)) {
                     log.warn("分表扫描告警-未获取到数据库连接信息");
+                    return;
                 }
 
                 final String databaseName = PatternUtil.extractDatabaseName(url);

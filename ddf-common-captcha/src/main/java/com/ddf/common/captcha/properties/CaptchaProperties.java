@@ -1,9 +1,8 @@
 package com.ddf.common.captcha.properties;
 
-import com.anji.captcha.config.AjCaptchaAutoConfiguration;
-import com.anji.captcha.config.AjCaptchaServiceAutoConfiguration;
-import com.anji.captcha.properties.AjCaptchaProperties;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
+import com.ddf.common.captcha.config.AjCaptchaAutoConfiguration;
+import com.ddf.common.captcha.config.AjCaptchaServiceAutoConfiguration;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.beans.BeansException;
@@ -30,7 +29,7 @@ public class CaptchaProperties implements ApplicationContextAware {
     /**
      * 缓存类型redis/local/....
      */
-    private com.anji.captcha.properties.AjCaptchaProperties.StorageType cacheType = AjCaptchaProperties.StorageType.redis;
+    private AjCaptchaProperties.StorageType cacheType = AjCaptchaProperties.StorageType.redis;
 
     /**
      * 验证码缓存存在时间，单位秒

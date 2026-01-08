@@ -1,1 +1,2 @@
+com.ddf.common.captcha.config.AjCaptchaAutoConfiguration
 com.ddf.common.captcha.config.CaptchaAutoConfiguration

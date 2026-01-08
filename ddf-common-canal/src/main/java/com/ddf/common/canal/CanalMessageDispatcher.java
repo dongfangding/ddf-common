@@ -1,6 +1,6 @@
 package com.ddf.common.canal;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.otter.canal.protocol.FlatMessage;
 import java.util.ArrayList;
 import java.util.Collections;
