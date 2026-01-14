@@ -90,12 +90,12 @@
             </dependency>
 
             <!-- spring-boot-dependencies 中已经有了，不需要再引入，但是它没指定scope为provided， 就这样吧 -->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <scope>provided</scope>
-                <version>${lombok.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.projectlombok</groupId>-->
+<!--                <artifactId>lombok</artifactId>-->
+<!--                <scope>provided</scope>-->
+<!--                <version>${lombok.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.mysql</groupId>

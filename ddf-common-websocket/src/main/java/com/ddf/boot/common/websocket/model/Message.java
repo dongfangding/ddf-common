@@ -328,7 +328,7 @@ public class Message<T> {
         if (StringUtils.isBlank(textMessagePayload)) {
             return null;
         }
-        String decrypt = SecureUtil.localPrivateDecryptFromBcd(textMessagePayload);
+        String decrypt = SecureUtil.rsaPrivateDecryptStr(textMessagePayload);
         log.debug("解密后数据: {}", decrypt);
         Message<?> message = JsonUtil.toBean(decrypt, Message.class);
         String signStr = message.getExtraMap().get("sign");
