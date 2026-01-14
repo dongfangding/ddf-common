@@ -1,10 +1,10 @@
 package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
-import java.io.Serial;
-import java.io.Serializable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Data;
 
 /**

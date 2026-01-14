@@ -2,13 +2,13 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsDLQMessagePageQueryByGroupIdRequest;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 import lombok.Data;
 
 

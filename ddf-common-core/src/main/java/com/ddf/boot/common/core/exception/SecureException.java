@@ -1,8 +1,8 @@
 package com.ddf.boot.common.core.exception;
 
-import com.ddf.boot.common.api.exception.BaseException;
-import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
+import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
+import com.ddf.boot.common.api.exception.BaseException;
 
 /**
  * 安全相关异常

@@ -1,7 +1,6 @@
 package com.ddf.boot.common.lock.redis.impl;
 
 import com.ddf.boot.common.lock.DistributedLock;
-import com.ddf.boot.common.lock.exception.LockingAcquireException;
 import com.ddf.boot.common.lock.redis.config.DistributedLockRedisProperties;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

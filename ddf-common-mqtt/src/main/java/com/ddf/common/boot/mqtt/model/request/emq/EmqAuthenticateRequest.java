@@ -1,9 +1,9 @@
 package com.ddf.common.boot.mqtt.model.request.emq;
 
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**

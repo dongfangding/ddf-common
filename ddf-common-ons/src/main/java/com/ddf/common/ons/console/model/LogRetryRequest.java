@@ -2,9 +2,9 @@ package com.ddf.common.ons.console.model;
 
 import com.ddf.common.ons.console.constant.RetryChannelEnum;
 import com.google.common.base.Objects;
-import java.util.List;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 

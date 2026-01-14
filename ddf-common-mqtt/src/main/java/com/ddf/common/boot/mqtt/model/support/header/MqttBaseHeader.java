@@ -1,6 +1,5 @@
 package com.ddf.common.boot.mqtt.model.support.header;
 
-import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;

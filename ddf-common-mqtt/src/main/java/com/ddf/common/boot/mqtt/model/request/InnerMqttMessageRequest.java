@@ -2,10 +2,10 @@ package com.ddf.common.boot.mqtt.model.request;
 
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
-import java.io.Serializable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.io.Serializable;
 import lombok.Data;
 
 /**

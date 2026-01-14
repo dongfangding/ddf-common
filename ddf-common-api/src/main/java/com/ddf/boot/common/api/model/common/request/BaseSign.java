@@ -1,7 +1,7 @@
 package com.ddf.boot.common.api.model.common.request;
 
-import java.io.Serializable;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 
 /**

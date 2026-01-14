@@ -4,10 +4,10 @@ import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
 import com.ddf.common.boot.mqttclient.model.support.body.MessageBody;
 import com.ddf.common.boot.mqttclient.model.support.topic.MqttTopicDefine;
-import java.io.Serializable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.io.Serializable;
 import lombok.Data;
 
 /**

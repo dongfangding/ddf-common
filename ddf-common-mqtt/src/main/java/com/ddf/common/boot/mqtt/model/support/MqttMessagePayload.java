@@ -3,7 +3,6 @@ package com.ddf.common.boot.mqtt.model.support;
 import com.ddf.boot.common.core.util.BeanCopierUtils;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
-import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
 import com.ddf.common.boot.mqtt.model.support.header.MqttHeaderMsg;
 import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
 import java.io.Serial;

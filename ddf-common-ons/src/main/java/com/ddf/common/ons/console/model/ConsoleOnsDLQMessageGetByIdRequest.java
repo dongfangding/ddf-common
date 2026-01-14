@@ -1,9 +1,9 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsDLQMessageGetByIdRequest;
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**

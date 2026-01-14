@@ -1,8 +1,8 @@
 package com.ddf.boot.common.api.constraint.collect;
 
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
-import jakarta.annotation.Nonnull;
 import org.apache.commons.lang3.StringUtils;
 
 

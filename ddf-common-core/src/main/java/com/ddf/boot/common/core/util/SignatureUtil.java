@@ -9,7 +9,6 @@ import com.ddf.boot.common.api.model.common.request.BaseSign;
 import com.ddf.boot.common.api.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

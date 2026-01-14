@@ -1,6 +1,5 @@
 package com.ddf.boot.common.rocketmq.producer;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;

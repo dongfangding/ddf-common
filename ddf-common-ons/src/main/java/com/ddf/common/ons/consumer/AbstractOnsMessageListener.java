@@ -2,8 +2,8 @@ package com.ddf.common.ons.consumer;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.ddf.common.ons.properties.OnsProperties;
-import java.io.Serializable;
 import jakarta.annotation.PostConstruct;
+import java.io.Serializable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

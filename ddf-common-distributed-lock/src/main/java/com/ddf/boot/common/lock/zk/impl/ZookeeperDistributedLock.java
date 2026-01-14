@@ -1,7 +1,6 @@
 package com.ddf.boot.common.lock.zk.impl;
 
 import com.ddf.boot.common.lock.DistributedLock;
-import com.ddf.boot.common.lock.exception.LockingAcquireException;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
 import com.google.common.base.Strings;
 import java.util.Objects;

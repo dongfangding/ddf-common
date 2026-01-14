@@ -1,10 +1,10 @@
 package com.ddf.boot.common.api.model.captcha.request;
 
 import com.ddf.boot.common.api.model.captcha.CaptchaType;
-import java.io.Serial;
-import java.io.Serializable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

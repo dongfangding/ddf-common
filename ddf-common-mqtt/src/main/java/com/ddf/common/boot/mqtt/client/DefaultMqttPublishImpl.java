@@ -5,7 +5,6 @@ import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.api.util.MessagePackUtil;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
-import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
@@ -13,13 +12,11 @@ import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
 import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
