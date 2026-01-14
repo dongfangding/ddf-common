@@ -15,10 +15,11 @@ deploy_project() {
         cd "$deploy" || exit 1
     fi
     # 切换到项目根目录
-
+    pwd
     echo "🚀 执行 Maven Deploy ..."
-    mvn --settings "$maven_settings" -U clean deploy
-
+#    mvn --settings "$maven_settings" -U clean deploy
+    # 没有私服本地开发用install
+    mvn --settings "$maven_settings" -U clean install
     if [ -d "$deploy" ]; then
         cd ..
     fi
