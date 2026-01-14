@@ -1,5 +1,6 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.util.SecureUtil;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

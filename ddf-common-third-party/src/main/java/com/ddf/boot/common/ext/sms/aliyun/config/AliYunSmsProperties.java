@@ -90,8 +90,8 @@ public class AliYunSmsProperties implements InitializingBean {
                 "请检查sms配置属性"
         );
         if (secretAccessKey) {
-            this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
-            this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
+            this.setAccessKeyId(SecureUtil.aesDecryptStr(this.getAccessKeyId()));
+            this.setAccessKeySecret(SecureUtil.aesDecryptStr(this.getAccessKeySecret()));
         }
     }
 

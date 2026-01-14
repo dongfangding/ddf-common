@@ -23,7 +23,12 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * <p>description</p >
+ * MQTT 消息发布实现
+ * <p>
+ * 修复说明：
+ * 1. 修正 QoS 枚举与线程池 bean 名称的映射关系
+ * 2. 添加线程池获取失败的降级处理
+ * </p>
  *
  * @author Snowball
  * @version 1.0
@@ -36,7 +41,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
     private final Map<String, MqttPublishListener> listenerMap;
     private final EmqConnectionProperties mqttProperties;
 
-    public DefaultMqttPublishImpl(MqttClient mqttClient, Map<String, MqttPublishListener> listenerMap, EmqConnectionProperties mqttProperties    ) {
+    public DefaultMqttPublishImpl(MqttClient mqttClient, Map<String, MqttPublishListener> listenerMap, EmqConnectionProperties mqttProperties) {
         this.mqttClient = mqttClient;
         this.listenerMap = listenerMap;
         this.mqttProperties = mqttProperties;
@@ -52,9 +57,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         PreconditionUtil.requiredParamCheck(request);
         final MqttMessage message = new MqttMessage();
         final MqttMessageControl control = request.getControl();
-        message.setQos(control
-                .getQos()
-                .getQos());
+        message.setQos(control.getQos().getQos());
         message.setRetained(control.getRetain());
         // 将请求对象转换为实际的mqtt message payload
         final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
@@ -70,24 +73,41 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         messageResponse.setServerInfo(payload.getServerInfo());
         messageResponse.setAsync(control.getAsync());
         if (control.getAsync()) {
-            ThreadPoolTaskExecutor executor = switch (control.getQos()) {
-                case AT_LAST_ONCE -> SpringContextHolder.getBean("qos0Executors", ThreadPoolTaskExecutor.class);
-                case AT_MOST_ONCE -> SpringContextHolder.getBean("qos1Executors", ThreadPoolTaskExecutor.class);
-                case EXACTLY_ONCE -> SpringContextHolder.getBean("qos2Executors", ThreadPoolTaskExecutor.class);
+            // 获取对应 QoS 级别的线程池
+            String beanName = switch (control.getQos()) {
+                case AT_MOST_ONCE -> "qos0Executors";  // QoS 0: 最多一次
+                case AT_LAST_ONCE -> "qos1Executors";  // QoS 1: 最少一次
+                case EXACTLY_ONCE -> "qos2Executors";  // QoS 2: 恰好一次
             };
+            ThreadPoolTaskExecutor executor = SpringContextHolder.getBean(beanName, ThreadPoolTaskExecutor.class);
+            // 线程池不存在时使用同步发送
+            if (executor == null) {
+                log.warn("MQTT {} 线程池不存在，使用同步发送", beanName);
+                return publishSync(request, message, payload, messageResponse);
+            }
             executor.execute(() -> {
                 try {
                     mqttClient.publish(request.getTopic(), message);
                 } catch (MqttException e) {
-                    log.error("mqtt消息发送失败, 消息内容 = {}", JsonUtil.asString(request));
+                    log.error("MQTT异步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), e);
                 }
             });
             return ResponseData.success(messageResponse);
         }
+        return publishSync(request, message, payload, messageResponse);
+    }
+
+    /**
+     * 同步发送消息
+     */
+    private ResponseData<MqttMessageResponse> publishSync(InnerMqttMessageRequest request,
+                                                           MqttMessage message,
+                                                           MqttMessagePayload payload,
+                                                           MqttMessageResponse messageResponse) {
         try {
             mqttClient.publish(request.getTopic(), message);
         } catch (MqttException e) {
-            log.error("mqtt消息发送失败, 消息内容 = {}", JsonUtil.asString(request));
+            log.error("MQTT同步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), e);
             return ResponseData.failure("mqtt_error", e.getMessage());
         }
         // 预留的发送成功处理监听

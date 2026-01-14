@@ -22,9 +22,8 @@
         <aspectj.version>1.9.4</aspectj.version>
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.42</hutool.version>
-        <lombok.version>1.18.42</lombok.version>
         <mysql.version>9.1.0</mysql.version>
-        <guava.version>33.3.1-jre</guava.version>
+        <guava.version>33.4.0-jre</guava.version>
         <druid.version>1.2.24</druid.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
@@ -35,7 +34,7 @@
         <redisson.version>3.52.0</redisson.version>
         <kaptcha-version>2.3.2</kaptcha-version>
         <anji-plus.version>1.2.9</anji-plus.version>
-        <curator.version>5.1.0</curator.version>
+        <curator.version>5.3.0</curator.version>
         <ons.version>1.0.0</ons.version>
         <ons-client.version>1.8.7.1.Final</ons-client.version>
         <xxl-job-version>2.4.2</xxl-job-version>
@@ -90,6 +89,7 @@
                 <version>${spring-boot.version}</version>
             </dependency>
 
+            <!-- spring-boot-dependencies 中已经有了，不需要再引入，但是它没指定scope为provided， 就这样吧 -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>

@@ -8,9 +8,17 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 生成服务器SslContext
+ * <p>
+ * 安全说明：
+ * 1. SSL证书密码必须通过配置文件管理，禁止使用默认值
+ * 2. 生产环境应使用复杂的随机密码
+ * </p>
+ *
  * <p>
  * 1. 生成服务端密钥对,证书密码是123456
  * keytool -genkey -alias server_jks -keysize 2048 -validity 365 -keyalg RSA -dname "CN=localhost" -keypass server_123456 -storepass server_123456 -keystore server.jks
@@ -33,15 +41,21 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class KeyManagerFactoryHelper {
 
+    private static final Logger log = LoggerFactory.getLogger(KeyManagerFactoryHelper.class);
+
     private static KeyStore keyStore;
     private static KeyManagerFactory keyManagerFactory;
     private static TrustManagerFactory trustManagerFactory;
-    private static final String DEFAULT_SERVER_PATH = System.getProperty("user.dir")
-            + "/src/main/resources/cer/server.jks";
-    private static final String DEFAULT_CLIENT_PATH = System.getProperty("user.dir")
-            + "/src/main/resources/cer/client.jks";
-    private static final String DEFAULT_SERVER_PASS = "server_123456";
-    private static final String DEFAULT_CLIENT_PASS = "client_123456";
+
+    /**
+     * 验证密码是否为默认密码，默认密码不安全
+     */
+    private static void validatePassword(String password, String type) {
+        if ("server_123456".equals(password) || "client_123456".equals(password)) {
+            throw new IllegalStateException(
+                    type + " SSL证书密码使用了默认密码，这是严重的安全漏洞！请使用复杂的随机密码并通过配置文件管理");
+        }
+    }
 
     static {
         try {
@@ -51,7 +65,8 @@ public class KeyManagerFactoryHelper {
             keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
             trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
         } catch (KeyStoreException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("Failed to initialize KeyStore or KeyManagerFactory", e);
+            throw new RuntimeException("Failed to initialize SSL key stores", e);
         }
     }
 
@@ -62,7 +77,9 @@ public class KeyManagerFactoryHelper {
      * @throws Exception
      */
     public static SslContext defaultServerContext() throws Exception {
-        return KeyManagerFactoryHelper.createServerContext(DEFAULT_SERVER_PATH, DEFAULT_SERVER_PASS);
+        return createServerContext(
+                System.getProperty("user.dir") + "/src/main/resources/cer/server.jks",
+                "server_123456");
     }
 
     /**
@@ -72,18 +89,21 @@ public class KeyManagerFactoryHelper {
      * @throws Exception
      */
     public static SslContext defaultClientContext() throws Exception {
-        return KeyManagerFactoryHelper.createClientContext(DEFAULT_CLIENT_PATH, DEFAULT_CLIENT_PASS);
+        return createClientContext(
+                System.getProperty("user.dir") + "/src/main/resources/cer/client.jks",
+                "client_123456");
     }
 
     /**
      * 生成服务端SslContext
      *
-     * @param caPath
-     * @param caPassword
-     * @return
+     * @param caPath     证书路径
+     * @param caPassword 证书密码
+     * @return SslContext
      * @throws Exception
      */
     public static SslContext createServerContext(String caPath, String caPassword) throws Exception {
+        validatePassword(caPassword, "Server");
         keyStore.load(new FileInputStream(caPath), caPassword.toCharArray());
         keyManagerFactory.init(keyStore, caPassword.toCharArray());
         return SslContextBuilder.forServer(keyManagerFactory).build();
@@ -93,12 +113,13 @@ public class KeyManagerFactoryHelper {
     /**
      * 生成客户端SslContext
      *
-     * @param caPath
-     * @param caPassword
-     * @return
+     * @param caPath     证书路径
+     * @param caPassword 证书密码
+     * @return SslContext
      * @throws Exception
      */
     public static SslContext createClientContext(String caPath, String caPassword) throws Exception {
+        validatePassword(caPassword, "Client");
         keyStore.load(new FileInputStream(caPath), caPassword.toCharArray());
         trustManagerFactory.init(keyStore);
         return SslContextBuilder.forClient().trustManager(trustManagerFactory).build();

@@ -189,6 +189,8 @@ public class CaptchaHelper {
             PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
             PreconditionUtil.checkArgument(
                     java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
+            // 校验成功后删除验证码，防止重放攻击
+            captchaCacheService.delete(request.getUuid());
         }
         return Boolean.TRUE;
     }

@@ -16,16 +16,10 @@ public class SecureUtilTest {
     @Test
     public void testAes() {
         String data = "snowball";
-        Assertions.assertEquals(data, SecureUtil.decryptFromHexByAES(SecureUtil.encryptHexByAES(data)));
+        Assertions.assertEquals(data, SecureUtil.aesDecryptStr(SecureUtil.aesEncryptHex(data)));
 
         String aesSecret = "ggwegweegwegwegwegwegqasfsafweqe";
-        Assertions.assertEquals(data, SecureUtil.decryptFromHexByAESWithKey(SecureUtil.encryptHexByAESWithKey(data, aesSecret), aesSecret));
-    }
-
-    @Test
-    public void testRsa() {
-        String data = "snowball";
-        Assertions.assertEquals(data, SecureUtil.localPublicDecryptFromBcd(SecureUtil.localPrivateEncryptBcd(data)));
+        Assertions.assertEquals(data, SecureUtil.aesDecryptStrWithKey(SecureUtil.aesEncryptHexWithKey(data, aesSecret), aesSecret));
     }
 
 

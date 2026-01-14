@@ -44,7 +44,7 @@ public class TokenUtil {
     public static AuthenticateToken createToken(UserClaim userClaim) {
         final String originUserClaimStr = JsonUtil.asString(userClaim);
         final AuthenticateToken authenticateToken = AuthenticateToken.of(
-                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.encryptHexByAES(originUserClaimStr));
+                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
         if (Objects.nonNull(TOKEN_CACHE)) {
             TOKEN_CACHE.setToken(userClaim, authenticateToken);
         }
@@ -61,7 +61,7 @@ public class TokenUtil {
         UserClaim claim;
         try {
             final AuthenticateToken tokenObj = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtil.decryptFromHexByAES(tokenObj.getDetailsToken());
+            final String originDetailsToken = SecureUtil.aesDecryptStr(tokenObj.getDetailsToken());
             claim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             if (Objects.isNull(claim)) {
                 throw new UnauthorizedException(CoreExceptionCode.ILLEGAL_TOKEN);
@@ -81,7 +81,7 @@ public class TokenUtil {
     public static AuthenticateCheckResult checkToken(String token) {
         try {
             final AuthenticateToken authenticateToken = AuthenticateToken.fromToken(token);
-            final String originDetailsToken = SecureUtil.decryptFromHexByAES(authenticateToken.getDetailsToken());
+            final String originDetailsToken = SecureUtil.aesDecryptStr(authenticateToken.getDetailsToken());
             UserClaim userClaim = JsonUtil.toBean(originDetailsToken, UserClaim.class);
             String userId = userClaim.getUserId();
             if (Objects.nonNull(TOKEN_CACHE)) {

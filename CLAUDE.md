@@ -94,6 +94,7 @@ exception/      # 自定义异常
 - 异常抛出需抛出`com.ddf.boot.common.api.exception.BusinessException`
 - 错误码定义在枚举中，实现统一接口`com.ddf.boot.common.api.exception.BaseCallbackCode`
 - API 响应统一使用 `com.ddf.boot.common.api.model.common.response.ResponseData<T>` 包装
+- 使用lombok，替代setter/getter
 
 ### 配置属性类
 - 使用 `@ConfigurationProperties` 注解，prefix 命名规范

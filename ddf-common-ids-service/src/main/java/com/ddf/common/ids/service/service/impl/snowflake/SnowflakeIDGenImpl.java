@@ -10,7 +10,7 @@ import com.ddf.common.ids.service.service.IDGen;
 import com.ddf.common.ids.service.util.Utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,6 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long workerId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
-    private static final Random RANDOM = new Random();
     private IdsProperties idsProperties;
 
     public SnowflakeIDGenImpl(IdsProperties idsProperties) {
@@ -80,6 +79,7 @@ public class SnowflakeIDGenImpl implements IDGen {
                     }
                 } catch (InterruptedException e) {
                     LOGGER.error("wait interrupted");
+                    Thread.currentThread().interrupt();
                     throw new BusinessException(IdsErrorCodeEnum.INTERRUPTED_EXCEPTION);
                 }
             } else {
@@ -90,12 +90,12 @@ public class SnowflakeIDGenImpl implements IDGen {
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 //seq 为0的时候表示是下一毫秒时间开始对seq做随机
-                sequence = RANDOM.nextInt(100);
+                sequence = ThreadLocalRandom.current().nextInt(100);
                 timestamp = tilNextMillis(lastTimestamp);
             }
         } else {
             //如果是新的ms开始
-            sequence = RANDOM.nextInt(100);
+            sequence = ThreadLocalRandom.current().nextInt(100);
         }
         lastTimestamp = timestamp;
         long id = ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;

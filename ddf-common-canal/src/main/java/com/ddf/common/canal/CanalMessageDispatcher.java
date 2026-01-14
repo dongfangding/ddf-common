@@ -15,7 +15,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 /**
- * <p>canal消息业务转发</p >
+ * canal消息业务转发
+ * <p>
+ * 修复说明：
+ * 1. findHandler 方法使用传统 for 循环，确保找到第一个匹配后正确返回
+ * 2. 添加 executor 空指针检查
+ * </p>
  *
  * @author Snowball
  * @version 1.0
@@ -55,7 +60,7 @@ public class CanalMessageDispatcher {
         final List newData = getData(flatMessage.getData(), dataClazz);
         // 任务分发
         final ThreadPoolExecutor executor = handler.getExecutor();
-        if (executor == null) {
+        if (executor == null || executor.isShutdown() || executor.isTerminated()) {
             handler.handle(flatMessage, oldData, newData);
             return;
         }
@@ -65,6 +70,9 @@ public class CanalMessageDispatcher {
 
     /**
      * 根据消息内容找到对应的业务处理类
+     * <p>
+     * 注意：使用传统 for 循环而非 forEach，确保找到匹配后正确返回
+     * </p>
      *
      * @param flatMessage
      * @return
@@ -72,12 +80,14 @@ public class CanalMessageDispatcher {
     private CanalMessageHandler<?> findHandler(FlatMessage flatMessage) {
         final String tableName = flatMessage.getTable();
         if (!tableNameHandlerMapping.containsKey(tableName)) {
-            beanNameHandlerMapping.forEach((beanName, handlerInstance) -> {
+            // 使用传统 for 循环，确保找到匹配后正确返回
+            for (Map.Entry<String, CanalMessageHandler<?>> entry : beanNameHandlerMapping.entrySet()) {
+                CanalMessageHandler<?> handlerInstance = entry.getValue();
                 if (handlerInstance.match(tableName)) {
                     tableNameHandlerMapping.put(tableName, handlerInstance);
-                    return;
+                    return handlerInstance;
                 }
-            });
+            }
         }
         return tableNameHandlerMapping.get(tableName);
     }

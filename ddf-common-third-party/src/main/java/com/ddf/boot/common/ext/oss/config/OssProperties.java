@@ -111,8 +111,8 @@ public class OssProperties implements InitializingBean {
             if (this.isSecret()) {
                 // 在运行时解密存储
                 if (!isDecrypt) {
-                    this.setAccessKeyId(SecureUtil.decryptFromHexByAES(this.getAccessKeyId()));
-                    this.setAccessKeySecret(SecureUtil.decryptFromHexByAES(this.getAccessKeySecret()));
+                    this.setAccessKeyId(SecureUtil.aesDecryptStr(this.getAccessKeyId()));
+                    this.setAccessKeySecret(SecureUtil.aesDecryptStr(this.getAccessKeySecret()));
                     isDecrypt = true;
                 }
             }

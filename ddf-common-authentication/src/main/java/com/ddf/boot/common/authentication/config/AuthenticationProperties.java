@@ -62,9 +62,10 @@ public class AuthenticationProperties {
     private Integer expiredMinute;
 
     /**
-     * 加签秘钥
+     * 加签秘钥, 32位
+     * 注意：生产环境必须配置复杂的签名密钥，禁止使用默认值
      */
-    private String signSecret = "abcdefghijklmnopqrstuvw987654321";
+    private String signSecret;
 
     /**
      * 加签验证是否开启
