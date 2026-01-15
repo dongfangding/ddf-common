@@ -50,7 +50,7 @@ echo "--------------------------"
 # 再进行逻辑阻断判断
 if [ -n "$local_status" ]; then
     echo "❌ 拦截：当前分支有未提交的修改，请先 commit 或 stash，否则会污染目标分支。"
-#    exit 1
+    exit 1
 fi
 
 echo "开始合并：${fromBranch} -> ${targetBranch}"
