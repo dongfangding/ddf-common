@@ -1,15 +1,18 @@
 package com.ddf.boot.common.core.util;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * <p>description</p >
+ * SecureUtil 测试类
+ * 注意：此类需要 Spring Context 和 GlobalProperties 配置才能运行
  *
  * @author Snowball
  * @version 1.0
  * @date 2024/07/08 14:07
  */
+@Disabled("需要 Spring Context 和 GlobalProperties 配置")
 public class SecureUtilTest {
 
 
