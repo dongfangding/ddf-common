@@ -1,92 +1,42 @@
-# web application files
-#/web-app/WEB-INF
-# IDE support files
-/.classpath
-/.launch
-/.project
-/.settings
-/*.launch
-/*.tmproj
-/ivy*
-/eclipse
-# default HSQL database files for production mode
-/prodDb.*
-# general HSQL database files
-*Db.properties
-*Db.script
-# logs
-/stacktrace.log
-/test/reports
-/logs
-*.log
-# project release file
-/*.war
-# plugin release file
-/*.zip
-/*.zip.sha1
-# older plugin install locations
-/plugins
-/web-app/plugins
-/web-app/WEB-INF/classes
-# "temporary" build files
 target/
-out/
-#.gitignore for java
-*.class
-# Package Files #
-*.war
-*.ear
-## .gitignore for eclipse
-*.pydevproject
-.project
-.metadata
-#bin/**
-tmp/**
-tmp/**/*
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-# External tool builders
-.externalToolBuilders/
-# Locally stored "Eclipse launch configurations"
-*.launch
-# CDT-specific
-.cproject
-# PDT-specific
-.buildpath
-## .gitignore for intellij
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
 *.iml
 *.ipr
-*.iws
-.idea/
-## .gitignore for linux
-.*
-!.gitignore
-*~
-## .gitignore for windows
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-# Folder config file
-Desktop.ini
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-## .gitignore for mac os x
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
 .DS_Store
-.AppleDouble
-.LSOverride
-Icon
-# Thumbnails
-._*
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-*_copy.html
-*_copy.htm
-*_copy.html
-*.pdb
+
+
+### claude code /cursor ,避免层级过深，忽略一些团队的规范定义
+.claude/settings.local.json

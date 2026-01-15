@@ -1,58 +1,79 @@
+# ddf-common
 
+Spring Boot 3.3 多模块通用组件库，为 Java 后端开发提供可复用组件。
 
-[TOC]
+## 特性
 
-**通用功能，从boot2分支作为基础构建。
-主要是为了将一些与springboot版本无关的功能，都在这个分支开发。
-然后合并到boot2和boo3分支**
+- **开箱即用**: 引入依赖即可完成功能集成，无需繁琐配置
+- **模块化设计**: 按功能拆分模块，按需引入
+- **生产可用**: 代码贴近生产项目开发标准，可直接用于生产环境
 
-**持续开发中**
+## 技术栈
 
-**持续开发中**
+| 技术 | 版本 |
+|------|------|
+| Java | 17 |
+| Spring Boot | 3.3.13 |
+| Maven | 3.9.6+ |
 
-本项目结合了个人开发生涯中的经验，基于SpringBoot整合大部分常用开发功能，并尽量讲模块做成依赖包的方式， 基本都可以做到直接引入依赖，就完成实际项目开发的多种功能，代码中基本没有包含了各种demo的东西，而全部是直接贴近生产项目开发代码内容。当然至于实现方式的好坏，这个就是个人能力问题了。
+## 模块列表
 
-# 配合使用
-本项目只是一个通用包， 不能直接作为应用启动， 提供了另一个项目https://github.com/dongfangding/spring-boot-quick, 这个项目引入了通用包来演示使用方式
+| 模块 | 功能 |
+|------|------|
+| [ddf-common-dependency](./ddf-common-dependency/README.md) | 依赖版本统一管理 (BOM) |
+| [ddf-common-api](./ddf-common-api/README.md) | 通用 API 定义和枚举 |
+| [ddf-common-core](./ddf-common-core/README.md) | 核心功能（基础配置、工具类） |
+| [ddf-common-mvc](./ddf-common-mvc/README.md) | MVC 相关工具 |
+| [ddf-common-authentication](./ddf-common-authentication/README.md) | JWT 认证授权 |
+| [ddf-common-redis](./ddf-common-redis/README.md) | Redis 集成 (Redisson) |
+| [ddf-common-distributed-lock](./ddf-common-distributed-lock/README.md) | 分布式锁 (Redis/ZK) |
+| [ddf-common-limit](./ddf-common-limit/README.md) | 限流和防重复提交 |
+| [ddf-common-captcha](./ddf-common-captcha/README.md) | 验证码 (Google kaptcha + 安吉) |
+| [ddf-common-ids-service](./ddf-common-ids-service/README.md) | ID 生成 (雪花算法/号段模式) |
+| [ddf-common-rocketmq](./ddf-common-rocketmq/README.md) | RocketMQ 集成 |
+| [ddf-common-ons](./ddf-common-ons/README.md) | 阿里云 ONS |
+| [ddf-common-mqtt](./ddf-common-mqtt/README.md) | MQTT 协议支持 |
+| [ddf-common-mqtt-client](./ddf-common-mqtt-client/README.md) | MQTT 客户端 |
+| [ddf-common-canal](./ddf-common-canal/README.md) | Canal 数据库同步 |
+| [ddf-common-mongo](./ddf-common-mongo/README.md) | MongoDB 集成 |
+| [ddf-common-es](./ddf-common-es/README.md) | Elasticsearch 集成 |
+| [ddf-common-zookeeper](./ddf-common-zookeeper/README.md) | Zookeeper 服务发现 |
+| [ddf-common-websocket](./ddf-common-websocket/README.md) | WebSocket 支持 |
+| [ddf-common-netty-broker](./ddf-common-netty-broker/README.md) | Netty 自定义协议实现 |
+| [ddf-common-xxl-executor](./ddf-common-xxl-executor/README.md) | XXL-JOB 执行器 |
+| [ddf-common-log4j](./ddf-common-log4j/README.md) | Log4j2 配置 |
+| [ddf-common-sharding](./ddf-common-sharding/README.md) | ShardingSphere 集成 |
+| [ddf-common-alarm](./ddf-common-alarm/README.md) | 告警通知模块 |
+| [ddf-common-third-party](./ddf-common-third-party/README.md) | 第三方集成 (OSS, SMS) |
+| [ddf-common-vps](./ddf-common-vps/README.md) | VPS 工具（文件上传） |
+| [ddf-common-script](./ddf-common-script/README.md) | 工具脚本 |
 
-# 依赖问题
-1. Leaf和elastic对zookeeper和guava使用的版本都不一致， guava由于兼容性很烂， 在各自模块中使用了不同版本的guava。
-2. 至于zk框架curator由于elastic-job中使用的版本为5.1.0， 该版本不再支持3.4.x版本的z, 因此需要提高zk的安装版本
+## 快速开始
 
-# 模块
+### 添加依赖
 
-## 总览
+```xml
+<dependency>
+    <groupId>com.ddf.common</groupId>
+    <artifactId>ddf-common-core</artifactId>
+    <version>boot3.3-2025.1-SNAPSHOT</version>
+</dependency>
+```
 
-| 模块                           | 功能                                                                        |
-|------------------------------|---------------------------------------------------------------------------|
-| ddf-common-core              | 核心功能包, 包含web项目核心配置、通用数据对象封装、全局异常、线程池优雅关闭注册、跨域处理、全局访问日志                    |
-| ddf-common-captcha           | 整合谷歌kaptcha完成验证码的生成，支持验证码类型，普通字符、数学计算、滑动图片、点选文字                           |
-| ddf-common-distributed-lock  | 分布式锁模块， 同时支持zk分布式锁和基于redisson客户端的redis的分布式锁                               |
-| ddf-common-redis             | redis依赖、key规则生成工具、常用lua脚本整理、redisson集成                                    |
-| ddf-common-authentication    | 自实现的简单清晰的用户认证处理模块， 提供一整套认证token的生成、校验、刷新等机制。提供上下文登录用户获取、通用请求头获取、日志MDC数据预埋 |
-| ddf-common-limit             | 自实现基于redis的分布式限流模块，包含防表单重复提交和全局限流和接口限流                                    |
-| ddf-common-ids-service       | 基于leaf重新封装的常用id生成方案，提供单个/批量获取雪花id/自定义业务code功能                             |
-| ddf-common-mq                | 针对rabbitmq交换器绑定使用过于复杂封装的基于枚举定义自动初始化定义队列配置绑定和消费监听                          |
-| ddf-common-rocketmq          | rocketmq依赖和消息定义规则生成                                                       |
-| ddf-common-xxl-executor      | 基于xxl-job提供的执行器自动配置类                                                      |
-| ddf-common-mybatis-generator | 自用的基于mybatis-plus调试的代码生成器                                                 |
-| ddf-common-mybatis-plus      | mybatis-plus常用配置模块                                                        |
-| ddf-common-log4j             | 使用log4j2的方式， 但是依赖不能传递，没搞清楚原因                                              |
-| ddf-common-netty-broker      | 基于Netty实现的自定义协议实现，提供报文定义、编解码、加密传输、配置类；待实现，连接管理、集群转发                       |
-| ddf-common-websocket         | websocket快速集成模块，可引入后快速集成，提供一整套报文定义、发送、连接管理、加密传输、集群消息转发、异步阻塞消息接收等          |
-| ddf-common-mqtt              | 提供基于EMQ X 实现的mqtt协议的推送服务模块， 尚未完成                                          |
-| ddf-common-vps               | 提供自搭建FastDFS服务的文件上传、图片压缩功能                                                |
-| ddf-common-mongo             | mongo-db模块，如分页工具类、依赖等                                                     |
-| ddf-common-es                | 目前仅提供elasticsearch依赖管理                                                    |
-| ddf-common-zookeeper         | 基于zookeeper封装的一套基于服务上下线节点的自动化配置监听和回调                                      |
-| ddf-common-third-party       | 第三方集成， 如oss, sms                                                          |
-| ddf-common-security          | 未整理，目前属于废弃状态                                                              |
-| ddf-common-trace             | 基于dubbo环境下适配已存在应用的简单上下文追踪工具， 未整理成通用，做demo备用                               |
-| ddf-common-script            | 开发常用脚本收集                                                                  |
-| ddf-common-sentinel          | spring-boot集成sentinel自动配置类                                                |
-| ddf-common-jwt               | 不建议使用，原功能为快速集成jwt模块，提供了jwt通用生成参数类， 注解开启全局验证、白名单等功能，只需实现一个接口即可             |
-| ddf-common-swagger           | 不建议使用的东西，提供swagger的核心配置和依赖                                                |
+### 构建命令
 
-## ddf-common-core
-核心功能包模块，具体介绍[移步到具体模块](https://github.com/dongfangding/ddf-common/tree/dev/ddf-common-core)
+```bash
+# 构建所有模块
+mvn clean install -DskipTests
 
+# 构建指定模块
+mvn clean install -DskipTests -pl ddf-common-core -am
+```
+
+## 配合使用
+
+本项目为通用依赖库，不可直接运行。配套示例项目：[spring-boot-quick](https://github.com/dongfangding/spring-boot-quick)
+
+## License
+
+MIT
