@@ -26,8 +26,8 @@ import java.util.Set;
 public class FileRestore {
 
     public static void main(String[] args) {
-        String baseTargetDirectory = "D:/文件整理/整理";
-        computerReadAndMoveFileToMonth(new String[] {"D:/文件整理/小了多"}, baseTargetDirectory);
+        String baseTargetDirectory = "H:/整理/卧室";
+        packageMonitorVideo(new String[] {"H:/未整理/卧室"}, baseTargetDirectory);
     }
 
     /**
@@ -168,7 +168,7 @@ public class FileRestore {
                         Files.move(sourcePath, targetPath);
 
                         // 删除空源文件夹
-                        Files.delete(sourcePath);
+//                        Files.delete(sourcePath);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -8,6 +8,7 @@ import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
 import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
+import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
@@ -28,6 +29,7 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,10 +38,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * <p>mqtt client 配置类</p >
+ * MQTT Client 配置类
+ * </p>
  *
  * @author Snowball
  * @version 1.0
@@ -56,7 +62,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     /**
      * 创建Mqtt客户端
      *
-     * @return
+     * @return MqttClient
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
@@ -112,12 +118,10 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         return mqttClient;
     }
 
-
     private void setupMqttCallback(MqttClient mqttClient) {
         mqttClient.setCallback(new MqttCallback() {
             /**
              * 连接断开回调
-             *
              */
             @Override
             public void disconnected(MqttDisconnectResponse disconnectResponse) {
@@ -146,7 +150,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              */
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                // 消息是否可以在此持久化？
+                // 如果当前模块需要订阅消息， 则是实现这个方法，目前只作为发送客户端封装
             }
 
             /**
@@ -173,23 +177,82 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     }
 
     /**
-     * mqtt内部实现bean
+     * 构建 QoS 等级到线程池的映射，O(1) 时间复杂度获取，消除运行时查找开销
      *
-     * @param mqttClient
-     * @return
+     * @param qos0Executor QoS 0 线程池
+     * @param qos1Executor QoS 1 线程池
+     * @param qos2Executor QoS 2 线程池
+     * @return QoS 线程池映射
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
-    public MqttDefinition mqttDefinition(MqttClient mqttClient,
+    public Map<MqttQosEnum, ThreadPoolTaskExecutor> mqttQosExecutors(
+            @Qualifier("qos0Executors") ThreadPoolTaskExecutor qos0Executor,
+            @Qualifier("qos1Executors") ThreadPoolTaskExecutor qos1Executor,
+            @Qualifier("qos2Executors") ThreadPoolTaskExecutor qos2Executor) {
+        return Map.of(
+                MqttQosEnum.AT_MOST_ONCE, qos0Executor,
+                MqttQosEnum.AT_LAST_ONCE, qos1Executor,
+                MqttQosEnum.EXACTLY_ONCE, qos2Executor
+        );
+    }
+
+    /**
+     * MQTT 消息发送重试模板，指数退避策略
+     *
+     * @return RetryTemplate
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    public RetryTemplate mqttRetryTemplate() {
+        RetryTemplate retryTemplate = new RetryTemplate();
+
+        // 指数退避策略：初始间隔100ms，最大间隔5s，倍数2.0
+        ExponentialBackOffPolicy backOff = new ExponentialBackOffPolicy();
+        backOff.setInitialInterval(100);
+        backOff.setMaxInterval(5000);
+        backOff.setMultiplier(2.0);
+        retryTemplate.setBackOffPolicy(backOff);
+
+        // 最大重试3次
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        return retryTemplate;
+    }
+
+    /**
+     * MQTT 内部实现 bean
+     *
+     * @param mqttClient     MQTT 客户端
+     * @param listenerMap    发布监听器映射
+     * @param mqttProperties MQTT 配置属性
+     * @param qosExecutors   QoS 线程池映射
+     * @param retryTemplate  重试模板
+     * @return MQTT 定义接口实现
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    public MqttDefinition mqttDefinition(
+            MqttClient mqttClient,
             ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
-            EmqConnectionProperties emqConnectionProperties) {
-        return new DefaultMqttPublishImpl(mqttClient, listenerMap.getIfAvailable(), emqConnectionProperties);
+            EmqConnectionProperties mqttProperties,
+            Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
+            RetryTemplate retryTemplate) {
+        return new DefaultMqttPublishImpl(
+                mqttClient,
+                listenerMap.getIfAvailable(),
+                mqttProperties,
+                qosExecutors,
+                retryTemplate
+        );
     }
 
     /**
      * qos 0 消息发送线程池
      *
-     * @return
+     * @return ThreadPoolTaskExecutor
      */
     @Bean
     @ConditionalOnMissingBean(name = "qos0Executors")
@@ -200,7 +263,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     /**
      * qos 1 消息发送线程池
      *
-     * @return
+     * @return ThreadPoolTaskExecutor
      */
     @Bean
     @ConditionalOnMissingBean(name = "qos1Executors")
@@ -211,7 +274,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     /**
      * qos 2 消息发送线程池
      *
-     * @return
+     * @return ThreadPoolTaskExecutor
      */
     @Bean
     @ConditionalOnMissingBean(name = "qos2Executors")
@@ -220,10 +283,10 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     }
 
     /**
-     * 暴露给外部使用的封装好的发送消息的client
+     * 暴露给外部使用的封装好的发送消息的 client
      *
-     * @param mqttDefinition
-     * @return
+     * @param mqttDefinition MQTT 定义接口
+     * @return MQTT 发布客户端
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
@@ -233,10 +296,21 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
 
     @Override
     public void destroy() throws Exception {
-        // 关闭mqtt client
-        final MqttClient mqttClient = applicationContext.getBean(MqttClient.class);
-        if (mqttClient.isConnected()) {
-            mqttClient.disconnect();
+        // 修复 NPE 风险：使用 getBean 可能抛出异常，改用安全的方式获取
+        if (applicationContext == null) {
+            log.warn("ApplicationContext 为空，跳过 MQTT client 关闭");
+            return;
+        }
+        try {
+            final MqttClient mqttClient = applicationContext.getBean(MqttClient.class);
+            if (Objects.nonNull(mqttClient) && mqttClient.isConnected()) {
+                mqttClient.disconnect();
+                log.info("MQTT client 已成功断开连接");
+            }
+        } catch (BeansException e) {
+            log.warn("获取 MQTT client bean 失败，可能已被移除: {}", e.getMessage());
+        } catch (MqttException e) {
+            log.error("断开 MQTT 连接失败", e);
         }
     }
 
