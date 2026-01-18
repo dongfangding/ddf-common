@@ -191,8 +191,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             @Qualifier("qos1Executors") ThreadPoolTaskExecutor qos1Executor,
             @Qualifier("qos2Executors") ThreadPoolTaskExecutor qos2Executor) {
         return Map.of(
-                MqttQosEnum.AT_MOST_ONCE, qos0Executor,
-                MqttQosEnum.AT_LAST_ONCE, qos1Executor,
+                MqttQosEnum.AT_MOST_ONCE, qos0Executor, MqttQosEnum.AT_LAST_ONCE, qos1Executor,
                 MqttQosEnum.EXACTLY_ONCE, qos2Executor
         );
     }
@@ -225,27 +224,22 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     /**
      * MQTT 内部实现 bean
      *
-     * @param mqttClient     MQTT 客户端
-     * @param listenerMap    发布监听器映射
-     * @param mqttProperties MQTT 配置属性
-     * @param qosExecutors   QoS 线程池映射
-     * @param retryTemplate  重试模板
+     * @param mqttClient              MQTT 客户端
+     * @param listenerMap             发布监听器映射
+     * @param emqConnectionProperties MQTT 配置属性
+     * @param qosExecutors            QoS 线程池映射
+     * @param retryTemplate           重试模板
      * @return MQTT 定义接口实现
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
-    public MqttDefinition mqttDefinition(
-            MqttClient mqttClient,
+    public MqttDefinition mqttDefinition(MqttClient mqttClient,
             ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
-            EmqConnectionProperties mqttProperties,
-            Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
+            EmqConnectionProperties emqConnectionProperties, Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
             RetryTemplate retryTemplate) {
         return new DefaultMqttPublishImpl(
-                mqttClient,
-                listenerMap.getIfAvailable(),
-                mqttProperties,
-                qosExecutors,
-                retryTemplate
+                mqttClient, listenerMap.getIfAvailable(), emqConnectionProperties,
+                qosExecutors, retryTemplate
         );
     }
 

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
  */
 @ConfigurationProperties(prefix = "customizer.infra.mqtt.config")
 @Data
-@Component
 public class EmqConnectionProperties {
 
     /**

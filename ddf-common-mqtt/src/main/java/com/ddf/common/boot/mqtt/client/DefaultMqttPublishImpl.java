@@ -43,18 +43,18 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     private final MqttClient mqttClient;
     private final Map<String, MqttPublishListener> listenerMap;
-    private final EmqConnectionProperties mqttProperties;
+    private final EmqConnectionProperties emqConnectionProperties;
     private final RetryTemplate retryTemplate;
 
     public DefaultMqttPublishImpl(
             MqttClient mqttClient,
             Map<String, MqttPublishListener> listenerMap,
-            EmqConnectionProperties mqttProperties,
+            EmqConnectionProperties emqConnectionProperties,
             Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
             RetryTemplate retryTemplate) {
         this.mqttClient = mqttClient;
         this.listenerMap = listenerMap;
-        this.mqttProperties = mqttProperties;
+        this.emqConnectionProperties = emqConnectionProperties;
         this.qosExecutors = qosExecutors;
         this.retryTemplate = retryTemplate;
     }
