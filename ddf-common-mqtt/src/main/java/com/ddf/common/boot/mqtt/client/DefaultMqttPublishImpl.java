@@ -14,6 +14,9 @@ import com.ddf.common.boot.mqtt.model.support.MqttMessageControl;
 import com.ddf.common.boot.mqtt.model.support.MqttMessagePayload;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttActionListener;
+import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
@@ -41,18 +44,18 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
      */
     private final Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors;
 
-    private final MqttClient mqttClient;
+    private final MqttAsyncClient mqttAsyncClient;
     private final Map<String, MqttPublishListener> listenerMap;
     private final EmqConnectionProperties emqConnectionProperties;
     private final RetryTemplate retryTemplate;
 
     public DefaultMqttPublishImpl(
-            MqttClient mqttClient,
+            MqttAsyncClient mqttAsyncClient,
             Map<String, MqttPublishListener> listenerMap,
             EmqConnectionProperties emqConnectionProperties,
             Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
             RetryTemplate retryTemplate) {
-        this.mqttClient = mqttClient;
+        this.mqttAsyncClient = mqttAsyncClient;
         this.listenerMap = listenerMap;
         this.emqConnectionProperties = emqConnectionProperties;
         this.qosExecutors = qosExecutors;
@@ -72,7 +75,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         message.setQos(control.getQos().getQos());
         message.setRetained(control.getRetain());
         // 将请求对象转换为实际的mqtt message payload
-        final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttClient.getClientId());
+        final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttAsyncClient.getClientId());
         final byte[] bytes = MessagePackUtil.writeValueAsBytes(payload);
         message.setPayload(bytes);
         // 预留的发送前置处理监听
@@ -93,7 +96,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             executor.execute(() -> {
                 try {
                     retryTemplate.execute(ctx -> {
-                        mqttClient.publish(request.getTopic(), message);
+                        mqttAsyncClient.publish(request.getTopic(), message);
                         return null;
                     });
                 } catch (MqttException e) {
@@ -113,20 +116,34 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                                                            MqttMessagePayload payload,
                                                            MqttMessageResponse messageResponse) {
         try {
-            retryTemplate.execute(ctx -> {
-                mqttClient.publish(request.getTopic(), message);
-                return null;
+            final IMqttToken mqttToken = mqttAsyncClient.publish(request.getTopic(), message);
+            // mqttAsyncClient不会关心实际结果
+            mqttToken.setActionCallback(new MqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // 只有成功收到 PUBACK (QoS > 1) 才会进这里
+                    log.debug("消息发送成功: {}", request.getTopic());
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    log.error("消息发送失败: request = {}, {}", request, exception.getMessage());
+                }
             });
-        } catch (MqttException e) {
-            log.error("MQTT同步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), e);
-            return ResponseData.failure("mqtt_error", e.getMessage());
+        } catch (MqttException mqttException) {
+            int reasonCode = mqttException.getReasonCode();
+            // org.eclipse.paho.mqttv5.common.MqttException.getMessage
+            // 这个错误码，是发送的消息未确认的过多，就会报这个错，这种就不要重试了
+            if (reasonCode == 32202) {
+                log.error("MQTT缓冲区已满，放弃当前发送重试，topic={}", request.getTopic());
+                return ResponseData.failure("mqtt_congestion", "发送缓冲区已满");
+            }
+            log.error("MQTT同步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), mqttException);
+            return ResponseData.failure("mqtt_error", mqttException.getMessage());
         }
         // 预留的发送成功处理监听
-        if (CollUtil.isNotEmpty(listenerMap)) {
-            listenerMap.forEach((beanName, bean) -> {
-                bean.afterPublish(message, payload);
-            });
-        }
+        listenerMap.forEach((beanName, bean) -> {
+            bean.afterPublish(message, payload);
+        });
         return ResponseData.success(messageResponse);
     }
 }

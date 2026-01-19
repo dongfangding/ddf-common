@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
@@ -66,7 +67,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
-    public MqttClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
+    public MqttAsyncClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
         PreconditionUtil.checkArgument(
@@ -84,11 +85,11 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
                 Objects.nonNull(connectionConfig), MqttCallbackCode.MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR);
 
         final String url = connectionConfig.getUrl();
-        MqttClient mqttClient;
+        MqttAsyncClient mqttClient;
         try {
             // 发送消息质量大于0的消息时， 在broker未回执前，会存在内存中，new MemoryPersistence()，这样速度极快，但需要注意分配足够的内存。
             // 如果使用磁盘，性能会下降。
-            mqttClient = new MqttClient(url, emqConnectionProperties.getClientId(), new MemoryPersistence());
+            mqttClient = new MqttAsyncClient(url, emqConnectionProperties.getClientId(), new MemoryPersistence());
         } catch (MqttException e) {
             log.error("mqtt tcp 创建客户端失败， protocol = {}, url = {}", protocol, url, e);
             throw new BusinessException(MqttCallbackCode.MQTT_CONFIG_CREATE_CLIENT_ERROR);
@@ -107,6 +108,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 重连后，清除之前的会话信息。因为目前使用的内存new MemoryPersistence()来处理qos>0的消息回执状态， 不清楚的话，可能会内存爆掉。
         // 如果对消息质量要求比较高，同时启动磁盘来处理消息的话，这里可以改为false，这样即使重启也能继续处理之前的消息
         connOpts.setCleanStart(true);
+        // 设置最大在途消息数，压测时发现，如果qos质量大于1，每个client都必须等待broker ack， 达到一定数量，就会抛异常 org.eclipse.paho.mqttv5.common.MqttException: 正在进行过多的发布
+        // 同时还要调整emqx控制台的会话里的“最大飞行窗口”
+        connOpts.setReceiveMaximum(10000);
         connOpts.setAutomaticReconnect(true);
         // 设置回调要在 connect 之前，确保不会丢失首次连接成功的通知
         setupMqttCallback(mqttClient);
@@ -118,7 +122,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         return mqttClient;
     }
 
-    private void setupMqttCallback(MqttClient mqttClient) {
+    private void setupMqttCallback(MqttAsyncClient mqttClient) {
         mqttClient.setCallback(new MqttCallback() {
             /**
              * 连接断开回调
@@ -224,7 +228,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     /**
      * MQTT 内部实现 bean
      *
-     * @param mqttClient              MQTT 客户端
+     * @param mqttAsyncClient              MQTT 客户端
      * @param listenerMap             发布监听器映射
      * @param emqConnectionProperties MQTT 配置属性
      * @param qosExecutors            QoS 线程池映射
@@ -233,12 +237,12 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      */
     @Bean
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
-    public MqttDefinition mqttDefinition(MqttClient mqttClient,
+    public MqttDefinition mqttDefinition(MqttAsyncClient mqttAsyncClient,
             ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
             EmqConnectionProperties emqConnectionProperties, Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
             RetryTemplate retryTemplate) {
         return new DefaultMqttPublishImpl(
-                mqttClient, listenerMap.getIfAvailable(), emqConnectionProperties,
+                mqttAsyncClient, listenerMap.getIfAvailable(), emqConnectionProperties,
                 qosExecutors, retryTemplate
         );
     }
