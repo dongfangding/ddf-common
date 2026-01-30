@@ -5,20 +5,19 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>boot3.3-2025.1-SNAPSHOT</version>
+        <version>boot3.5-2025.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-log4j</artifactId>
-    <version>boot3.3-2025.1-SNAPSHOT</version>
+    <version>boot3.5-2025.1-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
-    <!-- 搞不懂在这里依赖的包括使用的明明是2.17.1，但是其它模块依赖这个模块后，log4j的版本又被回退到2.13.3了，然后
-     在项目中直接把这块的依赖拷贝过去就没有问题-->
+    <!-- 搞不懂在这里依赖的包括使用的明明是3.17.1，但是其它模块依赖这个模块后，log4j的版本又被回退到3.13.3了，然后在项目中直接把这块的依赖拷贝过去就没有问题 -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,3 +105,4 @@
     </dependencies>
 
 </project>
+

@@ -5,12 +5,12 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>com.ddf.common</groupId>
-        <version>boot3.3-2025.1-SNAPSHOT</version>
+        <version>boot3.5-2025.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-xxl-executor</artifactId>
-    <version>boot3.3-2025.1-SNAPSHOT</version>
+    <version>boot3.5-2025.1-SNAPSHOT</version>
     <description>xxl-job的执行器模块， 每个项目引入该模块作为一个执行器，执行自己执行器内的代码； 如果是分布式项目中， 也可将该模块独立成一个服务， 然后通过内部接口调用其他服务的接口
     </description>
 
@@ -40,3 +40,4 @@
     </dependencies>
 
 </project>
+

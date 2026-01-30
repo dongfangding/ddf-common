@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.ddf.common</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>boot3.3-2025.1-SNAPSHOT</version>
+        <version>boot3.5-2025.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-core</artifactId>
-    <version>boot3.3-2025.1-SNAPSHOT</version>
+    <version>boot3.5-2025.1-SNAPSHOT</version>
     <description>基础包</description>
 
     <properties>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.ddf.common</groupId>
             <artifactId>ddf-common-api</artifactId>
-            <version>boot3.3-2025.1-SNAPSHOT</version>
+            <version>boot3.5-2025.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -130,7 +130,7 @@
             <artifactId>httpcore5</artifactId>
         </dependency>
 
-        <!-- java promise库 -->
+        <!-- java promise库-->
         <dependency>
             <groupId>org.jdeferred.v2</groupId>
             <artifactId>jdeferred-core</artifactId>
@@ -154,3 +154,4 @@
 
 
 </project>
+
