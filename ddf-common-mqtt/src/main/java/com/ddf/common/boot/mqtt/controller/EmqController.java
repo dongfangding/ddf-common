@@ -20,6 +20,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
@@ -45,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmqController {
 
     private final EmqConnectionProperties emqConnectionProperties;
-    private final MqttClient mqttClient;
+    private final MqttAsyncClient mqttAsyncClient;
     private final MqttPublishClient mqttPublishClient;
 
     @Autowired(required = false)
@@ -62,7 +63,7 @@ public class EmqController {
     public ResponseData<String> send(String message) throws MqttException {
         final MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
-        mqttClient.publish("test", mqttMessage);
+        mqttAsyncClient.publish("test", mqttMessage);
         return ResponseData.success("true");
     }
 
