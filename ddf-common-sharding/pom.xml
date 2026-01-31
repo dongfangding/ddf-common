@@ -16,54 +16,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <sharding-jdbc.version>5.2.1</sharding-jdbc.version>
+        <sharding-jdbc.version>5.4.0</sharding-jdbc.version>
     </properties>
 
     <dependencies>
-        <!-- 没看懂这个starter为什么引了那么多依赖，甚至还有elastic-job的 -->
+        <!-- ShardingSphere 5.4.0 Spring Boot 3.x 适配依赖 -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-sharding-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-shadow-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-db-discovery-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-encrypt-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-readwrite-splitting-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-spring-boot-starter-infra</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-transaction-spring</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-parser-spring-boot-starter</artifactId>
-            <version>${sharding-jdbc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-sql-translator-spring-boot-starter</artifactId>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${sharding-jdbc.version}</version>
         </dependency>
 

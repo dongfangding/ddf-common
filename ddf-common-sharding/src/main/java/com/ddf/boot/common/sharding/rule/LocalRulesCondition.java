@@ -17,23 +17,63 @@
 
 package com.ddf.boot.common.sharding.rule;
 
-import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertySource;
 
 /**
- * Local rules condition.
+ * Local rules condition for ShardingSphere.
+ *
+ * <p>Checks if ShardingSphere rule configuration exists in local file
+ * (application.yml/properties) by looking for the prefix "spring.shardingsphere.rules".</p>
  */
 public final class LocalRulesCondition extends SpringBootCondition {
-    
+
     private static final String SHARDING_PREFIX = "spring.shardingsphere.rules";
-    
+
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext conditionContext, final AnnotatedTypeMetadata annotatedTypeMetadata) {
-        return PropertyUtil.containPropertyPrefix(conditionContext.getEnvironment(), SHARDING_PREFIX)
-                ? ConditionOutcome.match()
-                : ConditionOutcome.noMatch("Can't find ShardingSphere rule configuration in local file.");
+        ConfigurableEnvironment environment = (ConfigurableEnvironment) conditionContext.getEnvironment();
+        // 检查是否包含 ShardingSphere 规则配置前缀
+        if (containsPropertyPrefix(environment, SHARDING_PREFIX)) {
+            return ConditionOutcome.match();
+        }
+        // 检查是否包含规则配置文件引用
+        String datasourceUrl = environment.getProperty("spring.datasource.url");
+        if (datasourceUrl != null && datasourceUrl.contains("sharding")) {
+            return ConditionOutcome.match();
+        }
+        return ConditionOutcome.noMatch("Can't find ShardingSphere rule configuration in local file.");
+    }
+
+    /**
+     * Check if environment contains property with given prefix.
+     *
+     * @param environment Spring Environment
+     * @param prefix      property prefix
+     * @return true if any property starts with the prefix
+     */
+    private boolean containsPropertyPrefix(final ConfigurableEnvironment environment, final String prefix) {
+        for (PropertySource<?> propertySource : environment.getPropertySources()) {
+            Object source = propertySource.getSource();
+            if (source instanceof java.util.Map) {
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> map = (java.util.Map<String, Object>) source;
+                for (String key : map.keySet()) {
+                    if (key.startsWith(prefix)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        // Fallback: check system properties and environment variables
+        String shardingRules = environment.getProperty(SHARDING_PREFIX);
+        if (shardingRules != null) {
+            return true;
+        }
+        return false;
     }
 }
