@@ -1,0 +1,192 @@
+# ShardingSphere 5.4.0 + Spring Boot 3.5 配置示例
+#
+# 使用方式：
+# 1. 在 application.yml 中引入此配置：
+#    spring:
+#      datasource:
+#        url: jdbc:shardingsphere:classpath:example-sharding.yaml
+#        driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+#
+# 2. 或直接在 application.yml 中使用以下配置属性
+
+#############################################################################
+# 模式配置 (可选 - 使用本地配置时不需要)
+#############################################################################
+#mode:
+#  type: Standalone
+#  repository:
+#    type: File
+#    props:
+#      path: ./sharding
+#      algorithm: JSON
+#  overwrite: true
+
+#############################################################################
+# 数据源配置
+#############################################################################
+dataSources:
+  # 主库数据源
+  ds_master:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/db_master?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+
+  # 从库数据源
+  ds_slave_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/db_slave_0?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+
+  ds_slave_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/db_slave_1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+
+#############################################################################
+# 分片规则配置
+#############################################################################
+rules:
+  # 读写分离规则
+  readwrite-splitting:
+    dataSourceGroups:
+      # 主库组
+      ds_master:
+        writeDataSourceName: ds_master
+        readDataSourceNames:
+          - ds_slave_0
+          - ds_slave_1
+        # 负载均衡策略
+        loadBalancerName: round_robin
+    loadBalancers:
+      # 轮询负载均衡
+      round_robin:
+        type: ROUND_ROBIN
+        props:
+          # 从库是否启用读负载均衡
+          readBalanceEnable: false
+      # 随机负载均衡
+      random:
+        type: RANDOM
+      # 权重负载均衡
+      weight:
+        type: WEIGHT
+        props:
+          ds_slave_0: 1
+          ds_slave_1: 2
+
+  # 分表规则 (示例)
+  sharding:
+    # 表配置
+    tables:
+      # 订单表 - 按用户ID分片
+      t_order:
+        # 真实数据节点
+        actualDataNodes: ds_master.t_order_${0..15}
+        # 分片策略
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: t_order_table_algorithm
+        # 自增主键策略
+        keyGenerateStrategy:
+          type: SNOWFLAKE
+          column: id
+          keyGeneratorName: snowflake
+
+      # 订单详情表 - 按订单ID分片
+      t_order_item:
+        actualDataNodes: ds_master.t_order_item_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: t_order_item_table_algorithm
+        keyGenerateStrategy:
+          type: SNOWFLAKE
+          column: id
+          keyGeneratorName: snowflake
+
+    # 分片算法配置
+    shardingAlgorithms:
+      # 订单表分片算法 - 取模
+      t_order_table_algorithm:
+        type: MOD
+        props:
+          sharding-count: 16
+
+      # 订单详情表分片算法 - 范围
+      t_order_item_table_algorithm:
+        type: RANGE
+        props:
+          range-lower-bound: 0
+          range-upper-bound: 1000000
+
+    # 分布式序列配置
+    keyGenerators:
+      snowflake:
+        type: SNOWFLAKE
+        props:
+          # 工作机器ID
+          worker-id: 1
+          # 序列最大值
+          max-timestamps: 4194304
+
+  # 加密规则 (示例)
+  encrypt:
+    # 加密表配置
+    tables:
+      t_user:
+        columns:
+          # 密码列 - 加密存储
+          password:
+            cipher:
+              type: AES
+              props:
+                aes-key-value: ddf-common-sharding-key-12345678
+            # 查询时是否加密列（用于模糊查询）
+            assistedQuery:
+              type: AES
+              props:
+                aes-key-value: ddf-common-sharding-key-12345678
+          # 手机号 - 脱敏
+          phone:
+            cipher:
+              type: MASK
+              props:
+                mask-char: '*'
+                # 显示前3位和后4位
+                preserve-first-n: 3
+                preserve-last-n: 4
+    # 加密算法配置
+    encryptors:
+      aes:
+        type: AES
+        props:
+          aes-key-value: ddf-common-sharding-key-12345678
+      mask:
+        type: MASK
+        props:
+          mask-char: '*'
+          preserve-first-n: 3
+          preserve-last-n: 4
+
+#############################################################################
+# 扩展属性配置
+#############################################################################
+props:
+  # SQL 是否显示
+  sql-show: true
+
+  # 最大连接数
+  max-connections-size-per-query: 1
+
+  # 是否开启广播表检测
+  check-table-metadata-enabled: false
+
+  # 代理前端使用
+  proxy-frontend-database-protocol-type: MySQL

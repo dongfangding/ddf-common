@@ -23,8 +23,6 @@
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.42</hutool.version>
         <mysql.version>9.1.0</mysql.version>
-        <guava.version>33.4.0-jre</guava.version>
-        <druid.version>1.2.24</druid.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
         <jakarta-validation.version>3.0.2</jakarta-validation.version>
@@ -37,11 +35,17 @@
         <curator.version>5.3.0</curator.version>
         <ons.version>1.0.0</ons.version>
         <ons-client.version>1.8.7.1.Final</ons-client.version>
-        <xxl-job-version>2.4.2</xxl-job-version>
+        <xxl-job-version>3.3.0</xxl-job-version>
         <disruptor.version>3.4.4</disruptor.version>
-        <fastjson2.version>2.0.53</fastjson2.version>
+        <!-- 和Spring Cloud Alibaba的BOM保持一致开始 -->
+        <fastjson2.version>2.0.58</fastjson2.version>
+        <druid.version>1.2.27</druid.version>
+        <guava.version>33.4.8-jre</guava.version>
+        <!-- 和Spring Cloud Alibaba的BOM保持一致结束 -->
         <msgpack.version>0.9.3</msgpack.version>
         <commons-io.version>2.18.0</commons-io.version>
+        <!-- 这个要看这个模块里引入的rocketmq-client版本是否和SCA里一致即可 -->
+        <rocketmq.version>2.3.3</rocketmq.version>
         <!-- 加依赖前，先去spring-boot-dependencies查看是否有，有则直接使用，不要自己指定版本再引入了 -->
     </properties>
 
@@ -346,6 +350,12 @@
                 <artifactId>jackson-dataformat-msgpack</artifactId>
                 <version>${msgpack.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
