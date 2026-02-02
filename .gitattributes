@@ -1,0 +1,26 @@
+# -----------------------------------------------------------
+# 全局设置：默认所有文本文件在检出时都强制转换为 LF
+# -----------------------------------------------------------
+* text=auto eol=lf
+
+# --- 源码与配置文件 ---
+*.java text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.env text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+
+# --- 二进制文件 (显式禁止换行符转换) ---
+# 必须标记为 binary，防止 Git 尝试“修复”它们的换行符
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.war binary
+*.zip binary
+*.pdf binary
