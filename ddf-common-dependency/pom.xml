@@ -46,6 +46,7 @@
         <commons-io.version>2.18.0</commons-io.version>
         <!-- 这个要看这个模块里引入的rocketmq-client版本是否和SCA里一致即可 -->
         <rocketmq.version>2.3.3</rocketmq.version>
+        <minio.version>8.5.7</minio.version>
         <!-- 加依赖前，先去spring-boot-dependencies查看是否有，有则直接使用，不要自己指定版本再引入了 -->
     </properties>
 
@@ -354,6 +355,12 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
 
         </dependencies>

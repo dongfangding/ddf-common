@@ -1,0 +1,118 @@
+# MinIO 单机生产环境部署
+# 使用说明：
+# 1. 创建目录: mkdir -p /data/minio/{data,config,logs}
+# 2. 修改下方配置（ROOT_USER、ROOT_PASSWORD、控制台端口）
+# 3. 启动: docker-compose up -d
+# 4. 控制台访问: http://localhost:9001 (用户名: admin, 密码: your_password)
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2024-11-07T00-52-32Z
+    container_name: minio
+    hostname: minio-server
+
+    # 端口映射: API 9000, 控制台 9001
+    ports:
+      - "9000:9000"   # API 端口
+      - "9001:9001"   # 控制台端口
+
+    # 环境变量
+    environment:
+      # root 用户名（建议修改）
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      # root 密码（建议使用强密码，至少16位）
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # 区域配置
+      MINIO_REGION: cn-bj1
+      # 控制台静态文件路径
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+      # 禁用临时凭证（生产环境建议禁用）
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+      # 节点名称（单机使用 local）
+      MINIO_NODE_NAME: local
+
+    # 命令行参数
+    command: server
+      --address :9000
+      --console-address :9001
+      --config-dir /config
+      /data
+
+    # 数据卷挂载
+    volumes:
+      # 数据目录（必须挂载）
+      - minio_data:/data
+      # 配置目录（必须挂载，用于存储 erasure coding 配置）
+      - minio_config:/config
+      # 日志目录（可选）
+      - minio_logs:/var/log/minio
+
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 60s
+
+    # 资源限制（生产环境建议配置）
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 512M
+        reservations:
+          cpus: '1'
+          memory: 256M
+
+    # 重启策略
+    restart: unless-stopped
+
+    # 网络配置
+    networks:
+      - middleware-network
+
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+    # ulimits 配置（生产环境建议）
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      nproc:
+        soft: 65536
+        hard: 65536
+
+    # 停止优雅等待时间
+    stop_grace_period: 60s
+
+# 数据卷定义
+volumes:
+  minio_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/minio/data  # 修改为实际数据目录路径
+  minio_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/minio/config  # 修改为实际配置目录路径
+  minio_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/minio/logs  # 修改为实际日志目录路径
+
+# 网络定义
+networks:
+  middleware-network:
+    external: true  # 使用已创建的外部网络

@@ -66,6 +66,7 @@
         <module>ddf-common-mqtt</module>
         <module>ddf-common-mqtt-client</module>
         <module>ddf-common-canal</module>
+        <module>ddf-common-s3</module>
     </modules>
 
 
