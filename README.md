@@ -54,7 +54,7 @@ Spring Boot 3.3 多模块通用组件库，为 Java 后端开发提供可复用�
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-core</artifactId>
     <version>boot3.3-2025.1-SNAPSHOT</version>
 </dependency>

@@ -6,7 +6,7 @@ S3 兼容存储通用模块，支持 MinIO、AWS S3、阿里云 OSS、腾讯云 
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-s3</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

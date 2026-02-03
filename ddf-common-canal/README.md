@@ -12,7 +12,7 @@ Canal 数据库变更订阅模块，用于监听 MySQL binlog 实现数据同步
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-canal</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

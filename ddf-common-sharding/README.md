@@ -22,7 +22,7 @@ ShardingSphere 集成模块，提供数据库分片、读写分离、分布式�
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-sharding</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

@@ -13,7 +13,7 @@ Redis 集成模块，基于 Redisson 提供丰富的 Redis 操作。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-redis</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

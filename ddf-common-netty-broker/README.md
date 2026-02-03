@@ -12,7 +12,7 @@ Netty 自定义协议模块，提供基于 Netty 的协议实现。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-netty-broker</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

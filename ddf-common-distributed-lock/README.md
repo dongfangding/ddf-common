@@ -13,7 +13,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-distributed-lock</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

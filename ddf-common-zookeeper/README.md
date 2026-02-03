@@ -12,7 +12,7 @@ Zookeeper 服务发现和配置管理模块。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-zookeeper</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

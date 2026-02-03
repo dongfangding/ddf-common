@@ -12,7 +12,7 @@ MongoDB 集成模块，提供 MongoDB 操作封装。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-mongo</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

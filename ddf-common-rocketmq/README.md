@@ -13,7 +13,7 @@ RocketMQ 消息队列模块。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-rocketmq</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

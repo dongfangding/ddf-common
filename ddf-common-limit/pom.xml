@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ddf-common</artifactId>
-        <groupId>com.ddf.common</groupId>
+        <groupId>io.github.dongfangding</groupId>
         <version>boot3.5-2025.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -19,21 +19,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-mvc</artifactId>
             <version>boot3.5-2025.1-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-authentication</artifactId>
             <version>boot3.5-2025.1-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-redis</artifactId>
             <version>boot3.5-2025.1-SNAPSHOT</version>
         </dependency>

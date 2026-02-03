@@ -12,7 +12,7 @@ MQTT 客户端模块，提供 MQTT 协议客户端功能。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-mqtt-client</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

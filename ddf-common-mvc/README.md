@@ -12,7 +12,7 @@ MVC 相关工具模块，提供 Web 开发常用工具。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-mvc</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

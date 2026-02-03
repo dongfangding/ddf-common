@@ -12,7 +12,7 @@ VPS 工具模块，提供文件上传和图片处理功能。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-vps</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

@@ -13,7 +13,7 @@ WebSocket 模块，提供实时通信功能。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-websocket</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

@@ -12,7 +12,7 @@ MQTT 协议模块，提供 MQTT 服务端功能。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-mqtt</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

@@ -12,7 +12,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-ons</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

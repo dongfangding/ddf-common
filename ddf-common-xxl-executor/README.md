@@ -12,7 +12,7 @@ XXL-JOB 执行器模块，提供定时任务执行功能。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-xxl-executor</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

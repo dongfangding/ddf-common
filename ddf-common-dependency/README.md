@@ -16,7 +16,7 @@
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-dependency</artifactId>
             <version>${ddf-common.version}</version>
             <type>pom</type>
@@ -31,7 +31,7 @@
 ```xml
 <dependencies>
     <dependency>
-        <groupId>com.ddf.common</groupId>
+        <groupId>io.github.dongfangding</groupId>
         <artifactId>ddf-common-core</artifactId>
     </dependency>
     <!-- 无需指定版本，版本由 BOM 统一管理 -->

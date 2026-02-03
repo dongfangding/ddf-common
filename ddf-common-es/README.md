@@ -12,7 +12,7 @@ Elasticsearch 集成模块，提供 ES 客户端和操作封装。
 
 ```xml
 <dependency>
-    <groupId>com.ddf.common</groupId>
+    <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-es</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>

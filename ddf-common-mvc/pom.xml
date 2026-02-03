@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.ddf.common</groupId>
+        <groupId>io.github.dongfangding</groupId>
         <artifactId>ddf-common</artifactId>
         <version>boot3.5-2025.1-SNAPSHOT</version>
     </parent>
@@ -20,7 +20,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.ddf.common</groupId>
+            <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-core</artifactId>
             <version>boot3.5-2025.1-SNAPSHOT</version>
         </dependency>
