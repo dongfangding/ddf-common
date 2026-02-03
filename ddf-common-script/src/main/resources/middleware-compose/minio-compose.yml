@@ -7,7 +7,7 @@
 
 networks:
   middleware-network:
-    external: true  # 使用已创建的外部网络
+    external: true # 使用已创建的外部网络
 
 services:
   minio:
