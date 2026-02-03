@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *    enabledIsolation: true
  *    # 隔离环境名称，拼接到topic后，topic_dev，默认空字符串
  *    environment: dev
- * @author snowball
+ * @author YiMing
  * @date 2023/10/09
  */
 @Data

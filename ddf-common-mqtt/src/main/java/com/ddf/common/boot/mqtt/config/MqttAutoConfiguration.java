@@ -66,7 +66,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return MqttClient
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public MqttAsyncClient mqttClient(EmqConnectionProperties emqConnectionProperties, EnvironmentHelper environmentHelper) {
         // 获取客户端配置
         final EmqConnectionProperties.ClientConfig clientConfig = emqConnectionProperties.getClient();
@@ -189,7 +189,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return QoS 线程池映射
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public Map<MqttQosEnum, ThreadPoolTaskExecutor> mqttQosExecutors(
             @Qualifier("qos0Executors") ThreadPoolTaskExecutor qos0Executor,
             @Qualifier("qos1Executors") ThreadPoolTaskExecutor qos1Executor,
@@ -206,7 +206,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return RetryTemplate
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public RetryTemplate mqttRetryTemplate() {
         RetryTemplate retryTemplate = new RetryTemplate();
 
@@ -236,7 +236,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return MQTT 定义接口实现
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public MqttDefinition mqttDefinition(MqttAsyncClient mqttAsyncClient,
             ObjectProvider<Map<String, MqttPublishListener>> listenerMap,
             EmqConnectionProperties emqConnectionProperties, Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
@@ -287,7 +287,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
      * @return MQTT 发布客户端
      */
     @Bean
-    @ConditionalOnProperty(prefix = "customizer.infra.mqtt.config", value = "enable", havingValue = "true")
+    @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public MqttPublishClient mqttPublishClient(MqttDefinition mqttDefinition) {
         return new MqttPublishClient(mqttDefinition);
     }
