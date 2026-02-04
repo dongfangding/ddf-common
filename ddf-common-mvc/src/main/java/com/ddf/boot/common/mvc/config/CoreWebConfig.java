@@ -24,6 +24,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -144,23 +147,23 @@ public class CoreWebConfig implements WebMvcConfigurer {
      *
      * @return
      */
-    //    @Bean
-    //    public CorsFilter corsRegistration() {
-    //        CorsConfiguration config = new CorsConfiguration();
-    //        // Possibly...
-    //        // config.applyPermitDefaultValues()
-    //        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
-    //        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
-    //        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
-    //        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
-    //        config.setAllowCredentials(false);
-    //        config.addAllowedOrigin("*");
-    //        config.addAllowedHeader("*");
-    //        config.addAllowedMethod("*");
-    //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    //        source.registerCorsConfiguration("/**", config);
-    //        return new CorsFilter(source);
-    //    }
+    @Bean
+    public CorsFilter corsRegistration() {
+        CorsConfiguration config = new CorsConfiguration();
+        // Possibly...
+        // config.applyPermitDefaultValues()
+        // 注意方法org.springframework.web.cors.CorsConfiguration#checkOrigin
+        // 这里设置为true, 在当前版本5.2.13上面那个方法中如果配置的跨域主机为*，会从当前请求中获取Origin。是没有问题的。
+        // 但是在5.3.16（具体在前面有没有不确定，只是用过这个版本碰到过）。代码被改了， 加了个校验的方法，如果设置了allowCredentials=true，
+        // 同时跨域主机为*的话，会强制报错。。。需要用allowedOriginPatterns替代
+        config.setAllowCredentials(false);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
     /**
      * 配置静态资源映射路径

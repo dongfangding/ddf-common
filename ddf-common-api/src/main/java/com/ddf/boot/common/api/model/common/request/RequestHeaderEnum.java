@@ -19,7 +19,6 @@ public enum RequestHeaderEnum {
      */
     SIGN("sign", true, true, ""),
 
-
     /**
      * 版本号（内部）
      * 之后做版本控制使用
@@ -52,7 +51,7 @@ public enum RequestHeaderEnum {
     /**
      * APP设置的语言
      */
-    APP_LANGUAGE("app_language", true, true, ""),
+    APP_LANGUAGE("app_language", false, true, ""),
 
     /**
      * 系统当前语言
@@ -62,12 +61,12 @@ public enum RequestHeaderEnum {
     /**
      * 是否使用了代理
      */
-    USE_PROXY("use_proxy", true, true, "false"),
+    USE_PROXY("use_proxy", false, true, "false"),
 
     /**
      * 是否使用VPN
      */
-    USE_VPN("use_vpn", true, true, "false"),
+    USE_VPN("use_vpn", false, true, "false"),
 
     /**
      * 时区
