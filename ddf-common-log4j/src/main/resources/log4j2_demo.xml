@@ -2,13 +2,22 @@
 <!-- Log4j 2.x 配置文件 -->
 <Configuration status="warn" strict="true">
     <Properties>
-        <Property name="application_name">river</Property>
+        <Property name="application_name">game</Property>
         <Property name="LOG_BASE_DIR">/data/logs/${application_name}</Property>
-        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}} %clr{[%t]} %clr{%-5p} %clr{%c(%L)} %clr{%m%n}</Property>
-        <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] %-5p [%X{client_ip}#%X{imei}#%X{user_id}#%X{trace_id}] %c{1.} - %msg%n </Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}} %clr{[%t]} %clr{%-5p} %clr{[%X{user_id}#%X{trace_id}]} %clr{%c(%L)} %clr{%m%n}
+        </Property>
+        <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] %-5p [%X{user_id}#%X{trace_id}] %c{1.} - %msg%n</Property>
     </Properties>
 
     <Appenders>
+        <ErrorInterceptor name="ErrorInterceptor">
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}" />
+        </ErrorInterceptor>
+
+        <Async name="AsyncError" includeLocation="false" shutdownTimeout="10000" blocking="false">
+            <AppenderRef ref="ErrorInterceptor" />
+        </Async>
+
         <!-- 输出到控制台 -->
         <Console name="CONSOLE" target="SYSTEM_OUT">
             <!-- 需要记录的格式 -->
@@ -56,21 +65,6 @@
             <!-- 最大保留文件数量 -->
             <DefaultRolloverStrategy max="30"/>
         </RollingRandomAccessFile>
-
-        <!-- 用户一些告警相关的日志，在日志中进行埋点，单独记录，方便追溯 -->
-        <RollingRandomAccessFile name="ALARM_FILE" fileName="${LOG_BASE_DIR}/${application_name}-alarm.log"
-                                 filePattern="${LOG_BASE_DIR}/${application_name}-alarm-%d{yyyy-MM-dd}.log">
-            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <!-- 需要记录的格式 -->
-            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
-            <Policies>
-                <!-- 时间滚动策略，interval的单位跟随filePattern后面最后的时间单位来 -->
-                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
-            </Policies>
-            <!-- 最大保留文件数量 -->
-            <DefaultRolloverStrategy max="30"/>
-        </RollingRandomAccessFile>
     </Appenders>
 
     <Loggers>
@@ -80,9 +74,8 @@
             <AppenderRef ref="INFO_FILE"/>
             <AppenderRef ref="WARN_FILE"/>
             <AppenderRef ref="ERROR_FILE"/>
+            <AppenderRef ref="AsyncError"/>
         </asyncRoot>
-        <asyncLogger name="ALARM_FILE" level="INFO" additivity="false" includeLocation="true" >
-            <AppenderRef ref="ALARM_FILE"/>
-        </asyncLogger>
     </Loggers>
+
 </Configuration>

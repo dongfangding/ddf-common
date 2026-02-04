@@ -65,3 +65,17 @@ ERROR文件日志内容
 # Don't forget to set system property to make all loggers asynchronous.
 -Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
 ```
+
+### 自定义日志拦截
+
+```xml
+    <ErrorInterceptor name="ErrorInterceptor">
+        <PatternLayout pattern="${sys:FILE_LOG_PATTERN}" />
+    </ErrorInterceptor>
+
+    <Async name="AsyncError" includeLocation="false" shutdownTimeout="10000" blocking="false">
+        <AppenderRef ref="ErrorInterceptor" />
+    </Async>
+```
+这一块是基于Log4j做的拦截器， 识别到ERROR日志，推送告警，不需要的话，可以不配置。
+TODO 是否应该将告警模块中的拦截写到当前模块中，然后通过事件发布，解耦告警模块和Log4j的强关联关系。
