@@ -5,12 +5,14 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>io.github.dongfangding</groupId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>基于netty实现的消息代理服务器</description>
     <artifactId>ddf-common-netty-broker</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>ddf-common-netty-broker</name>
+    <description>基于netty实现的消息代理服务器demo演示</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,7 +25,7 @@
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <optional>true</optional>
         </dependency>
 

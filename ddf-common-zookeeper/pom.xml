@@ -5,12 +5,14 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>io.github.dongfangding</groupId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-zookeeper</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>ddf-common-zookeeper</name>
     <description>zk使用相关工具</description>
 
     <properties>
@@ -25,14 +27,14 @@
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-distributed-lock</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>

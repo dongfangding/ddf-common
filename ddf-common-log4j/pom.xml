@@ -5,12 +5,15 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>io.github.dongfangding</groupId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ddf-common-log4j</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>ddf-common-log4j</name>
+    <description>log4j模块</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>

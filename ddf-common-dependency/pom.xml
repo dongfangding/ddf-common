@@ -6,29 +6,40 @@
     <groupId>io.github.dongfangding</groupId>
     <artifactId>ddf-common-dependency</artifactId>
     <packaging>pom</packaging>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>ddf-common-dependency</name>
     <description>依赖统一管理</description>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/dongfangding/ddf-common</url>
+        <connection>scm:git:git://github.com/dongfangding/ddf-common.git</connection>
+        <developerConnection>scm:git:ssh://github.com/dongfangding/ddf-common.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>snowball</id>
+            <name>snowball</name>
+            <email>dongfang.ding1@gmail.com</email>
+            <organization>snowball</organization>
+        </developer>
+    </developers>
+
     <properties>
+        <!-- Project revision -->
+        <revision>boot3.5-2024.3</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <!-- maven版本使用3.9.6以上版本 -->
-        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
-        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
-        <maven.archetype.plugin.version>3.3.0</maven.archetype.plugin.version>
-        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
-        <maven.release.plugin.version>3.3.0</maven.release.plugin.version>
-        <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
-        <maven.sonar.plugin.version>5.5.0.6356</maven.sonar.plugin.version>
-        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <!-- 发布插件版本 -->
-        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
-        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
         <spring-boot.version>3.5.9</spring-boot.version>
         <spring-cloud-context.version>4.1.6</spring-cloud-context.version>
         <reflectasm.version>1.11.9</reflectasm.version>
@@ -61,6 +72,13 @@
         <!-- 这个要看这个模块里引入的rocketmq-client版本是否和SCA里一致即可 -->
         <rocketmq.version>2.3.3</rocketmq.version>
         <minio.version>8.5.7</minio.version>
+        <!-- 发布插件版本 -->
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+        <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+        <native-maven-plugin.version>0.10.6</native-maven-plugin.version>
         <!-- 加依赖前，先去spring-boot-dependencies查看是否有，有则直接使用，不要自己指定版本再引入了 -->
     </properties>
 
@@ -383,4 +401,94 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <!-- 默认不启动发布插件，当需要的时候，激活这个profile -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <source>${maven.compiler.source}</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 用于发布到maven中央仓库的插件， 对文件进行gpg签名。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 说一千道一万，都没一个说这个插件的，还是看了开源项目搜索了用途才知道，就是用来解决，各种本地父子项目结构复杂，私服地址等各种配置的问题的 -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>flatten-maven-plugin</artifactId>
+                        <version>${flatten-maven-plugin.version}</version>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>flatten</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>flatten</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>flatten.clean</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 用于发布到maven中央仓库的插件，将文件推送到中央仓库，使用该插件，不需要在distributionManagement中配置仓库地址。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <!-- publishingServerId里的值要对应本地settings.xml中的server认证信息的id， 用户名和密码要真实到中央仓库账号注册过 -->
+                            <publishingServerId>snowball</publishingServerId>
+                            <!-- 自动发布， 否则就要登录账号收到点击发布 -->
+                            <autoPublish>false</autoPublish>
+                            <excludeArtifacts>
+                                <!-- 排除的Artifact，比如有example模块是 -->
+                                <excludeArtifact>test</excludeArtifact>
+                            </excludeArtifacts>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

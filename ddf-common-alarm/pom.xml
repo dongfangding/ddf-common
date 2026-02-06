@@ -6,12 +6,14 @@
     <parent>
         <groupId>io.github.dongfangding</groupId>
         <artifactId>ddf-common</artifactId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ddf-common-alarm</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>ddf-common-api</name>
+    <description>告警模块</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,19 +45,19 @@
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-redis</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-log4j</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

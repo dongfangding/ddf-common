@@ -6,11 +6,13 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>io.github.dongfangding</groupId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ddf-common-sharding</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>ddf-common-sharding</name>
     <description>分库分表模块</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

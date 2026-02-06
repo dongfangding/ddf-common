@@ -5,11 +5,13 @@
     <parent>
         <artifactId>ddf-common</artifactId>
         <groupId>io.github.dongfangding</groupId>
-        <version>boot3.5-2025.1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ddf-common-mongo</artifactId>
-    <version>boot3.5-2025.1-SNAPSHOT</version>
+    <version>${revision}</version>
+    <name>ddf-common-mongo</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -21,14 +23,14 @@
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-api</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-core</artifactId>
-            <version>boot3.5-2025.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <optional>true</optional>
         </dependency>
 
