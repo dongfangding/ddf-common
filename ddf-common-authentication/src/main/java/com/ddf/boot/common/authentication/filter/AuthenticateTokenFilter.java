@@ -126,6 +126,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             if (Objects.isNull(userClaim)) {
                 throw new BusinessException(BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
             }
+        } else {
+            userClaim = UserClaim.getDefaultUser();
         }
         // 添加服务端请求头
         clientHeaderMap.putAll(resolveServerHeaders(request, userClaim));
@@ -145,8 +147,9 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // 签名校验
         final String contentType = request.getContentType();
         final MediaType mediaType = MediaType.parseMediaType(contentType);
+        // 适合 JSON 和 Form 提交的请求
         if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType)
-                || MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) { // 适合 JSON 和 Form 提交的请求
+                || MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
             resolveBodySignData(request);
         } else {
             resolveQueryParamsSignData(request);

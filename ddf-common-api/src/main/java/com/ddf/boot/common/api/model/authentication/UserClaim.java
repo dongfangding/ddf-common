@@ -36,7 +36,7 @@ public class UserClaim implements Serializable {
      * 默认用户信息
      * 判断是否默认用户方法{@link UserClaim#isDefaultUser(UserClaim)}
      */
-    private static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").build();
+    public static final UserClaim DEFAULT_USER = UserClaim.builder().userId("0").username("SYSTEM").build();
 
     /**
      * 用户id
@@ -92,6 +92,10 @@ public class UserClaim implements Serializable {
         claim.setUsername("mock");
         claim.setCredit("*");
         return claim;
+    }
+
+    public static UserClaim getDefaultUser() {
+        return DEFAULT_USER;
     }
 
     /**
