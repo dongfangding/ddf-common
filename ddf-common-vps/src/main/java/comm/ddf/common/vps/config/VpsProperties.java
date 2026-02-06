@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/12/01 19:36
+ * @since 2021/12/01 19:36
  */
 @Component
 @ConfigurationProperties(prefix = "customizer.infra.vps")

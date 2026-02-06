@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/21 19:16
+ * @since 2020/09/21 19:16
  */
 @ComponentScan("com.ddf.boot.mongo")
 public class MongoAutoConfiguration {

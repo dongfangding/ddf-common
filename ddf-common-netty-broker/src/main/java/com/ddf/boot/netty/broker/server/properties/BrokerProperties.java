@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * 代理服务器配置类$
  *
  * @author dongfang.ding
- * @date 2020/9/20 0020 21:31
+ * @since 2020/9/20 0020 21:31
  */
 @Component
 @Data

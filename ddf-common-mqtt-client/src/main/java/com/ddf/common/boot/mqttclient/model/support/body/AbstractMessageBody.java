@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/21 18:35
+ * @since 2022/03/21 18:35
  */
 @Data
 public class AbstractMessageBody implements MessageBody, Serializable {

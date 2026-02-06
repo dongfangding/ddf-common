@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/08/26 14:11
+ * @since 2021/08/26 14:11
  */
 @Data
 @ConfigurationProperties(prefix = "customizer.infra.ons")

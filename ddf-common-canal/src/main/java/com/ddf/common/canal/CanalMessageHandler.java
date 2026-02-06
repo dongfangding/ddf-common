@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/07/29 17:17
+ * @since 2022/07/29 17:17
  */
 public interface CanalMessageHandler<T> {
 

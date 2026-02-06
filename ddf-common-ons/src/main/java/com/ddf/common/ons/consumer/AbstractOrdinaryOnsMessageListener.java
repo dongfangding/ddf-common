@@ -11,7 +11,7 @@ import java.io.Serializable;
  * ONS普通无序消息监听器抽象类
  *
  * @author snowball
- * @date 2021/8/26 16:46
+ * @since 2021/8/26 16:46
  **/
 public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable>
         extends AbstractOnsMessageListener<D> implements MessageListener {

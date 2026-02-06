@@ -25,7 +25,7 @@ import org.redisson.api.RedissonClient;
  * @param <T>
  * @author Mitchell
  * @version 1.0
- * @date 2020/09/18 13:42
+ * @since 2020/09/18 13:42
  */
 @Slf4j
 public class RedisBloomFilter<T> {

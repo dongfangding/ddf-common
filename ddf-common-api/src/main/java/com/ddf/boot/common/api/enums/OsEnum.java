@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/12/30 14:02
+ * @since 2022/12/30 14:02
  */
 public enum OsEnum {
 

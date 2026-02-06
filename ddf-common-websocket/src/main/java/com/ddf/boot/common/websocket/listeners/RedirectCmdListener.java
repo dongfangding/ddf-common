@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * cmd指令转发订阅
  *
  * @author dongfang.ding
- * @date 2019/8/27 15:18
+ * @since 2019/8/27 15:18
  */
 @Component
 @Slf4j

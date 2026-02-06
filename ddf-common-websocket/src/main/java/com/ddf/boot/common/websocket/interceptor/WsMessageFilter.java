@@ -10,7 +10,7 @@ import com.ddf.boot.common.websocket.model.MessageRequest;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/16 15:29
+ * @since 2020/09/16 15:29
  */
 public interface WsMessageFilter {
 

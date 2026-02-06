@@ -10,7 +10,7 @@ import com.ddf.boot.common.api.model.common.dto.RequestContext;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/05 22:33
+ * @since 2021/02/05 22:33
  */
 public class UserContextUtil {
 

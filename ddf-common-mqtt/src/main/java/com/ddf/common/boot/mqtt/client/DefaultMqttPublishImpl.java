@@ -34,7 +34,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 15:50
+ * @since 2022/03/19 15:50
  */
 @Slf4j
 public class DefaultMqttPublishImpl implements MqttDefinition {

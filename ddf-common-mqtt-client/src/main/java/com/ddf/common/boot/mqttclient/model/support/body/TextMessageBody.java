@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/20 13:14
+ * @since 2022/03/20 13:14
  */
 @Data
 public class TextMessageBody extends AbstractMessageBody implements Serializable {

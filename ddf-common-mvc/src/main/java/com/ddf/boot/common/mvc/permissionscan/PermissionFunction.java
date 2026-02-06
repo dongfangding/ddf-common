@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/04/28 17:29
+ * @since 2025/04/28 17:29
  */
 @Documented
 @Target({ElementType.METHOD})

@@ -9,7 +9,7 @@ public class EncryptUtils {
      * 功能：编码字符串
      * 
      * @author 宋立君
-     * @date 2014年07月03日
+     * @since 2014年07月03日
      * @param data
      *      源字符串
      * @return String
@@ -22,7 +22,7 @@ public class EncryptUtils {
      * 功能：解码字符串
      * 
      * @author 宋立君
-     * @date 2014年07月03日
+     * @since 2014年07月03日
      * @param data
      *      源字符串
      * @return String
@@ -35,7 +35,7 @@ public class EncryptUtils {
      * 功能：编码byte[]
      * 
      * @author 宋立君
-     * @date 2014年07月03日
+     * @since 2014年07月03日
      * @param data
      *      源
      * @return char[]
@@ -72,7 +72,7 @@ public class EncryptUtils {
      * 功能：解码
      * 
      * @author 宋立君
-     * @date 2014年07月03日
+     * @since 2014年07月03日
      * @param data
      *      编码后的字符数组
      * @return byte[]

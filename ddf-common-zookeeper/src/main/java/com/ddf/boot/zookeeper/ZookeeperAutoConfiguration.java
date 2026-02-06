@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/09 18:24
+ * @since 2020/10/09 18:24
  */
 @ComponentScan("com.ddf.boot.zookeeper")
 @Configuration

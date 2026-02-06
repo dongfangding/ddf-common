@@ -10,7 +10,7 @@ import org.springframework.web.socket.TextMessage;
  * 每个实现的Service的beanName必须和命令码保持一致
  *
  * @author dongfang.ding
- * @date 2019/8/24 10:35
+ * @since 2019/8/24 10:35
  */
 public interface CmdStrategy {
 
@@ -36,7 +36,7 @@ public interface CmdStrategy {
      * @param message
      * @return
      * @author dongfang.ding
-     * @date 2019/10/26 15:17
+     * @since 2019/10/26 15:17
      */
     <T> Message<T> responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal,
             Message<T> message);

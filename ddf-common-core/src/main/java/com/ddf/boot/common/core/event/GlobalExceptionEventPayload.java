@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/05 19:23
+ * @since 2024/06/05 19:23
  */
 @Data
 public class GlobalExceptionEventPayload {

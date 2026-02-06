@@ -7,7 +7,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * 业务事务执行器
  *
  * @author snowball
- * @date 2022/6/17 18:29
+ * @since 2022/6/17 18:29
  **/
 public interface BizTransactionExecutor extends SmartInitializingSingleton {
 

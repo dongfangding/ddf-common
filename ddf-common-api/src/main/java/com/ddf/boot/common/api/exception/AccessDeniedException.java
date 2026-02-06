@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.exception;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/28 13:28
+ * @since 2020/06/28 13:28
  */
 public class AccessDeniedException extends BaseException {
 

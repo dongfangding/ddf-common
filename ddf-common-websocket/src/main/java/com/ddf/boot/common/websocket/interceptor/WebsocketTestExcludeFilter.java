@@ -14,7 +14,7 @@ import org.springframework.core.type.filter.TypeFilter;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/12 17:40
+ * @since 2020/10/12 17:40
  */
 public class WebsocketTestExcludeFilter implements TypeFilter {
     @Override

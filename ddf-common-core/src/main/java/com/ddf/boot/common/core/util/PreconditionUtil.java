@@ -19,7 +19,7 @@ import org.springframework.lang.NonNull;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/23 18:38
+ * @since 2020/10/23 18:38
  */
 public class PreconditionUtil {
 

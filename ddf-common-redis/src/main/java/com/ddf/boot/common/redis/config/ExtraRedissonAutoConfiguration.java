@@ -49,7 +49,7 @@ import org.springframework.util.CollectionUtils;
  * redis多数据源简单配置， 依赖于redisson的实现，且只特定于当前模块，因为依赖于一些配置
  *
  * @author snowball
- * @date 2023/10/6 20:21
+ * @since 2023/10/6 20:21
  **/
 @Configuration
 @EnableConfigurationProperties(ExtraRedisProperties.class)

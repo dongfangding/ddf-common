@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * 强制删除无效下线key$
  *
  * @author dongfang.ding
- * @date 2020/9/17 0017 23:33
+ * @since 2020/9/17 0017 23:33
  */
 @Component
 public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefreshedEvent> {

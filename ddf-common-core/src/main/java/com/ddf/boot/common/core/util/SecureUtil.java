@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  * </p>
  *
  * @author dongfang.ding on 2018/5/31
- * @date 2022/5/24 22:57
+ * @since 2022/5/24 22:57
  **/
 public class SecureUtil {
 
@@ -127,7 +127,7 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:02
+     * @since 2019/11/29 12:02
      **/
     public static String rsaPrivateEncryptHex(String data) {
         return PRIVATE_RSA.encryptHex(data, UTF_8, KeyType.PrivateKey);
@@ -139,7 +139,7 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 0029 12:03
+     * @since 2019/11/29 0029 12:03
      **/
     public static String rsaPrivateDecryptStr(String data) {
         return PRIVATE_RSA.decryptStr(data, KeyType.PrivateKey, UTF_8);
@@ -151,7 +151,7 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:02
+     * @since 2019/11/29 12:02
      **/
     public static String rsaPublicEncryptHex(String data) {
         return PUBLIC_RSA.encryptHex(data, UTF_8, KeyType.PublicKey);
@@ -163,7 +163,7 @@ public class SecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:03
+     * @since 2019/11/29 12:03
      **/
     public static String rsaPublicDecryptStr(String data) {
         return PUBLIC_RSA.decryptStr(data, KeyType.PublicKey, UTF_8);
@@ -175,7 +175,7 @@ public class SecureUtil {
      * @param data
      * @param key
      * @return java.lang.String
-     * @date 2019/11/29 12:06
+     * @since 2019/11/29 12:06
      **/
     public static String signWithHMac(String data, String key) {
         HMac mac = new HMac(HmacAlgorithm.HmacSHA256, key.getBytes(UTF_8));

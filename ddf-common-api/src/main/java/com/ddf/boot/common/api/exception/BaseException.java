@@ -11,7 +11,7 @@ import org.springframework.context.MessageSource;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/17 15:55
+ * @since 2020/06/17 15:55
  */
 @Getter
 public abstract class BaseException extends RuntimeException {

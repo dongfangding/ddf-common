@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.model.captcha;
  *
  * @author snowball
  * @version 1.0
- * @date 2021/07/12 14:33
+ * @since 2021/07/12 14:33
  */
 public enum CaptchaType {
 

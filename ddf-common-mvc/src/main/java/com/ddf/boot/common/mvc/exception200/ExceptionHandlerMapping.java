@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/28 10:33
+ * @since 2020/06/28 10:33
  */
 public interface ExceptionHandlerMapping {
 

@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationEvent;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/05 19:23
+ * @since 2024/06/05 19:23
  */
 @Getter
 public class GlobalExceptionEvent extends ApplicationEvent {

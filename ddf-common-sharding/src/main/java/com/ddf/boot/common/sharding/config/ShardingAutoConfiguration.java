@@ -33,7 +33,7 @@ import java.util.Optional;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/03 19:26
+ * @since 2024/06/03 19:26
  */
 @Configuration
 @EnableConfigurationProperties(SpringBootPropertiesConfiguration.class)

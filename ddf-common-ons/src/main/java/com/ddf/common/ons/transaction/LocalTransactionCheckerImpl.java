@@ -12,7 +12,7 @@ import org.springframework.util.ObjectUtils;
  * 本地事务回查实现
  *
  * @author SteveGuo
- * @date 2021-10-28 17:36 PM
+ * @since 2021-10-28 17:36 PM
  */
 @Component("localTransactionChecker")
 public class LocalTransactionCheckerImpl implements LocalTransactionChecker {

@@ -15,6 +15,20 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- maven版本使用3.9.6以上版本 -->
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+        <maven.archetype.plugin.version>3.3.0</maven.archetype.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <maven.release.plugin.version>3.3.0</maven.release.plugin.version>
+        <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
+        <maven.sonar.plugin.version>5.5.0.6356</maven.sonar.plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <!-- 发布插件版本 -->
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
         <spring-boot.version>3.5.9</spring-boot.version>
         <spring-cloud-context.version>4.1.6</spring-cloud-context.version>
         <reflectasm.version>1.11.9</reflectasm.version>
@@ -49,6 +63,11 @@
         <minio.version>8.5.7</minio.version>
         <!-- 加依赖前，先去spring-boot-dependencies查看是否有，有则直接使用，不要自己指定版本再引入了 -->
     </properties>
+
+    <!-- 推送到私服，需要配置快照和release仓库地址，推送到中央仓库，保留一个空标签就可 -->
+    <distributionManagement>
+
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -363,4 +382,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 </project>

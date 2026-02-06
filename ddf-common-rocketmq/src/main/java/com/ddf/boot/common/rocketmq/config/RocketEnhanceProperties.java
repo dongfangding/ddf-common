@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *    # 隔离环境名称，拼接到topic后，topic_dev，默认空字符串
  *    environment: dev
  * @author YiMing
- * @date 2023/10/09
+ * @since 2023/10/09
  */
 @Data
 @ConfigurationProperties(prefix = "rocketmq.enhance")

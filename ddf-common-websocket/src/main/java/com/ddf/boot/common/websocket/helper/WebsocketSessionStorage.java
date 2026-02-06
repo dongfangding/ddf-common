@@ -38,7 +38,7 @@ import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorato
  * <p>
  *
  * @author dongfang.ding
- * @date 2019/8/20 18:38
+ * @since 2019/8/20 18:38
  */
 @Slf4j
 public class WebsocketSessionStorage {
@@ -167,7 +167,7 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      * @return
-     * @date 2019/9/24 15:17
+     * @since 2019/9/24 15:17
      */
     public static boolean isSocketSessionOn(AuthPrincipal authPrincipal) {
         return WEB_SOCKET_SESSION_MAP.containsKey(authPrincipal);
@@ -258,7 +258,7 @@ public class WebsocketSessionStorage {
      * @param message
      * @param response
      * @return
-     * @date 2019/9/26 21:21
+     * @since 2019/9/26 21:21
      */
     public static void putDefaultResponse(@NotNull Message<?> message, @NotNull MessageResponse<?> response) {
         if (!InternalCmdEnum.PING.equals(message.getCmd()) && WebsocketSessionStorage.isNone(message.getRequestId())) {
@@ -349,7 +349,7 @@ public class WebsocketSessionStorage {
      *
      * @param requestId
      * @return
-     * @date 2019/9/26 18:39
+     * @since 2019/9/26 18:39
      */
     public static boolean responseIsTake(String requestId) {
         return REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == null;
@@ -360,7 +360,7 @@ public class WebsocketSessionStorage {
      *
      * @param requestId
      * @return
-     * @date 2019/9/26 20:35
+     * @since 2019/9/26 20:35
      */
     public static boolean isNone(String requestId) {
         return REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == MessageResponse.none();

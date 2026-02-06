@@ -11,7 +11,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/25 13:12
+ * @since 2021/05/25 13:12
  */
 @Data
 public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {

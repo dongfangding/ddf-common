@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/24 11:45
+ * @since 2021/02/24 11:45
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

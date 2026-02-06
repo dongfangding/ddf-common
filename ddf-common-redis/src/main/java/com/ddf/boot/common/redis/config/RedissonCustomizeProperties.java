@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author snowball
  * @version 1.0
- * @date 2021/04/25 10:54
+ * @since 2021/04/25 10:54
  */
 @ConfigurationProperties(prefix = "spring.redis.redisson")
 @Data

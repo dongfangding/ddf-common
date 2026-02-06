@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * 业务结果查询器实例池
  *
  * @author snowball
- * @date 2022/6/17
+ * @since 2022/6/17
  **/
 public abstract class BizResultCheckerPool {
 

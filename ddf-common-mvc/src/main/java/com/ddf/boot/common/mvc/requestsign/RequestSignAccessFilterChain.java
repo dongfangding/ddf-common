@@ -23,10 +23,10 @@ import org.springframework.stereotype.Component;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/01/13 21:27
+ * @since 2022/01/13 21:27
  */
 @Component
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor
 public class RequestSignAccessFilterChain implements AccessFilterChain {
 
     private final GlobalProperties globalProperties;

@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @menu ONS控制台
  * @author Snowball
  * @version 1.0
- * @date 2021/05/14 17:50
+ * @since 2021/05/14 17:50
  */
 @RestController
 @RequestMapping("/ons/console")

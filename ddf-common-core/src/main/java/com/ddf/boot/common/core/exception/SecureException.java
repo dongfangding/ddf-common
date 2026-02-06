@@ -11,7 +11,7 @@ import com.ddf.boot.common.api.exception.BaseException;
  * </p>
  *
  * @author dongfang.ding
- * @date 2025/1/14
+ * @since 2025/1/14
  */
 public class SecureException extends BaseException {
 

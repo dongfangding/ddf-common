@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 内置指令码
  *
  * @author dongfang.ding
- * @date 2020/3/11 0011 15:59
+ * @since 2020/3/11 0011 15:59
  */
 public enum InternalCmdEnum implements Serializable {
 

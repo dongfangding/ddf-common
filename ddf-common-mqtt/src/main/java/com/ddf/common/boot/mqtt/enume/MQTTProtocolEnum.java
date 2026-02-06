@@ -19,7 +19,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/18 12:01
+ * @since 2022/03/18 12:01
  */
 @Getter
 public enum MQTTProtocolEnum {

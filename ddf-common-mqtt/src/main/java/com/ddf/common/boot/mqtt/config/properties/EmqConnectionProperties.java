@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/18 13:46
+ * @since 2022/03/18 13:46
  */
 @ConfigurationProperties(prefix = "customizer.infra.mqtt")
 @Data

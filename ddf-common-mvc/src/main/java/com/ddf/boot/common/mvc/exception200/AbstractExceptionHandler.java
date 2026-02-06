@@ -50,7 +50,7 @@ import org.springframework.web.multipart.MultipartException;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/28 10:20
+ * @since 2020/06/28 10:20
  */
 @Slf4j
 public abstract class AbstractExceptionHandler {

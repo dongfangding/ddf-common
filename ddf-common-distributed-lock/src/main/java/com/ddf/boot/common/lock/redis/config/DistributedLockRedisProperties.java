@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/07/13 20:10
+ * @since 2021/07/13 20:10
  */
 @ConfigurationProperties(prefix = "customizer.infra.distributed.lock.redis")
 @Data

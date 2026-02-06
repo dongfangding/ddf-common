@@ -24,10 +24,10 @@ import org.springframework.util.CollectionUtils;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/07/29 17:20
+ * @since 2022/07/29 17:20
  */
 @Component
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class CanalMessageDispatcher {
 

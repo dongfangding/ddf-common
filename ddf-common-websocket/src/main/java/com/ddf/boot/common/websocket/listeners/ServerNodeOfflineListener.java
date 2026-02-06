@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/10 15:59
+ * @since 2020/10/10 15:59
  */
 @Component
 public class ServerNodeOfflineListener implements NodeEventListener {

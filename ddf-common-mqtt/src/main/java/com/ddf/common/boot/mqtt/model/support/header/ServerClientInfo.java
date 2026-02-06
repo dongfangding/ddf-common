@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 21:32
+ * @since 2022/03/19 21:32
  */
 @Data
 public class ServerClientInfo implements Serializable {

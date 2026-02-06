@@ -24,7 +24,7 @@ import org.springframework.lang.Nullable;
 @Configuration
 @EnableSpringUtil
 @Order(value = Ordered.HIGHEST_PRECEDENCE + 5)
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 public class SpringContextHolder {
 
     /**

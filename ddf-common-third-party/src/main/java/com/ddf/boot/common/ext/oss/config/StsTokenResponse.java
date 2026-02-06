@@ -10,7 +10,7 @@ import lombok.Data;
  * STS返回的认证信息
  *
  * @author dongfang.ding
- * @date 2020/10/13 0013 16:52
+ * @since 2020/10/13 0013 16:52
  * @see AssumeRoleResponse.Credentials
  **/
 @Data

@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Mitchell
  * @version 1.0
- * @date 2021/1/25 20:24
+ * @since 2021/1/25 20:24
  */
 @Slf4j
 public class EmqHttpResponseUtil {

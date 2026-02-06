@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/12 13:35
+ * @since 2020/10/12 13:35
  */
 @AutoConfiguration
 @ComponentScan("com.ddf.boot.common.ext")

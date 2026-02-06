@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/18 13:54
+ * @since 2022/03/18 13:54
  */
 @Configuration
 @Slf4j

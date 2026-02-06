@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  * 开启认证模块
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

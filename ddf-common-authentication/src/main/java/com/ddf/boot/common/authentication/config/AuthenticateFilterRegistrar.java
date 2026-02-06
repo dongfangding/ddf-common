@@ -11,7 +11,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * 认证模块bean注册类
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 public class AuthenticateFilterRegistrar implements ImportBeanDefinitionRegistrar {
 

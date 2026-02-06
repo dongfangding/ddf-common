@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/19 23:39
+ * @since 2022/05/19 23:39
  */
 @Component
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class AliYunSmsApiImpl implements SmsApi {
 

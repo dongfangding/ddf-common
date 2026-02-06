@@ -39,7 +39,7 @@ import org.springframework.web.socket.TextMessage;
  * 提供rest接口允许对在线的客户端发送消息
  *
  * @author dongfang.ding
- * @date 2020-09-16
+ * @since 2020-09-16
  */
 @Slf4j
 @Service
@@ -60,7 +60,7 @@ public class WsMessageServiceImpl implements WsMessageService {
      * 批量发送指令，该方法目前只支持异步
      *
      * @param requestList
-     * @date 2019/10/18 9:49
+     * @since 2019/10/18 9:49
      */
     @Override
     public <T, Q> MessageResponse<T> executeCmd(List<MessageRequest<Q>> requestList) {
@@ -80,7 +80,7 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request
      * @return
-     * @date 2019/08/21 11:00
+     * @since 2019/08/21 11:00
      */
     @Override
     public <T, Q> MessageResponse<T> executeCmd(MessageRequest<Q> request) {

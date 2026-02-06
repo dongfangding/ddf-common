@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/02/27 11:39
+ * @since 2025/02/27 11:39
  */
 @Configuration
 public class EnvironmentContext implements EnvironmentAware {

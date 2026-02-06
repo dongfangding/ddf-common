@@ -7,7 +7,7 @@ import lombok.Getter;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/28 13:14
+ * @since 2020/06/28 13:14
  */
 public enum BaseErrorCallbackCode implements BaseCallbackCode {
 

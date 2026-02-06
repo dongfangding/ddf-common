@@ -8,7 +8,7 @@ import lombok.Getter;
  *
  * @author YUNTAO
  * @version 1.0
- * @date 2020/10/17 18:04
+ * @since 2020/10/17 18:04
  */
 @AllArgsConstructor
 public enum IdType {

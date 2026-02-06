@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/25 09:57
+ * @since 2022/05/25 09:57
  */
 public interface TokenCustomizeCheckService {
 

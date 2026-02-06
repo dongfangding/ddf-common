@@ -31,7 +31,7 @@ import org.springframework.core.env.Environment;
  * ONS监听器容器配置， 根据{@link OnsMessageListenerAno} 构建出监听容器类
  * 
  * @author snowball
- * @date 2021/8/26 14:24
+ * @since 2021/8/26 14:24
  **/
 @Configuration
 @EnableConfigurationProperties(value = {OnsProperties.class})

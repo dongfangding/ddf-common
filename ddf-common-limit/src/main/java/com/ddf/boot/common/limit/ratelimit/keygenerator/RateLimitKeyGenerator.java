@@ -9,7 +9,7 @@ import org.aspectj.lang.JoinPoint;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/24 14:02
+ * @since 2021/02/24 14:02
  */
 public interface RateLimitKeyGenerator {
 

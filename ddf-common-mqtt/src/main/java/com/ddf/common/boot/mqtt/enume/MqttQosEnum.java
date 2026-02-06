@@ -7,7 +7,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 10:57
+ * @since 2022/03/19 10:57
  */
 public enum MqttQosEnum {
 

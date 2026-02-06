@@ -9,7 +9,7 @@ import org.springframework.util.AntPathMatcher;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/27 09:59
+ * @since 2020/10/27 09:59
  */
 public enum GlobalAntMatcher {
 

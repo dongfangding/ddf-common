@@ -26,7 +26,7 @@ import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_IMPL;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/03/02 15:20
+ * @since 2021/03/02 15:20
  */
 @Configuration
 @EnableConfigurationProperties(CaptchaProperties.class)

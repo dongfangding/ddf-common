@@ -9,7 +9,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/21 13:10
+ * @since 2022/03/21 13:10
  */
 public interface MqttPublishListener {
 

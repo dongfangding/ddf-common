@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
  * @since 2023/06/25 14:44
  */
 @Component
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class TokenCacheImpl implements TokenCache {
 

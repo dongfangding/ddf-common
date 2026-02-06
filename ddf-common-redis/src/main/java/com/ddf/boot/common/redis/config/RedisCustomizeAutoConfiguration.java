@@ -38,7 +38,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/12/11 11:06
+ * @since 2020/12/11 11:06
  */
 @Configuration
 @EnableConfigurationProperties({RedissonCustomizeProperties.class, RedisProperties.class})

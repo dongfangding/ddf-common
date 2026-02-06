@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
  * 分布式锁接口
  *
  * @author dongfang.ding
- * @date 2020/3/13 0013 16:30
+ * @since 2020/3/13 0013 16:30
  */
 public interface DistributedLock {
 

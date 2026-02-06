@@ -4,7 +4,7 @@ package com.ddf.common.ons.enume;
  * 消费模式
  *
  * @author snowball
- * @date 2021/8/26 14:18
+ * @since 2021/8/26 14:18
  **/
 public enum ConsumeMode {
 

@@ -47,7 +47,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * 拦截请求处理用户认证信息
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 @Slf4j
 public class AuthenticateTokenFilter implements HandlerInterceptor {

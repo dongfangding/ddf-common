@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.enums;
  *
  * @author snowball
  * @version 1.0
- * @date 2023/02/05 23:11
+ * @since 2023/02/05 23:11
  */
 public enum RedisKeyTypeEnum {
 

@@ -16,7 +16,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 18:24
+ * @since 2022/03/19 18:24
  */
 @Data
 public class MqttMessagePayload implements Serializable {

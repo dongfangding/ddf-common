@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Mitchell
  * @version 1.0
- * @date 2021/02/23 14:46
+ * @since 2021/02/23 14:46
  */
 @Data
 @ConfigurationProperties(prefix = "customizer.infra.ids")

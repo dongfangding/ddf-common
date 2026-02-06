@@ -4,7 +4,7 @@ package com.ddf.common.ons.consumer;
  * ONS消费者接口
  *
  * @author snowball
- * @date 2021/8/26 16:29
+ * @since 2021/8/26 16:29
  **/
 public interface OnsConsumer {
 

@@ -13,7 +13,7 @@ import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
  * @see RateLimitAspect
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/25 10:26
+ * @since 2021/02/25 10:26
  */
 public interface RateLimitPropertiesCollect {
 

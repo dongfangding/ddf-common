@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.model.common.dto;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/09/21 16:41
+ * @since 2022/09/21 16:41
  */
 public interface WeightProportion {
 

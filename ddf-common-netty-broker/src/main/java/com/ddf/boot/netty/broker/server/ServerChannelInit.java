@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * 服务端的handler
  *
  * @author dongfang.ding
- * @date 2019/7/5 10:49
+ * @since 2019/7/5 10:49
  */
 @Slf4j
 public class ServerChannelInit extends ChannelInitializer<Channel> {

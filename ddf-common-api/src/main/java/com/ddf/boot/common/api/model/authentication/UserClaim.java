@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
  * 生成token的用户信息对象
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 @Data
 @NoArgsConstructor

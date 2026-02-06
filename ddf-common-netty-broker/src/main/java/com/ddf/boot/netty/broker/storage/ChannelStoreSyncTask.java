@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
  * 连接信息同步任务类
  *
  * @author dongfang.ding
- * @date 2019/7/8 10:12
+ * @since 2019/7/8 10:12
  */
 public class ChannelStoreSyncTask implements Runnable {
 

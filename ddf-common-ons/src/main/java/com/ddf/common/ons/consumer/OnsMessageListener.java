@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * ONS消息监听器接口
  *
  * @author snowball
- * @date 2021/8/26 16:29
+ * @since 2021/8/26 16:29
  **/
 public interface OnsMessageListener<D extends Serializable> {
 

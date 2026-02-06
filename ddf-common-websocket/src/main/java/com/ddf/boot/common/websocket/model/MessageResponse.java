@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * 指令发送后服务端给调用方的响应结果
  *
  * @author dongfang.ding
- * @date 2019/9/24 16:18
+ * @since 2019/9/24 16:18
  */
 @Data
 @AllArgsConstructor

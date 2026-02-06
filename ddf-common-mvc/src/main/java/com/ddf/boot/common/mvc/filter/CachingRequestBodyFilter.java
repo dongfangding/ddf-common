@@ -13,7 +13,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
  * ContentCachingRequestWrapper会把request body的内容进行缓存，这样我们就可以在后续的使用重复读取request body。
  *
  * @author yiming
- * @date 2024/3/21 14:38
+ * @since 2024/3/21 14:38
  **/
 public class CachingRequestBodyFilter extends GenericFilterBean {
 

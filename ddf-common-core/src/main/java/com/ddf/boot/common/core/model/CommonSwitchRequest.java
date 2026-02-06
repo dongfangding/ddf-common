@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/23 10:19
+ * @since 2021/02/23 10:19
  */
 @Data
 public class CommonSwitchRequest {

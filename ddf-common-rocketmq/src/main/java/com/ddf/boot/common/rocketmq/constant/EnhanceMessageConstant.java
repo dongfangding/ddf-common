@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author YiMing
  * @description:
- * @date 2023/10/9 14:02
+ * @since 2023/10/9 14:02
  */
 @Slf4j
 public class EnhanceMessageConstant {

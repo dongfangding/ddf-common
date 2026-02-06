@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/03/15 18:05
+ * @since 2025/03/15 18:05
  */
 public class ComparatorUtil {
 

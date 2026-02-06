@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
  * ONS消息对象
  *
  * @author snowball
- * @date 2021/8/26 14:51
+ * @since 2021/8/26 14:51
  **/
 @Data
 @Builder

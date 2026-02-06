@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * zookeeper客户端配置
  *
  * @author dongfang.ding
- * @date 2020/3/13 0013 16:43
+ * @since 2020/3/13 0013 16:43
  **/
 @ConfigurationProperties(prefix = "customizer.infra.distributed.lock.zookeeper")
 @Data

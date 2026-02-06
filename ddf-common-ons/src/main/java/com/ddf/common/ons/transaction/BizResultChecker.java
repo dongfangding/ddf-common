@@ -7,7 +7,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * 业务结果查询器
  *
  * @author snowball
- * @date 2022/6/17
+ * @since 2022/6/17
  **/
 public interface BizResultChecker extends SmartInitializingSingleton {
 

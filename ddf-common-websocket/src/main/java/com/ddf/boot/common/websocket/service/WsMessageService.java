@@ -12,7 +12,7 @@ import java.util.List;
  * 使用方可以将当前接口进行包装，或者是暴露http服务或者是rpc
  *
  * @author dongfang.ding
- * @date 2020-09-16
+ * @since 2020-09-16
  */
 public interface WsMessageService {
 

@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * 编解码器，用于解析和传输对象{@link RequestContent}
  *
  * @author dongfang.ding
- * @date 2019/7/5 15:01
+ * @since 2019/7/5 15:01
  */
 @Slf4j
 public class RequestContentCodec extends ByteToMessageCodec<Object> {

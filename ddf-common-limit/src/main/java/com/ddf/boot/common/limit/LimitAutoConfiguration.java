@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/23 17:56
+ * @since 2021/02/23 17:56
  */
 @Configuration
 public class LimitAutoConfiguration {

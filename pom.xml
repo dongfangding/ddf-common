@@ -15,13 +15,14 @@
         <license>
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
     <scm>
+        <connection>scm:git:git://github.com/dongfangding/ddf-common.git</connection>
+        <developerConnection>scm:git:ssh://github.com/dongfangding/ddf-common.git</developerConnection>
         <url>https://github.com/dongfangding/ddf-common</url>
-        <connection>scm:git:github.com/dongfangding/ddf-common.git</connection>
-        <developerConnection>scm:git:github.com/dongfangding/ddf-common.git</developerConnection>
     </scm>
 
     <developers>
@@ -29,6 +30,7 @@
             <id>snowball</id>
             <name>snowball</name>
             <email>dongfang.ding1@gmail.com</email>
+            <organization>snowball</organization>
         </developer>
     </developers>
 
@@ -42,8 +44,7 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.5.9</spring-boot.version>
-        <spring-cloud-context.version>4.1.6</spring-cloud-context.version>
+        <maven.test.skip>true</maven.test.skip>
         <!-- maven版本使用3.9.6以上版本 -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
@@ -53,11 +54,12 @@
         <maven.release.plugin.version>3.3.0</maven.release.plugin.version>
         <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
         <maven.sonar.plugin.version>5.5.0.6356</maven.sonar.plugin.version>
-        <maven-javadoc-plugin.version>3.10.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <!-- 发布插件版本 -->
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
-        <maven.test.skip>true</maven.test.skip>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+        <spring-boot.version>3.5.9</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +104,11 @@
         <module>ddf-common-canal</module>
         <module>ddf-common-s3</module>
     </modules>
+
+    <distributionManagement>
+
+    </distributionManagement>
+
 
     <repositories>
         <!--        <repository>-->
@@ -177,6 +184,8 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+
 
     <build>
         <pluginManagement>
@@ -263,12 +272,6 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven.deploy.plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.plugin.version}</version>
                     <configuration>
@@ -276,46 +279,85 @@
                         <argLine>-Djdk.traceVirtualThreadLocals=false</argLine>
                     </configuration>
                 </plugin>
+
+                <!-- 用于发布到maven中央仓库的插件， 对文件进行gpg签名。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- 用于发布到maven中央仓库的插件，将文件推送到中央仓库，使用该插件，不需要在distributionManagement中配置仓库地址。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.9.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <!-- publishingServerId里的值要对应本地settings.xml中的server认证信息的id， 用户名和密码要真实到中央仓库账号注册过 -->
+                        <publishingServerId>snowball</publishingServerId>
+                        <!-- 自动发布， 否则就要登录账号收到点击发布 -->
+                        <autoPublish>false</autoPublish>
+                    </configuration>
+                </plugin>
+
+                <!-- release plugin,用于发布到release仓库部署插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 
+    <!-- 默认不启动发布插件，当需要的时候，激活这个profile -->
     <profiles>
         <profile>
             <id>release</id>
             <build>
                 <plugins>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
 
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>${central-publishing-maven-plugin.version}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <publishingServerId>snowball</publishingServerId>
-                            <!-- 可选自动发布 -->
-                            <autoPublish>true</autoPublish>
-                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/22 14:52
+ * @since 2022/03/22 14:52
  */
 @Data
 @NoArgsConstructor

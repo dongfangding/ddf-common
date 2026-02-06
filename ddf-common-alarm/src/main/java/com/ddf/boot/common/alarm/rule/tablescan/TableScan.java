@@ -31,9 +31,9 @@ import org.springframework.core.env.Environment;
  *
  * @author Snowball
  * @version 1.0
- * @date 2024/06/03 16:50
+ * @since 2024/06/03 16:50
  */
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 @Configuration
 public class TableScan {

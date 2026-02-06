@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/07/19 20:20
+ * @since 2021/07/19 20:20
  */
 @Configuration
 @EnableConfigurationProperties(value = {IdsProperties.class})

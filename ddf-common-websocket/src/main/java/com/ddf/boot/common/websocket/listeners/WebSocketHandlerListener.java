@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/17 09:52
+ * @since 2020/09/17 09:52
  */
 public interface WebSocketHandlerListener {
 

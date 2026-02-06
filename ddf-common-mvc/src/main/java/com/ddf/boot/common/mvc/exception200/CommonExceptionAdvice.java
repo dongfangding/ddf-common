@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 通用包异常拦截$
  *
  * @author dongfang.ding
- * @date 2020/11/22 0022 22:11
+ * @since 2020/11/22 0022 22:11
  */
 @Component
 @RestControllerAdvice(basePackages = "com.nvwa.boot.common")

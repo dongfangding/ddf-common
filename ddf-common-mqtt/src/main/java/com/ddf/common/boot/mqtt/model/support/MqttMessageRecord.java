@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/21 20:31
+ * @since 2022/03/21 20:31
  */
 @Data
 public class MqttMessageRecord implements Serializable {

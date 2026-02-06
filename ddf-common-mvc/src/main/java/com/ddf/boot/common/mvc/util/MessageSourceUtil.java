@@ -21,7 +21,7 @@ import org.springframework.lang.Nullable;
  *
  * @author Snowball
  * @version 1.0
- * @date 2024/12/28 19:38
+ * @since 2024/12/28 19:38
  */
 @Slf4j
 public class MessageSourceUtil {

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 认证模块的自动配置类类
  *
  * @author dongfang.ding
- * @date 2020/8/16 0016 13:59
+ * @since 2020/8/16 0016 13:59
  */
 @Configuration
 public class AuthenticationWebConfiguration implements WebMvcConfigurer {

@@ -45,7 +45,7 @@ import org.springframework.util.CollectionUtils;
  *
  * @author snowball
  * @version 1.0
- * @date 2021/08/15 13:02
+ * @since 2021/08/15 13:02
  */
 @Slf4j
 public class ExecutorServiceGracefulShutdownDefinition implements ApplicationListener<ContextClosedEvent> {

@@ -30,12 +30,12 @@ import org.springframework.stereotype.Component;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/14 11:01
+ * @since 2020/10/14 11:01
  */
 @Data
 @Component
 @Slf4j
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor
 public class AliYunSmsHelper {
 
     private final AliYunSmsProperties smsProperties;

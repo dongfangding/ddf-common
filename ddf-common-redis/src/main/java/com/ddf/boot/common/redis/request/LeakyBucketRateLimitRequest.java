@@ -7,7 +7,7 @@ import lombok.Data;
  * 基于漏桶算法的分布式限流参数$
  *
  * @author dongfang.ding
- * @date 2020/12/18 0018 23:03
+ * @since 2020/12/18 0018 23:03
  */
 @Data
 @AllArgsConstructor

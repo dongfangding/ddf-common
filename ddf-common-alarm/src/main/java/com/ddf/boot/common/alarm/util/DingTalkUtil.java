@@ -26,7 +26,7 @@ import org.apache.commons.lang3.ObjectUtils;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/04 15:01
+ * @since 2024/06/04 15:01
  */
 @Slf4j
 public class DingTalkUtil {

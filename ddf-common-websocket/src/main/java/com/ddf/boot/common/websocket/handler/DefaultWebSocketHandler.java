@@ -22,7 +22,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
  * 这小小的代码本来就没啥含量，为了通用实在是写的一言难尽，把事情搞复杂了。
  *
  * @author dongfang.ding
- * @date 2019/8/20 11:43
+ * @since 2019/8/20 11:43
  */
 @Slf4j
 public class DefaultWebSocketHandler extends AbstractWebSocketHandler {

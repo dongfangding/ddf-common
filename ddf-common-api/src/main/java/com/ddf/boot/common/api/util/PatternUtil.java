@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/09/13 20:08
+ * @since 2022/09/13 20:08
  */
 public class PatternUtil {
 

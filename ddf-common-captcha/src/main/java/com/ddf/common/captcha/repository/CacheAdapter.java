@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/11/06 16:27
+ * @since 2021/11/06 16:27
  */
 public class CacheAdapter {
 

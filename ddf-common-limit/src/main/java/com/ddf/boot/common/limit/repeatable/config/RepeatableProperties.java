@@ -7,7 +7,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/05 13:23
+ * @since 2021/02/05 13:23
  */
 @Data
 public class RepeatableProperties {

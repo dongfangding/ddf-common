@@ -7,7 +7,7 @@ import java.util.Objects;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/17 15:28
+ * @since 2021/05/17 15:28
  */
 public interface ConsoleConstants {
 

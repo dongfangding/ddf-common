@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 要保证实现类添加到容器类中的beanName和指令码保持一致
  *
  * @author dongfang.ding
- * @date 2019/8/24 10:37
+ * @since 2019/8/24 10:37
  */
 @Slf4j
 public class CmdAction implements CmdStrategy {

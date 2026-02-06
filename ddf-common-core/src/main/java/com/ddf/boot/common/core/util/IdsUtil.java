@@ -17,30 +17,9 @@ import java.util.UUID;
  * {@link GlobalProperties}
  * <p>
  * 如果不想使用，还是要借助工具 如https://github.com/Meituan-Dianping/Leaf
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
- * @date 2019/12/9 0009 11:35
+ * @since 2019/12/9 0009 11:35
  */
 public class IdsUtil {
 
@@ -51,7 +30,7 @@ public class IdsUtil {
      *
      * @return void
      * @author dongfang.ding
-     * @date 2019/12/9 0009 11:38
+     * @since 2019/12/9 0009 11:38
      **/
     public static String getNextStrId() {
         return Long.toString(getNextLongId());
@@ -62,7 +41,7 @@ public class IdsUtil {
      *
      * @return void
      * @author dongfang.ding
-     * @date 2019/12/9 0009 11:39
+     * @since 2019/12/9 0009 11:39
      **/
     public static long getNextLongId() {
         long workId = 0;
@@ -81,7 +60,7 @@ public class IdsUtil {
      *
      * @return 字符串格式的id
      * @author dongfang.ding
-     * @date 2019/12/9 0009 11:38
+     * @since 2019/12/9 0009 11:38
      **/
     public static String getUniqueId() {
         return getNextStrId() + UUID

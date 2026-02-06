@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Snowball
  * @version 1.0
- * @date 2024/07/08 14:07
+ * @since 2024/07/08 14:07
  */
 @Disabled("需要 Spring Context 和 GlobalProperties 配置")
 public class SecureUtilTest {

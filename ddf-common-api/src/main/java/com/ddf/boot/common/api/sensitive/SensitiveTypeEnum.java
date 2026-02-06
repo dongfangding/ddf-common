@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.sensitive;
  * 数据脱敏类型
  *
  * @author dongfang.ding
- * @date 2020/9/25 0025 14:37
+ * @since 2020/9/25 0025 14:37
  **/
 public enum SensitiveTypeEnum {
 

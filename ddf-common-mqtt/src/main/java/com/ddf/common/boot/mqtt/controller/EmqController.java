@@ -37,11 +37,11 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/22 14:46
+ * @since 2022/03/22 14:46
  */
 @RestController
 @RequestMapping("/mqtt/proxy")
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class EmqController {
 

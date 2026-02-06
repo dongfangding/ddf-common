@@ -9,7 +9,7 @@ import com.ddf.boot.common.api.exception.BaseException;
  * 消费异常
  *
  * @author snowball
- * @date 2021/8/26 16:29
+ * @since 2021/8/26 16:29
  **/
 public class ConsumeException extends BaseException {
 

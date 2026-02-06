@@ -11,7 +11,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/24 15:27
+ * @since 2021/05/24 15:27
  */
 @Getter
 public enum OnsBizErrorCodeEnum implements BaseCallbackCode {

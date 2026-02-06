@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  * ONS自动配置
  *
  * @author snowball
- * @date 2021/8/26 14:48
+ * @since 2021/8/26 14:48
  **/
 @Configuration
 @Import({OnsListenerContainerConfiguration.class, OnsClientConfiguration.class})

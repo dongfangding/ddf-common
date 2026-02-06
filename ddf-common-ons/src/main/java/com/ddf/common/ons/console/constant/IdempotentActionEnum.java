@@ -5,7 +5,7 @@ package com.ddf.common.ons.console.constant;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/18 18:06
+ * @since 2021/05/18 18:06
  */
 public enum IdempotentActionEnum {
 

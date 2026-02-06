@@ -31,7 +31,7 @@ import org.springframework.util.FastByteArrayOutputStream;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/03/02 16:00
+ * @since 2021/03/02 16:00
  */
 public class CaptchaHelper {
 

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/12/16 23:17
+ * @since 2022/12/16 23:17
  */
 public class ObjectUtil {
 

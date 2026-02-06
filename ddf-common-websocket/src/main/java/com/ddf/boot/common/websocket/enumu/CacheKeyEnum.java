@@ -5,7 +5,7 @@ package com.ddf.boot.common.websocket.enumu;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/16 16:23
+ * @since 2020/09/16 16:23
  */
 public enum CacheKeyEnum {
 

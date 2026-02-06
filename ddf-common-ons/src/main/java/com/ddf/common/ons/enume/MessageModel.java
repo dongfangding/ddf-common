@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * 消息模式
  *
  * @author snowball
- * @date 2021/8/26 14:19
+ * @since 2021/8/26 14:19
  **/
 public enum MessageModel {
 

@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/17 16:33
+ * @since 2021/05/17 16:33
  */
 @Data
 public class LogRetryRequest implements UserRequest {

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/23 11:24
+ * @since 2020/10/23 11:24
  */
 public enum CommonLogic {
 

@@ -25,11 +25,11 @@ import org.springframework.web.socket.TextMessage;
  * 接收到消息之后的处理
  *
  * @author dongfang.ding
- * @date 2019/12/21
+ * @since 2019/12/21
  */
 @Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor
 public class HandlerMessageServiceImpl implements HandlerMessageService {
 
     @Autowired

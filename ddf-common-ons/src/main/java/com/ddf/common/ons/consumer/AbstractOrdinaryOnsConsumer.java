@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * ONS普通无序消息抽象消费者
  *
  * @author snowball
- * @date 2021/8/26 16:46
+ * @since 2021/8/26 16:46
  **/
 public abstract class AbstractOrdinaryOnsConsumer implements OnsConsumer {
 

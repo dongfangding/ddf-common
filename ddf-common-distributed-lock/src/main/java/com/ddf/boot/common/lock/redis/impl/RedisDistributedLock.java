@@ -15,7 +15,7 @@ import org.redisson.api.RedissonClient;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/07/13 20:07
+ * @since 2021/07/13 20:07
  */
 @Slf4j
 public class RedisDistributedLock implements DistributedLock {

@@ -28,10 +28,10 @@ import org.springframework.stereotype.Component;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/06 10:37
+ * @since 2024/06/06 10:37
  */
 @Component
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionEvent> {
 

@@ -12,7 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/24 14:03
+ * @since 2021/02/24 14:03
  */
 public class IpRateLimitKeyGenerator implements RateLimitKeyGenerator {
 

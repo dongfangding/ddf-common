@@ -35,7 +35,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/12/11 11:05
+ * @since 2020/12/11 11:05
  */
 public class RedisTemplateHelper {
 

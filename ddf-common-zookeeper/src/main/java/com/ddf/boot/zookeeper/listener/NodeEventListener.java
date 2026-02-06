@@ -8,7 +8,7 @@ import org.apache.curator.framework.recipes.cache.ChildData;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/09 14:02
+ * @since 2020/10/09 14:02
  */
 public interface NodeEventListener {
 

@@ -5,7 +5,7 @@ package com.ddf.boot.common.alarm.rule.tablescan;
  *
  * @author Snowball
  * @version 1.0
- * @date 2024/06/04 11:30
+ * @since 2024/06/04 11:30
  */
 public interface TableNotify {
 

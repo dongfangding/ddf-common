@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Slf4j
-@RequiredArgsConstructor(onConstructor_ =@Autowired)
+@RequiredArgsConstructor
 @Component
 public class RocketProducer {
 

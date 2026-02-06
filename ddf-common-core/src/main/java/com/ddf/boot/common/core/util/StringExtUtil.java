@@ -11,28 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 聚合String功能
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding on 2018/12/31
  */
@@ -63,10 +41,9 @@ public class StringExtUtil {
     /**
      * 随机生成登录密码
      *
-     * @param
-     * @return
+     * @return 随机生成的登录密码
      * @author dongfang.ding
-     * @date 2019/9/25 17:51
+     * @since 2019/9/25 17:51
      */
     public static String randomLoginPassword() {
         return randomLoginPassword(MIN, MAX);
@@ -75,10 +52,11 @@ public class StringExtUtil {
     /**
      * 随机生成密码
      *
-     * @param
-     * @return
+     * @param minLength 最小长度
+     * @param maxLength 最大长度
+     * @return 随机生成的密码
      * @author dongfang.ding
-     * @date 2019/9/25 17:51
+     * @since 2019/9/25 17:51
      */
     public static String randomLoginPassword(int minLength, int maxLength) {
         if (minLength < MIN) {
@@ -108,10 +86,9 @@ public class StringExtUtil {
     /**
      * 生成6位支付密码
      *
-     * @param
-     * @return
+     * @return 6位随机数字密码
      * @author dongfang.ding
-     * @date 2019/9/25 17:59
+     * @since 2019/9/25 17:59
      */
     public static String randomPayPassword() {
         Random random = new Random();

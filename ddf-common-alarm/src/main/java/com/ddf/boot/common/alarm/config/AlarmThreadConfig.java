@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/06/06 10:40
+ * @since 2024/06/06 10:40
  */
 @Configuration
 public class AlarmThreadConfig {

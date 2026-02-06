@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author snowball
  * @version 1.0
- * @date 2023/02/06 14:07
+ * @since 2023/02/06 14:07
  */
 public interface RedisKeyConstraint {
 

@@ -11,7 +11,7 @@ import lombok.Data;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/01/04 20:04
+ * @since 2022/01/04 20:04
  */
 public interface BaseSign extends Serializable {
 
@@ -46,7 +46,7 @@ public interface BaseSign extends Serializable {
      *
      * @author dongfang.ding
      * @version 1.0
-     * @date 2021/02/23 10:19
+     * @since 2021/02/23 10:19
      */
     @Data
     class CommonSwitchRequest {

@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/21 13:10
+ * @since 2022/03/21 13:10
  */
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class MqttPublishCheckerListener implements MqttPublishListener {

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * ONS抽象类
  *
  * @author snowball
- * @date 2021/8/26 16:43
+ * @since 2021/8/26 16:43
  **/
 public abstract class AbstractOnsMessageListener<D extends Serializable> implements OnsMessageListener<D> {
 

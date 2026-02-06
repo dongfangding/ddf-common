@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/27 19:58
+ * @since 2022/05/27 19:58
  */
 public interface RedisTemplateSupport {
 

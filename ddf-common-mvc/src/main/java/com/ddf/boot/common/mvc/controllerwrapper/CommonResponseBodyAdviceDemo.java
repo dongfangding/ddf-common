@@ -5,7 +5,7 @@ package com.ddf.boot.common.mvc.controllerwrapper;
  * 然后补充自己的@RestControllerAdvice(basePackages = {"com"})，通用包中默认不再生效包范围
  *
  * @author dongfang.ding
- * @date 2019/6/27 11:15
+ * @since 2019/6/27 11:15
  */
 //@RestControllerAdvice(basePackages = {"com"})
 //@Order

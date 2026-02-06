@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  * 认证用户
  *
  * @author dongfang.ding
- * @date 2019/8/19 16:57
+ * @since 2019/8/19 16:57
  */
 @Data
 @NoArgsConstructor

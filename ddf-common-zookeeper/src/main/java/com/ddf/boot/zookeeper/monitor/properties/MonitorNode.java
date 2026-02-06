@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/09 13:06
+ * @since 2020/10/09 13:06
  */
 @Data
 @AllArgsConstructor

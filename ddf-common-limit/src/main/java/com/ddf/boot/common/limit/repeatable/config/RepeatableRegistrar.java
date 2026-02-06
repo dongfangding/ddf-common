@@ -16,7 +16,7 @@ import org.springframework.core.type.AnnotationMetadata;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/05 12:56
+ * @since 2021/02/05 12:56
  */
 public class RepeatableRegistrar implements ImportBeanDefinitionRegistrar {
 

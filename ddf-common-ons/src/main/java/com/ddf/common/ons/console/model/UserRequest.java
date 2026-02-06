@@ -5,7 +5,7 @@ package com.ddf.common.ons.console.model;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/06/05 15:46
+ * @since 2021/06/05 15:46
  */
 public interface UserRequest {
 

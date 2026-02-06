@@ -7,7 +7,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/20 15:34
+ * @since 2021/05/20 15:34
  */
 @Getter
 public enum GroupTypeEnum {

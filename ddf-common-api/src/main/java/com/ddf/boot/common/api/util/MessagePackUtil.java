@@ -15,7 +15,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
  *
  * @author Snowball
  * @version 1.0
- * @date 2026/01/06 15:58
+ * @since 2026/01/06 15:58
  */
 public class MessagePackUtil {
 
@@ -92,8 +92,7 @@ public class MessagePackUtil {
     /**
      * 返回新实例,同时设置默认值
      *
-     * @param
-     * @return
+     * @return 配置好的 ObjectMapper 实例
      */
     public static ObjectMapper newInstance() {
         ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());

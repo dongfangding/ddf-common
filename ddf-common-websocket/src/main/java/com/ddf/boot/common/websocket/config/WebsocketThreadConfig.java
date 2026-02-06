@@ -9,7 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 线程池配置
  *
  * @author dongfang.ding
- * @date 2019/12/11 0011 18:03
+ * @since 2019/12/11 0011 18:03
  */
 @Configuration
 public class WebsocketThreadConfig {

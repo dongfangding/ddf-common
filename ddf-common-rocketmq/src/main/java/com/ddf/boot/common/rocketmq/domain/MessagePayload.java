@@ -8,7 +8,7 @@ import lombok.Data;
  * 消息负载
  *
  * @author YiMing
- * @date 2023/10/09
+ * @since 2023/10/09
  */
 @Data
 public class MessagePayload<T> {

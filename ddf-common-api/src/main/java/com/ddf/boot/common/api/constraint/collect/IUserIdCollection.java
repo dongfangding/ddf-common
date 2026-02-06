@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/22 10:47
+ * @since 2021/02/22 10:47
  */
 public interface IUserIdCollection {
 

@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/02/11 17:18
+ * @since 2022/02/11 17:18
  */
 public class CopyRandomList {
 

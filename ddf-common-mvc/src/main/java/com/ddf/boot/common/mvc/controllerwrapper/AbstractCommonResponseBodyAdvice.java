@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * 这里提供逻辑，但没有将该类加入到容器中，就是为了让其他服务直接集成该类，然后再添加自己的@RestControllerAdvice(basePackages = {""})
  *
  * @author dongfang.ding
- * @date 2019/6/27 11:15
+ * @since 2019/6/27 11:15
  */
 public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 

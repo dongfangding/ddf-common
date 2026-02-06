@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 批量组合id
  *
  * @author dongfang.ding
- * @date 2021/7/21 15:55
+ * @since 2021/7/21 15:55
  **/
 @Data
 @Accessors(chain = true)

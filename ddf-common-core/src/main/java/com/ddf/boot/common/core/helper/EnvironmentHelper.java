@@ -10,32 +10,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
- * 系统环境变量帮助类$
- * <p>
- * <p>
- * _ooOoo_
- * o8888888o
- * 88" . "88
- * (| -_- |)
- * O\ = /O
- * ___/`---'\____
- * .   ' \\| |// `.
- * / \\||| : |||// \
- * / _||||| -:- |||||- \
- * | | \\\ - /// | |
- * | \_| ''\---/'' | |
- * \ .-\__ `-` ___/-. /
- * ___`. .' /--.--\ `. . __
- * ."" '< `.___\_<|>_/___.' >'"".
- * | | : `- \`.;`\ _ /`;.`/ - ` : | |
- * \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- * `=---='
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
+ * 系统环境变量帮助类
  *
  * @author dongfang.ding
- * @date 2019/12/24 0024 13:49
+ * @since 2019/12/24 0024 13:49
  */
 @Component
 public class EnvironmentHelper {
@@ -50,7 +28,7 @@ public class EnvironmentHelper {
      * @param targetProfile
      * @return boolean
      * @author dongfang.ding
-     * @date 2019/12/24 0024 13:52
+     * @since 2019/12/24 0024 13:52
      **/
     public boolean checkIsExistOr(List<String> targetProfile) {
         String[] profileList;

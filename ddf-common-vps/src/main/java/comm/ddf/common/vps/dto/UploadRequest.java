@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/30 12:52
+ * @since 2022/05/30 12:52
  */
 @Data
 public class UploadRequest implements Serializable {

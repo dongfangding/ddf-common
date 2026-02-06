@@ -13,7 +13,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/14 10:59
+ * @since 2020/10/14 10:59
  */
 @Data
 public class SmsSendRequest {

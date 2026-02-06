@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/06/17 14:58
+ * @since 2020/06/17 14:58
  */
 public interface BaseCallbackCode {
 

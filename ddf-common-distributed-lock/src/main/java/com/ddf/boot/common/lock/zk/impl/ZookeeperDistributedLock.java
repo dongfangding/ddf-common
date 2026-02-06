@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
  * 基于zookeeper实现的分布式锁$
  *
  * @author dongfang.ding
- * @date 2020/3/13 0013 16:56
+ * @since 2020/3/13 0013 16:56
  */
 @Slf4j
 public class ZookeeperDistributedLock implements DistributedLock {

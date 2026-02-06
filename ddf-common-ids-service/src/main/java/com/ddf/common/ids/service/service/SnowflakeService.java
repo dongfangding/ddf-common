@@ -9,7 +9,7 @@ import com.ddf.common.ids.service.model.common.ResultList;
  * 雪花id业务接口
  *
  * @author dongfang.ding
- * @date 2021/7/20 15:56
+ * @since 2021/7/20 15:56
  **/
 public class SnowflakeService {
 

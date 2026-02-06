@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/21 19:11
+ * @since 2020/09/21 19:11
  */
 @Component
-@RequiredArgsConstructor(onConstructor_ =@Autowired)
+@RequiredArgsConstructor
 public class MongoTemplateHelper {
 
     private final MongoTemplate mongoTemplate;

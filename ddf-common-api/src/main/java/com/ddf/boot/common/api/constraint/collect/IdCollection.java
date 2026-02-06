@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.constraint.collect;
  *
  * @author snowball
  * @version 1.0
- * @date 2021/03/02 11:04
+ * @since 2021/03/02 11:04
  */
 public interface IdCollection {
 

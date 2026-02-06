@@ -12,7 +12,7 @@ import java.time.Duration;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/05/21 20:36
+ * @since 2022/05/21 20:36
  */
 public enum AlarmRedisKeyEnum implements RedisKeyConstraint {
 

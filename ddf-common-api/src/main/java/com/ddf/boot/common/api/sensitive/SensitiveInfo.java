@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  * 标识脱敏字段， 仅支持jackson
  *
  * @author dongfang.ding
- * @date 2020/9/25 0025 11:54
+ * @since 2020/9/25 0025 11:54
  **/
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotationsInside

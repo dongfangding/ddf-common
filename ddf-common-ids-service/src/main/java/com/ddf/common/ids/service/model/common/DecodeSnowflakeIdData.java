@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/07/21 16:55
+ * @since 2021/07/21 16:55
  */
 @Data
 public class DecodeSnowflakeIdData implements Serializable {

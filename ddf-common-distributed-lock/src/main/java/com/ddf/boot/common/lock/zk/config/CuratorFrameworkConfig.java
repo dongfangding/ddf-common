@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * 初始化curator框架
  *
  * @author dongfang.ding
- * @date 2020/3/13 0013 16:53
+ * @since 2020/3/13 0013 16:53
  **/
 @Configuration
 @Slf4j

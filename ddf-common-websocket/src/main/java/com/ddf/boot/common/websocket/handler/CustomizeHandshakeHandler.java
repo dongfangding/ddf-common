@@ -12,7 +12,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
  * 握手处理器,用来提取并向容器中添加建立websocket的session认证信息
  *
  * @author dongfang.ding
- * @date 2019/8/20 18:00
+ * @since 2019/8/20 18:00
  */
 public class CustomizeHandshakeHandler extends DefaultHandshakeHandler {
     /**

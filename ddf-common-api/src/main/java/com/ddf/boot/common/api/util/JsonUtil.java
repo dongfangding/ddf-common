@@ -295,8 +295,7 @@ public final class JsonUtil {
     /**
      * 返回当前实例
      *
-     * @param
-     * @return
+     * @return ObjectMapper 实例
      * @since 2019年07月25日
      */
     public static ObjectMapper getInstance() {
@@ -306,8 +305,7 @@ public final class JsonUtil {
     /**
      * 返回新实例,同时设置默认值
      *
-     * @param
-     * @return
+     * @return 配置好的 ObjectMapper 实例
      */
     public static ObjectMapper newInstance() {
         return config(new ObjectMapper());

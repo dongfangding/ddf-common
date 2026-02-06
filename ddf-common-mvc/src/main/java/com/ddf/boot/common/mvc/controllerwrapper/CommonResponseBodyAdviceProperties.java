@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * 针对统一返回格式封装的一些属性类
  *
  * @author dongfang.ding
- * @date 2019/9/2 17:08
+ * @since 2019/9/2 17:08
  */
 @Component
 @ConfigurationProperties(prefix = "customizer.infra.response-body-advice")

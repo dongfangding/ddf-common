@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/28 11:27
+ * @since 2020/10/28 11:27
  */
 @Data
 public class StsTokenRequest {

@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/01/14 17:37
+ * @since 2022/01/14 17:37
  */
 @Slf4j
 public class GlobalFilter implements HandlerInterceptor {

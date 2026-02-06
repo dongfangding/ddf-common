@@ -27,7 +27,7 @@ import java.util.Objects;
  *
  * @author Trump
  * @version 1.0
- * @date 2020/04/26 13:34
+ * @since 2020/04/26 13:34
  */
 public class IdsApiImpl implements IdsApi {
 

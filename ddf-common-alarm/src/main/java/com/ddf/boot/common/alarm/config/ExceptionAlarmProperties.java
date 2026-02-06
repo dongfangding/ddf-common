@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author snowball
  * @version 1.0
- * @date 2024/07/12 14:38
+ * @since 2024/07/12 14:38
  */
 @Data
 @RefreshScope

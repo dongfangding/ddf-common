@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * api模块的自动注入$
  *
  * @author dongfang.ding
- * @date 2020/8/15 0015 17:59
+ * @since 2020/8/15 0015 17:59
  */
 @Configuration
 @ComponentScan(basePackages = "com.ddf.boot.common.api")

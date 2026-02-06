@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * 泛型键值对$
  *
  * @author dongfang.ding
- * @date 2020/10/26 0026 22:24
+ * @since 2020/10/26 0026 22:24
  */
 @Data
 @AllArgsConstructor(staticName = "of")

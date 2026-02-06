@@ -7,7 +7,7 @@ import com.ddf.common.boot.mqtt.support.GlobalStorage;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/10/28 17:15
+ * @since 2022/10/28 17:15
  */
 public abstract class AbstractGroupMqttTopic implements MqttTopicDefine {
 

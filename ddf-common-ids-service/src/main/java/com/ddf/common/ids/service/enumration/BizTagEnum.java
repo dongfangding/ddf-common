@@ -5,7 +5,7 @@ package com.ddf.common.ids.service.enumration;
  *
  * @author YUNTAO
  * @version 1.0
- * @date 2020/09/16 13:47
+ * @since 2020/09/16 13:47
  */
 public enum BizTagEnum {
 

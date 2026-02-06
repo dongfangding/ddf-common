@@ -8,7 +8,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/04/19 15:29
+ * @since 2025/04/19 15:29
  */
 @Getter
 public enum PokerCardColorEnum {

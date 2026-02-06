@@ -10,7 +10,7 @@ import lombok.Data;
  *
  * @author snowball
  * @version 1.0
-     * @date 2021/03/02 16:`19`
+     * @since 2021/03/02 16:`19`
  */
 @Data
 public class CaptchaResult implements Serializable {

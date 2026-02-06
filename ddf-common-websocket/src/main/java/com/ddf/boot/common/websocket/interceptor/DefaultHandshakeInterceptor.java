@@ -35,7 +35,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  * WebSocketHttpRequestHandler
  *
  * @author dongfang.ding
- * @date 2019/8/20 11:46
+ * @since 2019/8/20 11:46
  */
 @Slf4j
 public class DefaultHandshakeInterceptor implements HandshakeInterceptor {

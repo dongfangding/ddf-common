@@ -8,7 +8,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/07/21 14:58
+ * @since 2021/07/21 14:58
  */
 public enum IdsErrorCodeEnum implements BaseCallbackCode {
 

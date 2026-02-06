@@ -12,7 +12,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/11/30 20:04
+ * @since 2021/11/30 20:04
  */
 @Data
 public class UploadResponse implements Serializable {

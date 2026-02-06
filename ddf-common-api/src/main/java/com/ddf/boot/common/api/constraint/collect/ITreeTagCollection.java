@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author snowball
  * @version 1.0
- * @date 2021/03/02 10:29
+ * @since 2021/03/02 10:29
  */
 public interface ITreeTagCollection<K, T> {
 
@@ -42,7 +42,7 @@ public interface ITreeTagCollection<K, T> {
     /**
      * 获取children集合, 这个子类一定要默认的children属性是空集合，不能是null
      *
-     * @param
+     * @return 子节点列表
      */
     @Nonnull
     List<T> getChildren();

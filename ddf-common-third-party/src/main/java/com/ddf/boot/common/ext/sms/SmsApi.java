@@ -8,7 +8,7 @@ import com.ddf.boot.common.ext.sms.model.SmsSendResponse;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/send:36
+ * @since 2022/05/send:36
  */
 public interface SmsApi {
 

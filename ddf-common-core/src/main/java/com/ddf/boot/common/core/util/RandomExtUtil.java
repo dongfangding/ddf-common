@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author rebot
  * @version 1.0
- * @date 2022/09/21 16:31
+ * @since 2022/09/21 16:31
  */
 public class RandomExtUtil {
 

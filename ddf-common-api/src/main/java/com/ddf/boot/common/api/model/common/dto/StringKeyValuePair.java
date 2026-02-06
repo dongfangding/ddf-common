@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * String格式的键值对$
  *
  * @author dongfang.ding
- * @date 2020/10/26 0026 22:23
+ * @since 2020/10/26 0026 22:23
  */
 @Data
 @NoArgsConstructor

@@ -19,7 +19,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/17 15:37
+ * @since 2021/05/17 15:37
  */
 @Getter
 public enum TopicMessageType {

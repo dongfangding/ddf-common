@@ -7,7 +7,7 @@ import com.ddf.common.ids.service.model.common.ResultList;
  * id生成器顶层接口
  *
  * @author dongfang.ding
- * @date 2021/7/20 15:54
+ * @since 2021/7/20 15:54
  **/
 public interface IDGen {
 

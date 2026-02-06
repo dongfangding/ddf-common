@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  * 这个是有缓存的，第一次会与其它使用反射实现的速度差不多，但后面就非常快了，和mapstruct类似的字节码技术的速度就几乎持平了
  *
  * @author SteveGuo
- * @date 2018-08-21 10:54 PM
+ * @since 2018-08-21 10:54 PM
  */
 public class BeanCopierUtils {
 

@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
  *
  * @author Snowball
  * @version 1.0
- * @date 2024/06/04 14:52
+ * @since 2024/06/04 14:52
  */
 @Component
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class TableNotifyImpl implements TableNotify {
 

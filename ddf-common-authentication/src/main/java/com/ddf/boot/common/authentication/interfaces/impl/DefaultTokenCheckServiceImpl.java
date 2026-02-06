@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/05/27 21:56
+ * @since 2022/05/27 21:56
  */
 @Slf4j
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService {
 
     public static final String BEAN_NAME = "defaultTokenCheckServiceImpl";

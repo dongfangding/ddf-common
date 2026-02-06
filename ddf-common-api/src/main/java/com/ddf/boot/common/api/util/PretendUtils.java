@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * 脱敏工具类
  *
  * @author dongfang.ding
- * @date 2020/9/25 0025 11:38
+ * @since 2020/9/25 0025 11:38
  **/
 @Slf4j
 public class PretendUtils {

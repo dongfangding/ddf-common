@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  * 通道传输数据格式定义类
  *
  * @author dongfang.ding
- * @date 2019/7/5 14:59
+ * @since 2019/7/5 14:59
  */
 @Data
 @NoArgsConstructor

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author dongfang.ding
- * @date 2019/7/5 17:38
+ * @since 2019/7/5 17:38
  */
 @Slf4j
 public class ClientOutboundHandler extends ChannelOutboundHandlerAdapter {

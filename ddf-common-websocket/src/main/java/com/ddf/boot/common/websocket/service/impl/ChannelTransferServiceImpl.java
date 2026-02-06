@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 通道传输接口实现
  *
  * @author dongfang.ding
- * @date 2019/8/23 9:45
+ * @since 2019/8/23 9:45
  */
 @Service
 public class ChannelTransferServiceImpl implements ChannelTransferService {

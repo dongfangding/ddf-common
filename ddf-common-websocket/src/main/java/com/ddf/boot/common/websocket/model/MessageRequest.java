@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 指令发送的请求参数
  *
  * @author dongfang.ding
- * @date 2019/9/24 16:17
+ * @since 2019/9/24 16:17
  */
 @Data
 @NoArgsConstructor
@@ -151,9 +151,8 @@ public class MessageRequest<T> implements Serializable {
     /**
      * 单设备指令
      *
-     * @param
-     * @return
-     * @date 2019/9/25 10:25
+     * @return MessageRequest 实例
+     * @since 2019/9/25 10:25
      */
     public MessageRequest<T> toSingle() {
         return this.setSendMode(SendMode.SINGLE);
@@ -162,9 +161,8 @@ public class MessageRequest<T> implements Serializable {
     /**
      * 批量设备指令
      *
-     * @param
-     * @return
-     * @date 2019/9/25 10:25
+     * @return MessageRequest 实例
+     * @since 2019/9/25 10:25
      */
     public MessageRequest<T> toBatch() {
         return this.setSendMode(SendMode.BATCH);
@@ -173,9 +171,8 @@ public class MessageRequest<T> implements Serializable {
     /**
      * 全设备指令
      *
-     * @param
-     * @return
-     * @date 2019/9/25 10:25
+     * @return MessageRequest 实例
+     * @since 2019/9/25 10:25
      */
     public MessageRequest<T> toAll() {
         return this.setSendMode(SendMode.ALL);

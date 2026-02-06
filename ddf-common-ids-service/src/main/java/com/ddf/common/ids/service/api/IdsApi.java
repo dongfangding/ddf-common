@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author shuaishuai.xiao
  * @version 1.0: SequenceApi.java
- * @date 2019/12/18 18:42
+ * @since 2019/12/18 18:42
  */
 public interface IdsApi {
 

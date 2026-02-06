@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author https://blog.csdn.net/ruixue0117/article/details/22829557
- * @date 2019-6-20 17:28:53
+ * @since 2019-6-20 17:28:53
  */
 public class VerifyCodeUtil {
 

@@ -31,7 +31,7 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
  * 当前项目未定型stomp over websocket
  *
  * @author dongfang.ding
- * @date 2019/8/20 11:43
+ * @since 2019/8/20 11:43
  */
 @Configuration
 @EnableWebSocket

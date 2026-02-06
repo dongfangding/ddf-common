@@ -9,7 +9,7 @@ import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 16:22
+ * @since 2022/03/19 16:22
  */
 public interface MqttDefinition {
 

@@ -7,7 +7,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/10/13 14:31
+ * @since 2020/10/13 14:31
  */
 @Data
 public class BucketProperty {

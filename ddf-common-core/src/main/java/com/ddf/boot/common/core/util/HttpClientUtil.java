@@ -46,7 +46,7 @@ import org.apache.hc.core5.util.Timeout;
  * http client 工具类
  *
  * @author snowball
- * @date 2025/8/13 16:31
+ * @since 2025/8/13 16:31
  **/
 @Slf4j
 public class HttpClientUtil {

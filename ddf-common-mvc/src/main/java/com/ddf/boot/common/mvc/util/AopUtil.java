@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
  * aop获取相关属性的方法工具类$
  *
  * @author dongfang.ding
- * @date 2019/12/20 0020 10:24
+ * @since 2019/12/20 0020 10:24
  */
 public class AopUtil {
 
@@ -37,7 +37,7 @@ public class AopUtil {
      * @param targetAnnotation
      * @return T
      * @author dongfang.ding
-     * @date 2019/12/20 0020 10:29
+     * @since 2019/12/20 0020 10:29
      **/
     public static <T extends Annotation> T getAnnotation(JoinPoint joinPoint, Class<T> targetAnnotation)
             throws NoSuchMethodException {
@@ -80,7 +80,7 @@ public class AopUtil {
      * @param joinPoint
      * @return java.util.Map<java.lang.Class < ?>,java.lang.Object>
      * @author dongfang.ding
-     * @date 2019/12/20 0020 11:28
+     * @since 2019/12/20 0020 11:28
      **/
     public static Map<Class<?>, Object> getArgs(JoinPoint joinPoint) {
         if (joinPoint == null) {
@@ -105,7 +105,7 @@ public class AopUtil {
      * @param joinPoint
      * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
-     * @date 2020/6/12 0012 18:46
+     * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getAllParamMap(JoinPoint joinPoint) {
         Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
@@ -125,7 +125,7 @@ public class AopUtil {
      * @param joinPoint
      * @return java.util.Map<java.lang.String, java.lang.Object>
      * @author dongfang.ding
-     * @date 2020/6/12 0012 18:46
+     * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getSerializableParamMap(JoinPoint joinPoint) {
         try {

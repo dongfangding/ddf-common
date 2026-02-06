@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * </p>
  *
  * @author snowball
- * @date 2021/8/26 16:34
+ * @since 2021/8/26 16:34
  **/
 @Slf4j
 public abstract class AbstractOrderOnsMessageListener<D extends Serializable>

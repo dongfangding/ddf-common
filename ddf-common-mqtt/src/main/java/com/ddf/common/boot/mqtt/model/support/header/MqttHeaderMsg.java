@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 11:29
+ * @since 2022/03/19 11:29
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

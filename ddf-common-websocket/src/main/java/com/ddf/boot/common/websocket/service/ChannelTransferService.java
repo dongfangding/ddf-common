@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 通道传输service
  *
  * @author dongfang.ding
- * @date 2019/8/23 9:45
+ * @since 2019/8/23 9:45
  */
 public interface ChannelTransferService  {
 

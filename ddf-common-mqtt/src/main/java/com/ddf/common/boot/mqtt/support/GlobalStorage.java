@@ -10,7 +10,7 @@ import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/19 12:36
+ * @since 2022/03/19 12:36
  */
 public class GlobalStorage {
 

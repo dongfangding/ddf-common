@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/05/17 13:32
+ * @since 2021/05/17 13:32
  */
 @Data
 @ConfigurationProperties(prefix = "customizer.infra.ons.console")

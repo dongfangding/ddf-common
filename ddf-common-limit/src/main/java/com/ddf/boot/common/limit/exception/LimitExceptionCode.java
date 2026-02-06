@@ -9,7 +9,7 @@ import lombok.Getter;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/02/24 13:52
+ * @since 2021/02/24 13:52
  */
 @AllArgsConstructor
 public enum LimitExceptionCode implements BaseCallbackCode {

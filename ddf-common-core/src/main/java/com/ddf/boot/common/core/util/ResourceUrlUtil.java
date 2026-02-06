@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author network
  * @version 1.0
- * @date 2020/10/24 12:08
+ * @since 2020/10/24 12:08
  */
 @Slf4j
 public class ResourceUrlUtil {

@@ -45,7 +45,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/22 13:54
+ * @since 2022/03/22 13:54
  */
 @Data
 public class EmqAclRequest implements Serializable {

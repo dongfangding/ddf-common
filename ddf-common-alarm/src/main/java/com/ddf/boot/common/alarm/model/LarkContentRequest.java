@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/01/11 20:44
+ * @since 2025/01/11 20:44
  */
 @Data
 public class LarkContentRequest implements Serializable {

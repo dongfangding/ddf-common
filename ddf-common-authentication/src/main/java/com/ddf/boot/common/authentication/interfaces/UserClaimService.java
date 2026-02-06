@@ -10,7 +10,7 @@ import java.util.Map;
  * 提供一个接口让调用方实现，来将用户的最新数据信息加载进来，这样模块才能验证信息
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 public interface UserClaimService {
 
@@ -35,7 +35,7 @@ public interface UserClaimService {
      * @param host    客户端请求ip
      * @return void
      * @author dongfang.ding
-     * @date 2019/12/7 0007 16:04
+     * @since 2019/12/7 0007 16:04
      **/
     void storeRequest(HttpServletRequest request, String host);
 

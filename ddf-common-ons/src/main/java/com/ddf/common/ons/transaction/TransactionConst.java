@@ -5,7 +5,7 @@ package com.ddf.common.ons.transaction;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/06/17 18:34
+ * @since 2022/06/17 18:34
  */
 public class TransactionConst {
 

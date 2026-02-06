@@ -15,7 +15,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/18 20:25
+ * @since 2022/03/18 20:25
  */
 @Data
 public class MqttMessageRequest<T extends MessageBody> implements Serializable {

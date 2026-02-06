@@ -18,7 +18,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * 创建线程帮助类
  * <p>
- *
  * <p>线程池按照业务时间划分</p>
  *
  * <p>可承受线程数 ≈ CPU 核数 * (1 + 平均 IO 等待时间 / 平均 CPU 执行时间)</p>
@@ -27,21 +26,16 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * <p>调数据库和接口平均耗时 400ms（IO 阻塞）</p>
  * <p>那么计算下来：</p>
  * <p>1 * (1 + 400 / 100) = 1 * (1 + 4) = 5</p>
- * <p>👉 理想线程数是 5 个左右</p>
- * </p>
+ * <p>理想线程数是 5 个左右</p>
  *
- * <p>
  * <p>任务队列设置</p>
- * <p>🚀 请求速率（QPS）	QPS 高 → 队列大一点</p>
- * <p>⏳ 任务执行时间	耗时长 → 队列大一点</p>
- * <p>💥 是否允许排队等待	允许排队 → 队列大一点；希望快速失败 → 队列小一点</p>
+ * <p>请求速率（QPS） QPS 高 → 队列大一点</p>
+ * <p>任务执行时间 耗时长 → 队列大一点</p>
+ * <p>是否允许排队等待 允许排队 → 队列大一点；希望快速失败 → 队列小一点</p>
  * 经验公式：队列容量 ≈ QPS × 平均响应时间（秒）
- * </p>
- * .............................................
- * 佛曰：bug泛滥，我已瘫痪！
  *
  * @author dongfang.ding
- * @date 2019/12/11 0011 17:52
+ * @since 2019/12/11 0011 17:52
  */
 @Slf4j
 public class ThreadBuilderHelper {
@@ -158,7 +152,7 @@ public class ThreadBuilderHelper {
      * @param maxPoolSize      最大线程池大小
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
      * @author dongfang.ding
-     * @date 2019/12/11 0011 17:59
+     * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,
             int keepAliveSeconds, int queueCapacity) {
@@ -179,7 +173,7 @@ public class ThreadBuilderHelper {
      * @param rejectedExecutionHandler 队列满之后的处理策略
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
      * @author dongfang.ding
-     * @date 2019/12/11 0011 17:59
+     * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,
             int keepAliveSeconds, int queueCapacity, RejectedExecutionHandler rejectedExecutionHandler,
@@ -202,7 +196,7 @@ public class ThreadBuilderHelper {
      * @param schedulePrintRunningState 是否需要定时打印运行状况
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
      * @author dongfang.ding
-     * @date 2019/12/11 0011 17:59
+     * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,
             int keepAliveSeconds, int queueCapacity, RejectedExecutionHandler rejectedExecutionHandler,

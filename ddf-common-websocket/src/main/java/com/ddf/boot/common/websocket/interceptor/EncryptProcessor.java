@@ -7,7 +7,7 @@ import com.ddf.boot.common.websocket.model.Message;
  * 暴露一个对与websocket相关的传输的数据进行加密解密的实现$
  *
  * @author dongfang.ding
- * @date 2020/9/16 0016 22:37
+ * @since 2020/9/16 0016 22:37
  */
 public interface EncryptProcessor {
 

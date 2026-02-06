@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/05/24 22:29
+ * @since 2022/05/24 22:29
  */
 @Slf4j
 public class TokenUtil {

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @author snowball
  * @version 1.0
- * @date 2022/05/24 22:48
+ * @since 2022/05/24 22:48
  */
 @Data
 @NoArgsConstructor

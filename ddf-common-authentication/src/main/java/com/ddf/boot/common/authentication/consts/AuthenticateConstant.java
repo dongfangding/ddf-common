@@ -4,7 +4,7 @@ package com.ddf.boot.common.authentication.consts;
  * 常量
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 public class AuthenticateConstant {
 

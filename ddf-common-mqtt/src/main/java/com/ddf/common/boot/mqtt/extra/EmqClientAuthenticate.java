@@ -9,7 +9,7 @@ import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/22 15:22
+ * @since 2022/03/22 15:22
  */
 public interface EmqClientAuthenticate {
 

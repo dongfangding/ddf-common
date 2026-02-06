@@ -7,7 +7,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/03/02 15:07
+ * @since 2021/03/02 15:07
  */
 @Data
 public class KaptchaProperties {

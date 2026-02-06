@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  * @author YUNTAO
  * @version 1.0
- * @date 2020/12/09 11:33
+ * @since 2020/12/09 11:33
  */
 public class BizUtils {
 

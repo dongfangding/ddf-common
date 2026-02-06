@@ -19,7 +19,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/09/15 20:11
+ * @since 2020/09/15 20:11
  */
 @Data
 @Component

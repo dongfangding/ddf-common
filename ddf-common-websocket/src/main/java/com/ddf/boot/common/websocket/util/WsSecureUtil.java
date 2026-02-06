@@ -52,7 +52,7 @@ public class WsSecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:02
+     * @since 2019/11/29 12:02
      **/
     public static String privateEncryptBcd(String data) {
         return RSA.encryptBcd(data, KeyType.PrivateKey, UTF_8);
@@ -64,7 +64,7 @@ public class WsSecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 0029 12:03
+     * @since 2019/11/29 0029 12:03
      **/
     public static String privateDecryptFromBcd(String data) {
         return RSA.decryptStrFromBcd(data, KeyType.PrivateKey, UTF_8);
@@ -77,7 +77,7 @@ public class WsSecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:02
+     * @since 2019/11/29 12:02
      **/
     public static String publicEncryptBcd(String data) {
         return RSA.encryptBcd(data, KeyType.PublicKey, UTF_8);
@@ -89,7 +89,7 @@ public class WsSecureUtil {
      *
      * @param data
      * @return java.lang.String
-     * @date 2019/11/29 12:03
+     * @since 2019/11/29 12:03
      **/
     public static String publicDecryptFromBcd(String data) {
         return RSA.decryptStrFromBcd(data, KeyType.PublicKey, UTF_8);
@@ -101,7 +101,7 @@ public class WsSecureUtil {
      * @param data
      * @param key
      * @return java.lang.String
-     * @date 2019/11/29 12:06
+     * @since 2019/11/29 12:06
      **/
     public static String signWithHMac(String data, String key) {
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, key.getBytes(UTF_8));

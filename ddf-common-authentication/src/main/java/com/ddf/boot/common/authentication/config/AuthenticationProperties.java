@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * 认证模块相关配置类
  *
  * @author dongfang.ding
- * @date 2019-12-07 16:45
+ * @since 2019-12-07 16:45
  */
 @ConfigurationProperties(prefix = "customizer.infra.authentication")
 @Data

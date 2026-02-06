@@ -8,7 +8,7 @@ import lombok.Getter;
  *
  * @author Snowball
  * @version 1.0
- * @date 2020/10/13 16:59
+ * @since 2020/10/13 16:59
  */
 public enum CaptchaErrorCode implements BaseCallbackCode {
     /**

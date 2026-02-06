@@ -12,7 +12,7 @@ import org.springframework.jmx.support.RegistrationPolicy;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/11/29 17:10
+ * @since 2021/11/29 17:10
  */
 @AutoConfiguration
 @Import(FdfsClientConfig.class)

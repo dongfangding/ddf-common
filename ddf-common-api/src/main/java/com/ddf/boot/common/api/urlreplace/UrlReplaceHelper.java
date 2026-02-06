@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/03/25 11:26
+ * @since 2025/03/25 11:26
  */
 @Slf4j
 @Configuration

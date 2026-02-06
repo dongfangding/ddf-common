@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * ONS批量消息监听器抽象类
  *
  * @author snowball
- * @date 2021/8/26 16:45
+ * @since 2021/8/26 16:45
  **/
 public abstract class AbstractBatchOnsMessageListener<D extends Serializable> extends AbstractOnsMessageListener<D>
         implements BatchMessageListener {

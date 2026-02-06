@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * ONS消息监听器注解
  *
  * @author snowball
- * @date 2021/8/26 14:25
+ * @since 2021/8/26 14:25
  **/
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

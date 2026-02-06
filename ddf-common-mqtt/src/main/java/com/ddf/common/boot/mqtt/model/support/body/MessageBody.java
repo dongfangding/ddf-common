@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author Snowball
  * @version 1.0
- * @date 2022/03/20 13:11
+ * @since 2022/03/20 13:11
  */
 public interface MessageBody extends Serializable {
 

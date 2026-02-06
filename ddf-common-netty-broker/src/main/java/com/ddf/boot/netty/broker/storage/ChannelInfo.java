@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
  * 通道连接信息对象
  *
  * @author dongfang.ding
- * @date 2019/7/8 9:49
+ * @since 2019/7/8 9:49
  */
 public class ChannelInfo {
     /**

@@ -5,7 +5,7 @@ package com.ddf.boot.common.api.constraint.redis;
  *
  * @author snowball
  * @version 1.0
- * @date 2023/02/06 15:18
+ * @since 2023/02/06 15:18
  */
 public interface RedisShardingRule<S, M> {
 

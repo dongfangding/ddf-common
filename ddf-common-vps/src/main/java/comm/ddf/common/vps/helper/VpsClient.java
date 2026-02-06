@@ -35,10 +35,10 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author Snowball
  * @version 1.0
- * @date 2021/12/01 17:42
+ * @since 2021/12/01 17:42
  */
 @Component
-@RequiredArgsConstructor(onConstructor_={@Autowired})
+@RequiredArgsConstructor
 @Slf4j
 public class VpsClient {
 
