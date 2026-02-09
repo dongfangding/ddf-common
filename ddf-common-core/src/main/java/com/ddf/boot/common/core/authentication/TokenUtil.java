@@ -43,8 +43,10 @@ public class TokenUtil {
      */
     public static AuthenticateToken createToken(UserClaim userClaim) {
         final String originUserClaimStr = JsonUtil.asString(userClaim);
+//        final AuthenticateToken authenticateToken = AuthenticateToken.of(
+//                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
         final AuthenticateToken authenticateToken = AuthenticateToken.of(
-                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
+                SecureUtil.aesEncryptHex(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
         if (Objects.nonNull(TOKEN_CACHE)) {
             TOKEN_CACHE.setToken(userClaim, authenticateToken);
         }

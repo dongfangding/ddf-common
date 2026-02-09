@@ -68,7 +68,7 @@
         <dependency>
             <groupId>io.github.dongfangding</groupId>
             <artifactId>ddf-common-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>
