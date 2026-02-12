@@ -79,7 +79,7 @@ public abstract class AbstractExceptionHandler {
         String body = WebUtil.readBody(httpServletRequest);
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
         final String uri = httpServletRequest.getRequestURI();
-        final Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
+        final String queryString = httpServletRequest.getQueryString();
         Map<String, String> clientHeaderMap = new HashMap<>();
         // 处理客户端传递的约定好的请求头
         final Map<String, RequestHeaderEnum> clientHeaders = RequestHeaderEnum.getAllClientHeaders();
@@ -95,15 +95,15 @@ public abstract class AbstractExceptionHandler {
                 .getClass()
                 .getName())) {
             log.error(
-                    "全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
-                    uri, parameterMap, clientHeaderMap, body, exception
+                    "全局异常捕获到请求异常， url = {}, 请求参数: queryString = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
+                    uri, queryString, body, clientHeaderMap, exception
             );
             shouldTriggerExceptionEvent = true;
         } else {
             // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
             log.info(
                     "全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, , clientHeaders = {}, 异常堆栈: ",
-                    uri, parameterMap, clientHeaderMap, body, exception
+                    uri, queryString, body, clientHeaderMap, exception
             );
         }
         if (exception instanceof AlarmException) {
@@ -112,7 +112,7 @@ public abstract class AbstractExceptionHandler {
 
         final GlobalExceptionEventPayload payload = new GlobalExceptionEventPayload();
         payload.setUrl(uri);
-        payload.setParameterMap(parameterMap);
+        payload.setParameterMap(httpServletRequest.getParameterMap());
         payload.setBody(body);
         try {
             payload.setHost(InetAddress

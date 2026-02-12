@@ -144,16 +144,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
                 || nonce > currentTimeMillis + TimeUnit.MINUTES.toMillis(timeForceCheckDiffMinute)) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
-        // 签名校验
-        final String contentType = request.getContentType();
-        final MediaType mediaType = MediaType.parseMediaType(contentType);
-        // 适合 JSON 和 Form 提交的请求
-        if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType)
-                || MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
-            resolveBodySignData(request);
-        } else {
-            resolveQueryParamsSignData(request);
-        }
+        // 校验签名
+        checkSign(request);
         // 分发服务前
         final ResponseData<Object> responseData = userClaimService.beforeDispatch(
                 request, response, userClaim, allHeaderMap, customizeHeaderMap);
@@ -161,8 +153,26 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             WebUtil.writerJson(response, JsonUtil.toJson(responseData));
             return false;
         }
+        // 构建解析后的上下文
         buildContext(request, userClaim, clientIp);
         return true;
+    }
+
+    private void checkSign(HttpServletRequest request) {
+        // 标准情况下，get方法应该是没有content-type的，但是有些不规范的写法会将这个传过来，导致走body签名，那就不管了。
+        final String contentType = request.getContentType();
+        boolean isBodyContentType = false;
+        // 只有当 contentType 非空，且解析后的类型匹配时，才视为 Body 类型
+        if (StringUtils.isNotBlank(contentType)) {
+            final MediaType mediaType = MediaType.parseMediaType(contentType);
+            isBodyContentType = MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType)
+                    || MediaType.APPLICATION_JSON.isCompatibleWith(mediaType);
+        }
+        if (isBodyContentType) {
+            resolveBodySignData(request);
+        } else {
+            resolveQueryParamsSignData(request);
+        }
     }
 
 

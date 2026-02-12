@@ -21,10 +21,10 @@ singleServerConfig:
   # 连接超时，单位：毫秒
   connectTimeout: 10000
   # 命令等待超时，单位：毫秒
-  timeout: 5000
+  timeout: 2000
   # 命令失败重试次数,如果尝试达到 retryAttempts（命令失败重试次数） 仍然不能将命令发送至某个指定的节点时，将抛出错误。如果尝试在此限制之内发送成功，则开始启用 timeout（命令等待超时） 计时
   retryAttempts: 3
   # 命令重试发送时间间隔，单位：毫秒
-  retryInterval: 1500
+  retryInterval: 500
   dnsMonitoringInterval: 5000
 codec: !<org.redisson.codec.JsonJacksonCodec> {}
