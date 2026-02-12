@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -27,6 +28,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.Expression;
@@ -43,18 +45,17 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  */
 @Aspect
 @Slf4j
+@RequiredArgsConstructor
 public class RateLimitAspect {
 
-    @Autowired
-    private RedisTemplateHelper redisTemplateHelper;
-    @Autowired
-    private RateLimitProperties rateLimitProperties;
-    @Autowired(required = false)
-    private RateLimitPropertiesCollect rateLimitPropertiesCollect;
+    private final RedisTemplateHelper redisTemplateHelper;
+    private final RateLimitProperties rateLimitProperties;
+    private final ObjectProvider<RateLimitPropertiesCollect> rateLimitPropertiesCollect;
 
     public static final String BEAN_NAME = "rateLimitAspect";
 
-    private final StandardReflectionParameterNameDiscoverer discoverer = new StandardReflectionParameterNameDiscoverer();
+    private final StandardReflectionParameterNameDiscoverer discoverer =
+            new StandardReflectionParameterNameDiscoverer();
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
@@ -62,8 +63,8 @@ public class RateLimitAspect {
      * key生成规则实现器
      *
      */
-    public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringContextHolder
-            .getBeansOfType(RateLimitKeyGenerator.class);
+    public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringContextHolder.getBeansOfType(
+            RateLimitKeyGenerator.class);
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
             + " || @within(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
@@ -81,11 +82,18 @@ public class RateLimitAspect {
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws NoSuchMethodException {
         // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
+        final Class<?> currentClass = joinPoint
+                .getSignature()
+                .getDeclaringType();
         // 获取当前拦截方法
         MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
-        if (currentMethod.getMethod().isAnnotationPresent(RateLimitIgnore.class)) {
-            log.info("忽略执行[{}]-[{}]的限流处理>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
+        if (currentMethod
+                .getMethod()
+                .isAnnotationPresent(RateLimitIgnore.class)) {
+            log.info(
+                    "忽略执行[{}]-[{}]的限流处理>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(),
+                    currentMethod.getName()
+            );
             return;
         }
         final MultiRateLimit multiRateLimit = AopUtil.getAnnotation(joinPoint, MultiRateLimit.class);
@@ -97,7 +105,8 @@ public class RateLimitAspect {
             // 获取限流注解
             final RateLimit annotation = AopUtil.getAnnotation(joinPoint, RateLimit.class);
             if (Objects.isNull(annotation)) {
-                log.debug("[{}-{}]未开启限流限流>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
+                log.debug(
+                        "[{}-{}]未开启限流限流>>>>>>>>>>>>>>>>>>>>>>", currentClass.getName(), currentMethod.getName());
                 return;
             }
             rules = Collections.singletonList(annotation);
@@ -113,17 +122,21 @@ public class RateLimitAspect {
             // 这个特性基本上只会用在全局限流规则， 其它个性化的限流规则，其实应该用不到这个，不过这里代码统一，反正只要使用的时候，
             // 自己在方法级别设置自己的限流规则就行了
             if (rateLimitProperties.isCloudRefresh()) {
-                if (Objects.isNull(rateLimitPropertiesCollect)) {
-                    throw new NoSuchBeanDefinitionException("当使用了cloudRefresh=true时， 请务必同时实现接口[%s]".formatted(
-                            RateLimitPropertiesCollect.class.getName()));
+                final RateLimitPropertiesCollect propertiesCollectIfAvailable =
+                        rateLimitPropertiesCollect.getIfAvailable();
+                if (Objects.isNull(propertiesCollectIfAvailable)) {
+                    throw new NoSuchBeanDefinitionException(
+                            "当使用了cloudRefresh=true时， 请务必同时实现接口[%s]".formatted(
+                                    RateLimitPropertiesCollect.class.getName()));
                 }
                 // 使用外部接口类填充全局属性
-                rateLimitPropertiesCollect.copyToProperties(rateLimitProperties);
+                propertiesCollectIfAvailable.copyToProperties(rateLimitProperties);
             }
             // 属性检查
             rateLimitProperties.check();
             // 获取限流最大令牌桶数量
-            Integer max = annotation.max() == rateLimitProperties.getMax() ? rateLimitProperties.getMax() : annotation.max();
+            Integer max =
+                    annotation.max() == rateLimitProperties.getMax() ? rateLimitProperties.getMax() : annotation.max();
             if (Objects.equals(RateLimitProperties.NOT_CONTROL, max)) {
                 continue;
             }
@@ -137,7 +150,8 @@ public class RateLimitAspect {
             // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
             String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei());
             // 获取令牌恢复速率
-            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() : annotation.rate();
+            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() :
+                    annotation.rate();
             if (Objects.equals(RateLimitProperties.NOT_CONTROL, rate)) {
                 return;
             }
@@ -148,10 +162,14 @@ public class RateLimitAspect {
             }
 
             // 生成限流的key
-            String key = KEY_GENERATOR_MAP.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
+            String key = KEY_GENERATOR_MAP
+                    .get(keyGenerator)
+                    .generateKey(joinPoint, annotation, rateLimitProperties);
             if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
-                log.error("接口【{}-{}-{}】超过限流组件{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                        currentMethod.getName(), keyGenerator, key, AopUtil.serializeParam(joinPoint)
+                log.error(
+                        "接口【{}-{}-{}】超过限流组件{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>",
+                        identityNo, currentClass.getName(), currentMethod.getName(), keyGenerator, key,
+                        AopUtil.serializeParam(joinPoint)
                 );
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }

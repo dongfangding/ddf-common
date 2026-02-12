@@ -24,6 +24,7 @@ import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +49,7 @@ public class EmqController {
     private final EmqConnectionProperties emqConnectionProperties;
     private final MqttAsyncClient mqttAsyncClient;
     private final MqttPublishClient mqttPublishClient;
-
-    @Autowired(required = false)
-    private EmqClientAuthenticate emqClientAuthenticate;
+    private final ObjectProvider<EmqClientAuthenticate> emqClientAuthenticateProvider;
 
     /**
      * 演示发送消息，非正式使用
@@ -130,6 +129,7 @@ public class EmqController {
                 // 客户端用户， 让使用该模块的功能完成自己的用户认证， 这块的代码应该写在应用层，而不是这个模块内部，因为如果是模块内部那就是自己依赖自己，
                 // 本身服务没起来的前提所有客户端都无法连接， 所以这个代码应该是一个独立的认证中心，比如写在用户模块，然后接口暴露在网关层，然后将网关层接口
                 // 配置到emq的认证http地址中，这里只是提供写法，小项目单体项目可以直接集成，分布式不合适。
+                final EmqClientAuthenticate emqClientAuthenticate = emqClientAuthenticateProvider.getIfAvailable();
                 if (emqClientAuthenticate == null) {
                     EmqHttpResponseUtil.error(response, "未定义客户端认证规则，不允许连接");
                     return;

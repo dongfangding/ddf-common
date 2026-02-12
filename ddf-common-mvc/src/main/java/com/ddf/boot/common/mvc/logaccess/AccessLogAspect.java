@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,6 +18,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -29,23 +31,17 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * @author dongfang.ding on 2018/10/9
  */
 @Aspect
+@RequiredArgsConstructor
 public class AccessLogAspect {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final String BEAN_NAME = "accessLogAspect";
 
-    @Autowired
-    private LogAspectConfiguration logAspectConfiguration;
+    private final LogAspectConfiguration logAspectConfiguration;
+    private final GlobalProperties globalProperties;
 
-    @Autowired(required = false)
-    private SlowEventAction slowEventAction;
-    @Autowired(required = false)
-    private Map<String, AccessFilterChain> accessFilterChainMap;
-
-    @Autowired
-    private ThreadPoolTaskExecutor defaultThreadPool;
-    @Autowired
-    private GlobalProperties globalProperties;
+    private final ObjectProvider<SlowEventAction> slowEventActionProvider;
+    private final ObjectProvider<Map<String, AccessFilterChain>> accessFilterChainMapProvider;
 
     // @Pointcut(value = "execution(public * com..controller..*(..)) || execution(public * com..provider..*(..))")
     @Pointcut(value = "@annotation(com.ddf.boot.common.mvc.logaccess.Log) || @within(com.ddf.boot.common.mvc.logaccess.Log)")
@@ -80,6 +76,7 @@ public class AccessLogAspect {
             paramJson = AopUtil.serializeParam(joinPoint);
             // 调用起始时间
             long beforeTime = System.currentTimeMillis();
+            final Map<String, AccessFilterChain> accessFilterChainMap = accessFilterChainMapProvider.getIfAvailable();
             if (CollUtil.isNotEmpty(accessFilterChainMap)) {
                 final List<AccessFilterChain> chainList = accessFilterChainMap.values().stream().sorted(
                         Comparator.comparingInt(AccessFilterChain::getOrder)).toList();
@@ -136,13 +133,15 @@ public class AccessLogAspect {
      */
     private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
         long slowTime = logAspectConfiguration.getSlowTime();
+        final SlowEventAction slowEventAction = slowEventActionProvider.getIfAvailable();
         if (consumerTime > slowTime && slowEventAction != null && !checkIgnore(className)) {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制
             SlowEventAction.SlowEvent slowEvent = new SlowEventAction.SlowEvent(className, methodName, params,
                     consumerTime, slowTime
             );
             logger.info("{}-{}耗时{}，准备执行处理回调。。。。", className, methodName, consumerTime);
-            defaultThreadPool.execute(() -> slowEventAction.doAction(slowEvent));
+            // 实际使用过程中，自行决定是否要异步执行
+            slowEventAction.doAction(slowEvent);
         }
     }
 

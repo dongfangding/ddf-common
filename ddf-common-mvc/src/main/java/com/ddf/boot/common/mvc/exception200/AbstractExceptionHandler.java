@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -57,8 +58,8 @@ public abstract class AbstractExceptionHandler {
 
     @Autowired
     private GlobalProperties globalProperties;
-    @Autowired(required = false)
-    private ExceptionHandlerMapping exceptionHandlerMapping;
+    @Autowired
+    private ObjectProvider<ExceptionHandlerMapping> exceptionHandlerMappingProvider;
     @Autowired
     private EnvironmentHelper environmentHelper;
     @Autowired
@@ -124,6 +125,7 @@ public abstract class AbstractExceptionHandler {
         payload.setProfile(environmentHelper.getProfileStr());
         payload.setTimestamps(System.currentTimeMillis());
 
+        final ExceptionHandlerMapping exceptionHandlerMapping = exceptionHandlerMappingProvider.getIfAvailable();
         // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         if (exceptionHandlerMapping != null) {
             // 仅仅支持通知异常，提供一个回调的机制
