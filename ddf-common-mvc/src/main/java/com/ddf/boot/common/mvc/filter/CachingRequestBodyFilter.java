@@ -1,9 +1,15 @@
 package com.ddf.boot.common.mvc.filter;
 
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 
@@ -15,13 +21,17 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
  * @author yiming
  * @since 2024/3/21 14:38
  **/
-public class CachingRequestBodyFilter extends GenericFilterBean {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class CachingRequestBodyFilter extends OncePerRequestFilter {
 
     @Override
-    public void doFilter(jakarta.servlet.ServletRequest request, jakarta.servlet.ServletResponse response,
-            jakarta.servlet.FilterChain chain) throws IOException, jakarta.servlet.ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         HttpServletRequest currentRequest = (HttpServletRequest) request;
-        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(currentRequest);
-        chain.doFilter(wrappedRequest, response);
+
+        if (!(request instanceof ContentCachingRequestWrapper)) {
+            request = new ContentCachingRequestWrapper(currentRequest);
+        }
+        filterChain.doFilter(request, response);
     }
 }

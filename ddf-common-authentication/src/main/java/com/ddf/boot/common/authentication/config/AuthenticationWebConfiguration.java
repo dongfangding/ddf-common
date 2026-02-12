@@ -1,8 +1,7 @@
 package com.ddf.boot.common.authentication.config;
 
 import com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,15 +15,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class AuthenticationWebConfiguration implements WebMvcConfigurer {
 
-    @Autowired(required = false)
-    private AuthenticateTokenFilter authenticateTokenFilter;
+    private final ObjectProvider<AuthenticateTokenFilter> authenticateTokenFilter;
+
+    public AuthenticationWebConfiguration(ObjectProvider<AuthenticateTokenFilter> authenticateTokenFilter) {
+        this.authenticateTokenFilter = authenticateTokenFilter;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        if (Objects.nonNull(authenticateTokenFilter)) {
-            registry
-                    .addInterceptor(authenticateTokenFilter)
+        authenticateTokenFilter.ifAvailable(filter -> {
+            registry.addInterceptor(filter)
                     .addPathPatterns("/**");
-        }
+        });
     }
 }

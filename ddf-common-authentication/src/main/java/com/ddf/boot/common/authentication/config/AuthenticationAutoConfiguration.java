@@ -33,7 +33,7 @@ public class AuthenticationAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(AuthenticateTokenFilter.class)
-    @ConditionalOnMissingBean(TokenCustomizeCheckService.class)
+    @ConditionalOnMissingBean(TokenCache.class)
     public TokenCache tokenCacheImpl(AuthenticationProperties authenticationProperties,
             EnvironmentHelper environmentHelper) {
         return new TokenCacheImpl(authenticationProperties, environmentHelper);

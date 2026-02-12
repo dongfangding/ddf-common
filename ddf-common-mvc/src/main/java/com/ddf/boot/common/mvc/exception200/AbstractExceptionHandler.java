@@ -140,7 +140,7 @@ public abstract class AbstractExceptionHandler {
             }
         }
         Locale locale = new Locale("en");
-        final String appLanguage = httpServletRequest.getHeader(RequestHeaderEnum.APP_LANGUAGE.getName());
+        final String appLanguage = httpServletRequest.getHeader(RequestHeaderEnum.LANGUAGE.getName());
         try {
             if (StringUtils.isNotBlank(appLanguage)) {
                 locale = new Locale(appLanguage);

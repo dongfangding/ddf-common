@@ -1,5 +1,6 @@
 package com.ddf.boot.common.authentication.filter;
 
+import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.BaseException;
 import com.ddf.boot.common.api.exception.BusinessException;
@@ -9,6 +10,7 @@ import com.ddf.boot.common.api.model.authentication.AuthenticateCheckResult;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.model.common.dto.RequestContext;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
+import com.ddf.boot.common.api.model.common.response.ResponseData;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.consts.AuthenticateConstant;
@@ -20,6 +22,7 @@ import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.SignatureUtil;
+import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +36,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +54,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * @since 2019-12-07 16:45
  */
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticateTokenFilter implements HandlerInterceptor {
 
     public static final String BEAN_NAME = "authenticateTokenFilter";
@@ -59,14 +64,9 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      */
     private static final List<String> SYSTEM_IGNORE_PATH = Collections.unmodifiableList(Lists.newArrayList("/error"));
 
-    @Autowired(required = false)
-    private UserClaimService userClaimService;
-    @Autowired
-    private TokenCustomizeCheckService tokenCustomizeCheckService;
-    @Autowired
-    private AuthenticationProperties authenticateProperties;
-    @Autowired
-    private EnvironmentHelper environmentHelper;
+    private final UserClaimService userClaimService;
+    private final TokenCustomizeCheckService tokenCustomizeCheckService;
+    private final AuthenticationProperties authenticateProperties;
 
     /**
      * 前置校验
@@ -89,7 +89,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             return true;
         }
         // 开放接口校验，比如提供给外部的回调接口
-        final RequestContext requestContext = UserContextUtil.getRequestContext();
         final List<String> openIgnores = authenticateProperties.getOpenIgnores();
         if (GlobalAntMatcher.match(openIgnores, url)) {
             return true;
@@ -108,7 +107,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // token校验前置校验
         userClaimService.beforeTokenVerify(request, response, clientHeaderMap, customizeHeaderMap);
 
-        String clientIp = requestContext.getClientIp();
+        String clientIp = WebUtil.getHost();
         final String token = request.getHeader(authenticateProperties.getTokenHeaderName());
         request.setAttribute(AuthenticateConstant.CLIENT_IP, clientIp);
         final List<String> ignores = authenticateProperties.getIgnores();
@@ -131,17 +130,18 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         }
         // 添加服务端请求头
         clientHeaderMap.putAll(resolveServerHeaders(request, userClaim));
-        // 填充认证接口前置属性
-        userClaimService.storeRequest(request, clientIp);
 
+        final HashMap<String, String> allHeaderMap = new HashMap<>(clientHeaderMap);
+        allHeaderMap.putAll(customizeHeaderMap);
         // 预留认证通过后置接口
-        userClaimService.afterVerifySuccess(request, userClaim, clientHeaderMap, customizeHeaderMap);
+        userClaimService.afterTokenVerifySuccess(request, userClaim, allHeaderMap, customizeHeaderMap);
 
         // 重放简单校验
         final long nonce = Long.parseLong(Objects.requireNonNull(request.getHeader(RequestHeaderEnum.NONCE.getName())));
         final long currentTimeMillis = System.currentTimeMillis();
-        if (nonce < currentTimeMillis - TimeUnit.MINUTES.toMillis(5)
-                || nonce > currentTimeMillis + TimeUnit.MINUTES.toMillis(5)) {
+        final Integer timeForceCheckDiffMinute = authenticateProperties.getTimeForceCheckDiffMinute();
+        if (nonce < currentTimeMillis - TimeUnit.MINUTES.toMillis(timeForceCheckDiffMinute)
+                || nonce > currentTimeMillis + TimeUnit.MINUTES.toMillis(timeForceCheckDiffMinute)) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
         // 签名校验
@@ -154,20 +154,28 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         } else {
             resolveQueryParamsSignData(request);
         }
-
-        final HashMap<String, String> allHeaderMap = new HashMap<>(clientHeaderMap);
-        allHeaderMap.putAll(customizeHeaderMap);
-        // 自定义token校验
-
-        // 塞入最新用户数据
-        UserContextUtil.setUserClaim(userClaim);
-        if (Objects.nonNull(userClaim)) {
-            MDC.put(AuthenticateConstant.MDC_USER_ID, userClaim.getUserId());
-            String userInfo = JsonUtil.asString(userClaim);
-            request.setAttribute(AuthenticateConstant.HEADER_USER, userInfo);
+        // 分发服务前
+        final ResponseData<Object> responseData = userClaimService.beforeDispatch(
+                request, response, userClaim, allHeaderMap, customizeHeaderMap);
+        if (!responseData.isSuccess()) {
+            WebUtil.writerJson(response, JsonUtil.toJson(responseData));
+            return false;
         }
-        MDC.put(AuthenticateConstant.MDC_TRACE_ID, generateTraceId(userClaim.getUserId()));
+        buildContext(request, userClaim, clientIp);
         return true;
+    }
+
+
+    public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp) {
+        // 解析请求头
+        resolveRequestContext(request, userClaim, clientIp);
+        MDC.put(AuthenticateConstant.MDC_USER_ID, UserContextUtil.getUserId());
+        MDC.put(
+                AuthenticateConstant.MDC_TRACE_ID,
+                request.getHeader(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName())
+        );
+        MDC.put(AuthenticateConstant.MDC_CLIENT_IP, UserContextUtil.getClientIpFromGateway());
+        MDC.put(AuthenticateConstant.MDC_IMEI, UserContextUtil.getImei());
     }
 
 
@@ -211,7 +219,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             return;
         }
         if (!(authenticateProperties.isMockSignEnabled() && Objects.equals(authenticateProperties.getMockSign(), sign))
-                && !SignatureUtil.verifySelfSignature(data, sign, authenticateProperties.getSignSecret())) {
+                && !SignatureUtil.verifySelfSignature(data, sign, authenticateProperties.getSignSecret(), true)) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
     }
@@ -238,11 +246,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
             @Nullable Exception ex) throws Exception {
-        // 移除用户信息
-        UserContextUtil.removeUserClaim();
-        UserContextUtil.removeRequestContext();
-        MDC.remove(AuthenticateConstant.MDC_USER_ID);
-        MDC.remove(AuthenticateConstant.MDC_TRACE_ID);
+        removeContext();
     }
 
     /**
@@ -280,9 +284,11 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // 处理客户端传递的约定好的请求头
         final Map<String, RequestHeaderEnum> clientHeaders = RequestHeaderEnum.getAllClientHeaders();
         clientHeaders.forEach((name, obj) -> {
-            clientHeaderMap.put(name, Optional
-                    .ofNullable(request.getHeader(name))
-                    .orElse(obj.getDefaultValue()));
+            clientHeaderMap.put(
+                    name, Optional
+                            .ofNullable(request.getHeader(name))
+                            .orElse(obj.getDefaultValue())
+            );
         });
         return clientHeaderMap;
     }
@@ -306,14 +312,47 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
                 RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName(),
                 RequestHeaderEnum.IS_GATEWAY_DISPATCH.getDefaultValue()
         );
-        serverHeaderMap.put(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
-                Objects.nonNull(userClaim) ? userClaim.getUserId() :
-                        request.getHeader(RequestHeaderEnum.IMEI.getName())));
+        serverHeaderMap.put(
+                RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
+                        Objects.nonNull(userClaim) ? userClaim.getUserId() :
+                                request.getHeader(RequestHeaderEnum.IMEI.getName()))
+        );
         return serverHeaderMap;
     }
 
-    public void resolveRequestContext() {
+    public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp) {
+        // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用
+        UserContextUtil.setRequestContext(RequestContext
+                .builder()
+                .userClaim(userClaim)
+                .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
+                .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
+                .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
+                .nonce(Long.parseLong(
+                        StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
+                .versionCode(Integer.parseInt(
+                        StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.VERSION_CODE.getName()), "0")))
+                .version(request.getHeader(RequestHeaderEnum.VERSION.getName()))
+                .language(request.getHeader(RequestHeaderEnum.LANGUAGE.getName()))
+                .timeZone(request.getHeader(RequestHeaderEnum.TIME_ZONE.getName()))
+                .osVersion(request.getHeader(RequestHeaderEnum.OS_VERSION.getName()))
+                .deviceMode(request.getHeader(RequestHeaderEnum.DEVICE_MODE.getName()))
+                .requestUri(request.getRequestURI())
+                .clientIp(clientIp)
+                .clientIpFromGateway(clientIp)
+                .userIdFromGateway(userClaim.getUserId())
+                .build());
+    }
 
+
+    public void removeContext() {
+        // 移除用户信息
+        UserContextUtil.removeRequestContext();
+        UserContextUtil.removeUserClaim();
+        MDC.remove(AuthenticateConstant.MDC_USER_ID);
+        MDC.remove(AuthenticateConstant.MDC_TRACE_ID);
+        MDC.remove(AuthenticateConstant.MDC_CLIENT_IP);
+        MDC.remove(AuthenticateConstant.MDC_IMEI);
     }
 
 

@@ -3,16 +3,21 @@ package com.ddf.boot.common.mvc.util;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.constant.GlobalConstants;
+import com.ddf.boot.common.mvc.filter.CachingRequestBodyFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.WebUtils;
 
 /**
  * Web层辅助工具类
@@ -102,7 +107,6 @@ public class WebUtil {
      * @param errorMessage
      */
     public static void responseError(HttpServletResponse response, int status, String errorMessage) {
-        log.debug("------------------失败响应------------------");
         response.setStatus(status);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=utf-8");
@@ -167,19 +171,42 @@ public class WebUtil {
 
 
     /**
-     * 读取body
+     * 读取body, 配合{@link CachingRequestBodyFilter}
      *
      * @param httpServletRequest
      * @return
      */
     public static String readBody(HttpServletRequest httpServletRequest) {
-        String body = "";
-        ContentCachingRequestWrapper contentCachingRequestWrapper =
-                org.springframework.web.util.WebUtils.getNativeRequest(
-                        httpServletRequest, ContentCachingRequestWrapper.class);
-        if (Objects.nonNull(contentCachingRequestWrapper)) {
-            body = new String(contentCachingRequestWrapper.getContentAsByteArray());
+        ContentCachingRequestWrapper wrapper =
+                WebUtils.getNativeRequest(httpServletRequest, ContentCachingRequestWrapper.class);
+        if (wrapper == null) {
+            return "";
         }
-        return body;
+        byte[] buf = wrapper.getContentAsByteArray();
+        if (buf.length == 0) {
+            return "";
+        }
+        String encoding = Optional
+                .ofNullable(wrapper.getCharacterEncoding())
+                .orElse(StandardCharsets.UTF_8.name());
+        return new String(buf, Charset.forName(encoding));
+    }
+
+
+    /**
+     * 处理http 响应失败
+     *
+     * @param response
+     * @param json
+     */
+    public static void writerJson(HttpServletResponse response, String json) {
+        response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        try {
+            response.getWriter().print(json);
+        } catch (IOException e) {
+            log.error("处理响应失败{}", json, e);
+        }
     }
 }

@@ -14,11 +14,6 @@ public class AuthenticateConstant {
     public static final String CLIENT_IP = "client_ip";
 
     /**
-     * 用户信息
-     */
-    public static final String HEADER_USER = "header_user_info";
-
-    /**
      * MDC uid放入key
      */
     public static final String MDC_USER_ID = "user_id";
@@ -27,4 +22,14 @@ public class AuthenticateConstant {
      * MDC trace_id放入key
      */
     public static final String MDC_TRACE_ID = "trace_id";
+
+    /**
+     * MDC trace_id放入key
+     */
+    public static final String MDC_CLIENT_IP = "client_ip";
+
+    /**
+     * MDC trace_id放入key
+     */
+    public static final String MDC_IMEI = "imei";
 }

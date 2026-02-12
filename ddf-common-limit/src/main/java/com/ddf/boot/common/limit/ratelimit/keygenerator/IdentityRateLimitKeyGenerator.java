@@ -36,7 +36,7 @@ public class IdentityRateLimitKeyGenerator implements RateLimitKeyGenerator {
         // 身份标识
         String identityNo = StringUtils.defaultIfBlank(StringUtils.defaultIfBlank(
                 UserContextUtil.getUserId(),
-                UserContextUtil.getCredit()), getPrefix());
+                        UserContextUtil.getImei()), getPrefix());
         // 获取当前拦截类
         final Class<?> currentClass = joinPoint.getSignature()
                 .getDeclaringType();

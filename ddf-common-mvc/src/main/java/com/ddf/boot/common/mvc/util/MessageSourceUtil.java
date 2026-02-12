@@ -55,7 +55,7 @@ public class MessageSourceUtil {
      * @return
      */
     public static String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage) {
-        final String appLanguage = WebUtil.getHeader(RequestHeaderEnum.APP_LANGUAGE.name());
+        final String appLanguage = WebUtil.getHeader(RequestHeaderEnum.LANGUAGE.name());
         String defaultLanguage = "en";
         String language = StringUtils.defaultIfBlank(appLanguage, defaultLanguage);
         language = Objects.equals("zh-hans", language) ? "zh-hant" : language;

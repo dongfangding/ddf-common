@@ -1,7 +1,12 @@
 package com.ddf.boot.common.authentication.util;
 
+import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.model.common.dto.RequestContext;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 ;
 
@@ -42,28 +47,58 @@ public class UserContextUtil {
         USER_CONTEXT.remove();
     }
 
-    /**
-     * 获取当前用户uid
-     *
-     * @return
-     */
+    public static String getClientIp() {
+        return getRequestContext().getClientIp();
+    }
+
+    public static String getLanguage() {
+        return getRequestContext().getLanguage();
+    }
+
+    public static String getClientIpFromGateway() {
+        return getRequestContext().getClientIpFromGateway();
+    }
+
+    public static String getRequestUri() {
+        return getRequestContext().getRequestUri();
+    }
+
+    public static String getSign() {
+        return getRequestContext().getSign();
+    }
+
+    public static Integer getVersionCode() {
+        return getRequestContext().getVersionCode();
+    }
+
+    public static String getImei() {
+        return getRequestContext().getImei();
+    }
+
+    public static Long getNonce() {
+        return getRequestContext().getNonce();
+    }
+
+    public static OsEnum getOs() {
+        return getRequestContext().getOs();
+    }
+
+    public static String getOsVersion() {
+        return getRequestContext().getOsVersion();
+    }
+
+
     public static String getUserId() {
-        return getUserClaim().getUserId();
+        return getRequestContext().getUserIdFromGateway();
+    }
+
+    public static String getDeviceMode() {
+        return getRequestContext().getDeviceMode();
     }
 
     public static Long getLongUserId() {
         return Long.parseLong(getUserId());
     }
-
-    /**
-     * 获取客户端唯一标识, 建议使用设备号
-     *
-     * @return
-     */
-    public static String getCredit() {
-        return getUserClaim().getCredit();
-    }
-
 
     /**
      * 设置请求上下文
@@ -87,6 +122,21 @@ public class UserContextUtil {
      * 移除请求上下文
      */
     public static void removeRequestContext() {
-        REQUEST_CONTEXT.remove();;
+        REQUEST_CONTEXT.remove();
+    }
+
+
+    /**
+     * 获取当前app语言，默认英文
+     *
+     * @return
+     */
+    public static String getLanguageOrDefault() {
+        String defaultLanguage = "en";
+        return StringUtils.defaultIfBlank(getRequestContext().getLanguage(), defaultLanguage);
+    }
+
+    public static Locale getLocale() {
+        return new Locale(getLanguageOrDefault());
     }
 }

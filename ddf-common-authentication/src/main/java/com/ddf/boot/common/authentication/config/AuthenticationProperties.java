@@ -82,6 +82,12 @@ public class AuthenticationProperties {
      * 万能sign， 某些情况下使用
      */
     private String mockSign;
+
+
+    /**
+     * 时间强制校验，当客户时间与服务端时间上下相差超过该值时，认为是异常请求，单位 分钟
+     */
+    private Integer timeForceCheckDiffMinute = 10;
 }
 
 

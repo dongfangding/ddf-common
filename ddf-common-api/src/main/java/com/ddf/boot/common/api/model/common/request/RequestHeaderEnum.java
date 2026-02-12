@@ -51,22 +51,7 @@ public enum RequestHeaderEnum {
     /**
      * APP设置的语言
      */
-    APP_LANGUAGE("app_language", false, true, ""),
-
-    /**
-     * 系统当前语言
-     */
-    SYSTEM_LANGUAGE("system_language", false, true, ""),
-
-    /**
-     * 是否使用了代理
-     */
-    USE_PROXY("use_proxy", false, true, "false"),
-
-    /**
-     * 是否使用VPN
-     */
-    USE_VPN("use_vpn", false, true, "false"),
+    LANGUAGE("language", false, true, ""),
 
     /**
      * 时区
@@ -83,27 +68,20 @@ public enum RequestHeaderEnum {
      */
     DEVICE_MODE("device_mode", false, true, ""),
 
-
-    /**
-     * h5版本号
-     */
-    H5_VERSION("h5_version", false, true, ""),
-
-    /**
-     * ios的idfa
-     */
-    IOS_IDFA("ios_idfa", false, true, ""),
-
-
-    /**
-     * Android android_id
-     */
-    ANDROID_ID("android_id", false, true, ""),
-
     /**
      * 客户端ip
      */
     CLIENT_IP("client_ip", false, false, ""),
+
+    /**
+     * 经度
+     */
+    LONGITUDE("longitude", false, true, "0"),
+
+    /**
+     * 纬度
+     */
+    LATITUDE("latitude", false, true, "0"),
 
     /**
      * 客户端ip(比如有网关服务的前提下，网关负责解析就需要传递下去，而不是下游服务自己获取）
@@ -121,30 +99,9 @@ public enum RequestHeaderEnum {
     TRACE_ID_FROM_GATEWAY("trace_id_from_gateway", false, false, ""),
 
     /**
-     * 广告渠道（下载渠道）
-     */
-    AD_CHANNEL("ad_channel", false, true, ""),
-
-    /**
      * 是否网关调用
      */
     IS_GATEWAY_DISPATCH("is_gateway_dispatch", false, false, "true"),
-
-    /**
-     * 是否模拟器， 0否1是
-     */
-    SIMULATOR("is_simulator", false, true, "false"),
-
-    /**
-     * 经度
-     */
-    LONGITUDE("longitude", false, true, "0"),
-
-    /**
-     * 纬度
-     */
-    LATITUDE("latitude", false, true, "0"),
-
     ;
     /**
      * header name

@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.util;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -189,5 +190,15 @@ public class StringExtUtil {
      */
     public static boolean isValidHttpScheme(String url) {
         return StringUtils.isNotBlank(url) && (url.startsWith("http://") || url.startsWith("https://"));
+    }
+
+    /**
+     * 更符合语义的Boolean解析方法
+     *
+     * @param value
+     * @return
+     */
+    public static Boolean parseBoolean(String value) {
+        return Objects.equals(value, "1") || "true".equalsIgnoreCase(value);
     }
 }

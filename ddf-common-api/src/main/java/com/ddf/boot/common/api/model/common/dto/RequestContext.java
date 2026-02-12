@@ -1,6 +1,7 @@
 package com.ddf.boot.common.api.model.common.dto;
 
 import com.ddf.boot.common.api.enums.OsEnum;
+import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
 import com.ddf.boot.common.api.util.ReflectUtils;
 import java.io.Serial;
@@ -32,6 +33,11 @@ public class RequestContext implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -7528108356364083934L;
+
+    /**
+     * 用户token对象
+     */
+    private UserClaim userClaim;
 
     /**
      * 客户端ip，当前服务从请求对象中自己获取的
@@ -76,12 +82,7 @@ public class RequestContext implements Serializable {
     /**
      * 软件当前语言
      */
-    private String appLanguage;
-
-    /**
-     * 设备系统当前语言
-     */
-    private String systemLanguage;
+    private String language;
 
     /**
      * 客户端类型
@@ -99,21 +100,6 @@ public class RequestContext implements Serializable {
     private String channel;
 
     /**
-     * 设备运营商
-     */
-    private String simOperator;
-
-    /**
-     * 是否使用了代理
-     */
-    private Boolean useProxy;
-
-    /**
-     * 是否使用了vpn
-     */
-    private Boolean useVpn;
-
-    /**
      * 设备时区
      */
     private String timeZone;
@@ -129,44 +115,9 @@ public class RequestContext implements Serializable {
     private String deviceMode;
 
     /**
-     * h5版本
-     */
-    private String h5Version;
-
-    /**
-     * ios的idfa
-     */
-    private String iosIdfa;
-
-    /**
-     * Android oa_id
-     */
-    private String oaId;
-
-    /**
-     * Android android_id
-     */
-    private String androidId;
-
-    /**
      * 是否网关转发
      */
     private Boolean isGatewayDispatch = Boolean.FALSE;
-
-    /**
-     * 是否运营后台添加的设备白名单
-     */
-    private Boolean isConsoleWhitelistImei = Boolean.FALSE;
-
-    /**
-     * 账号是否被封（风控服务提供），被封之后，除开登录以外其他都会被拒绝
-     */
-    private Boolean isBanned = Boolean.FALSE;
-
-    /**
-     * 是否模拟器， 0否1是
-     */
-    private Boolean isSimulator = Boolean.FALSE;
 
     /**
      * 经度
