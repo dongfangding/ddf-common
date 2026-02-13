@@ -1,7 +1,6 @@
-package com.ddf.boot.common.s3;
+package com.ddf.boot.common.s3.config;
 
 import com.ddf.boot.common.s3.api.S3Api;
-import com.ddf.boot.common.s3.config.S3Properties;
 import com.ddf.boot.common.s3.helper.S3Helper;
 import com.ddf.boot.common.s3.service.S3Service;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

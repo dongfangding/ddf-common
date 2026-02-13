@@ -43,4 +43,9 @@ public class UploadResult {
      */
     private Instant uploadTime;
 
+    /**
+     * 缩略图访问路径.
+     */
+    private String thumbPath;
+
 }

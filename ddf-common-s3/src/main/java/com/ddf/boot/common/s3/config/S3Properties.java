@@ -3,7 +3,9 @@ package com.ddf.boot.common.s3.config;
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.base.Preconditions;
 import jakarta.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -141,12 +143,26 @@ public class S3Properties {
     /**
      * 读取超时时间（毫秒）.
      */
-    private int readTimeout = 30000;
+    private int readTimeout = 10000;
 
     /**
      * 多 Bucket 配置.
      */
     private List<S3BucketProperty> buckets;
+
+    /**
+     * 允许上传的文件类型（扩展名小写）.
+     *
+     * <p>为空时使用默认值（图片类型）.</p>
+     */
+    private Set<String> allowedFileTypes = new HashSet<>();
+
+    /**
+     * 最大文件大小（字节）.
+     *
+     * <p>默认为 10MB.</p>
+     */
+    private long maxFileSize = 10 * 1024 * 1024;
 
     /**
      * 主 Bucket 配置，初始化时自动设置.

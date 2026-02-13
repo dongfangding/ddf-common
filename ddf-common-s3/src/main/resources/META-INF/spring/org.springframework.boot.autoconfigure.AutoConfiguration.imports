@@ -1,1 +1,1 @@
-com.ddf.boot.common.minio.MinioAutoConfiguration
+com.ddf.boot.common.s3.config.S3AutoConfiguration
