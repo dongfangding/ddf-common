@@ -24,6 +24,12 @@ public class AuthenticationProperties {
 
     public static final String BEAN_NAME = "cloudAuthenticationProperties";
 
+	/**
+	 * 是否自动注册拦截器，为了模块实现简单，先自动注册拦截器。
+	 * 但当项目中需要多个拦截器，但又要自定义顺序时，可能会不满足，就要关闭自动注册拦截器，然后在实际的项目中手动注册拦截器了。
+	 */
+	private boolean autoRegisterFilter = true;
+
     /**
      * 加密算法秘钥
      */

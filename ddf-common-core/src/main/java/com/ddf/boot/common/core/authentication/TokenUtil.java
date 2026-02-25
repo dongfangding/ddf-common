@@ -115,7 +115,7 @@ public class TokenUtil {
 
     public static void main(String[] args) {
         final AuthenticateCheckResult result = TokenUtil.checkToken(
-                "$2a$10$GsXo2QZoLmQaRAR9S7S.MOcXCbvTiErPRMAX1unXM7sbMIbME.TpW<=>ad8c782851e20c70f1d25dfab92d0ee4f7de2424ba092721b9a38152ce1cc8ebe6c2b4e4c7d4c295f28ac741d0f63d74f6194fdabdb44e2cd9da1d2fcd8a517f1a827a2a9f3e77e9786118c2bee942e85d419d76768afeac3103d7bd92f27fbf");
+                "$2a$10$dloe/PgLOVpgn2RqvfrgFucUOf8v9/HefZv0dLt/p04iGnD79N93G.6d3309a6d94d9a7bed598cbc372c75a9055507ce2bf965dfb83265925297c54e5fccd6c06ec4b3d629f77b6b5ffcba2270b3acb196f758d50f409a27684ba028b3b1d46a166564e9d816189bb92925baa1ca70b1ba3154dc5da2f96dd2fdd63a7af7d3f29b3cce4d9e26c1419c3a084397572758e3f90cfc1810993dfc2c8c3e84256b8120817f9c7674ffbfbb351f6fed84e8c3e076bd771b039f3ca6adbb2df71e28171937d668fd458311abf9caef39921b3f6825f0d681a35245eca337b49bc482a91ea761b84b7379d9a5647e805824ff9154499c9254344f3247000ed2");
         System.out.println("result = " + result);
     }
 }

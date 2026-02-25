@@ -1,0 +1,14 @@
+root = true
+
+[*.{groovy,java,kt,xml}]
+indent_style = tab
+indent_size = 4
+continuation_indent_size = 8
+
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[*.yaml]
+indent_style = space
+indent_size = 2

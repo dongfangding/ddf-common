@@ -34,6 +34,11 @@ public class RequestContext implements Serializable {
     @Serial
     private static final long serialVersionUID = -7528108356364083934L;
 
+	/**
+	 * 认证的token
+	 */
+	private String token;
+
     /**
      * 用户token对象
      */

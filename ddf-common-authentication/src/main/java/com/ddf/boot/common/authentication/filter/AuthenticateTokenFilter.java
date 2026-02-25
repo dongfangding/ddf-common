@@ -154,7 +154,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             return false;
         }
         // 构建解析后的上下文
-        buildContext(request, userClaim, clientIp);
+        buildContext(request, userClaim, clientIp, token);
         return true;
     }
 
@@ -176,9 +176,9 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     }
 
 
-    public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp) {
+    public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // 解析请求头
-        resolveRequestContext(request, userClaim, clientIp);
+        resolveRequestContext(request, userClaim, clientIp, token);
         MDC.put(AuthenticateConstant.MDC_USER_ID, UserContextUtil.getUserId());
         MDC.put(
                 AuthenticateConstant.MDC_TRACE_ID,
@@ -330,10 +330,11 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         return serverHeaderMap;
     }
 
-    public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp) {
+    public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用
         UserContextUtil.setRequestContext(RequestContext
                 .builder()
+						.token(token)
                 .userClaim(userClaim)
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))

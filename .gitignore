@@ -1,99 +1,81 @@
-# web application files
-#/web-app/WEB-INF
-# IDE support files
-/.classpath
-/.launch
-/.project
-/.settings
-/*.launch
-/*.tmproj
-/ivy*
-/eclipse
-# default HSQL database files for production mode
-/prodDb.*
-# general HSQL database files
-*Db.properties
-*Db.script
-# logs
-/stacktrace.log
-/test/reports
-/logs
-*.log
-# project release file
-/*.war
-# plugin release file
-/*.zip
-/*.zip.sha1
-# older plugin install locations
-/plugins
-/web-app/plugins
-/web-app/WEB-INF/classes
-# "temporary" build files
-target/
-out/
-#.gitignore for java
+# Compiled class file
 *.class
+*.classpath
+*.factorypath
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
 # Package Files #
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
 *.war
 *.ear
-## .gitignore for eclipse
-*.pydevproject
-.project
-.metadata
-#bin/**
-tmp/**
-tmp/**/*
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-# External tool builders
-.externalToolBuilders/
-# Locally stored "Eclipse launch configurations"
-*.launch
-# CDT-specific
-.cproject
-# PDT-specific
-.buildpath
-## .gitignore for intellij
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IDE Files #
 *.iml
-*.ipr
-*.iws
+.idea
 .idea/
-## .gitignore for linux
-.*
-!.gitignore
-!.gitattributes
-!.env
-*~
-## .gitignore for windows
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-# Folder config file
-Desktop.ini
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-## .gitignore for mac os x
+.project
+.settings
+target
 .DS_Store
-.AppleDouble
-.LSOverride
-Icon
-# Thumbnails
-._*
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-*_copy.html
-*_copy.htm
-*_copy.html
-*.pdb
+.qoder
+.cursor
+.vscode
 
+#Seata test data file
+sessionStore/
 
+# temp ignore
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# Maven ignore
+.flattened-pom.xml
+
+.attach_pid*
+.gradle
+.metadata
+.recommenders
+.springBeans
+/code
+MANIFEST.MF
+_site/
+activemq-data
+bin
+build
+!/**/src/**/bin
+!/**/src/**/build
+build.log
+dependency-reduced-pom.xml
+dump.rdb
+interpolated*.xml
+lib/
+manifest.yml
+out
+overridedb.*
+secrets.yml
+.gradletasknamecache
+.sts4-cache
+.git-hooks/
+node_modules
+/.kotlin/
 
 ### claude code /cursor ,避免层级过深，忽略一些团队的规范定义
 .claude/settings.local.json
