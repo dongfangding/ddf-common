@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/04/28 19:26
+ * @date 2025/04/28 19:26
  */
 @Data
 public class ScanPermissionPayload {

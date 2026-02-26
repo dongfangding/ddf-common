@@ -11,7 +11,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/01/07 17:50
+ * @date 2025/01/07 17:50
  */
 
 
@@ -35,6 +35,16 @@ public class SysMenuFunction implements ITreeTagCollection<String, SysMenuFuncti
      * 菜单类型
      */
     private PermissionMenuType type;
+
+    /**
+     * 组件名称/路由地址，前端用，两个字段合一，保持一样了
+     */
+    private String componentName;
+
+    /**
+     * 组件路径，前端用
+     */
+    private String componentPath;
 
     /**
      * 父类菜单名称

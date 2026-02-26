@@ -5,7 +5,7 @@ package com.ddf.boot.common.mvc.permissionscan;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/04/29 11:11
+ * @date 2025/04/29 11:11
  */
 public enum PermissionMenuType {
 

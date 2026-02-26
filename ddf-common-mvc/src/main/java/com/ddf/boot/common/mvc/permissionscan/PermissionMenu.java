@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/04/28 17:29
+ * @date 2025/04/28 17:29
  */
 @Inherited
 @Documented
@@ -42,6 +42,16 @@ public @interface PermissionMenu {
     PermissionMenuType type() default PermissionMenuType.MENU;
 
     /**
+     * 组件名称/路由地址，前端用，两个字段合一，保持一样了
+     */
+    String componentName() default "";
+
+    /**
+     * 组件路径，前端用
+     */
+    String componentPath() default "";
+
+    /**
      * 菜单权限
      *
      * @return
@@ -69,5 +79,12 @@ public @interface PermissionMenu {
      * @return
      */
     PermissionMenuType parentType() default PermissionMenuType.FOLDER;
+
+    /**
+     * 排序
+     *
+     * @return
+     */
+    int sort() default 1;
 
 }

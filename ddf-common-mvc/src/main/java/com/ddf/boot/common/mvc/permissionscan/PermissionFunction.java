@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/04/28 17:29
+ * @date 2025/04/28 17:29
  */
 @Documented
 @Target({ElementType.METHOD})
@@ -33,20 +33,24 @@ public @interface PermissionFunction {
     String code() default "";
 
     /**
-     * 权限代码，本项目中直接读取Spring security {@link PreAuthorize}中的表达式
-     * 如 @PreAuthorize("@el.check('system-config:set')")
-     *
-     * 如果不适用的话，则使用
+     * 权限代码，本项目中直接读取{@link PreAuthorize}中的表达式
      *
      * @return
      */
     String permission() default "";
 
     /**
-     * 所属菜单，如果没有指定，则使用类上的{@link PermissionMenu}
+     * 所属菜单，如果没有指定，则使用类上的{@link PermissionMenu}, 这个的一大作用是一个controller里包含了两个菜单的功能，就没有办法把父类菜单标记到类上了，需要方法指定自己的父类菜单
      *
      * @return
      */
     PermissionMenu menu() default @PermissionMenu(name = "");
+
+    /**
+     * 排序
+     *
+     * @return
+     */
+    int sort() default 1;
 
 }
