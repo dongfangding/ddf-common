@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * <p>随机工具类</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @since 2022/09/21 16:31
  */

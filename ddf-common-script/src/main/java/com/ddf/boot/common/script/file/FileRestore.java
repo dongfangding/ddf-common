@@ -26,8 +26,8 @@ import java.util.Set;
 public class FileRestore {
 
     public static void main(String[] args) {
-        String baseTargetDirectory = "H:/整理/卧室";
-        packageMonitorVideo(new String[] {"H:/未整理/卧室"}, baseTargetDirectory);
+        String baseTargetDirectory = "I:/整理/乐多";
+		computerReadAndMoveFileToMonth(new String[] {"I:/未整理/乐多"}, baseTargetDirectory);
     }
 
     /**

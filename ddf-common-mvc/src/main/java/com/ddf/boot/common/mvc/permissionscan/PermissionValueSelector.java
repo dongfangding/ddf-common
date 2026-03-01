@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
  *
  * @author Snowball
  * @version 1.0
- * @date 2026/02/26 17:27
+ * @since 2026/02/26 17:27
  */
 public interface PermissionValueSelector {
 

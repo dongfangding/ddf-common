@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * <p>基于hash的自增，超出上下限则将值设置为上下限，而不是回滚的响应结果</p >
  *
- * @author rebot
+ * @author snowball
  * @version 1.0
  * @since 2022/09/27 18:09
  */
