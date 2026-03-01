@@ -78,7 +78,7 @@ public @interface PermissionMenu {
      *
      * @return
      */
-    PermissionMenuType parentType() default PermissionMenuType.FOLDER;
+    PermissionMenuType parentType() default PermissionMenuType.CATELOG;
 
     /**
      * 排序
