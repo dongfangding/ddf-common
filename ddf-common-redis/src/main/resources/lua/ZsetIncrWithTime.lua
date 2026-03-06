@@ -4,6 +4,7 @@ local member = ARGV[1]
 local step = tonumber(ARGV[2])
 -- 本次附加的基于时间计算的小数位
 local decimal = tonumber(ARGV[3])
+local expireSeconds = tonumber(ARGV[4])
 local scoreStr = redis.call('ZSCORE', KEYS[1], member)
 local oldScore = tonumber(scoreStr)
 if (oldScore == nil) then
@@ -12,4 +13,8 @@ end
 oldScore = math.floor(oldScore)
 local newScore = step + oldScore + decimal
 redis.call('ZADD', KEYS[1], newScore, member)
+-- 设置过期时间
+if expireSeconds > 0 then
+    redis.call('EXPIRE', KEYS[1], expireSeconds)
+end
 return redis.call('ZSCORE', KEYS[1], member)

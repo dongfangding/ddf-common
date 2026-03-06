@@ -8,6 +8,7 @@ import com.ddf.boot.common.api.exception.BusinessException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Objects;
@@ -23,12 +24,20 @@ import org.springframework.lang.NonNull;
  */
 public class PreconditionUtil {
 
-    /**
-     * Validator instances can be pooled and shared by the implementation.
-     * 这个东西不缓存下来，并发一上来，tomcat线程会刷刷的创建然后blocked，非常非常非常影响qps
-     */
-    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory()
-            .getValidator();
+	/**
+	 * Validator 实例。
+	 * Validator instances can be pooled and shared by the implementation.
+	 * 使用静态块初始化，并确保 Factory 被正确关闭或由容器管理。
+	 * 这个东西不缓存下来，并发一上来，tomcat线程会刷刷的创建然后blocked，非常非常非常影响qps
+	 */
+	private static final Validator VALIDATOR;
+
+	static {
+		try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+			VALIDATOR = factory.getValidator();
+		}
+	}
+
 
     /**
      * 检查参数

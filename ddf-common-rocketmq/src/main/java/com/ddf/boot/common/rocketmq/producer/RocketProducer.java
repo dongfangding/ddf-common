@@ -1,11 +1,13 @@
 package com.ddf.boot.common.rocketmq.producer;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
 import com.google.common.base.Throwables;
 import jakarta.annotation.Resource;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendCallback;
@@ -139,4 +141,32 @@ public class RocketProducer {
         );
         return sendResult;
     }
+
+	/**
+	 * 发送延迟消息（毫秒）
+	 */
+	public SendResult sendDelayForMill(RocketMqMessage rocketMqMessage) {
+		rocketMqMessage.check();
+		String topic = rocketMqMessage.getTopic();
+		String tag = rocketMqMessage.getExpression();
+		MessagePayload payload = rocketMqMessage.getPayLoad();
+		Long delayTime = rocketMqMessage.getDelayTime();
+		if (Objects.isNull(delayTime) || delayTime <= 0) {
+			return null;
+		}
+		return sendDelayForMill(buildDestination(topic, tag), payload, delayTime);
+	}
+
+	/**
+	 * 延迟消息 毫秒
+	 **/
+	private <T extends MessagePayload> SendResult sendDelayForMill(String destination, T message, Long delayMilliseconds) {
+		Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
+				RocketMQHeaders.KEYS, message.getMessageId()).build();
+		SendResult sendResult = template.syncSendDelayTimeMills(destination, sendMessage, delayMilliseconds);
+		log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayMilliseconds,
+				JSONObject.toJSON(message), JSONObject.toJSON(sendResult)
+		);
+		return sendResult;
+	}
 }

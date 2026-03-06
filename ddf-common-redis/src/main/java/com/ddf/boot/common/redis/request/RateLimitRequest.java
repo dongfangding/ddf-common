@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author dongfang.ding
  * @version 1.0
- * @since 2020/12/11 11:12
+ * @date 2020/12/11 11:12
  */
 @Data
 @AllArgsConstructor

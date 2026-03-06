@@ -1,6 +1,5 @@
 package com.ddf.boot.common.redis.response;
 
-import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +9,9 @@ import lombok.NoArgsConstructor;
 /**
  * <p>基于hash的自增，超出上下限则将值设置为上下限，而不是回滚的响应结果</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
- * @since 2022/09/27 18:09
+ * @date 2022/09/27 18:09
  */
 @Data
 @Builder
@@ -20,7 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HashIncrementPersistLimitValueResponse implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 3718353983577760216L;
 
     // limited = 1, actualStep = minValue - (result - step), currentValue = minValue

@@ -13,25 +13,25 @@ import org.springframework.context.annotation.Configuration;
 /**
  * <p>Lark配置</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
- * @since 2024/06/04 14:56
+ * @date 2024/06/04 14:56
  */
 @Data
 @RefreshScope
 @Configuration
-@ConfigurationProperties(prefix = "customizer.infra.alarm.lark")
+@ConfigurationProperties(prefix = "customs.alarm.lark")
 public class LarkProperties {
 
     /**
      * 业务告警-资源告警机器人
      */
-   private Properties bizResource;
+    private Properties bizResource;
 
     /**
      * 业务告警-代码异常告警机器人
      */
-   private Properties codeException;
+    private Properties codeException;
 
     /**
      * 自定义映射告警机器人配置

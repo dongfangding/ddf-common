@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/09/17 16:42
+ * @date 2025/09/17 16:42
  */
 @Data
 public class ZsetZaddWithMaxCheckResponse implements Serializable {

@@ -2,16 +2,16 @@
 -- 还需要传入递增的值以及取模的模数，最终返还取模后的值，算出来之后会减去取模用掉的数值，重新设置当前hash的value。
 -- 例如积攒碎片，每3个碎片可以兑换一个物品
 
-local hashKey = ARGV[1]
+local field = ARGV[1]
 local step = tonumber(ARGV[2])
 local modules = tonumber(ARGV[3])
-local result = redis.call('HINCRBY', KEYS[1], hashKey, step)
+local result = redis.call('HINCRBY', KEYS[1], field, step)
 local round = 0
 if (result > 0 and modules > 0) then
     round = math.modf(result / modules)
     if (round > 0) then
         -- 将求整消耗的数值减掉
-        redis.call('HINCRBY', KEYS[1], hashKey, -(round * modules))
+        redis.call('HINCRBY', KEYS[1], field, -(round * modules))
     end
 end
 return tostring(round)

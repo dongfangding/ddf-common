@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 /**
  * <p>description</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
- * @since 2024/07/12 14:38
+ * @date 2024/07/12 14:38
  */
 @Data
 @RefreshScope
 @Configuration
-@ConfigurationProperties(prefix = "customizer.infra.alarm.exception")
+@ConfigurationProperties(prefix = "customs.alarm.exception")
 public class ExceptionAlarmProperties {
 
     /**

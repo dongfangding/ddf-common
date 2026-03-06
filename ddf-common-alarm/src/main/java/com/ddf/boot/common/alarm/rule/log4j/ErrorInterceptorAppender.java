@@ -1,15 +1,16 @@
 package com.ddf.boot.common.alarm.rule.log4j;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.ddf.boot.common.alarm.config.LarkProperties;
 import com.ddf.boot.common.alarm.util.LarkUtil;
 import com.ddf.boot.common.api.util.DateUtils;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import com.ddf.boot.common.redis.response.AccessLimitResponse;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
@@ -28,62 +29,69 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 @Plugin(name = "ErrorInterceptor", category = "Core", elementType = Appender.ELEMENT_TYPE)
 public class ErrorInterceptorAppender extends AbstractAppender {
-    protected ErrorInterceptorAppender(String name, Layout<? extends Serializable> layout) {
-        super(name, null, layout, false);
-    }
+	protected ErrorInterceptorAppender(String name, Layout<? extends Serializable> layout) {
+		super(name, null, layout, false);
+	}
 
-    @Override
-    public void append(LogEvent event) {
-        try {
-            final Level level = event.getLevel();
-            if (!level.equals(Level.ERROR)) {
-                return;
-            }
-            final String loggerName = event.getLoggerName();
-            final RedisTemplateHelper redisTemplateHelper = SpringContextHolder.getBean(RedisTemplateHelper.class);
-            final Message message = event.getMessage();
-            final String formattedMessage = message.getFormattedMessage();
-            final LarkProperties larkProperties = SpringContextHolder.getBean(LarkProperties.class);
-            final EnvironmentHelper environmentHelper = SpringContextHolder.getBean(EnvironmentHelper.class);
-            if (formattedMessage.contains("全局异常捕获到请求异常") || Objects.isNull(redisTemplateHelper)
-                    || Objects.isNull(larkProperties) || Objects.isNull(environmentHelper)) {
-                return;
-            }
-            final String applicationName = environmentHelper.getApplicationName();
-            final LarkProperties.Properties properties = larkProperties.getCodeProperties(applicationName);
-            if (!properties.isEnabled()) {
-                return;
-            }
-            final AccessLimitResponse response = redisTemplateHelper.sliderWindowAccess(
-                    applicationName + ":error-push:count:" + loggerName, 1, 1);
-            if (response.isLimited()) {
-                return;
-            }
-            final ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) SpringContextHolder.getBean(
-                    "errorLogExecutor");
-            executor.execute(() -> {
-                String host = "";
-                try {
-                    host = InetAddress
-                            .getLocalHost()
-                            .getHostAddress();
-                } catch (UnknownHostException ignore) {
-                }
-                LarkUtil.sendTextMsgType(
-                        properties.getWebhookUrl(), properties.getSecret(), "[%s]-[%s(%s)]-[%s]: %s".formatted(DateUtils.standardFormatSeconds(event
-                        .getInstant()
-                        .getEpochSecond()), applicationName, host, loggerName, formattedMessage
-                ), true
-                );
-            });
-        } catch (Exception e) {
-            getStatusLogger().info("ErrorInterceptorAppender出错", e);
-        }
-    }
+	@Override
+	public void append(LogEvent event) {
+		try {
+			final Level level = event.getLevel();
+			if (!level.equals(Level.ERROR)) {
+				return;
+			}
+			final String loggerName = event.getLoggerName();
+			final RedisTemplateHelper redisTemplateHelper = SpringContextHolder.getBean(RedisTemplateHelper.class);
+			final Message message = event.getMessage();
+			final String formattedMessage = message.getFormattedMessage();
+			final LarkProperties larkProperties = SpringContextHolder.getBean(LarkProperties.class);
+			final EnvironmentHelper environmentHelper = SpringContextHolder.getBean(EnvironmentHelper.class);
+			if (formattedMessage.contains("全局异常捕获到请求异常") || Objects.isNull(redisTemplateHelper)
+					|| Objects.isNull(larkProperties) || Objects.isNull(environmentHelper)) {
+				return;
+			}
+			final String applicationName = environmentHelper.getApplicationName();
+			final LarkProperties.Properties properties = larkProperties.getCodeProperties(applicationName);
+			if (!properties.isEnabled()) {
+				return;
+			}
+			final Object globalExceptionExecutor = SpringContextHolder.getBean("globalExceptionExecutor");
+			if (Objects.isNull(globalExceptionExecutor)) {
+				return;
+			}
+			final AccessLimitResponse response = redisTemplateHelper.sliderWindowAccess(
+					applicationName + ":error-push:count:" + loggerName, 1, 1);
+			if (response.isLimited()) {
+				return;
+			}
+			final long epochSeconds = event
+					.getInstant()
+					.getEpochSecond();
+			final String stackTrace = event.getThrown() != null ? ExceptionUtil.stacktraceToString(event.getThrown()) :
+					"";
+			final ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) globalExceptionExecutor;
+			executor.execute(() -> {
+				String host = "";
+				try {
+					host = InetAddress
+							.getLocalHost()
+							.getHostAddress();
+				} catch (Exception ignore) {
+				}
+				String text = String.format(
+						"[%s]-[%s(%s)]-[%s]: %s\n\n堆栈信息: %s", DateUtils.standardFormatSeconds(epochSeconds),
+						applicationName, host, loggerName, formattedMessage, stackTrace
+				);
+				LarkUtil.sendTextMsgType(properties.getWebhookUrl(), properties.getSecret(), text, true);
+			});
+		} catch (Exception e) {
+			getStatusLogger().info("ErrorInterceptorAppender出错", e);
+		}
+	}
 
-    @PluginFactory
-    public static ErrorInterceptorAppender createAppender(@PluginAttribute("name") String name,
-            @PluginElement("Layout") Layout<? extends Serializable> layout) {
-        return new ErrorInterceptorAppender(name, layout);
-    }
+	@PluginFactory
+	public static ErrorInterceptorAppender createAppender(@PluginAttribute("name") String name,
+			@PluginElement("Layout") Layout<? extends Serializable> layout) {
+		return new ErrorInterceptorAppender(name, layout);
+	}
 }

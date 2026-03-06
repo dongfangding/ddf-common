@@ -7,6 +7,7 @@ import com.ddf.boot.common.api.model.common.dto.WeightProportion;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -403,4 +404,22 @@ public class RandomExtUtil {
         final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
         return localRandom.nextInt(start, end);
     }
+
+	/**
+	 * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
+	 *
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static double randomDouble(double start, double end, int scale) {
+		if (start == end) {
+			return start;
+		}
+		final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
+		return BigDecimal
+				.valueOf(localRandom.nextDouble(start, end))
+				.setScale(scale, RoundingMode.HALF_DOWN)
+				.doubleValue();
+	}
 }

@@ -1,11 +1,11 @@
 -- 该脚本的作用是在hash自增时进行上限判定，如果超出上限则回退本次增加数值， 脚本提供自增和判断以及回退的整个原子性保证
-local hashKey = ARGV[1]
+local field = ARGV[1]
 local step = tonumber(ARGV[2]);
 local limit = tonumber(ARGV[3]);
-local result = redis.call('HINCRBY', KEYS[1], hashKey, step)
+local result = redis.call('HINCRBY', KEYS[1], field, step)
 if (result > limit) then
     -- 超出限制将值减回去
-    redis.call('HINCRBY', KEYS[1], hashKey, -step)
+    redis.call('HINCRBY', KEYS[1], field, -step)
     return cjson.encode({ limited = 1, currentCount = limit, maxCount = limit })
 end
 -- 首次的话设置过期时间，result - step == 0简单表示首次，如果数值来回浮动也会造成表达式满足，比如+6 + 4 - 10

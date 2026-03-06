@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.script.RedisScript;
  *
  * @author dongfang.ding
  * @version 1.0
- * @since 2021/01/16 15:53
+ * @date 2021/01/16 15:53
  */
 public interface RedisLuaScript {
 
@@ -41,6 +41,13 @@ public interface RedisLuaScript {
      */
     RedisScript<String> HASH_INCREMENT_CHECK = RedisScript.of(
         new ClassPathResource("lua/HashIncreaseCheck.lua"), String.class);
+
+    /**
+     * 基于hash结构的自减并增加下限判定的通用脚本
+     */
+    RedisScript<String> HASH_DECREMENT_CHECK = RedisScript.of(
+        new ClassPathResource("lua/HashDecreaseCheck.lua"), String.class);
+
 
     /**
      * 基于hash结构的自增，但是当达到上限时，会将值设置为上限值，而不是回滚本次增加的值
@@ -79,10 +86,16 @@ public interface RedisLuaScript {
         new ClassPathResource("lua/TtlIncrWithLimit.lua"), String.class);
 
     /**
-     * 基于Hash对hashkey进行value的判断， 如果为预期值则删除，否则不删除
+     * 基于Hash对field进行value的判断， 如果为预期值则删除，否则不删除
      */
     RedisScript<String> HASH_DELETE_WITH_CHECK_VALUE = RedisScript.of(
         new ClassPathResource("lua/HashDeleteWithCheckValue.lua"), String.class);
+
+    /**
+     * 该脚本的作用是在hash递减时进行下限判定，如果小于下限则回退本次减少数值， 脚本提供递减和判断以及回退的整个原子性保证
+     */
+    RedisScript<String> HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO = RedisScript.of(
+        new ClassPathResource("lua/HashDecreaseUntilFirstLessThanZero.lua"), String.class);
 
     /**
      * 基于String进行value的判断， 如果为预期值则删除，否则不删除
@@ -91,7 +104,7 @@ public interface RedisLuaScript {
         new ClassPathResource("lua/StringDeleteWithCheckValue.lua"), String.class);
 
     /**
-     * 该脚本的作用是对hash的hashkey进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
+     * 该脚本的作用是对hash的field进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
      */
     RedisScript<String> HASH_INCR_WITH_FIRST_SET_TTL = RedisScript.of(
         new ClassPathResource("lua/HashIncrWithFirstSetTtl.lua"), String.class);
@@ -115,4 +128,61 @@ public interface RedisLuaScript {
     RedisScript<String> ZSET_RANGEBYSCORE_ZREM = RedisScript.of(
         new ClassPathResource("lua/zset_rangebyscore_zrem.lua"), String.class);
 
+
+    /**
+     * 基于hash结构的批量自增并增加上限判定的通用脚本, 对同一个key的多个field进行自增判断,
+     */
+    RedisScript<String> HASH_BATCH_INCREMENT_CHECK = RedisScript.of(
+        new ClassPathResource("lua/HashBatchIncreaseCheck.lua"), String.class);
+
+
+    /**
+     * 基于hash结构的批量自增并增加上限判定的通用脚本, 对同一个key的多个field进行自增判断,
+     */
+    RedisScript<String> MULTIPLE_HASH_BATCH_INCREMENT_CHECK = RedisScript.of(
+        new ClassPathResource("lua/MultipleHashIncreaseCheck.lua"), String.class);
+
+    /**
+     * 基于zset实现的zadd操作，当score大于已有值时才会更新, 注意这个是带时间戳检查的，小数位不是真实的时间戳
+     */
+    RedisScript<String> ZSET_ZADD_WITH_TIME_MAX_CHECK = RedisScript.of(
+        new ClassPathResource("lua/zadd_with__max_score_check.lua"), String.class);
+
+
+    /**
+     * 基于zset实现的zadd操作，当score大于已有值时才会更新, 注意这个是带时间戳检查的，小数位不是真实的时间戳
+     */
+    RedisScript<String> ZSET_ZADD_WITH_MAX_CHECK = RedisScript.of(
+        new ClassPathResource("lua/zadd_with_max_check.lua"), String.class);
+
+    /**
+     * 基于zset实现的对指定元素的前后元素进行查询
+     */
+    RedisScript<String> ZSET_AROUND_ELEMENT_RANK = RedisScript.of(
+        new ClassPathResource("lua/zset_around_element_rank.lua"), String.class);
+
+    /**
+     * 基于hash实现的对指定元素的字段进行选择性更新
+     */
+    RedisScript<String> HASH_VALUE_UPDATE_SELECTIVE = RedisScript.of(
+        new ClassPathResource("lua/HashValueUpdateSelective.lua"), String.class);
+
+
+    /**
+     * 基于hash实现的对指定元素的字段进行选择性更新
+     */
+    RedisScript<String> ZSET_REV_RANGE_BIZ_RANKING_QUERY = RedisScript.of(
+        new ClassPathResource("lua/zrevrange_biz_ranking_query.lua"), String.class);
+
+    /**
+     * 对榜单进行多维度数据获取查询
+     */
+    RedisScript<String> ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY = RedisScript.of(
+        new ClassPathResource("lua/zrevrange_biz_ranking_element_query.lua"), String.class);
+
+    /**
+     * 多维度业务榜单榜单回滚
+     */
+    RedisScript<String> ZSET_DELETE_WITH_MAX_SCORE_CHECK = RedisScript.of(
+        new ClassPathResource("lua/zdelete_with_max_score_check.lua"), String.class);
 }

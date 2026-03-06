@@ -21,9 +21,9 @@ import org.redisson.config.Config;
 /**
  * <p>基于地理空间的的帮助类</p >
  *
- * @author snowball
+ * @author rebot
  * @version 1.0
- * @since 2021/04/23 15:08
+ * @date 2021/04/23 15:08
  */
 public class GeoHelper {
 

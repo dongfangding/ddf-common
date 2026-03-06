@@ -9,7 +9,7 @@ local score = ARGV[3]
 redis.call('ZADD', KEYS[1], score, member)
 local currSize = redis.call('ZCARD', KEYS[1])
 if (currSize > maxLength) then
-    redis.call('ZREMRANGEBYRANK', KEYS[1], 0, currSize - maxLength)
+    redis.call('ZREMRANGEBYRANK', KEYS[1], 0, currSize - maxLength - 1)
 end
 return tostring(currSize)
 

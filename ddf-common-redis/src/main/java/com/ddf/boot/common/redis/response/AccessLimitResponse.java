@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @since 2025/01/09 11:35
+ * @date 2025/01/09 11:35
  */
 @Data
 public class AccessLimitResponse implements Serializable {

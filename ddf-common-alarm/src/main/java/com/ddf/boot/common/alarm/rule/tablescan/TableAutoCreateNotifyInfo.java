@@ -5,9 +5,9 @@ import lombok.Data;
 /**
  * <p>自动创建表通知</p >
  *
- * @author Snowball
+ * @author rebot
  * @version 1.0
- * @since 2024/06/04 11:33
+ * @date 2024/06/04 11:33
  */
 @Data
 public class TableAutoCreateNotifyInfo {

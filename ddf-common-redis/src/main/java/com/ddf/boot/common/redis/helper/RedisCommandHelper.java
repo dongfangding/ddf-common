@@ -1,6 +1,7 @@
 package com.ddf.boot.common.redis.helper;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1483,6 +1484,28 @@ public class RedisCommandHelper {
                     .toString()));
         }
         return scoreMap;
+    }
+
+    /**
+     * 批量获取多个集合的元素, 并返回score值
+     */
+    public List<Set<TypedTuple<String>>> batchZRangWithScore (List<String> keys, Long min, Long max) {
+        List<Object> resultList = executePipelined(connection -> {
+            for (String key : keys) {
+                connection.zRangeWithScores(key.getBytes(StandardCharsets.UTF_8), min, max);
+            }
+            return null;
+        });
+        List<Set<TypedTuple<String>>> returnList = new ArrayList<>();
+        for (int i = 0; i < keys.size(); i++) {
+            final Object o = resultList.get(i);
+            if (o instanceof Set data) {
+                returnList.add(data);
+            } else {
+                returnList.add(Sets.newHashSetWithExpectedSize(0));
+            }
+        }
+        return returnList;
     }
 
     /**
