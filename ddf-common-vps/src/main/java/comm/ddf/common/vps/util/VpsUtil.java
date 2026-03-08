@@ -61,6 +61,7 @@ public class VpsUtil {
      *
      * @param filePath        可以是本地文件，也可以是在线文件
      * @param beforeCutSecond
+     * @param tmpPath 参数
      * @return 截取后文件本地路径
      */
     public static String cutVideoCover(String filePath, String beforeCutSecond, String tmpPath) {

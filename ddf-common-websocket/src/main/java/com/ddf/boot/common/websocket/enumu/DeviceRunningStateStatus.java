@@ -25,9 +25,10 @@ public enum DeviceRunningStateStatus {
      * 执行结束
      */
     OVER(2);
-
+    /**
+     * @param status 参数
+     */
     private Integer status;
-
     DeviceRunningStateStatus(Integer status) {
         this.status = status;
     }

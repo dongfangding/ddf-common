@@ -43,6 +43,10 @@ public class KeyManagerFactoryHelper {
 
     private static final Logger log = LoggerFactory.getLogger(KeyManagerFactoryHelper.class);
 
+    /**
+     * @param password 参数
+     * @param type 参数
+     */
     private static KeyStore keyStore;
     private static KeyManagerFactory keyManagerFactory;
     private static TrustManagerFactory trustManagerFactory;

@@ -56,7 +56,15 @@ public class ChannelInfo {
     public ChannelInfo() {
 
     }
-
+    /**
+     * @param channel 参数
+     * @param remoteAddress 参数
+     * @param status 参数
+     * @param registryTime 参数
+     * @param modifyTime 参数
+     * @param queue 参数
+     * @param syncDone 参数
+     */
     public ChannelInfo(Channel channel, String remoteAddress, int status, Date registryTime, Date modifyTime,
             BlockingQueue<RequestContent> queue, boolean syncDone) {
         this.channel = channel;
@@ -99,7 +107,10 @@ public class ChannelInfo {
     public static ChannelInfo inactive(Channel channel) {
         return modify(channel, STATUS_INACTIVE);
     }
-
+    /**
+     * @param channel 参数
+     * @param status 参数
+     */
     private static ChannelInfo modify(Channel channel, int status) {
         String key = channel.remoteAddress().toString();
         ChannelInfo info = ServerInboundHandler.channelStore.get(key);
@@ -111,7 +122,9 @@ public class ChannelInfo {
         info.setSyncDone(false);
         return info;
     }
-
+    /**
+     * @param status 参数
+     */
     public static String status2String(int status) {
         if (status == STATUS_REGISTRY) {
             return "注册";
@@ -126,7 +139,9 @@ public class ChannelInfo {
     public Channel getChannel() {
         return channel;
     }
-
+    /**
+     * @param channel 参数
+     */
     public void setChannel(Channel channel) {
         this.channel = channel;
     }
@@ -134,7 +149,9 @@ public class ChannelInfo {
     public String getRemoteAddress() {
         return remoteAddress;
     }
-
+    /**
+     * @param remoteAddress 参数
+     */
     public void setRemoteAddress(String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
@@ -142,7 +159,9 @@ public class ChannelInfo {
     public int getStatus() {
         return status;
     }
-
+    /**
+     * @param status 参数
+     */
     public void setStatus(int status) {
         this.status = status;
     }
@@ -150,7 +169,9 @@ public class ChannelInfo {
     public Date getRegistryTime() {
         return registryTime;
     }
-
+    /**
+     * @param registryTime 参数
+     */
     public void setRegistryTime(Date registryTime) {
         this.registryTime = registryTime;
     }
@@ -158,7 +179,9 @@ public class ChannelInfo {
     public Date getModifyTime() {
         return modifyTime;
     }
-
+    /**
+     * @param modifyTime 参数
+     */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
@@ -166,7 +189,9 @@ public class ChannelInfo {
     public BlockingQueue<RequestContent> getQueue() {
         return queue;
     }
-
+    /**
+     * @param queue 参数
+     */
     public void setQueue(BlockingQueue<RequestContent> queue) {
         this.queue = queue;
     }
@@ -174,7 +199,9 @@ public class ChannelInfo {
     public boolean isSyncDone() {
         return syncDone;
     }
-
+    /**
+     * @param syncDone 参数
+     */
     public void setSyncDone(boolean syncDone) {
         this.syncDone = syncDone;
     }

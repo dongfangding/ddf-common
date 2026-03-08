@@ -51,8 +51,6 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
     static {
         VALUE_MAPPINGS = Arrays.stream(values()).collect(Collectors.toMap(OnsBizErrorCodeEnum::getCode, val -> val));
     }
-
-
     OnsBizErrorCodeEnum(String value, String description) {
         this.code = value;
         this.description = description;

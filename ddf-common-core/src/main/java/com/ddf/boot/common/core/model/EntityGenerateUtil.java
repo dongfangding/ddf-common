@@ -71,8 +71,9 @@ public class EntityGenerateUtil {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding"
                 + "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
     }
-
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) throws Exception {
         generateEntity(TableType.LINE_HUMP);
     }
@@ -201,6 +202,7 @@ public class EntityGenerateUtil {
 
     /**
      * 下划线转驼峰
+     * @param str 参数
      */
     private static String lineToHump(String str) {
         final String regex = "_(\\w)";
@@ -221,6 +223,7 @@ public class EntityGenerateUtil {
      * @param packageName 要生成的包名
      * @param tableName   表名
      * @param className   类名
+     * @param tableRemarks 参数
      * @return
      */
     public static StringBuffer initClass(String packageName, String tableName, String tableRemarks, String className) {

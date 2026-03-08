@@ -57,13 +57,19 @@ public class AuthPrincipal implements Principal, Serializable {
      * 为了防止参数被拿走之后用
      */
     private Long timeStamp;
-
     public AuthPrincipal(String accessKeyId, String authCode, LoginType loginType) {
         this.accessKeyId = accessKeyId;
         this.authCode = authCode;
         this.loginType = loginType;
     }
-
+    /**
+     * @param accessKeyId 参数
+     * @param accessKeyName 参数
+     * @param authCode 参数
+     * @param loginType 参数
+     * @param version 参数
+     * @param timeStamp 参数
+     */
     public AuthPrincipal(String accessKeyId, String accessKeyName, String authCode, LoginType loginType, String version,
             long timeStamp) {
         this.accessKeyId = accessKeyId;
@@ -78,6 +84,8 @@ public class AuthPrincipal implements Principal, Serializable {
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
      *
      * @param accessKeyId
+     * @param authCode 参数
+     * @param loginType 参数
      * @return
      */
     public static AuthPrincipal buildChannelPrincipal(String accessKeyId, String authCode, LoginType loginType) {
@@ -88,6 +96,7 @@ public class AuthPrincipal implements Principal, Serializable {
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
      *
      * @param accessKeyId
+     * @param loginType 参数
      * @return
      */
     public static AuthPrincipal buildChannelPrincipal(String accessKeyId, LoginType loginType) {
@@ -103,8 +112,9 @@ public class AuthPrincipal implements Principal, Serializable {
     public String getName() {
         return accessKeyId;
     }
-
-
+    /**
+     * @param o 参数
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

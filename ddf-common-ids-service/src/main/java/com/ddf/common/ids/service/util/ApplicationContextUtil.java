@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 public class ApplicationContextUtil implements ApplicationContextAware {
     @Autowired
     private static ApplicationContext applicationContext;
-
     public static Object getBean(String name) {
         return getApplicationContext().getBean(name);
     }
@@ -26,20 +25,29 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
-
+    /**
+     * @param applicationContext 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ApplicationContextUtil.applicationContext = applicationContext;
     }
-
+    /**
+     * @param clazz 参数
+     */
     public static <T> T getBean(Class<T> clazz) {
         return getApplicationContext().getBean(clazz);
     }
-
+    /**
+     * @param name 参数
+     * @param clazz 参数
+     */
     public static <T> T getBean(String name, Class<T> clazz) {
         return getApplicationContext().getBean(name, clazz);
     }
-
+    /**
+     * @param clazz 参数
+     */
     public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
         return getApplicationContext().getBeansOfType(clazz);
     }

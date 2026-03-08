@@ -1,10 +1,9 @@
 package com.ddf.boot.common.core.util;
 
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.regex.Pattern;
 
 /**
  * StringExtUtil 测试类

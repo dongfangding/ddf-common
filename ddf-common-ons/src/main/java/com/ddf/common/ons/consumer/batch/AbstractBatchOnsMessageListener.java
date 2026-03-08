@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
  **/
 public abstract class AbstractBatchOnsMessageListener<D extends Serializable> extends AbstractOnsMessageListener<D>
         implements BatchMessageListener {
-
     @Override
     public Action consume(final List<Message> messages, final ConsumeContext consumeContext) {
         Set<Action> actions = messages.stream()
@@ -35,7 +34,6 @@ public abstract class AbstractBatchOnsMessageListener<D extends Serializable> ex
                         }
                         // 调用子类的执行业务方法
                         executeBiz(domain);
-
                         LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] 消息", member,
                                 messageId, topic, message.getTag(), payLoad, message.getKey()
                         );

@@ -19,8 +19,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * 拦截指定的请求为某些注解功能提供支持，目前支持功能如下
@@ -130,6 +128,7 @@ public class AccessLogAspect {
      * @param className
      * @param methodName
      * @param consumerTime
+     * @param params 参数
      */
     private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
         long slowTime = logAspectConfiguration.getSlowTime();

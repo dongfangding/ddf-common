@@ -69,7 +69,10 @@ public @interface EnumIntegerValue {
             enumClass = constraintAnnotation.enumClass();
             required = constraintAnnotation.required();
         }
-
+        /**
+         * @param value 参数
+         * @param context 参数
+         */
         @Override
         public boolean isValid(Integer value, ConstraintValidatorContext context) {
             if (value == null && required) {

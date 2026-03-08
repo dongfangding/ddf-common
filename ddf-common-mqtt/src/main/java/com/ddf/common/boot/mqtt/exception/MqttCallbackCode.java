@@ -21,8 +21,6 @@ public enum MqttCallbackCode implements BaseCallbackCode {
     MQTT_CONFIG_CONNECTION_ERROR("mqtt0001", "mqtt 连接配置错误")
 
     ;
-
-
     MqttCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;

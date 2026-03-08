@@ -17,12 +17,15 @@ public enum ExceptionCode implements BaseCallbackCode {
     SMS_SEND_FAILURE("sms_send_failure", "短信发送失败")
 
     ;
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     @Getter
     private final String code;
 
     @Getter
     private final String description;
-
     ExceptionCode(String code, String description) {
         this.code = code;
         this.description = description;

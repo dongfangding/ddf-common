@@ -1,7 +1,6 @@
 package com.ddf.boot.common.alarm.config;
 
 import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
-import java.util.concurrent.ThreadPoolExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

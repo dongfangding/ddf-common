@@ -25,19 +25,25 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     public static Map<String, ChannelInfo> channelStore = new ConcurrentHashMap<>();
-
+    /**
+     * @param ctx 参数
+     */
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) {
         log.debug("客户端[{}]注册成功>>>>>", ctx.channel().remoteAddress());
     }
-
+    /**
+     * @param ctx 参数
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         log.debug("客户端[{}]在线>>>>>", ctx.channel().remoteAddress());
         channels.add(ctx.channel());
         channelStore.put(ctx.channel().remoteAddress().toString(), ChannelInfo.registry(ctx.channel()));
     }
-
+    /**
+     * @param ctx 参数
+     */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         log.debug("客户端[{}]掉线>>>>>", ctx.channel().remoteAddress());
@@ -59,7 +65,10 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
         log.debug("接收到客户端[{}]发送的数据: {}", ctx.channel().remoteAddress(), msg.serial());
         ctx.writeAndFlush(RequestContent.responseAccept(msg));
     }
-
+    /**
+     * @param ctx 参数
+     * @param cause 参数
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("连接出现异常>>>>>", cause);

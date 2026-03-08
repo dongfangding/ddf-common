@@ -36,6 +36,7 @@ public class ConsoleOnsTopicSubListResponse implements Serializable {
 
     /**
      * 消费模式名称
+     * @param response 参数
      */
     private String messageModelName;
 
@@ -51,8 +52,9 @@ public class ConsoleOnsTopicSubListResponse implements Serializable {
         return response.getBody().getData().getSubscriptionDataList().getSubscriptionDataList().stream()
                 .map(ConsoleOnsTopicSubListResponse::convert).collect(Collectors.toList());
     }
-
-
+    /**
+     * @param info 参数
+     */
     public static ConsoleOnsTopicSubListResponse convert(
             OnsTopicSubDetailResponseBody.OnsTopicSubDetailResponseBodyDataSubscriptionDataListSubscriptionDataList info) {
         return new ConsoleOnsTopicSubListResponse()

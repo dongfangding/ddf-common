@@ -42,6 +42,7 @@ public abstract class BaseException extends RuntimeException {
      * 有这样一种需求，比如抛出异常的情况下还是要额外返回一些数据。
      * 比如现在说用户余额不足，但是我不仅是在消息中返回缺多少钱，而且还要返回一整个相关的数据，让前端可以处理更加复杂的逻辑，而这需要返回与这个
      * 异常相关的业务数据，就可以放到这个对象里来
+     * @param throwable 参数
      */
     private Object extra;
 
@@ -136,8 +137,11 @@ public abstract class BaseException extends RuntimeException {
         super(MessageFormat.format(description, params));
         initCallback(code, description, params);
     }
-
-
+    /**
+     * @param extra 参数
+     * @param baseCallbackCode 参数
+     * @param params 参数
+     */
     private void initCallback(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
         this.extra = extra;
         this.baseCallbackCode = baseCallbackCode;
@@ -155,6 +159,7 @@ public abstract class BaseException extends RuntimeException {
      *
      * @param code
      * @param description
+     * @param params 参数
      */
     private void initCallback(String code, String description, Object... params) {
         this.code = code == null ? defaultCallback().getCode() : code;

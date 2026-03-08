@@ -136,6 +136,7 @@ public class WebsocketSessionStorage {
      * 认证身份用户对应的WebSocketSession离线
      *
      * @param authPrincipal
+     * @param webSocketSession 参数
      */
     public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) throws Exception {
         DISTRIBUTED_LOCK.lockWork(DistributedLock.formatPath(LOCK_PATH, authPrincipal.getName()), () -> {
@@ -179,6 +180,7 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal
      * @param status
+     * @param webSocketSession 参数
      * @return
      */
     public static boolean modifyStatus(AuthPrincipal authPrincipal, Integer status, WebSocketSession webSocketSession) {

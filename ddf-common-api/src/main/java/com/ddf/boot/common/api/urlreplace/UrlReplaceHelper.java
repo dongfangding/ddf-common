@@ -30,16 +30,20 @@ public class UrlReplaceHelper implements BeanFactoryPostProcessor {
      * 因此实现BeanFactoryPostProcessor注入ConfigurableListableBeanFactory实现bean的操作
      */
     private static ConfigurableListableBeanFactory beanFactory;
-
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         UrlReplaceHelper.beanFactory = beanFactory;
     }
-
+    /**
+     * @param value 参数
+     */
     public static String replaceHost(String value) {
         return replaceHost(value, "default");
     }
-
+    /**
+     * @param value 参数
+     * @param bucket 参数
+     */
     public static String replaceHost(String value, String bucket) {
         try {
             final StaticProperties bean = beanFactory.getBean(StaticProperties.class);

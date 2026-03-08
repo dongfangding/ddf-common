@@ -16,9 +16,7 @@ import javax.net.ssl.SSLEngine;
  * @since 2019/7/5 10:49
  */
 public class ClientChannelInit extends ChannelInitializer<Channel> {
-
     private final SslContext context;
-
     public ClientChannelInit(SslContext context) {
         this.context = context;
     }
@@ -26,7 +24,9 @@ public class ClientChannelInit extends ChannelInitializer<Channel> {
     public ClientChannelInit() {
         context = null;
     }
-
+    /**
+     * @param ch 参数
+     */
     @Override
     protected void initChannel(Channel ch) {
         ChannelPipeline pipeline = ch.pipeline();

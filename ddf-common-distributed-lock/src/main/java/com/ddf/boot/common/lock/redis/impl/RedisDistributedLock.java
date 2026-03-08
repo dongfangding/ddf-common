@@ -31,7 +31,6 @@ public class RedisDistributedLock implements DistributedLock {
      * redis锁属性类
      */
     private final DistributedLockRedisProperties distributedLockRedisProperties;
-
     public RedisDistributedLock(RedissonClient redissonClient, DistributedLockRedisProperties properties) {
         this.redissonClient = redissonClient;
         this.distributedLockRedisProperties = properties;

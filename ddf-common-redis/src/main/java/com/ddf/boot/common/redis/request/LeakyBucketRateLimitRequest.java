@@ -74,30 +74,35 @@ public class LeakyBucketRateLimitRequest {
          * 是否忽略使用前缀
          */
         private boolean ignorePrefix;
-
-
         public LeakyBucketRateLimitRequestBuilder key(String key) {
             this.key = key;
             return this;
         }
-
-
+        /**
+         * @param rate 参数
+         */
         public LeakyBucketRateLimitRequestBuilder rate(long rate) {
             this.rate = rate;
             return this;
         }
-
+        /**
+         * @param rateIntervalSeconds 参数
+         */
         public LeakyBucketRateLimitRequestBuilder rateIntervalSeconds(
                 long rateIntervalSeconds) {
             this.rateIntervalSeconds = rateIntervalSeconds;
             return this;
         }
-
+        /**
+         * @param permits 参数
+         */
         public LeakyBucketRateLimitRequestBuilder permits(long permits) {
             this.permits = permits;
             return this;
         }
-
+        /**
+         * @param ignorePrefix 参数
+         */
         public LeakyBucketRateLimitRequestBuilder ignorePrefix(boolean ignorePrefix) {
             this.ignorePrefix = ignorePrefix;
             return this;

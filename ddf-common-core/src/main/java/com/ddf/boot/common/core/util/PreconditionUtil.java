@@ -80,6 +80,7 @@ public class PreconditionUtil {
      * 检查参数
      *
      * @param expression
+     * @param baseException 参数
      */
     public static void checkArgument(boolean expression, BaseException baseException) {
         if (!expression) {

@@ -40,7 +40,6 @@ public abstract class AbstractOrderOnsConsumer implements OnsConsumer {
         subscription.setTopic(getTopic());
         subscription.setExpression(getExpression());
         subscriptionTable.put(subscription, getMessageOrderListener());
-
         orderConsumerBean.setSubscriptionTable(subscriptionTable);
 
         return orderConsumerBean;

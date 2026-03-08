@@ -136,7 +136,10 @@ public class VerifyCodeUtil {
         g2.dispose();
         ImageIO.write(image, "jpg", os);
     }
-
+    /**
+     * @param fc 参数
+     * @param bc 参数
+     */
     private static Color getRandColor(int fc, int bc) {
         if (fc > 255) {
             fc = 255;
@@ -167,12 +170,22 @@ public class VerifyCodeUtil {
         }
         return rgb;
     }
-
+    /**
+     * @param g 参数
+     * @param w1 参数
+     * @param h1 参数
+     * @param color 参数
+     */
     private static void shear(Graphics g, int w1, int h1, Color color) {
         shearX(g, w1, h1, color);
         shearY(g, w1, h1, color);
     }
-
+    /**
+     * @param g 参数
+     * @param w1 参数
+     * @param h1 参数
+     * @param color 参数
+     */
     private static void shearX(Graphics g, int w1, int h1, Color color) {
 
         int period = random.nextInt(2);
@@ -193,7 +206,12 @@ public class VerifyCodeUtil {
         }
 
     }
-
+    /**
+     * @param g 参数
+     * @param w1 参数
+     * @param h1 参数
+     * @param color 参数
+     */
     private static void shearY(Graphics g, int w1, int h1, Color color) {
         // 50;
         int period = random.nextInt(40) + 10;

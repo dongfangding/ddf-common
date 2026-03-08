@@ -75,7 +75,6 @@ public class ObjectStringRedisSerializer implements RedisSerializer<Object> {
 	 * @param charset must not be {@literal null}.
 	 */
 	public ObjectStringRedisSerializer(Charset charset) {
-
 		Assert.notNull(charset, "Charset must not be null!");
 		this.charset = charset;
 	}
@@ -83,6 +82,9 @@ public class ObjectStringRedisSerializer implements RedisSerializer<Object> {
 	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.data.redis.serializer.RedisSerializer#deserialize(byte[])
+	 */
+	/**
+	 * @param bytes 参数
 	 */
 	@Override
 	public String deserialize(@Nullable byte[] bytes) {
@@ -92,6 +94,9 @@ public class ObjectStringRedisSerializer implements RedisSerializer<Object> {
 	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.data.redis.serializer.RedisSerializer#serialize(java.lang.Object)
+	 */
+	/**
+	 * @param string 参数
 	 */
 	@Override
 	public byte[] serialize(@Nullable Object string) {

@@ -58,6 +58,9 @@ public class TigerMachineApp {
     }
 
     // --- 策略工厂 ---
+    /**
+     * @param mod 参数
+     */
     private static MachineStrategy getStrategy(String mod) {
         return switch (mod) {
             case MOD_GOLDEN_PIG -> new GoldenPigStrategy();
@@ -66,8 +69,6 @@ public class TigerMachineApp {
             default -> null;
         };
     }
-
-
     public static void main(String[] args) {
         randomTest();
     }
@@ -158,7 +159,10 @@ public class TigerMachineApp {
     }
 
     // --- 逻辑判断部分 ---
-
+    /**
+     * @param export 参数
+     * @param multipleIntervalMap 参数
+     */
     public static boolean checkResults(BoardResultExport export, Map<Integer, Integer> multipleIntervalMap) {
         if (export.getTotalMultiple() > 10000) {
 			return false;
@@ -191,7 +195,10 @@ public class TigerMachineApp {
 
         return !checkCountLimit(export.getTotalMultiple(), multipleIntervalMap);
     }
-
+    /**
+     * @param multiple 参数
+     * @param multipleIntervalMap 参数
+     */
     public static boolean checkCountLimit(Integer multiple, Map<Integer, Integer> multipleIntervalMap) {
         final Integer multipleKey = convertCountLimitKey(multiple);
         int currentCount = multipleIntervalMap.getOrDefault(multipleKey, 0);
@@ -201,7 +208,9 @@ public class TigerMachineApp {
         multipleIntervalMap.put(multipleKey, currentCount + 1);
         return false;
     }
-
+    /**
+     * @param multiple 参数
+     */
     public static Integer convertCountLimitKey(Integer multiple) {
         if (multiple == 0) {
             return 0;
@@ -230,15 +239,22 @@ public class TigerMachineApp {
 
     public static class SymbolPool {
         private final List<Symbol> symbols = new ArrayList<>();
+        /**
+         * @param weights 参数
+         * @param strategy 参数
+         */
         private final int[] weights;
         private final MachineStrategy strategy;
-
         public SymbolPool(int[] weights, MachineStrategy strategy) {
             this.weights = weights;
             this.strategy = strategy;
             strategy.initSymbols(this.symbols);
         }
-
+        /**
+         * @param rows 参数
+         * @param cols 参数
+         * @param isFreeSpin 参数
+         */
         public int[][] generateSymbolMatrix(int rows, int cols, boolean isFreeSpin) {
             int[][] result = new int[rows][cols];
             int originWildWeight = this.weights[0];
@@ -264,7 +280,9 @@ public class TigerMachineApp {
             this.weights[0] = originWildWeight;
             return result;
         }
-
+        /**
+         * @param idMatrix 参数
+         */
         public Symbol[][] convertToSymbolMatrix(int[][] idMatrix) {
             Symbol[][] matrix = new Symbol[idMatrix.length][idMatrix[0].length];
             for (int r = 0; r < idMatrix.length; r++) {
@@ -324,7 +342,10 @@ public class TigerMachineApp {
         private Boolean isFree;
         private Set<Integer> lightIndex = new HashSet<>();
         private List<Integer> ids = new ArrayList<>();
-
+        /**
+         * @param matrix 参数
+         * @param isFree 参数
+         */
         public BoardResult(Symbol[][] matrix, Boolean isFree) {
             this.matrix = matrix;
             this.isFree = isFree;
@@ -444,7 +465,9 @@ public class TigerMachineApp {
         private int freeSpins;
         private BoardResult self;
         private List<BoardResult> children = new ArrayList<>();
-
+        /**
+         * @param self 参数
+         */
         public BoardResultExport(BoardResult self) {
             this.self = self;
             this.totalMultiple = self.getTotalMultiple();
@@ -463,7 +486,6 @@ public class TigerMachineApp {
     }
 
     // --- 导出逻辑 ---
-
     private static void exportFinalResults(List<BoardResultExport> results, String modUsage) {
         List<BoardResultExport> filtered = results
             .stream()
@@ -508,7 +530,9 @@ public class TigerMachineApp {
 //        }
         System.out.println("成功生成数据量: " + filtered.size());
     }
-
+    /**
+     * @param r 参数
+     */
     private static BoardResultSimple toSimple(BoardResult r) {
         BoardResultSimple s = new BoardResultSimple();
         s.setTotalMultiple(r.getTotalMultiple());

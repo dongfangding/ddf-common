@@ -22,7 +22,9 @@ public class BoardResultResponse {
      * 免费结果
      */
     private List<BoardResultSimple> children = new ArrayList<>();
-
+    /**
+     * @param self 参数
+     */
     public BoardResultResponse(BoardResultSimple self) {
         this.self = self;
         this.totalMultiple = self.getTotalMultiple();

@@ -28,7 +28,10 @@ public abstract class AbstractOnsMessageListener<D extends Serializable> impleme
     public Class<D> getDomainClass() {
         return domainClass;
     }
-
+    /**
+     * @param message 参数
+     * @param domain 参数
+     */
     @Override
     public boolean isBizSuccess(Message message, D domain) {
         return false;
@@ -46,6 +49,7 @@ public abstract class AbstractOnsMessageListener<D extends Serializable> impleme
      * 记录消费失败消息日志
      *
      * @param message
+     * @param failureReason 参数
      */
     protected void errorMessage(Message message, String failureReason) {
     }

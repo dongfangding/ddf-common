@@ -21,11 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
-import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -101,6 +99,7 @@ public class EmqController {
      * 连接认证
      *
      * @param request
+     * @param response 参数
      */
     @PostMapping("authenticate")
     public void authenticate(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
@@ -153,6 +152,7 @@ public class EmqController {
      * 首先查询客户端是否为超级用户，客户端为超级用户时将跳过 ACL 查询。
      *
      * @param request
+     * @param response 参数
      */
     @PostMapping("acl/superuser")
     public void superuser(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
@@ -169,6 +169,7 @@ public class EmqController {
      * 普通客户端ACL认证
      *
      * @param request
+     * @param response 参数
      */
     @PostMapping("acl")
     public void acl(@RequestBody EmqAclRequest request, HttpServletResponse response) {

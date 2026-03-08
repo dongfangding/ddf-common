@@ -48,6 +48,9 @@ public class OssBeanAutoConfiguration {
         );
     }
 
+    /**
+     * @param ossProperties 参数
+     */
     @Bean(name = DEFAULT_ACS_CLIENT_NAME, destroyMethod = "shutdown")
     @Primary
     public IAcsClient defaultAcsClient(OssProperties ossProperties) {
@@ -58,8 +61,11 @@ public class OssBeanAutoConfiguration {
         // 用profile构造client
         return new DefaultAcsClient(profile);
     }
-
-
+    /**
+     * @param defaultAcsClient 参数
+     * @param defaultOssClient 参数
+     * @param ossProperties 参数
+     */
     @Bean
     public OssHelper ossHelper(IAcsClient defaultAcsClient, OSS defaultOssClient, OssProperties ossProperties) {
         return new OssHelper(defaultAcsClient, defaultOssClient, ossProperties);

@@ -1,11 +1,10 @@
 package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.core.model.IndexComparatorElement;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 /**
  * ComparatorUtil 测试类

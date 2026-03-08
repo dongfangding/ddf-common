@@ -56,6 +56,10 @@ public @interface Mobile {
      */
     class MobileValidator implements ConstraintValidator<Mobile, String> {
 
+        /**
+         * @param value 参数
+         * @param context 参数
+         */
         @Override
         public boolean isValid(String value, ConstraintValidatorContext context) {
             // 为空时不进行逻辑校验

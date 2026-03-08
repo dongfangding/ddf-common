@@ -73,7 +73,11 @@ public class RedisCacheManagerConfiguration {
 
         return redisCacheManagerBuilder.build();
     }
-
+    /**
+     * @param cacheProperties 参数
+     * @param applicationName 参数
+     * @param ttl 参数
+     */
     private RedisCacheConfiguration createConfiguration(CacheProperties cacheProperties, String applicationName,
             Duration ttl) {
         CacheProperties.Redis redisProperties = cacheProperties.getRedis();
@@ -97,7 +101,6 @@ public class RedisCacheManagerConfiguration {
             config = config.disableKeyPrefix();
             log.warn("======> ${spring.cache.redis.use-key-prefix} is false, not recommended. <======");
         }
-
         log.info("======> spring redis cache , prefix keys={}, ttl={} <======", prefixKeys, ttl);
         return config;
     }

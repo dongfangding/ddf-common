@@ -29,6 +29,8 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
 
     /**
      * 处理文本消息的事件处理器
+     * @param handlerMessageService 参数
+     * @param webSocketHandlerListener 参数
      */
     private final HandlerMessageService handlerMessageService;
 
@@ -36,13 +38,14 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
      * 为当前实现暴露监听事件， 允许额外实现逻辑
      */
     private final WebSocketHandlerListener webSocketHandlerListener;
-
     public DefaultWebSocketHandler(HandlerMessageService handlerMessageService,
             WebSocketHandlerListener webSocketHandlerListener) {
         this.handlerMessageService = handlerMessageService;
         this.webSocketHandlerListener = webSocketHandlerListener;
     }
-
+    /**
+     * @param session 参数
+     */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
@@ -79,7 +82,10 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
             handlerMessageService.handlerMessage(principal, WebsocketSessionStorage.get(principal), textMessage);
         }
     }
-
+    /**
+     * @param session 参数
+     * @param message 参数
+     */
     @Override
     protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
         log.info("-----------------handlePongMessage------------------");
@@ -87,7 +93,10 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
             webSocketHandlerListener.handlePongMessage(session, message);
         }
     }
-
+    /**
+     * @param session 参数
+     * @param exception 参数
+     */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
@@ -100,7 +109,10 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
         }
         session.close();
     }
-
+    /**
+     * @param session 参数
+     * @param status 参数
+     */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();

@@ -69,6 +69,9 @@ public class BaseOnsListenerContainer implements OnsListenerContainer {
     private String topic;
     private ExpressionType expressionType;
     private String expression;
+    /**
+     * @param annotation 参数
+     */
     private MessageModel messageModel;
     private int consumeThreadNums;
     private long consumeTimeout;
@@ -121,7 +124,9 @@ public class BaseOnsListenerContainer implements OnsListenerContainer {
     public boolean isAutoStartup() {
         return true;
     }
-
+    /**
+     * @param callback 参数
+     */
     @Override
     public void stop(Runnable callback) {
         stop();

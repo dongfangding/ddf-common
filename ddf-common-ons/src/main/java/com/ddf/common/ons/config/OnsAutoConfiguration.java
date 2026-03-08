@@ -27,6 +27,9 @@ public class OnsAutoConfiguration {
         return producerBean;
     }
 
+    /**
+     * @param onsProperties 参数
+     */
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     public OrderProducerBean orderProducer(OnsProperties onsProperties) {
         OrderProducerBean orderProducerBean = new OrderProducerBean();

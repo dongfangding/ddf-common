@@ -123,17 +123,28 @@ public class BeanCopierUtils {
             return target;
         }).collect(Collectors.toList());
     }
-
+    /**
+     * @param source 参数
+     * @param target 参数
+     */
     public static void copy(Object source, Object target) {
         copy(source, target, null);
     }
-
+    /**
+     * @param source 参数
+     * @param target 参数
+     * @param converter 参数
+     */
     public static void copy(Object source, Object target, Converter converter) {
         boolean useConverter = null != converter;
         BeanCopier copier = getBeanCopier(source.getClass(), target.getClass(), useConverter);
         copier.copy(source, target, converter);
     }
-
+    /**
+     * @param sourceClass 参数
+     * @param targetClass 参数
+     * @param useConverter 参数
+     */
     private static BeanCopier getBeanCopier(Class sourceClass, Class targetClass, boolean useConverter) {
         String beanKey = generateKey(sourceClass, targetClass);
         BeanCopier copier;
@@ -145,11 +156,16 @@ public class BeanCopierUtils {
         }
         return copier;
     }
-
+    /**
+     * @param class1 参数
+     * @param class2 参数
+     */
     private static String generateKey(Class<?> class1, Class<?> class2) {
         return class1.toString() + class2.toString();
     }
-
+    /**
+     * @param targetClass 参数
+     */
     private static <T> ConstructorAccess<T> getConstructorAccess(Class<T> targetClass) {
         ConstructorAccess<T> constructorAccess = CONSTRUCTOR_ACCESS_CACHE.get(targetClass.toString());
         if (constructorAccess != null) {

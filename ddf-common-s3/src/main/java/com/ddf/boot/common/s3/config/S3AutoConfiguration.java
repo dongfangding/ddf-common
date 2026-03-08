@@ -32,6 +32,10 @@ public class S3AutoConfiguration {
         return new S3Service(s3Properties);
     }
 
+    /**
+     * @param s3Api 参数
+     * @param s3Properties 参数
+     */
     @Bean
     @ConditionalOnMissingBean(S3Helper.class)
     public S3Helper s3Helper(S3Api s3Api, S3Properties s3Properties) {

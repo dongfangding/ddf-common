@@ -90,6 +90,7 @@ public class PageResult<E> implements Serializable {
      * @param pageNum     页码
      * @param pageSize 每页结果数
      * @param total    结果总数
+     * @param content 参数
      */
     public PageResult(long pageNum, long pageSize, long total, List<E> content) {
         this(pageNum, pageSize);
@@ -97,7 +98,10 @@ public class PageResult<E> implements Serializable {
         this.totalPage = totalPage(total, pageSize);
         this.content = content;
     }
-
+    /**
+     * @param totalCount 参数
+     * @param pageSize 参数
+     */
     public static long totalPage(long totalCount, long pageSize) {
         if (pageSize == 0) {
             return 0;

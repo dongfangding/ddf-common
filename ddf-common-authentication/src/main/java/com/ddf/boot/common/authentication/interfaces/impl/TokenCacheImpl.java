@@ -11,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -56,19 +55,27 @@ public class TokenCacheImpl implements TokenCache {
             stringRedisTemplate = SpringContextHolder.getBean(RedisTemplateSupport.class).getStringRedisTemplate();
         }
     }
-
+    /**
+     * @param userClaim 参数
+     * @param authenticateToken 参数
+     */
     @Override
     public void setToken(UserClaim userClaim, AuthenticateToken authenticateToken) {
         // token存入缓存
         stringRedisTemplate.opsForValue().set(getTokenKey(userClaim.getUserId()), authenticateToken.getToken(),
                 authenticationProperties.getExpiredMinute(), TimeUnit.MINUTES);
     }
-
+    /**
+     * @param userId 参数
+     */
     @Override
     public String getToken(String userId) {
         return stringRedisTemplate.opsForValue().get(getTokenKey(userId));
     }
-
+    /**
+     * @param userId 参数
+     * @param token 参数
+     */
     @Override
     public void refreshToken(String userId, String token) {
         // token存入缓存

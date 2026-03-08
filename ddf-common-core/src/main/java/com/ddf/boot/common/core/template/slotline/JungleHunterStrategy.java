@@ -43,7 +43,12 @@ public class JungleHunterStrategy implements MachineStrategy {
             "0,4,7,10,14"
         );
     }
-
+    /**
+     * @param matrix 参数
+     * @param r 参数
+     * @param c 参数
+     * @param isFreeSpin 参数
+     */
     @Override
     public void handleSpecialMatrixLogic(int[][] matrix, int r, int c, boolean isFreeSpin) {
     }

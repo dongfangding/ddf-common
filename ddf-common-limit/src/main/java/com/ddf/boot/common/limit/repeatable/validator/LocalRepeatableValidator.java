@@ -38,6 +38,8 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      *
      * @param joinPoint  织入点
      * @param repeatable 注解
+     * @param currentUid 参数
+     * @param repeatableProperties 参数
      * @return 是否通过校验
      */
     @Override
@@ -71,6 +73,8 @@ public class LocalRepeatableValidator implements RepeatableValidator {
     /**
      * 获取缓存key
      *
+     * @param joinPoint 参数
+     * @param currentUid 参数
      * @return
      */
     private String getRequestMapKey(JoinPoint joinPoint, String currentUid) {
@@ -84,6 +88,7 @@ public class LocalRepeatableValidator implements RepeatableValidator {
     /**
      * 获取缓存的value对象
      *
+     * @param jointPoint 参数
      * @return
      */
     private RequestValue getRequestMapValue(JoinPoint jointPoint) {

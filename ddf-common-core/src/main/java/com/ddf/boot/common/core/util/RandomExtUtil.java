@@ -44,7 +44,9 @@ public class RandomExtUtil {
     public static final String BASE_CHAR = "abcdefghijklmnopqrstuvwxyz";
 
     final static DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
-
+    /**
+     * @param maxLength 参数
+     */
     public static String randomOrderNo(int maxLength) {
         return randomOrderNo("-", maxLength);
     }
@@ -52,6 +54,8 @@ public class RandomExtUtil {
     /**
      * 规则比较简单，会暴露当前时间的生成订单号，适合内部或者小型系统，不存在暴露订单量的担心时使用
      *
+     * @param separator 参数
+     * @param maxLength 参数
      * @return
      */
     public static String randomOrderNo(String separator, int maxLength) {
@@ -107,6 +111,7 @@ public class RandomExtUtil {
     /**
      * 基于权重的中奖概率判定
      *
+     * @param sources 参数
      * @return
      */
     public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
@@ -138,6 +143,8 @@ public class RandomExtUtil {
      * <p>
      * 则最终会生成15条数据， 生成的顺序根据权重来判定，每次生成后当前权重减少1
      *
+     * @param sources 参数
+     * @param clazz 参数
      * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources, Class<T> clazz) {
@@ -312,7 +319,9 @@ public class RandomExtUtil {
         ));
         return new BigDecimal("1.0").subtract(decimal);
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final List<DefaultWeightProportion> proportions = Lists.newArrayList(
             DefaultWeightProportion.of("1", 10d),
@@ -350,7 +359,11 @@ public class RandomExtUtil {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * @param roundId 参数
+     * @param startSeconds 参数
+     * @param isLuck 参数
+     */
     private static void round(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck) {
         final long currentSeconds = System.currentTimeMillis() / 1000;
         long pastTime = currentSeconds - startSeconds.get();
@@ -370,7 +383,12 @@ public class RandomExtUtil {
             }
         }
     }
-
+    /**
+     * @param roundId 参数
+     * @param startSeconds 参数
+     * @param isLuck 参数
+     * @param currentSeconds 参数
+     */
     private static void startRound(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck,
         long currentSeconds) {
         roundId.incrementAndGet();
@@ -410,6 +428,7 @@ public class RandomExtUtil {
 	 *
 	 * @param start
 	 * @param end
+	 * @param scale 参数
 	 * @return
 	 */
 	public static double randomDouble(double start, double end, int scale) {

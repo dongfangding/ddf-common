@@ -23,12 +23,14 @@ public class FileNamePrefixReplacer {
             System.err.println("❌ 目标路径不存在或不是文件夹: " + folderPath);
             return;
         }
-
         processFolderRecursively(rootFolder, matchPrefix, newPrefix);
     }
 
     /**
      * 递归处理文件夹
+     * @param folder 参数
+     * @param matchPrefix 参数
+     * @param newPrefix 参数
      */
     private static void processFolderRecursively(File folder, String matchPrefix, String newPrefix) {
         File[] files = folder.listFiles();
@@ -59,6 +61,9 @@ public class FileNamePrefixReplacer {
 
     /**
      * 替换文件内部的 public class/interface/enum 后跟的前缀
+     * @param file 参数
+     * @param matchPrefix 参数
+     * @param newPrefix 参数
      */
     public static void replaceClassNameInsideFile(File file, String matchPrefix, String newPrefix) {
         File tempFile = new File(file.getAbsolutePath() + ".tmp");
@@ -85,7 +90,6 @@ public class FileNamePrefixReplacer {
                         System.out.println("🔧 替换类名: " + line.trim());
                     }
                 }
-
                 writer.write(line);
                 writer.newLine();
             }
@@ -102,6 +106,8 @@ public class FileNamePrefixReplacer {
 
     /**
      * 判断一行是否匹配 class/interface/enum 且后面带有匹配前缀
+     * @param line 参数
+     * @param matchPrefix 参数
      */
     private static boolean matchesClassDeclaration(String line, String matchPrefix) {
         // 正则匹配:
@@ -111,6 +117,7 @@ public class FileNamePrefixReplacer {
 
     /**
      * 获取声明部分（例如 "public static class"、"public interface"）
+     * @param line 参数
      */
     private static String getLeadingDeclarationPart(String line) {
         String[] types = {"class", "interface", "enum"};
@@ -124,7 +131,9 @@ public class FileNamePrefixReplacer {
         }
         return null;
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         replaceFileNamePrefix("D:\\IdeaWorkspaces\\seaway\\game\\game-core\\src\\main\\java\\com\\kewta\\biz\\game\\core\\domain\\jinhua", "TigerLoong", "JinHua");
     }

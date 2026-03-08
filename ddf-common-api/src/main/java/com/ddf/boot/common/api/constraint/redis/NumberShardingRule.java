@@ -28,7 +28,6 @@ public class NumberShardingRule implements RedisShardingRule<Integer, Integer> {
      * 分片的取模数，如分10个分片，100个分片
      */
     private Integer shardingMod;
-
     @Override
     public String getSharding(String... args) {
         if (shardingKeyInArgsIndex >= args.length) {

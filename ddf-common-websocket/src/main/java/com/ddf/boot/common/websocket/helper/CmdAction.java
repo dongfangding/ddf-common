@@ -30,9 +30,10 @@ public class CmdAction implements CmdStrategy {
 
 
     public CmdAction() {
-
     }
-
+    /**
+     * @param cmdEnum 参数
+     */
     public CmdAction(String cmdEnum) {
         CmdStrategy cmdStrategy;
         try {

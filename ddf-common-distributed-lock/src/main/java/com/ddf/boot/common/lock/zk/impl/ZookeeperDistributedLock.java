@@ -23,7 +23,6 @@ public class ZookeeperDistributedLock implements DistributedLock {
 
     private final CuratorFramework client;
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
-
     public ZookeeperDistributedLock(CuratorFramework client,
             DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
         this.client = client;

@@ -33,12 +33,16 @@ public class CityUtil {
             }
         }
     }
-
+    /**
+     * @param cityName 参数
+     */
     public static String getProvinceByCity(String cityName) {
         System.out.println(cityName + ": " + CITY_MAPPING.getOrDefault(cityName, cityName));
         return CITY_MAPPING.getOrDefault(cityName, "");
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         getProvinceByCity("丹东市");
         getProvinceByCity("亳州市");
@@ -163,9 +167,6 @@ public class CityUtil {
         getProvinceByCity("齐齐哈尔市");
     }
 }
-
-
-
 
 
 

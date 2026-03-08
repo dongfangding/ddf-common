@@ -21,6 +21,10 @@ public enum PokerCardColorEnum {
 
     ;
 
+    /**
+     * @param color 参数
+     * @param desc 参数
+     */
     private final String color;
     private final String desc;
 

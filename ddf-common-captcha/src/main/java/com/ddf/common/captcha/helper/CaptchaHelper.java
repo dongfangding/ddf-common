@@ -49,7 +49,6 @@ public class CaptchaHelper {
      * key取名这个是因为三方库的key使用的名字是这个， 自定义的与它保持一致吧，这样都放在一块
      */
     public final static String CAPTCHA_KEY_PREFIX = "RUNNING:CAPTCHA:";
-
     public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties, CaptchaService captchaService) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
@@ -61,6 +60,7 @@ public class CaptchaHelper {
     /**
      * 生成验证码
      *
+     * @param captchaRequest 参数
      * @return
      */
     public CaptchaResult generate(CaptchaRequest captchaRequest) {
@@ -140,6 +140,7 @@ public class CaptchaHelper {
     /**
      * 获取文字点击验证码/获取图片滑块验证码
      *
+     * @param captchaTypeEnum 参数
      * @return
      */
     public CaptchaResult generateAjCaptcha(CaptchaTypeEnum captchaTypeEnum) {
@@ -161,6 +162,7 @@ public class CaptchaHelper {
 
     /**
      * 校验验证码
+     * @param request 参数
      */
     public boolean check(CaptchaCheckRequest request) {
 //        PreconditionUtil.requiredParamCheck(request);

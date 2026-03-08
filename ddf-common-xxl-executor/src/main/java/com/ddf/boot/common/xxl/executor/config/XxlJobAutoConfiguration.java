@@ -24,10 +24,13 @@ public class XxlJobAutoConfiguration {
 
     private final Logger logger = LoggerFactory.getLogger(XxlJobAutoConfiguration.class);
 
+    /**
+     * @param xxlJobConfig 参数
+     * @param environment 参数
+     */
     private final XxlJobConfig xxlJobConfig;
 
     private final Environment environment;
-
     public XxlJobAutoConfiguration(XxlJobConfig xxlJobConfig, Environment environment) {
         this.xxlJobConfig = xxlJobConfig;
         this.environment = environment;

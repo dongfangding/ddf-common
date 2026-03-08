@@ -87,6 +87,13 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * 主体数据
+     * @param requestId 参数
+     * @param type 参数
+     * @param cmd 参数
+     * @param sendMode 参数
+     * @param clientChannel 参数
+     * @param timestamp 参数
+     * @param content 参数
      */
     private T body;
 
@@ -98,8 +105,6 @@ public class RequestContent<T> implements Serializable {
 
     @JsonIgnore
     private transient Map<String, String> extraMap;
-
-
     public RequestContent(String requestId, Type type, String cmd, Integer sendMode, String clientChannel,
             Long timestamp, T content) {
         this.requestId = requestId;
@@ -258,7 +263,9 @@ public class RequestContent<T> implements Serializable {
     public Map<String, String> getExtraMap() {
         return extraMap;
     }
-
+    /**
+     * @param extraMap 参数
+     */
     public void setExtraMap(Map<String, String> extraMap) {
         this.extraMap = extraMap;
     }

@@ -7,7 +7,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -45,19 +44,28 @@ public class SpringContextHolder {
             return null;
         }
     }
-
+    /**
+     * @param requiredType 参数
+     */
     public static <T> T getBean(Class<T> requiredType) throws BeansException {
         return SpringUtil.getBean(requiredType);
     }
-
+    /**
+     * @param name 参数
+     */
     public static Object getBean(String name) throws BeansException {
         return SpringUtil.getBean(name);
     }
-
+    /**
+     * @param name 参数
+     * @param requiredType 参数
+     */
     public static <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return SpringUtil.getBean(name, requiredType);
     }
-
+    /**
+     * @param type 参数
+     */
     public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {
         return SpringUtil.getBeansOfType(type);
     }

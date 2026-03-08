@@ -19,9 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RequestContentCodec extends ByteToMessageCodec<Object> {
-
     private final Charset charset;
-
     public RequestContentCodec(Charset charset) {
         if (charset == null) {
             charset = CharsetUtil.UTF_8;

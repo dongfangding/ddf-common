@@ -43,12 +43,17 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
 
     private final AtomicLong counter = new AtomicLong(0);
 
+    /**
+     * @param environment 参数
+     * @param onsProperties 参数
+     */
     private final OnsProperties onsProperties;
-
     public OnsListenerContainerConfiguration(Environment environment, OnsProperties onsProperties) {
         this.onsProperties = onsProperties;
     }
-
+    /**
+     * @param applicationContext 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = (ConfigurableApplicationContext) applicationContext;
@@ -61,7 +66,10 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         beans.forEach(this::registerListenerContainer);
     }
-
+    /**
+     * @param beanName 参数
+     * @param bean 参数
+     */
     private void registerListenerContainer(String beanName, Object bean) {
         Class<?> clazz = AopProxyUtils.ultimateTargetClass(bean);
 
@@ -102,7 +110,11 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
         }
         LOGGER.info("Register the Listener:[{}] to the Container:[{}]", beanName, containerBeanName);
     }
-
+    /**
+     * @param annotation 参数
+     * @param bean 参数
+     * @param beanName 参数
+     */
     private BaseOnsListenerContainer createOnsListenerContainer(OnsMessageListenerAno annotation,
                                                                    Object bean, String beanName) {
         BaseOnsListenerContainer container = new BaseOnsListenerContainer();
@@ -128,7 +140,6 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
         } else {
             throw new BeanDefinitionValidationException("the Class modifier by Annotation @OnsMessageListener must implements interface MessageListener or BatchMessageListener or MessageOrderListener ");
         }
-
         container.setName(beanName);
 
         return container;

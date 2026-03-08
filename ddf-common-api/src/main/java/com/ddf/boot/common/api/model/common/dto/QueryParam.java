@@ -75,6 +75,7 @@ public class QueryParam<T> implements Serializable {
      *
      * @param key   字段
      * @param value 值
+     * @param op 参数
      */
     public QueryParam(String key, Op op, T value) {
         this.key = key;
@@ -92,8 +93,10 @@ public class QueryParam<T> implements Serializable {
          * 与其它关系为or关系
          */
         OR("OR");
+        /**
+         * @param value 参数
+         */
         private String value;
-
         Relative(String value) {
             this.value = value;
         }
@@ -150,9 +153,10 @@ public class QueryParam<T> implements Serializable {
          * IS NULL
          */
         NI("IS NULL");
-
+        /**
+         * @param value 参数
+         */
         private String value;
-
         Op(String value) {
             this.value = value;
         }

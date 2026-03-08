@@ -20,7 +20,6 @@ public class DefaultWeightProportion implements WeightProportion {
 	 * 那就可以使用这个
 	 */
 	private Double rewardValue;
-
 	public static DefaultWeightProportion of(String key, Double weightValue) {
 		return DefaultWeightProportion.builder()
 				.key(key)

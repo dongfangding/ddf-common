@@ -67,7 +67,9 @@ public class AjCaptchaServiceAutoConfiguration {
                 CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue() : CaptchaTypeEnum.CLICKWORD.getCodeValue());
         return CaptchaServiceFactory.getInstance(config);
     }
-
+    /**
+     * @param prop 参数
+     */
     private Properties buildProperties(AjCaptchaProperties prop) {
         log.info("自定义配置项：{}", prop.toString());
         Properties config = new Properties();
@@ -92,11 +94,16 @@ public class AjCaptchaServiceAutoConfiguration {
         config.put("captcha.req.verify.minute.limit", prop.getReqVerifyMinuteLimit() + "");
         return config;
     }
-
+    /**
+     * @param jigsaw 参数
+     * @param picClick 参数
+     */
     private static void initializeBaseMap(String jigsaw, String picClick) {
         ImageUtils.cacheBootImage(getResourcesImagesFile(jigsaw + "/original/*.png"), getResourcesImagesFile(jigsaw + "/slidingBlock/*.png"), getResourcesImagesFile(picClick + "/*.png"));
     }
-
+    /**
+     * @param path 参数
+     */
     public static Map<String, String> getResourcesImagesFile(String path) {
         Map<String, String> imgMap = new HashMap();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

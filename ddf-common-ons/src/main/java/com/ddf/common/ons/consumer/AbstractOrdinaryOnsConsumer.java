@@ -42,7 +42,6 @@ public abstract class AbstractOrdinaryOnsConsumer implements OnsConsumer {
         subscription.setTopic(getTopic());
         subscription.setExpression(getExpression());
         subscriptionTable.put(subscription, getMessageListener());
-
         consumerBean.setSubscriptionTable(subscriptionTable);
 
         return consumerBean;

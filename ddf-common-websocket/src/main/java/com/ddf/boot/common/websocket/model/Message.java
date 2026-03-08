@@ -89,6 +89,12 @@ public class Message<T> {
 
     /**
      * 解析请求头存放的对象，非报文传输字段
+     * @param type 参数
+     * @param requestId 参数
+     * @param sendModel 参数
+     * @param cmd 参数
+     * @param body 参数
+     * @param clientChannel 参数
      */
     @JsonIgnore
     private transient Map<String, String> extraMap;
@@ -97,7 +103,6 @@ public class Message<T> {
      * 主体数据内容
      */
     private T body;
-
     public Message(Type type, String requestId, String sendModel, String cmd, T body, String clientChannel) {
         this.type = type;
         this.requestId = requestId;
@@ -107,7 +112,15 @@ public class Message<T> {
         this.timestamp = System.currentTimeMillis();
         this.clientChannel = clientChannel;
     }
-
+    /**
+     * @param type 参数
+     * @param requestId 参数
+     * @param sendModel 参数
+     * @param cmd 参数
+     * @param body 参数
+     * @param code 参数
+     * @param clientChannel 参数
+     */
     public Message(Type type, String requestId, String sendModel, String cmd, T body, Integer code,
             String clientChannel) {
         this.type = type;
@@ -146,6 +159,7 @@ public class Message<T> {
     /**
      * 服务端响应客户端未登录
      *
+     * @param message 参数
      * @return
      */
     public static Message<String> responseNotLogin(@NotNull WebSocketMessage<?> message) {
@@ -162,6 +176,7 @@ public class Message<T> {
     /**
      * 服务端响应客户端的数据在服务端没有对应的请求
      *
+     * @param message 参数
      * @return
      */
     public static <O> Message<String> responseNotMatchRequest(@NotNull Message<O> message) {
@@ -175,6 +190,7 @@ public class Message<T> {
     /**
      * 服务端响应客户端在重复请求数据
      *
+     * @param message 参数
      * @return
      */
     public static <O> Message<String> responseRepeatRequest(@NotNull Message<O> message) {
@@ -232,6 +248,8 @@ public class Message<T> {
      *
      * @param message
      * @param <T>
+     * @param body 参数
+     * @param code 参数
      * @return
      */
     public static <O, T> Message<T> responseReceived(Message<O> message, T body, Integer code) {
@@ -286,8 +304,9 @@ public class Message<T> {
         parseExtra();
         return this;
     }
-
-
+    /**
+     * @param extra 参数
+     */
     public void setExtra(String extra) {
         this.extra = extra;
         parseExtra();

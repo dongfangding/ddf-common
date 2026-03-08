@@ -112,7 +112,9 @@ public class TokenUtil {
             TOKEN_CACHE.refreshToken(userId, token);
         }
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final AuthenticateCheckResult result = TokenUtil.checkToken(
                 "$2a$10$dloe/PgLOVpgn2RqvfrgFucUOf8v9/HefZv0dLt/p04iGnD79N93G.6d3309a6d94d9a7bed598cbc372c75a9055507ce2bf965dfb83265925297c54e5fccd6c06ec4b3d629f77b6b5ffcba2270b3acb196f758d50f409a27684ba028b3b1d46a166564e9d816189bb92925baa1ca70b1ba3154dc5da2f96dd2fdd63a7af7d3f29b3cce4d9e26c1419c3a084397572758e3f90cfc1810993dfc2c8c3e84256b8120817f9c7674ffbfbb351f6fed84e8c3e076bd771b039f3ca6adbb2df71e28171937d668fd458311abf9caef39921b3f6825f0d681a35245eca337b49bc482a91ea761b84b7379d9a5647e805824ff9154499c9254344f3247000ed2");

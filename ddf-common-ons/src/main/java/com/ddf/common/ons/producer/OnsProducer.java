@@ -251,13 +251,18 @@ public abstract class OnsProducer {
         try {
             // 异步发送消息, 发送结果通过 callback 返回给客户端。
             PRODUCER.sendAsync(message, new SendCallback() {
+                /**
+                 * @param sendResult 参数
+                 */
                 @Override
                 public void onSuccess(final SendResult sendResult) {
                     LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
                             payLoad, bizId, delayTime, sendResult.getMessageId()
                     );
                 }
-
+                /**
+                 * @param context 参数
+                 */
                 @Override
                 public void onException(OnExceptionContext context) {
                     String errorMessage = context.getException()
@@ -271,7 +276,6 @@ public abstract class OnsProducer {
                     }
                 }
             });
-
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,
@@ -320,13 +324,18 @@ public abstract class OnsProducer {
             }
             // 异步发送消息, 发送结果通过 callback 返回给客户端。
             PRODUCER.sendAsync(message, new SendCallback() {
+                /**
+                 * @param sendResult 参数
+                 */
                 @Override
                 public void onSuccess(final SendResult sendResult) {
                     LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
                             payLoad, bizId, delayTime, sendResult.getMessageId()
                     );
                 }
-
+                /**
+                 * @param context 参数
+                 */
                 @Override
                 public void onException(OnExceptionContext context) {
                     LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}", topic,
@@ -339,7 +348,6 @@ public abstract class OnsProducer {
                     }
                 }
             });
-
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,

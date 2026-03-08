@@ -296,6 +296,7 @@ public class OnsClientOperations {
     /**
      * 向指定的消费者推送消息, MsgId会重新生成， 但是用重新生成的MsgId获取消息记录，指向的还是之前的MsgId
      *
+     * @param request 参数
      * @throws Exception
      */
     public static void onsMessagePush(ConsoleOnsMessagePushRequest request) {
@@ -553,6 +554,7 @@ public class OnsClientOperations {
      *
      * @param instanceId
      * @param groupId
+     * @param response 参数
      */
     private static void putOnsConsumerConnections(String instanceId, String groupId,
             OnsConsumerGetConnectionResponse response) {

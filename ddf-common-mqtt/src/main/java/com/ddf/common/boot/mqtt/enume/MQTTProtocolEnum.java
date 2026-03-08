@@ -45,10 +45,11 @@ public enum MQTTProtocolEnum {
     MQTT_WSS("mqtt_wss")
     ;
 
+    /**
+     * @param protocol 参数
+     */
     private final String protocol;
-
     private static final Map<String, MQTTProtocolEnum> MAPPINGS;
-
     MQTTProtocolEnum(String protocol) {
         this.protocol = protocol;
     }
@@ -56,7 +57,9 @@ public enum MQTTProtocolEnum {
     static {
         MAPPINGS = Arrays.stream(MQTTProtocolEnum.values()).collect(Collectors.toMap(MQTTProtocolEnum::getProtocol, obj -> obj));
     }
-
+    /**
+     * @param protocol 参数
+     */
     public static MQTTProtocolEnum resolve(String protocol) {
         return MAPPINGS.get(protocol);
     }

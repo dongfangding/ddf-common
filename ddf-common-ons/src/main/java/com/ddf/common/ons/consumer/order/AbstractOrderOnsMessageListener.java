@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractOrderOnsMessageListener<D extends Serializable>
         extends AbstractOnsMessageListener<D> implements MessageOrderListener {
-
     @Override
     public OrderAction consume(final Message message, final ConsumeOrderContext context) {
         String payLoad = new String(message.getBody());
@@ -38,7 +37,6 @@ public abstract class AbstractOrderOnsMessageListener<D extends Serializable>
             }
             // 调用子类的执行业务方法
             executeBiz(domain);
-
             LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] ShadingKey [{}] 消息",
                     member, messageId, topic, message.getTag(), payLoad, message.getKey(), message.getShardingKey());
             infoMessage(message);

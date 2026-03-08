@@ -130,7 +130,6 @@ public class LarkUtil {
 
         Map<String, Object> postMap = new HashMap<>();
         postMap.put("post", languageMap);
-
         params.put("content", postMap);
         return params;
     }
@@ -140,6 +139,7 @@ public class LarkUtil {
      *
      * @param text
      * @param isAtAll
+     * @param secret 参数
      * @return
      */
     public static Map<String, Object> buildText(String secret, String text, boolean isAtAll) {
@@ -158,7 +158,10 @@ public class LarkUtil {
         params.put("content", textParams);
         return params;
     }
-
+    /**
+     * @param secret 参数
+     * @param timestamp 参数
+     */
     private static String genSign(String secret, long timestamp) {
         try {
             //把timestamp+"\n"+密钥当做签名字符串

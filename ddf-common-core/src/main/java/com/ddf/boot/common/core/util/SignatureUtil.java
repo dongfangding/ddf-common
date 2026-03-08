@@ -69,7 +69,6 @@ public class SignatureUtil {
 
         // 使用 TreeMap 自动处理参数名按照ASCII码表升序排序
         Map<String, Object> resultMap = new TreeMap<>();
-
         collectParams(params, null, resultMap, flatten);
 
         // 按照排序拼接参数名与参数值
@@ -297,7 +296,9 @@ public class SignatureUtil {
         final String s = asciiSortToQueryStringOnlyBasicType(params);
         return SecureUtil.sha1(s);
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         // f8d2ef16c48c87a1a00b9920c57f168213cae6da12686736737a528ab6b7d3fc
         String str =

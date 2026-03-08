@@ -14,9 +14,7 @@ import com.ddf.boot.common.api.exception.BaseException;
 public class ConsumeException extends BaseException {
 
     private String code;
-
     private String message;
-
     public ConsumeException(String message) {
         super(message);
     }
@@ -35,7 +33,10 @@ public class ConsumeException extends BaseException {
     public boolean isMaskErrorDetails() {
         return true;
     }
-
+    /**
+     * @param code 参数
+     * @param message 参数
+     */
     public ConsumeException(String code, String message) {
         super(code, message);
         this.code = code;

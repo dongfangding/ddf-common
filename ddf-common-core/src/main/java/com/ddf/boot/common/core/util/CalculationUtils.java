@@ -86,6 +86,11 @@ public class CalculationUtils {
 
     /**
      * 分段累加计算时长
+     * @param startValue 参数
+     * @param targetValue 参数
+     * @param unitStep 参数
+     * @param segments 参数
+     * @param defaultFactor 参数
      */
     public static long calculateSegmentedDuration(BigDecimal startValue, BigDecimal targetValue, BigDecimal unitStep,
         List<RangeSegment> segments, BigDecimal defaultFactor) {

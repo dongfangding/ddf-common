@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +38,11 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
         // 初始化令牌桶限流, 先预热5秒钟，后续再恢复每秒令牌
         rateLimiter = RateLimiter.create(emqConnectionProperties.getPublishRateLimit(), Duration.ofSeconds(5));
     }
-
+    /**
+     * @param message 参数
+     * @param payload 参数
+     * @param request 参数
+     */
     @Override
     public void beforePublish(MqttMessage message, MqttMessagePayload payload, InnerMqttMessageRequest request) {
         if (request
@@ -61,7 +64,10 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
             throw new ServerErrorException(BaseErrorCallbackCode.REQUEST_TOO_MANY);
         }
     }
-
+    /**
+     * @param message 参数
+     * @param payload 参数
+     */
     @Override
     public void afterPublish(MqttMessage message, MqttMessagePayload payload) {
 

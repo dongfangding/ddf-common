@@ -25,9 +25,11 @@ public enum MqttQosEnum {
     AT_LAST_ONCE(1),
     EXACTLY_ONCE(2)
     ;
+    /**
+     * @param qos 参数
+     */
     @Getter
     private final Integer qos;
-
     MqttQosEnum(Integer qos) {
         this.qos = qos;
     }

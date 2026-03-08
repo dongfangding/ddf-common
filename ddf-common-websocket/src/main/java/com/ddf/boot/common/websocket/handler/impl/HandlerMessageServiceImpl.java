@@ -36,6 +36,11 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
     @Qualifier(value = "handlerMessagePool")
     private ThreadPoolTaskExecutor handlerMessagePool;
     private final ChannelTransferService channelTransferService;
+    /**
+     * @param authPrincipal 参数
+     * @param webSocketSessionWrapper 参数
+     * @param textMessage 参数
+     */
     private final WebSocketProperties webSocketProperties;
     private final CmdStrategyHelper cmdStrategyHelper;
 

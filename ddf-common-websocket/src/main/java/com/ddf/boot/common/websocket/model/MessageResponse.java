@@ -72,6 +72,9 @@ public class MessageResponse<T> implements Serializable {
      * <p>
      * 请求的id，针对执行下发的一个阻塞实现，如果请求被转发到另一台服务器，另一台服务器返回的数据需要携带
      * requestId，这样数据回传回来才能找到数据对应的源请求
+     * @param code 参数
+     * @param message 参数
+     * @param payload 参数
      */
     private String requestId;
 
@@ -79,7 +82,6 @@ public class MessageResponse<T> implements Serializable {
      * 响应的数据
      */
     private T payload;
-
     public MessageResponse(Integer code, String message, T payload) {
         this.code = code;
         this.message = message;
@@ -98,31 +100,52 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> successWithNoneRequestId() {
         return success(null, null);
     }
-
+    /**
+     * @param requestId 参数
+     */
     public static <T> MessageResponse<T> success(String requestId) {
         return success(requestId, null);
     }
-
+    /**
+     * @param requestId 参数
+     * @param payload 参数
+     */
     public static <T> MessageResponse<T> success(String requestId, T payload) {
         return new MessageResponse<>(SERVER_CODE_COMPLETE, "操作成功", requestId, payload);
     }
-
+    /**
+     * @param requestId 参数
+     * @param message 参数
+     */
     public static <T> MessageResponse<T> failure(String requestId, String message) {
         return failure(requestId, SERVER_CODE_ERROR, message);
     }
-
+    /**
+     * @param code 参数
+     * @param message 参数
+     */
     public static <T> MessageResponse<T> fastFailure(Integer code, String message) {
         return failure(null, code, message);
     }
-
+    /**
+     * @param message 参数
+     */
     public static <T> MessageResponse<T> fastFailure(String message) {
         return failure(null, SERVER_CODE_ERROR, message);
     }
-
+    /**
+     * @param requestId 参数
+     * @param code 参数
+     * @param message 参数
+     */
     public static <T> MessageResponse<T> failure(String requestId, Integer code, String message) {
         return new MessageResponse<>(code, message, requestId, null);
     }
-
+    /**
+     * @param requestId 参数
+     * @param message 参数
+     * @param payload 参数
+     */
     public static <T> MessageResponse<T> failure(String requestId, String message, T payload) {
         return new MessageResponse<>(SERVER_CODE_ERROR, message, requestId, payload);
     }
@@ -135,6 +158,7 @@ public class MessageResponse<T> implements Serializable {
     /**
      * 阻塞实现如果超时的一个提示方法
      *
+     * @param requestId 参数
      * @return
      */
     public static <T> MessageResponse<T> delay(String requestId) {

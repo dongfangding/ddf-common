@@ -53,6 +53,7 @@ public class IdsServiceAutoConfiguration {
     /**
      * 号段模式id实现类
      *
+     * @param idAllocDao 参数
      * @return
      */
     @Bean
@@ -64,6 +65,8 @@ public class IdsServiceAutoConfiguration {
     /**
      * 对外统一暴露的ids服务接口
      *
+     * @param segmentIDGen 参数
+     * @param snowflakeService 参数
      * @return
      */
     @Bean

@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
  * @since 2022/02/11 17:18
  */
 public class CopyRandomList {
-
     @AllArgsConstructor
     @Data
     @Accessors(chain = true)
@@ -32,7 +31,9 @@ public class CopyRandomList {
         public String toString() {
             return "Node{" + "val=" + val + ", next=" + next + ", random=" + (random == null ? "null" : random.getVal()) + '}';
         }
-
+        /**
+         * @param o 参数
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -49,7 +50,9 @@ public class CopyRandomList {
             return Objects.hash(getId(), getVal(), getNext(), getRandom());
         }
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
 
 
@@ -80,7 +83,9 @@ public class CopyRandomList {
         printNode(copyNode2);
         System.out.println("===========================");
     }
-
+    /**
+     * @param nodeStr 参数
+     */
     public static Node buildNode(String nodeStr) {
         final String[] split = nodeStr.split(";");
         List<Node> nodeList = new ArrayList<>();
@@ -101,7 +106,9 @@ public class CopyRandomList {
         }
         return nodeList.get(0);
     }
-
+    /**
+     * @param node 参数
+     */
     public static void printNode(Node node) {
         while (true) {
             if (node == null) {
@@ -118,7 +125,9 @@ public class CopyRandomList {
             }
         }
     }
-
+    /**
+     * @param node 参数
+     */
     public static Node copyNode(Node node) {
         Node currentNode = node;
         Map<Integer, Node> nodeMap = new HashMap<>();

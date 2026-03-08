@@ -168,7 +168,10 @@ public class RequestContext implements Serializable {
 
         return context;
     }
-
+    /**
+     * @param pattern 参数
+     * @param headerEnum 参数
+     */
     private static String getRequestContextFieldName(Pattern pattern, RequestHeaderEnum headerEnum) {
         Matcher matcher = pattern.matcher(headerEnum
                 .name()

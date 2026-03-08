@@ -20,9 +20,9 @@ package com.ddf.boot.common.sharding.rule;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * Local rules condition for ShardingSphere.
@@ -33,7 +33,6 @@ import org.springframework.core.env.PropertySource;
 public final class LocalRulesCondition extends SpringBootCondition {
 
     private static final String SHARDING_PREFIX = "spring.shardingsphere.rules";
-
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext conditionContext, final AnnotatedTypeMetadata annotatedTypeMetadata) {
         ConfigurableEnvironment environment = (ConfigurableEnvironment) conditionContext.getEnvironment();

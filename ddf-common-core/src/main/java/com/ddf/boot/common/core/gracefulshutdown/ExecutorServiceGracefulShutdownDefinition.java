@@ -52,10 +52,13 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
 
     private static final List<ExecutorService> POOLS = Collections.synchronizedList(new ArrayList<>(12));
 
+    /**
+     * @param awaitTermination 参数
+     * @param timeUnit 参数
+     */
     private final long awaitTermination;
 
     private final TimeUnit timeUnit;
-
     public ExecutorServiceGracefulShutdownDefinition(long awaitTermination, TimeUnit timeUnit) {
         this.awaitTermination = awaitTermination;
         this.timeUnit = timeUnit;

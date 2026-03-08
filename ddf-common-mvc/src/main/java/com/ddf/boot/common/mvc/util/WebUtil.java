@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -105,6 +104,7 @@ public class WebUtil {
      *
      * @param response
      * @param errorMessage
+     * @param status 参数
      */
     public static void responseError(HttpServletResponse response, int status, String errorMessage) {
         response.setStatus(status);

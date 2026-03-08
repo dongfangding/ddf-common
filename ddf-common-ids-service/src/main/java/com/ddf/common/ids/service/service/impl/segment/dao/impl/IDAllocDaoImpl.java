@@ -14,9 +14,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 public class IDAllocDaoImpl implements IDAllocDao {
-
     SqlSessionFactory sqlSessionFactory;
-
     public IDAllocDaoImpl(DataSource dataSource) {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
@@ -34,7 +32,9 @@ public class IDAllocDaoImpl implements IDAllocDao {
             sqlSession.close();
         }
     }
-
+    /**
+     * @param tag 参数
+     */
     @Override
     public LeafAlloc updateMaxIdAndGetLeafAlloc(String tag) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -47,7 +47,9 @@ public class IDAllocDaoImpl implements IDAllocDao {
             sqlSession.close();
         }
     }
-
+    /**
+     * @param leafAlloc 参数
+     */
     @Override
     public LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc) {
         SqlSession sqlSession = sqlSessionFactory.openSession();

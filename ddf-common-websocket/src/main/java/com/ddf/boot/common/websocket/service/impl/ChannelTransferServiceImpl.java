@@ -60,7 +60,13 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
 //        Lists.partition(channelTransfers, 500).forEach(ls -> saveBatch(ls));
         return messageMap;
     }
-
+    /**
+     * @param authPrincipal 参数
+     * @param message 参数
+     * @param request 参数
+     * @param webSocketSessionWrapper 参数
+     * @param messageRequest 参数
+     */
     private <T, Q> ChannelTransfer buildChannelTransfer(AuthPrincipal authPrincipal, Message<T> message, String request,
             WebSocketSessionWrapper webSocketSessionWrapper, MessageRequest<Q> messageRequest) {
         ChannelTransfer channelTransfer = new ChannelTransfer();
@@ -125,6 +131,7 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
      * @param authPrincipal
      * @param requestId
      * @param response
+     * @param message 参数
      * @return
      */
     @Override
@@ -201,6 +208,7 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
      * @param isSuccess
      * @param errorMessage
      * @param response
+     * @param serverSend 参数
      * @return
      */
     @Override
@@ -236,7 +244,9 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
 //        }
 //        return update(null, updateWrapper);
     }
-
+    /**
+     * @param requestId 参数
+     */
     private ChannelTransfer getByRequestId(String requestId) {
 //        if (StringUtils.isBlank(requestId)) {
 //            return null;

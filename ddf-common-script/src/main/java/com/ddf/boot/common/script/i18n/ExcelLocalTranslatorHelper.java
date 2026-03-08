@@ -20,7 +20,12 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class ExcelLocalTranslatorHelper {
 
@@ -158,6 +163,9 @@ public class ExcelLocalTranslatorHelper {
 
     /**
      * 将 Properties 按照插入顺序写入输出流（UTF-8编码），模拟 Properties.store() 的行为
+     * @param props 参数
+     * @param out 参数
+     * @param comments 参数
      */
     private void storeOrdered(OrderedProperties props, OutputStream out, String comments) throws IOException {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
@@ -182,6 +190,10 @@ public class ExcelLocalTranslatorHelper {
     }
 
     // 参考 java.util.Properties 的 saveConvert 方法，简单实现转义（这里只处理常见字符）
+    /**
+     * @param theString 参数
+     * @param escapeSpace 参数
+     */
     private String saveConvert(String theString, boolean escapeSpace) {
         int len = theString.length();
         StringBuilder outBuffer = new StringBuilder(len * 2);
@@ -213,6 +225,9 @@ public class ExcelLocalTranslatorHelper {
                 case '#':
                     outBuffer.append('\\').append(aChar);
                     break;
+                /**
+                 * @param aChar 参数
+                 */
                 default:
                     outBuffer.append(aChar);
             }
@@ -222,6 +237,7 @@ public class ExcelLocalTranslatorHelper {
 
     /**
      * 将单元格内容转换为字符串（支持不同类型）
+     * @param cell 参数
      */
     private String getCellStringValue(Cell cell) {
         if (cell == null) return "";
@@ -234,7 +250,10 @@ public class ExcelLocalTranslatorHelper {
      */
     public static class OrderedProperties extends Properties {
         private final LinkedHashSet<Object> keys = new LinkedHashSet<>();
-
+        /**
+         * @param key 参数
+         * @param value 参数
+         */
         @Override
         public synchronized Object put(Object key, Object value) {
             keys.add(key);
@@ -253,6 +272,9 @@ public class ExcelLocalTranslatorHelper {
     }
 
     // 测试 main 方法
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         ExcelLocalTranslatorHelper exporter = new ExcelLocalTranslatorHelper();
         String excelPath = System.getProperty("user.dir") + "/wheel/wheel-docs/src/main/resources/errorCode.xlsx";  // 请替换为实际路径
@@ -280,7 +302,6 @@ public class ExcelLocalTranslatorHelper {
                     System.out.println("无效输入，请重新输入。");
                 }
             }
-
             exporter.exportTranslations(excelPath, appendMode);
             System.out.println("导出完成！");
         } catch (Exception e) {

@@ -49,7 +49,12 @@ public class RedisBloomFilter<T> {
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(name);
         return new RedisBloomFilter<>(name, bloomFilter, expectedInsertions, falseProbability);
     }
-
+    /**
+     * @param name 参数
+     * @param bloomFilter 参数
+     * @param expectedInsertions 参数
+     * @param falseProbability 参数
+     */
     public RedisBloomFilter(String name, RBloomFilter<T> bloomFilter, long expectedInsertions,
             double falseProbability) {
         this.name = name;

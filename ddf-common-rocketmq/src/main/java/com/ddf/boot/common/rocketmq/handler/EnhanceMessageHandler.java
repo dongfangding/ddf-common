@@ -32,6 +32,9 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
     private static final Long DELAY_LEVEL = EnhanceMessageConstant.FIVE_SECOND;
 
 
+    /**
+     * @param message 参数
+     */
     @Resource
     private RocketProducer rocketProducer;
 
@@ -96,7 +99,9 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
     protected Long getDelaySeconds() {
         return DELAY_LEVEL;
     }
-
+    /**
+     * @param payload 参数
+     */
     @Override
     public void onMessage(MessagePayload payload) {
         dispatchMessage(payload);
@@ -121,6 +126,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
 
     /**
      * 使用模板模式构建消息消费框架，可自由扩展或删减
+     * @param message 参数
      */
     public void dispatchMessage(MessagePayload<T> message) {
         // 基础日志记录被父类处理了

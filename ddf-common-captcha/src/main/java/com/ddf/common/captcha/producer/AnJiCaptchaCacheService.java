@@ -33,23 +33,32 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
     public void set(String key, String value, long expiresInSeconds) {
         CacheAdapter.getTemplate().opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
     }
-
+    /**
+     * @param key 参数
+     */
     @Override
     public boolean exists(String key) {
         final Boolean aBoolean = CacheAdapter.getTemplate().hasKey(key);
         return Objects.nonNull(aBoolean) && aBoolean;
     }
-
+    /**
+     * @param key 参数
+     */
     @Override
     public void delete(String key) {
         CacheAdapter.getTemplate().delete(key);
     }
-
+    /**
+     * @param key 参数
+     */
     @Override
     public String get(String key) {
         return CacheAdapter.getTemplate().opsForValue().get(key);
     }
-
+    /**
+     * @param key 参数
+     * @param val 参数
+     */
     @Override
     public Long increment(String key, long val) {
         return CacheAdapter.getTemplate().opsForValue().increment(key,val);

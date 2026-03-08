@@ -148,7 +148,6 @@ public enum RequestHeaderEnum {
                 .filter(obj -> obj.isClientHeader() && obj.isRequired())
                 .collect(Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
     }
-
     RequestHeaderEnum(String name, boolean isRequired, boolean isClientHeader, String defaultValue) {
         this.name = name;
         this.isRequired = isRequired;

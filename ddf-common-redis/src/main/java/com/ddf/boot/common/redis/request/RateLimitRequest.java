@@ -53,6 +53,7 @@ public class RateLimitRequest {
 
         /**
          * 令牌桶的最大大小
+         * @param key 参数
          */
         private Integer max;
 
@@ -65,23 +66,27 @@ public class RateLimitRequest {
          * 是否忽略使用前缀
          */
         private boolean ignorePrefix;
-
-
         public RateLimitRequestBuilder key(String key) {
             this.key = key;
             return this;
         }
-
+        /**
+         * @param max 参数
+         */
         public RateLimitRequestBuilder max(Integer max) {
             this.max = max;
             return this;
         }
-
+        /**
+         * @param rate 参数
+         */
         public RateLimitRequestBuilder rate(Integer rate) {
             this.rate = rate;
             return this;
         }
-
+        /**
+         * @param ignorePrefix 参数
+         */
         public RateLimitRequestBuilder ignorePrefix(boolean ignorePrefix) {
             this.ignorePrefix = ignorePrefix;
             return this;

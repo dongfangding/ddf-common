@@ -20,17 +20,24 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 public class MessagePackUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = newInstance();
-
+    /**
+     * @param value 参数
+     */
     @SneakyThrows
     public static byte[] writeValueAsBytes(Object value) {
         return OBJECT_MAPPER.writeValueAsBytes(value);
     }
-
+    /**
+     * @param value 参数
+     */
     @SneakyThrows
     public static String writeValueAsHex(Object value) {
         return HexFormat.of().formatHex(writeValueAsBytes(value));
     }
-
+    /**
+     * @param src 参数
+     * @param valueType 参数
+     */
     @SneakyThrows
     public static <T> T readValue(byte[] src, Class<T> valueType) {
         return OBJECT_MAPPER.readValue(src, valueType);
@@ -50,7 +57,9 @@ public class MessagePackUtil {
     public static <T> T readHexValue(String content, Class<T> valueType) {
         return OBJECT_MAPPER.readValue(hexToBinary(content), valueType);
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final UserClaim claim = new UserClaim();
         claim.setUserId("123");
@@ -79,7 +88,9 @@ public class MessagePackUtil {
         ));
         System.out.println(userClaim);
     }
-
+    /**
+     * @param hexString 参数
+     */
     public static byte[] hexToBinary(String hexString) {
         if (hexString == null || hexString.isEmpty()) {
             return new byte[0];

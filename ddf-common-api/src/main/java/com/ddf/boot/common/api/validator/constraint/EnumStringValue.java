@@ -11,8 +11,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -66,7 +64,10 @@ public @interface EnumStringValue {
             enumClass = constraintAnnotation.enumClass();
             required = constraintAnnotation.required();
         }
-
+        /**
+         * @param value 参数
+         * @param context 参数
+         */
         @Override
         public boolean isValid(String value, ConstraintValidatorContext context) {
             if (StringUtils.isBlank(value) && required) {

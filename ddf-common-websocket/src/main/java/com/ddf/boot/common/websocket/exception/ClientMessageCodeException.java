@@ -9,7 +9,6 @@ import com.ddf.boot.common.api.exception.ServerErrorException;
  * @since 2019/9/20 16:11
  */
 public class ClientMessageCodeException extends ServerErrorException {
-
     public ClientMessageCodeException(String message) {
         super(message);
     }

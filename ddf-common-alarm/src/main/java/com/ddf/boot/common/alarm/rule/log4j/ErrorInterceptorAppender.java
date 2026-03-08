@@ -4,7 +4,6 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import com.ddf.boot.common.alarm.config.LarkProperties;
 import com.ddf.boot.common.alarm.util.LarkUtil;
 import com.ddf.boot.common.api.util.DateUtils;
-import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
@@ -32,7 +31,9 @@ public class ErrorInterceptorAppender extends AbstractAppender {
 	protected ErrorInterceptorAppender(String name, Layout<? extends Serializable> layout) {
 		super(name, null, layout, false);
 	}
-
+	/**
+	 * @param event 参数
+	 */
 	@Override
 	public void append(LogEvent event) {
 		try {
@@ -88,7 +89,10 @@ public class ErrorInterceptorAppender extends AbstractAppender {
 			getStatusLogger().info("ErrorInterceptorAppender出错", e);
 		}
 	}
-
+	/**
+	 * @param name 参数
+	 * @param layout 参数
+	 */
 	@PluginFactory
 	public static ErrorInterceptorAppender createAppender(@PluginAttribute("name") String name,
 			@PluginElement("Layout") Layout<? extends Serializable> layout) {

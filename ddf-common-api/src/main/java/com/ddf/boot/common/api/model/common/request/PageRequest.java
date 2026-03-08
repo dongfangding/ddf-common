@@ -109,9 +109,12 @@ public interface PageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     class DefaultPageRequest implements PageRequest {
+        /**
+         * @param pageNum 参数
+         * @param pageSize 参数
+         */
         private Integer pageNum;
         private Integer pageSize;
-
         public static PageRequest of(Integer pageNum, Integer pageSize) {
             return new DefaultPageRequest(pageNum, pageSize);
         }

@@ -18,11 +18,9 @@ import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
 import com.ddf.boot.common.authentication.util.UserContextUtil;
 import com.ddf.boot.common.core.authentication.TokenUtil;
-import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.SignatureUtil;
-import com.ddf.boot.common.core.util.StringExtUtil;
 import com.ddf.boot.common.mvc.util.WebUtil;
 import com.google.common.collect.Lists;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -157,7 +154,9 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         buildContext(request, userClaim, clientIp, token);
         return true;
     }
-
+    /**
+     * @param request 参数
+     */
     private void checkSign(HttpServletRequest request) {
         // 标准情况下，get方法应该是没有content-type的，但是有些不规范的写法会将这个传过来，导致走body签名，那就不管了。
         final String contentType = request.getContentType();
@@ -174,8 +173,12 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             resolveQueryParamsSignData(request);
         }
     }
-
-
+    /**
+     * @param request 参数
+     * @param userClaim 参数
+     * @param clientIp 参数
+     * @param token 参数
+     */
     public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // 解析请求头
         resolveRequestContext(request, userClaim, clientIp, token);
@@ -219,6 +222,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * 验签
      *
      * @param data
+     * @param request 参数
      * @return
      */
     private void validSign(HttpServletRequest request, Map<String, Object> data) {
@@ -329,7 +333,12 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         );
         return serverHeaderMap;
     }
-
+    /**
+     * @param request 参数
+     * @param userClaim 参数
+     * @param clientIp 参数
+     * @param token 参数
+     */
     public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用
         UserContextUtil.setRequestContext(RequestContext

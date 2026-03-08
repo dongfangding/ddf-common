@@ -31,9 +31,10 @@ public enum CacheKeyEnum {
      * {4} authCode
      */
     AUTH_PRINCIPAL_MONITOR("{0}:{1}:{2}:{3}:{4}");
-
+    /**
+     * @param template 参数
+     */
     private final String template;
-
     CacheKeyEnum(String template) {
         this.template = template;
     }

@@ -44,7 +44,14 @@ public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Obje
         return Arrays.stream(ANNOTATIONS).anyMatch(
                 annotation -> annotation.isAnnotation() && element.isAnnotationPresent(annotation));
     }
-
+    /**
+     * @param body 参数
+     * @param returnType 参数
+     * @param selectedContentType 参数
+     * @param selectedConverterType 参数
+     * @param request 参数
+     * @param response 参数
+     */
     @Override
     public ResponseData<Object> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
             Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,

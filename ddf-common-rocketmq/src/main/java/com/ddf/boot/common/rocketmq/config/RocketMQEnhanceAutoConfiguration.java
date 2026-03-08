@@ -51,6 +51,7 @@ public class RocketMQEnhanceAutoConfiguration {
 
     /**
      * 环境隔离配置
+     * @param rocketEnhanceProperties 参数
      */
     @Bean
     @ConditionalOnProperty(name="rocketmq.enhance.enabledIsolation", havingValue="true")

@@ -91,7 +91,9 @@ public class TreeConvertUtil {
             return children;
         }
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final List<Node> nodes = List.of(Node.of("1", 1L, 0L, new ArrayList<>()),
                 Node.of("1-1", 2L, 1L, new ArrayList<>()), Node.of("1-1-1", 3L, 2L, new ArrayList<>()),

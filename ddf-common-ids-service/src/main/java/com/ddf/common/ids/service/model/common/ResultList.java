@@ -8,7 +8,6 @@ public class ResultList implements Serializable {
     private String code;
     private List<String> idList;
     private Status status;
-
     public ResultList(String code, Status status) {
         this.code = code;
         this.status = status;
@@ -17,7 +16,9 @@ public class ResultList implements Serializable {
     public List<String> getIdList() {
         return idList;
     }
-
+    /**
+     * @param idList 参数
+     */
     public void setIdList(List<String> idList) {
         this.idList = idList;
     }
@@ -25,7 +26,9 @@ public class ResultList implements Serializable {
     public Status getStatus() {
         return status;
     }
-
+    /**
+     * @param status 参数
+     */
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -33,11 +36,16 @@ public class ResultList implements Serializable {
     public String getCode() {
         return code;
     }
-
+    /**
+     * @param code 参数
+     */
     public void setCode(String code) {
         this.code = code;
     }
-
+    /**
+     * @param idList 参数
+     * @param status 参数
+     */
     public ResultList(List<String> idList, Status status) {
         this.idList = idList;
         this.status = status;

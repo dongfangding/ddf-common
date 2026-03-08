@@ -26,7 +26,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +57,7 @@ public class VpsClient {
      * 上传本地文件
      *
      * @param filePath
+     * @param thumbImage 参数
      * @return
      */
     @SneakyThrows
@@ -121,6 +121,7 @@ public class VpsClient {
      * 因此这个方法能工作的前提必须是有一台专门的服务器用来处理文件上传请求， 然后在这台服务器上要安装ffmpeg，这样才能正常工作
      *
      * @param fastImageFile
+     * @param cutVideoThumb 参数
      * @return
      */
     public UploadResponse uploadFile(FastImageFile fastImageFile, boolean cutVideoThumb) {

@@ -69,9 +69,12 @@ public class SegmentIDGenImpl implements IDGen {
             5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
     private volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
+    /**
+     * @param dao 参数
+     * @param idsProperties 参数
+     */
     private IDAllocDao dao;
     private IdsProperties idsProperties;
-
     public SegmentIDGenImpl(IDAllocDao dao, IdsProperties idsProperties) {
         this.dao = dao;
         this.idsProperties = idsProperties;
@@ -85,7 +88,9 @@ public class SegmentIDGenImpl implements IDGen {
         private static synchronized int nextThreadNum() {
             return threadInitNumber++;
         }
-
+        /**
+         * @param r 参数
+         */
         @Override
         public Thread newThread(Runnable r) {
             return new Thread(r, "Thread-Segment-Update-" + nextThreadNum());
@@ -177,6 +182,9 @@ public class SegmentIDGenImpl implements IDGen {
         }
         SegmentBuffer buffer = cache.get(key);
         if (!buffer.isInitOk()) {
+            /**
+             * @param buffer 参数
+             */
             synchronized (buffer) {
                 if (!buffer.isInitOk()) {
                     try {
@@ -213,7 +221,10 @@ public class SegmentIDGenImpl implements IDGen {
         }
         return resultList;
     }
-
+    /**
+     * @param key 参数
+     * @param segment 参数
+     */
     public void updateSegmentFromDb(String key, Segment segment) {
         SegmentBuffer buffer = segment.getBuffer();
         LeafAlloc leafAlloc;
@@ -264,7 +275,9 @@ public class SegmentIDGenImpl implements IDGen {
         segment.setStep(buffer.getStep());
         segment.setFillLength(buffer.getFillLength());
     }
-
+    /**
+     * @param buffer 参数
+     */
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
         while (true) {
             buffer.rLock().lock();
@@ -320,7 +333,9 @@ public class SegmentIDGenImpl implements IDGen {
             }
         }
     }
-
+    /**
+     * @param buffer 参数
+     */
     private void waitAndSleep(SegmentBuffer buffer) {
         int roll = 0;
         while (buffer.getThreadRunning().get()) {
@@ -363,7 +378,9 @@ public class SegmentIDGenImpl implements IDGen {
     public IDAllocDao getDao() {
         return dao;
     }
-
+    /**
+     * @param dao 参数
+     */
     public void setDao(IDAllocDao dao) {
         this.dao = dao;
     }

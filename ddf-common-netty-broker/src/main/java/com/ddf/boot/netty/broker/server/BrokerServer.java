@@ -42,7 +42,6 @@ public class BrokerServer {
     private EventLoopGroup boss;
     private EventLoopGroup worker;
     private ScheduledExecutorService syncExecutor;
-
     public BrokerServer(BrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }

@@ -70,6 +70,8 @@ public abstract class AbstractExceptionHandler {
      * 这样可以只使用一个方法来处理，否则方法太多，看起来有点凌乱，也不太好做一些通用处理
      *
      * @param exception
+     * @param httpServletRequest 参数
+     * @param response 参数
      * @return
      */
     @ExceptionHandler(value = Exception.class)
@@ -282,7 +284,6 @@ public abstract class AbstractExceptionHandler {
             );
         }
     }
-
     public record ExceptionResolveResult(String exceptionCode, String formatCode, String formatDefaultMessage,
                                          Object[] formatParams, String subMessage, Object extra) {
     }

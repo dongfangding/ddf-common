@@ -39,6 +39,9 @@ import org.apache.commons.lang3.StringUtils;
 public class OssHelper {
 
     /**
+     * @param defaultAcsClient 参数
+     * @param defaultOssClient 参数
+     * @param ossProperties 参数
      * @see OssBeanAutoConfiguration
      */
     private IAcsClient defaultAcsClient;
@@ -49,7 +52,6 @@ public class OssHelper {
     private OSS defaultOssClient;
 
     private OssProperties ossProperties;
-
     public OssHelper(IAcsClient defaultAcsClient, OSS defaultOssClient, OssProperties ossProperties) {
         this.defaultAcsClient = defaultAcsClient;
         this.defaultOssClient = defaultOssClient;
@@ -94,6 +96,7 @@ public class OssHelper {
     /**
      * 返回STS核心授权信息
      *
+     * @param stsTokenRequest 参数
      * @return
      * @throws ClientException
      */
@@ -161,6 +164,7 @@ public class OssHelper {
      * 获取OSS token, 使用完成后关闭对象
      *
      * @param stsTokenRequest
+     * @param consumer 参数
      * @return
      */
     public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
@@ -238,8 +242,9 @@ public class OssHelper {
         aliOssPolicy.setStatement(Lists.newArrayList(statementBean));
         return JSONUtil.toJsonStr(aliOssPolicy);
     }
-
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final OSS stsOss = new OSSClientBuilder().build("oss-cn-hangzhou.aliyuncs.com", "STS.NTXKVzNyBFa1HFFYC21t9awAb",
                 "965xDoLYyGZeY5WdRUfRzFDk8w37JuA9i4HJuUL8b1QJ",

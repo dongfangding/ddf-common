@@ -12,13 +12,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ClientOutboundHandler extends ChannelOutboundHandlerAdapter {
-
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
         log.debug("向服务端发送数据: {}", ((RequestContent<?>) msg).serial());
         ctx.writeAndFlush((msg));
     }
-
+    /**
+     * @param ctx 参数
+     * @param cause 参数
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();

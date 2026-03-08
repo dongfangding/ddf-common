@@ -17,13 +17,11 @@ public enum CoreExceptionCode implements BaseCallbackCode {
     TOKEN_EXPIRED("TOKEN_EXPIRED", "已过期的登录信息，请重新登录")
 
     ;
-
     CoreExceptionCode(String code, String description) {
         this.code = code;
         this.description = description;
         this.bizMessage = description;
     }
-
     CoreExceptionCode(String code, String description, String bizMessage) {
         this.code = code;
         this.description = description;

@@ -1,20 +1,22 @@
 package com.ddf.boot.common.core.util;
 
-import java.text.MessageFormat;
-import java.time.Duration;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.apache.commons.lang3.ObjectUtils;
-
+import cn.hutool.cache.impl.TimedCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
-import cn.hutool.cache.impl.TimedCache;
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -65,6 +67,7 @@ public class LocalCacheUtil {
 	 * @param loadingCache
 	 * @param template
 	 * @param parameter
+	 * @param defaultValidValue 参数
 	 * @return
 	 */
 	public static <T> T getGuavaCacheCheckDefault(LoadingCache<String, T> loadingCache, T defaultValidValue,
@@ -117,6 +120,7 @@ public class LocalCacheUtil {
 	 * @param defaultValue    默认对象， 和guava一样， 本地缓存使用Map都不允许value直接存null
 	 * @param <K>
 	 * @param <V>
+	 * @param maximumSize 参数
 	 * @return
 	 */
 	public static <K, V> com.github.benmanes.caffeine.cache.LoadingCache<K, V> buildCaffeine(int maximumSize,
@@ -129,6 +133,9 @@ public class LocalCacheUtil {
 				.refreshAfterWrite(timeoutDuration.dividedBy(2))
 				.recordStats()
 				.build(new com.github.benmanes.caffeine.cache.CacheLoader<>() {
+					/**
+					 * @param key 参数
+					 */
 					@Override
 					public V load(K key) throws Exception {
 						return ObjectUtils.defaultIfNull(function.apply(key), defaultValue);
@@ -145,6 +152,7 @@ public class LocalCacheUtil {
 	 * @param defaultValue    默认对象， 和guava一样， 本地缓存使用Map都不允许value直接存null
 	 * @param <K>
 	 * @param <V>
+	 * @param maximumSize 参数
 	 * @return
 	 */
 	public static <K, V> com.github.benmanes.caffeine.cache.LoadingCache<K, V> buildBatchLoadCaffeine(int maximumSize,
@@ -157,11 +165,17 @@ public class LocalCacheUtil {
 				.refreshAfterWrite(timeoutDuration.dividedBy(2))
 				.recordStats()
 				.build(new com.github.benmanes.caffeine.cache.CacheLoader<>() {
+					/**
+					 * @param key 参数
+					 */
 					@Override
 					public @Nullable V load(@NonNull K key) throws Exception {
 						Map<K, V> result = function.apply(Collections.singletonList(key));
 						return (Objects.isNull(result) || Objects.isNull(result.get(key))) ? defaultValue : result.get(key);
 					}
+					/**
+					 * @param keys 参数
+					 */
 					@Override
 					public Map<? extends K, ? extends @NonNull V> loadAll(Set<? extends K> keys) throws Exception {
 						return batchLoad(keys, function, defaultValue);
@@ -176,6 +190,7 @@ public class LocalCacheUtil {
 	 * @param function
 	 * @param <K>
 	 * @param <V>
+	 * @param defaultValue 参数
 	 * @return
 	 */
 	public static <K, V> Map<@NonNull K, @NonNull V> batchLoad(Set<? extends K> keys,

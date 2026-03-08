@@ -35,6 +35,7 @@ public class PageUtil {
      * 空分页
      *
      * @param <E>
+     * @param pageRequest 参数
      * @return
      */
     public static <E> PageResult<E> empty(PageRequest pageRequest) {
@@ -172,6 +173,7 @@ public class PageUtil {
     /**
      * 构造基于spring-data基本分页对象
      *
+     * @param pageRequest 参数
      * @return
      */
     public static Pageable toSpringData(PageRequest pageRequest) {

@@ -39,7 +39,6 @@ public enum CommonLogic {
     static {
         valueMappings = Arrays.stream(values()).collect(Collectors.toMap(CommonLogic::getLogic, value -> value));
     }
-
     CommonLogic(Integer logic) {
         this.logic = logic;
     }
@@ -47,7 +46,9 @@ public enum CommonLogic {
     public Integer getLogic() {
         return logic;
     }
-
+    /**
+     * @param logic 参数
+     */
     public static CommonLogic getByLogic(Integer logic) {
         final CommonLogic contentLibraryStatus = valueMappings.get(logic);
         PreconditionUtil.checkArgument(contentLibraryStatus != null, new ServerErrorException(BaseErrorCallbackCode.ENUM_CODE_NOT_MAPPING));

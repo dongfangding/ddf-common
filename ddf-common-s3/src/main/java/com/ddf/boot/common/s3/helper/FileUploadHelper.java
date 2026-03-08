@@ -153,6 +153,10 @@ public class FileUploadHelper {
 
     /**
      * 生成并上传缩略图.
+     * @param platform 参数
+     * @param identity 参数
+     * @param multipartFile 参数
+     * @param originalObjectKey 参数
      */
     private UploadResult generateAndUploadThumbnail(String platform, String identity,
                                                     MultipartFile multipartFile,
@@ -179,6 +183,7 @@ public class FileUploadHelper {
 
     /**
      * 生成缩略图的 objectKey.
+     * @param originalObjectKey 参数
      */
     private String generateThumbObjectKey(String originalObjectKey) {
         String basePath = originalObjectKey.substring(0, originalObjectKey.lastIndexOf("."));
@@ -187,6 +192,8 @@ public class FileUploadHelper {
 
     /**
      * 校验文件.
+     * @param file 参数
+     * @param allowVideo 参数
      */
     private void validateFile(MultipartFile file, boolean allowVideo) {
         if (file == null || file.isEmpty()) {
@@ -226,6 +233,7 @@ public class FileUploadHelper {
 
     /**
      * 判断是否为图片.
+     * @param filename 参数
      */
     private boolean isImage(String filename) {
         if (filename == null) {
@@ -237,6 +245,7 @@ public class FileUploadHelper {
 
     /**
      * 获取文件扩展名.
+     * @param filename 参数
      */
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
@@ -247,6 +256,9 @@ public class FileUploadHelper {
 
     /**
      * 生成对象 Key（路径）.
+     * @param platform 参数
+     * @param identity 参数
+     * @param filename 参数
      */
     public String generateObjectKey(String platform, String identity, String filename) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");

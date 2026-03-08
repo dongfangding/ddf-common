@@ -46,7 +46,10 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
 
     private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(
             EncryptProcessor.class);
-
+    /**
+     * @param webSocketProperties 参数
+     * @param handshakeAuthList 参数
+     */
     public DefaultHandshakeInterceptor(WebSocketProperties webSocketProperties, List<HandshakeAuth> handshakeAuthList) {
         this.webSocketProperties = webSocketProperties;
         this.handshakeAuthList = handshakeAuthList;

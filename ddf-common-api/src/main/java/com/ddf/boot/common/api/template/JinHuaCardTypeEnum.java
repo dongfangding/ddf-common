@@ -36,12 +36,13 @@ public enum JinHuaCardTypeEnum {
                 .collect(Collectors.toMap(JinHuaCardTypeEnum::getType, obj -> obj));
 
     }
-
     JinHuaCardTypeEnum(String type, String desc) {
         this.type = type;
         this.desc = desc;
     }
-
+    /**
+     * @param value 参数
+     */
     public static JinHuaCardTypeEnum resolve(String value) {
         return MAPPINGS.get(value);
     }

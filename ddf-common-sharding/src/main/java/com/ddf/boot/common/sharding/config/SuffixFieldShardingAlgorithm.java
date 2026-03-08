@@ -17,7 +17,6 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.StandardSharding
  */
 @Slf4j
 public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<Integer> {
-
     @Override
     public String doSharding(final Collection<String> collection, final PreciseShardingValue<Integer> value) {
         if (collection.isEmpty()) {
@@ -28,7 +27,10 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
         final String baseTableName = first.substring(0, first.lastIndexOf("_"));
         return baseTableName + "_" + suffix;
     }
-
+    /**
+     * @param collection 参数
+     * @param value 参数
+     */
     @Override
     public Collection<String> doSharding(final Collection<String> collection, final RangeShardingValue<Integer> value) {
         if (collection.isEmpty()) {
@@ -52,7 +54,9 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
     public String getType() {
         return "SUFFIX_FIELD_SHARDING_ALGORITHM";
     }
-
+    /**
+     * @param properties 参数
+     */
     @Override
     public void init(final Properties properties) {
     }

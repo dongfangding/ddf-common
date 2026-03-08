@@ -32,7 +32,6 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     private IdsProperties idsProperties;
-
     public SnowflakeIDGenImpl(IdsProperties idsProperties) {
         this.idsProperties = idsProperties;
         this.twepoch = idsProperties.getBeginTimestamp();
@@ -102,8 +101,10 @@ public class SnowflakeIDGenImpl implements IDGen {
         return new Result(String.valueOf(id), Status.SUCCESS);
 
     }
-
-
+    /**
+     * @param key 参数
+     * @param length 参数
+     */
     @Override
     public ResultList list(String key, int length) {
         if (0 >length) {
@@ -117,7 +118,9 @@ public class SnowflakeIDGenImpl implements IDGen {
         }
         return resultList;
     }
-
+    /**
+     * @param lastTimestamp 参数
+     */
     protected long tilNextMillis(long lastTimestamp) {
         long timestamp = timeGen();
         while (timestamp <= lastTimestamp) {

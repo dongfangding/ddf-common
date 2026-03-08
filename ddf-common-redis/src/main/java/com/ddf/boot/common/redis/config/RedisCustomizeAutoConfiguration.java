@@ -66,6 +66,9 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         return new RedisTemplateHelper(stringRedisTemplate, redissonClient);
     }
 
+    /**
+     * @param redisConnectionFactory 参数
+     */
     @Bean
     @ConditionalOnMissingBean(name = "redisTemplate")
     @Primary
@@ -81,6 +84,9 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         return template;
     }
 
+    /**
+     * @param redisConnectionFactory 参数
+     */
     @Bean
     @ConditionalOnMissingBean(name = "stringRedisTemplate")
     @Primary
@@ -94,7 +100,9 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         template.setHashValueSerializer(new ObjectStringRedisSerializer());
         return template;
     }
-
+    /**
+     * @param stringRedisTemplate 参数
+     */
     @Bean
     public RedisCommandHelper redisCommandHelper(StringRedisTemplate stringRedisTemplate) {
         return new RedisCommandHelper(stringRedisTemplate);
@@ -163,7 +171,9 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         }
         return prefix;
     }
-
+    /**
+     * @param nodesObject 参数
+     */
     private String[] convert(List<String> nodesObject) {
         List<String> nodes = new ArrayList<String>(nodesObject.size());
         for (String node : nodesObject) {

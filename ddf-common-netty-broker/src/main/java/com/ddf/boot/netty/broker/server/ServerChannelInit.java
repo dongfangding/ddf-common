@@ -30,19 +30,22 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerChannelInit extends ChannelInitializer<Channel> {
 
     private final SslContext context;
-
     private final BrokerProperties brokerProperties;
-
     public ServerChannelInit(BrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
         context = null;
     }
-
+    /**
+     * @param brokerProperties 参数
+     * @param context 参数
+     */
     public ServerChannelInit(BrokerProperties brokerProperties, SslContext context) {
         this.brokerProperties = brokerProperties;
         this.context = context;
     }
-
+    /**
+     * @param ch 参数
+     */
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
@@ -67,7 +70,6 @@ public class ServerChannelInit extends ChannelInitializer<Channel> {
      * 心跳检测类
      */
     public static final class HeartbeatHandler extends ChannelInboundHandlerAdapter {
-
         @Override
         public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
             if (evt instanceof IdleStateEvent) {

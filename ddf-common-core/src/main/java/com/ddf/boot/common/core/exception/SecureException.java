@@ -14,21 +14,27 @@ import com.ddf.boot.common.api.exception.BaseException;
  * @since 2025/1/14
  */
 public class SecureException extends BaseException {
-
     private static final long serialVersionUID = 1L;
-
     public SecureException(String message) {
         super(message);
     }
-
+    /**
+     * @param code 参数
+     * @param message 参数
+     */
     public SecureException(String code, String message) {
         super(code, message);
     }
-
+    /**
+     * @param baseCallbackCode 参数
+     */
     public SecureException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
-
+    /**
+     * @param baseCallbackCode 参数
+     * @param message 参数
+     */
     public SecureException(BaseCallbackCode baseCallbackCode, String message) {
         super(baseCallbackCode, message);
     }

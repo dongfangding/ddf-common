@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class Segment {
     private AtomicLong value = new AtomicLong(0);
+    /**
+     * @param buffer 参数
+     */
     private volatile long max;
     private volatile int step;
     /**
@@ -13,7 +16,6 @@ public class Segment {
      */
     private int fillLength;
     private SegmentBuffer buffer;
-
     public Segment(SegmentBuffer buffer) {
         this.buffer = buffer;
     }

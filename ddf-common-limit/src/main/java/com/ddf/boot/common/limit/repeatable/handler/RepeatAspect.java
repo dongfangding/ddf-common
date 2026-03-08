@@ -47,6 +47,9 @@ public class RepeatAspect {
 
     }
 
+    /**
+     * @param joinPoint 参数
+     */
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws NoSuchMethodException {
         // 获取当前拦截类

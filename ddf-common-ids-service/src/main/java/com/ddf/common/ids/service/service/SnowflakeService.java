@@ -12,9 +12,7 @@ import com.ddf.common.ids.service.model.common.ResultList;
  * @since 2021/7/20 15:56
  **/
 public class SnowflakeService {
-
     private final IDGen idGen;
-
     public SnowflakeService(IDGen idGen) {
         this.idGen = idGen;
     }

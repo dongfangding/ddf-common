@@ -18,7 +18,9 @@ import org.springframework.util.ObjectUtils;
 public class LocalTransactionCheckerImpl implements LocalTransactionChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionChecker");
-
+   /**
+    * @param msg 参数
+    */
    @Override
    public TransactionStatus check(Message msg) {
        String messageId = msg.getMsgID();

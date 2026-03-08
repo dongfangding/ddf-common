@@ -8,20 +8,25 @@ package com.ddf.boot.common.api.exception;
  * @since 2020/06/28 13:30
  */
 public class UnauthorizedException extends BaseException {
-
     public UnauthorizedException(Throwable throwable) {
         super(throwable);
     }
-
+    /**
+     * @param baseCallbackCode 参数
+     */
     public UnauthorizedException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
-
-
+    /**
+     * @param description 参数
+     */
     public UnauthorizedException(String description) {
         super(description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     public UnauthorizedException(String code, String description) {
         super(code, description);
     }

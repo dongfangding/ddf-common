@@ -38,6 +38,7 @@ public class MailUtil {
      * @param subject    主题
      * @param content    内容
      * @param attachment 附件
+     * @param cc 参数
      */
     public static void sendMimeMail(String[] sendTo, String[] cc, String subject, String content,
             Map<String, File> attachment) {
@@ -81,11 +82,20 @@ public class MailUtil {
         }
         mailSender.send(mimeMessage);
     }
-
+    /**
+     * @param sendTo 参数
+     * @param subject 参数
+     * @param content 参数
+     */
     public static void sendMimeMail(String[] sendTo, String subject, String content) {
         sendMimeMail(sendTo, null, subject, content, null);
     }
-
+    /**
+     * @param sendTo 参数
+     * @param cc 参数
+     * @param subject 参数
+     * @param content 参数
+     */
     public static void sendMimeMail(String[] sendTo, String[] cc, String subject, String content) {
         sendMimeMail(sendTo, cc, subject, content, null);
     }

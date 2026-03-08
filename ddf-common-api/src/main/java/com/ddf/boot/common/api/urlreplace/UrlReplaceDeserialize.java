@@ -18,17 +18,25 @@ public class UrlReplaceDeserialize extends JsonDeserializer<String> implements C
 
     public UrlReplaceDeserialize() {
     }
-
+    /**
+     * @param bucket 参数
+     */
     public UrlReplaceDeserialize(String bucket) {
         this.bucket = bucket;
     }
-
+    /**
+     * @param p 参数
+     * @param ctxt 参数
+     */
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String value = p.getText();
         return UrlReplaceHelper.replaceHost(value, bucket);
     }
-
+    /**
+     * @param ctxt 参数
+     * @param property 参数
+     */
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
             throws JsonMappingException {

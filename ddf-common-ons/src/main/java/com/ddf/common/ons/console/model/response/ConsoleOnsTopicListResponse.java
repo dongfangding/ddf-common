@@ -60,6 +60,7 @@ public class ConsoleOnsTopicListResponse implements Serializable {
 
     /**
      * 创建时间
+     * @param sdkResponse 参数
      */
     public Long createTime;
 
@@ -72,13 +73,14 @@ public class ConsoleOnsTopicListResponse implements Serializable {
      * 实例id
      */
     public String instanceId;
-
     public static List<ConsoleOnsTopicListResponse> convertFromSdk(OnsTopicListResponse sdkResponse) {
         return sdkResponse.getBody()
                 .getData()
                 .getPublishInfoDo().stream().map(ConsoleOnsTopicListResponse::convert).collect(Collectors.toList());
     }
-
+    /**
+     * @param infoDo 参数
+     */
     public static ConsoleOnsTopicListResponse convert(
             OnsTopicListResponseBody.OnsTopicListResponseBodyDataPublishInfoDo infoDo) {
         return new ConsoleOnsTopicListResponse().setMessageType(infoDo.getMessageType())

@@ -29,17 +29,26 @@ public class UrlReplaceSerialize extends JsonSerializer<String> implements Conte
 
     public UrlReplaceSerialize() {
     }
-
+    /**
+     * @param bucket 参数
+     */
     public UrlReplaceSerialize(final String bucket) {
         this.bucket = bucket;
     }
-
+    /**
+     * @param value 参数
+     * @param jsonGenerator 参数
+     * @param serializers 参数
+     */
     @Override
     public void serialize(String value, JsonGenerator jsonGenerator, SerializerProvider serializers)
             throws IOException {
         jsonGenerator.writeString(UrlReplaceHelper.replaceHost(value, bucket));
     }
-
+    /**
+     * @param serializerProvider 参数
+     * @param beanProperty 参数
+     */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider serializerProvider, BeanProperty beanProperty)
             throws JsonMappingException {

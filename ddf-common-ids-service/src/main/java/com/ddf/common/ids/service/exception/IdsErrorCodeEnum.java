@@ -26,6 +26,10 @@ public enum IdsErrorCodeEnum implements BaseCallbackCode {
 
     ;
 
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     @Getter
     private final String code;
 
@@ -34,7 +38,6 @@ public enum IdsErrorCodeEnum implements BaseCallbackCode {
 
     @Getter
     private final String bizMessage;
-
     IdsErrorCodeEnum(String code, String description) {
         this.code = code;
         this.description = description;

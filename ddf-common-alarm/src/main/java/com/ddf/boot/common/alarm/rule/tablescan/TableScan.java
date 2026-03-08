@@ -37,7 +37,6 @@ import org.springframework.core.env.Environment;
 @Slf4j
 @Configuration
 public class TableScan {
-
     private final Environment environment;
     @Autowired(required = false)
     private DataSourceProperties dataSourceProperties;

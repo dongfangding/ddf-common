@@ -59,7 +59,6 @@ public class RedisTemplateHelper {
     private final StringRedisTemplate stringRedisTemplate;
 
     private final RedissonClient redissonClient;
-
     public RedisTemplateHelper(StringRedisTemplate stringRedisTemplate, RedissonClient redissonClient) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.redissonClient = redissonClient;
@@ -335,6 +334,7 @@ public class RedisTemplateHelper {
      * @param supplier
      * @param exceptionCode
      * @param <T>
+     * @param field 参数
      * @return
      */
     public <T> T hashIncrWithLimitCheckException(String key, String field, Long step, Long limit, Long expireSeconds,
@@ -442,6 +442,7 @@ public class RedisTemplateHelper {
      * @param key
      * @param score
      * @param member
+     * @param expireSeconds 参数
      * @return
      */
     public Long zIncrByWithTime(String key, Long score, String member, Long expireSeconds) {
@@ -490,6 +491,7 @@ public class RedisTemplateHelper {
      * @param key
      * @param score
      * @param member
+     * @param enlargeMultiple 参数
      * @return
      */
     public Double zIncrDoubleByWithTime(String key, BigDecimal score, String member, Integer enlargeMultiple) {
@@ -505,6 +507,8 @@ public class RedisTemplateHelper {
      * @param key
      * @param score
      * @param member
+     * @param enlargeMultiple 参数
+     * @param expireSeconds 参数
      * @return
      */
     public Double zIncrDoubleByWithTime(String key, BigDecimal score, String member, Integer enlargeMultiple,
@@ -551,6 +555,7 @@ public class RedisTemplateHelper {
      * @param key
      * @param start
      * @param end
+     * @param enlargeMultiple 参数
      */
     public Set<ZSetOperations.TypedTuple<String>> reverseRangeDoubleWithScoresTime(String key, long start, long end,
         Integer enlargeMultiple) {
@@ -610,6 +615,7 @@ public class RedisTemplateHelper {
      * @param element
      * @param beforeFetchSize
      * @param afterFetchSize
+     * @param enlargeMultiple 参数
      * @return
      */
     public List<RankResponse> rankAround(String key, String element, Integer beforeFetchSize, Integer afterFetchSize,
@@ -799,7 +805,11 @@ public class RedisTemplateHelper {
         }
         return map;
     }
-
+    /**
+     * @param key 参数
+     * @param elementKey 参数
+     * @param step 参数
+     */
     public Long hashIncrFloatRoundDecimal(String key, String elementKey, Double step) {
         final String execute = stringRedisTemplate.execute(
             RedisLuaScript.HASH_INCR_FLOAT_ROUND_DECIMAL,
@@ -885,6 +895,7 @@ public class RedisTemplateHelper {
      * 基于zset实现的zadd操作，当score大于已有值时才会更新, 支持小数，因为要同时支持相同分数，先完成的在前面，使用小数设计的，有冲突，因此
      * 该方法内部将小数放大成整数存储，取出来用的时候要注意
      *
+     * @param request 参数
      * @return
      */
     public ZsetZaddWithMaxCheckResponse zSetAddWithMaxCheckSupportBiz(ZSetAddDoubleWithMaxCheckCommand request) {
@@ -929,8 +940,9 @@ public class RedisTemplateHelper {
         );
         return JsonUtil.toBean(execute, ZRevRangeBizRankingResponse.class);
     }
-
-
+    /**
+     * @param time 参数
+     */
     public static BigDecimal calcPointScoreByTime(long time) {
         //        final BigDecimal decimal = new BigDecimal(time * Math.pow(
         //            10, Math.negateExact(String
@@ -983,6 +995,7 @@ public class RedisTemplateHelper {
 
     /**
      * 对榜单的单个元素进行多维度数据获取查询
+     * @param query 参数
      */
     public ZRevRangeBizRankingResponse.Element zSetRevRangeBizRankingQueryElement(
         ZRevRangeBizRankingElementQuery query) {
@@ -1000,6 +1013,7 @@ public class RedisTemplateHelper {
 
     /**
      * 多维度业务榜单榜单回滚, 如果积分匹配的话，则执行回滚
+     * @param command 参数
      */
     public ZsetZaddWithMaxCheckResponse zSetDeleteWithMaxScoreCheck(ZSetAddDoubleWithMaxCheckCommand command) {
         final Integer scoreFactory = command.getScoreFactory();

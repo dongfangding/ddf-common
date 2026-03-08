@@ -8,24 +8,33 @@ package com.ddf.boot.common.api.exception;
  * @since 2020/06/28 13:30
  */
 public class ServerErrorException extends BaseException {
-
     public ServerErrorException(Throwable throwable) {
         super(throwable);
     }
-
+    /**
+     * @param baseCallbackCode 参数
+     */
     public ServerErrorException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
-
-
+    /**
+     * @param description 参数
+     */
     public ServerErrorException(String description) {
         super(description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     public ServerErrorException(String code, String description) {
         super(code, description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     * @param params 参数
+     */
     public ServerErrorException(String code, String description, Object... params) {
         super(code, description, params);
     }

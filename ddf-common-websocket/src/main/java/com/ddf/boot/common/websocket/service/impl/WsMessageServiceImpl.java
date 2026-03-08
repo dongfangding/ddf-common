@@ -52,6 +52,9 @@ public class WsMessageServiceImpl implements WsMessageService {
     private Environment environment;
     @Autowired
     private ThreadPoolTaskExecutor batchCmdExecutor;
+    /**
+     * @param requestList 参数
+     */
     @Autowired(required = false)
     private List<WsMessageFilter> wsMessageFilters;
 
@@ -186,6 +189,7 @@ public class WsMessageServiceImpl implements WsMessageService {
      * 尝试从本地缓存获取数据
      *
      * @param request
+     * @param authPrincipal 参数
      * @return
      */
     private <T, Q> MessageResponse<T> tryLoadByLocalCache(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
@@ -328,6 +332,8 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param requestId 请求id，数据回传回来之后需要根据这个来对应起来
      * @param async     是否需要阻塞
+     * @param messageRequest 参数
+     * @param blockMilliSeconds 参数
      * @return
      */
     private <T, Q> MessageResponse<T> blockUntilDataFlush(@NotNull MessageRequest<Q> messageRequest,

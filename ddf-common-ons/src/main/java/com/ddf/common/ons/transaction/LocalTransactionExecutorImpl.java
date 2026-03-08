@@ -20,7 +20,10 @@ import org.springframework.util.ObjectUtils;
 public class LocalTransactionExecutorImpl implements LocalTransactionExecuter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionExecutor");
-
+    /**
+     * @param msg 参数
+     * @param arg 参数
+     */
     @Override
     public TransactionStatus execute(Message msg, Object arg) {
         String messageId = msg.getMsgID();

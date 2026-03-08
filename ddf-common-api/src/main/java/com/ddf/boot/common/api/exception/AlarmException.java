@@ -8,7 +8,6 @@ package com.ddf.boot.common.api.exception;
  * @since 2020/06/28 15:13
  */
 public class AlarmException extends BaseException {
-
     public AlarmException(Throwable throwable) {
         super(throwable);
     }
@@ -19,16 +18,24 @@ public class AlarmException extends BaseException {
     public AlarmException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
-
-
+    /**
+     * @param description 参数
+     */
     public AlarmException(String description) {
         super(description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     public AlarmException(String code, String description) {
         super(code, description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     * @param params 参数
+     */
     public AlarmException(String code, String description, Object... params) {
         super(code, description, params);
     }

@@ -8,8 +8,8 @@ import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
 import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
-import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
+import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
@@ -121,11 +121,14 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         }
         return mqttClient;
     }
-
+    /**
+     * @param mqttClient 参数
+     */
     private void setupMqttCallback(MqttAsyncClient mqttClient) {
         mqttClient.setCallback(new MqttCallback() {
             /**
              * 连接断开回调
+             * @param disconnectResponse 参数
              */
             @Override
             public void disconnected(MqttDisconnectResponse disconnectResponse) {
@@ -134,7 +137,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
                         disconnectResponse.getReturnCode(), disconnectResponse.getReasonString()
                 );
             }
-
+            /**
+             * @param exception 参数
+             */
             @Override
             public void mqttErrorOccurred(MqttException exception) {
                 log.error("mqtt 运行异常", exception);
@@ -167,12 +172,18 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             public void deliveryComplete(IMqttToken token) {
                 // 消息确认
             }
-
+            /**
+             * @param reconnect 参数
+             * @param serverURI 参数
+             */
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 log.info("mqtt 连接成功: {}, 是否为重连: {}", serverURI, reconnect);
             }
-
+            /**
+             * @param reasonCode 参数
+             * @param properties 参数
+             */
             @Override
             public void authPacketArrived(int reasonCode, MqttProperties properties) {
 
@@ -311,7 +322,9 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             log.error("断开 MQTT 连接失败", e);
         }
     }
-
+    /**
+     * @param context 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         this.applicationContext = context;

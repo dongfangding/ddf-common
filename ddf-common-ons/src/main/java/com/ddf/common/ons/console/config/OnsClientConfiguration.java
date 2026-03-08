@@ -67,7 +67,9 @@ public class OnsClientConfiguration implements SmartInitializingSingleton, Appli
             });
         });
     }
-
+    /**
+     * @param applicationContext 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

@@ -55,6 +55,10 @@ public @interface IdCard {
      */
     class IdCardValidator implements ConstraintValidator<IdCard, String> {
 
+        /**
+         * @param value 参数
+         * @param context 参数
+         */
         @Override
         public boolean isValid(String value, ConstraintValidatorContext context) {
             return IdcardUtil.isValidCard(value);

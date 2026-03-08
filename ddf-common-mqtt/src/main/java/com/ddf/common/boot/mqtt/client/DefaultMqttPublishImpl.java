@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttActionListener;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
-import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.springframework.retry.support.RetryTemplate;
@@ -41,6 +40,11 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * QoS 等级到线程池的映射，预先构建消除运行时查找
+     * @param mqttAsyncClient 参数
+     * @param listenerMap 参数
+     * @param emqConnectionProperties 参数
+     * @param qosExecutors 参数
+     * @param retryTemplate 参数
      */
     private final Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors;
 
@@ -48,7 +52,6 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
     private final Map<String, MqttPublishListener> listenerMap;
     private final EmqConnectionProperties emqConnectionProperties;
     private final RetryTemplate retryTemplate;
-
     public DefaultMqttPublishImpl(
             MqttAsyncClient mqttAsyncClient,
             Map<String, MqttPublishListener> listenerMap,
@@ -110,6 +113,10 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * 同步发送消息
+     * @param request 参数
+     * @param message 参数
+     * @param payload 参数
+     * @param messageResponse 参数
      */
     private ResponseData<MqttMessageResponse> publishSync(InnerMqttMessageRequest request,
                                                            MqttMessage message,
@@ -119,11 +126,18 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             final IMqttToken mqttToken = mqttAsyncClient.publish(request.getTopic(), message);
             // mqttAsyncClient不会关心实际结果
             mqttToken.setActionCallback(new MqttActionListener() {
+                /**
+                 * @param asyncActionToken 参数
+                 */
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     // 只有成功收到 PUBACK (QoS > 1) 才会进这里
                     log.debug("消息发送成功: {}", request.getTopic());
                 }
+                /**
+                 * @param asyncActionToken 参数
+                 * @param exception 参数
+                 */
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     log.error("消息发送失败: request = {}, {}", request, exception.getMessage());

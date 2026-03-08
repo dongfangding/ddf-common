@@ -19,8 +19,6 @@ public enum GroupTypeEnum {
     HTTP("http")
 
     ;
-
-
     GroupTypeEnum(String value) {
         this.value = value;
     }

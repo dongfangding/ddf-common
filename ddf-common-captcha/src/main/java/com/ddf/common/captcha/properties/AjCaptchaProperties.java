@@ -96,7 +96,9 @@ public class AjCaptchaProperties {
     public boolean isHistoryDataClearEnable() {
         return historyDataClearEnable;
     }
-
+    /**
+     * @param historyDataClearEnable 参数
+     */
     public void setHistoryDataClearEnable(boolean historyDataClearEnable) {
         this.historyDataClearEnable = historyDataClearEnable;
     }
@@ -108,7 +110,9 @@ public class AjCaptchaProperties {
     public boolean getReqFrequencyLimitEnable() {
         return reqFrequencyLimitEnable;
     }
-
+    /**
+     * @param reqFrequencyLimitEnable 参数
+     */
     public void setReqFrequencyLimitEnable(boolean reqFrequencyLimitEnable) {
         this.reqFrequencyLimitEnable = reqFrequencyLimitEnable;
     }
@@ -116,7 +120,9 @@ public class AjCaptchaProperties {
     public int getReqGetLockLimit() {
         return reqGetLockLimit;
     }
-
+    /**
+     * @param reqGetLockLimit 参数
+     */
     public void setReqGetLockLimit(int reqGetLockLimit) {
         this.reqGetLockLimit = reqGetLockLimit;
     }
@@ -124,7 +130,9 @@ public class AjCaptchaProperties {
     public int getReqGetLockSeconds() {
         return reqGetLockSeconds;
     }
-
+    /**
+     * @param reqGetLockSeconds 参数
+     */
     public void setReqGetLockSeconds(int reqGetLockSeconds) {
         this.reqGetLockSeconds = reqGetLockSeconds;
     }
@@ -132,7 +140,9 @@ public class AjCaptchaProperties {
     public int getReqGetMinuteLimit() {
         return reqGetMinuteLimit;
     }
-
+    /**
+     * @param reqGetMinuteLimit 参数
+     */
     public void setReqGetMinuteLimit(int reqGetMinuteLimit) {
         this.reqGetMinuteLimit = reqGetMinuteLimit;
     }
@@ -140,7 +150,9 @@ public class AjCaptchaProperties {
     public int getReqCheckMinuteLimit() {
         return reqGetMinuteLimit;
     }
-
+    /**
+     * @param reqCheckMinuteLimit 参数
+     */
     public void setReqCheckMinuteLimit(int reqCheckMinuteLimit) {
         this.reqCheckMinuteLimit = reqCheckMinuteLimit;
     }
@@ -148,7 +160,9 @@ public class AjCaptchaProperties {
     public int getReqVerifyMinuteLimit() {
         return reqVerifyMinuteLimit;
     }
-
+    /**
+     * @param reqVerifyMinuteLimit 参数
+     */
     public void setReqVerifyMinuteLimit(int reqVerifyMinuteLimit) {
         this.reqVerifyMinuteLimit = reqVerifyMinuteLimit;
     }
@@ -175,7 +189,9 @@ public class AjCaptchaProperties {
     public CaptchaTypeEnum getType() {
         return type;
     }
-
+    /**
+     * @param type 参数
+     */
     public void setType(CaptchaTypeEnum type) {
         this.type = type;
     }
@@ -183,7 +199,9 @@ public class AjCaptchaProperties {
     public String getJigsaw() {
         return jigsaw;
     }
-
+    /**
+     * @param jigsaw 参数
+     */
     public void setJigsaw(String jigsaw) {
         this.jigsaw = jigsaw;
     }
@@ -191,7 +209,9 @@ public class AjCaptchaProperties {
     public String getPicClick() {
         return picClick;
     }
-
+    /**
+     * @param picClick 参数
+     */
     public void setPicClick(String picClick) {
         this.picClick = picClick;
     }
@@ -199,7 +219,9 @@ public class AjCaptchaProperties {
     public String getWaterMark() {
         return waterMark;
     }
-
+    /**
+     * @param waterMark 参数
+     */
     public void setWaterMark(String waterMark) {
         this.waterMark = waterMark;
     }
@@ -207,7 +229,9 @@ public class AjCaptchaProperties {
     public String getWaterFont() {
         return waterFont;
     }
-
+    /**
+     * @param waterFont 参数
+     */
     public void setWaterFont(String waterFont) {
         this.waterFont = waterFont;
     }
@@ -215,7 +239,9 @@ public class AjCaptchaProperties {
     public String getFontType() {
         return fontType;
     }
-
+    /**
+     * @param fontType 参数
+     */
     public void setFontType(String fontType) {
         this.fontType = fontType;
     }
@@ -223,7 +249,9 @@ public class AjCaptchaProperties {
     public String getSlipOffset() {
         return slipOffset;
     }
-
+    /**
+     * @param slipOffset 参数
+     */
     public void setSlipOffset(String slipOffset) {
         this.slipOffset = slipOffset;
     }
@@ -231,7 +259,9 @@ public class AjCaptchaProperties {
     public Boolean getAesStatus() {
         return aesStatus;
     }
-
+    /**
+     * @param aesStatus 参数
+     */
     public void setAesStatus(Boolean aesStatus) {
         this.aesStatus = aesStatus;
     }
@@ -239,7 +269,9 @@ public class AjCaptchaProperties {
     public StorageType getCacheType() {
         return cacheType;
     }
-
+    /**
+     * @param cacheType 参数
+     */
     public void setCacheType(StorageType cacheType) {
         this.cacheType = cacheType;
     }
@@ -247,7 +279,9 @@ public class AjCaptchaProperties {
     public String getInterferenceOptions() {
         return interferenceOptions;
     }
-
+    /**
+     * @param interferenceOptions 参数
+     */
     public void setInterferenceOptions(String interferenceOptions) {
         this.interferenceOptions = interferenceOptions;
     }
@@ -255,7 +289,9 @@ public class AjCaptchaProperties {
     public String getCacheNumber() {
         return cacheNumber;
     }
-
+    /**
+     * @param cacheNumber 参数
+     */
     public void setCacheNumber(String cacheNumber) {
         this.cacheNumber = cacheNumber;
     }
@@ -263,7 +299,9 @@ public class AjCaptchaProperties {
     public String getTimingClear() {
         return timingClear;
     }
-
+    /**
+     * @param timingClear 参数
+     */
     public void setTimingClear(String timingClear) {
         this.timingClear = timingClear;
     }

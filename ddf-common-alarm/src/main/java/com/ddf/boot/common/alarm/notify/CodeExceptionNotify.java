@@ -18,7 +18,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -40,7 +39,6 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     private final ExceptionAlarmProperties exceptionAlarmProperties;
     private final LarkProperties larkProperties;
     private final EnvironmentHelper environmentHelper;
-
     @Override
     public void onApplicationEvent(GlobalExceptionEvent event) {
         globalExceptionExecutor.execute(() -> {
@@ -59,7 +57,6 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
                     return;
                 }
             }
-
             sendToLark(payload);
             sendToDingTalk(payload);
         });

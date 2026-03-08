@@ -2,14 +2,13 @@ package com.ddf.boot.common.core.util;
 
 import com.ddf.boot.common.api.model.common.request.PageRequest;
 import com.ddf.boot.common.api.model.common.response.PageResult;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /**
  * PageUtil 测试类

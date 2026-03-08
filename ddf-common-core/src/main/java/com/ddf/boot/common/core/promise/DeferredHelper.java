@@ -91,6 +91,7 @@ public class DeferredHelper<D, F, P> {
 
     /**
      * @param result
+     * @param id 参数
      * @return
      */
     public boolean resolve(String id, D result) {

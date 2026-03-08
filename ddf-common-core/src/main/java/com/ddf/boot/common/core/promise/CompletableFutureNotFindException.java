@@ -7,7 +7,6 @@ package com.ddf.boot.common.core.promise;
  * @since 2020/4/9 0009 14:38
  */
 public class CompletableFutureNotFindException extends RuntimeException {
-
     public CompletableFutureNotFindException(String requestId) {
         super(requestId);
     }

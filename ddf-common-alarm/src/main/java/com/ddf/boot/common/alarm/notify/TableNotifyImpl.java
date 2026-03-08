@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,13 +34,14 @@ public class TableNotifyImpl implements TableNotify {
     private final DingTalkProperties dingTalkProperties;
     private final LarkProperties larkProperties;
     private final SmartInitializingSingleton loadBalancedAsyncRestTemplateInitializer;
-
     @Override
     public void notifyNotExistTables(TableNotExistNotifyInfo info) {
         notifyNotExistTablesToDingTalk(info);
         notifyNotExistTablesToLark(info);
     }
-
+    /**
+     * @param info 参数
+     */
     private void notifyNotExistTablesToDingTalk(TableNotExistNotifyInfo info) {
         final DingTalkProperties.Properties propertiesBizResource = dingTalkProperties.getBizResource();
         final List<String> nextMonthNotExistTables = info.getNextMonthNotExistTables();
@@ -65,6 +65,7 @@ public class TableNotifyImpl implements TableNotify {
     /**
      * 发送到Lark机器人
      *
+     * @param info 参数
      */
     private void notifyNotExistTablesToLark(TableNotExistNotifyInfo info) {
         try {
@@ -96,13 +97,17 @@ public class TableNotifyImpl implements TableNotify {
             log.error("发送lark异常告警失败", e);
         }
     }
-
+    /**
+     * @param info 参数
+     */
     @Override
     public void notifyAuthCreateTable(TableAutoCreateNotifyInfo info) {
         notifyAuthCreateTableToLark(info);
         notifyAuthCreateTableToDingTalk(info);
     }
-
+    /**
+     * @param info 参数
+     */
     private void notifyAuthCreateTableToDingTalk(TableAutoCreateNotifyInfo info) {
         final DingTalkProperties.Properties propertiesBizResource = dingTalkProperties.getBizResource();
         if (Objects.isNull(propertiesBizResource) || !propertiesBizResource.isEnabled()) {
@@ -124,6 +129,7 @@ public class TableNotifyImpl implements TableNotify {
 
     /**
      * 使用lark通知建表结果
+     * @param info 参数
      */
     private void notifyAuthCreateTableToLark(TableAutoCreateNotifyInfo info) {
         try {

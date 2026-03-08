@@ -54,7 +54,6 @@ public class SampleXxlJob {
         // 分片参数
         int shardIndex = XxlJobHelper.getShardIndex();
         int shardTotal = XxlJobHelper.getShardTotal();
-
         XxlJobHelper.log("分片参数：当前分片序号 = {}, 总分片数 = {}", shardIndex, shardTotal);
 
         // 业务逻辑
@@ -210,7 +209,6 @@ public class SampleXxlJob {
                 result.append(line);
             }
             String responseMsg = result.toString();
-
             XxlJobHelper.log(responseMsg);
 
             return;

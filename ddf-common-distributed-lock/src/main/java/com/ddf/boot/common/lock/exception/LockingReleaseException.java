@@ -7,11 +7,12 @@ package com.ddf.boot.common.lock.exception;
  * @since 2020/3/13 0013 16:37
  */
 public class LockingReleaseException extends Exception {
-
     public LockingReleaseException(Exception e) {
         super(e);
     }
-
+    /**
+     * @param msg 参数
+     */
     public LockingReleaseException(String msg) {
         super(msg);
     }

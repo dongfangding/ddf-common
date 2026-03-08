@@ -54,7 +54,6 @@ public class TCPClient {
     private ExecutorService executorService;
     private NioEventLoopGroup worker;
     private boolean startSsl;
-
     public TCPClient(String host, int port, ExecutorService executorService, boolean startSsl) {
         this.host = host;
         this.port = port;
@@ -134,7 +133,6 @@ public class TCPClient {
                 throw e;
             }
         }
-
         channel.writeAndFlush(content);
     }
 
@@ -158,8 +156,9 @@ public class TCPClient {
             }
         }
     }
-
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) throws JsonProcessingException, InterruptedException {
         ExecutorService executorService = Executors.newCachedThreadPool();
         ObjectMapper objectMapper = new ObjectMapper();

@@ -25,7 +25,9 @@ public class Utils {
         }
         return ip;
     }
-
+    /**
+     * @param interfaceName 参数
+     */
     public static String getIp(String interfaceName) {
         String ip;
         interfaceName = interfaceName.trim();

@@ -15,7 +15,6 @@ import java.io.Serializable;
  **/
 public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable>
         extends AbstractOnsMessageListener<D> implements MessageListener {
-
     @Override
     public Action consume(Message message, ConsumeContext consumeContext) {
         String payLoad = new String(message.getBody());
@@ -29,7 +28,6 @@ public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable>
             }
             // 调用子类的执行业务方法
             executeBiz(domain);
-
             LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] 消息", member, messageId, topic,
                     message.getTag(), payLoad, message.getKey());
             infoMessage(message);

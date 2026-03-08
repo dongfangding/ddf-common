@@ -110,6 +110,7 @@ public class OnsConsoleUtil {
      *
      * @param str
      * @param separator
+     * @param replaceSeparator 参数
      * @return
      */
     public static String getShortNameBySplit(String str, String separator, String replaceSeparator) {

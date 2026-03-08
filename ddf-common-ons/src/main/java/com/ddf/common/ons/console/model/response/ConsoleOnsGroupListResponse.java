@@ -73,9 +73,10 @@ public class ConsoleOnsGroupListResponse implements Serializable {
     public static List<ConsoleOnsGroupListResponse> convertFromSdk(OnsGroupListResponse response) {
         return response.getBody().getData().getSubscribeInfoDo().stream().map(ConsoleOnsGroupListResponse::convert)
                 .collect(Collectors.toList());
-
     }
-
+    /**
+     * @param infoDo 参数
+     */
     public static ConsoleOnsGroupListResponse convert(
             OnsGroupListResponseBody.OnsGroupListResponseBodyDataSubscribeInfoDo infoDo) {
         return new ConsoleOnsGroupListResponse().setOwner(infoDo.getOwner())

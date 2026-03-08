@@ -36,7 +36,6 @@ public class IdsApiImpl implements IdsApi {
     private final SnowflakeService snowflakeService;
 
     private final IDGen segmentIDGen;
-
     public IdsApiImpl(IdsProperties idsProperties, SnowflakeService snowflakeService, IDGen segmentIDGen) {
         this.idsProperties = idsProperties;
         this.snowflakeService = snowflakeService;
@@ -166,18 +165,26 @@ public class IdsApiImpl implements IdsApi {
         data.setSequence(snowflakeId ^ (snowflakeId >> 12 << 12));
         return data;
     }
-
+    /**
+     * @param result 参数
+     */
     private String get(Result result) {
         return result.getId();
     }
-
+    /**
+     * @param key 参数
+     * @param resultList 参数
+     */
     private List<String> list(String key, ResultList resultList) {
         if (key == null || key.isEmpty()) {
             throw new NoKeyException();
         }
         return resultList.getIdList();
     }
-
+    /**
+     * @param length 参数
+     * @param resultList 参数
+     */
     private List<String> list(Integer length, ResultList resultList) {
         if (length == null || 0 == length) {
             throw new LengthZeroException();

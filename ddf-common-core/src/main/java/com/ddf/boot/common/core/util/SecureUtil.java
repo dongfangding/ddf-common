@@ -67,6 +67,9 @@ public class SecureUtil {
     /**
      * 安全初始化RSA密钥
      * 如果配置缺失，抛出异常而非使用硬编码密钥
+     * @param privateKey 参数
+     * @param publicKey 参数
+     * @param configName 参数
      */
     private static RSA initRsa(String privateKey, String publicKey, String configName) {
         if (StringUtils.isBlank(privateKey) || StringUtils.isBlank(publicKey)) {
@@ -206,6 +209,7 @@ public class SecureUtil {
      * 使用指定秘钥的AES加密成十六进制
      *
      * @param str
+     * @param secret 参数
      * @return
      */
     public static String aesEncryptHexWithKey(String str, String secret) {
@@ -263,7 +267,9 @@ public class SecureUtil {
     public static String md5Hex(final String data) {
         return DigestUtils.md5Hex(data);
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
 
     }

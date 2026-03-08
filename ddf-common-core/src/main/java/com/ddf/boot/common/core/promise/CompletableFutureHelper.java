@@ -94,6 +94,7 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 创建一个自动触发完成的CompletableFuture
+     * @param v 参数
      * @return
      */
     public CompletableFuture<T> createCompletedFuture(T v) {
@@ -134,7 +135,9 @@ public class CompletableFutureHelper<T> {
         remove(requestId);
         return b;
     }
-
+    /**
+     * @param requestId 参数
+     */
     private CompletableFuture<T> find(String requestId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(requestId));
         CompletableFuture<T> completableFuture = completableFutureMap.get(requestId);
@@ -151,8 +154,9 @@ public class CompletableFutureHelper<T> {
     private void remove(String requestId) {
         completableFutureMap.remove(requestId);
     }
-
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         List<String> list = new ArrayList<>(2);
         list.add("hello");

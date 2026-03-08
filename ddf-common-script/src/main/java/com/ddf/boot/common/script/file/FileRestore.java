@@ -24,7 +24,6 @@ import java.util.Set;
  * @since 2024/07/09 10:54
  */
 public class FileRestore {
-
     public static void main(String[] args) {
         String baseTargetDirectory = "I:/整理/乐多";
 		computerReadAndMoveFileToMonth(new String[] {"I:/未整理/乐多"}, baseTargetDirectory);
@@ -41,6 +40,10 @@ public class FileRestore {
         for (String directory : directories) {
             try {
                 Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
+                    /**
+                     * @param file 参数
+                     * @param attrs 参数
+                     */
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         // 获取文件创建时间
@@ -95,6 +98,10 @@ public class FileRestore {
         for (String directory : directories) {
             try {
                 Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
+                    /**
+                     * @param file 参数
+                     * @param attrs 参数
+                     */
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         // video_0881_0_10_20240628194426_20240628195010.mp4
@@ -136,6 +143,7 @@ public class FileRestore {
      * 4. 总结就是没有移动以前任何文件，只是嵌套了一下造了两层级目录进行目录层级缩减
      *
      * @param directories
+     * @param targetDirector 参数
      */
     public static void packageMonitorVideo(String[] directories, String targetDirector) {
         for (String directory : directories) {
@@ -177,13 +185,19 @@ public class FileRestore {
             System.out.println("All folders moved successfully.");
         }
     }
-
-
+    /**
+     * @param directories 参数
+     * @param backupDeleteDirector 参数
+     */
     public static void deleteRepeatFileByMd5(String[] directories, String backupDeleteDirector) {
         Set<String> md5Set = new HashSet<>();
         for (String directory : directories) {
             try {
                 Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
+                    /**
+                     * @param file 参数
+                     * @param attrs 参数
+                     */
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         final File realFile = file.toFile();

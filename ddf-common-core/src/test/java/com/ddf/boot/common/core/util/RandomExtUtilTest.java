@@ -3,16 +3,13 @@ package com.ddf.boot.common.core.util;
 import com.ddf.boot.common.api.model.common.dto.DefaultWeightProportion;
 import com.ddf.boot.common.api.model.common.dto.ObjectKeyValuePair;
 import com.ddf.boot.common.api.model.common.dto.WeightProportion;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * RandomExtUtil 测试类

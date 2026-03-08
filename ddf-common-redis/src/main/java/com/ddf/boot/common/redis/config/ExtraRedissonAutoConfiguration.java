@@ -145,6 +145,7 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
     /**
      * 获取redis连接协议前缀
      *
+     * @param isSsl 参数
      * @return
      */
     private String getPrefix(boolean isSsl) {
@@ -185,7 +186,9 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
         }
         return config;
     }
-
+    /**
+     * @param nodesObject 参数
+     */
     private String[] convert(List<String> nodesObject) {
         List<String> nodes = new ArrayList<String>(nodesObject.size());
         for (String node : nodesObject) {
@@ -209,7 +212,9 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
     public void afterSingletonsInstantiated() {
         createRedissonClient();
     }
-
+    /**
+     * @param applicationContext 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

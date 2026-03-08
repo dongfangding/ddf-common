@@ -1,7 +1,6 @@
 package com.ddf.boot.common.core.model.dto;
 
 import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

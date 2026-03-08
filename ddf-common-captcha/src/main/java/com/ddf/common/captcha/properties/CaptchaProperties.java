@@ -56,8 +56,8 @@ public class CaptchaProperties implements ApplicationContextAware {
         BeanCopierUtils.copy(aj, ajCaptchaProperties);
         ajCaptchaProperties.setCacheType(cacheType);
     }
-
     /**
+     * @param applicationContext 参数
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

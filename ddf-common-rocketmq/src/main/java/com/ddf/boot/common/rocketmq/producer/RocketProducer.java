@@ -14,7 +14,6 @@ import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -39,6 +38,8 @@ public class RocketProducer {
     /**
      * 根据系统上下文自动构建隔离后的topic
      * 构建目的地
+     * @param topic 参数
+     * @param tag 参数
      */
     private String buildDestination(String topic, String tag) {
         topic = reBuildTopic(topic);
@@ -60,6 +61,7 @@ public class RocketProducer {
 
     /**
      * 异步发送MQ消息
+     * @param rocketMqMessage 参数
      */
     public <T> void asyncSend(RocketMqMessage rocketMqMessage) {
         rocketMqMessage.check();
@@ -74,6 +76,9 @@ public class RocketProducer {
         try {
             log.debug("[{}] Sending message to MQ topic {}, context {}", TAG, topic, message);
             SendCallback callback = new SendCallback() {
+                /**
+                 * @param sendResult 参数
+                 */
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     // 打印msgId用来以备查验,外部消息发送mq成功则任务置为成功
@@ -81,7 +86,9 @@ public class RocketProducer {
                             sendResult.getMsgId()
                     );
                 }
-
+                /**
+                 * @param e 参数
+                 */
                 @Override
                 public void onException(Throwable e) {
                     log.error("[{}] Failed to send message to MQ {},TAG:{}, msg {}, cause {}", TAG, topic, tag,message,
@@ -102,6 +109,7 @@ public class RocketProducer {
 
     /**
      * 发送同步消息
+     * @param rocketMqMessage 参数
      */
     public SendResult syncSend(RocketMqMessage rocketMqMessage) {
         rocketMqMessage.check();
@@ -117,8 +125,15 @@ public class RocketProducer {
         return send(buildDestination(topic, tag), payload);
     }
 
-    /**同步消息**/
-    private <T extends MessagePayload> SendResult send(String destination, T message) {
+	/**
+	 * 同步消息
+	 *
+	 * @param destination 目的地
+	 * @param message 消息内容
+	 * @return
+	 * @param <T>
+	 */
+	private <T extends MessagePayload> SendResult send(String destination, T message) {
         // 设置业务键，此处根据公共的参数进行处理
         // 更多的其它基础业务处理...
         Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
@@ -131,7 +146,14 @@ public class RocketProducer {
         return sendResult;
     }
 
-    /**延迟消息**/
+	/**
+	 * 延迟消息
+	 * @param destination 参数
+	 * @param message 参数
+	 * @param delayTime 参数
+	 * @return
+	 * @param <T>
+	 */
     private <T extends MessagePayload> SendResult sendDelay(String destination, T message, Long delayTime) {
         Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
                 RocketMQHeaders.KEYS, message.getMessageId()).build();
@@ -144,6 +166,7 @@ public class RocketProducer {
 
 	/**
 	 * 发送延迟消息（毫秒）
+	 * @param rocketMqMessage 参数
 	 */
 	public SendResult sendDelayForMill(RocketMqMessage rocketMqMessage) {
 		rocketMqMessage.check();
@@ -159,6 +182,9 @@ public class RocketProducer {
 
 	/**
 	 * 延迟消息 毫秒
+	 * @param destination 参数
+	 * @param message 参数
+	 * @param delayMilliseconds 参数
 	 **/
 	private <T extends MessagePayload> SendResult sendDelayForMill(String destination, T message, Long delayMilliseconds) {
 		Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(

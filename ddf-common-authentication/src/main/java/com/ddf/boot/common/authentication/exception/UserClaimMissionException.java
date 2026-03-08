@@ -11,7 +11,6 @@ import com.ddf.boot.common.api.exception.BaseException;
  * @since 2019-12-07 16:45
  */
 public class UserClaimMissionException extends BaseException {
-
     public UserClaimMissionException(String message) {
         super(message);
     }

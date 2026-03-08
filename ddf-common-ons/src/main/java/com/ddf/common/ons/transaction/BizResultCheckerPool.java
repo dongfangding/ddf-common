@@ -33,6 +33,7 @@ public abstract class BizResultCheckerPool {
 
     /**
      * 根据主题获取业务结果查询器实例
+     * @param routeKey 参数
      * @return
      */
     public static <T extends BizResultChecker> T get(String routeKey) {

@@ -28,8 +28,9 @@ public class ReflectUtils {
             final boolean forceAccess) throws IllegalAccessException {
         FieldUtils.writeField(target, fieldName, value, true);
     }
-
-
+    /**
+     * @param aClass 参数
+     */
     public static Field[] getFields(final Class<?> aClass) {
         return FieldUtils.getAllFields(aClass);
     }

@@ -31,6 +31,10 @@ public class AuthenticationAutoConfiguration {
         return new DefaultTokenCheckServiceImpl(authenticationProperties, userClaimService);
     }
 
+    /**
+     * @param authenticationProperties 参数
+     * @param environmentHelper 参数
+     */
     @Bean
     @ConditionalOnBean(AuthenticateTokenFilter.class)
     @ConditionalOnMissingBean(TokenCache.class)

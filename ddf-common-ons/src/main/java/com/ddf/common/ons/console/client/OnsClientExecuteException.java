@@ -36,18 +36,30 @@ public class OnsClientExecuteException extends BaseException {
     public boolean isMaskErrorDetails() {
         return true;
     }
-
+    /**
+     * @param message 参数
+     * @param cause 参数
+     */
     public OnsClientExecuteException(String message, Throwable cause) {
         super(ONS_COMMON_CODE, message, cause);
     }
-
+    /**
+     * @param message 参数
+     */
     public OnsClientExecuteException(String message) {
         super(ONS_COMMON_CODE, message);
     }
-
+    /**
+     * @param cause 参数
+     */
     public OnsClientExecuteException(Throwable cause) {
         super(cause);
     }
+    /**
+     * @param code 参数
+     * @param message 参数
+     * @param cause 参数
+     */
     public OnsClientExecuteException(String code, String message, Throwable cause) {
         super(code, message, cause);
     }
@@ -66,6 +78,7 @@ public class OnsClientExecuteException extends BaseException {
      * 为适应内部通用错误码拦截功能，简单转换ONS异常类为内部异常类
      *
      * @param cause
+     * @param env 参数
      */
     public static OnsClientExecuteException convertTeaException(Throwable cause, String env) {
         if (cause instanceof TeaException exception) {

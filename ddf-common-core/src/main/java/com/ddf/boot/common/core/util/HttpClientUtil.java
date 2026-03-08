@@ -94,6 +94,12 @@ public class HttpClientUtil {
     private static CloseableHttpClient createHttpClient() {
         // 显式实现 HttpRequestRetryStrategy 接口
         HttpRequestRetryStrategy retryStrategy = new HttpRequestRetryStrategy() {
+            /**
+             * @param request 参数
+             * @param exception 参数
+             * @param execCount 参数
+             * @param context 参数
+             */
             @Override
             public boolean retryRequest(HttpRequest request, IOException exception, int execCount,
                     HttpContext context) {
@@ -121,7 +127,11 @@ public class HttpClientUtil {
 
                 return false;
             }
-
+            /**
+             * @param response 参数
+             * @param execCount 参数
+             * @param context 参数
+             */
             @Override
             public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
                 if (execCount >= 3) {
@@ -137,6 +147,9 @@ public class HttpClientUtil {
 
             /**
              * 决定重试之间的等待时间
+             * @param response 参数
+             * @param execCount 参数
+             * @param context 参数
              */
             @Override
             public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
@@ -151,7 +164,9 @@ public class HttpClientUtil {
                 .setDefaultRequestConfig(DEFAULT_REQUEST_CONFIG)
                 .build();
     }
-
+    /**
+     * @param timeoutMillis 参数
+     */
     private static RequestConfig buildRequestConfig(int timeoutMillis) {
         if (REQUEST_CONFIG_MAP.containsKey(timeoutMillis)) {
             return REQUEST_CONFIG_MAP.get(timeoutMillis);
@@ -195,7 +210,10 @@ public class HttpClientUtil {
                         }, 30, 30, TimeUnit.SECONDS
                 );
     }
-
+    /**
+     * @param request 参数
+     * @param headers 参数
+     */
     private static void applyHeaders(HttpUriRequestBase request, Map<String, String> headers) {
         if (CollUtil.isNotEmpty(headers)) {
             headers.forEach(request::addHeader);
@@ -203,22 +221,44 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST JSON -----------------
+    /**
+     * @param url 参数
+     * @param postData 参数
+     */
     public static String postJson(String url, String postData) {
         return postJson(url, postData, null, DEFAULT_REQUEST_CONFIG);
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param timeoutMillis 参数
+     */
     public static String postJson(String url, String postData, int timeoutMillis) {
         return postJson(url, postData, null, buildRequestConfig(timeoutMillis));
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     */
     public static String postJson(String url, String postData, Map<String, String> headers) {
         return postJson(url, postData, headers, DEFAULT_REQUEST_CONFIG);
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     * @param timeoutMillis 参数
+     */
     public static String postJson(String url, String postData, Map<String, String> headers, int timeoutMillis) {
         return postJson(url, postData, headers, buildRequestConfig(timeoutMillis));
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     * @param config 参数
+     */
     private static String postJson(String url, String postData, Map<String, String> headers, RequestConfig config) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(config);
@@ -229,14 +269,29 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST QUERY STRING -----------------
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     */
     public static String postQueryString(String url, String postData, Map<String, String> headers) {
         return postQueryString(url, postData, headers, DEFAULT_REQUEST_CONFIG);
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     * @param timeoutMillis 参数
+     */
     public static String postQueryString(String url, String postData, Map<String, String> headers, int timeoutMillis) {
         return postQueryString(url, postData, headers, buildRequestConfig(timeoutMillis));
     }
-
+    /**
+     * @param url 参数
+     * @param postData 参数
+     * @param headers 参数
+     * @param config 参数
+     */
     private static String postQueryString(String url, String postData, Map<String, String> headers,
             RequestConfig config) {
         HttpPost httpPost = new HttpPost(url);
@@ -248,14 +303,26 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST WITHOUT BODY -----------------
+    /**
+     * @param url 参数
+     * @param headers 参数
+     */
     public static String post(String url, List<Header> headers) {
         return post(url, headers, DEFAULT_REQUEST_CONFIG);
     }
-
+    /**
+     * @param url 参数
+     * @param headers 参数
+     * @param timeoutMillis 参数
+     */
     public static String post(String url, List<Header> headers, int timeoutMillis) {
         return post(url, headers, buildRequestConfig(timeoutMillis));
     }
-
+    /**
+     * @param url 参数
+     * @param headers 参数
+     * @param config 参数
+     */
     private static String post(String url, List<Header> headers, RequestConfig config) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(config);
@@ -266,14 +333,23 @@ public class HttpClientUtil {
     }
 
     // ----------------- GET -----------------
+    /**
+     * @param url 参数
+     */
     public static String get(String url) {
         return get(url, DEFAULT_REQUEST_CONFIG);
     }
-
+    /**
+     * @param url 参数
+     * @param timeoutMillis 参数
+     */
     public static String get(String url, int timeoutMillis) {
         return get(url, buildRequestConfig(timeoutMillis));
     }
-
+    /**
+     * @param url 参数
+     * @param config 参数
+     */
     private static String get(String url, RequestConfig config) {
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(config);
@@ -282,6 +358,9 @@ public class HttpClientUtil {
     }
 
     // ----------------- EXECUTE -----------------
+    /**
+     * @param request 参数
+     */
     private static String execute(HttpUriRequestBase request) {
         final URI uri;
         try {

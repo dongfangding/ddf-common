@@ -60,7 +60,10 @@ public interface BaseCallbackCode {
         public String getBizMessage() {
             return bizMessage;
         }
-
+        /**
+         * @param code 参数
+         * @param description 参数
+         */
         public static BaseCallbackCode of(String code, String description) {
             return of(code, description, description);
         }

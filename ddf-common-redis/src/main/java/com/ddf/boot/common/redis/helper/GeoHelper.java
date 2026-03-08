@@ -26,9 +26,7 @@ import org.redisson.config.Config;
  * @date 2021/04/23 15:08
  */
 public class GeoHelper {
-
     private final RedissonClient redissonClient;
-
     public GeoHelper(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
@@ -117,6 +115,7 @@ public class GeoHelper {
      * value: 与指定位置相距距离
      *
      * @param <V>
+     * @param request 参数
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoCoordinateSearchRequest request) {
@@ -194,6 +193,7 @@ public class GeoHelper {
      * value: 与指定位置相距距离
      *
      * @param <V>
+     * @param request 参数
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoMemberSearchRequest<V> request) {
@@ -237,7 +237,9 @@ public class GeoHelper {
         }
         return geo.searchWithPosition(optionalGeoSearch);
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) {
         final Config config = new Config();
         config.useSingleServer()
@@ -250,7 +252,6 @@ public class GeoHelper {
 
         final RGeo<String> geo = helper.get("geo:test");
         String key = "geo:test";
-
         helper.add(key, 13.361389, 38.115556, "Palermo");
         helper.add(key, 15.087269, 37.502669, "Catalina");
         helper.add(key, 14.087269, 37.502669, "ZhangSan");

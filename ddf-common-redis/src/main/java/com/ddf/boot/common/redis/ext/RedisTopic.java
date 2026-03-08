@@ -30,12 +30,14 @@ public class RedisTopic {
     private final String name;
 
     private final RTopic topic;
-
     public static RedisTopic newInstance(String name, RedissonClient redissonClient) {
         RTopic topic = redissonClient.getTopic(name);
         return new RedisTopic(name, topic);
     }
-
+    /**
+     * @param name 参数
+     * @param topic 参数
+     */
     private RedisTopic(String name, RTopic topic) {
         this.name = name;
         this.topic = topic;
@@ -71,6 +73,7 @@ public class RedisTopic {
      * is published on this topic.
      *
      * @param listener for messages
+     * @param type 参数
      * @return locally unique listener id
      * @see MessageListener
      */

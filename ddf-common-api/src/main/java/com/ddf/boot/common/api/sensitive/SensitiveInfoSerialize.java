@@ -24,11 +24,17 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
 
     public SensitiveInfoSerialize() {
     }
-
+    /**
+     * @param type 参数
+     */
     public SensitiveInfoSerialize(final SensitiveTypeEnum type) {
         this.type = type;
     }
-
+    /**
+     * @param value 参数
+     * @param jsonGenerator 参数
+     * @param serializers 参数
+     */
     @Override
     public void serialize(String value, JsonGenerator jsonGenerator, SerializerProvider serializers)
             throws IOException {
@@ -65,11 +71,14 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
                 jsonGenerator.writeString(PretendUtils.password(value));
                 break;
             }
+            /**
+             * @param serializerProvider 参数
+             * @param beanProperty 参数
+             */
             default:
                 break;
         }
     }
-
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider serializerProvider, BeanProperty beanProperty)
             throws JsonMappingException {

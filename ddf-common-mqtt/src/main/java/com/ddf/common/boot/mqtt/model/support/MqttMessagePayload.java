@@ -73,6 +73,7 @@ public class MqttMessagePayload implements Serializable {
      * 注意这个值来源于{@link InnerMqttMessageRequest#getBody()}
      * 这里的T舍弃了限定符， 是为了避免对象序列化之后，由于多态无法反序列化问题。
      * 如果要支持，会把这一块搞发非常复杂，目前应该没有必要
+     * @param byte 参数
      */
     private String body;
 

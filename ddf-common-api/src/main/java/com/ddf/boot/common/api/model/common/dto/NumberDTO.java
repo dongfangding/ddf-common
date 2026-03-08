@@ -18,8 +18,6 @@ public class NumberDTO {
      * count
      */
     private Long count;
-
-
     public static NumberDTO of(long count) {
         return new NumberDTO(count);
     }

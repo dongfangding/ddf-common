@@ -37,9 +37,7 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
  */
 
 public class RedisCommandHelper {
-
     private StringRedisTemplate redisTemplate;
-
     public RedisCommandHelper(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -314,6 +312,7 @@ public class RedisCommandHelper {
      *
      * @param key   位置
      * @param value 值,true为1, false为0
+     * @param offset 参数
      * @return
      */
     public boolean setBit(String key, long offset, boolean value) {
@@ -368,6 +367,8 @@ public class RedisCommandHelper {
      *
      * @param key
      * @param value
+     * @param timeout 参数
+     * @param unit 参数
      * @return 之前已经存在返回false, 不存在返回true
      */
     public boolean setIfAbsent(String key, String value, long timeout, TimeUnit unit) {
@@ -428,6 +429,7 @@ public class RedisCommandHelper {
      * 增加(自增长), 负数则为自减
      *
      * @param key
+     * @param increment 参数
      * @return
      */
     public Long incrBy(String key, long increment) {
@@ -438,6 +440,7 @@ public class RedisCommandHelper {
 
     /**
      * @param key
+     * @param increment 参数
      * @return
      */
     public Double incrByFloat(String key, double increment) {
@@ -524,19 +527,29 @@ public class RedisCommandHelper {
         }
         return data;
     }
-
+    /**
+     * @param key 参数
+     * @param hashKey 参数
+     * @param value 参数
+     */
     public void hPut(String key, String hashKey, String value) {
         redisTemplate
                 .opsForHash()
                 .put(key, hashKey, value);
     }
-
+    /**
+     * @param key 参数
+     * @param maps 参数
+     */
     public void hPutAll(String key, Map<String, String> maps) {
         redisTemplate
                 .opsForHash()
                 .putAll(key, maps);
     }
-
+    /**
+     * @param key 参数
+     * @param maps 参数
+     */
     public void hPutAllObject(String key, Map<String, Object> maps) {
         redisTemplate
                 .opsForHash()
@@ -988,6 +1001,7 @@ public class RedisCommandHelper {
      * 移除并返回集合的一个随机元素
      *
      * @param key
+     * @param count 参数
      * @return
      */
     public List<String> sPop(String key, int count) {
@@ -1034,7 +1048,10 @@ public class RedisCommandHelper {
                 .opsForSet()
                 .isMember(key, value);
     }
-
+    /**
+     * @param key 参数
+     * @param values 参数
+     */
     public Map<Object, Boolean> sIsMember(String key, Object... values) {
         return redisTemplate
                 .opsForSet()
@@ -1446,6 +1463,8 @@ public class RedisCommandHelper {
      * @param keys
      * @param offset
      * @param count
+     * @param min 参数
+     * @param max 参数
      * @return
      */
     public List<Set<TypedTuple<String>>> batchZReverseRangeWithScores(List<String> keys, double min, double max,
@@ -1467,8 +1486,10 @@ public class RedisCommandHelper {
         }
         return returnList;
     }
-
-
+    /**
+     * @param keys 参数
+     * @param member 参数
+     */
     public Map<String, Double> batchZScore(List<String> keys, String member) {
         final List<Object> valueList = executePipelined(connection -> {
             for (String key : keys) {
@@ -1488,6 +1509,9 @@ public class RedisCommandHelper {
 
     /**
      * 批量获取多个集合的元素, 并返回score值
+     * @param keys 参数
+     * @param min 参数
+     * @param max 参数
      */
     public List<Set<TypedTuple<String>>> batchZRangWithScore (List<String> keys, Long min, Long max) {
         List<Object> resultList = executePipelined(connection -> {
@@ -1820,6 +1844,7 @@ public class RedisCommandHelper {
      * 批量zrank
      *
      * @param members
+     * @param key 参数
      * @return
      */
     public Map<String, Integer> batchZRank(String key, List<String> members) {
@@ -1838,7 +1863,9 @@ public class RedisCommandHelper {
         }
         return sizeMap;
     }
-
+    /**
+     * @param pattern 参数
+     */
     public List<String> scanKeys(String pattern) {
         List<String> keys = new ArrayList<>();
         redisTemplate.execute((RedisCallback<Void>) connection -> {
@@ -1854,7 +1881,9 @@ public class RedisCommandHelper {
         });
         return keys;
     }
-
+    /**
+     * @param keys 参数
+     */
     public Map<String, Long> getTtlForKeys(List<String> keys) {
         Map<String, Long> ttlMap = new HashMap<>();
         List<Object> objects = redisTemplate.executePipelined((RedisCallback<Long>) connection -> {
@@ -1908,6 +1937,9 @@ public class RedisCommandHelper {
     public Map<String, Set<String>> pipelineZRange(List<String> keys, Map<String, Integer> offsets, int batchSize) {
         // 使用executePipelined执行Pipeline命令，返回结果列表，与keys顺序一致
         List<Object> pipelineResults = redisTemplate.executePipelined(new RedisCallback<Object>() {
+            /**
+             * @param connection 参数
+             */
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
                 // 遍历每个 key，并发送zRange命令

@@ -60,8 +60,6 @@ public class ResponseData<T> {
      * 之后， 再次抛出异常，会丢失这个填充内容，因此需要再全局异常里把这个内容放进来，这样上层才可以再次抛出这个异常并填充这个内容
      */
     private Object[] formatParams;
-
-
     public ResponseData(String code, String message, String subMessage, long timestamp, T data) {
         this.code = code;
         this.message = message;
@@ -69,7 +67,14 @@ public class ResponseData<T> {
         this.timestamp = timestamp;
         this.data = data;
     }
-
+    /**
+     * @param code 参数
+     * @param message 参数
+     * @param subMessage 参数
+     * @param timestamp 参数
+     * @param data 参数
+     * @param extra 参数
+     */
     public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra) {
         this.code = code;
         this.message = message;
@@ -78,7 +83,15 @@ public class ResponseData<T> {
         this.data = data;
         this.extra = extra;
     }
-
+    /**
+     * @param code 参数
+     * @param message 参数
+     * @param subMessage 参数
+     * @param timestamp 参数
+     * @param data 参数
+     * @param extra 参数
+     * @param formatParams 参数
+     */
     public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra, Object[] formatParams) {
         this.code = code;
         this.message = message;
@@ -120,6 +133,7 @@ public class ResponseData<T> {
      *
      * @param data
      * @param <T>
+     * @param extra 参数
      * @return
      */
     public static <T> ResponseData<T> success(T data, Object extra) {
@@ -157,6 +171,7 @@ public class ResponseData<T> {
      *
      * @param baseCallbackCode
      * @param <T>
+     * @param extra 参数
      * @return
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode, Object extra) {
@@ -183,6 +198,7 @@ public class ResponseData<T> {
      * @param code
      * @param message
      * @param <T>
+     * @param subMessage 参数
      * @return
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage) {
@@ -195,6 +211,7 @@ public class ResponseData<T> {
      * @param code
      * @param message
      * @param <T>
+     * @param extra 参数
      * @return
      */
     public static <T> ResponseData<T> failure(String code, String message, Object extra) {
@@ -207,6 +224,8 @@ public class ResponseData<T> {
      * @param code
      * @param message
      * @param <T>
+     * @param subMessage 参数
+     * @param extra 参数
      * @return
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra) {
@@ -219,6 +238,9 @@ public class ResponseData<T> {
      * @param code
      * @param message
      * @param <T>
+     * @param subMessage 参数
+     * @param extra 参数
+     * @param formatParams 参数
      * @return
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra, Object[] formatParams) {

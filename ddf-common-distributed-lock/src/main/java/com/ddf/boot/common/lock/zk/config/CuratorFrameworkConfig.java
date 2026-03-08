@@ -45,6 +45,9 @@ public class CuratorFrameworkConfig {
         );
     }
 
+    /**
+     * @param curatorFramework 参数
+     */
     @Bean(name = ZookeeperDistributedLock.BEAN_NAME)
     @ConditionalOnMissingBean(name = "zookeeperDistributedLock")
     public DistributedLock zookeeperDistributedLock(@Autowired CuratorFramework curatorFramework) {

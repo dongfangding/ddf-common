@@ -56,8 +56,9 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
      */
     private final Map<String, HandlerMethodArgumentResolver> argumentResolverCache =
             new ConcurrentHashMap<>(8);
-
-
+    /**
+     * @param parameter 参数
+     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameter().isAnnotationPresent(MultiArgumentResolver.class);
@@ -65,6 +66,10 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
 
     /**
      * 解析参数
+     * @param parameter 参数
+     * @param mavContainer 参数
+     * @param webRequest 参数
+     * @param binderFactory 参数
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
@@ -86,11 +91,15 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
         }
         return null;
     }
-
+    /**
+     * @param contentType 参数
+     */
     private boolean isJson(String contentType) {
         return contentType.contains(CONTENT_TYPE_JSON);
     }
-
+    /**
+     * @param contentType 参数
+     */
     private boolean isFormUrlEncoded(String contentType) {
         return contentType.contains(CONTENT_TYPE_FORM_URLENCODED);
     }
@@ -117,7 +126,9 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
         }
         return true;
     }
-
+    /**
+     * @param applicationContext 参数
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

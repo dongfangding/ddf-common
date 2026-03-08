@@ -19,6 +19,11 @@ import org.springframework.web.socket.TextMessage;
 @Component
 @Slf4j
 public class CmdStrategyHelper {
+    /**
+     * @param authPrincipal 参数
+     * @param payload 参数
+     * @param message 参数
+     */
     @Autowired
     private ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool;
 
@@ -69,6 +74,4 @@ public class CmdStrategyHelper {
         //        });
     }
 }
-
-
 

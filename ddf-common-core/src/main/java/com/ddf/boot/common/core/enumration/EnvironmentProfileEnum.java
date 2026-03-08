@@ -22,6 +22,10 @@ public enum EnvironmentProfileEnum {
 
     ;
 
+    /**
+     * @param code 参数
+     * @param desc 参数
+     */
     @Getter
     private final String code;
 

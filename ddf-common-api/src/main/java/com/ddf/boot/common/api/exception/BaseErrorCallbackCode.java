@@ -106,6 +106,7 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     /**
      * 异常消息
+     * @param description 参数
      */
     @Getter
     private final String description;
@@ -115,19 +116,16 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
      */
     @Getter
     private final String bizMessage;
-
     BaseErrorCallbackCode(String description) {
         this.code = null;
         this.description = description;
         this.bizMessage = description;
     }
-
     BaseErrorCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;
         this.bizMessage = description;
     }
-
     BaseErrorCallbackCode(String code, String description, String bizMessage) {
         this.code = code;
         this.description = description;

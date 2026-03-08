@@ -73,7 +73,10 @@ public class UserClaim implements Serializable {
      * 自定义的其它属性
      */
     private Map<String, Object> properties = new HashMap<>();
-
+    /**
+     * @param userId 参数
+     * @param username 参数
+     */
     public UserClaim(String userId, String username) {
         this.userId = userId;
         this.username = username;

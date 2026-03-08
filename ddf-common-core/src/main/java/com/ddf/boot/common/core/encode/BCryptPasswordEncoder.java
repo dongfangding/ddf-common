@@ -95,7 +95,9 @@ public class BCryptPasswordEncoder {
 		this.strength = strength == -1 ? 10 : strength;
 		this.random = random;
 	}
-
+	/**
+	 * @param rawPassword 参数
+	 */
 	public String encode(CharSequence rawPassword) {
 		if (rawPassword == null) {
 			throw new IllegalArgumentException("rawPassword cannot be null");
@@ -109,7 +111,10 @@ public class BCryptPasswordEncoder {
 		}
 		return BCrypt.hashpw(rawPassword.toString(), salt);
 	}
-
+	/**
+	 * @param rawPassword 参数
+	 * @param encodedPassword 参数
+	 */
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
 		if (rawPassword == null) {
 			throw new IllegalArgumentException("rawPassword cannot be null");
@@ -127,7 +132,9 @@ public class BCryptPasswordEncoder {
 
 		return BCrypt.checkpw(rawPassword.toString(), encodedPassword);
 	}
-
+	/**
+	 * @param encodedPassword 参数
+	 */
 	public boolean upgradeEncoding(String encodedPassword) {
 		if (encodedPassword == null || encodedPassword.length() == 0) {
 			logger.warn("Empty encoded password");
@@ -153,9 +160,10 @@ public class BCryptPasswordEncoder {
 		$2A("$2a"),
 		$2Y("$2y"),
 		$2B("$2b");
-
+		/**
+		 * @param version 参数
+		 */
 		private final String version;
-
 		BCryptVersion(String version) {
 			this.version = version;
 		}
@@ -164,7 +172,9 @@ public class BCryptPasswordEncoder {
 			return this.version;
 		}
 	}
-
+	/**
+	 * @param args 参数
+	 */
 	public static void main(String[] args) {
 		final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		String str = "123456";

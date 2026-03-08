@@ -56,6 +56,8 @@ public class UploadResponse implements Serializable {
      * 只适用于使用默认的缩略图配置
      *
      * @param storePath
+     * @param thumbImage 参数
+     * @param accessDomain 参数
      * @return
      */
     public static UploadResponse fromStorePath(StorePath storePath, ThumbImage thumbImage, String accessDomain) {

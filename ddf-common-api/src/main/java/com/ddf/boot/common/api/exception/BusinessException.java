@@ -9,7 +9,6 @@ package com.ddf.boot.common.api.exception;
  * @since 2020/06/28 15:13
  */
 public class BusinessException extends BaseException {
-
     public BusinessException(Throwable throwable) {
         super(throwable);
     }
@@ -20,16 +19,24 @@ public class BusinessException extends BaseException {
     public BusinessException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
-
-
+    /**
+     * @param description 参数
+     */
     public BusinessException(String description) {
         super(description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     */
     public BusinessException(String code, String description) {
         super(code, description);
     }
-
+    /**
+     * @param code 参数
+     * @param description 参数
+     * @param params 参数
+     */
     public BusinessException(String code, String description, Object... params) {
         super(code, description, params);
     }

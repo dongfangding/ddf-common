@@ -48,27 +48,22 @@ public enum AlarmRedisKeyEnum implements RedisKeyConstraint {
      * key的分片规则
      */
     private RedisShardingRule redisShardingRule;
-
     AlarmRedisKeyEnum(String template, RedisKeyTypeEnum keyType) {
         this.template = template;
         this.ttl = Duration.ofSeconds(-1);
         this.keyType = keyType;
     }
-
     AlarmRedisKeyEnum(String template, RedisKeyTypeEnum keyType, Class clazz) {
         this.template = template;
         this.ttl = Duration.ofSeconds(-1);
         this.keyType = keyType;
         this.clazz = clazz;
     }
-
-
     AlarmRedisKeyEnum(String template, Duration ttl, RedisKeyTypeEnum keyType) {
         this.template = template;
         this.ttl = ttl;
         this.keyType = keyType;
     }
-
     AlarmRedisKeyEnum(String template, Duration ttl, RedisKeyTypeEnum keyType, Class clazz) {
         this.template = template;
         this.ttl = ttl;

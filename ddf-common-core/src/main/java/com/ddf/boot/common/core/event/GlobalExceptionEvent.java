@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationEvent;
 public class GlobalExceptionEvent extends ApplicationEvent {
 
     private final GlobalExceptionEventPayload payload;
-
     public GlobalExceptionEvent(Object source, GlobalExceptionEventPayload payload) {
         super(source);
         this.payload = payload;

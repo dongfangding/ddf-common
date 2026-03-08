@@ -12,9 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @since 2021/11/06 16:27
  */
 public class CacheAdapter {
-
     private static StringRedisTemplate stringRedisTemplate;
-
     public CacheAdapter(StringRedisTemplate stringRedisTemplate) {
         CacheAdapter.stringRedisTemplate = stringRedisTemplate;
     }

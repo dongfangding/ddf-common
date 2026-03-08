@@ -33,6 +33,7 @@ public abstract class BizTransactionExecutorPool {
 
     /**
      * 根据主题获取业务事务执行器实例
+     * @param routeKey 参数
      * @return
      */
     public static <T extends BizTransactionExecutor> T get(String routeKey) {

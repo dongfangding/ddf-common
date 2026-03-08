@@ -26,6 +26,9 @@ public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefr
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    /**
+     * @param event 参数
+     */
     @Autowired
     private Environment environment;
 

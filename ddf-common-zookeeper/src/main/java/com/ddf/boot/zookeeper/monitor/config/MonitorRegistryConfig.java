@@ -120,7 +120,9 @@ public class MonitorRegistryConfig implements InitializingBean {
         }
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
-
+    /**
+     * @param args 参数
+     */
     public static void main(String[] args) throws Exception {
         final CuratorFramework framework = CuratorFrameworkFactory.newClient("www.snowball.fans:2181", 4000, 40000,
                 new RetryNTimes(3, 2000)
@@ -349,7 +351,11 @@ public class MonitorRegistryConfig implements InitializingBean {
             return null;
         }, () -> {return null;});
     }
-
+    /**
+     * @param monitorPath 参数
+     * @param monitor 参数
+     * @param allNodes 参数
+     */
     private void callbackNode(String monitorPath, MonitorNode monitor, Collection<String> allNodes) {
         ChildData childData;
         // 回调所有节点的监听事件

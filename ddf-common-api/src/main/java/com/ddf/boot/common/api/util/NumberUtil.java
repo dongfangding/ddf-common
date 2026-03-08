@@ -8,7 +8,6 @@ import org.apache.commons.lang3.math.NumberUtils;
  * 数字精度处理工具类
  */
 public class NumberUtil {
-
     public static BigDecimal disposeAccuracy(Double value){
         return BigDecimal.valueOf(value).setScale(BigDecimal.ROUND_CEILING, RoundingMode.DOWN);
     }
@@ -37,7 +36,10 @@ public class NumberUtil {
 
         return formatNumber(score, 100000000) + "亿";
     }
-
+    /**
+     * @param number 参数
+     * @param dividend 参数
+     */
     private static String formatNumber(long number, long dividend) {
         long zheng = number / dividend;
         long yu = number % dividend;
@@ -158,7 +160,6 @@ public class NumberUtil {
 			}
 
 			return Long.parseLong(fractionalStr);
-
 		} catch (NumberFormatException e) {
 			// 如果转换失败（例如小数部分过长，超出了 Long 的范围），
 			// 可以选择抛出异常，或者返回一个默认值。

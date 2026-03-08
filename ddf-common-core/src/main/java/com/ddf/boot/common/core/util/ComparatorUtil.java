@@ -2,11 +2,14 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.util.URLUtil;
 import com.ddf.boot.common.core.model.IndexComparatorElement;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>description</p >
@@ -61,6 +64,8 @@ public class ComparatorUtil {
 	 * 替换 = 删除 + 新增（成对）
 	 * 位置越近，替换可信度越高
 	 * 替换的那对从新增/删除列表中移除，统一归入“替换”结果
+	 * @param oldArrStr 参数
+	 * @param newArrStr 参数
 	 */
 	public static List<IndexComparatorElement> compareWithWeakReplaceLast(String oldArrStr, String newArrStr) {
 		String[] oldArr = StringUtils.isBlank(oldArrStr) ? new String[0] : Stream.of(oldArrStr.split(",")).map(item -> URLUtil.url(item).getPath()).toArray(String[]::new);
@@ -224,9 +229,10 @@ public class ComparatorUtil {
 		System.out.println("\n=== 测试 deleteElements 方法 ===");
 		String deletedString = removeSplitValueIfMatch(originStr, "b");
 		System.out.println("删除后数组: " + deletedString);
-
 	}
-
+	/**
+	 * @param args 参数
+	 */
 	public static void main(String[] args) {
 		test();
 	}

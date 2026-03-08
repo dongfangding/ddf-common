@@ -39,7 +39,6 @@ public class SnowflakeZookeeperHolder {
     private String connectionString;
     private long lastUpdateTime;
     private final IdsProperties idsProperties;
-
     public SnowflakeZookeeperHolder(String ip, IdsProperties idsProperties) {
         this.idsProperties = idsProperties;
         this.ip = ip;
@@ -113,13 +112,21 @@ public class SnowflakeZookeeperHolder {
         }
         return true;
     }
-
+    /**
+     * @param curator 参数
+     */
     private void doService(CuratorFramework curator) {
         ScheduledUploadData(curator, zk_AddressNode);// /snowflake_forever/ip:port-000000001
     }
-
+    /**
+     * @param curator 参数
+     * @param zk_AddressNode 参数
+     */
     private void ScheduledUploadData(final CuratorFramework curator, final String zk_AddressNode) {
         Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            /**
+             * @param r 参数
+             */
             @Override
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r, "schedule-upload-time");
@@ -134,7 +141,10 @@ public class SnowflakeZookeeperHolder {
         }, 1L, 3L, TimeUnit.SECONDS);//每3s上报数据
 
     }
-
+    /**
+     * @param curator 参数
+     * @param zk_AddressNode 参数
+     */
     private boolean checkInitTimeStamp(CuratorFramework curator, String zk_AddressNode) throws Exception {
         byte[] bytes = curator.getData().forPath(zk_AddressNode);
         Endpoint endPoint = deBuildData(new String(bytes));
@@ -157,7 +167,10 @@ public class SnowflakeZookeeperHolder {
             throw e;
         }
     }
-
+    /**
+     * @param curator 参数
+     * @param path 参数
+     */
     private void updateNewData(CuratorFramework curator, String path) {
         try {
             if (System.currentTimeMillis() < lastUpdateTime) {
@@ -181,7 +194,9 @@ public class SnowflakeZookeeperHolder {
         String json = mapper.writeValueAsString(endpoint);
         return json;
     }
-
+    /**
+     * @param json 参数
+     */
     private Endpoint deBuildData(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Endpoint endpoint = mapper.readValue(json, Endpoint.class);
@@ -222,7 +237,12 @@ public class SnowflakeZookeeperHolder {
             }
         }
     }
-
+    /**
+     * @param connectionString 参数
+     * @param retryPolicy 参数
+     * @param connectionTimeoutMs 参数
+     * @param sessionTimeoutMs 参数
+     */
     private CuratorFramework createWithOptions(String connectionString, RetryPolicy retryPolicy, int connectionTimeoutMs, int sessionTimeoutMs) {
         return CuratorFrameworkFactory.builder().connectString(connectionString)
                 .retryPolicy(retryPolicy)
@@ -242,7 +262,11 @@ public class SnowflakeZookeeperHolder {
 
         public Endpoint() {
         }
-
+        /**
+         * @param ip 参数
+         * @param port 参数
+         * @param timestamp 参数
+         */
         public Endpoint(String ip, String port, long timestamp) {
             this.ip = ip;
             this.port = port;

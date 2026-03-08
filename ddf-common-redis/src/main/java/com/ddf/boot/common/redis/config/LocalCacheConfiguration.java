@@ -31,7 +31,6 @@ public class LocalCacheConfiguration {
         String spec = ObjectUtil.defaultIfBlank(caffeine.getSpec(), "maximumSize=10000,expireAfterWrite=5m,softValues");
 
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-
         cacheManager.setCacheSpecification(spec);
 
         return cacheManager;

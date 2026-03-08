@@ -32,7 +32,6 @@ public enum TopicMessageType {
     Trans_Msg_Half(2, "全局顺序消息"),
     Trans_msg_Commit(4, "事务消息"),
     Delay_Msg(5, "定时/延时消息");
-
     TopicMessageType(Integer value, String desc) {
         this.value = value;
         this.desc = desc;
@@ -47,11 +46,15 @@ public enum TopicMessageType {
     static {
         VALUE_MAPPING = Arrays.stream(values()).collect(Collectors.toMap(TopicMessageType::getValue, val -> val));
     }
-
+    /**
+     * @param value 参数
+     */
     public static TopicMessageType getByValue(Integer value) {
         return VALUE_MAPPING.get(value);
     }
-
+    /**
+     * @param value 参数
+     */
     public static String getDesc(Integer value) {
         final TopicMessageType messageType = getByValue(value);
         return Objects.nonNull(messageType) ? messageType.getDesc() : value + "";

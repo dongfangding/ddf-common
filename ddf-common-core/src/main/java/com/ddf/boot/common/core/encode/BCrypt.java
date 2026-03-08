@@ -668,7 +668,9 @@ public class BCrypt {
 			S[i + 1] = lr[1];
 		}
 	}
-
+	/**
+	 * @param log_rounds 参数
+	 */
 	static long roundsForLogRounds(int log_rounds) {
 		if (log_rounds < 4 || log_rounds > 31) {
 			throw new IllegalArgumentException("Bad number of rounds");
@@ -828,7 +830,6 @@ public class BCrypt {
 		if (log_rounds < 4 || log_rounds > 31) {
 			throw new IllegalArgumentException ("Invalid log_rounds");
 		}
-
 		random.nextBytes(rnd);
 
 		rs.append("$2");
@@ -882,7 +883,9 @@ public class BCrypt {
 			throws IllegalArgumentException {
 		return gensalt(log_rounds, new SecureRandom());
 	}
-
+	/**
+	 * @param prefix 参数
+	 */
 	public static String gensalt(String prefix) {
 		return gensalt(prefix, GENSALT_DEFAULT_LOG2_ROUNDS);
 	}
@@ -919,7 +922,10 @@ public class BCrypt {
 	public static boolean checkpw(byte[] passwordb, String hashed) {
 		return equalsNoEarlyReturn(hashed, hashpw(passwordb, hashed));
 	}
-
+	/**
+	 * @param a 参数
+	 * @param b 参数
+	 */
 	static boolean equalsNoEarlyReturn(String a, String b) {
 		return MessageDigest.isEqual(a.getBytes(StandardCharsets.UTF_8), b.getBytes(StandardCharsets.UTF_8));
 	}

@@ -18,12 +18,12 @@ public class ConstUtil {
     public static final String STRING_COLON = ":";
     public static final String STRING_DOT = ".";
     public static final String STRING_PERCENT = "%";
-
-
     public static boolean isBlank(Object obj) {
         return !isNotBlank(obj);
     }
-
+    /**
+     * @param obj 参数
+     */
     public static boolean isNotBlank(Object obj) {
         return obj != null && StringUtils.isNotBlank(obj.toString());
     }

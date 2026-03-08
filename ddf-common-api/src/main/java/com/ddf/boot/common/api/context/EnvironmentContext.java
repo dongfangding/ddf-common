@@ -19,7 +19,6 @@ public class EnvironmentContext implements EnvironmentAware {
 
     @Getter
     private static Environment environment;
-
     @Override
     public void setEnvironment(Environment environment) {
         EnvironmentContext.environment = environment;
