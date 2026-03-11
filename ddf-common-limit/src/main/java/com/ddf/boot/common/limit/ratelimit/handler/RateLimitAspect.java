@@ -2,7 +2,7 @@ package com.ddf.boot.common.limit.ratelimit.handler;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.api.exception.BusinessException;
-import com.ddf.boot.common.authentication.util.UserContextUtil;
+import com.ddf.boot.common.api.util.UserContextUtil;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;

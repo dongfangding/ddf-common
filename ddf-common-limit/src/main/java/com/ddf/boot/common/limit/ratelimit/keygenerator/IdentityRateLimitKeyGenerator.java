@@ -1,6 +1,6 @@
 package com.ddf.boot.common.limit.ratelimit.keygenerator;
 
-import com.ddf.boot.common.authentication.util.UserContextUtil;
+import com.ddf.boot.common.api.util.UserContextUtil;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;

@@ -1,4 +1,4 @@
-package com.ddf.boot.common.authentication.util;
+package com.ddf.boot.common.api.util;
 
 import com.ddf.boot.common.api.enums.OsEnum;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
