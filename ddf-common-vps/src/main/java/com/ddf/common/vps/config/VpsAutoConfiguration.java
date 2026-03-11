@@ -1,4 +1,4 @@
-package comm.ddf.common.vps.config;
+package com.ddf.common.vps.config;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -18,6 +18,6 @@ import org.springframework.jmx.support.RegistrationPolicy;
 @Import(FdfsClientConfig.class)
 // 解决jmx重复注册bean的问题
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-@ComponentScan("comm.ddf.common.vps")
+@ComponentScan("com.ddf.common.vps")
 public class VpsAutoConfiguration {
 }

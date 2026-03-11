@@ -1,4 +1,4 @@
-package comm.ddf.common.vps.util;
+package com.ddf.common.vps.util;
 
 import java.io.File;
 import java.text.MessageFormat;

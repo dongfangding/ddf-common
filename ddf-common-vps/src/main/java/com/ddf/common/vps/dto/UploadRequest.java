@@ -1,4 +1,4 @@
-package comm.ddf.common.vps.dto;
+package com.ddf.common.vps.dto;
 
 import com.github.tobato.fastdfs.domain.upload.ThumbImage;
 import java.io.Serial;

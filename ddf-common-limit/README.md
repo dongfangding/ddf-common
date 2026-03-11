@@ -1,49 +1,50 @@
 # ddf-common-limit
 
-限流模块，提供分布式限流和防重复提交功能。
+限流与防重复提交模块。
 
-## 功能特性
+定位：
 
-- 接口限流
-- 防重复提交
-- 自定义限流策略
+- 提供接口限流、防重复提交等能力
+- 作为 `ddf-common-starter-web` 的组成部分
+- 依赖认证、MVC、Redis 等基础能力共同工作
 
-## 依赖引入
+## 当前提供能力
+
+- `@RateLimit`
+- `@MultiRateLimit`
+- 防重复提交能力
+- 限流 Key 生成扩展
+
+## 使用建议
+
+不建议业务项目直接依赖 `ddf-common-limit`。
+
+推荐方式：
 
 ```xml
 <dependency>
     <groupId>io.github.dongfangding</groupId>
-    <artifactId>ddf-common-limit</artifactId>
+    <artifactId>ddf-common-starter-web</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>
 ```
 
-## 核心类
+如果业务同时需要数据库和治理能力，推荐直接使用：
 
-| 类路径               | 功能   |
-|-------------------|------|
-| `RateLimitAspect` | 限流切面 |
-| `LimitService`    | 限流服务 |
-| `LimitProperties` | 配置属性 |
-
-## 使用说明
-
-### 注解方式
-
-```java
-@RateLimit(key = "api:user", count = 10, period = 60)
-@PostMapping("/user")
-public ResponseData<User> createUser(@RequestBody User user) {
-    // 限流控制
-}
+```xml
+<dependency>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-starter-default</artifactId>
+    <version>${ddf-common.version}</version>
+</dependency>
 ```
 
-### 防重复提交
+## 说明
 
-```java
-@NonRepeatableSubmit
-@PostMapping("/order")
-public ResponseData<Order> createOrder(@RequestBody Order order) {
-    // 防止重复提交
-}
-```
+`ddf-common-limit` 当前仍然和：
+
+- `ddf-common-mvc`
+- `ddf-common-authentication`
+- `ddf-common-redis`
+
+存在协同关系，因此更适合作为 starter 内部组成部分使用，而不是由业务项目手工单独拼装。

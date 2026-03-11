@@ -5,7 +5,6 @@ import com.ddf.boot.common.core.helper.ThreadBuilderHelper;
 import com.ddf.boot.common.mvc.filter.CachingRequestBodyFilter;
 import com.ddf.boot.common.mvc.resolver.MultiArgumentResolverMethodProcessor;
 import com.ddf.boot.common.mvc.resolver.QueryParamArgumentResolver;
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -50,12 +49,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 @EnableCaching
 public class CoreWebConfig implements WebMvcConfigurer {
-
-    @PostConstruct
-    public void init() {
-        // 解决druid日志报警discard long time none received connection问题，但是这个不一定有用，要放在启动脚本里才能保证最先识别
-        System.setProperty("druid.mysql.usePingMethod", "false");
-    }
 
     /**
      * 注册解析器

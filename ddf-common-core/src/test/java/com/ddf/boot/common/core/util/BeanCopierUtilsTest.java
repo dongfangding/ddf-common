@@ -3,8 +3,8 @@ package com.ddf.boot.common.core.util;
 import com.ddf.boot.common.api.util.DateUtils;
 import com.ddf.boot.common.core.model.BaseDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +58,7 @@ public class BeanCopierUtilsTest {
         domain2.setGmtCreated(DateUtils.currentTimeSeconds());
         domain2.setGmtModified(DateUtils.currentTimeSeconds());
 
-        final ArrayList<BaseDomain> originList = Lists.newArrayList(domain, domain2);
+        final ArrayList<BaseDomain> originList = new ArrayList<>(Arrays.asList(domain, domain2));
         final List<BaseDomain> copyDomain = BeanCopierUtils.copy(originList, BaseDomain.class);
         Assertions.assertIterableEquals(originList, copyDomain);
     }

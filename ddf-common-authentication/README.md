@@ -1,47 +1,51 @@
-# 介绍
+# ddf-common-authentication
 
-该模块主要用户单点项目使用， 无网关， 模块不仅负责校验处理请求、还负责解析。
+认证基础能力模块。
 
-因此该模块就是一个用来认证和处理用户上下文的东西。
+定位：
 
-# 使用
+- 提供认证相关公共能力
+- 作为 `ddf-common-starter-web` 的组成部分
+- 与 MVC、限流等基础 Web 能力协同工作
 
-## 开启认证
+## 当前提供能力
 
-在配置类或者启动类上使用注解`@EnableAuthenticate` 即可接入，
-详细配置等在`com.ddf.boot.common.authentication.config.AuthenticationProperties` 类中
+- 认证自动配置
+- 用户上下文处理
+- Token 校验扩展点
+- 认证相关配置项
 
-```java
+## 使用建议
 
-@SpringBootApplication
-@EnableAuthenticate
-public class AppApplication {
+不建议业务项目直接依赖 `ddf-common-authentication`。
 
-    public static void main(String[] args) {
-        SpringApplication.run(AppApplication.class);
-    }
-}
+推荐方式：
+
+```xml
+<dependency>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-starter-web</artifactId>
+    <version>${ddf-common.version}</version>
+</dependency>
 ```
 
+如果是常规业务服务，推荐直接使用：
 
-## 实现接口
-1. 实现接口com.ddf.boot.common.authentication.interfaces.UserClaimService
-
-实现后可获得服务内部用户信息，用于对比
-
-## 获取解析后的上下文数据
-
-更多信息请参考类`com.banma.sunshine.authentication.annotation.util.UserContextUtil`
-```java
-
-public class ClassA {
-
-    public void test() {
-        // 获取当前请求用户信息
-        final String userId = UserContextUtil.getUserId();
-        final Long longUserId = UserContextUtil.getLongUserId();
-    }
-}
+```xml
+<dependency>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-starter-default</artifactId>
+    <version>${ddf-common.version}</version>
+</dependency>
 ```
 
+## 扩展点
 
+如果业务需要自定义认证逻辑，重点关注：
+
+- `UserClaimService`
+- `TokenCustomizeCheckService`
+
+认证配置见：
+
+- `AuthenticationProperties`

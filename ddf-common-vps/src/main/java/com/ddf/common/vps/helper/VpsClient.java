@@ -1,4 +1,4 @@
-package comm.ddf.common.vps.helper;
+package com.ddf.common.vps.helper;
 
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.github.tobato.fastdfs.FdfsClientConstants;
@@ -9,9 +9,9 @@ import com.github.tobato.fastdfs.domain.fdfs.ThumbImageConfig;
 import com.github.tobato.fastdfs.domain.upload.FastImageFile;
 import com.github.tobato.fastdfs.domain.upload.ThumbImage;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
-import comm.ddf.common.vps.config.VpsProperties;
-import comm.ddf.common.vps.dto.UploadResponse;
-import comm.ddf.common.vps.util.VpsUtil;
+import com.ddf.common.vps.config.VpsProperties;
+import com.ddf.common.vps.dto.UploadResponse;
+import com.ddf.common.vps.util.VpsUtil;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;

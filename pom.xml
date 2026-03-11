@@ -41,7 +41,6 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.test.skip>true</maven.test.skip>
         <!-- maven版本使用3.9.6以上版本 -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
@@ -89,6 +88,10 @@
         <module>ddf-common-xxl-executor</module>
         <module>ddf-common-log4j</module>
         <module>ddf-common-limit</module>
+        <module>ddf-common-data-mysql-starter</module>
+        <module>ddf-common-governance-starter</module>
+        <module>ddf-common-starter-web</module>
+        <module>ddf-common-starter-default</module>
         <module>ddf-common-captcha</module>
         <module>ddf-common-ids-service</module>
         <module>ddf-common-zookeeper</module>

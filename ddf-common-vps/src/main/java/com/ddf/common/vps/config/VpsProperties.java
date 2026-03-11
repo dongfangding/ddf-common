@@ -1,4 +1,4 @@
-package comm.ddf.common.vps.config;
+package com.ddf.common.vps.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

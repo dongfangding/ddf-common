@@ -1,26 +1,70 @@
+# ddf-common-core
+
+轻量核心基础模块。
+
+定位：
+
+- 为整个 `ddf-common` 体系提供通用工具、公共模型和 Spring 支撑
+- 作为 `ddf-common-starter-web`、`ddf-common-data-mysql-starter`、`ddf-common-governance-starter` 的底层依赖
+- 不再直接承载数据库、邮件、治理等重型基础设施
+
+## 当前职责
+
+- 通用工具类
+- 公共模型与基础对象
+- Spring 上下文辅助
+- 线程池与优雅停机
+- 缓存辅助
+- 不绑定具体中间件的公共支撑能力
+
+## 不再承载的能力
+
+- JDBC
+- MySQL 驱动
+- Druid
+- Mail
+- Actuator
+
+这些能力已迁移到：
+
+- `ddf-common-data-mysql-starter`
+- `ddf-common-governance-starter`
+
+## 使用建议
+
+不建议业务项目直接依赖 `ddf-common-core`。
+
+推荐方式：
+
+- Web 服务使用 `ddf-common-starter-web`
+- 常规业务服务使用 `ddf-common-starter-default`
+
+如果你只是扩展 `ddf-common` 内部模块，可以继续依赖 `ddf-common-core`。
+
+
 核心功能包
 
 ### 特性和功能
 - 自定义参数解析器
     - 基础
-      - [SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
+        - [SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
     - 项目特性
-      - [自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
+        - [自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
 - 配置跨域
     - 基础
-       - [SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
+        - [SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
     - 项目特性
-       - [项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
+        - [项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
 - 自定义拦截器
     - 基础
-      - [SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
+        - [SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
 - 配置线程池
     - 基础
-      - [SpringBoot项目如何配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
-      - [线程池优雅关闭方案](https://blog.csdn.net/yichen0429/article/details/119818681)
-   - 项目特性
-     - [快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
-     - [让普通线程池具备优雅停机逻辑](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/shutdown/ThreadPoolExecutorShutdownDefinition.java)
+        - [SpringBoot项目如何配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
+        - [线程池优雅关闭方案](https://blog.csdn.net/yichen0429/article/details/119818681)
+    - 项目特性
+        - [快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
+        - [让普通线程池具备优雅停机逻辑](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/shutdown/ThreadPoolExecutorShutdownDefinition.java)
 - ControllerAdvice和@RestControllerAdvice的使用
     - [全局对象包装和异常处理](https://blog.csdn.net/yichen0429/article/details/120087311)
 
@@ -62,7 +106,7 @@
 * 可直接使用的异常类及状态码
 
   | 异常类                | 状态码 | 建议使用场景                         |
-  | --------------------- | ------ | ------------------------------------ |
+    | --------------------- | ------ | ------------------------------------ |
   | AccessDeniedException | 403    | 可以获取用户身份，但对请求无权限     |
   | BadRequestException   | 400    | 请求参数不合法                       |
   | BusinessException     | 500    | 用户开发人员自身抛出的业务方面的异常 |
@@ -73,10 +117,10 @@
 
 1.  如果想要出现异常时，接管异常处理，可以实现接口`com.ddf.boot.common.core.exception200.ExceptionHandlerMapping`
 
-   接管异常大致有两个方面的需求
+接管异常大致有两个方面的需求
 
-   * 仅仅是希望异常时做一些额外的处理，那么做自己想做的，但是最终返回null， 程序依然会去执行异常逻辑
-   * 有一些异常需要额外的处理，就是不想用默认的异常封装处理，那么返回自己想要的即可，只要不为null，就会以实现为准
+* 仅仅是希望异常时做一些额外的处理，那么做自己想做的，但是最终返回null， 程序依然会去执行异常逻辑
+* 有一些异常需要额外的处理，就是不想用默认的异常封装处理，那么返回自己想要的即可，只要不为null，就会以实现为准
 
 2. 出现异常了，就是不想要http的状态码为200
 
@@ -145,7 +189,7 @@ public class ResponseData<T> {
         - 要忽略的类的全类名
   ```
 
- 
+
 
 ### 访问日志打印和慢接口事件回调
 

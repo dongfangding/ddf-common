@@ -7,11 +7,11 @@ import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServi
 import com.ddf.boot.common.authentication.interfaces.impl.TokenCacheImpl;
 import com.ddf.boot.common.core.authentication.TokenCache;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * 认证模块的自动配置类类
@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author dongfang.ding
  * @since 2020/8/16 0016 13:59
  */
-@Configuration
+@AutoConfiguration
 @ComponentScan(basePackages = "com.ddf.boot.common.authentication")
 public class AuthenticationAutoConfiguration {
 

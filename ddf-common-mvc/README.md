@@ -1,32 +1,51 @@
 # ddf-common-mvc
 
-MVC 相关工具模块，提供 Web 开发常用工具。
+MVC 基础能力模块。
 
-## 功能特性
+定位：
+
+- 为 Web 场景提供 MVC 相关公共能力
+- 作为 `ddf-common-starter-web` 的组成部分
+- 不再承载数据库连接池等基础设施实现
+
+## 当前提供能力
 
 - 全局异常处理
 - 跨域配置
-- 请求日志
+- 参数解析扩展
+- 请求体缓存过滤
+- Web 工具类
+- AOP 辅助能力
 
-## 依赖引入
+## 不再承载的能力
+
+- Druid
+- MySQL 相关数据源行为
+
+这些能力已迁移到：
+
+- `ddf-common-data-mysql-starter`
+
+## 使用建议
+
+不建议业务项目直接依赖 `ddf-common-mvc`。
+
+推荐方式：
 
 ```xml
 <dependency>
     <groupId>io.github.dongfangding</groupId>
-    <artifactId>ddf-common-mvc</artifactId>
+    <artifactId>ddf-common-starter-web</artifactId>
     <version>${ddf-common.version}</version>
 </dependency>
 ```
 
-## 核心类
+如果需要数据库能力，再叠加：
 
-| 类路径 | 功能 |
-|-------|------|
-| `AbstractExceptionHandler` | 异常处理器 |
-| `GlobalCorsConfig` | 跨域配置 |
-| `WebUtil` | Web 工具类 |
-| `AopUtil` | AOP 工具类 |
-
-## 使用说明
-
-自动配置生效，无需额外配置即可使用。
+```xml
+<dependency>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-data-mysql-starter</artifactId>
+    <version>${ddf-common.version}</version>
+</dependency>
+```

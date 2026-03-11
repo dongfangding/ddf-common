@@ -1,6 +1,6 @@
 package com.ddf.boot.common.limit;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 /**
  * <p>description</p >
@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @since 2021/02/23 17:56
  */
-@Configuration
+@AutoConfiguration
 public class LimitAutoConfiguration {
 }
