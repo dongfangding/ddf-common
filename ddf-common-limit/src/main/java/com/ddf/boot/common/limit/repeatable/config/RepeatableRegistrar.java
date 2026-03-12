@@ -1,6 +1,7 @@
 package com.ddf.boot.common.limit.repeatable.config;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.ddf.boot.common.api.support.SpringSupport;
 import com.ddf.boot.common.limit.repeatable.annotation.EnableRepeatable;
 import com.ddf.boot.common.limit.repeatable.handler.RepeatAspect;
 import com.ddf.boot.common.limit.repeatable.validator.LocalRepeatableValidator;
@@ -38,19 +39,12 @@ public class RepeatableRegistrar implements ImportBeanDefinitionRegistrar {
         if (CollectionUtil.isNotEmpty(attributes)) {
             attributes.forEach(repeatablePropertiesBuilder::addPropertyValue);
         }
-        registry.registerBeanDefinition(RepeatableProperties.BEAN_NAME, repeatablePropertiesBuilder.getBeanDefinition());
-        registry.registerBeanDefinition(
-                RepeatAspect.BEAN_NAME, BeanDefinitionBuilder.genericBeanDefinition(RepeatAspect.class)
-                        .getBeanDefinition());
-        registry.registerBeanDefinition(
-                LocalRepeatableValidator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(LocalRepeatableValidator.class)
-                        .getBeanDefinition()
-        );
-        registry.registerBeanDefinition(
-                RedisRepeatableValidator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(RedisRepeatableValidator.class)
-                        .getBeanDefinition()
-        );
+		SpringSupport.registerIfAbsent(registry, RepeatableProperties.BEAN_NAME, repeatablePropertiesBuilder);
+		SpringSupport.registerIfAbsent(registry, RepeatAspect.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(RepeatAspect.class));
+		SpringSupport.registerIfAbsent(registry, LocalRepeatableValidator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(LocalRepeatableValidator.class));
+		SpringSupport.registerIfAbsent(registry, RedisRepeatableValidator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(RedisRepeatableValidator.class));
     }
 }

@@ -6,14 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * 存放一些全局的自定义属性，根据需要决定是否可配置
  *
  * @author dongfang.ding on 2019/1/25
  */
-@Component
 @ConfigurationProperties(prefix = "customizer.infra.global-properties")
 @Getter
 @Setter

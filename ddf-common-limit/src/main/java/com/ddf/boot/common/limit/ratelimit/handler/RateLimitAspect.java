@@ -3,7 +3,6 @@ package com.ddf.boot.common.limit.ratelimit.handler;
 import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.UserContextUtil;
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
@@ -50,6 +49,7 @@ public class RateLimitAspect {
     private final RedisTemplateHelper redisTemplateHelper;
     private final RateLimitProperties rateLimitProperties;
     private final ObjectProvider<RateLimitPropertiesCollect> rateLimitPropertiesCollect;
+    private final Map<String, RateLimitKeyGenerator> keyGeneratorMap;
 
     public static final String BEAN_NAME = "rateLimitAspect";
 
@@ -57,13 +57,6 @@ public class RateLimitAspect {
             new StandardReflectionParameterNameDiscoverer();
 
     private final ExpressionParser parser = new SpelExpressionParser();
-
-    /**
-     * key生成规则实现器
-     *
-     */
-    public static final Map<String, RateLimitKeyGenerator> KEY_GENERATOR_MAP = SpringContextHolder.getBeansOfType(
-            RateLimitKeyGenerator.class);
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
             + " || @within(com.ddf.boot.common.limit.ratelimit.annotation.RateLimit)"
@@ -156,12 +149,12 @@ public class RateLimitAspect {
             }
 
             // 强制性校验，避免隐藏错误
-            if (!KEY_GENERATOR_MAP.containsKey(keyGenerator)) {
+            if (!keyGeneratorMap.containsKey(keyGenerator)) {
                 throw new NoSuchBeanDefinitionException("限流组件[%s]不存在".formatted(keyGenerator));
             }
 
             // 生成限流的key
-            String key = KEY_GENERATOR_MAP
+            String key = keyGeneratorMap
                     .get(keyGenerator)
                     .generateKey(joinPoint, annotation, rateLimitProperties);
             if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {

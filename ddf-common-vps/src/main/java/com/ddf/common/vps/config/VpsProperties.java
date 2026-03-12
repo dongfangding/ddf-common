@@ -2,7 +2,6 @@ package com.ddf.common.vps.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2021/12/01 19:36
  */
-@Component
 @ConfigurationProperties(prefix = "customizer.infra.vps")
 @Data
 public class VpsProperties {

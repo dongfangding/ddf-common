@@ -1,6 +1,7 @@
 package com.ddf.boot.common.limit.ratelimit.config;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.ddf.boot.common.api.support.SpringSupport;
 import com.ddf.boot.common.limit.ratelimit.annotation.EnableRateLimit;
 import com.ddf.boot.common.limit.ratelimit.handler.RateLimitAspect;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.GlobalRateLimitKeyGenerator;
@@ -40,21 +41,18 @@ public class RateLimitRegistrar implements ImportBeanDefinitionRegistrar {
             attributes.forEach(rateLimitProperties::addPropertyValue);
         }
         // 注册全局属性类
-        registry.registerBeanDefinition(RateLimitProperties.BEAN_NAME, rateLimitProperties.getBeanDefinition());
+		SpringSupport.registerIfAbsent(registry, RateLimitProperties.BEAN_NAME, rateLimitProperties);
 
         // 注册限流处理类
-        registry.registerBeanDefinition(RateLimitAspect.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(RateLimitAspect.class).getBeanDefinition());
+		SpringSupport.registerIfAbsent(registry, RateLimitAspect.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(RateLimitAspect.class));
 
         // 注册限流key规则生成器
-        registry.registerBeanDefinition(GlobalRateLimitKeyGenerator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(GlobalRateLimitKeyGenerator.class).getBeanDefinition()
-        );
-        registry.registerBeanDefinition(IdentityRateLimitKeyGenerator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class).getBeanDefinition()
-        );
-        registry.registerBeanDefinition(IpRateLimitKeyGenerator.BEAN_NAME,
-                BeanDefinitionBuilder.genericBeanDefinition(IpRateLimitKeyGenerator.class).getBeanDefinition()
-        );
+		SpringSupport.registerIfAbsent(registry, GlobalRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(GlobalRateLimitKeyGenerator.class));
+		SpringSupport.registerIfAbsent(registry, IdentityRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class));
+		SpringSupport.registerIfAbsent(registry, IpRateLimitKeyGenerator.BEAN_NAME,
+                BeanDefinitionBuilder.genericBeanDefinition(IpRateLimitKeyGenerator.class));
     }
 }

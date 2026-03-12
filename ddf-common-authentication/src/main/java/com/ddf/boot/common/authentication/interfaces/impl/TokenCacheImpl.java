@@ -6,13 +6,10 @@ import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.interfaces.RedisTemplateSupport;
 import com.ddf.boot.common.core.authentication.TokenCache;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import com.ddf.boot.common.core.helper.SpringContextHolder;
-import jakarta.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -21,14 +18,12 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2023/06/25 14:44
  */
-@Component
-@RequiredArgsConstructor
 @Slf4j
 public class TokenCacheImpl implements TokenCache {
 
     public static final String BEAN_NAME = "tokenCacheImpl";
 
-    private StringRedisTemplate stringRedisTemplate = RedisTemplateSupport.defaultRedisTemplate();
+    private final StringRedisTemplate stringRedisTemplate;
     private final AuthenticationProperties authenticationProperties;
     private final EnvironmentHelper environmentHelper;
 
@@ -49,11 +44,13 @@ public class TokenCacheImpl implements TokenCache {
         return TOKEN_KEY.formatted(environmentHelper.getApplicationName(), uid);
     }
 
-    @PostConstruct
-    public void init() {
-        if (SpringContextHolder.containsBeanType(RedisTemplateSupport.class)) {
-            stringRedisTemplate = SpringContextHolder.getBean(RedisTemplateSupport.class).getStringRedisTemplate();
-        }
+    public TokenCacheImpl(AuthenticationProperties authenticationProperties, EnvironmentHelper environmentHelper,
+            StringRedisTemplate defaultRedisTemplate, ObjectProvider<RedisTemplateSupport> redisTemplateSupport) {
+        this.authenticationProperties = authenticationProperties;
+        this.environmentHelper = environmentHelper;
+        this.stringRedisTemplate = redisTemplateSupport
+                .getIfAvailable(() -> () -> defaultRedisTemplate)
+                .getStringRedisTemplate();
     }
     /**
      * @param userClaim 参数

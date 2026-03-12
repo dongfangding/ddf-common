@@ -1,17 +1,21 @@
 package com.ddf.boot.common.authentication.config;
 
 import com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter;
+import com.ddf.boot.common.authentication.interfaces.RedisTemplateSupport;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
 import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServiceImpl;
 import com.ddf.boot.common.authentication.interfaces.impl.TokenCacheImpl;
 import com.ddf.boot.common.core.authentication.TokenCache;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * 认证模块的自动配置类类
@@ -20,6 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2020/8/16 0016 13:59
  */
 @AutoConfiguration
+@EnableConfigurationProperties(AuthenticationProperties.class)
 @ComponentScan(basePackages = "com.ddf.boot.common.authentication")
 public class AuthenticationAutoConfiguration {
 
@@ -39,7 +44,9 @@ public class AuthenticationAutoConfiguration {
     @ConditionalOnBean(AuthenticateTokenFilter.class)
     @ConditionalOnMissingBean(TokenCache.class)
     public TokenCache tokenCacheImpl(AuthenticationProperties authenticationProperties,
-            EnvironmentHelper environmentHelper) {
-        return new TokenCacheImpl(authenticationProperties, environmentHelper);
+            EnvironmentHelper environmentHelper, StringRedisTemplate stringRedisTemplate,
+            ObjectProvider<RedisTemplateSupport> redisTemplateSupport) {
+        return new TokenCacheImpl(authenticationProperties, environmentHelper, stringRedisTemplate,
+                redisTemplateSupport);
     }
 }

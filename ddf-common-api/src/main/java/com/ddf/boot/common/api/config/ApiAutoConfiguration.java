@@ -1,6 +1,8 @@
 package com.ddf.boot.common.api.config;
 
+import com.ddf.boot.common.api.urlreplace.StaticProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2020/8/15 0015 17:59
  */
 @AutoConfiguration
+@EnableConfigurationProperties(StaticProperties.class)
 @ComponentScan(basePackages = "com.ddf.boot.common.api")
 public class ApiAutoConfiguration {
 

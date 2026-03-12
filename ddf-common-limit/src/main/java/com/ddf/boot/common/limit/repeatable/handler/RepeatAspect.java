@@ -2,7 +2,6 @@ package com.ddf.boot.common.limit.repeatable.handler;
 
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.UserContextUtil;
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
 import com.ddf.boot.common.limit.repeatable.annotation.RepeatableIgnore;
@@ -10,6 +9,7 @@ import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import com.ddf.boot.common.limit.repeatable.validator.RepeatableValidator;
 import com.ddf.boot.common.mvc.util.AopUtil;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -18,7 +18,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>表单防重校验</p >
@@ -29,18 +28,17 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Aspect
 @Slf4j
+@RequiredArgsConstructor
 public class RepeatAspect {
 
     public static final String BEAN_NAME = "repeatAspect";
 
-    @Autowired
-    private RepeatableProperties repeatableProperties;
+    private final RepeatableProperties repeatableProperties;
 
     /**
      * 表单防重校验接口实现
      */
-    private final Map<String, RepeatableValidator> handlerMapping = SpringContextHolder.getBeansOfType(
-            RepeatableValidator.class);
+    private final Map<String, RepeatableValidator> handlerMapping;
 
     @Pointcut(value = "@annotation(com.ddf.boot.common.limit.repeatable.annotation.Repeatable) || @within(com.ddf.boot.common.limit.repeatable.annotation.Repeatable)")
     public void pointCut() {

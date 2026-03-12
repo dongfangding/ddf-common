@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 @Data
 @NoArgsConstructor
 @RefreshScope
-@Component
 public class StaticProperties {
 
     private String name;

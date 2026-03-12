@@ -5,6 +5,7 @@ import com.ddf.boot.common.core.gracefulshutdown.ExecutorServiceGracefulShutdown
 import java.util.concurrent.TimeUnit;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2020/8/15 0015 17:59
  */
 @AutoConfiguration
+@EnableConfigurationProperties(GlobalProperties.class)
 @ComponentScan(basePackages = GlobalConstants.CORE_BASE_PACKAGE)
 public class CoreAutoConfiguration {
 

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.mvc.logaccess;
 
+import com.ddf.boot.common.api.support.SpringSupport;
 import java.util.Map;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -12,6 +13,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @author dongfang.ding on 2018/11/7
  */
 public class LogAspectRegistrar implements ImportBeanDefinitionRegistrar {
+
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
         registryLogAspect(metadata, registry);
@@ -28,19 +30,14 @@ public class LogAspectRegistrar implements ImportBeanDefinitionRegistrar {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(LogAspectConfiguration.class);
         if (exist) {
             // 拦截器默认不开启，只有开启了相关功能才注入到IOC，使之生效
-            if (!registry.containsBeanDefinition(AccessLogAspect.BEAN_NAME)) {
-                BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder.
-                        genericBeanDefinition(AccessLogAspect.class);
-                registry.registerBeanDefinition(
-                        AccessLogAspect.BEAN_NAME,
-                        requestContextDefinition.getBeanDefinition()
-                );
-            }
+            BeanDefinitionBuilder requestContextDefinition = BeanDefinitionBuilder
+                    .genericBeanDefinition(AccessLogAspect.class);
+			SpringSupport.registerIfAbsent(registry, AccessLogAspect.BEAN_NAME, requestContextDefinition);
             Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(EnableLogAspect.class.getName(), true);
             if (defaultAttrs != null && !defaultAttrs.isEmpty()) {
                 defaultAttrs.forEach(builder::addPropertyValue);
             }
         }
-        registry.registerBeanDefinition(LogAspectConfiguration.BEAN_NAME, builder.getBeanDefinition());
+		SpringSupport.registerIfAbsent(registry, LogAspectConfiguration.BEAN_NAME, builder);
     }
 }
