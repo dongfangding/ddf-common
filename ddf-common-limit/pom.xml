@@ -13,7 +13,7 @@
     <artifactId>ddf-common-limit</artifactId>
     <version>${revision}</version>
     <name>ddf-common-limit</name>
-    <description>Rate limit and repeat-submit protection module.</description>
+    <description>Rate limiting and repeat-submit protection module for Spring Boot applications.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>

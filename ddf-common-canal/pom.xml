@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ddf-common-canal</artifactId>
     <name>ddf-common-canal</name>
-    <description>canal订阅分发</description>
+    <description>Canal subscription and message dispatch support module.</description>
     <version>${revision}</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,4 +48,3 @@
     </dependencies>
     
 </project>
-

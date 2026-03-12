@@ -1,14 +1,16 @@
 # ddf-common-mongo
 
-MongoDB 集成模块，提供 MongoDB 操作封装。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+MongoDB integration helper module.
 
-- MongoDB 客户端集成
-- 分页查询支持
-- 常用操作封装
+## Current Positioning
 
-## 依赖引入
+- Provides the component scanning entry for MongoDB-related support
+- Provides helper capabilities such as `MongoTemplateHelper`
+- The current module is lightweight and is closer to MongoDB integration assistance than to a full data access framework
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,23 +20,16 @@ MongoDB 集成模块，提供 MongoDB 操作封装。
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径 | 功能 |
-|-------|------|
-| `MongoTemplate` | MongoDB 模板 |
-| `MongoProperties` | 配置属性 |
-| `PageUtil` | 分页工具 |
+- `com.ddf.boot.mongo.config.MongoAutoConfiguration`
 
-## 使用说明
+## Main Types
 
-```java
-@Autowired
-private MongoTemplate mongoTemplate;
+- `MongoAutoConfiguration`
+- `MongoTemplateHelper`
 
-// 保存文档
-mongoTemplate.save(entity);
+## Notes
 
-// 查询
-List<Entity> list = mongoTemplate.find(query, Entity.class);
-```
+- The module mainly establishes a shared organizational entry for Mongo-related support
+- Fuller repository, query-model, and paging capabilities should be built in business code or later dedicated modules

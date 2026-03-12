@@ -1,5 +1,6 @@
 package com.ddf.boot.mongo.config;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @version 1.0
  * @since 2020/09/21 19:16
  */
+@AutoConfiguration
 @ComponentScan("com.ddf.boot.mongo")
 public class MongoAutoConfiguration {
 }

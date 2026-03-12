@@ -54,8 +54,6 @@ public class MqttMessagePayload implements Serializable {
      * 那么下面消息体的body字段持久化的时候就是消息对象的json序列化字符串。而取出来消息的要使用的时候是需要反序列化回来的，
      * 可以根据这个字段来判断来决定如何序列化，当然下面还有一个bizType字段是业务类型，根据场景决定可能也是可以使用的，
      * 使用方自己决定即可，这里只是预留字段
-     *
-     * @return
      */
     private String deserializeType;
 
@@ -69,17 +67,15 @@ public class MqttMessagePayload implements Serializable {
 
     /**
      * 消息body
-     *
-     * 注意这个值来源于{@link InnerMqttMessageRequest#getBody()}
+     * 注意这个值来源于{@link com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest#getBody()}
      * 这里的T舍弃了限定符， 是为了避免对象序列化之后，由于多态无法反序列化问题。
      * 如果要支持，会把这一块搞发非常复杂，目前应该没有必要
-     * @param byte 参数
      */
     private String body;
 
     /**
      * 通过外部发送消息的请求对象转换为实际要发送mqtt message的payload
-     * {@link MqttMessage#setPayload(byte[])} ()}
+     * {@link org.eclipse.paho.mqttv5.common.MqttMessage#setPayload(byte[])} ()}
      *
      * @param request
      * @param serverClientId

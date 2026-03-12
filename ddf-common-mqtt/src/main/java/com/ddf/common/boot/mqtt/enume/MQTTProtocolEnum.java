@@ -21,7 +21,6 @@ import lombok.Getter;
  * @version 1.0
  * @since 2022/03/18 12:01
  */
-@Getter
 public enum MQTTProtocolEnum {
 
     /**
@@ -46,9 +45,11 @@ public enum MQTTProtocolEnum {
     ;
 
     /**
-     * @param protocol 参数
+	 * 协议
      */
+	@Getter
     private final String protocol;
+	@Getter
     private static final Map<String, MQTTProtocolEnum> MAPPINGS;
     MQTTProtocolEnum(String protocol) {
         this.protocol = protocol;

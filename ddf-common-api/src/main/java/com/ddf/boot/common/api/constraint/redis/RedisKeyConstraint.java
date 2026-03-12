@@ -70,7 +70,7 @@ public interface RedisKeyConstraint {
         if (PatternUtil.findChildStrCount(template, TEMPLATE_SPLIT_CHAR) != args.length) {
             throw new ServerErrorException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
         }
-        return template.formatted(args);
+        return template.formatted((Object) args);
     }
 
     /**
@@ -84,6 +84,6 @@ public interface RedisKeyConstraint {
         if (Objects.isNull(shardingRule)) {
             return getKey(args);
         }
-        return String.join("_", getTemplate().formatted(args), shardingRule.getSharding(args));
+        return String.join("_", getTemplate().formatted((Object) args), shardingRule.getSharding(args));
     }
 }

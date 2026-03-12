@@ -1,14 +1,16 @@
 # ddf-common-mqtt-client
 
-MQTT 客户端模块，提供 MQTT 协议客户端功能。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Higher-level MQTT client model module built on top of `ddf-common-mqtt`.
 
-- MQTT 连接管理
-- 消息发布/订阅
-- 自动重连
+## Current Positioning
 
-## 依赖引入
+- Provides business-oriented message body and topic abstractions
+- Provides controller and model support for MQTT client scenarios
+- Depends on the base `ddf-common-mqtt` module
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,39 +20,17 @@ MQTT 客户端模块，提供 MQTT 协议客户端功能。
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.mqtt.client.config.MqttClientProperties` | 客户端配置 |
-| `com.ddf.boot.common.mqtt.client.api.MqttClientApi` | MQTT 客户端 API |
+- `com.ddf.common.boot.mqttclient.config.MqttClientAutoConfiguration`
 
-## 使用说明
+## Main Types
 
-### 配置
+- `MqttClientController`
+- `MqttMessageRequest`
+- `MqttTopicDefine`
+- `TextMessageBody`
 
-```yaml
-ddf:
-  mqtt:
-    client:
-      server-uri: tcp://localhost:1883
-      client-id: client-001
-      username: guest
-      password: guest
-```
+## Notes
 
-### 发布消息
-
-```java
-@Autowired
-private MqttClientApi mqttClientApi;
-
-public void publish(String topic, String payload) {
-    mqttClientApi.publish(topic, payload);
-}
-```
-
-## 注意事项
-
-1. **连接管理**：确保 MQTT Broker 可用
-2. **消息 QoS**：根据业务需求选择合适的 QoS 等级
+- This is not an independent MQTT protocol implementation, but a business-facing wrapper around the base MQTT client capability

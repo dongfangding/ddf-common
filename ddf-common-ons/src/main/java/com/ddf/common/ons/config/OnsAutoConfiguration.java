@@ -4,9 +4,9 @@ import com.aliyun.openservices.ons.api.bean.OrderProducerBean;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.ddf.common.ons.console.config.OnsClientConfiguration;
 import com.ddf.common.ons.properties.OnsProperties;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
  * @author snowball
  * @since 2021/8/26 14:48
  **/
-@Configuration
+@AutoConfiguration
 @Import({OnsListenerContainerConfiguration.class, OnsClientConfiguration.class})
 @ComponentScan(basePackages = {"com.ddf.common.ons"})
 public class OnsAutoConfiguration {

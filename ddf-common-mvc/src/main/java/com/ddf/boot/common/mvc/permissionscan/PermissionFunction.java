@@ -33,7 +33,7 @@ public @interface PermissionFunction {
     String code() default "";
 
     /**
-     * 权限代码，本项目中直接读取{@link PreAuthorize}中的表达式
+     * 权限代码
      *
      * @return
      */

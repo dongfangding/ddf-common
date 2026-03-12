@@ -36,7 +36,6 @@ public class AopUtil {
      * @param joinPoint
      * @param targetAnnotation
      * @return T
-     * @author dongfang.ding
      * @since 2019/12/20 0020 10:29
      **/
     public static <T extends Annotation> T getAnnotation(JoinPoint joinPoint, Class<T> targetAnnotation)
@@ -78,8 +77,6 @@ public class AopUtil {
      * 获取指定类型的参数
      *
      * @param joinPoint
-     * @return java.util.Map<java.lang.Class < ?>,java.lang.Object>
-     * @author dongfang.ding
      * @since 2019/12/20 0020 11:28
      **/
     public static Map<Class<?>, Object> getArgs(JoinPoint joinPoint) {
@@ -103,8 +100,6 @@ public class AopUtil {
      * 可以用{@link AopUtil#getSerializableParamMap(JoinPoint)}代替
      *
      * @param joinPoint
-     * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author dongfang.ding
      * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getAllParamMap(JoinPoint joinPoint) {
@@ -123,8 +118,6 @@ public class AopUtil {
      * 返回可以序列化的当前方法的参数map
      *
      * @param joinPoint
-     * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author dongfang.ding
      * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getSerializableParamMap(JoinPoint joinPoint) {

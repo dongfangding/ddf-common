@@ -3,6 +3,7 @@ package com.ddf.common.boot.mqtt.model.support.topic;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Notice2PointMqttTopic extends AbstractPoint2PointTopic {
 
     /**

@@ -14,7 +14,7 @@
     <artifactId>ddf-common-s3</artifactId>
     <version>${revision}</version>
     <name>ddf-common-s3</name>
-    <description>基于s3协议的对象存储模块</description>
+    <description>S3-compatible object storage integration module.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>

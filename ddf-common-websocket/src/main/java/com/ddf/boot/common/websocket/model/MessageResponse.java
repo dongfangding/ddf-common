@@ -72,9 +72,6 @@ public class MessageResponse<T> implements Serializable {
      * <p>
      * 请求的id，针对执行下发的一个阻塞实现，如果请求被转发到另一台服务器，另一台服务器返回的数据需要携带
      * requestId，这样数据回传回来才能找到数据对应的源请求
-     * @param code 参数
-     * @param message 参数
-     * @param payload 参数
      */
     private String requestId;
 

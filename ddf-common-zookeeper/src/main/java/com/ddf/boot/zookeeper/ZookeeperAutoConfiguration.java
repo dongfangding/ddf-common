@@ -1,7 +1,7 @@
 package com.ddf.boot.zookeeper;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>description</p >
@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 2020/10/09 18:24
  */
 @ComponentScan("com.ddf.boot.zookeeper")
-@Configuration
+@AutoConfiguration
 public class ZookeeperAutoConfiguration {
 }

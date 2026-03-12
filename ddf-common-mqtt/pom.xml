@@ -13,7 +13,7 @@
     <artifactId>ddf-common-mqtt</artifactId>
     <version>${revision}</version>
     <name>ddf-common-mqtt</name>
-    <description>mqtt通用client模块</description>
+    <description>MQTT client integration module with publishing and connection support.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -78,4 +78,3 @@
     </dependencies>
 
 </project>
-

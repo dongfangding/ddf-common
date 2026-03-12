@@ -68,8 +68,6 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 连接客户端，注册CuratorFramework对象
      * http://curator.apache.org/getting-started.html
-     *
-     * @return
      */
     public void initClient() {
         log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());

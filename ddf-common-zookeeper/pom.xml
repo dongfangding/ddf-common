@@ -13,7 +13,7 @@
     <artifactId>ddf-common-zookeeper</artifactId>
     <version>${revision}</version>
     <name>ddf-common-zookeeper</name>
-    <description>zk使用相关工具</description>
+    <description>Zookeeper utility and monitoring support module.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,4 +44,3 @@
 
     </dependencies>
 </project>
-

@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>ddf-common-captcha</name>
-    <description>验证码生成器模块</description>
+    <description>Captcha module for image and behavior-based verification support.</description>
 
     <artifactId>ddf-common-captcha</artifactId>
     <version>${revision}</version>
@@ -64,4 +64,3 @@
     </dependencies>
 
 </project>
-

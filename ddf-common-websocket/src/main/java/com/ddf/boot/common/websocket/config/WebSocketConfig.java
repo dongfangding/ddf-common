@@ -12,9 +12,9 @@ import com.ddf.boot.common.websocket.properties.WebSocketProperties;
 import java.util.List;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
@@ -33,7 +33,7 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
  * @author dongfang.ding
  * @since 2019/8/20 11:43
  */
-@Configuration
+@AutoConfiguration
 @EnableWebSocket
 @MapperScan(basePackages = "com.ddf.boot.common.websocket.mapper")
 @ComponentScan(basePackages = "com.ddf.boot.common.websocket")

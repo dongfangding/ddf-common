@@ -13,7 +13,7 @@
     <artifactId>ddf-common-es</artifactId>
     <version>${revision}</version>
     <name>ddf-common-es</name>
-    <description>es依赖模块</description>
+    <description>Elasticsearch integration dependency module.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -34,4 +34,3 @@
     </dependencies>
 
 </project>
-

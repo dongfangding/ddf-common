@@ -1,14 +1,16 @@
 # ddf-common-third-party
 
-第三方服务集成模块，提供 OSS、SMS 等第三方服务封装。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Third-party service integration module.
 
-- OSS 对象存储
-- SMS 短信服务
-- 统一接口封装
+## Current Positioning
 
-## 依赖引入
+- Provides a unified entry point for third-party service integrations
+- Currently focuses on Alibaba Cloud OSS and SMS-related capabilities
+- Offers reusable integration support for higher-level business modules
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,40 +20,18 @@
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.third.party.oss.OssApi` | OSS 操作接口 |
-| `com.ddf.boot.common.third.party.sms.SmsApi` | 短信发送接口 |
-| `com.ddf.boot.common.third.party.config.ThirdPartyProperties` | 配置属性 |
+- `com.ddf.boot.common.ext.ExtAutoConfiguration`
+- `com.ddf.boot.common.ext.oss.config.OssBeanAutoConfiguration`
 
-## 使用说明
+## Main Types
 
-### OSS 配置
+- `OssProperties`
+- `OssHelper`
+- `AliYunSmsProperties`
 
-```yaml
-ddf:
-  third-party:
-    oss:
-      endpoint: oss-cn-hangzhou.aliyuncs.com
-      access-key-id: your-access-key
-      access-key-secret: your-access-secret
-      bucket-name: your-bucket
-```
+## Notes
 
-### 上传文件
-
-```java
-@Autowired
-private OssApi ossApi;
-
-public String upload(String key, InputStream inputStream) {
-    return ossApi.upload(key, inputStream);
-}
-```
-
-## 注意事项
-
-1. **密钥安全**：生产环境使用配置中心管理密钥
-2. **权限控制**：合理设置 Bucket 权限
+- The currently exposed public capabilities mainly focus on OSS and SMS
+- If more third-party integrations are added later, they should continue to be split by service domain and documented separately

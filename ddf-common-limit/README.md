@@ -1,25 +1,29 @@
 # ddf-common-limit
 
-限流与防重复提交模块。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-定位：
+Rate limiting and repeat-submission protection module.
 
-- 提供接口限流、防重复提交等能力
-- 作为 `ddf-common-starter-web` 的组成部分
-- 依赖认证、MVC、Redis 等基础能力共同工作
+Positioning:
 
-## 当前提供能力
+- Provides API rate limiting and repeat-submission protection
+- Acts as part of `ddf-common-starter-web`
+- Works together with authentication, MVC, Redis, and other foundational modules
+
+## Current Capabilities
 
 - `@RateLimit`
 - `@MultiRateLimit`
-- 防重复提交能力
-- 限流 Key 生成扩展
+- `@EnableRateLimit`
+- `@EnableRepeatable`
+- Repeat-submission protection
+- Rate-limit key generation extensions
 
-## 使用建议
+## Usage Recommendation
 
-不建议业务项目直接依赖 `ddf-common-limit`。
+Direct business dependencies on `ddf-common-limit` are not recommended.
 
-推荐方式：
+Recommended option:
 
 ```xml
 <dependency>
@@ -29,7 +33,7 @@
 </dependency>
 ```
 
-如果业务同时需要数据库和治理能力，推荐直接使用：
+If the business service also needs database and governance support, prefer:
 
 ```xml
 <dependency>
@@ -39,12 +43,18 @@
 </dependency>
 ```
 
-## 说明
+## Notes
 
-`ddf-common-limit` 当前仍然和：
+`ddf-common-limit` currently still collaborates with:
 
 - `ddf-common-mvc`
 - `ddf-common-authentication`
 - `ddf-common-redis`
 
-存在协同关系，因此更适合作为 starter 内部组成部分使用，而不是由业务项目手工单独拼装。
+This makes it more suitable as an internal starter component than as a standalone business dependency to be manually assembled.
+
+Additional notes:
+
+- `LimitAutoConfiguration` itself is currently lightweight
+- Actual rate limiting and repeat-submission protection still depend mainly on the import chain triggered by `@EnableRateLimit` and `@EnableRepeatable`
+- Simply importing the dependency is therefore not equivalent to all limiting capabilities becoming active automatically

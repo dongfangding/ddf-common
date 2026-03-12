@@ -12,8 +12,8 @@
 
     <artifactId>ddf-common-alarm</artifactId>
     <version>${revision}</version>
-    <name>ddf-common-api</name>
-    <description>告警模块</description>
+    <name>ddf-common-alarm</name>
+    <description>Alarm integrations for exception, log, and rule-based notifications.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

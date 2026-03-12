@@ -13,7 +13,7 @@
     <artifactId>ddf-common-ids-service</artifactId>
     <version>${revision}</version>
     <name>ddf-common-ids-service</name>
-    <description>id生成器模块</description>
+    <description>Distributed ID generation service module.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -66,4 +66,3 @@
     </dependencies>
 
 </project>
-

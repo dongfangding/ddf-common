@@ -13,7 +13,7 @@
     <artifactId>ddf-common-governance-starter</artifactId>
     <version>${revision}</version>
     <name>ddf-common-governance-starter</name>
-    <description>Governance starter for mail and observability capabilities.</description>
+    <description>Governance starter for mail, actuator, and basic observability capabilities.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,6 +39,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

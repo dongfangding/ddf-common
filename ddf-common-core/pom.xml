@@ -13,7 +13,7 @@
     <artifactId>ddf-common-core</artifactId>
     <version>${revision}</version>
     <name>ddf-common-core</name>
-    <description>Lightweight core support module.</description>
+    <description>Core support module for shared utilities, configuration, cache, and common infrastructure helpers.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

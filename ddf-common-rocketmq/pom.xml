@@ -13,7 +13,7 @@
     <artifactId>ddf-common-rocketmq</artifactId>
     <name>ddf-common-rocketmq</name>
     <version>${revision}</version>
-    <description>原生sdk对接RocketMQ</description>
+    <description>RocketMQ integration module with enhanced producer and message support.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -42,4 +42,3 @@
 
 
 </project>
-

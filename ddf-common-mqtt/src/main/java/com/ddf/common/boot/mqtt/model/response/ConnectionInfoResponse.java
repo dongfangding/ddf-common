@@ -24,7 +24,7 @@ public class ConnectionInfoResponse implements Serializable {
 
     /**
      * 协议
-     * @see MQTTProtocolEnum#getProtocol()
+     * @see com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum#getProtocol()
      */
     private String protocol;
 

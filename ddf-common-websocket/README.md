@@ -1,15 +1,17 @@
 # ddf-common-websocket
 
-WebSocket 模块，提供实时通信功能。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+WebSocket support module that provides connection registration, handshake extensions, and message-handling foundations.
 
-- WebSocket 连接管理
-- 消息推送
-- 集群消息转发
-- 消息加密
+## Current Positioning
 
-## 依赖引入
+- Provides WebSocket configuration registration
+- Provides handshake authentication and interceptor extension points
+- Provides default message handling and listener support
+- The current implementation is infrastructure-oriented rather than an annotation-driven chat framework
+
+## Dependency
 
 ```xml
 <dependency>
@@ -19,34 +21,18 @@ WebSocket 模块，提供实时通信功能。
 </dependency>
 ```
 
-## 核心类
+## Core Configuration Types
 
-| 类路径                | 功能            |
-|--------------------|---------------|
-| `WebSocketServer`  | WebSocket 服务端 |
-| `WebSocketSender`  | 消息发送器         |
-| `WsSessionManager` | 会话管理          |
+- `com.ddf.boot.common.websocket.config.WebSocketConfig`
+- `com.ddf.boot.common.websocket.properties.WebSocketProperties`
 
-## 使用说明
+## Main Extension Points
 
-```java
-@WebSocket("/ws")
-public class MyWebSocket extends WebSocketServer {
+- `HandshakeAuth`
+- `HandlerMessageService`
+- `WebSocketHandlerListener`
 
-    @Override
-    public void onMessage(String message) {
-        // 处理消息
-    }
-}
-```
+## Notes
 
-### 发送消息
-
-```java
-@Autowired
-private WebSocketSender sender;
-
-public void sendToUser(String userId, String message) {
-    sender.sendToUser(userId, message);
-}
-```
+- The current module still contains some business-coupled traces, so adoption should be evaluated against your own business model first
+- If it is to remain a long-term public component, more business-specific parts should continue to be separated later

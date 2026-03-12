@@ -37,7 +37,6 @@ public class InnerMqttMessageRequest implements Serializable {
      * 因为有一种场景，比如聊天室里的历史消息，每个都是不同的业务，消息存储的时候是一个大json， 反序列化的时候，就很难知道是哪个对象。
      * 要么使用messageCode字段判断业务，然后硬编码去反序列化，这里可以提供一个字段直接将类写进去，反序列化的时候直接使用就行
      *
-     * @return
      */
     private String deserializeType;
 

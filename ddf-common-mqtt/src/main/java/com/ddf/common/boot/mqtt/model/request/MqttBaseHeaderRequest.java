@@ -4,6 +4,7 @@ import com.ddf.common.boot.mqtt.model.support.header.MqttBaseHeader;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * <p>mqtt 请求头 请求对象 </p >
@@ -15,6 +16,7 @@ import lombok.Data;
  * @since 2022/03/19 11:29
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class MqttBaseHeaderRequest extends MqttBaseHeader implements Serializable {
 
     @Serial

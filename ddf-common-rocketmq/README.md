@@ -1,15 +1,17 @@
 # ddf-common-rocketmq
 
-RocketMQ 消息队列模块。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+RocketMQ enhancement integration module.
 
-- 消息发送
-- 消息消费
-- 顺序消息
-- 事务消息
+## Current Positioning
 
-## 依赖引入
+- Provides an enhancement layer based on `rocketmq-spring-boot-starter`
+- Provides the enhanced `RocketProducer`
+- Handles Jackson message conversion compatibility for Java time types
+- Supports property-driven environment isolation behavior
+
+## Dependency
 
 ```xml
 <dependency>
@@ -19,34 +21,27 @@ RocketMQ 消息队列模块。
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径                | 功能   |
-|--------------------|------|
-| `RocketMqProducer` | 生产者  |
-| `RocketMqConsumer` | 消费者  |
-| `MqProperties`     | 配置属性 |
+- `com.ddf.boot.common.rocketmq.config.RocketMQEnhanceAutoConfiguration`
 
-## 使用说明
+## Main Types
 
-### 配置
+- `RocketProducer`
+- `RocketEnhanceProperties`
+- `EnvironmentIsolationProcessor`
+
+## Related Configuration
+
+Environment isolation switch:
 
 ```yaml
-ddf:
-  rocketmq:
-    producer:
-      namesrv-addr: localhost:9876
-    consumer:
-      namesrv-addr: localhost:9876
+rocketmq:
+  enhance:
+    enabledIsolation: true
 ```
 
-### 发送消息
+## Notes
 
-```java
-@Autowired
-private RocketMqProducer producer;
-
-public void send(String topic, String message) {
-    producer.send(topic, message);
-}
-```
+- This module is not a rewrite of the full RocketMQ capability set, but an enhancement layer on top of Spring RocketMQ integration
+- Standard RocketMQ connection parameters should still be configured through the native starter conventions

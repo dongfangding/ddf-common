@@ -4,7 +4,7 @@ import com.ddf.common.boot.mqtt.model.request.emq.EmqAuthenticateRequest;
 import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse;
 
 /**
- * <p客户端自己根据用户信息判断是否是授权登录用户</p >
+ * <p>客户端自己根据用户信息判断是否是授权登录用户</p >
  *
  *
  * @author Snowball

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  * 速度区间定义
  *
  * @author snowball
- * @date 2026/1/19 15:18
+ * @since 2026/1/19 15:18
  **/
 @Data
 @NoArgsConstructor

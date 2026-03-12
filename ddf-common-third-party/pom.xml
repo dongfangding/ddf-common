@@ -13,7 +13,7 @@
     <artifactId>ddf-common-third-party</artifactId>
     <version>${revision}</version>
     <name>ddf-common-third-party</name>
-    <description>第三方扩展工具包</description>
+    <description>Third-party integration module for services such as OSS and SMS.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -60,4 +60,3 @@
         </dependency>
     </dependencies>
 </project>
-

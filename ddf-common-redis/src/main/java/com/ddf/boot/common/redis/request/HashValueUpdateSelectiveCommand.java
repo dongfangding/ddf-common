@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2026/01/22 17:52
+ * @since 2026/01/22 17:52
  */
 @Data
 public class HashValueUpdateSelectiveCommand implements Serializable {

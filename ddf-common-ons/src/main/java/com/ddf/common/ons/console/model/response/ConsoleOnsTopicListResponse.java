@@ -60,7 +60,6 @@ public class ConsoleOnsTopicListResponse implements Serializable {
 
     /**
      * 创建时间
-     * @param sdkResponse 参数
      */
     public Long createTime;
 

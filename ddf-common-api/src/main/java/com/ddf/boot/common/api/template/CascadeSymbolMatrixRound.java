@@ -8,8 +8,7 @@ import lombok.Data;
  * 代表一个回合的所有符号矩阵列表
  *
  * @author snowball
- * @return null
- * @date 2025/11/7 15:38
+ * @since 2025/11/7 15:38
  **/
 @Data
 public class CascadeSymbolMatrixRound {

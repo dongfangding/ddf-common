@@ -36,12 +36,14 @@
 
     <properties>
         <!-- Project revision -->
-        <revision>boot3.5-2025.1-SNAPSHOT</revision>
+        <revision>boot3.5-2026.1</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <!-- maven版本使用3.9.6以上版本 -->
+        <maven.enforcer.plugin.version>3.5.0</maven.enforcer.plugin.version>
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
@@ -220,6 +222,12 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven.enforcer.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.plugin.version}</version>
                     <configuration>
@@ -273,6 +281,29 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-build-environment</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[17,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.9.6,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -367,6 +398,7 @@
                             <excludeArtifacts>
                                 <!-- 排除的Artifact，比如有example模块是 -->
                                 <excludeArtifact>ddf-common-script</excludeArtifact>
+                                <excludeArtifact>ddf-common-netty-broker</excludeArtifact>
                             </excludeArtifacts>
                         </configuration>
                     </plugin>

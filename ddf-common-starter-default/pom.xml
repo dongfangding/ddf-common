@@ -13,7 +13,7 @@
     <artifactId>ddf-common-starter-default</artifactId>
     <version>${revision}</version>
     <name>ddf-common-starter-default</name>
-    <description>Aggregated default starter for typical business services.</description>
+    <description>Aggregated default starter for typical Spring Boot business services.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

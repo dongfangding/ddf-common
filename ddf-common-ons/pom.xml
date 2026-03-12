@@ -13,7 +13,7 @@
     <artifactId>ddf-common-ons</artifactId>
     <version>${revision}</version>
     <name>ddf-common-ons</name>
-    <description>对接阿里云RocketMQ的ONS</description>
+    <description>Alibaba Cloud ONS integration module for RocketMQ-compatible messaging.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -46,4 +46,3 @@
     </dependencies>
 
 </project>
-

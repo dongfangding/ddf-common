@@ -13,7 +13,7 @@
     <artifactId>ddf-common-mvc</artifactId>
     <version>${revision}</version>
     <name>ddf-common-mvc</name>
-    <description>mvc核心模块</description>
+    <description>Spring MVC core module for response wrapping, exception handling, and web filters.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

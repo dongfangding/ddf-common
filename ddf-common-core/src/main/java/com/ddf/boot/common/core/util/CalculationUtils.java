@@ -9,7 +9,7 @@ import java.util.List;
  * 通用物理与数学计算工具类
  *
  * @author snowball
- * @date 2026/1/19 15:20
+ * @since 2026/1/19 15:20
  **/
 public class CalculationUtils {
 

@@ -27,7 +27,6 @@ public class EnvironmentHelper {
      *
      * @param targetProfile
      * @return boolean
-     * @author dongfang.ding
      * @since 2019/12/24 0024 13:52
      **/
     public boolean checkIsExistOr(List<String> targetProfile) {

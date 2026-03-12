@@ -10,7 +10,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2026/01/23 16:50
+ * @since 2026/01/23 16:50
  */
 @Data
 public class ZRevRangeBizRankingResponse implements Serializable {

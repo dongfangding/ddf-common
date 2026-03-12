@@ -1,81 +1,43 @@
+# ddf-common-log4j
 
-## 依赖
+[English](./README.md) | [中文](./README.zh-CN.md)
+
+Log4j2 logging integration module.
+
+## Current Positioning
+
+- Provides `spring-boot-starter-log4j2` dependency integration
+- Provides the `disruptor` dependency required for asynchronous logging
+- Works as the base module for replacing Spring Boot's default Logback stack
+
+## Dependency
+
 ```xml
-<!-- 日志组件 -->
 <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-log4j2</artifactId>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-log4j</artifactId>
+    <version>${ddf-common.version}</version>
 </dependency>
-<!-- 日志组件依赖，异步打印日志 -->
-<dependency>
-    <groupId>com.lmax</groupId>
-    <artifactId>disruptor</artifactId>
-</dependency>
+```
 
-<!-- 演示排除logback依赖 -->
+## Usage Recommendation
+
+If the business application already imports the default web starter, exclude `spring-boot-starter-logging`:
+
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
     <exclusions>
         <exclusion>
-            <artifactId>spring-boot-starter-logging</artifactId>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
     </exclusions>
 </dependency>
 ```
-## 注意事项
 
-### 日志级别隔离
-`ThresholdFilter`的匹配规则是配置的级别以以上都会满足条件， 这么一个特性，如果在做不同级别日志隔离的时候，如`INFO`级别， 那么
-其实`INFO`.`WARN`, `ERROR`都会输出
-```xml
-<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-```
-如果不喜欢这种方式，就是一定要`INFO`里只打印`INFO`, 就需要用到多个`Filters`，需要注意每个不同日志级别的文件都要替换
+## Notes
 
-INFO文件日志内容如下
-```xml
-<!--控制台只输出level级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-<Filters>
-    <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
-    <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
-</Filters>
-```
-
-WARN文件日志内容
-```xml
-<Filters>
-    <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
-    <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
-</Filters>
-```
-
-ERROR文件日志内容
-```xml
-<Filters>
-    <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-</Filters>
-```
-
-### 异步使用
-关于异步分为全异步和异步和同步混合使用， 全异步的话，可以通过启动脚本直接指定
-```shell
-# Don't forget to set system property to make all loggers asynchronous.
--Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
-```
-
-### 自定义日志拦截
-
-```xml
-    <ErrorInterceptor name="ErrorInterceptor">
-        <PatternLayout pattern="${sys:FILE_LOG_PATTERN}" />
-    </ErrorInterceptor>
-
-    <Async name="AsyncError" includeLocation="false" shutdownTimeout="10000" blocking="false">
-        <AppenderRef ref="ErrorInterceptor" />
-    </Async>
-```
-这一块是基于Log4j做的拦截器， 识别到ERROR日志，推送告警，不需要的话，可以不配置。
-TODO 是否应该将告警模块中的拦截写到当前模块中，然后通过事件发布，解耦告警模块和Log4j的强关联关系。
+- This module mainly provides dependency wiring and logging stack switching support
+- Concrete log file splitting, filters, and formatting conventions should still be maintained centrally on the business side

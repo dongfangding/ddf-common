@@ -12,7 +12,7 @@
     <artifactId>ddf-common-netty-broker</artifactId>
     <version>${revision}</version>
     <name>ddf-common-netty-broker</name>
-    <description>基于netty实现的消息代理服务器demo演示</description>
+    <description>Netty-based broker demo and message proxy support module.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,4 +43,3 @@
 
 
 </project>
-

@@ -8,8 +8,8 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
     <name>ddf-common-dependency</name>
-    <description>依赖统一管理</description>
-
+    <description>Bill of materials for ddf-common modules and managed dependency versions.</description>
+	<url>https://github.com/dongfangding/ddf-common</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -35,7 +35,7 @@
 
     <properties>
         <!-- Project revision -->
-        <revision>boot3.5-2025.1-SNAPSHOT</revision>
+        <revision>boot3.5-2026.1</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

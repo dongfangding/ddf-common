@@ -36,7 +36,6 @@ public class ConsoleOnsTopicSubListResponse implements Serializable {
 
     /**
      * 消费模式名称
-     * @param response 参数
      */
     private String messageModelName;
 

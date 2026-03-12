@@ -13,7 +13,7 @@
     <artifactId>ddf-common-websocket</artifactId>
     <version>${revision}</version>
     <name>ddf-common-websocket</name>
-    <description>基础websocket模块</description>
+    <description>WebSocket support module for connection handling and message processing.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -127,4 +127,3 @@
     </dependencies>
 
 </project>
-

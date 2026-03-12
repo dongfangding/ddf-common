@@ -515,7 +515,6 @@ public class RedisCommandHelper {
      *
      * @param key    钥匙
      * @param fields 字段
-     * @return {@link Map}<{@link String}, {@link String}>
      */
     public Map<String, String> hMGetMap(String key, Collection<String> fields) {
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
@@ -921,8 +920,8 @@ public class RedisCommandHelper {
      * 删除集合中值等于value得元素
      *
      * @param key
-     * @param index index=0, 删除所有值等于value的元素; index>0, 从头部开始删除第一个值等于value的元素;
-     *              index<0, 从尾部开始删除第一个值等于value的元素;
+     * @param index index=0, 删除所有值等于value的元素; index&gt;0, 从头部开始删除第一个值等于value的元素;
+     *              index&lt;0, 从尾部开始删除第一个值等于value的元素;
      * @param value
      * @return
      */

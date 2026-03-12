@@ -13,7 +13,7 @@
     <artifactId>ddf-common-starter-web</artifactId>
     <version>${revision}</version>
     <name>ddf-common-starter-web</name>
-    <description>Aggregated starter for common web application capabilities.</description>
+    <description>Aggregated starter for common Spring Boot web application capabilities.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

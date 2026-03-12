@@ -13,7 +13,7 @@
     <artifactId>ddf-common-authentication</artifactId>
     <version>${revision}</version>
     <name>ddf-common-authentication</name>
-    <description>认证模块</description>
+    <description>Authentication support module with token validation and web filter integration.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,6 +22,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.github.dongfangding</groupId>
+            <artifactId>ddf-common-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -43,7 +48,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
-

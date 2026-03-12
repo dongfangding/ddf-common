@@ -39,9 +39,6 @@ import org.apache.commons.lang3.StringUtils;
 public class OssHelper {
 
     /**
-     * @param defaultAcsClient 参数
-     * @param defaultOssClient 参数
-     * @param ossProperties 参数
      * @see OssBeanAutoConfiguration
      */
     private IAcsClient defaultAcsClient;
@@ -165,7 +162,6 @@ public class OssHelper {
      *
      * @param stsTokenRequest
      * @param consumer 参数
-     * @return
      */
     public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
         final StsTokenResponse acsResponse = getOssToken(stsTokenRequest);

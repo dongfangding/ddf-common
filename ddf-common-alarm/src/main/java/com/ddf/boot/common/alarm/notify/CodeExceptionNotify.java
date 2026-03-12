@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  *
  * @author rebot
  * @version 1.0
- * @date 2024/06/06 10:37
+ * @since 2024/06/06 10:37
  */
 @Component
 @RequiredArgsConstructor

@@ -22,7 +22,7 @@ public class ConnectionInfoRequest implements Serializable {
 
     /**
      * 需要哪个协议的地址
-     * @see MQTTProtocolEnum#getProtocol()
+     * @see com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum#getProtocol()
      */
     @NotBlank(message = "协议不能为空")
     @Size(max = 16, message = "协议地址过长，不合法")

@@ -1,7 +1,7 @@
 package com.ddf.boot.common.alarm.config;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>description</p >
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @since 2024/06/04 14:08
  */
-@Configuration
+@AutoConfiguration
 @ComponentScan("com.ddf.boot.common.alarm")
 public class AlarmAutoConfiguration {
 }

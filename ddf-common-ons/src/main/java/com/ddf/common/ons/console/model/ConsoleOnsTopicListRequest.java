@@ -26,7 +26,7 @@ public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
 
     /**
      * 环境key
-     * @see EnvClientProperties#getClients()
+     * @see com.ddf.common.ons.console.config.EnvClientProperties#getClients()
      */
     private String env;
 

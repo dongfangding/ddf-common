@@ -13,7 +13,7 @@
     <artifactId>ddf-common-redis</artifactId>
     <version>${revision}</version>
     <name>ddf-common-redis</name>
-    <description>redis通用基础模块</description>
+    <description>Redis foundation module with Redisson, cache, and helper integrations.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -52,7 +52,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
-

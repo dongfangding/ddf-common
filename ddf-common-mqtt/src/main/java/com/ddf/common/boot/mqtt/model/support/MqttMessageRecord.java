@@ -63,25 +63,25 @@ public class MqttMessageRecord implements Serializable {
 
     /**
      * 消息header json序列化后的内容
-     * @see MqttMessagePayload#getHeader()
+     * @see com.ddf.common.boot.mqtt.model.support.MqttMessagePayload#getHeader()
      */
     private String header;
 
     /**
      * 整个mqtt message的payload
-     * @see MqttMessagePayload
+     * @see com.ddf.common.boot.mqtt.model.support.MqttMessagePayload
      */
     private String payload;
 
     /**
      * 调用方自己设置的body
-     * @see MqttMessagePayload#getBody()
+     * @see com.ddf.common.boot.mqtt.model.support.MqttMessagePayload#getBody()
      */
     private String body;
 
     /**
      * 最终发送出去的topic
-     * @see InnerMqttMessageRequest#getTopic()
+     * @see com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest#getTopic()
      */
     private String topicUrl;
 

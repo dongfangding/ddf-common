@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/11/24 11:46
+ * @since 2025/11/24 11:46
  */
 @Data
 public class HashDecreaseUntilFirstLessThanZeroResponse implements Serializable {

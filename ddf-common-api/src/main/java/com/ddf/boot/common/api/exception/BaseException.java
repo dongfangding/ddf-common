@@ -42,7 +42,6 @@ public abstract class BaseException extends RuntimeException {
      * 有这样一种需求，比如抛出异常的情况下还是要额外返回一些数据。
      * 比如现在说用户余额不足，但是我不仅是在消息中返回缺多少钱，而且还要返回一整个相关的数据，让前端可以处理更加复杂的逻辑，而这需要返回与这个
      * 异常相关的业务数据，就可以放到这个对象里来
-     * @param throwable 参数
      */
     private Object extra;
 

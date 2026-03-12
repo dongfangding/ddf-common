@@ -1,14 +1,16 @@
 # ddf-common-es
 
-Elasticsearch 集成模块，提供 ES 客户端和操作封装。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Elasticsearch dependency integration module.
 
-- ES 客户端自动配置
-- 索引管理
-- 文档操作封装
+## Current Positioning
 
-## 依赖引入
+- Provides `spring-boot-starter-data-elasticsearch` dependency integration
+- Does not wrap an additional standalone client API
+- Works as a base dependency for higher-level Elasticsearch business modules
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,36 +20,7 @@ Elasticsearch 集成模块，提供 ES 客户端和操作封装。
 </dependency>
 ```
 
-## 核心类
+## Notes
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.es.config.ElasticSearchProperties` | ES 配置属性 |
-| `com.ddf.boot.common.es.client.EsClient` | ES 客户端 |
-
-## 使用说明
-
-### 配置
-
-```yaml
-ddf:
-  elasticsearch:
-    host: localhost
-    port: 9200
-```
-
-### 创建索引
-
-```java
-@Autowired
-private EsClient esClient;
-
-public void createIndex(String indexName) {
-    esClient.createIndex(indexName);
-}
-```
-
-## 注意事项
-
-1. **版本兼容**：确保 ES 版本与客户端兼容
-2. **索引设计**：合理设计索引映射和分片
+- This module is currently a dependency-layer wrapper rather than a full Elasticsearch business SDK
+- If index management or query abstractions are added later, they should be built on top of this module

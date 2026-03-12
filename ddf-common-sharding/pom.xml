@@ -13,7 +13,7 @@
     <artifactId>ddf-common-sharding</artifactId>
     <version>${revision}</version>
     <name>ddf-common-sharding</name>
-    <description>分库分表模块</description>
+    <description>Database sharding module with ShardingSphere-based integration support.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -72,4 +72,3 @@
         </dependency>
     </dependencies>
 </project>
-

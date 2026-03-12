@@ -259,7 +259,6 @@ public class WebsocketSessionStorage {
      *
      * @param message
      * @param response
-     * @return
      * @since 2019/9/26 21:21
      */
     public static void putDefaultResponse(@NotNull Message<?> message, @NotNull MessageResponse<?> response) {

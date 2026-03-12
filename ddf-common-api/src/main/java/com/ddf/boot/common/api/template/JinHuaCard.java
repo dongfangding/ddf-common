@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2025/04/19 17:21
+ * @since 2025/04/19 17:21
  */
 @Data
 public class JinHuaCard {

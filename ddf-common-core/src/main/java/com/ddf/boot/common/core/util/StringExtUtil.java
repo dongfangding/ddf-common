@@ -43,7 +43,6 @@ public class StringExtUtil {
      * 随机生成登录密码
      *
      * @return 随机生成的登录密码
-     * @author dongfang.ding
      * @since 2019/9/25 17:51
      */
     public static String randomLoginPassword() {
@@ -56,7 +55,6 @@ public class StringExtUtil {
      * @param minLength 最小长度
      * @param maxLength 最大长度
      * @return 随机生成的密码
-     * @author dongfang.ding
      * @since 2019/9/25 17:51
      */
     public static String randomLoginPassword(int minLength, int maxLength) {
@@ -88,7 +86,6 @@ public class StringExtUtil {
      * 生成6位支付密码
      *
      * @return 6位随机数字密码
-     * @author dongfang.ding
      * @since 2019/9/25 17:59
      */
     public static String randomPayPassword() {

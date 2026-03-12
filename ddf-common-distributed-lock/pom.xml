@@ -18,7 +18,7 @@
     <artifactId>ddf-common-distributed-lock</artifactId>
     <version>${revision}</version>
     <name>ddf-common-distributed-lock</name>
-    <description>分布式锁实现</description>
+    <description>Distributed lock module with Redis and Zookeeper implementations.</description>
 
     <dependencies>
 
@@ -75,4 +75,3 @@
     </dependencies>
 
 </project>
-

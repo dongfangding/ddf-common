@@ -151,7 +151,6 @@ public class ThreadBuilderHelper {
      * @param corePoolSize     核心线程池大小
      * @param maxPoolSize      最大线程池大小
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-     * @author dongfang.ding
      * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,
@@ -173,7 +172,6 @@ public class ThreadBuilderHelper {
      * @param rejectedExecutionHandler 队列满之后的处理策略
      * @param gracefulShutdown 参数
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-     * @author dongfang.ding
      * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,
@@ -196,7 +194,6 @@ public class ThreadBuilderHelper {
      * @param gracefulShutdown          是否优雅关闭
      * @param schedulePrintRunningState 是否需要定时打印运行状况
      * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-     * @author dongfang.ding
      * @since 2019/12/11 0011 17:59
      **/
     public static ThreadPoolTaskExecutor buildThreadExecutor(String prefix, int corePoolSize, int maxPoolSize,

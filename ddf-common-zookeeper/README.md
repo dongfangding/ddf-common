@@ -1,14 +1,16 @@
 # ddf-common-zookeeper
 
-Zookeeper 服务发现和配置管理模块。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Zookeeper utility and listener support module.
 
-- 服务注册发现
-- 配置监听
-- 节点管理
+## Current Positioning
 
-## 依赖引入
+- Provides the Zookeeper auto-configuration entry
+- Provides helper capabilities for node listeners and monitoring
+- Can serve as a lower-level support module for distributed IDs, distributed locks, and similar scenarios
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,41 +20,16 @@ Zookeeper 服务发现和配置管理模块。
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径                | 功能     |
-|--------------------|--------|
-| `ZkClient`         | ZK 客户端 |
-| `ServiceDiscovery` | 服务发现   |
-| `ZkProperties`     | 配置属性   |
+- `com.ddf.boot.zookeeper.ZookeeperAutoConfiguration`
 
-## 使用说明
+## Main Types
 
-### 配置
+- `NodeEventListener`
+- `MonitorProperties`
+- `MonitorRegistryConfig`
 
-```yaml
-ddf:
-  zookeeper:
-    host: localhost:2181
-    session-timeout: 6000
-    connection-timeout: 3000
-```
+## Notes
 
-### 服务注册
-
-```java
-@Autowired
-private ServiceDiscovery serviceDiscovery;
-
-public void register(String serviceName, String address) {
-    serviceDiscovery.register(serviceName, address);
-}
-```
-
-### 服务发现
-
-```java
-public List<String> getAddresses(String serviceName) {
-    return serviceDiscovery.getAddresses(serviceName);
-}
-```
+- The module is currently more utility and monitoring oriented rather than a full service registry or discovery framework

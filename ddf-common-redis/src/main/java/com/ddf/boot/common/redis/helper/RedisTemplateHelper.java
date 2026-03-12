@@ -51,7 +51,7 @@ import org.springframework.data.redis.core.ZSetOperations;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2020/12/11 11:05
+ * @since 2020/12/11 11:05
  */
 @Slf4j
 public class RedisTemplateHelper {
@@ -288,8 +288,6 @@ public class RedisTemplateHelper {
      * @param field         要操作的hash key
      * @param step          每次自增的值
      * @param minValue      小于这个值，则将值设置为这个值
-     * @param maxValue      大于这个值，则将值设置为这个值
-     * @param expireSeconds 对key设置最大的过期时间
      * @param maxValue      自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
      * @return

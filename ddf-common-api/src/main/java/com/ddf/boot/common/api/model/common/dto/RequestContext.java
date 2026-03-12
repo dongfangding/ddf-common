@@ -122,6 +122,7 @@ public class RequestContext implements Serializable {
     /**
      * 是否网关转发
      */
+	@Builder.Default
     private Boolean isGatewayDispatch = Boolean.FALSE;
 
     /**
@@ -137,6 +138,7 @@ public class RequestContext implements Serializable {
     /**
      * 自定义属性
      */
+	@Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
 

@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.script.RedisScript;
  *
  * @author dongfang.ding
  * @version 1.0
- * @date 2021/01/16 15:53
+ * @since 2021/01/16 15:53
  */
 public interface RedisLuaScript {
 

@@ -1,14 +1,16 @@
 # ddf-common-alarm
 
-告警通知模块，提供统一的告警发送功能。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Alert notification and exception alerting module.
 
-- 多渠道告警支持
-- 告警模板配置
-- 告警分级处理
+## Current Positioning
 
-## 依赖引入
+- Provides alarm-related auto-configuration
+- Provides baseline support for DingTalk, Lark, and similar notification channels
+- Can be combined with logs, exceptions, table scan alerts, and similar scenarios
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,31 +20,17 @@
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径                                                | 功能        |
-|----------------------------------------------------|-----------|
-| `com.ddf.boot.common.alarm.api.AlarmApi`           | 告警 API 接口 |
-| `com.ddf.boot.common.alarm.config.AlarmProperties` | 配置属性      |
+- `com.ddf.boot.common.alarm.config.AlarmAutoConfiguration`
 
-## 使用说明
+## Main Configuration Types
 
-### 配置
+- `DingTalkProperties`
+- `LarkProperties`
+- `ExceptionAlarmProperties`
 
-```yaml
-ddf:
-  alarm:
-    enabled: true
-    # 告警配置
-```
+## Notes
 
-### 发送告警
-
-```java
-@Autowired
-private AlarmApi alarmApi;
-
-public void sendAlarm(String title, String content) {
-    alarmApi.sendAlarm(title, content);
-}
-```
+- The module currently focuses on alarm capability aggregation and notification support
+- Concrete business alerting strategies should still be packaged on the business side by scenario

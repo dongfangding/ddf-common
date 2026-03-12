@@ -13,7 +13,7 @@
     <artifactId>ddf-common-api</artifactId>
     <version>${revision}</version>
     <name>ddf-common-api</name>
-    <description>所有api模块的基础依赖和功能</description>
+    <description>Shared API contracts, constants, context objects, and base abstractions.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -100,4 +100,3 @@
 		</dependency>
     </dependencies>
 </project>
-

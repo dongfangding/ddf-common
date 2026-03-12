@@ -87,13 +87,6 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * 主体数据
-     * @param requestId 参数
-     * @param type 参数
-     * @param cmd 参数
-     * @param sendMode 参数
-     * @param clientChannel 参数
-     * @param timestamp 参数
-     * @param content 参数
      */
     private T body;
 

@@ -1,14 +1,16 @@
 # ddf-common-ons
 
-阿里云 ONS 消息队列模块。
+[English](./README.md) | [中文](./README.zh-CN.md)
 
-## 功能特性
+Alibaba Cloud ONS integration module.
 
-- 消息发送
-- 消息订阅
-- 顺序消息
+## Current Positioning
 
-## 依赖引入
+- Provides producer-related ONS auto-configuration
+- Provides support for listener containers and console client components
+- Suitable for RocketMQ-compatible integration scenarios based on Alibaba Cloud ONS
+
+## Dependency
 
 ```xml
 <dependency>
@@ -18,23 +20,28 @@
 </dependency>
 ```
 
-## 核心类
+## Auto-configuration
 
-| 类路径 | 功能 |
-|-------|------|
-| `OnsProducer` | ONS 生产者 |
-| `OnsConsumer` | ONS 消费者 |
-| `OnsProperties` | 配置属性 |
+- `com.ddf.common.ons.config.OnsAutoConfiguration`
 
-## 使用说明
+## Main Types
+
+- `OnsProperties`
+- `OnsClientConfiguration`
+- `OnsListenerContainerConfiguration`
+
+## Configuration Prefix
 
 ```yaml
-ddf:
-  ons:
-    producer:
-      access-key: xxx
-      secret-key: xxx
-    consumer:
-      access-key: xxx
-      secret-key: xxx
+customizer:
+  infra:
+    ons:
+      accessKey: your-access-key
+      secretKey: your-secret-key
+      nameServerAddr: your-ons-endpoint
 ```
+
+## Notes
+
+- The module currently focuses on ONS producer and listener support
+- Topic, tag, and consumer business logic should still be implemented in the business layer

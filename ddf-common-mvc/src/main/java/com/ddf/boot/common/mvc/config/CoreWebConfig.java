@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.data.web.config.SpringDataWebConfiguration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -35,7 +36,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * 框架核心配置类
  * <p>
- * 主要这里一定要实现{@link WebMvcConfigurer}，该接口已经提供了默认实现，而且{@link @EnableSpringDataWebSupport}
+ * 主要这里一定要实现{@link WebMvcConfigurer}，该接口已经提供了默认实现，而且{@link EnableSpringDataWebSupport}
  * 提供的{@link SpringDataWebConfiguration}就是实现了该接口来添加相对应的参数解析器和消息转换器，如果这里处置不当，
  * 会覆盖该注解提供的功能，如{@link PageableHandlerMethodArgumentResolver}
  *

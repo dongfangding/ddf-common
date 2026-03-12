@@ -7,7 +7,7 @@ import lombok.Data;
  *
  * @author Snowball
  * @version 1.0
- * @date 2026/01/23 14:25
+ * @since 2026/01/23 14:25
  */
 @Data
 public class ZRevRangeBizRankingQuery {

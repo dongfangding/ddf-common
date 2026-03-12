@@ -29,7 +29,6 @@ public class IdsUtil {
      * 获取string格式的id
      *
      * @return void
-     * @author dongfang.ding
      * @since 2019/12/9 0009 11:38
      **/
     public static String getNextStrId() {
@@ -40,7 +39,6 @@ public class IdsUtil {
      * 获取long类型的id
      *
      * @return void
-     * @author dongfang.ding
      * @since 2019/12/9 0009 11:39
      **/
     public static long getNextLongId() {
@@ -59,7 +57,6 @@ public class IdsUtil {
      * 在雪花的基础上附加更加长的字符串id
      *
      * @return 字符串格式的id
-     * @author dongfang.ding
      * @since 2019/12/9 0009 11:38
      **/
     public static String getUniqueId() {

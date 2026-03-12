@@ -13,7 +13,7 @@
     <artifactId>ddf-common-log4j</artifactId>
     <version>${revision}</version>
     <name>ddf-common-log4j</name>
-    <description>log4j模块</description>
+    <description>Log4j2 integration module for Spring Boot applications.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -108,4 +108,3 @@
     </dependencies>
 
 </project>
-
