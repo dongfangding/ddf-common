@@ -27,7 +27,7 @@ This directory is documentation-oriented and is not part of the root Maven react
 
     <properties>
         <java.version>17</java.version>
-        <ddf-common.version>boot3.5-2026.1</ddf-common.version>
+        <ddf-common.version>boot3.5-2026.1-SNAPSHOT</ddf-common.version>
     </properties>
 
     <dependencies>

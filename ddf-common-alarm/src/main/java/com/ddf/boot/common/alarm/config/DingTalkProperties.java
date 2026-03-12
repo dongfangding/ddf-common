@@ -70,7 +70,7 @@ public class DingTalkProperties {
     /**
      * 获取告警机器人配置
      *
-     * @param mappingCode
+     * @param mappingCode 映射编码
      * @return
      */
     public Properties getCodeProperties(String mappingCode) {
@@ -83,7 +83,7 @@ public class DingTalkProperties {
     /**
      * 获取告警机器人配置
      *
-     * @param mappingCode
+     * @param mappingCode 映射编码
      * @return
      */
     public Properties getBizProperties(String mappingCode) {

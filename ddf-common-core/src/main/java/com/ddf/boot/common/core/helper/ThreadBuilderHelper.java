@@ -219,8 +219,8 @@ public class ThreadBuilderHelper {
     /**
      * 构建定时任务线程池
      *
-     * @param prefix
-     * @param keepAliveSeconds
+     * @param prefix 前缀参数
+     * @param keepAliveSeconds keepaliveseconds参数
      * @return
      */
     public static ScheduledThreadPoolExecutor buildScheduledExecutorService(String prefix, int keepAliveSeconds) {
@@ -235,8 +235,8 @@ public class ThreadBuilderHelper {
     /**
      * 构建定时任务线程池
      *
-     * @param prefix
-     * @param keepAliveSeconds
+     * @param prefix 前缀参数
+     * @param keepAliveSeconds keepaliveseconds参数
      * @param gracefulShutdown 参数
      * @return
      */
@@ -253,9 +253,9 @@ public class ThreadBuilderHelper {
     /**
      * 构建定时任务线程池
      *
-     * @param prefix
-     * @param corePoolSize
-     * @param maxPoolSize
+     * @param prefix 前缀参数
+     * @param corePoolSize corepool大小参数
+     * @param maxPoolSize 最大pool大小参数
      * @param keepAliveSeconds 参数
      * @param gracefulShutdown 参数
      * @return

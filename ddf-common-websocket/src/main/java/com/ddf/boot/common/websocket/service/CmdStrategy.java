@@ -18,10 +18,10 @@ public interface CmdStrategy {
     /**
      * 将指令下发给设备
      *
-     * @param cmd
-     * @param clientChannel
-     * @param body
-     * @param <T>
+     * @param cmd 命令参数
+     * @param clientChannel 客户端通道参数
+     * @param body 请求体参数
+     * @param <T> 泛型类型
      * @return
      */
     default <T> Message<T> push(String cmd, String clientChannel, T body) {
@@ -31,9 +31,9 @@ public interface CmdStrategy {
     /**
      * 响应Cmd命令码
      *
-     * @param webSocketSessionWrapper
-     * @param authPrincipal
-     * @param message
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param authPrincipal 认证主体对象
+     * @param message 消息内容
      * @return
      * @author dongfang.ding
      * @since 2019/10/26 15:17
@@ -44,8 +44,8 @@ public interface CmdStrategy {
     /**
      * 响应Cmd命令码
      *
-     * @param authPrincipal
-     * @param textMessage
+     * @param authPrincipal 认证主体对象
+     * @param textMessage 文本消息对象
      */
     default void responseCmd(AuthPrincipal authPrincipal, TextMessage textMessage) {
 

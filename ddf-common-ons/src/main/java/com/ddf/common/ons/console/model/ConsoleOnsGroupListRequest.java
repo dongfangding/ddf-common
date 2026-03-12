@@ -40,7 +40,7 @@ public class ConsoleOnsGroupListRequest implements UserRequest, Serializable {
     /**
      * 转换为SDK内部请求类
      *
-     * @param instanceId
+     * @param instanceId 实例ID
      * @return
      */
     public OnsGroupListRequest toSdkRequest(String instanceId) {

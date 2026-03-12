@@ -87,7 +87,7 @@ public class UserClaim implements Serializable {
     /**
      * 创建mock用户
      *
-     * @param userId
+     * @param userId 用户 ID
      * @return
      */
     public static UserClaim mockUser(String userId) {
@@ -133,7 +133,7 @@ public class UserClaim implements Serializable {
     /**
      * 是否默认用户
      *
-     * @param userClaim
+     * @param userClaim 用户声明信息
      * @return
      */
     public boolean isDefaultUser(UserClaim userClaim) {

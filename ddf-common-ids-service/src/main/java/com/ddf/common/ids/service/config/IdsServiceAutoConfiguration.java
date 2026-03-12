@@ -40,7 +40,7 @@ public class IdsServiceAutoConfiguration {
     /**
      * 将数据源注入到查询Dao中，支持外部重新注册Bean
      *
-     * @param dataSource
+     * @param dataSource 数据source参数
      * @return
      */
     @Bean

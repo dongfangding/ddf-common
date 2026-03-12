@@ -34,7 +34,7 @@ public class AjCaptchaServiceAutoConfiguration {
     /**
      * 注入默认bean以支持想要的默认验证码类型
      *
-     * @param prop
+     * @param prop 配置属性
      * @return
      */
     @Bean
@@ -53,7 +53,7 @@ public class AjCaptchaServiceAutoConfiguration {
     /**
      * 另一个非默认的验证码类型也注册上去，因验证码类型已固定，目前没有采用动态注册
      *
-     * @param prop
+     * @param prop 配置属性
      * @return
      */
     @Bean
@@ -68,7 +68,7 @@ public class AjCaptchaServiceAutoConfiguration {
         return CaptchaServiceFactory.getInstance(config);
     }
     /**
-     * @param prop 参数
+     * @param prop 配置属性
      */
     private Properties buildProperties(AjCaptchaProperties prop) {
         log.info("自定义配置项：{}", prop.toString());

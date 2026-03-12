@@ -55,8 +55,8 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     /**
      * 如果是聊天室的功能，其实就是服务端收到消息之后，然后再由服务端向所有连接的客户端转发这个消息而已
      *
-     * @param ctx
-     * @param msg
+     * @param ctx 通道上下文
+     * @param msg 消息内容
      * @throws JsonProcessingException
      */
     @Override
@@ -81,8 +81,8 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     /**
      * 将消息放入对应的客户端的消息队列中
      *
-     * @param channel
-     * @param requestContent
+     * @param channel 通道对象
+     * @param requestContent 请求content参数
      */
     private void putMessage(Channel channel, RequestContent<?> requestContent) {
         String key = channel.remoteAddress().toString();

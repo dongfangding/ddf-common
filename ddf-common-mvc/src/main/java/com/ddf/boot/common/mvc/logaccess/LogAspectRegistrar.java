@@ -22,8 +22,8 @@ public class LogAspectRegistrar implements ImportBeanDefinitionRegistrar {
     /**
      * 注册项目是否开启了@EnableLogAspect功能
      *
-     * @param metadata
-     * @param registry
+     * @param metadata metadata参数
+     * @param registry Bean 定义注册器
      */
     private void registryLogAspect(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
         boolean exist = metadata.hasAnnotation(EnableLogAspect.class.getName());

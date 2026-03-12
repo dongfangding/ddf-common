@@ -36,7 +36,7 @@ public class UrlReplaceSerialize extends JsonSerializer<String> implements Conte
         this.bucket = bucket;
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      * @param jsonGenerator 参数
      * @param serializers 参数
      */

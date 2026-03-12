@@ -18,7 +18,7 @@ public class RSAEncryptProcessor implements EncryptProcessor {
      * 解密握手时需要的token参数
      * 如果客户端加密了的话
      *
-     * @param token
+     * @param token token 字符串
      * @return
      */
     @Override
@@ -29,7 +29,7 @@ public class RSAEncryptProcessor implements EncryptProcessor {
     /**
      * 加密要发送的消息对象
      *
-     * @param message
+     * @param message 消息内容
      * @return
      */
     @Override

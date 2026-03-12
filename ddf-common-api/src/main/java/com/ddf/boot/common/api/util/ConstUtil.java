@@ -22,7 +22,7 @@ public class ConstUtil {
         return !isNotBlank(obj);
     }
     /**
-     * @param obj 参数
+     * @param obj 对象实例
      */
     public static boolean isNotBlank(Object obj) {
         return obj != null && StringUtils.isNotBlank(obj.toString());

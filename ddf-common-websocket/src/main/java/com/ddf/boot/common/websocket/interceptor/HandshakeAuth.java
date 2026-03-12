@@ -17,11 +17,11 @@ public interface HandshakeAuth {
     /**
      * 基于默认的握手实现，校验认证参数，返回认证身份，可以提供多个实现
      *
-     * @param request
-     * @param response
-     * @param wsHandler
-     * @param attributes
-     * @param handshakeParam
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param wsHandler WShandler参数
+     * @param attributes attributes参数
+     * @param handshakeParam handshake参数参数
      * @return
      * @see DefaultHandshakeInterceptor
      */

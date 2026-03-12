@@ -19,7 +19,7 @@ public interface CanalMessageHandler<T> {
      * 比如return tableName.startWith("user_base_info_");
      * 则用来处理user_base_info_*表的canal消息
      *
-     * @param tableName
+     * @param tableName 表名
      * @return
      */
     boolean match(String tableName);

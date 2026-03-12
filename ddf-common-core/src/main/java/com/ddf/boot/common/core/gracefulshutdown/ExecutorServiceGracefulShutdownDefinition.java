@@ -67,7 +67,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
     /**
      * 注册要关闭的线程池， 如果一些线程池未交由线程池管理，则可以调用这个方法
      *
-     * @param executor
+     * @param executor executor参数
      */
     public static void registryExecutor(ThreadPoolExecutor executor) {
         POOLS.add(executor);
@@ -79,7 +79,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
      * 因为依赖的{@link ThreadPoolTaskExecutor#getThreadPoolExecutor()}必须要在bean的父类方法中定义的
      * 初始化{@link ExecutorConfigurationSupport#afterPropertiesSet()}方法中才会赋值
      *
-     * @param threadPoolTaskExecutor
+     * @param threadPoolTaskExecutor threadpooltaskexecutor参数
      */
     public static void registryExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         POOLS.add(threadPoolTaskExecutor.getThreadPoolExecutor());
@@ -94,7 +94,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
      * 重写了{@link ThreadPoolTaskScheduler#initializeExecutor(java.util.concurrent.ThreadFactory, java.util.concurrent.RejectedExecutionHandler)}
      * 来对父类的{@link ExecutorConfigurationSupport#executor}赋值
      *
-     * @param threadPoolTaskExecutor
+     * @param threadPoolTaskExecutor threadpooltaskexecutor参数
      */
     public static void registryExecutor(ThreadPoolTaskScheduler threadPoolTaskExecutor) {
         POOLS.add(threadPoolTaskExecutor.getScheduledThreadPoolExecutor());
@@ -106,7 +106,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
      * 1. 感觉他么的跟在这里睡眠60秒没啥区别，当然如果线程池里没有任务或者剩余任务的时间小于60s，还是有点用处的，
      * 至少这个时间针对现在这样的逻辑是最大时间，而如果sleep则是固定时间，但至少也能解决问题啊。
      *
-     * @param event the event to respond to
+     * @param event event参数
      */
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {

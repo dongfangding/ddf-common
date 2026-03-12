@@ -127,7 +127,7 @@ public class OnsClientOperations {
     /**
      * 创建多环境topic
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, OnsTopicCreateResponse> onsTopicCreate(ConsoleOnsTopicCreateRequest request) {
@@ -146,7 +146,7 @@ public class OnsClientOperations {
     /**
      * 多环境删除Topic
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, OnsTopicDeleteResponse> onsTopicDelete(ConsoleOnsTopicDeleteRequest request) {
@@ -166,7 +166,7 @@ public class OnsClientOperations {
     /**
      * 多环境创建GROUP_ID
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, OnsGroupCreateResponse> onsGroupCreate(ConsoleOnsGroupCreateRequest request) {
@@ -184,7 +184,7 @@ public class OnsClientOperations {
     /**
      * 多环境删除GROUP_ID
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, OnsGroupDeleteResponse> onsGroupDelete(ConsoleOnsGroupDeleteRequest request) {
@@ -204,10 +204,10 @@ public class OnsClientOperations {
     /**
      * 执行多环境操作模板
      *
-     * @param qps
-     * @param request
-     * @param function
-     * @param <R>
+     * @param qps QPS参数
+     * @param request 请求对象
+     * @param function function参数
+     * @param <R> 返回值泛型类型
      * @return
      */
     @SneakyThrows
@@ -238,8 +238,8 @@ public class OnsClientOperations {
     /**
      * 查询消息记录
      *
-     * @param topicId
-     * @param msgId
+     * @param topicId 主题ID
+     * @param msgId 消息 ID
      * @return
      */
     public static OnsMessageGetByMsgIdResponse onsMessageGetByMsgId(String topicId, String msgId) {
@@ -260,8 +260,8 @@ public class OnsClientOperations {
     /**
      * 获取指定GroupId和InstanceId下的客户端连接
      *
-     * @param instanceId
-     * @param groupId
+     * @param instanceId 实例ID
+     * @param groupId 分组ID
      * @return
      */
     public static OnsConsumerGetConnectionResponse onsConsumerGetConnection(String instanceId, String groupId) {
@@ -279,7 +279,7 @@ public class OnsClientOperations {
     /**
      * 从缓存中获取ONS消费者连接信息ClientId集合
      *
-     * @param groupId
+     * @param groupId 分组ID
      * @return
      */
     public static List<String> getOnsConsumerClientIdListFromCache(String groupId) {
@@ -296,7 +296,7 @@ public class OnsClientOperations {
     /**
      * 向指定的消费者推送消息, MsgId会重新生成， 但是用重新生成的MsgId获取消息记录，指向的还是之前的MsgId
      *
-     * @param request 参数
+     * @param request 请求对象
      * @throws Exception
      */
     public static void onsMessagePush(ConsoleOnsMessagePushRequest request) {
@@ -323,8 +323,8 @@ public class OnsClientOperations {
     /**
      * 重发指定MessageId的死信消息, 如果消息未到达最大重试次数，即消息未进入死信，则该方法会出现异常
      *
-     * @param groupId
-     * @param msgId
+     * @param groupId 分组ID
+     * @param msgId 消息 ID
      */
     public static OnsDLQMessageResendByIdResponse onsDLQMessageResendByIdRequest(String groupId, String msgId) {
         OnsDLQMessageResendByIdRequest onsDLQMessageResendByIdRequest = new OnsDLQMessageResendByIdRequest()
@@ -342,7 +342,7 @@ public class OnsClientOperations {
     /**
      * 根据MsgId查询死信消息
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static ConsoleOnsDLQMessagePageQueryByGroupResponse onsDLQMessageGetByIdRequest(
@@ -391,7 +391,7 @@ public class OnsClientOperations {
     /**
      * 查询GroupId下所有死信消息
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static PageResult<ConsoleOnsDLQMessagePageQueryByGroupResponse> onsDLQMessagePageQueryByGroupId(
@@ -452,7 +452,7 @@ public class OnsClientOperations {
     /**
      * 多环境查询账号下所有 Topic 的信息列表
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, List<ConsoleOnsTopicListResponse>> onsTopicList(ConsoleOnsTopicListRequest request) {
@@ -475,7 +475,7 @@ public class OnsClientOperations {
     /**
      * 多环境获取Group_Id资源列表
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static Map<String, List<ConsoleOnsGroupListResponse>> onsGroupList(ConsoleOnsGroupListRequest request) {
@@ -499,7 +499,7 @@ public class OnsClientOperations {
     /**
      * 查看Topic的在线订阅组
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static List<ConsoleOnsTopicSubListResponse> onsTopicSubDetail(ConsoleOnsTopicSubDetailRequest request) {
@@ -541,8 +541,8 @@ public class OnsClientOperations {
     /**
      * ons消费客户端连接信息缓存key
      *
-     * @param instanceId
-     * @param groupId
+     * @param instanceId 实例ID
+     * @param groupId 分组ID
      * @return
      */
     public static String getOnsConsumerConnectionsKey(String instanceId, String groupId) {
@@ -552,9 +552,9 @@ public class OnsClientOperations {
     /**
      * 放入ons消费客户端连接信息缓存, 仅需要ClientId
      *
-     * @param instanceId
-     * @param groupId
-     * @param response 参数
+     * @param instanceId 实例ID
+     * @param groupId 分组ID
+     * @param response 响应对象
      */
     private static void putOnsConsumerConnections(String instanceId, String groupId,
             OnsConsumerGetConnectionResponse response) {
@@ -571,7 +571,7 @@ public class OnsClientOperations {
     /**
      * 校验用户名
      *
-     * @param userRequest
+     * @param userRequest 用户请求参数
      * @return
      */
     private static void checkCurrentUser(UserRequest userRequest) {
@@ -588,7 +588,7 @@ public class OnsClientOperations {
     /**
      * 系统Topic不可操作
      *
-     * @param topic
+     * @param topic 主题参数
      */
     private static void checkSystemTopic(String topic) {
         boolean isSystemTopic = !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemTopic()) && ENV_CLIENT_PROPERTIES.getSystemTopic().contains(topic);
@@ -601,7 +601,7 @@ public class OnsClientOperations {
     /**
      * 系统Group不可操作
      *
-     * @param group
+     * @param group 分组参数
      */
     private static void checkSystemGroup(String group) {
         boolean isSystemGroup= !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemGroup()) && ENV_CLIENT_PROPERTIES.getSystemGroup().contains(group);

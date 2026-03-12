@@ -16,7 +16,7 @@ public class MqttException extends BaseException {
     /**
      * 只简单抛出消息异常
      *
-     * @param description
+     * @param description 描述信息
      */
     public MqttException(String description) {
         super(description);

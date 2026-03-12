@@ -13,9 +13,9 @@ public interface HandlerMessageService {
     /**
      * 处理接收到的消息
      *
-     * @param authPrincipal
-     * @param session
-     * @param textMessage
+     * @param authPrincipal 认证主体对象
+     * @param session 会话对象
+     * @param textMessage 文本消息对象
      */
     void handlerMessage(AuthPrincipal authPrincipal, WebSocketSessionWrapper session, TextMessage textMessage);
 

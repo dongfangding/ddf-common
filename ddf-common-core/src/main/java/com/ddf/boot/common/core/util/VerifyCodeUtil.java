@@ -40,7 +40,7 @@ public class VerifyCodeUtil {
      * 使用指定源生成验证码
      *
      * @param verifySize 验证码长度
-     * @param sources    验证码字符源
+     * @param sources    源数据列表
      * @return
      */
     public static String generateVerifyCode(int verifySize, String sources) {
@@ -59,10 +59,10 @@ public class VerifyCodeUtil {
     /**
      * 输出指定验证码图片流
      *
-     * @param w
-     * @param h
-     * @param os
-     * @param code
+     * @param w W参数
+     * @param h H参数
+     * @param os OS参数
+     * @param code 编码值
      * @throws IOException
      */
     public static void outputImage(int w, int h, OutputStream os, String code) throws IOException {

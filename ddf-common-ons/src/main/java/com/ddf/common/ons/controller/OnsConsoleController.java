@@ -55,7 +55,7 @@ public class OnsConsoleController {
     /**
      * 创建多环境TOPIC
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @PostMapping("topic")
@@ -69,7 +69,7 @@ public class OnsConsoleController {
     /**
      * 删除多环境TOPIC
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @DeleteMapping("/topic")
@@ -82,7 +82,7 @@ public class OnsConsoleController {
     /**
      * 多环境查询账号下所有 Topic 的信息列表
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("topic")
@@ -95,7 +95,7 @@ public class OnsConsoleController {
     /**
      * 查看Topic的在线订阅组
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("topic/subs")
@@ -109,7 +109,7 @@ public class OnsConsoleController {
     /**
      * 创建多环境GROUP
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @PostMapping("/group")
@@ -123,7 +123,7 @@ public class OnsConsoleController {
     /**
      * 删除多环境GROUP
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @DeleteMapping("/group")
@@ -137,7 +137,7 @@ public class OnsConsoleController {
     /**
      * 多环境获取Group_Id资源列表
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("group")
@@ -151,7 +151,7 @@ public class OnsConsoleController {
     /**
      * 根据messageId查询死信队列
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("DLQ/by_msg_id")
@@ -164,7 +164,7 @@ public class OnsConsoleController {
     /**
      * 根据GroupId下的死信队列消息
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("DLQ/by_group_id")

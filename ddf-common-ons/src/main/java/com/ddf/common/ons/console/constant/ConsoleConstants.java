@@ -24,7 +24,7 @@ public interface ConsoleConstants {
     /**
      * 获取对应环境的{@link com.aliyun.ons20190214.Client}  bean_name
      *
-     * @param env
+     * @param env ENV参数
      * @return
      */
     static String getOnsClientBeanName(String env) {
@@ -34,7 +34,7 @@ public interface ConsoleConstants {
     /**
      * 判断表达式是否是重试表达式
      *
-     * @param expression
+     * @param expression expression参数
      * @return
      */
     static boolean isRetryExpression(String expression) {

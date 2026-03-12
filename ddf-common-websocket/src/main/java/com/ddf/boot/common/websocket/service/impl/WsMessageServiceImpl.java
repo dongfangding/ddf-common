@@ -62,7 +62,7 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 批量发送指令，该方法目前只支持异步
      *
-     * @param requestList
+     * @param requestList 请求列表
      * @since 2019/10/18 9:49
      */
     @Override
@@ -81,7 +81,7 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 对设备进行指令下发
      *
-     * @param request
+     * @param request 请求对象
      * @return
      * @since 2019/08/21 11:00
      */
@@ -147,8 +147,8 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 之前过滤器校验，有一个校验不通过，则不会继续执行
      *
-     * @param request
-     * @param <Q>
+     * @param request 请求对象
+     * @param <Q> 请求泛型类型
      * @return
      */
     private <Q> boolean filter(MessageRequest<Q> request) {
@@ -166,9 +166,9 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 必传参数校验
      *
-     * @param request
-     * @param <T>
-     * @param <Q>
+     * @param request 请求对象
+     * @param <T> 泛型类型
+     * @param <Q> 请求泛型类型
      * @return
      */
     private <T, Q> MessageResponse<T> validRequiredParam(MessageRequest<Q> request) {
@@ -188,7 +188,7 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 尝试从本地缓存获取数据
      *
-     * @param request
+     * @param request 请求对象
      * @param authPrincipal 参数
      * @return
      */
@@ -203,8 +203,8 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 校验是否可以发送指令
      *
-     * @param request
-     * @param authPrincipal
+     * @param request 请求对象
+     * @param authPrincipal 认证主体对象
      * @return
      */
     private <Q> boolean canSend(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
@@ -236,8 +236,8 @@ public class WsMessageServiceImpl implements WsMessageService {
     /**
      * 处理发送指令逻辑
      *
-     * @param request
-     * @param localAddress
+     * @param request 请求对象
+     * @param localAddress 本地address参数
      * @return
      */
     private <T, Q> MessageResponse<T> sendCmd(MessageRequest<Q> request, String localAddress) {

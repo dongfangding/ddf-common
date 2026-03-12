@@ -14,27 +14,27 @@ public class BusinessException extends BaseException {
     }
 
     /**
-     * @param baseCallbackCode
+     * @param baseCallbackCode 回调码对象
      */
     public BusinessException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
     /**
-     * @param description 参数
+     * @param description 描述信息
      */
     public BusinessException(String description) {
         super(description);
     }
     /**
      * @param code 参数
-     * @param description 参数
+     * @param description 描述信息
      */
     public BusinessException(String code, String description) {
         super(code, description);
     }
     /**
      * @param code 参数
-     * @param description 参数
+     * @param description 描述信息
      * @param params 参数
      */
     public BusinessException(String code, String description, Object... params) {
@@ -44,8 +44,8 @@ public class BusinessException extends BaseException {
     /**
      * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
      *
-     * @param baseCallbackCode
-     * @param params
+     * @param baseCallbackCode 回调码对象
+     * @param params 格式化参数列表
      */
     public BusinessException(BaseCallbackCode baseCallbackCode, Object... params) {
         super(baseCallbackCode, params);
@@ -54,9 +54,9 @@ public class BusinessException extends BaseException {
     /**
      * 提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
      *
-     * @param extra
-     * @param baseCallbackCode
-     * @param params
+     * @param extra 扩展参数
+     * @param baseCallbackCode 回调码对象
+     * @param params 格式化参数列表
      */
     public BusinessException(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
         super(extra, baseCallbackCode, params);

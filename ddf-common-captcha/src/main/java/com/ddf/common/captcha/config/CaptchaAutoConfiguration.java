@@ -70,7 +70,7 @@ public class CaptchaAutoConfiguration {
     /**
      * 适配缓存代理类
      *
-     * @param stringRedisTemplate
+     * @param stringRedisTemplate StringRedisTemplate 实例
      * @return
      */
     @Bean
@@ -82,9 +82,9 @@ public class CaptchaAutoConfiguration {
     /**
      * 验证码实现帮助类
      *
-     * @param defaultKaptcha
-     * @param mathKaptcha
-     * @param captchaService
+     * @param defaultKaptcha 默认验证码实例
+     * @param mathKaptcha 数学验证码实例
+     * @param captchaService 验证码服务实例
      * @return
      */
     @Bean

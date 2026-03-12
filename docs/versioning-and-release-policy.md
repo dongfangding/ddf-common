@@ -14,9 +14,9 @@ Recommended release conventions:
 
 Examples:
 
+- `boot3.5-2026.1-SNAPSHOT-SNAPSHOT`
 - `boot3.5-2026.1-SNAPSHOT`
-- `boot3.5-2026.1`
-- `boot3.5-2026.1.1`
+- `boot3.5-2026.1-SNAPSHOT.1`
 
 ## Release Rules
 

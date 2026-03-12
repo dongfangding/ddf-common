@@ -83,7 +83,7 @@ public class AuthPrincipal implements Principal, Serializable {
     /**
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
      *
-     * @param accessKeyId
+     * @param accessKeyId 访问键ID
      * @param authCode 参数
      * @param loginType 参数
      * @return
@@ -95,7 +95,7 @@ public class AuthPrincipal implements Principal, Serializable {
     /**
      * 构建用于通讯的关键身份信息类型, 一般为服务端用，通过这个找对应的连接
      *
-     * @param accessKeyId
+     * @param accessKeyId 访问键ID
      * @param loginType 参数
      * @return
      */

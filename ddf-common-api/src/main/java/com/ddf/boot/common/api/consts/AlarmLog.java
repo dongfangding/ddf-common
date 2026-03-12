@@ -16,7 +16,7 @@ public class AlarmLog  {
     /**
      * Log a message at the DEBUG level.
      *
-     * @param msg the message string to be logged
+     * @param msg 消息内容
      */
     public static void debug(String msg) {
         LOGGER.debug(msg);
@@ -29,8 +29,8 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the DEBUG level. </p>
      *
-     * @param format the format string
-     * @param arg    the argument
+     * @param format 格式字符串
+     * @param arg    参数值
      */
     public static void debug(String format, Object arg) {
         LOGGER.debug(format, arg);
@@ -43,9 +43,9 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the DEBUG level. </p>
      *
-     * @param format the format string
-     * @param arg1   the first argument
-     * @param arg2   the second argument
+     * @param format 格式字符串
+     * @param arg1   第一个参数
+     * @param arg2   第二个参数
      */
     public static void debug(String format, Object arg1, Object arg2) {
         LOGGER.debug(format, arg1, arg2);
@@ -62,8 +62,8 @@ public class AlarmLog  {
      * {@link #debug(String, Object) one} and {@link #debug(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    the format string
-     * @param arguments a list of 3 or more arguments
+     * @param format    格式字符串
+     * @param arguments 参数列表
      */
     public static void debug(String format, Object... arguments) {
         LOGGER.debug(format, arguments);
@@ -73,8 +73,8 @@ public class AlarmLog  {
      * Log an exception (throwable) at the DEBUG level with an
      * accompanying message.
      *
-     * @param msg the message accompanying the exception
-     * @param t   the exception (throwable) to log
+     * @param msg 消息内容
+     * @param t   异常对象
      */
     public static void debug(String msg, Throwable t) {
         LOGGER.debug(msg, t);
@@ -84,7 +84,7 @@ public class AlarmLog  {
     /**
      * Log a message at the INFO level.
      *
-     * @param msg the message string to be logged
+     * @param msg 消息内容
      */
     public static void info(String msg) {
         LOGGER.info(msg);
@@ -97,8 +97,8 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the INFO level. </p>
      *
-     * @param format the format string
-     * @param arg    the argument
+     * @param format 格式字符串
+     * @param arg    参数值
      */
     public static void info(String format, Object arg) {
         LOGGER.info(format, arg);
@@ -111,9 +111,9 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the INFO level. </p>
      *
-     * @param format the format string
-     * @param arg1   the first argument
-     * @param arg2   the second argument
+     * @param format 格式字符串
+     * @param arg1   第一个参数
+     * @param arg2   第二个参数
      */
     public static void info(String format, Object arg1, Object arg2) {
         LOGGER.info(format, arg1, arg2);
@@ -130,8 +130,8 @@ public class AlarmLog  {
      * {@link #info(String, Object) one} and {@link #info(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    the format string
-     * @param arguments a list of 3 or more arguments
+     * @param format    格式字符串
+     * @param arguments 参数列表
      */
     public static void info(String format, Object... arguments) {
         LOGGER.info(format, arguments);
@@ -141,8 +141,8 @@ public class AlarmLog  {
      * Log an exception (throwable) at the INFO level with an
      * accompanying message.
      *
-     * @param msg the message accompanying the exception
-     * @param t   the exception (throwable) to log
+     * @param msg 消息内容
+     * @param t   异常对象
      */
     public static void info(String msg, Throwable t) {
         LOGGER.info(msg, t);
@@ -152,7 +152,7 @@ public class AlarmLog  {
     /**
      * Log a message at the WARN level.
      *
-     * @param msg the message string to be logged
+     * @param msg 消息内容
      */
     public static void warn(String msg) {
         LOGGER.warn(msg);
@@ -165,8 +165,8 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the WARN level. </p>
      *
-     * @param format the format string
-     * @param arg    the argument
+     * @param format 格式字符串
+     * @param arg    参数值
      */
     public static void warn(String format, Object arg) {
         LOGGER.warn(format, arg);
@@ -183,8 +183,8 @@ public class AlarmLog  {
      * {@link #warn(String, Object) one} and {@link #warn(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    the format string
-     * @param arguments a list of 3 or more arguments
+     * @param format    格式字符串
+     * @param arguments 参数列表
      */
     public static void warn(String format, Object... arguments) {
         LOGGER.warn(format, arguments);
@@ -197,9 +197,9 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the WARN level. </p>
      *
-     * @param format the format string
-     * @param arg1   the first argument
-     * @param arg2   the second argument
+     * @param format 格式字符串
+     * @param arg1   第一个参数
+     * @param arg2   第二个参数
      */
     public static void warn(String format, Object arg1, Object arg2) {
         LOGGER.warn(format, arg1, arg2);
@@ -209,8 +209,8 @@ public class AlarmLog  {
      * Log an exception (throwable) at the WARN level with an
      * accompanying message.
      *
-     * @param msg the message accompanying the exception
-     * @param t   the exception (throwable) to log
+     * @param msg 消息内容
+     * @param t   异常对象
      */
     public static void warn(String msg, Throwable t) {
         LOGGER.warn(msg, t);
@@ -220,7 +220,7 @@ public class AlarmLog  {
     /**
      * Log a message at the ERROR level.
      *
-     * @param msg the message string to be logged
+     * @param msg 消息内容
      */
     public static void error(String msg) {
         LOGGER.error(msg);
@@ -233,8 +233,8 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the ERROR level. </p>
      *
-     * @param format the format string
-     * @param arg    the argument
+     * @param format 格式字符串
+     * @param arg    参数值
      */
     public static void error(String format, Object arg) {
         LOGGER.error(format, arg);
@@ -247,9 +247,9 @@ public class AlarmLog  {
      * <p>This form avoids superfluous object creation when the logger
      * is disabled for the ERROR level. </p>
      *
-     * @param format the format string
-     * @param arg1   the first argument
-     * @param arg2   the second argument
+     * @param format 格式字符串
+     * @param arg1   第一个参数
+     * @param arg2   第二个参数
      */
     public static void error(String format, Object arg1, Object arg2) {
         LOGGER.error(format, arg1, arg2);
@@ -266,8 +266,8 @@ public class AlarmLog  {
      * {@link #error(String, Object) one} and {@link #error(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    the format string
-     * @param arguments a list of 3 or more arguments
+     * @param format    格式字符串
+     * @param arguments 参数列表
      */
     public static void error(String format, Object... arguments) {
         LOGGER.error(format, arguments);
@@ -277,8 +277,8 @@ public class AlarmLog  {
      * Log an exception (throwable) at the ERROR level with an
      * accompanying message.
      *
-     * @param msg the message accompanying the exception
-     * @param t   the exception (throwable) to log
+     * @param msg 消息内容
+     * @param t   异常对象
      */
     public static void error(String msg, Throwable t) {
         LOGGER.error(msg, t);

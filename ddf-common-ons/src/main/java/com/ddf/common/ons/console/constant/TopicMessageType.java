@@ -47,13 +47,13 @@ public enum TopicMessageType {
         VALUE_MAPPING = Arrays.stream(values()).collect(Collectors.toMap(TopicMessageType::getValue, val -> val));
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     public static TopicMessageType getByValue(Integer value) {
         return VALUE_MAPPING.get(value);
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     public static String getDesc(Integer value) {
         final TopicMessageType messageType = getByValue(value);

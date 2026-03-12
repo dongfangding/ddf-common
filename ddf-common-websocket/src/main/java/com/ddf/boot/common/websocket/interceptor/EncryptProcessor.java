@@ -15,7 +15,7 @@ public interface EncryptProcessor {
      * 解密握手时需要的token参数
      * 如果客户端加密了的话
      *
-     * @param token
+     * @param token token 字符串
      * @return
      */
     default String decryptHandshakeToken(String token) {
@@ -25,8 +25,8 @@ public interface EncryptProcessor {
     /**
      * 加密要发送的消息对象
      *
-     * @param message
-     * @param <T>
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @return
      */
     default <T> String encryptMessage(Message<T> message) {

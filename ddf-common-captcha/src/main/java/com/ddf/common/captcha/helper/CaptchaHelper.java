@@ -162,7 +162,7 @@ public class CaptchaHelper {
 
     /**
      * 校验验证码
-     * @param request 参数
+     * @param request 请求对象
      */
     public boolean check(CaptchaCheckRequest request) {
 //        PreconditionUtil.requiredParamCheck(request);
@@ -200,7 +200,7 @@ public class CaptchaHelper {
     /**
      * 获取s验证码
      *
-     * @param token
+     * @param token token 字符串
      * @return
      */
     public String getVerifyCodeByToken(String token) {

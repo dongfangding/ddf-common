@@ -15,7 +15,7 @@ public class NumberUtil {
     /**
      * 小于等于9999时正常显示，大于1万后格式改为1.001万，11.11万...，大于9999万后显示1.001亿，11.11
      *
-     * @param score
+     * @param score 分值
      * @return
      */
     public static String formatNumberForScore(long score) {
@@ -57,7 +57,7 @@ public class NumberUtil {
     /**
      * 使用java正则表达式去掉多余的.与0
      *
-     * @param s
+     * @param s S参数
      * @return
      */
     public static String subZeroAndDot(String s) {
@@ -72,7 +72,7 @@ public class NumberUtil {
 
     /**
      * 是否 null 或  0
-     * @param number
+     * @param number 数值
      * @return
      */
     public static boolean isNullOrZero(Number number){
@@ -81,7 +81,7 @@ public class NumberUtil {
 
      /**
      * 是否是数字
-     * @param str
+     * @param str STR参数
      * @return
      */
     public static boolean isNumber(String str){

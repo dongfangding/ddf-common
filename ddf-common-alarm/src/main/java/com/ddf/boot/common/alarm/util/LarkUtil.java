@@ -38,10 +38,10 @@ public class LarkUtil {
     /**
      * 使用Lark发送msg_type=text类型的文本消息
      *
-     * @param webhookUrl
-     * @param secret
-     * @param text
-     * @param isAtAll
+     * @param webhookUrl Webhook 地址
+     * @param secret 签名密钥
+     * @param text 文本内容
+     * @param isAtAll 是否 @ 所有人
      */
     public static void sendTextMsgType(String webhookUrl, String secret, String text, boolean isAtAll) {
         try {
@@ -60,10 +60,10 @@ public class LarkUtil {
     /**
      * 使用Lark发送msg_type=post类型的富文本消息
      *
-     * @param webhookUrl
-     * @param secret
-     * @param title
-     * @param contentRequest
+     * @param webhookUrl Webhook 地址
+     * @param secret 签名密钥
+     * @param title 标题
+     * @param contentRequest 富文本内容请求对象
      */
     public static void sendPostMsgType(String webhookUrl, String secret, String title,
             LarkContentRequest contentRequest) {
@@ -108,9 +108,9 @@ public class LarkUtil {
      * }
      * }
      *
-     * @param secret
-     * @param title
-     * @param contentRequest
+     * @param secret 签名密钥
+     * @param title 标题
+     * @param contentRequest 富文本内容请求对象
      * @return
      */
     public static Map<String, Object> buildPostMsgTypeContent(String secret, String title,
@@ -137,9 +137,9 @@ public class LarkUtil {
     /**
      * 构建text文本消息
      *
-     * @param text
-     * @param isAtAll
-     * @param secret 参数
+     * @param text 文本内容
+     * @param isAtAll 是否 @ 所有人
+     * @param secret 签名密钥
      * @return
      */
     public static Map<String, Object> buildText(String secret, String text, boolean isAtAll) {
@@ -159,7 +159,7 @@ public class LarkUtil {
         return params;
     }
     /**
-     * @param secret 参数
+     * @param secret 签名密钥
      * @param timestamp 参数
      */
     private static String genSign(String secret, long timestamp) {

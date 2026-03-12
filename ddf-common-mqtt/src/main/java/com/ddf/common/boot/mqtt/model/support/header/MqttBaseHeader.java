@@ -68,8 +68,8 @@ public class MqttBaseHeader implements Serializable {
     /**
      * 添加指定扩展字段的快速方法
      *
-     * @param key
-     * @param val
+     * @param key 目标键
+     * @param val VAL参数
      * @return
      */
     public Map<String, Object> putExtra(String key, Object val) {
@@ -80,7 +80,7 @@ public class MqttBaseHeader implements Serializable {
     /**
      * 获取指定扩展字段的快速方法
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Object getExtra(String key) {

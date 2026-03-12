@@ -57,7 +57,7 @@ public class ConsoleOnsGroupCreateRequest implements EnvRequest, UserRequest, Se
     /**
      * 转换为ONS SDK请求参数
      *
-     * @param instanceId
+     * @param instanceId 实例ID
      * @return
      */
     public OnsGroupCreateRequest toSdkRequest(String instanceId) {

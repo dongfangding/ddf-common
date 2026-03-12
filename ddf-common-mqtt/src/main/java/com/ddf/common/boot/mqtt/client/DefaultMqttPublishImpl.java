@@ -68,7 +68,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
     /**
      * 发布消息
      *
-     * @param request
+     * @param request 请求对象
      */
     @Override
     public ResponseData<MqttMessageResponse> publish(InnerMqttMessageRequest request) {
@@ -113,7 +113,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * 同步发送消息
-     * @param request 参数
+     * @param request 请求对象
      * @param message 参数
      * @param payload 参数
      * @param messageResponse 参数

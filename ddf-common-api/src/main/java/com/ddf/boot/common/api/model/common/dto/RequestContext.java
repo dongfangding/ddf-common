@@ -145,7 +145,7 @@ public class RequestContext implements Serializable {
     /**
      * 从请求头map中根据规则解析到RequestContext中
      *
-     * @param headers
+     * @param headers 请求头集合
      * @return
      */
     public static RequestContext fromHeaderMap(Map<String, Object> headers) {
@@ -171,7 +171,7 @@ public class RequestContext implements Serializable {
         return context;
     }
     /**
-     * @param pattern 参数
+     * @param pattern 匹配表达式
      * @param headerEnum 参数
      */
     private static String getRequestContextFieldName(Pattern pattern, RequestHeaderEnum headerEnum) {

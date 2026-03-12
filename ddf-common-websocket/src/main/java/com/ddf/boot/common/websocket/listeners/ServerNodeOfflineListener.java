@@ -35,7 +35,7 @@ public class ServerNodeOfflineListener implements NodeEventListener {
      * @param client  客户端连接对象
      * @param path    被创建的节点
      * @param oldData 节点旧数据
-     * @param data    节点最新数据
+     * @param data    待处理数据
      */
     @Override
     public void nodeCreate(CuratorFramework client, String path, ChildData oldData, ChildData data) {
@@ -48,7 +48,7 @@ public class ServerNodeOfflineListener implements NodeEventListener {
      * @param client  客户端连接对象
      * @param path    被创建的节点
      * @param oldData 节点旧数据
-     * @param data    节点最新数据
+     * @param data    待处理数据
      */
     @Override
     public void nodeChange(CuratorFramework client, String path, ChildData oldData, ChildData data) {
@@ -63,7 +63,7 @@ public class ServerNodeOfflineListener implements NodeEventListener {
      * @param client  客户端连接对象
      * @param path    被创建的节点
      * @param oldData 节点旧数据
-     * @param data    节点最新数据
+     * @param data    待处理数据
      */
     @Override
     public void nodeDeleted(CuratorFramework client, String path, ChildData oldData, ChildData data) {

@@ -45,8 +45,8 @@ public class CompletableFutureHelper<T> {
     /**
      * 创建一个带超时的回调函数
      *
-     * @param requestId
-     * @param timeoutMilliSeconds
+     * @param requestId 请求 ID
+     * @param timeoutMilliSeconds 超时milliseconds参数
      * @return
      */
     public CompletableFuture<T> create(String requestId, long timeoutMilliSeconds) {
@@ -76,7 +76,7 @@ public class CompletableFutureHelper<T> {
     /**
      * 创建要给默认超时时间的CompletableFuture
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     public CompletableFuture<T> create(String requestId) {
@@ -103,8 +103,8 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 完成一个回调函数
-     * @param requestId
-     * @param t
+     * @param requestId 请求 ID
+     * @param t 异常对象
      * @return
      */
     public boolean complete(String requestId, T t) {
@@ -115,7 +115,7 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 取消任务
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     public boolean cancel(String requestId) {
@@ -126,8 +126,8 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 触发回调任务异常
-     * @param requestId
-     * @param throwable
+     * @param requestId 请求 ID
+     * @param throwable 异常对象
      * @return
      */
     public boolean completeExceptionally(String requestId, Throwable throwable) {
@@ -149,7 +149,7 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 删除Map中的指定回调对象
-     * @param requestId
+     * @param requestId 请求 ID
      */
     private void remove(String requestId) {
         completableFutureMap.remove(requestId);

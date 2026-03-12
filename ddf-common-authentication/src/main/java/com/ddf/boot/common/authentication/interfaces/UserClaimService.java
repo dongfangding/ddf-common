@@ -17,10 +17,10 @@ public interface UserClaimService {
     /**
      * 校验/解析token之前
      *
-     * @param request
-     * @param response
+     * @param request 请求对象
+     * @param response 响应对象
      * @param clientHeaderMap    客户端传递的请求头
-     * @param customizeHeaderMap 自定义的请求头
+     * @param customizeHeaderMap 自定义请求头映射
      * @return
      */
     default ResponseData<Object> beforeTokenVerify(HttpServletRequest request, HttpServletResponse response,
@@ -33,10 +33,10 @@ public interface UserClaimService {
      * 验证通过后预留一个接口允许客户端对用户做一些事情；
      * 如可以将用户放在自行选择的安全框架上下文中
      *
-     * @param request
-     * @param userClaim
-     * @param headerMap
-     * @param customizeHeaderMap
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
+     * @param headerMap 请求头映射
+     * @param customizeHeaderMap 自定义请求头映射
      */
     default void afterTokenVerifySuccess(HttpServletRequest request, UserClaim userClaim, Map<String, String> headerMap,
             Map<String, String> customizeHeaderMap) {
@@ -46,8 +46,8 @@ public interface UserClaimService {
     /**
      * Jwt将token中的用户信息，传递给调用方，需要调用方实现这个接口来将数据库中的最新用户数据返回过来
      *
-     * @param request
-     * @param userClaim
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
      * @return
      */
     UserClaim getStoreUserInfo(HttpServletRequest request, UserClaim userClaim);
@@ -56,11 +56,11 @@ public interface UserClaimService {
     /**
      * 请求分发前，所有自己服务的网关流程已经走完，开始将请求分发到下游服务
      *
-     * @param request
-     * @param response
-     * @param userClaim
-     * @param headerMap
-     * @param customizeHeaderMap
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param userClaim 用户声明信息
+     * @param headerMap 请求头映射
+     * @param customizeHeaderMap 自定义请求头映射
      * @return
      */
     default ResponseData<Object> beforeDispatch(HttpServletRequest request, HttpServletResponse response,

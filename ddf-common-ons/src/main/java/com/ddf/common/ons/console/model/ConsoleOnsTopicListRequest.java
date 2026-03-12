@@ -38,7 +38,7 @@ public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
     /**
      * 转换为SDK请求对象
      *
-     * @param instanceId
+     * @param instanceId 实例ID
      * @return
      */
     public OnsTopicListRequest toSdkRequest(String instanceId) {

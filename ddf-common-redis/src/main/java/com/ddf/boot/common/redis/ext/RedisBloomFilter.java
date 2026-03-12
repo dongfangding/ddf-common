@@ -22,7 +22,7 @@ import org.redisson.api.RedissonClient;
  * 即将相应业务数据需要初始化到布隆过滤器中。
  * 否则"特点1"不成立，会造成误判。{@link #contains(Object)}
  *
- * @param <T>
+ * @param <T> 泛型类型
  * @author Mitchell
  * @version 1.0
  * @since 2020/09/18 13:42
@@ -37,11 +37,11 @@ public class RedisBloomFilter<T> {
     /**
      * 构造布隆过滤器
      *
-     * @param name               redis key name
-     * @param redissonClient     redisson client
+     * @param name               名称
+     * @param redissonClient     redisson客户端参数
      * @param expectedInsertions 预计容器数量
      * @param falseProbability   允许误差率 0~1
-     * @param <T>
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> RedisBloomFilter<T> newInstance(String name, RedissonClient redissonClient,
@@ -65,7 +65,7 @@ public class RedisBloomFilter<T> {
     /**
      * 判断是否包含指定元素
      *
-     * @param object
+     * @param object 对象
      * @return
      */
     public boolean contains(T object) {
@@ -78,7 +78,7 @@ public class RedisBloomFilter<T> {
     /**
      * 添加元素
      *
-     * @param object
+     * @param object 对象
      * @return
      */
     public boolean add(T object) {

@@ -40,7 +40,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -88,7 +88,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -133,7 +133,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      * @param lockKey        锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -148,7 +148,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
     /**
      * 上锁路径格式化
      *
-     * @param lockKey
+     * @param lockKey lock键参数
      * @return
      */
     @Override

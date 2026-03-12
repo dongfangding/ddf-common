@@ -32,7 +32,7 @@ public class MqttClientController {
     /**
      * 发布消息
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @PostMapping("publish")

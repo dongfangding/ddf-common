@@ -33,9 +33,9 @@ public class LocalCacheUtil {
 	/**
 	 * 查询guava缓存
 	 *
-	 * @param loadingCache
-	 * @param template
-	 * @param parameter
+	 * @param loadingCache loading缓存参数
+	 * @param template template参数
+	 * @param parameter parameter参数
 	 * @return
 	 */
 	public static <T> T getGuavaCache(LoadingCache<String, T> loadingCache, String template, String... parameter) {
@@ -64,9 +64,9 @@ public class LocalCacheUtil {
 	 * 这个方法提供获取value的时候，可以传入一个默认值， 这个方法会去判断是不是默认值，如果是默认值，会转换为null，并且清除key,
 	 * 方便使用的地方依然只要判断value是否为null即可
 	 *
-	 * @param loadingCache
-	 * @param template
-	 * @param parameter
+	 * @param loadingCache loading缓存参数
+	 * @param template template参数
+	 * @param parameter parameter参数
 	 * @param defaultValidValue 参数
 	 * @return
 	 */
@@ -100,10 +100,10 @@ public class LocalCacheUtil {
 	/**
 	 * 创建本地ttl缓存
 	 *
-	 * @param timeoutMillions
-	 * @param delayMillions
-	 * @param <K>
-	 * @param <V>
+	 * @param timeoutMillions 超时millions参数
+	 * @param delayMillions delaymillions参数
+	 * @param <K> 键泛型类型
+	 * @param <V> 值泛型类型
 	 * @return
 	 */
 	public static <K, V> TimedCache<K, V> getTimedCache(long timeoutMillions, long delayMillions) {
@@ -115,11 +115,11 @@ public class LocalCacheUtil {
 	/**
 	 * 创建caffeine批量load缓存模板
 	 *
-	 * @param timeoutDuration
-	 * @param function
+	 * @param timeoutDuration 超时duration参数
+	 * @param function function参数
 	 * @param defaultValue    默认对象， 和guava一样， 本地缓存使用Map都不允许value直接存null
-	 * @param <K>
-	 * @param <V>
+	 * @param <K> 键泛型类型
+	 * @param <V> 值泛型类型
 	 * @param maximumSize 参数
 	 * @return
 	 */
@@ -134,7 +134,7 @@ public class LocalCacheUtil {
 				.recordStats()
 				.build(new com.github.benmanes.caffeine.cache.CacheLoader<>() {
 					/**
-					 * @param key 参数
+					 * @param key 目标键
 					 */
 					@Override
 					public V load(K key) throws Exception {
@@ -147,11 +147,11 @@ public class LocalCacheUtil {
 	/**
 	 * 创建caffeine批量load缓存模板
 	 *
-	 * @param timeoutDuration
-	 * @param function
+	 * @param timeoutDuration 超时duration参数
+	 * @param function function参数
 	 * @param defaultValue    默认对象， 和guava一样， 本地缓存使用Map都不允许value直接存null
-	 * @param <K>
-	 * @param <V>
+	 * @param <K> 键泛型类型
+	 * @param <V> 值泛型类型
 	 * @param maximumSize 参数
 	 * @return
 	 */
@@ -166,7 +166,7 @@ public class LocalCacheUtil {
 				.recordStats()
 				.build(new com.github.benmanes.caffeine.cache.CacheLoader<>() {
 					/**
-					 * @param key 参数
+					 * @param key 目标键
 					 */
 					@Override
 					public @Nullable V load(@NonNull K key) throws Exception {
@@ -174,7 +174,7 @@ public class LocalCacheUtil {
 						return (Objects.isNull(result) || Objects.isNull(result.get(key))) ? defaultValue : result.get(key);
 					}
 					/**
-					 * @param keys 参数
+					 * @param keys 键集合
 					 */
 					@Override
 					public Map<? extends K, ? extends @NonNull V> loadAll(Set<? extends K> keys) throws Exception {
@@ -186,10 +186,10 @@ public class LocalCacheUtil {
 	/**
 	 * 批量load模板
 	 *
-	 * @param keys
-	 * @param function
-	 * @param <K>
-	 * @param <V>
+	 * @param keys 键集合
+	 * @param function function参数
+	 * @param <K> 键泛型类型
+	 * @param <V> 值泛型类型
 	 * @param defaultValue 参数
 	 * @return
 	 */
@@ -212,11 +212,11 @@ public class LocalCacheUtil {
 	/**
 	 * 这种只是演示，其实大概率用不到，直接get就可以，使用Optional作为默认缓存的，就直接等待过期时间到就好了，不用主动清除key
 	 *
-	 * @param loadingCache
-	 * @param key
+	 * @param loadingCache loading缓存参数
+	 * @param key 目标键
 	 * @return
-	 * @param <K>
-	 * @param <V>
+	 * @param <K> 键泛型类型
+	 * @param <V> 值泛型类型
 	 */
 	public static <K, V> Optional<V> getCaffeineCacheCheckDefault(
 			com.github.benmanes.caffeine.cache.LoadingCache<K, Optional<V>> loadingCache, K key) {
@@ -244,8 +244,8 @@ public class LocalCacheUtil {
 	 * 如果只是一味的提供默认对象去覆盖，就会造成问题，明明知道这个key是被自己删除了，还要浪费空间去缓存。
 	 * 所以提供一个方法，统一封装，空对象为默认对象，是默认对象的话， 强制删除。
 	 *
-	 * @param loadingCache
-	 * @param keys         查询key
+	 * @param loadingCache loading缓存参数
+	 * @param keys         键集合
 	 * @return
 	 */
 	public static <K, V> Map<K, V> getCaffeineCacheCheckDefault(

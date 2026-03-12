@@ -113,7 +113,7 @@ public class RequestContent<T> implements Serializable {
      * 主动发起请求推送数据
      *
      * @param cmd     指令碼
-     * @param content 发送的内容
+     * @param content 内容
      * @param <T>     内容类型
      * @return
      */
@@ -139,7 +139,7 @@ public class RequestContent<T> implements Serializable {
      * 对收到的请求应答业务处理成功同时返回给客户端数据
      *
      * @param requestContent 收到的数据
-     * @param data           要返回的数据
+     * @param data           待处理数据
      * @param <T>            收到的数据body类型
      * @param <R>            返回的body数据内容
      * @return
@@ -171,8 +171,8 @@ public class RequestContent<T> implements Serializable {
     /**
      * 添加扩展字段
      *
-     * @param key   扩展字段key
-     * @param value 扩展字典value
+     * @param key   目标键
+     * @param value 参数值
      * @return
      */
     public RequestContent<T> addExtra(String key, String value) {
@@ -201,7 +201,7 @@ public class RequestContent<T> implements Serializable {
      *
      * @param requestContent 收到的数据
      * @param code           响应code码
-     * @param data           响应的数据
+     * @param data           待处理数据
      * @param <T>            收到的数据内容类型
      * @param <R>            返回的数据内容类型
      * @return
@@ -245,7 +245,7 @@ public class RequestContent<T> implements Serializable {
     /**
      * 由于set添加扩展值容易出错，因此不对外提供，进攻解码器使用
      *
-     * @param extra
+     * @param extra 扩展参数
      * @return
      */
     private RequestContent<T> setExtra(String extra) {

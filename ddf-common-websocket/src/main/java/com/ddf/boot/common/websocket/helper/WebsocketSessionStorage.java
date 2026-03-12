@@ -78,7 +78,7 @@ public class WebsocketSessionStorage {
     /**
      * 返回当前认证身份对应的WebSocketSession
      *
-     * @param authPrincipal
+     * @param authPrincipal 认证主体对象
      * @return
      */
     public static WebSocketSessionWrapper get(AuthPrincipal authPrincipal) {
@@ -88,8 +88,8 @@ public class WebsocketSessionStorage {
     /**
      * 认证身份用户对应的WebSocketSession在线
      *
-     * @param authPrincipal
-     * @param webSocketSession
+     * @param authPrincipal 认证主体对象
+     * @param webSocketSession WEBsocket会话参数
      */
     @SneakyThrows
     public static void active(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) {
@@ -135,7 +135,7 @@ public class WebsocketSessionStorage {
     /**
      * 认证身份用户对应的WebSocketSession离线
      *
-     * @param authPrincipal
+     * @param authPrincipal 认证主体对象
      * @param webSocketSession 参数
      */
     public static void inactive(AuthPrincipal authPrincipal, WebSocketSession webSocketSession) throws Exception {
@@ -147,7 +147,7 @@ public class WebsocketSessionStorage {
     /**
      * 清除认证用户身份对应的WebSocketSession,清除前应保证离线状态已更新到表中
      *
-     * @param authPrincipal
+     * @param authPrincipal 认证主体对象
      */
     public static void remove(AuthPrincipal authPrincipal) {
         WEB_SOCKET_SESSION_MAP.remove(authPrincipal);
@@ -166,7 +166,7 @@ public class WebsocketSessionStorage {
     /**
      * 判断指定认证的可用连接是否在本机
      *
-     * @param authPrincipal
+     * @param authPrincipal 认证主体对象
      * @return
      * @since 2019/9/24 15:17
      */
@@ -178,8 +178,8 @@ public class WebsocketSessionStorage {
     /**
      * 修改状态节点
      *
-     * @param authPrincipal
-     * @param status
+     * @param authPrincipal 认证主体对象
+     * @param status 状态参数
      * @param webSocketSession 参数
      * @return
      */
@@ -228,8 +228,8 @@ public class WebsocketSessionStorage {
     /**
      * 修改同步状态
      *
-     * @param authPrincipal
-     * @param sync
+     * @param authPrincipal 认证主体对象
+     * @param sync sync参数
      * @return
      */
     public static boolean modifySync(AuthPrincipal authPrincipal, boolean sync) {
@@ -246,7 +246,7 @@ public class WebsocketSessionStorage {
     /**
      * 将请求id放入对象中，等待填充
      *
-     * @param requestId
+     * @param requestId 请求 ID
      */
     public static void put(@NotNull String requestId) {
         Objects.requireNonNull(requestId, "请求id不能为空!");
@@ -257,8 +257,8 @@ public class WebsocketSessionStorage {
     /**
      * 业务处理类如果没有放入响应，则放入默认的响应
      *
-     * @param message
-     * @param response
+     * @param message 消息内容
+     * @param response 响应对象
      * @since 2019/9/26 21:21
      */
     public static void putDefaultResponse(@NotNull Message<?> message, @NotNull MessageResponse<?> response) {
@@ -271,8 +271,8 @@ public class WebsocketSessionStorage {
     /**
      * 将响应的数据填充到requestId
      *
-     * @param requestId
-     * @param response
+     * @param requestId 请求 ID
+     * @param response 响应对象
      */
     public static void putResponse(@NotNull String requestId, @NotNull MessageResponse<?> response) {
         Objects.requireNonNull(requestId, "请求id不能为空!");
@@ -288,7 +288,7 @@ public class WebsocketSessionStorage {
     /**
      * 针对客户端的响应判断是否响应成功，如果没有成功则将响应结果返回给调用者
      *
-     * @param message
+     * @param message 消息内容
      * @return
      */
     public static boolean checkResponseIsSuccess(@NotNull Message<?> message) {
@@ -320,8 +320,8 @@ public class WebsocketSessionStorage {
     /**
      * 获取响应,如果超过阻塞时间则视为失败
      *
-     * @param requestId
-     * @param blockMilliSeconds
+     * @param requestId 请求 ID
+     * @param blockMilliSeconds blockmilliseconds参数
      * @return
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId, long blockMilliSeconds) {
@@ -348,7 +348,7 @@ public class WebsocketSessionStorage {
     /**
      * 判断响应值是否已经被取走
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      * @since 2019/9/26 18:39
      */
@@ -359,7 +359,7 @@ public class WebsocketSessionStorage {
     /**
      * 是否没有放入过数据
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      * @since 2019/9/26 20:35
      */
@@ -371,7 +371,7 @@ public class WebsocketSessionStorage {
     /**
      * 获取响应,如果超过阻塞时间则视为失败,默认5秒
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId) {
@@ -393,8 +393,8 @@ public class WebsocketSessionStorage {
      * FIXME 一个连接发送过来数据，如果还没来得及处理给响应，这时候客户端断线了，那么下次重连的时候，
      * 连到另外一台机器，就会出现问题,除非也走接口集群转发
      *
-     * @param webSocketSessionWrapper
-     * @param message
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param message 消息内容
      */
     public static WebSocketSessionWrapper sendMessage(WebSocketSessionWrapper webSocketSessionWrapper,
             Message<?> message) {
@@ -443,8 +443,8 @@ public class WebsocketSessionStorage {
     /**
      * 发送数据
      *
-     * @param authPrincipal
-     * @param message
+     * @param authPrincipal 认证主体对象
+     * @param message 消息内容
      */
     public static WebSocketSessionWrapper sendMessage(AuthPrincipal authPrincipal, Message<?> message) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -455,8 +455,8 @@ public class WebsocketSessionStorage {
     /**
      * 发送数据之后关闭连接
      *
-     * @param webSocketSessionWrapper
-     * @param message
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param message 消息内容
      */
     public static void sendMessageAndClose(WebSocketSessionWrapper webSocketSessionWrapper, Message<?> message) {
         try {
@@ -471,8 +471,8 @@ public class WebsocketSessionStorage {
     /**
      * 发送数据之后关闭连接
      *
-     * @param authPrincipal
-     * @param message
+     * @param authPrincipal 认证主体对象
+     * @param message 消息内容
      */
     public static void sendMessageAndClose(AuthPrincipal authPrincipal, Message<?> message) {
         sendMessageAndClose(get(authPrincipal), message);

@@ -30,10 +30,10 @@ public class CmdStrategyHelper {
     /**
      * 记录日志并发送消息
      *
-     * @param authPrincipal
-     * @param payload
-     * @param message
-     * @param <T>
+     * @param authPrincipal 认证主体对象
+     * @param payload 事件载荷对象
+     * @param message 消息内容
+     * @param <T> 泛型类型
      */
     public <T> void recordAndSend(AuthPrincipal authPrincipal, T payload, Message<T> message) {
         TextMessage textMessage = Message.wrapper(message);
@@ -46,8 +46,8 @@ public class CmdStrategyHelper {
     /**
      * 发送设备指令码运行状态数据
      *
-     * @param authPrincipal
-     * @param message
+     * @param authPrincipal 认证主体对象
+     * @param message 消息内容
      * @param isResponse    是否时响应数据
      */
     public void buildDeviceCmdRunningState(AuthPrincipal authPrincipal, Message<?> message, boolean isResponse) {

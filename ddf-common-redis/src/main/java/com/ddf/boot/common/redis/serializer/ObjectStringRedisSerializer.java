@@ -72,7 +72,7 @@ public class ObjectStringRedisSerializer implements RedisSerializer<Object> {
 	/**
 	 * Creates a new {@link ObjectStringRedisSerializer} using the given {@link Charset} to encode and decode strings.
 	 *
-	 * @param charset must not be {@literal null}.
+	 * @param charset charset参数
 	 */
 	public ObjectStringRedisSerializer(Charset charset) {
 		Assert.notNull(charset, "Charset must not be null!");

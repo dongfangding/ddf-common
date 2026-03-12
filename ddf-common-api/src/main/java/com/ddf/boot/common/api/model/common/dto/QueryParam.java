@@ -59,8 +59,8 @@ public class QueryParam<T> implements Serializable {
     /**
      * 条件相等关系为AND的简写
      *
-     * @param key   字段
-     * @param value 值
+     * @param key   目标键
+     * @param value 参数值
      */
     public QueryParam(String key, T value) {
         this.key = key;
@@ -73,8 +73,8 @@ public class QueryParam<T> implements Serializable {
     /**
      * 多个条件为AND关系的简写
      *
-     * @param key   字段
-     * @param value 值
+     * @param key   目标键
+     * @param value 参数值
      * @param op 参数
      */
     public QueryParam(String key, Op op, T value) {
@@ -94,7 +94,7 @@ public class QueryParam<T> implements Serializable {
          */
         OR("OR");
         /**
-         * @param value 参数
+         * @param value 参数值
          */
         private String value;
         Relative(String value) {
@@ -154,7 +154,7 @@ public class QueryParam<T> implements Serializable {
          */
         NI("IS NULL");
         /**
-         * @param value 参数
+         * @param value 参数值
          */
         private String value;
         Op(String value) {

@@ -62,8 +62,8 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
     /**
      * 待测试，这个方法好像是同步的
      *
-     * @param session
-     * @param textMessage
+     * @param session 会话对象
+     * @param textMessage 文本消息对象
      * @throws Exception
      */
     @Override

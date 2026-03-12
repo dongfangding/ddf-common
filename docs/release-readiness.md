@@ -8,7 +8,7 @@ Last updated: 2026-03-12
 
 Current status for a first public Maven Central release:
 
-- Candidate release version: `boot3.5-2026.1`
+- Candidate release version: `boot3.5-2026.1-SNAPSHOT`
 - Root release profile verification: passed
 - Root compile verification: passed
 - Maven Central metadata: prepared
@@ -78,6 +78,6 @@ Current status for a first public Maven Central release:
 ## Recommended Next Release Steps
 
 1. Run `mvn -Prelease clean deploy` in the real publishing environment with credentials and GPG configured.
-2. Create the Git tag for `boot3.5-2026.1` after successful publication.
+2. Create the Git tag for `boot3.5-2026.1-SNAPSHOT` after successful publication.
 3. Verify public coordinates and README rendering on Maven Central.
 4. Switch the repository back to the next development `SNAPSHOT` version after the release branch or tag is finalized.

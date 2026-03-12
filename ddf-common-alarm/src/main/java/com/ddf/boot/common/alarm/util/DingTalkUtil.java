@@ -42,10 +42,10 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人， 并且@所有人, 并且限制发送次数，主要是为了避免前期就把每月额度用完了，后面直接哑火。所有每天定量，只影响当天。
      *
-     * @param secret      加签
-     * @param accessToken url中带的访问token
-     * @param title       markdown标题
-     * @param content     markdown内容
+     * @param secret      签名密钥
+     * @param accessToken URL 中的 accessToken
+     * @param title       标题
+     * @param content     内容
      */
     public static void sendMarkdownMsgToAllWithLimit(String secret, String accessToken, String title, String content) {
         if (!ObjectUtils.allNotNull(DING_TALK_PROPERTIES, REDIS_TEMPLATE_HELPER)) {
@@ -68,10 +68,10 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人， 并且@所有人
      *
-     * @param secret      加签
-     * @param accessToken url中带的访问token
-     * @param title       markdown标题
-     * @param content     markdown内容
+     * @param secret      签名密钥
+     * @param accessToken URL 中的 accessToken
+     * @param title       标题
+     * @param content     内容
      */
     public static void sendMarkdownMsgToAll(String secret, String accessToken, String title, String content) {
         sendMarkdownMsg(secret, accessToken, title, content, true, new ArrayList<>());
@@ -81,12 +81,12 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人
      *
-     * @param secret      加签
-     * @param accessToken url中带的访问token
-     * @param title       markdown标题
-     * @param content     markdown内容
-     * @param isAtAll     是否@所有人
-     * @param atUserIds   @用户id列表
+     * @param secret      签名密钥
+     * @param accessToken URL 中的 accessToken
+     * @param title       标题
+     * @param content     内容
+     * @param isAtAll     是否 @ 所有人
+     * @param atUserIds   @ 用户 ID 列表
      */
     public static void sendMarkdownMsg(String secret, String accessToken, String title, String content, boolean isAtAll,
             List<String> atUserIds) {
@@ -116,10 +116,10 @@ public class DingTalkUtil {
     /**
      * 构建markdown请求类
      *
-     * @param title
-     * @param content
-     * @param isAtAll
-     * @param atUserIds
+     * @param title 标题
+     * @param content 内容
+     * @param isAtAll 是否 @ 所有人
+     * @param atUserIds @ 用户 ID 列表
      * @return
      */
     public static OapiRobotSendRequest buildMarkdownRequest(String title, String content, boolean isAtAll,

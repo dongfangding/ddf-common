@@ -33,20 +33,20 @@ public class ApplicationContextUtil implements ApplicationContextAware {
         ApplicationContextUtil.applicationContext = applicationContext;
     }
     /**
-     * @param clazz 参数
+     * @param clazz 目标类型
      */
     public static <T> T getBean(Class<T> clazz) {
         return getApplicationContext().getBean(clazz);
     }
     /**
      * @param name 参数
-     * @param clazz 参数
+     * @param clazz 目标类型
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return getApplicationContext().getBean(name, clazz);
     }
     /**
-     * @param clazz 参数
+     * @param clazz 目标类型
      */
     public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
         return getApplicationContext().getBeansOfType(clazz);

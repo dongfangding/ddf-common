@@ -32,7 +32,7 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换， 这个返回的是自己包装的分页对象，建议优先使用
      *
-     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 分页请求对象
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param voClazz   输出对象
@@ -64,7 +64,7 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个， 这个返回的是自己包装的分页对象，建议优先使用
      *
-     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 分页请求对象
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param <T>       原始Mongo对象类型
@@ -80,7 +80,7 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换, 这个返回的是spring-data自己的分页对象
      *
-     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 分页请求对象
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param voClazz   输出对象
@@ -109,7 +109,7 @@ public class MongoTemplateHelper {
     /**
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个, 这个返回的是spring-data自己的分页对象
      *
-     * @param pageRequest 原始查询对象，这个是为了在当前方法中提取分页参数
+     * @param pageRequest 分页请求对象
      * @param query     查询对象
      * @param poClazz   原始Mongo对象类型
      * @param <T>       原始Mongo对象类型

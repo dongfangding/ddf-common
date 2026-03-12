@@ -52,7 +52,7 @@ public class EmqController {
     /**
      * 演示发送消息，非正式使用
      *
-     * @param message
+     * @param message 消息内容
      * @return
      * @throws MqttException
      */
@@ -68,7 +68,7 @@ public class EmqController {
     /**
      * 原始发布消息，忽略处理一些规则，使用String接受参数，否则无法反序列化，定制化的接口在这个上层包装再处理
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @PostMapping("publish")
@@ -79,7 +79,7 @@ public class EmqController {
     /**
      * 获取emq连接信息
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     @GetMapping("getConnectionInfo")
@@ -98,8 +98,8 @@ public class EmqController {
     /**
      * 连接认证
      *
-     * @param request
-     * @param response 参数
+     * @param request 请求对象
+     * @param response 响应对象
      */
     @PostMapping("authenticate")
     public void authenticate(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
@@ -151,8 +151,8 @@ public class EmqController {
      * ACL 超级用户认证
      * 首先查询客户端是否为超级用户，客户端为超级用户时将跳过 ACL 查询。
      *
-     * @param request
-     * @param response 参数
+     * @param request 请求对象
+     * @param response 响应对象
      */
     @PostMapping("acl/superuser")
     public void superuser(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
@@ -168,8 +168,8 @@ public class EmqController {
     /**
      * 普通客户端ACL认证
      *
-     * @param request
-     * @param response 参数
+     * @param request 请求对象
+     * @param response 响应对象
      */
     @PostMapping("acl")
     public void acl(@RequestBody EmqAclRequest request, HttpServletResponse response) {

@@ -19,8 +19,8 @@ public class EmqHttpResponseUtil {
     /**
      * 认证成功：API 返回 200 状态码
      *
-     * @param response
-     * @param message
+     * @param response 响应对象
+     * @param message 消息内容
      */
     public static void success(HttpServletResponse response, String message) {
         response.setStatus(200);
@@ -35,8 +35,8 @@ public class EmqHttpResponseUtil {
     /**
      * 认证失败：API 返回 4xx 状态码
      *
-     * @param response
-     * @param errorMessage
+     * @param response 响应对象
+     * @param errorMessage 错误消息参数
      */
     public static void error(HttpServletResponse response, String errorMessage) {
         log.debug("------------------失败响应------------------");

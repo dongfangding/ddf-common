@@ -108,7 +108,7 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 获取监听节点路径
      *
-     * @param monitor
+     * @param monitor 监控参数
      * @return
      */
     private String getMonitorPath(MonitorNode monitor) {
@@ -141,7 +141,7 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 监听节点事件
      *
-     * @param path
+     * @param path 路径
      */
     private void listenerNode(final String path) {
         CuratorCache cache = CuratorCache.build(client, path, CuratorCache.Options.SINGLE_NODE_CACHE);
@@ -190,8 +190,8 @@ public class MonitorRegistryConfig implements InitializingBean {
     /**
      * 创建节点
      *
-     * @param path
-     * @param monitor
+     * @param path 路径
+     * @param monitor 监控参数
      * @throws Exception
      */
     private void createNode(String path, MonitorNode monitor) throws Exception {

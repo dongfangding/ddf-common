@@ -19,8 +19,8 @@ public class BizUtils {
     /**
      * 生成 id biz tag
      *
-     * @param appId
-     * @param tag
+     * @param appId 应用 ID
+     * @param tag TAG参数
      * @return
      */
     public static String genIdBizTag(String appId, String tag) {
@@ -30,8 +30,8 @@ public class BizUtils {
     /**
      * 生成id - 批量
      *
-     * @param length
-     * @param func
+     * @param length 长度
+     * @param func func参数
      * @return
      */
     public static List<Long> multiIds(Integer length, Function<Integer, Long> func) {

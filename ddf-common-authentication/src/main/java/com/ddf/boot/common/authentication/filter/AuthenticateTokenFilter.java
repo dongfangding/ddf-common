@@ -68,9 +68,9 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 前置校验
      *
-     * @param request
-     * @param response
-     * @param handler
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 当前处理器对象
      * @return
      * @throws Exception
      */
@@ -155,7 +155,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         return true;
     }
     /**
-     * @param request 参数
+     * @param request 请求对象
      */
     private void checkSign(HttpServletRequest request) {
         // 标准情况下，get方法应该是没有content-type的，但是有些不规范的写法会将这个传过来，导致走body签名，那就不管了。
@@ -174,10 +174,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         }
     }
     /**
-     * @param request 参数
-     * @param userClaim 参数
-     * @param clientIp 参数
-     * @param token 参数
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
+     * @param clientIp 客户端 IP
+     * @param token token 字符串
      */
     public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // 解析请求头
@@ -195,7 +195,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * body传参参数校验
      *
-     * @param request
+     * @param request 请求对象
      */
     private void resolveBodySignData(HttpServletRequest request) {
         final String body = WebUtil.readBody(request);
@@ -207,7 +207,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * QueryString传参签名校验
      *
-     * @param request
+     * @param request 请求对象
      */
     private void resolveQueryParamsSignData(HttpServletRequest request) {
         final Map<String, Object> data = request
@@ -221,8 +221,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 验签
      *
-     * @param data
-     * @param request 参数
+     * @param data 待处理数据
+     * @param request 请求对象
      * @return
      */
     private void validSign(HttpServletRequest request, Map<String, Object> data) {
@@ -241,7 +241,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 生成traceId
      *
-     * @param userId
+     * @param userId 用户 ID
      * @return
      */
     private String generateTraceId(String userId) {
@@ -251,10 +251,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 执行器结束
      *
-     * @param request
-     * @param response
-     * @param handler
-     * @param ex
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 当前处理器对象
+     * @param ex 异常对象
      * @throws Exception
      */
     @Override
@@ -266,8 +266,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 校验并转换用户信息
      *
-     * @param request
-     * @param tokenHeader
+     * @param request 请求对象
+     * @param tokenHeader 请求头中的 token 值
      * @return
      */
     private UserClaim checkAndParseAuthInfo(HttpServletRequest request, String tokenHeader) {
@@ -289,8 +289,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 解析客户端请求头
      *
-     * @param request
-     * @param userClaim
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
      * @return
      */
     private Map<String, String> resolveClientHeaders(HttpServletRequest request, UserClaim userClaim) {
@@ -310,8 +310,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     /**
      * 解析服务端内部请求头
      *
-     * @param request
-     * @param userClaim
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
      * @return
      */
     private Map<String, String> resolveServerHeaders(HttpServletRequest request, UserClaim userClaim) {
@@ -334,10 +334,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         return serverHeaderMap;
     }
     /**
-     * @param request 参数
-     * @param userClaim 参数
-     * @param clientIp 参数
-     * @param token 参数
+     * @param request 请求对象
+     * @param userClaim 用户声明信息
+     * @param clientIp 客户端 IP
+     * @param token token 字符串
      */
     public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用

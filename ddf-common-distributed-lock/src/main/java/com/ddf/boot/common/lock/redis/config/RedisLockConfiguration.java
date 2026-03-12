@@ -31,7 +31,7 @@ public class RedisLockConfiguration {
     /**
      * 注册redis锁实现类
      *
-     * @param redissonClient
+     * @param redissonClient redisson客户端参数
      * @return
      */
     @Bean(name = RedisDistributedLock.BEAN_NAME)

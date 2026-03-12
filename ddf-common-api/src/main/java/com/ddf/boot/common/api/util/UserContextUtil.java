@@ -32,7 +32,7 @@ public class UserContextUtil {
     /**
      * 填充用户信息
      *
-     * @param userClaim
+     * @param userClaim 用户声明信息
      */
     public static void setUserClaim(UserClaim userClaim) {
         USER_CONTEXT.set(userClaim);
@@ -101,7 +101,7 @@ public class UserContextUtil {
     /**
      * 设置请求上下文
      *
-     * @param requestHeader
+     * @param requestHeader 请求上下文对象
      */
     public static void setRequestContext(RequestContext requestHeader) {
         REQUEST_CONTEXT.set(requestHeader);

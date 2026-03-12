@@ -96,7 +96,7 @@ public class MathKaptchaTextCreator extends DefaultTextCreator
     /**
      * 解析该类生成的计算表达式
      *
-     * @param mathText
+     * @param mathText 数学验证码文本
      * @return
      */
     public static Data parse(String mathText) {

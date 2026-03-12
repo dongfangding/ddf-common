@@ -15,11 +15,11 @@ public class ObjectUtil {
     /**
      * 检查并且获取值
      *
-     * @param object
-     * @param supplier
+     * @param object 对象
+     * @param supplier 供应参数
      * @return
-     * @param <T>
-     * @param <R>
+     * @param <T> 泛型类型
+     * @param <R> 返回值泛型类型
      */
     public static <T, R> R checkAndGet(T object, Supplier<R> supplier) {
         if (Objects.isNull(object)) {
@@ -31,12 +31,12 @@ public class ObjectUtil {
     /**
      * 检查并且获取值，允许设置默认值
      *
-     * @param object
-     * @param supplier
+     * @param object 对象
+     * @param supplier 供应参数
      * @param defaultValue 参数
      * @return
-     * @param <T>
-     * @param <R>
+     * @param <T> 泛型类型
+     * @param <R> 返回值泛型类型
      */
     public static <T, R> R getOrDefault(T object, R defaultValue, Supplier<R> supplier) {
         if (Objects.isNull(object)) {

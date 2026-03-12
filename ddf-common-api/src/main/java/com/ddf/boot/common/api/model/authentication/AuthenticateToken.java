@@ -42,7 +42,7 @@ public class AuthenticateToken implements Serializable {
         return String.join(SPLIT, userIdToken, detailsToken);
     }
     /**
-     * @param token 参数
+     * @param token token 字符串
      */
     public static AuthenticateToken fromToken(String token) {
         final String[] tokenArr = token.split("\\" + SPLIT);

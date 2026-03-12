@@ -95,7 +95,7 @@ public class EntityGenerateUtil {
     /**
      * 生成实体源码
      *
-     * @param tableType
+     * @param tableType table类型
      * @throws Exception
      */
     private static void generateEntity(TableType tableType) throws Exception {
@@ -178,8 +178,8 @@ public class EntityGenerateUtil {
     /**
      * 将数据库类型转换为实体类型，可能会有遗漏，这里只转换了大部分，如不合适需要自己修改
      *
-     * @param type
-     * @param columnName
+     * @param type 类型
+     * @param columnName column名称参数
      * @return
      */
     private static String castSqlType(int type, String columnName) {
@@ -255,7 +255,7 @@ public class EntityGenerateUtil {
     /**
      * 将输入的包名转换为文件路径
      *
-     * @param packageName
+     * @param packageName package名称参数
      * @return
      */
     private static String packageNameToFileDir(String packageName) {

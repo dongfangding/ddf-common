@@ -24,8 +24,8 @@ public class RepeatableRegistrar implements ImportBeanDefinitionRegistrar {
     /**
      * 获取全局注解使用，注册属性类
      *
-     * @param metadata
-     * @param registry
+     * @param metadata metadata参数
+     * @param registry Bean 定义注册器
      */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {

@@ -49,13 +49,13 @@ public class MessageSourceUtil {
     /**
      * 解析message， 适配当前框架
      *
-     * @param code
-     * @param args
-     * @param defaultMessage
+     * @param code 编码值
+     * @param args 方法入参数组
+     * @param defaultMessage 默认消息参数
      * @return
      */
     public static String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage) {
-        final String appLanguage = WebUtil.getHeader(RequestHeaderEnum.LANGUAGE.name());
+        final String appLanguage = WebUtil.getCurrentRequestHeaderIfPresent(RequestHeaderEnum.LANGUAGE.name());
         String defaultLanguage = "en";
         String language = StringUtils.defaultIfBlank(appLanguage, defaultLanguage);
         language = Objects.equals("zh-hans", language) ? "zh-hant" : language;
@@ -66,10 +66,10 @@ public class MessageSourceUtil {
     /**
      * 解析message
      *
-     * @param code
-     * @param args
-     * @param defaultMessage
-     * @param locale
+     * @param code 编码值
+     * @param args 方法入参数组
+     * @param defaultMessage 默认消息参数
+     * @param locale locale参数
      * @return
      */
     public static String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage,
@@ -94,9 +94,9 @@ public class MessageSourceUtil {
     /**
      * 获取一个code的所有语言版本
      *
-     * @param code
-     * @param args
-     * @param defaultMessage
+     * @param code 编码值
+     * @param args 方法入参数组
+     * @param defaultMessage 默认消息参数
      * @return
      */
     public static Map<String, String> getAllMessages(String code, @Nullable Object[] args,
@@ -112,7 +112,7 @@ public class MessageSourceUtil {
     /**
      * 获取一个code的所有语言版本
      *
-     * @param code
+     * @param code 编码值
      * @return
      */
     public static Map<String, String> getAllMessages(String code) {
@@ -127,9 +127,9 @@ public class MessageSourceUtil {
     /**
      * 获取一个code的所有语言版本
      *
-     * @param code
-     * @param args
-     * @param defaultMessage
+     * @param code 编码值
+     * @param args 方法入参数组
+     * @param defaultMessage 默认消息参数
      * @return
      */
     public static String getAllMessagesJson(String code, @Nullable Object[] args, @Nullable String defaultMessage) {
@@ -140,7 +140,7 @@ public class MessageSourceUtil {
     /**
      * 获取一个code的所有语言版本
      *
-     * @param code
+     * @param code 编码值
      * @return
      */
     public static String getAllMessagesJson(String code) {

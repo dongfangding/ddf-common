@@ -40,7 +40,7 @@ public abstract class AbstractOnsMessageListener<D extends Serializable> impleme
     /**
      * 记录消费成功消息日志
      *
-     * @param message
+     * @param message 消息内容
      */
     protected void infoMessage(Message message) {
     }
@@ -48,7 +48,7 @@ public abstract class AbstractOnsMessageListener<D extends Serializable> impleme
     /**
      * 记录消费失败消息日志
      *
-     * @param message
+     * @param message 消息内容
      * @param failureReason 参数
      */
     protected void errorMessage(Message message, String failureReason) {

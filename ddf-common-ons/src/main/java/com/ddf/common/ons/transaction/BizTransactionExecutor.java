@@ -13,8 +13,8 @@ public interface BizTransactionExecutor extends SmartInitializingSingleton {
 
     /**
      * 执行
-     * @param msg
-     * @param arg
+     * @param msg 消息内容
+     * @param arg 参数值
      * @return
      */
     boolean execute(Message msg, Object arg);

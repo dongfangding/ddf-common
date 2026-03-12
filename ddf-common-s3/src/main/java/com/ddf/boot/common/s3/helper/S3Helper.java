@@ -70,7 +70,7 @@ public class S3Helper {
      * 上传文件（使用默认 Bucket，自动生成路径）.
      * @param platform 参数
      * @param identity 参数
-     * @param data 参数
+     * @param data 待处理数据
      * @param filename 参数
      */
     public UploadResult upload(String platform, String identity, byte[] data, String filename) {

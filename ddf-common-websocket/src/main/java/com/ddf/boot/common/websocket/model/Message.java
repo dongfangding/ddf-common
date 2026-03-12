@@ -147,7 +147,7 @@ public class Message<T> {
     /**
      * 客户端连接上来的欢迎语
      *
-     * @param payload
+     * @param payload 事件载荷对象
      * @return
      */
     public static Message<String> echo(String payload) {
@@ -203,7 +203,7 @@ public class Message<T> {
     /**
      * 将Message对象包装成发送的TextMessage
      *
-     * @param message
+     * @param message 消息内容
      * @return
      */
     public static <T> TextMessage wrapper(@NotNull Message<T> message) {
@@ -217,7 +217,7 @@ public class Message<T> {
     /**
      * 加密加签封装
      *
-     * @param message
+     * @param message 消息内容
      * @return
      */
     public static <T> Message<T> wrapperWithSign(@NotNull Message<T> message) {
@@ -234,9 +234,9 @@ public class Message<T> {
     /**
      * 服务端请求数据
      *
-     * @param cmd
-     * @param clientChannel
-     * @param body
+     * @param cmd 命令参数
+     * @param clientChannel 客户端通道参数
+     * @param body 请求体参数
      * @return
      */
     public static <T> Message<T> request(String cmd, String clientChannel, T body) {
@@ -246,8 +246,8 @@ public class Message<T> {
     /**
      * 响应客户端数据
      *
-     * @param message
-     * @param <T>
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @param body 参数
      * @param code 参数
      * @return
@@ -262,7 +262,7 @@ public class Message<T> {
     /**
      * 通用响应客户端数据处理成功
      *
-     * @param message
+     * @param message 消息内容
      * @return
      */
     public static <O> Message<String> responseSuccess(Message<O> message) {
@@ -272,10 +272,10 @@ public class Message<T> {
     /**
      * 根据客户端数据构建响应数据
      *
-     * @param message
-     * @param body
-     * @param code
-     * @param <T>
+     * @param message 消息内容
+     * @param body 请求体参数
+     * @param code 编码值
+     * @param <T> 泛型类型
      * @return
      */
     public static <O, T> Message<T> buildResponseMessage(Message<O> message, T body, Integer code) {
@@ -290,8 +290,8 @@ public class Message<T> {
     /**
      * 添加扩展字段
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Message<T> addExtra(String key, String value) {
@@ -339,7 +339,7 @@ public class Message<T> {
     /**
      * 对报文数据进行解密与验签
      *
-     * @param textMessagePayload
+     * @param textMessagePayload 文本消息载荷参数
      * @return
      */
     public static Message<?> unSign(String textMessagePayload) {
@@ -365,7 +365,7 @@ public class Message<T> {
     /**
      * 将收到的消息转换为Message对象
      *
-     * @param textMessage
+     * @param textMessage 文本消息对象
      * @return
      */
     public static Message<?> toMessage(TextMessage textMessage) {

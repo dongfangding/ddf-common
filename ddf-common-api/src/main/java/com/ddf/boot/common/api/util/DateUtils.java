@@ -144,7 +144,7 @@ public class DateUtils {
 	/**
 	 * 获取日期的起始时间 如某天 00:00:00
 	 *
-	 * @param time
+	 * @param time 时间参数
 	 * @return
 	 */
 	public static Date getStartOfDay(Date time) {
@@ -201,7 +201,7 @@ public class DateUtils {
 	/**
 	 * 获取日期的结束时间 如某天 23:59:59
 	 *
-	 * @param time
+	 * @param time 时间参数
 	 * @return
 	 */
 	public static Date getEndOfDay(Date time) {
@@ -217,7 +217,7 @@ public class DateUtils {
 	/**
 	 * 基于生日，计算星座
 	 *
-	 * @param birthDay
+	 * @param birthDay 生日日期
 	 * @return
 	 */
 	public static String getZodiac(@Nullable Date birthDay) {
@@ -233,7 +233,7 @@ public class DateUtils {
 	/**
 	 * 基于生日，计算当前年龄
 	 *
-	 * @param birthDay
+	 * @param birthDay 生日日期
 	 * @return
 	 */
 	public static Integer getAge(@Nullable Date birthDay) {
@@ -250,7 +250,7 @@ public class DateUtils {
 	/**
 	 * 获取指定日期对应时:分的毫秒值
 	 *
-	 * @param date
+	 * @param date 日期时间
 	 * @return
 	 */
 	public static long getMillionsOfHourMinute(Date date) {
@@ -263,7 +263,7 @@ public class DateUtils {
 	/**
 	 * 获取时分对应的毫秒值， 字符格式固定为时:分
 	 *
-	 * @param hourMinuteStr
+	 * @param hourMinuteStr 时分字符串
 	 * @return
 	 * @see DateUtils#TIME_SPLIT
 	 */
@@ -278,7 +278,7 @@ public class DateUtils {
 	/**
 	 * 校验时分格式
 	 *
-	 * @param hourMinuteStr 时分时间字符串
+	 * @param hourMinuteStr 时分字符串
 	 * @return [0] 时  [1] 分
 	 */
 	public static int[] checkHourMinute(String hourMinuteStr) {
@@ -303,7 +303,7 @@ public class DateUtils {
 	/**
 	 * 使用系统默认时区LocalDateTime转Instant
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Instant toDefaultInstant(LocalDateTime localDateTime) {
@@ -315,7 +315,7 @@ public class DateUtils {
 	/**
 	 * 使用全局设置时区LocalDateTime转Instant
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Instant toZhCnInstant(LocalDateTime localDateTime) {
@@ -332,7 +332,7 @@ public class DateUtils {
 	/**
 	 * 使用系统默认时区LocalDateTime转时间戳
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Long toDefaultMills(LocalDateTime localDateTime) {
@@ -343,7 +343,7 @@ public class DateUtils {
 	/**
 	 * 使用北京时区LocalDateTime转时间戳
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Long toZhCnMills(LocalDateTime localDateTime) {
@@ -361,7 +361,7 @@ public class DateUtils {
 	/**
 	 * 使用北京时区LocalDateTime转秒时间戳
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Long toZhCnSeconds(LocalDateTime localDateTime) {
@@ -371,7 +371,7 @@ public class DateUtils {
 	/**
 	 * 根据秒转换为标准北京时间
 	 *
-	 * @param seconds
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static LocalDateTime ofSeconds(long seconds) {
@@ -381,7 +381,7 @@ public class DateUtils {
 	/**
 	 * 时间戳转  LocalDate
 	 *
-	 * @param seconds
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static LocalDate toLocalDate(long seconds) {
@@ -394,7 +394,7 @@ public class DateUtils {
 	/**
 	 * 根据毫秒转换为标准北京时间
 	 *
-	 * @param millis
+	 * @param millis 毫秒值
 	 * @return
 	 */
 	public static LocalDateTime ofMillis(long millis) {
@@ -646,7 +646,7 @@ public class DateUtils {
 	/**
 	 * 根据秒时间戳格式化当前年月
 	 *
-	 * @param seconds 参数
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static Integer formatYearMonthDayBySeconds(Long seconds) {
@@ -657,7 +657,7 @@ public class DateUtils {
 	/**
 	 * 根据秒时间戳格式化当前年月
 	 *
-	 * @param seconds 参数
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static String formatYmdBySeconds(Long seconds) {
@@ -668,7 +668,7 @@ public class DateUtils {
 	/**
 	 * 根据毫秒时间戳格式化当前年月
 	 *
-	 * @param milli 参数
+	 * @param milli 毫秒值
 	 * @return
 	 */
 	public static Integer formatYearMonthDayByMillis(Long milli) {
@@ -679,7 +679,7 @@ public class DateUtils {
 	/**
 	 * 根据毫秒时间戳格式化当前年月
 	 *
-	 * @param milli
+	 * @param milli 毫秒值
 	 * @return
 	 */
 	public static String formatYmdByMilli(Long milli) {
@@ -710,7 +710,7 @@ public class DateUtils {
 	/**
 	 * 根据秒时间戳格式化当前年月
 	 *
-	 * @param seconds 参数
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static Integer formatYearMonthBySeconds(Long seconds) {
@@ -740,7 +740,7 @@ public class DateUtils {
 	/**
 	 * 将秒标准格式化输出
 	 *
-	 * @param seconds
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static String standardFormatSeconds(Long seconds) {
@@ -750,7 +750,7 @@ public class DateUtils {
 	/**
 	 * 将秒标准格式化输出
 	 *
-	 * @param seconds
+	 * @param seconds 秒数
 	 * @param formatter 参数
 	 * @return
 	 */
@@ -761,7 +761,7 @@ public class DateUtils {
 	/**
 	 * 将毫秒标准格式化输出
 	 *
-	 * @param millis
+	 * @param millis 毫秒值
 	 * @return
 	 */
 	public static String standardFormatMillis(Long millis) {
@@ -772,14 +772,14 @@ public class DateUtils {
 	/**
 	 * 将秒标准数字格式化输出
 	 *
-	 * @param seconds
+	 * @param seconds 秒数
 	 * @return
 	 */
 	public static String standardNumberFormatSeconds(Long seconds) {
 		return STANDARD_NUMBER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), DEFAULT_GMT));
 	}
 	/**
-	 * @param date 参数
+	 * @param date 日期时间
 	 * @param format 参数
 	 */
 	public static String formatDate(Date date, String format) {
@@ -789,8 +789,8 @@ public class DateUtils {
 	/**
 	 * 格式化时间
 	 *
-	 * @param time
-	 * @param format
+	 * @param time 时间参数
+	 * @param format 格式字符串
 	 * @return
 	 */
 	public static String formatDate(LocalDateTime time, DateTimeFormatter format) {
@@ -800,7 +800,7 @@ public class DateUtils {
 	/**
 	 * 格式化时间
 	 *
-	 * @param date 参数
+	 * @param date 日期时间
 	 * @return 'yyyy-MM-dd HH:mm:ss'
 	 */
 	public static String formatDate(Date date) {
@@ -810,7 +810,7 @@ public class DateUtils {
 	/**
 	 * date转中国标准时间LocalDateTime
 	 *
-	 * @param date
+	 * @param date 日期时间
 	 * @return
 	 */
 	public static LocalDateTime date2CnLocalDateTime(Date date) {
@@ -821,7 +821,7 @@ public class DateUtils {
 	/**
 	 * 获取日期的起始时间 如某天 00:00:00
 	 *
-	 * @param time
+	 * @param time 时间参数
 	 * @return
 	 */
 	public static LocalDateTime getStartOfDay(LocalDateTime time) {
@@ -831,7 +831,7 @@ public class DateUtils {
 	/**
 	 * 获取日期的结束时间 如某天 23:59:59
 	 *
-	 * @param time
+	 * @param time 时间参数
 	 * @return
 	 */
 	public static LocalDateTime getEndOfDay(LocalDateTime time) {
@@ -841,7 +841,7 @@ public class DateUtils {
 	/**
 	 * 判定指定时间已经过去了今天多久
 	 *
-	 * @param timeSeconds
+	 * @param timeSeconds 时间秒值
 	 * @return
 	 */
 	public static long calcPassedTodaySeconds(long timeSeconds) {
@@ -852,8 +852,8 @@ public class DateUtils {
 	/**
 	 * 获取前后指定小时的 时间戳
 	 *
-	 * @param day
-	 * @param hour
+	 * @param day 天参数
+	 * @param hour 小时参数
 	 * @return
 	 */
 	public static long assignDateSeconds(int day, int hour) {
@@ -870,8 +870,8 @@ public class DateUtils {
 	/**
 	 * 今天日期往后推NUM天
 	 *
-	 * @param num
-	 * @param pattern
+	 * @param num 数值
+	 * @param pattern 匹配表达式
 	 * @return
 	 */
 	public static String getDateFormatByPlus(int num, String pattern) {
@@ -884,7 +884,7 @@ public class DateUtils {
 	/**
 	 * LocalDateTime 转 Date
 	 *
-	 * @param localDateTime
+	 * @param localDateTime 本地日期时间参数
 	 * @return
 	 */
 	public static Date asDate(LocalDateTime localDateTime) {
@@ -896,8 +896,8 @@ public class DateUtils {
 	/**
 	 * 判断两个时间戳是否是同一天
 	 *
-	 * @param startTimeSeconds
-	 * @param endTimeSeconds
+	 * @param startTimeSeconds 起始时间seconds参数
+	 * @param endTimeSeconds 结束时间seconds参数
 	 * @return
 	 */
 	public static boolean isSameDay(long startTimeSeconds, long endTimeSeconds) {
@@ -915,8 +915,8 @@ public class DateUtils {
 	/**
 	 * 计算两个秒时间戳之间的自然日间隔
 	 *
-	 * @param startTimeSeconds
-	 * @param endTimeSeconds
+	 * @param startTimeSeconds 起始时间seconds参数
+	 * @param endTimeSeconds 结束时间seconds参数
 	 * @return
 	 */
 	public static long betweenDays(Long startTimeSeconds, Long endTimeSeconds) {

@@ -15,9 +15,9 @@ public class SpringSupport {
 	/**
 	 * 当bean未被定义时，添加注册
 	 *
-	 * @param registry
-	 * @param beanName
-	 * @param builder
+	 * @param registry Bean 定义注册器
+	 * @param beanName Bean 名称
+	 * @param builder 构建器参数
 	 */
 	public static void registerIfAbsent(BeanDefinitionRegistry registry, String beanName,
 			BeanDefinitionBuilder builder) {

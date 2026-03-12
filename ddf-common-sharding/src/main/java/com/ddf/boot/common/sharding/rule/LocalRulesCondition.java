@@ -51,8 +51,8 @@ public final class LocalRulesCondition extends SpringBootCondition {
     /**
      * Check if environment contains property with given prefix.
      *
-     * @param environment Spring Environment
-     * @param prefix      property prefix
+     * @param environment environment参数
+     * @param prefix      前缀参数
      * @return true if any property starts with the prefix
      */
     private boolean containsPropertyPrefix(final ConfigurableEnvironment environment, final String prefix) {

@@ -15,7 +15,7 @@ public class PretendUtils {
     /**
      * 【中文姓名】如果为两个汉字，则只显示名， 大于两个以上的字符显示姓和最后一个名，中间用对应数量的*代替
      *
-     * @param fullName
+     * @param fullName 完整名称
      * @return
      */
     public static String chineseName(String fullName) {
@@ -35,7 +35,7 @@ public class PretendUtils {
     /**
      * 【身份证号】显示最后四位，其他隐藏。共计18位或者15位，比如：*************1234
      *
-     * @param id
+     * @param id 标识值
      * @return
      */
     public static String idCardNum(String id) {
@@ -49,7 +49,7 @@ public class PretendUtils {
     /**
      * 【身份证号】显示前四位后四位，其他隐藏。共计18位或者15位，比如：*************1234
      *
-     * @param id
+     * @param id 标识值
      * @return
      */
     public static String fixIdCardNum(String id) {
@@ -62,7 +62,7 @@ public class PretendUtils {
     /**
      * 【固定电话 后四位，其他隐藏，比如1234
      *
-     * @param num
+     * @param num 数值
      * @return
      */
     public static String fixedPhone(String num) {
@@ -75,7 +75,7 @@ public class PretendUtils {
     /**
      * 【手机号码】前三位，后四位，其他隐藏，比如135****6810
      *
-     * @param num
+     * @param num 数值
      * @return
      */
     public static String mobilePhone(String num) {
@@ -92,7 +92,7 @@ public class PretendUtils {
     /**
      * 【地址】只显示到地区，不显示详细地址，比如：北京市海淀区****
      *
-     * @param address
+     * @param address 地址信息
      * @param sensitiveSize 敏感信息长度
      * @return
      */
@@ -107,7 +107,7 @@ public class PretendUtils {
     /**
      * 【电子邮箱 邮箱前缀仅显示第一个字母，前缀其他隐藏，用星号代替，@及后面的地址显示，比如：d**@126.com>
      *
-     * @param email
+     * @param email 邮箱地址
      * @return
      */
     public static String email(String email) {
@@ -127,7 +127,7 @@ public class PretendUtils {
     /**
      * 【银行卡号】前四位，后四位，其他用星号隐藏每位1个星号，比如：6222**********1234>
      *
-     * @param cardNum
+     * @param cardNum 卡号
      * @return
      */
     public static String bankCard(String cardNum) {
@@ -142,7 +142,7 @@ public class PretendUtils {
     /**
      * 【密码】密码的全部字符都用*代替，比如：******
      *
-     * @param password
+     * @param password 密码
      * @return
      */
     public static String password(String password) {

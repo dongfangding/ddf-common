@@ -37,7 +37,7 @@ public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefr
     /**
      * Handle an application event.
      *
-     * @param event the event to respond to
+     * @param event event参数
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {

@@ -24,7 +24,7 @@ public class ApplicationNamedKeyGenerator {
     /**
      * 拼凑key
      *
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public static String genKey(@NonNull String... keys) {
@@ -35,7 +35,7 @@ public class ApplicationNamedKeyGenerator {
      * 拼凑key
      *
      * @param ignoreApplicationName 是否忽略applicationName，若忽略则用'global'代替
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public static String genKey(boolean ignoreApplicationName, @NonNull String... keys) {
@@ -48,7 +48,7 @@ public class ApplicationNamedKeyGenerator {
     /**
      * 拼凑key
      *
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public static String genNormalKey(@NonNull String... keys) {

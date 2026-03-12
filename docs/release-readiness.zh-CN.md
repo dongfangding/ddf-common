@@ -8,7 +8,7 @@
 
 首个公开 Maven Central 发布的当前状态：
 
-- 候选发布版本：`boot3.5-2026.1`
+- 候选发布版本：`boot3.5-2026.1-SNAPSHOT`
 - 根 release profile 校验：已通过
 - 根编译校验：已通过
 - Maven Central 元数据：已准备
@@ -78,6 +78,6 @@
 ## 建议的下一步发布动作
 
 1. 在真实凭据和 GPG 环境下执行 `mvn -Prelease clean deploy`。
-2. 发布成功后创建 `boot3.5-2026.1` Git tag。
+2. 发布成功后创建 `boot3.5-2026.1-SNAPSHOT` Git tag。
 3. 在 Maven Central 上验证公开坐标与 README 渲染效果。
 4. release 分支或 tag 固化后，将仓库切回下一开发周期的 `SNAPSHOT` 版本。

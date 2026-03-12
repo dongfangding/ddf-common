@@ -78,7 +78,7 @@ public enum MessageResponseCodeEnum {
     /**
      * 根据状态码构建枚举对象
      *
-     * @param code
+     * @param code 编码值
      * @return
      */
     public MessageResponseCodeEnum getByCode(Integer code) {

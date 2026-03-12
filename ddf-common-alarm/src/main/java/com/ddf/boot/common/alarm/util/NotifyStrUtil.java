@@ -12,7 +12,7 @@ public class NotifyStrUtil {
     /**
      * 获取按月分表的基础表名， 如history_202406,则返回history
      *
-     * @param tableName
+     * @param tableName 表名
      * @return
      */
     public String getOriginBaseTableNameFromMonth(String tableName) {

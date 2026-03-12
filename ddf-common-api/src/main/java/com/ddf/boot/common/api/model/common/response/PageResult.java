@@ -90,7 +90,7 @@ public class PageResult<E> implements Serializable {
      * @param pageNum     页码
      * @param pageSize 每页结果数
      * @param total    结果总数
-     * @param content 参数
+     * @param content 内容
      */
     public PageResult(long pageNum, long pageSize, long total, List<E> content) {
         this(pageNum, pageSize);

@@ -53,7 +53,7 @@ public class RateLimitRequest {
 
         /**
          * 令牌桶的最大大小
-         * @param key 参数
+         * @param key 目标键
          */
         private Integer max;
 
@@ -71,7 +71,7 @@ public class RateLimitRequest {
             return this;
         }
         /**
-         * @param max 参数
+         * @param max 最大值
          */
         public RateLimitRequestBuilder max(Integer max) {
             this.max = max;

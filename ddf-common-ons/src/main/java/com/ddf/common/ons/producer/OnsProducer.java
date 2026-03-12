@@ -36,7 +36,7 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ顺序消息
      *
-     * @param onsMessage
+     * @param onsMessage ONS消息参数
      */
     public static void orderSend(OnsMessage onsMessage) {
         onsMessage.checkOrder();
@@ -80,7 +80,7 @@ public abstract class OnsProducer {
      * @param topic      主题
      * @param tag        标签
      * @param payLoad    消息体
-     * @param bizId      业务Id，每次发送必须唯一
+     * @param bizId      业务 ID
      * @param shadingKey 分区顺序消息中区分不同分区的关键字段，Sharding Key 与普通消息的 key 是完全不同的概念。
      *                   全局顺序消息，该字段可以设置为任意非空字符串。
      * @see OnsProducer#orderSend(OnsMessage)
@@ -96,7 +96,7 @@ public abstract class OnsProducer {
      * @param topic      主题
      * @param tag        标签
      * @param payLoad    消息体
-     * @param bizId      业务Id，每次发送必须唯一
+     * @param bizId      业务 ID
      * @param shadingKey 分区顺序消息中区分不同分区的关键字段，Sharding Key 与普通消息的 key 是完全不同的概念。
      *                   全局顺序消息，该字段可以设置为任意非空字符串。
      * @param delayTime  发送延时消息的延时时间，单位毫秒
@@ -135,7 +135,7 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ消息
      *
-     * @param onsMessage
+     * @param onsMessage ONS消息参数
      */
     public static void send(OnsMessage onsMessage) {
         onsMessage.check();
@@ -179,7 +179,7 @@ public abstract class OnsProducer {
      * @param topic   主题
      * @param tag     标签
      * @param payLoad 消息体
-     * @param bizId   业务Id，每次发送必须唯一
+     * @param bizId   业务 ID
      * @see OnsProducer#send(OnsMessage)
      */
     @Deprecated
@@ -193,7 +193,7 @@ public abstract class OnsProducer {
      * @param topic     主题
      * @param tag       标签
      * @param payLoad   消息体
-     * @param bizId     业务Id，每次发送必须唯一
+     * @param bizId     业务 ID
      * @param delayTime 发送延时消息的延时时间，单位毫秒
      * @see OnsProducer#send(OnsMessage)
      */
@@ -230,7 +230,7 @@ public abstract class OnsProducer {
     /**
      * 异步发送MQ消息
      *
-     * @param onsMessage
+     * @param onsMessage ONS消息参数
      */
     public static void sendAsync(OnsMessage onsMessage) {
         onsMessage.check();
@@ -294,7 +294,7 @@ public abstract class OnsProducer {
      * @param topic   主题
      * @param tag     标签
      * @param payLoad 消息体
-     * @param bizId   业务Id，每次发送必须唯一
+     * @param bizId   业务 ID
      * @see OnsProducer#sendAsync(OnsMessage)
      */
     @Deprecated
@@ -308,7 +308,7 @@ public abstract class OnsProducer {
      * @param topic     主题
      * @param tag       标签
      * @param payLoad   消息体
-     * @param bizId     业务Id，每次发送必须唯一
+     * @param bizId     业务 ID
      * @param delayTime 发送延时消息的延时时间，单位毫秒
      * @see OnsProducer#sendAsync(OnsMessage)
      */
@@ -363,7 +363,7 @@ public abstract class OnsProducer {
     /**
      * 增加重试次数
      *
-     * @param bizId
+     * @param bizId 业务 ID
      * @return
      */
     public static long incrementRetryTimes(String bizId) {
@@ -377,7 +377,7 @@ public abstract class OnsProducer {
     /**
      * 是否可以重试
      *
-     * @param bizId
+     * @param bizId 业务 ID
      * @return
      */
     public static boolean isRetryable(String bizId) {
@@ -395,7 +395,7 @@ public abstract class OnsProducer {
     /**
      * 删除重试次数
      *
-     * @param bizId
+     * @param bizId 业务 ID
      */
     public static void removeRetryTimes(String bizId) {
 //        String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;

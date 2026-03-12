@@ -152,8 +152,8 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              *
              * 如果应用需要持久化数据，那么在从这个方法返回之前，应该保证数据是持久化的，因为从这个方法返回之后，就认为消息已经送达了，并且无法重现
              *
-             * @param topic   name of the topic on the message was published to
-             * @param message the actual message.
+             * @param topic   主题参数
+             * @param message 消息内容
              * @throws Exception if a terminal error has occurred, and the client should be
              *                   shut down.
              */
@@ -166,7 +166,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
              * 当消息的传递完成并收到所有确认时调用。对于 QoS 0 消息，一旦将消息交给网络进行传递，就会调用它。对于 QoS 1，
              * 它在收到 PUBACK 时被调用，对于 QoS 2，它在收到 PUBCOMP 时被调用。令牌将与发布消息时返回的令牌相同
              *
-             * @param token the delivery token associated with the message.
+             * @param token token 字符串
              */
             @Override
             public void deliveryComplete(IMqttToken token) {

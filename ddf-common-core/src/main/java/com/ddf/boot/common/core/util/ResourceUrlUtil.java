@@ -39,8 +39,8 @@ public class ResourceUrlUtil {
     /**
      * 截取url路径前缀，获取相对路径
      *
-     * @param prefix
-     * @param url
+     * @param prefix 前缀参数
+     * @param url URL 地址
      * @return
      */
     public static String wrapRelativePath(String prefix, String url) {
@@ -56,7 +56,7 @@ public class ResourceUrlUtil {
     /**
      * 将链接内容转换成base64字符串
      *
-     * @param url
+     * @param url URL 地址
      * @return
      */
     public static String base64(String url) {
@@ -74,7 +74,7 @@ public class ResourceUrlUtil {
     /**
      * 是否是http开头的绝对路径
      *
-     * @param url
+     * @param url URL 地址
      * @return
      */
     private static boolean isHttpStart(String url) {

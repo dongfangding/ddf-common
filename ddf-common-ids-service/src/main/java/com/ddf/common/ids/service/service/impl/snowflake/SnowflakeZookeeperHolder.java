@@ -155,7 +155,7 @@ public class SnowflakeZookeeperHolder {
     /**
      * 创建持久顺序节点 ,并把节点数据放入 value
      *
-     * @param curator
+     * @param curator curator参数
      * @return
      * @throws Exception
      */
@@ -195,7 +195,7 @@ public class SnowflakeZookeeperHolder {
         return json;
     }
     /**
-     * @param json 参数
+     * @param json JSON 字符串
      */
     private Endpoint deBuildData(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -206,7 +206,7 @@ public class SnowflakeZookeeperHolder {
     /**
      * 在节点文件系统上缓存一个workid值,zk失效,机器重启时保证能够正常启动
      *
-     * @param workerID
+     * @param workerID 工作节点 ID
      */
     private void updateLocalWorkerID(int workerID) {
         File leafConfFile = new File(PROP_PATH.replace("{port}", port));

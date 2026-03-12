@@ -122,7 +122,7 @@ public class S3Service implements S3Api {
     }
     /**
      * @param objectKey 参数
-     * @param data 参数
+     * @param data 待处理数据
      * @param contentType 参数
      */
     @Override

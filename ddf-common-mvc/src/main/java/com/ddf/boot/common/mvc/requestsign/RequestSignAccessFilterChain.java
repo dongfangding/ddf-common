@@ -48,9 +48,9 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
      * 1. sign相关参数并没有放到请求头中，这是因为很容易被猜到，一看到字段就知道含义。现在是放到请求参数中，如果是查询串就固定参数sign,
      * 如果是json, 就固定字段sign
      *
-     * @param joinPoint
-     * @param pointClass
-     * @param pointMethod
+     * @param joinPoint joinpoint参数
+     * @param pointClass point类型
+     * @param pointMethod pointmethod参数
      * @return
      */
     @Override

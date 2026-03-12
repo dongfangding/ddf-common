@@ -40,10 +40,10 @@ public class OnsConsoleUtil {
     /**
      * 根据已有属性生成重试表达式, 为了避免广播模式附加主机后tag不同造成订阅关系可能混乱的问题，暂不支持广播模式
      *
-     * @param topic
-     * @param listenerClassName
-     * @param groupId
-     * @param messageModel
+     * @param topic 主题参数
+     * @param listenerClassName listener类型名称参数
+     * @param groupId 分组ID
+     * @param messageModel 消息model参数
      * @return
      */
     public static String getRetryExpression(String topic, String listenerClassName, String groupId,
@@ -62,9 +62,9 @@ public class OnsConsoleUtil {
     /**
      * 动态通过反射修改指定注解实例里的属性的值， 这个是如果只有一个属性要修改时提供的简便方法
      *
-     * @param annotation
-     * @param name
-     * @param value
+     * @param annotation annotation参数
+     * @param name 名称
+     * @param value 参数值
      */
     @SneakyThrows
     public static void modifyAnnotationValue(Annotation annotation, String name, Object value) {
@@ -97,8 +97,8 @@ public class OnsConsoleUtil {
     /**
      * 以指定格式分隔后进行固定格式拼接
      *
-     * @param str
-     * @param separator
+     * @param str STR参数
+     * @param separator 分隔符
      * @return
      */
     public static String getShortNameBySplit(String str, String separator) {
@@ -108,8 +108,8 @@ public class OnsConsoleUtil {
     /**
      * 以指定格式分隔后进行固定格式拼接
      *
-     * @param str
-     * @param separator
+     * @param str STR参数
+     * @param separator 分隔符
      * @param replaceSeparator 参数
      * @return
      */

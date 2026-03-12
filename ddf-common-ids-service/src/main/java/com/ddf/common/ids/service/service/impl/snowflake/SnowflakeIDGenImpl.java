@@ -61,7 +61,7 @@ public class SnowflakeIDGenImpl implements IDGen {
     /**
      * 对于雪花id来说，这个key毫无意义，如果调用方需要这个作为前缀，自行处理
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     @Override
@@ -102,7 +102,7 @@ public class SnowflakeIDGenImpl implements IDGen {
 
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param length 参数
      */
     @Override

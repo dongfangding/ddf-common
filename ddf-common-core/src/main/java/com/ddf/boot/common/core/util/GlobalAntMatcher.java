@@ -51,8 +51,8 @@ public enum GlobalAntMatcher {
     /**
      * 转接方法
      *
-     * @param pattern
-     * @param path
+     * @param pattern 匹配表达式
+     * @param path 路径
      * @return
      */
     public static boolean match(String pattern, String path) {
@@ -62,8 +62,8 @@ public enum GlobalAntMatcher {
     /**
      * 转接方法
      *
-     * @param patterns
-     * @param path
+     * @param patterns patterns参数
+     * @param path 路径
      * @return
      */
     public static boolean match(List<String> patterns, String path) {

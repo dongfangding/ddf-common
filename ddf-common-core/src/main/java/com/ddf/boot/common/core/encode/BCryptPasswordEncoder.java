@@ -45,47 +45,47 @@ public class BCryptPasswordEncoder {
 	}
 
 	/**
-	 * @param strength the log rounds to use, between 4 and 31
+	 * @param strength strength参数
 	 */
 	public BCryptPasswordEncoder(int strength) {
 		this(strength, null);
 	}
 
 	/**
-	 * @param version the version of bcrypt, can be 2a,2b,2y
+	 * @param version version参数
 	 */
 	public BCryptPasswordEncoder(BCryptVersion version) {
 		this(version, null);
 	}
 
 	/**
-	 * @param version the version of bcrypt, can be 2a,2b,2y
-	 * @param random  the secure random instance to use
+	 * @param version version参数
+	 * @param random  random参数
 	 */
 	public BCryptPasswordEncoder(BCryptVersion version, SecureRandom random) {
 		this(version, -1, random);
 	}
 
 	/**
-	 * @param strength the log rounds to use, between 4 and 31
-	 * @param random   the secure random instance to use
+	 * @param strength strength参数
+	 * @param random   random参数
 	 */
 	public BCryptPasswordEncoder(int strength, SecureRandom random) {
 		this(BCryptVersion.$2A, strength, random);
 	}
 
 	/**
-	 * @param version  the version of bcrypt, can be 2a,2b,2y
-	 * @param strength the log rounds to use, between 4 and 31
+	 * @param version  version参数
+	 * @param strength strength参数
 	 */
 	public BCryptPasswordEncoder(BCryptVersion version, int strength) {
 		this(version, strength, null);
 	}
 
 	/**
-	 * @param version  the version of bcrypt, can be 2a,2b,2y
-	 * @param strength the log rounds to use, between 4 and 31
-	 * @param random   the secure random instance to use
+	 * @param version  version参数
+	 * @param strength strength参数
+	 * @param random   random参数
 	 */
 	public BCryptPasswordEncoder(BCryptVersion version, int strength, SecureRandom random) {
 		if (strength != -1 && (strength < BCrypt.MIN_LOG_ROUNDS || strength > BCrypt.MAX_LOG_ROUNDS)) {

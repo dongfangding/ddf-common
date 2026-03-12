@@ -42,7 +42,7 @@ public class ImChatRoomMqttTopic extends AbstractGroupMqttTopic {
     /**
      * 按照规则通过完整的topic路径反解析成对应的topic对象
      *
-     * @param fullTopic
+     * @param fullTopic full主题参数
      * @return
      */
     @Override

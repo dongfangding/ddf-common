@@ -67,7 +67,7 @@ public class OnsClientExecuteException extends BaseException {
     /**
      * 为适应内部通用错误码拦截功能，简单转换ONS异常类为内部异常类
      *
-     * @param cause
+     * @param cause cause参数
      */
     public static OnsClientExecuteException convertTeaException(Throwable cause) {
         return convertTeaException(cause, "");
@@ -77,7 +77,7 @@ public class OnsClientExecuteException extends BaseException {
     /**
      * 为适应内部通用错误码拦截功能，简单转换ONS异常类为内部异常类
      *
-     * @param cause
+     * @param cause cause参数
      * @param env 参数
      */
     public static OnsClientExecuteException convertTeaException(Throwable cause, String env) {

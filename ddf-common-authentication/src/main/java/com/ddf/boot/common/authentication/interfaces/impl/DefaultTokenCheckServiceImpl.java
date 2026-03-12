@@ -34,8 +34,8 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
     /**
      * 业务校验规则
      *
-     * @param request
-     * @param authenticateCheckResult
+     * @param request 请求对象
+     * @param authenticateCheckResult 认证校验结果
      * @return
      */
     @Override

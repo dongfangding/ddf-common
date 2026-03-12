@@ -81,7 +81,7 @@ public class BaseOnsListenerContainer implements OnsListenerContainer {
     /**
      * 解析出annotation中的值放入容器中
      *
-     * @param annotation
+     * @param annotation annotation参数
      */
     public void setAnnotation(OnsMessageListenerAno annotation) {
         this.annotation = annotation;

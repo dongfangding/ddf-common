@@ -41,7 +41,7 @@ public enum JinHuaCardTypeEnum {
         this.desc = desc;
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     public static JinHuaCardTypeEnum resolve(String value) {
         return MAPPINGS.get(value);

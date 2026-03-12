@@ -51,7 +51,7 @@ public class RedisCommandHelper {
     /**
      * 删除key
      *
-     * @param key
+     * @param key 目标键
      */
     public Boolean delete(String key) {
         return redisTemplate.delete(key);
@@ -60,7 +60,7 @@ public class RedisCommandHelper {
     /**
      * 批量删除key
      *
-     * @param keys
+     * @param keys 键集合
      */
     public void delete(Collection<String> keys) {
         redisTemplate.delete(keys);
@@ -69,7 +69,7 @@ public class RedisCommandHelper {
     /**
      * 序列化key
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public byte[] dump(String key) {
@@ -79,7 +79,7 @@ public class RedisCommandHelper {
     /**
      * 是否存在key
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Boolean hasKey(String key) {
@@ -89,9 +89,9 @@ public class RedisCommandHelper {
     /**
      * 设置过期时间
      *
-     * @param key
-     * @param timeout
-     * @param unit
+     * @param key 目标键
+     * @param timeout 超时时长
+     * @param unit 时间或距离单位
      * @return
      */
     public Boolean expire(String key, long timeout, TimeUnit unit) {
@@ -101,8 +101,8 @@ public class RedisCommandHelper {
     /**
      * 设置过期时间
      *
-     * @param key
-     * @param timeout
+     * @param key 目标键
+     * @param timeout 超时时长
      * @return
      */
     public Boolean expire(String key, long timeout) {
@@ -116,8 +116,8 @@ public class RedisCommandHelper {
      * <p>
      * 设置过期时间
      *
-     * @param key
-     * @param date
+     * @param key 目标键
+     * @param date 日期时间
      * @return
      */
     public Boolean expireAt(String key, Date date) {
@@ -127,7 +127,7 @@ public class RedisCommandHelper {
     /**
      * 查找匹配的key
      *
-     * @param pattern
+     * @param pattern 匹配表达式
      * @return
      */
     public Set<String> keys(String pattern) {
@@ -137,8 +137,8 @@ public class RedisCommandHelper {
     /**
      * 将当前数据库的 key 移动到给定的数据库 db 当中
      *
-     * @param key
-     * @param dbIndex
+     * @param key 目标键
+     * @param dbIndex 数据库索引
      * @return
      */
     public Boolean move(String key, int dbIndex) {
@@ -148,7 +148,7 @@ public class RedisCommandHelper {
     /**
      * 移除 key 的过期时间，key 将持久保持
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Boolean persist(String key) {
@@ -158,8 +158,8 @@ public class RedisCommandHelper {
     /**
      * 返回 key 的剩余的过期时间
      *
-     * @param key
-     * @param unit
+     * @param key 目标键
+     * @param unit 时间或距离单位
      * @return
      */
     public Long getExpire(String key, TimeUnit unit) {
@@ -169,7 +169,7 @@ public class RedisCommandHelper {
     /**
      * 返回 key 的剩余的过期时间
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long getExpire(String key) {
@@ -188,8 +188,8 @@ public class RedisCommandHelper {
     /**
      * 修改 key 的名称
      *
-     * @param oldKey
-     * @param newKey
+     * @param oldKey 原键
+     * @param newKey 新键
      */
     public void rename(String oldKey, String newKey) {
         redisTemplate.rename(oldKey, newKey);
@@ -198,8 +198,8 @@ public class RedisCommandHelper {
     /**
      * 仅当 newkey 不存在时，将 oldKey 改名为 newkey
      *
-     * @param oldKey
-     * @param newKey
+     * @param oldKey 原键
+     * @param newKey 新键
      * @return
      */
     public Boolean renameIfAbsent(String oldKey, String newKey) {
@@ -209,7 +209,7 @@ public class RedisCommandHelper {
     /**
      * 返回 key 所储存的值的类型
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public DataType type(String key) {
@@ -221,8 +221,8 @@ public class RedisCommandHelper {
     /**
      * 设置指定 key 的值
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      */
     public void set(String key, String value) {
         redisTemplate
@@ -233,9 +233,9 @@ public class RedisCommandHelper {
     /**
      * 设置指定 key 的值
      *
-     * @param key
-     * @param value
-     * @param timeout 秒数
+     * @param key 目标键
+     * @param value 参数值
+     * @param timeout 超时时长
      */
     public void set(String key, String value, long timeout) {
         redisTemplate
@@ -246,7 +246,7 @@ public class RedisCommandHelper {
     /**
      * 获取指定 key 的值
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public String get(String key) {
@@ -258,9 +258,9 @@ public class RedisCommandHelper {
     /**
      * 返回 key 中字符串值的子字符
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public String getRange(String key, long start, long end) {
@@ -272,8 +272,8 @@ public class RedisCommandHelper {
     /**
      * 将给定 key 的值设为 value ，并返回 key 的旧值(old value)
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public String getAndSet(String key, String value) {
@@ -285,8 +285,8 @@ public class RedisCommandHelper {
     /**
      * 对 key 所储存的字符串值，获取指定偏移量上的位(bit)
      *
-     * @param key
-     * @param offset
+     * @param key 目标键
+     * @param offset 偏移量
      * @return
      */
     public Boolean getBit(String key, long offset) {
@@ -298,7 +298,7 @@ public class RedisCommandHelper {
     /**
      * 批量获取
      *
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public List<String> multiGet(Collection<String> keys) {
@@ -310,9 +310,9 @@ public class RedisCommandHelper {
     /**
      * 设置ASCII码, 字符串'a'的ASCII码是97, 转为二进制是'01100001', 此方法是将二进制第offset位值变为value
      *
-     * @param key   位置
-     * @param value 值,true为1, false为0
-     * @param offset 参数
+     * @param key   目标键
+     * @param value 参数值
+     * @param offset 偏移量
      * @return
      */
     public boolean setBit(String key, long offset, boolean value) {
@@ -324,10 +324,10 @@ public class RedisCommandHelper {
     /**
      * 将值 value 关联到 key ，并将 key 的过期时间设为 timeout
      *
-     * @param key
-     * @param value
-     * @param timeout 过期时间
-     * @param unit    时间单位, 天:TimeUnit.DAYS 小时:TimeUnit.HOURS 分钟:TimeUnit.MINUTES
+     * @param key 目标键
+     * @param value 参数值
+     * @param timeout 超时时长
+     * @param unit    时间或距离单位
      *                秒:TimeUnit.SECONDS 毫秒:TimeUnit.MILLISECONDS
      */
     public void setEx(String key, String value, long timeout, TimeUnit unit) {
@@ -339,9 +339,9 @@ public class RedisCommandHelper {
     /**
      * 将值 value 关联到 key ，并将 key 的过期时间设为 timeout
      *
-     * @param key
-     * @param value
-     * @param timeout 过期时间
+     * @param key 目标键
+     * @param value 参数值
+     * @param timeout 超时时长
      */
     public void setEx(String key, String value, long timeout) {
         redisTemplate
@@ -352,8 +352,8 @@ public class RedisCommandHelper {
     /**
      * 只有在 key 不存在时设置 key 的值
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return 之前已经存在返回false, 不存在返回true
      */
     public boolean setIfAbsent(String key, String value) {
@@ -365,10 +365,10 @@ public class RedisCommandHelper {
     /**
      * 只有在 key 不存在时设置 key 的值
      *
-     * @param key
-     * @param value
-     * @param timeout 参数
-     * @param unit 参数
+     * @param key 目标键
+     * @param value 参数值
+     * @param timeout 超时时长
+     * @param unit 时间或距离单位
      * @return 之前已经存在返回false, 不存在返回true
      */
     public boolean setIfAbsent(String key, String value, long timeout, TimeUnit unit) {
@@ -380,9 +380,9 @@ public class RedisCommandHelper {
     /**
      * 用 value 参数覆写给定 key 所储存的字符串值，从偏移量 offset 开始
      *
-     * @param key
-     * @param value
-     * @param offset 从指定位置开始覆写
+     * @param key 目标键
+     * @param value 参数值
+     * @param offset 偏移量
      */
     public void setRange(String key, String value, long offset) {
         redisTemplate
@@ -393,7 +393,7 @@ public class RedisCommandHelper {
     /**
      * 获取字符串的长度
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long size(String key) {
@@ -405,7 +405,7 @@ public class RedisCommandHelper {
     /**
      * 批量添加
      *
-     * @param maps
+     * @param maps 映射数据
      */
     public void multiSet(Map<String, String> maps) {
         redisTemplate
@@ -416,7 +416,7 @@ public class RedisCommandHelper {
     /**
      * 同时设置一个或多个 key-value 对，当且仅当所有给定 key 都不存在
      *
-     * @param maps
+     * @param maps 映射数据
      * @return 之前已经存在返回false, 不存在返回true
      */
     public boolean multiSetIfAbsent(Map<String, String> maps) {
@@ -428,8 +428,8 @@ public class RedisCommandHelper {
     /**
      * 增加(自增长), 负数则为自减
      *
-     * @param key
-     * @param increment 参数
+     * @param key 目标键
+     * @param increment 增量值
      * @return
      */
     public Long incrBy(String key, long increment) {
@@ -439,8 +439,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param increment 参数
+     * @param key 目标键
+     * @param increment 增量值
      * @return
      */
     public Double incrByFloat(String key, double increment) {
@@ -452,8 +452,8 @@ public class RedisCommandHelper {
     /**
      * 追加到末尾
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Integer append(String key, String value) {
@@ -467,8 +467,8 @@ public class RedisCommandHelper {
     /**
      * 获取存储在哈希表中指定字段的值
      *
-     * @param key
-     * @param field
+     * @param key 目标键
+     * @param field 字段名
      * @return
      */
     public String hGet(String key, String field) {
@@ -479,7 +479,7 @@ public class RedisCommandHelper {
     /**
      * 获取所有给定字段的值
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Map<String, String> hGetAll(String key) {
@@ -490,7 +490,7 @@ public class RedisCommandHelper {
     /**
      * 获取所有给定字段的值
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Map<String, Object> hGetAllObject(String key) {
@@ -501,8 +501,8 @@ public class RedisCommandHelper {
     /**
      * 获取所有给定字段的值
      *
-     * @param key
-     * @param fields
+     * @param key 目标键
+     * @param fields 字段集合
      * @return
      */
     public List<String> hMultiGet(String key, Collection<String> fields) {
@@ -513,8 +513,8 @@ public class RedisCommandHelper {
     /**
      * h mget地图
      *
-     * @param key    钥匙
-     * @param fields 字段
+     * @param key    目标键
+     * @param fields 字段集合
      */
     public Map<String, String> hMGetMap(String key, Collection<String> fields) {
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
@@ -527,9 +527,9 @@ public class RedisCommandHelper {
         return data;
     }
     /**
-     * @param key 参数
-     * @param hashKey 参数
-     * @param value 参数
+     * @param key 目标键
+     * @param hashKey 哈希字段键
+     * @param value 参数值
      */
     public void hPut(String key, String hashKey, String value) {
         redisTemplate
@@ -537,7 +537,7 @@ public class RedisCommandHelper {
                 .put(key, hashKey, value);
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param maps 参数
      */
     public void hPutAll(String key, Map<String, String> maps) {
@@ -546,7 +546,7 @@ public class RedisCommandHelper {
                 .putAll(key, maps);
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param maps 参数
      */
     public void hPutAllObject(String key, Map<String, Object> maps) {
@@ -558,9 +558,9 @@ public class RedisCommandHelper {
     /**
      * 仅当hashKey不存在时才设置
      *
-     * @param key
-     * @param hashKey
-     * @param value
+     * @param key 目标键
+     * @param hashKey 哈希字段键
+     * @param value 参数值
      * @return
      */
     public Boolean hPutIfAbsent(String key, String hashKey, String value) {
@@ -572,8 +572,8 @@ public class RedisCommandHelper {
     /**
      * 删除一个或多个哈希表字段
      *
-     * @param key
-     * @param fields
+     * @param key 目标键
+     * @param fields 字段集合
      * @return
      */
     public Long hDelete(String key, Object... fields) {
@@ -585,8 +585,8 @@ public class RedisCommandHelper {
     /**
      * 查看哈希表 key 中，指定的字段是否存在
      *
-     * @param key
-     * @param field
+     * @param key 目标键
+     * @param field 字段名
      * @return
      */
     public boolean hExists(String key, String field) {
@@ -598,9 +598,9 @@ public class RedisCommandHelper {
     /**
      * 为哈希表 key 中的指定字段的整数值加上增量 increment
      *
-     * @param key
-     * @param field
-     * @param increment
+     * @param key 目标键
+     * @param field 字段名
+     * @param increment 增量值
      * @return
      */
     public Long hIncrBy(String key, Object field, long increment) {
@@ -612,9 +612,9 @@ public class RedisCommandHelper {
     /**
      * 为哈希表 key 中的指定字段的整数值加上增量 increment
      *
-     * @param key
-     * @param field
-     * @param delta
+     * @param key 目标键
+     * @param field 字段名
+     * @param delta 变化量
      * @return
      */
     public Double hIncrByFloat(String key, Object field, double delta) {
@@ -626,7 +626,7 @@ public class RedisCommandHelper {
     /**
      * 获取所有哈希表中的字段
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Set<Object> hKeys(String key) {
@@ -638,7 +638,7 @@ public class RedisCommandHelper {
     /**
      * 获取哈希表中字段的数量
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long hSize(String key) {
@@ -650,7 +650,7 @@ public class RedisCommandHelper {
     /**
      * 获取哈希表中所有值
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public List<Object> hValues(String key) {
@@ -662,8 +662,8 @@ public class RedisCommandHelper {
     /**
      * 迭代哈希表中的键值对
      *
-     * @param key
-     * @param options
+     * @param key 目标键
+     * @param options 操作参数
      * @return
      */
     public Cursor<Entry<Object, Object>> hScan(String key, ScanOptions options) {
@@ -677,8 +677,8 @@ public class RedisCommandHelper {
     /**
      * 通过索引获取列表中的元素
      *
-     * @param key
-     * @param index
+     * @param key 目标键
+     * @param index 索引位置
      * @return
      */
     public String lIndex(String key, long index) {
@@ -690,9 +690,9 @@ public class RedisCommandHelper {
     /**
      * 获取列表指定范围内的元素
      *
-     * @param key
-     * @param start 开始位置, 0是开始位置
-     * @param end   结束位置, -1返回所有
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end   结束位置
      * @return
      */
     public List<String> lRange(String key, long start, long end) {
@@ -704,8 +704,8 @@ public class RedisCommandHelper {
     /**
      * 存储在list头部
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lLeftPush(String key, String value) {
@@ -715,8 +715,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lLeftPushAll(String key, String... value) {
@@ -726,8 +726,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lLeftPushAll(String key, Collection<String> value) {
@@ -739,8 +739,8 @@ public class RedisCommandHelper {
     /**
      * 当list存在的时候才加入
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lLeftPushIfPresent(String key, String value) {
@@ -752,9 +752,9 @@ public class RedisCommandHelper {
     /**
      * 如果pivot存在,再pivot前面添加
      *
-     * @param key
-     * @param pivot
-     * @param value
+     * @param key 目标键
+     * @param pivot 基准元素
+     * @param value 参数值
      * @return
      */
     public Long lLeftPush(String key, String pivot, String value) {
@@ -764,8 +764,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lRightPush(String key, String value) {
@@ -775,8 +775,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lRightPushAll(String key, String... value) {
@@ -786,8 +786,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lRightPushAll(String key, Collection<String> value) {
@@ -799,8 +799,8 @@ public class RedisCommandHelper {
     /**
      * 为已存在的列表添加值
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long lRightPushIfPresent(String key, String value) {
@@ -812,9 +812,9 @@ public class RedisCommandHelper {
     /**
      * 在pivot元素的右边添加值
      *
-     * @param key
-     * @param pivot
-     * @param value
+     * @param key 目标键
+     * @param pivot 基准元素
+     * @param value 参数值
      * @return
      */
     public Long lRightPush(String key, String pivot, String value) {
@@ -826,9 +826,9 @@ public class RedisCommandHelper {
     /**
      * 通过索引设置列表元素的值
      *
-     * @param key
-     * @param index 位置
-     * @param value
+     * @param key 目标键
+     * @param index 索引位置
+     * @param value 参数值
      */
     public void lSet(String key, long index, String value) {
         redisTemplate
@@ -839,7 +839,7 @@ public class RedisCommandHelper {
     /**
      * 移出并获取列表的第一个元素
      *
-     * @param key
+     * @param key 目标键
      * @return 删除的元素
      */
     public String lLeftPop(String key) {
@@ -851,9 +851,9 @@ public class RedisCommandHelper {
     /**
      * 移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
      *
-     * @param key
-     * @param timeout 等待时间
-     * @param unit    时间单位
+     * @param key 目标键
+     * @param timeout 超时时长
+     * @param unit    时间或距离单位
      * @return
      */
     public String lBLeftPop(String key, long timeout, TimeUnit unit) {
@@ -865,7 +865,7 @@ public class RedisCommandHelper {
     /**
      * 移除并获取列表最后一个元素
      *
-     * @param key
+     * @param key 目标键
      * @return 删除的元素
      */
     public String lRightPop(String key) {
@@ -877,9 +877,9 @@ public class RedisCommandHelper {
     /**
      * 移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
      *
-     * @param key
-     * @param timeout 等待时间
-     * @param unit    时间单位
+     * @param key 目标键
+     * @param timeout 超时时长
+     * @param unit    时间或距离单位
      * @return
      */
     public String lBRightPop(String key, long timeout, TimeUnit unit) {
@@ -891,8 +891,8 @@ public class RedisCommandHelper {
     /**
      * 移除列表的最后一个元素，并将该元素添加到另一个列表并返回
      *
-     * @param sourceKey
-     * @param destinationKey
+     * @param sourceKey 源键
+     * @param destinationKey 目标键
      * @return
      */
     public String lRightPopAndLeftPush(String sourceKey, String destinationKey) {
@@ -904,10 +904,10 @@ public class RedisCommandHelper {
     /**
      * 从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
      *
-     * @param sourceKey
-     * @param destinationKey
-     * @param timeout
-     * @param unit
+     * @param sourceKey 源键
+     * @param destinationKey 目标键
+     * @param timeout 超时时长
+     * @param unit 时间或距离单位
      * @return
      */
     public String lBRightPopAndLeftPush(String sourceKey, String destinationKey, long timeout, TimeUnit unit) {
@@ -919,10 +919,10 @@ public class RedisCommandHelper {
     /**
      * 删除集合中值等于value得元素
      *
-     * @param key
-     * @param index index=0, 删除所有值等于value的元素; index&gt;0, 从头部开始删除第一个值等于value的元素;
+     * @param key 目标键
+     * @param index 索引位置
      *              index&lt;0, 从尾部开始删除第一个值等于value的元素;
-     * @param value
+     * @param value 参数值
      * @return
      */
     public Long lRemove(String key, long index, String value) {
@@ -934,9 +934,9 @@ public class RedisCommandHelper {
     /**
      * 裁剪list
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      */
     public void lTrim(String key, long start, long end) {
         redisTemplate
@@ -947,7 +947,7 @@ public class RedisCommandHelper {
     /**
      * 获取列表长度
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long lLen(String key) {
@@ -961,8 +961,8 @@ public class RedisCommandHelper {
     /**
      * set添加元素
      *
-     * @param key
-     * @param values
+     * @param key 目标键
+     * @param values 参数值集合
      * @return
      */
     public Long sAdd(String key, String... values) {
@@ -974,8 +974,8 @@ public class RedisCommandHelper {
     /**
      * set移除元素
      *
-     * @param key
-     * @param values
+     * @param key 目标键
+     * @param values 参数值集合
      * @return
      */
     public Long sRemove(String key, Object... values) {
@@ -987,7 +987,7 @@ public class RedisCommandHelper {
     /**
      * 移除并返回集合的一个随机元素
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public String sPop(String key) {
@@ -999,8 +999,8 @@ public class RedisCommandHelper {
     /**
      * 移除并返回集合的一个随机元素
      *
-     * @param key
-     * @param count 参数
+     * @param key 目标键
+     * @param count 数量
      * @return
      */
     public List<String> sPop(String key, int count) {
@@ -1012,9 +1012,9 @@ public class RedisCommandHelper {
     /**
      * 将元素value从一个集合移到另一个集合
      *
-     * @param key
-     * @param value
-     * @param destKey
+     * @param key 目标键
+     * @param value 参数值
+     * @param destKey 目标键
      * @return
      */
     public Boolean sMove(String key, String value, String destKey) {
@@ -1026,7 +1026,7 @@ public class RedisCommandHelper {
     /**
      * 获取集合的大小
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long sSize(String key) {
@@ -1038,8 +1038,8 @@ public class RedisCommandHelper {
     /**
      * 判断集合是否包含value
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Boolean sIsMember(String key, Object value) {
@@ -1048,8 +1048,8 @@ public class RedisCommandHelper {
                 .isMember(key, value);
     }
     /**
-     * @param key 参数
-     * @param values 参数
+     * @param key 目标键
+     * @param values 参数值集合
      */
     public Map<Object, Boolean> sIsMember(String key, Object... values) {
         return redisTemplate
@@ -1060,8 +1060,8 @@ public class RedisCommandHelper {
     /**
      * 获取两个集合的交集
      *
-     * @param key
-     * @param otherKey
+     * @param key 目标键
+     * @param otherKey 另一个键
      * @return
      */
     public Set<String> sIntersect(String key, String otherKey) {
@@ -1073,8 +1073,8 @@ public class RedisCommandHelper {
     /**
      * 获取key集合与多个集合的交集
      *
-     * @param key
-     * @param otherKeys
+     * @param key 目标键
+     * @param otherKeys 其他键集合
      * @return
      */
     public Set<String> sIntersect(String key, Collection<String> otherKeys) {
@@ -1086,9 +1086,9 @@ public class RedisCommandHelper {
     /**
      * key集合与otherKey集合的交集存储到destKey集合中
      *
-     * @param key
-     * @param otherKey
-     * @param destKey
+     * @param key 目标键
+     * @param otherKey 另一个键
+     * @param destKey 目标键
      * @return
      */
     public Long sIntersectAndStore(String key, String otherKey, String destKey) {
@@ -1100,9 +1100,9 @@ public class RedisCommandHelper {
     /**
      * key集合与多个集合的交集存储到destKey集合中
      *
-     * @param key
-     * @param otherKeys
-     * @param destKey
+     * @param key 目标键
+     * @param otherKeys 其他键集合
+     * @param destKey 目标键
      * @return
      */
     public Long sIntersectAndStore(String key, Collection<String> otherKeys, String destKey) {
@@ -1114,8 +1114,8 @@ public class RedisCommandHelper {
     /**
      * 获取两个集合的并集
      *
-     * @param key
-     * @param otherKeys
+     * @param key 目标键
+     * @param otherKeys 其他键集合
      * @return
      */
     public Set<String> sUnion(String key, String otherKeys) {
@@ -1127,8 +1127,8 @@ public class RedisCommandHelper {
     /**
      * 获取key集合与多个集合的并集
      *
-     * @param key
-     * @param otherKeys
+     * @param key 目标键
+     * @param otherKeys 其他键集合
      * @return
      */
     public Set<String> sUnion(String key, Collection<String> otherKeys) {
@@ -1140,9 +1140,9 @@ public class RedisCommandHelper {
     /**
      * key集合与otherKey集合的并集存储到destKey中
      *
-     * @param key
-     * @param otherKey
-     * @param destKey
+     * @param key 目标键
+     * @param otherKey 另一个键
+     * @param destKey 目标键
      * @return
      */
     public Long sUnionAndStore(String key, String otherKey, String destKey) {
@@ -1154,9 +1154,9 @@ public class RedisCommandHelper {
     /**
      * key集合与多个集合的并集存储到destKey中
      *
-     * @param key
-     * @param otherKeys
-     * @param destKey
+     * @param key 目标键
+     * @param otherKeys 其他键集合
+     * @param destKey 目标键
      * @return
      */
     public Long sUnionAndStore(String key, Collection<String> otherKeys, String destKey) {
@@ -1168,8 +1168,8 @@ public class RedisCommandHelper {
     /**
      * 获取两个集合的差集
      *
-     * @param key
-     * @param otherKey
+     * @param key 目标键
+     * @param otherKey 另一个键
      * @return
      */
     public Set<String> sDifference(String key, String otherKey) {
@@ -1181,8 +1181,8 @@ public class RedisCommandHelper {
     /**
      * 获取key集合与多个集合的差集
      *
-     * @param key
-     * @param otherKeys
+     * @param key 目标键
+     * @param otherKeys 其他键集合
      * @return
      */
     public Set<String> sDifference(String key, Collection<String> otherKeys) {
@@ -1194,9 +1194,9 @@ public class RedisCommandHelper {
     /**
      * key集合与otherKey集合的差集存储到destKey中
      *
-     * @param key
-     * @param otherKey
-     * @param destKey
+     * @param key 目标键
+     * @param otherKey 另一个键
+     * @param destKey 目标键
      * @return
      */
     public Long sDifference(String key, String otherKey, String destKey) {
@@ -1208,9 +1208,9 @@ public class RedisCommandHelper {
     /**
      * key集合与多个集合的差集存储到destKey中
      *
-     * @param key
-     * @param otherKeys
-     * @param destKey
+     * @param key 目标键
+     * @param otherKeys 其他键集合
+     * @param destKey 目标键
      * @return
      */
     public Long sDifference(String key, Collection<String> otherKeys, String destKey) {
@@ -1222,7 +1222,7 @@ public class RedisCommandHelper {
     /**
      * 获取集合所有元素
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Set<String> setMembers(String key) {
@@ -1234,7 +1234,7 @@ public class RedisCommandHelper {
     /**
      * 随机获取集合中的一个元素
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public String sRandomMember(String key) {
@@ -1246,8 +1246,8 @@ public class RedisCommandHelper {
     /**
      * 随机获取集合中count个元素
      *
-     * @param key
-     * @param count
+     * @param key 目标键
+     * @param count 数量
      * @return
      */
     public List<String> sRandomMembers(String key, long count) {
@@ -1259,8 +1259,8 @@ public class RedisCommandHelper {
     /**
      * 随机获取集合中count个元素并且去除重复的
      *
-     * @param key
-     * @param count
+     * @param key 目标键
+     * @param count 数量
      * @return
      */
     public Set<String> sDistinctRandomMembers(String key, long count) {
@@ -1270,8 +1270,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param options
+     * @param key 目标键
+     * @param options 操作参数
      * @return
      */
     public Cursor<String> sScan(String key, ScanOptions options) {
@@ -1285,9 +1285,9 @@ public class RedisCommandHelper {
     /**
      * 添加元素,有序集合是按照元素的score值由小到大排列
      *
-     * @param key
-     * @param value
-     * @param score
+     * @param key 目标键
+     * @param value 参数值
+     * @param score 分值
      * @return
      */
     public Boolean zAdd(String key, String value, double score) {
@@ -1297,8 +1297,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param values
+     * @param key 目标键
+     * @param values 参数值集合
      * @return
      */
     public Long zAdd(String key, Set<TypedTuple<String>> values) {
@@ -1308,8 +1308,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param values
+     * @param key 目标键
+     * @param values 参数值集合
      * @return
      */
     public Long zRemove(String key, Object... values) {
@@ -1321,9 +1321,9 @@ public class RedisCommandHelper {
     /**
      * 增加元素的score值，并返回增加后的值
      *
-     * @param key
-     * @param value
-     * @param delta
+     * @param key 目标键
+     * @param value 参数值
+     * @param delta 变化量
      * @return
      */
     public Double zIncrementScore(String key, String value, double delta) {
@@ -1335,8 +1335,8 @@ public class RedisCommandHelper {
     /**
      * 返回元素在集合的排名,有序集合是按照元素的score值由小到大排列
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return 0表示第一位
      */
     public Long zRank(String key, Object value) {
@@ -1348,8 +1348,8 @@ public class RedisCommandHelper {
     /**
      * 返回元素在集合的排名,按元素的score值由大到小排列
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Long zReverseRank(String key, Object value) {
@@ -1361,9 +1361,9 @@ public class RedisCommandHelper {
     /**
      * 获取集合的元素, 从小到大排序
      *
-     * @param key
-     * @param start 开始位置
-     * @param end   结束位置, -1查询所有
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end   结束位置
      * @return
      */
     public Set<String> zRange(String key, long start, long end) {
@@ -1375,9 +1375,9 @@ public class RedisCommandHelper {
     /**
      * 获取集合元素, 并且把score值也获取
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<TypedTuple<String>> zRangeWithScores(String key, long start, long end) {
@@ -1389,7 +1389,7 @@ public class RedisCommandHelper {
     /**
      * 根据Score值查询集合元素
      *
-     * @param key
+     * @param key 目标键
      * @param min 最小值
      * @param max 最大值
      * @return
@@ -1403,7 +1403,7 @@ public class RedisCommandHelper {
     /**
      * 根据Score值查询集合元素, 从小到大排序
      *
-     * @param key
+     * @param key 目标键
      * @param min 最小值
      * @param max 最大值
      * @return
@@ -1415,11 +1415,11 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param min
-     * @param max
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<TypedTuple<String>> zRangeByScoreWithScores(String key, double min, double max, long start, long end) {
@@ -1431,9 +1431,9 @@ public class RedisCommandHelper {
     /**
      * 获取集合的元素, 从大到小排序
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<String> zReverseRange(String key, long start, long end) {
@@ -1445,9 +1445,9 @@ public class RedisCommandHelper {
     /**
      * 获取集合的元素, 从大到小排序, 并返回score值
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<TypedTuple<String>> zReverseRangeWithScores(String key, long start, long end) {
@@ -1459,11 +1459,11 @@ public class RedisCommandHelper {
     /**
      * 批量获取多个集合的元素, 从大到小排序, 并返回score值
      *
-     * @param keys
-     * @param offset
-     * @param count
-     * @param min 参数
-     * @param max 参数
+     * @param keys 键集合
+     * @param offset 偏移量
+     * @param count 数量
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public List<Set<TypedTuple<String>>> batchZReverseRangeWithScores(List<String> keys, double min, double max,
@@ -1486,8 +1486,8 @@ public class RedisCommandHelper {
         return returnList;
     }
     /**
-     * @param keys 参数
-     * @param member 参数
+     * @param keys 键集合
+     * @param member 成员值
      */
     public Map<String, Double> batchZScore(List<String> keys, String member) {
         final List<Object> valueList = executePipelined(connection -> {
@@ -1508,9 +1508,9 @@ public class RedisCommandHelper {
 
     /**
      * 批量获取多个集合的元素, 并返回score值
-     * @param keys 参数
-     * @param min 参数
-     * @param max 参数
+     * @param keys 键集合
+     * @param min 最小值
+     * @param max 最大值
      */
     public List<Set<TypedTuple<String>>> batchZRangWithScore (List<String> keys, Long min, Long max) {
         List<Object> resultList = executePipelined(connection -> {
@@ -1534,9 +1534,9 @@ public class RedisCommandHelper {
     /**
      * 根据Score值查询集合元素, 从大到小排序
      *
-     * @param key
-     * @param min
-     * @param max
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public Set<String> zReverseRangeByScore(String key, double min, double max) {
@@ -1548,9 +1548,9 @@ public class RedisCommandHelper {
     /**
      * 根据Score值查询集合元素, 从大到小排序
      *
-     * @param key
-     * @param min
-     * @param max
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public Set<TypedTuple<String>> zReverseRangeByScoreWithScores(String key, double min, double max) {
@@ -1562,11 +1562,11 @@ public class RedisCommandHelper {
     /**
      * 根据Score值查询集合元素, 从大到小排序
      *
-     * @param key
-     * @param min
-     * @param max
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<TypedTuple<String>> zReverseRangeByScoreWithScores(String key, double min, double max, long start,
@@ -1577,11 +1577,11 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param min
-     * @param max
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Set<String> zReverseRangeByScore(String key, double min, double max, long start, long end) {
@@ -1593,9 +1593,9 @@ public class RedisCommandHelper {
     /**
      * 根据score值获取集合元素数量
      *
-     * @param key
-     * @param min
-     * @param max
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public Long zCount(String key, double min, double max) {
@@ -1607,7 +1607,7 @@ public class RedisCommandHelper {
     /**
      * 获取集合大小
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long zSize(String key) {
@@ -1619,7 +1619,7 @@ public class RedisCommandHelper {
     /**
      * 获取集合大小
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     public Long zZCard(String key) {
@@ -1631,8 +1631,8 @@ public class RedisCommandHelper {
     /**
      * 获取集合中value元素的score值
      *
-     * @param key
-     * @param value
+     * @param key 目标键
+     * @param value 参数值
      * @return
      */
     public Double zScore(String key, Object value) {
@@ -1644,9 +1644,9 @@ public class RedisCommandHelper {
     /**
      * 移除指定索引位置的成员
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public Long zRemoveRange(String key, long start, long end) {
@@ -1658,9 +1658,9 @@ public class RedisCommandHelper {
     /**
      * 根据指定的score值的范围来移除成员
      *
-     * @param key
-     * @param min
-     * @param max
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public Long zRemoveRangeByScore(String key, double min, double max) {
@@ -1672,9 +1672,9 @@ public class RedisCommandHelper {
     /**
      * 获取key和otherKey的并集并存储在destKey中
      *
-     * @param key
-     * @param otherKey
-     * @param destKey
+     * @param key 目标键
+     * @param otherKey 另一个键
+     * @param destKey 目标键
      * @return
      */
     public Long zUnionAndStore(String key, String otherKey, String destKey) {
@@ -1684,9 +1684,9 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param otherKeys
-     * @param destKey
+     * @param key 目标键
+     * @param otherKeys 其他键集合
+     * @param destKey 目标键
      * @return
      */
     public Long zUnionAndStore(String key, Collection<String> otherKeys, String destKey) {
@@ -1698,9 +1698,9 @@ public class RedisCommandHelper {
     /**
      * 交集
      *
-     * @param key
-     * @param otherKey
-     * @param destKey
+     * @param key 目标键
+     * @param otherKey 另一个键
+     * @param destKey 目标键
      * @return
      */
     public Long zIntersectAndStore(String key, String otherKey, String destKey) {
@@ -1712,9 +1712,9 @@ public class RedisCommandHelper {
     /**
      * 交集
      *
-     * @param key
-     * @param otherKeys
-     * @param destKey
+     * @param key 目标键
+     * @param otherKeys 其他键集合
+     * @param destKey 目标键
      * @return
      */
     public Long zIntersectAndStore(String key, Collection<String> otherKeys, String destKey) {
@@ -1724,8 +1724,8 @@ public class RedisCommandHelper {
     }
 
     /**
-     * @param key
-     * @param options
+     * @param key 目标键
+     * @param options 操作参数
      * @return
      */
     public Cursor<TypedTuple<String>> zScan(String key, ScanOptions options) {
@@ -1737,7 +1737,7 @@ public class RedisCommandHelper {
     /**
      * 管道原生命令
      *
-     * @param action
+     * @param action 执行动作
      * @return
      */
     public List<Object> executePipelined(RedisCallback<?> action) {
@@ -1747,8 +1747,8 @@ public class RedisCommandHelper {
     /**
      * 批量zscore
      *
-     * @param key
-     * @param members
+     * @param key 目标键
+     * @param members 成员列表
      * @return
      */
     public Map<String, Double> batchZScore(String key, List<String> members) {
@@ -1773,8 +1773,8 @@ public class RedisCommandHelper {
     /**
      * 将具有给定成员名称的 Point 添加到键中。
      *
-     * @param key
-     * @param member
+     * @param key 目标键
+     * @param member 成员值
      * @param longitude 经度
      * @param latitude  纬度
      */
@@ -1788,8 +1788,8 @@ public class RedisCommandHelper {
     /**
      * 删除成员
      *
-     * @param key
-     * @param member
+     * @param key 目标键
+     * @param member 成员值
      */
     public void removeGeo(String key, String... member) {
         redisTemplate
@@ -1800,12 +1800,12 @@ public class RedisCommandHelper {
     /**
      * 获取给定圆边界内的成员
      *
-     * @param key
-     * @param longitude
-     * @param latitude
-     * @param radius
-     * @param unit
-     * @param paArgs
+     * @param key 目标键
+     * @param longitude 经度
+     * @param latitude 纬度
+     * @param radius 半径
+     * @param unit 时间或距离单位
+     * @param paArgs GEO 查询附加参数
      * @return
      */
     public GeoResults<GeoLocation<String>> geoRadius(String key, double longitude, double latitude, double radius,
@@ -1819,7 +1819,7 @@ public class RedisCommandHelper {
     /**
      * 批量zcard
      *
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public Map<String, Long> batchZCard(List<String> keys) {
@@ -1842,8 +1842,8 @@ public class RedisCommandHelper {
     /**
      * 批量zrank
      *
-     * @param members
-     * @param key 参数
+     * @param members 成员列表
+     * @param key 目标键
      * @return
      */
     public Map<String, Integer> batchZRank(String key, List<String> members) {
@@ -1863,7 +1863,7 @@ public class RedisCommandHelper {
         return sizeMap;
     }
     /**
-     * @param pattern 参数
+     * @param pattern 匹配表达式
      */
     public List<String> scanKeys(String pattern) {
         List<String> keys = new ArrayList<>();
@@ -1881,7 +1881,7 @@ public class RedisCommandHelper {
         return keys;
     }
     /**
-     * @param keys 参数
+     * @param keys 键集合
      */
     public Map<String, Long> getTtlForKeys(List<String> keys) {
         Map<String, Long> ttlMap = new HashMap<>();
@@ -1903,7 +1903,7 @@ public class RedisCommandHelper {
     /**
      * 批量获取map的所有数据
      *
-     * @param keys
+     * @param keys 键集合
      * @return
      */
     public Map<String, Map<String, String>> hMultiMapGetAll(List<String> keys) {
@@ -1928,7 +1928,7 @@ public class RedisCommandHelper {
     /**
      * 使用Pipeline批量获取多个 ZSet 的数据
      *
-     * @param keys      待获取的ZSet key列表
+     * @param keys      键集合
      * @param offsets   每个 key 对应的起始游标映射
      * @param batchSize 每个 key 批量拉取的数据量
      * @return 返回 Map，其中 key 为原始ZSet key，value 为该key对应的候选房间ID集合

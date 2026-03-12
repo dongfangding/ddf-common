@@ -39,7 +39,7 @@ public class ConsoleOnsDLQMessageGetByIdRequest implements UserRequest, Serializ
     /**
      * 转换为SDK请求对象
      *
-     * @param instanceId
+     * @param instanceId 实例ID
      * @return
      */
     public OnsDLQMessageGetByIdRequest toSdkRequest(String instanceId) {

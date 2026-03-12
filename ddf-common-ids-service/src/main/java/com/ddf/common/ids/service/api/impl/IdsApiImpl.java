@@ -55,7 +55,7 @@ public class IdsApiImpl implements IdsApi {
     /**
      * snowflake获取多个id
      *
-     * @param number
+     * @param number 数值
      * @return
      */
     @Override
@@ -66,7 +66,7 @@ public class IdsApiImpl implements IdsApi {
     /**
      * Segment获取单个id
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     @Override
@@ -78,8 +78,8 @@ public class IdsApiImpl implements IdsApi {
     /**
      * Segment获取多个id
      *
-     * @param key
-     * @param number
+     * @param key 目标键
+     * @param number 数值
      * @return
      */
     @Override
@@ -91,7 +91,7 @@ public class IdsApiImpl implements IdsApi {
     /**
      * 获取组合ID
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     @Override
@@ -104,8 +104,8 @@ public class IdsApiImpl implements IdsApi {
     /**
      * 获取组合批量ID
      *
-     * @param key
-     * @param number
+     * @param key 目标键
+     * @param number 数值
      * @return
      */
     @Override
@@ -152,7 +152,7 @@ public class IdsApiImpl implements IdsApi {
     /**
      * 解析雪花id信息
      *
-     * @param snowflakeIdStr
+     * @param snowflakeIdStr snowflakeIDSTR参数
      * @return
      */
     @Override
@@ -172,7 +172,7 @@ public class IdsApiImpl implements IdsApi {
         return result.getId();
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param resultList 参数
      */
     private List<String> list(String key, ResultList resultList) {

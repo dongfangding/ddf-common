@@ -17,15 +17,15 @@ public interface SlowEventAction {
      * 将超时的几个属性放入对象，提供给使用者去实现自己的处理逻辑,该方法在回调的时候已经设置为异步，
      * 自己实现的时候没必要在异步了
      *
-     * @param slowEvent
+     * @param slowEvent slowevent参数
      */
     void doAction(SlowEvent slowEvent);
 
     /**
      * 提供一个静态方法来完成回调功能
      *
-     * @param slowEven
-     * @param consumer
+     * @param slowEven sloweven参数
+     * @param consumer consumer参数
      */
     static void doAction(SlowEvent slowEven, Consumer<SlowEvent> consumer) {
         consumer.accept(slowEven);

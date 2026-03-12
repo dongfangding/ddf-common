@@ -34,7 +34,7 @@ public class NoblePrivilegeUtil {
 
 	/**
 	 * 是否有进房隐身的权限
-	 * @param noble
+	 * @param noble noble参数
 	 * @return
 	 */
 	public static boolean hasEntryRoomInvisiblePermission(int noble) {
@@ -43,7 +43,7 @@ public class NoblePrivilegeUtil {
 
 	/**
 	 * 是否有神秘人的权限
-	 * @param noble
+	 * @param noble noble参数
 	 * @return
 	 */
 	public static boolean hasMysteryManPermission(int noble) {

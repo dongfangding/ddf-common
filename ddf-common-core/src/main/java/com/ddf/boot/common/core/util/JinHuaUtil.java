@@ -42,7 +42,7 @@ public class JinHuaUtil {
         //        fixedCard();
     }
     /**
-     * @param count 参数
+     * @param count 数量
      */
     public static List<JinHuaCard> randomCard(int count) {
         //随机创建牌组

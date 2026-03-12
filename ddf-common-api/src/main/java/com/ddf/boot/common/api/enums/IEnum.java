@@ -11,7 +11,7 @@ public interface IEnum<T> extends ValueBean<T> {
 
     /**
      * 是否匹配
-     * @param value
+     * @param value 参数值
      * @return
      */
     default boolean matches(T value) {
@@ -20,7 +20,7 @@ public interface IEnum<T> extends ValueBean<T> {
 
     /**
      * 是否匹配
-     * @param iEnum
+     * @param iEnum 枚举实例
      * @return
      */
     default boolean matches(IEnum<T> iEnum) {

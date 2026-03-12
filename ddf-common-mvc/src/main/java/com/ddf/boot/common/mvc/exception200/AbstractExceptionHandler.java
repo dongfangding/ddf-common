@@ -69,9 +69,9 @@ public abstract class AbstractExceptionHandler {
      * 处理异常类，某些异常类需要特殊处理，在具体根据当前异常去判断是否是期望的异常类型,
      * 这样可以只使用一个方法来处理，否则方法太多，看起来有点凌乱，也不太好做一些通用处理
      *
-     * @param exception
+     * @param exception 异常对象
      * @param httpServletRequest 参数
-     * @param response 参数
+     * @param response 响应对象
      * @return
      */
     @ExceptionHandler(value = Exception.class)
@@ -205,7 +205,7 @@ public abstract class AbstractExceptionHandler {
     /**
      * 解析业务异常消息
      *
-     * @param exception
+     * @param exception 异常对象
      * @return
      */
     public static ExceptionResolveResult resolveExceptionMessage(Exception exception) {

@@ -47,8 +47,8 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
     /**
      * 处理接收到的消息
      *
-     * @param webSocketSessionWrapper
-     * @param textMessage
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param textMessage 文本消息对象
      */
     @Override
     public void handlerMessage(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper,
@@ -60,9 +60,9 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
     /**
      * 安卓认证用户收到数据之后的业务处理
      *
-     * @param authPrincipal
-     * @param webSocketSessionWrapper
-     * @param textMessage
+     * @param authPrincipal 认证主体对象
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param textMessage 文本消息对象
      */
     private void doMessageConsumer(AuthPrincipal authPrincipal, WebSocketSessionWrapper webSocketSessionWrapper,
             TextMessage textMessage) {

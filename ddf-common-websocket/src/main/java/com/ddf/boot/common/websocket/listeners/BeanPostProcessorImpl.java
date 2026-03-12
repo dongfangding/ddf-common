@@ -22,8 +22,8 @@ public class BeanPostProcessorImpl implements BeanPostProcessor {
     /**
      * 在bean初始化之前执行一些业务
      *
-     * @param bean
-     * @param beanName
+     * @param bean bean参数
+     * @param beanName Bean 名称
      * @return
      * @throws BeansException
      */

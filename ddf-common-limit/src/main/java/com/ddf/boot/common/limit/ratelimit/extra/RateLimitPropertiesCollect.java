@@ -42,7 +42,7 @@ public interface RateLimitPropertiesCollect {
     /**
      * 将扩展接口的值复制给属性类
      *
-     * @param properties
+     * @param properties properties参数
      */
     default void copyToProperties(RateLimitProperties properties) {
         properties.setKeyGenerator(getKeyGenerators());

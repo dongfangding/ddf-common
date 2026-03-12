@@ -166,7 +166,7 @@ public class SegmentIDGenImpl implements IDGen {
     /**
      * 获取id
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     @Override
@@ -204,8 +204,8 @@ public class SegmentIDGenImpl implements IDGen {
     /**
      * 批量获取ids
      *
-     * @param key
-     * @param number
+     * @param key 目标键
+     * @param number 数值
      * @return
      */
     @Override
@@ -222,7 +222,7 @@ public class SegmentIDGenImpl implements IDGen {
         return resultList;
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param segment 参数
      */
     public void updateSegmentFromDb(String key, Segment segment) {
@@ -355,8 +355,8 @@ public class SegmentIDGenImpl implements IDGen {
     /**
      * 填充对其value位数
      *
-     * @param value
-     * @param segment
+     * @param value 参数值
+     * @param segment segment参数
      * @return
      */
     private String fillValue(long value, Segment segment) {

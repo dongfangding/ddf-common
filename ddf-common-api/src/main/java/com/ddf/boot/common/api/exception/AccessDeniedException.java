@@ -12,20 +12,20 @@ public class AccessDeniedException extends BaseException {
         super(throwable);
     }
     /**
-     * @param baseCallbackCode 参数
+     * @param baseCallbackCode 回调码对象
      */
     public AccessDeniedException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
     /**
-     * @param description 参数
+     * @param description 描述信息
      */
     public AccessDeniedException(String description) {
         super(description);
     }
     /**
      * @param code 参数
-     * @param description 参数
+     * @param description 描述信息
      */
     public AccessDeniedException(String code, String description) {
         super(code, description);

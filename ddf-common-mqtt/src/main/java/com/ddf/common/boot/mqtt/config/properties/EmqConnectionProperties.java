@@ -112,7 +112,7 @@ public class EmqConnectionProperties {
     /**
      * 获取指定协议的配置
      *
-     * @param protocol
+     * @param protocol protocol参数
      * @return
      */
     public ConnectionConfig getConnectionUrl(String protocol) {

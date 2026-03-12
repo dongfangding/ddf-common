@@ -43,7 +43,7 @@ public class CanalMessageDispatcher {
     /**
      * 消息分发
      *
-     * @param flatMessage
+     * @param flatMessage Canal 消息对象
      */
     public void dispatch(FlatMessage flatMessage) {
         String tableName = flatMessage.getTable();
@@ -73,7 +73,7 @@ public class CanalMessageDispatcher {
      * 注意：使用传统 for 循环而非 forEach，确保找到匹配后正确返回
      * </p>
      *
-     * @param flatMessage
+     * @param flatMessage Canal 消息对象
      * @return
      */
     private CanalMessageHandler<?> findHandler(FlatMessage flatMessage) {
@@ -94,8 +94,8 @@ public class CanalMessageDispatcher {
     /**
      * 获取data中的数据
      *
-     * @param dataMap
-     * @param clazz
+     * @param dataMap 数据映射
+     * @param clazz 目标类型
      * @return
      */
     private <T> List<T> getData(List<Map<String, String>> dataMap, Class<T> clazz) {

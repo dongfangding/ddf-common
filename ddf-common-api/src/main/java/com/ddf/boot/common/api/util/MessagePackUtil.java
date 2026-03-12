@@ -21,14 +21,14 @@ public class MessagePackUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = newInstance();
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     @SneakyThrows
     public static byte[] writeValueAsBytes(Object value) {
         return OBJECT_MAPPER.writeValueAsBytes(value);
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     @SneakyThrows
     public static String writeValueAsHex(Object value) {
@@ -48,10 +48,10 @@ public class MessagePackUtil {
      * 将16进制数据，转换为msgpack协议，由于原生msgpack协议无法用字符展示，调试的时候，比如使用浏览器测试，
      * 接收到的数据是二进制，可以复制为16进制，这样可以复制然后反序列化看是否正确。
      *
-     * @param content
-     * @param valueType
+     * @param content 内容
+     * @param valueType 值类型
      * @return
-     * @param <T>
+     * @param <T> 泛型类型
      */
     @SneakyThrows
     public static <T> T readHexValue(String content, Class<T> valueType) {

@@ -13,7 +13,7 @@ public interface BizResultChecker extends SmartInitializingSingleton {
 
     /**
      * 是否成功
-     * @param message
+     * @param message 消息内容
      * @return
      */
     boolean isSuccess(Message message);

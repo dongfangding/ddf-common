@@ -16,7 +16,7 @@ public interface MqttDefinition {
     /**
      * 发布消息
      *
-     * @param request
+     * @param request 请求对象
      */
     ResponseData<MqttMessageResponse> publish(InnerMqttMessageRequest request);
 }

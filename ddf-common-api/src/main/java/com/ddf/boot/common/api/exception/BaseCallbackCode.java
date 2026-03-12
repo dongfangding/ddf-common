@@ -62,7 +62,7 @@ public interface BaseCallbackCode {
         }
         /**
          * @param code 参数
-         * @param description 参数
+         * @param description 描述信息
          */
         public static BaseCallbackCode of(String code, String description) {
             return of(code, description, description);

@@ -53,7 +53,7 @@ public class AccessLogAspect {
      * <p>
      * 因为操作日志如果不做到对请求前和请求后的数据获取的话，仅仅记录调用本身意义也不大
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @return
      */
     @Around("pointCut()")
@@ -125,9 +125,9 @@ public class AccessLogAspect {
     /**
      * 如果接口耗时超过预设值，提供一个异步回调接口给使用者实现处理逻辑
      *
-     * @param className
-     * @param methodName
-     * @param consumerTime
+     * @param className 类型名称参数
+     * @param methodName 方法名
+     * @param consumerTime consumer时间参数
      * @param params 参数
      */
     private void dealSlowTimeHandler(String className, String methodName, String params, long consumerTime) {
@@ -148,7 +148,7 @@ public class AccessLogAspect {
      * 判断是否忽略处理当前类
      * 这个功能的意义是有些接口天生就是慢接口的，但是又不想统计这个接口，因为开发时已经知道了，所以要跳过这个接口处理
      *
-     * @param className
+     * @param className 类型名称参数
      * @return
      */
     private boolean checkIgnore(String className) {

@@ -36,7 +36,7 @@ mvn -Prelease clean deploy
 
 Current first public release candidate:
 
-- `boot3.5-2026.1`
+- `boot3.5-2026.1-SNAPSHOT`
 
 ## GitHub Actions Secrets
 

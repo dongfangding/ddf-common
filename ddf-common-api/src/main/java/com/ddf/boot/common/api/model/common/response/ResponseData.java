@@ -72,7 +72,7 @@ public class ResponseData<T> {
      * @param message 参数
      * @param subMessage 参数
      * @param timestamp 参数
-     * @param data 参数
+     * @param data 待处理数据
      * @param extra 参数
      */
     public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra) {
@@ -88,7 +88,7 @@ public class ResponseData<T> {
      * @param message 参数
      * @param subMessage 参数
      * @param timestamp 参数
-     * @param data 参数
+     * @param data 待处理数据
      * @param extra 参数
      * @param formatParams 参数
      */
@@ -105,8 +105,8 @@ public class ResponseData<T> {
     /**
      * 成功返回数据方法
      *
-     * @param data
-     * @param <T>
+     * @param data 待处理数据
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> ResponseData<T> success(T data) {
@@ -119,7 +119,7 @@ public class ResponseData<T> {
     /**
      * 成功返回数据方法 - 自定义成功提示语
      *
-     * @param data 数据
+     * @param data 待处理数据
      * @param desc 提示语
      */
     public static <T> ResponseData<T> success(T data, String desc) {
@@ -131,8 +131,8 @@ public class ResponseData<T> {
     /**
      * 成功返回数据方法
      *
-     * @param data
-     * @param <T>
+     * @param data 待处理数据
+     * @param <T> 泛型类型
      * @param extra 参数
      * @return
      */
@@ -156,8 +156,8 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param baseCallbackCode
-     * @param <T>
+     * @param baseCallbackCode 回调码对象
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode) {
@@ -169,8 +169,8 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param baseCallbackCode
-     * @param <T>
+     * @param baseCallbackCode 回调码对象
+     * @param <T> 泛型类型
      * @param extra 参数
      * @return
      */
@@ -183,9 +183,9 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param code
-     * @param message
-     * @param <T>
+     * @param code 编码值
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> ResponseData<T> failure(String code, String message) {
@@ -195,9 +195,9 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param code
-     * @param message
-     * @param <T>
+     * @param code 编码值
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @param subMessage 参数
      * @return
      */
@@ -208,9 +208,9 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param code
-     * @param message
-     * @param <T>
+     * @param code 编码值
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @param extra 参数
      * @return
      */
@@ -221,9 +221,9 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param code
-     * @param message
-     * @param <T>
+     * @param code 编码值
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @param subMessage 参数
      * @param extra 参数
      * @return
@@ -235,9 +235,9 @@ public class ResponseData<T> {
     /**
      * 失败返回消息方法
      *
-     * @param code
-     * @param message
-     * @param <T>
+     * @param code 编码值
+     * @param message 消息内容
+     * @param <T> 泛型类型
      * @param subMessage 参数
      * @param extra 参数
      * @param formatParams 参数
@@ -274,7 +274,7 @@ public class ResponseData<T> {
     /**
      * 获取返回数据， 如果响应码非成功，返回指定默认值
      *
-     * @param defaultValue
+     * @param defaultValue 默认值
      * @return
      */
     public T failureDefault(T defaultValue) {

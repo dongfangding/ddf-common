@@ -21,7 +21,7 @@ public interface S3Api {
      *
      * @param objectKey 对象 Key（路径）
      * @param inputStream 输入流
-     * @param contentType Content-Type
+     * @param contentType content类型
      * @param size 文件大小
      * @return 上传结果
      */
@@ -33,7 +33,7 @@ public interface S3Api {
      * @param bucketName Bucket 名称
      * @param objectKey 对象 Key
      * @param inputStream 输入流
-     * @param contentType Content-Type
+     * @param contentType content类型
      * @param size 文件大小
      * @return 上传结果
      */
@@ -52,8 +52,8 @@ public interface S3Api {
      * 上传文件（使用 byte 数组）.
      *
      * @param objectKey 对象 Key
-     * @param data 字节数组
-     * @param contentType Content-Type
+     * @param data 待处理数据
+     * @param contentType content类型
      * @return 上传结果
      */
     UploadResult upload(String objectKey, byte[] data, String contentType);
@@ -164,7 +164,7 @@ public interface S3Api {
      * 生成预签名上传 URL.
      *
      * @param objectKey 对象 Key
-     * @param contentType Content-Type
+     * @param contentType content类型
      * @param expiry 有效期
      * @return 预签名 URL 结果
      */
@@ -175,7 +175,7 @@ public interface S3Api {
      *
      * @param bucketName Bucket 名称
      * @param objectKey 对象 Key
-     * @param contentType Content-Type
+     * @param contentType content类型
      * @param expiry 有效期
      * @return 预签名 URL 结果
      */

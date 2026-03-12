@@ -83,7 +83,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
      * 使用消息转换器判断MediaType的地方在
      * org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor#writeWithMessageConverters(java.lang.Object, org.springframework.core.MethodParameter, org.springframework.http.server.ServletServerHttpRequest, org.springframework.http.server.ServletServerHttpResponse)
      *
-     * @param converters
+     * @param converters converters参数
      */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -93,7 +93,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 配置拦截器
      *
-     * @param registry
+     * @param registry Bean 定义注册器
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -102,7 +102,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 配置允许所有请求跨域
      *
-     * @param registry
+     * @param registry Bean 定义注册器
      */
     @Override
     @Deprecated
@@ -141,7 +141,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 配置静态资源映射路径
      *
-     * @param registry
+     * @param registry Bean 定义注册器
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -150,7 +150,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 配置自定义参数解析器
      *
-     * @param resolvers
+     * @param resolvers resolvers参数
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

@@ -69,7 +69,7 @@ public @interface StringLogicValueValidator {
         /**
          * 初始化参数
          *
-         * @param constraintAnnotation
+         * @param constraintAnnotation 约束注解对象
          */
         @Override
         public void initialize(StringLogicValueValidator constraintAnnotation) {
@@ -81,8 +81,8 @@ public @interface StringLogicValueValidator {
 
         /**
          *
-         * @param value   object to validate
-         * @param context context in which the constraint is evaluated
+         * @param value   参数值
+         * @param context 上下文参数
          * @return {@code false} if {@code value} does not pass the constraint
          */
         @Override

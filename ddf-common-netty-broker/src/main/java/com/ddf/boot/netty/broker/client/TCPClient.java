@@ -107,7 +107,7 @@ public class TCPClient {
      * 3. 正确处理 InterruptedException
      * </p>
      *
-     * @param content 消息内容
+     * @param content 内容
      * @throws InterruptedException 如果线程被中断
      */
     public void write(RequestContent content) throws InterruptedException {

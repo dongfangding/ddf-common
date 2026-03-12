@@ -67,10 +67,10 @@ public class RedisTemplateHelper {
     /**
      * 构造布隆过滤器
      *
-     * @param name               redis key name
+     * @param name               名称
      * @param expectedInsertions 预计容器数量
      * @param falseProbability   允许误差率 0~1
-     * @param <T>
+     * @param <T> 泛型类型
      * @return
      */
     public <T> RedisBloomFilter<T> createRedisBloomFilter(String name, long expectedInsertions,
@@ -83,7 +83,7 @@ public class RedisTemplateHelper {
      * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
      * 业务方面的单位时间逻辑次数控制
      *
-     * @param key            缓存key
+     * @param key            目标键
      * @param maxCount       单位时间内最大访问次数
      * @param windowInSecond 窗口时间，单位秒
      * @return
@@ -102,7 +102,7 @@ public class RedisTemplateHelper {
      * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
      * 业务方面的单位时间逻辑次数控制
      *
-     * @param key              缓存key
+     * @param key              目标键
      * @param maxCount         单位时间内最大访问次数
      * @param windowInMillions 窗口时间，单位毫秒
      * @return
@@ -121,12 +121,12 @@ public class RedisTemplateHelper {
     /**
      * 包装{@link RedisTemplateHelper#sliderWindowAccess(String, long, int)}提供一体化的判断，满足条件执行，不满足抛出异常
      *
-     * @param key
-     * @param maxCount
-     * @param windowInSecond
-     * @param supplier
-     * @param exceptionCode
-     * @param <T>
+     * @param key 目标键
+     * @param maxCount 最大数量
+     * @param windowInSecond windowIN秒参数
+     * @param supplier 供应参数
+     * @param exceptionCode 异常编码
+     * @param <T> 泛型类型
      * @return
      */
     public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond,
@@ -150,8 +150,8 @@ public class RedisTemplateHelper {
      * last_time 上次恢复令牌时间
      * current_token为剩余的token，注意这个数量有可能不是最新的， 因为要在获取的时间才会按照恢复速率重新计算剩余令牌数
      *
-     * @param key  缓存key
-     * @param max  单位时间内最大令牌桶数量
+     * @param key  目标键
+     * @param max  最大值
      * @param rate 每秒钟令牌桶恢复速率
      * @return
      */
@@ -176,7 +176,7 @@ public class RedisTemplateHelper {
      * <p>
      * current_token为剩余的token，
      *
-     * @param request
+     * @param request 请求对象
      */
     public boolean tokenBucketRateLimitAcquire(RateLimitRequest request) {
         final String result = String.valueOf(stringRedisTemplate.execute(
@@ -190,7 +190,7 @@ public class RedisTemplateHelper {
     /**
      * 对String类型的key进行递增递减并设置过期值的原子脚本, 初始值为0， 每次递增+1
      *
-     * @param key           key
+     * @param key           目标键
      * @param expireSeconds 过期秒值
      * @return 缓存key对应的最新值
      */
@@ -206,7 +206,7 @@ public class RedisTemplateHelper {
     /**
      * 对String类型的key进行递增递减并设置过期指定指定时间的原子脚本
      *
-     * @param key      key
+     * @param key      目标键
      * @param expireAt 指定过期的具体时间
      * @return 缓存key对应的最新值
      */
@@ -227,7 +227,7 @@ public class RedisTemplateHelper {
      * <p>
      * https://github.com/redisson/redisson/wiki/6.-Distributed-objects
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public boolean leakyBucketRateLimitAcquire(LeakyBucketRateLimitRequest request) {
@@ -246,8 +246,8 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           要操作的key
-     * @param field         要操作的hash key
+     * @param key           目标键
+     * @param field         字段名
      * @param step          每次自增的值
      * @param limit         自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
@@ -265,8 +265,8 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自减并且支持自减下限判定，低于下限，该方法内部提供数据回滚
      *
-     * @param key           要操作的key
-     * @param field         要操作的hash key
+     * @param key           目标键
+     * @param field         字段名
      * @param step          每次自增的值
      * @param limit         自减下限值，低于这个值不会继续自减
      * @param expireSeconds 对key设置最大的过期时间
@@ -284,8 +284,8 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增（正负值）进行上下限判定，如果超出上下限，则将值设置为对应的上下限值
      *
-     * @param key           要操作的key
-     * @param field         要操作的hash key
+     * @param key           目标键
+     * @param field         字段名
      * @param step          每次自增的值
      * @param minValue      小于这个值，则将值设置为这个值
      * @param maxValue      自增上限值，超过这个值不会继续自增
@@ -308,8 +308,8 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自减并且支持自减下限判定，低于下限，该方法内部提供数据回滚
      *
-     * @param key   要操作的key
-     * @param field 要操作的hash key
+     * @param key   目标键
+     * @param field 字段名
      * @param step  每次自增的值
      * @return
      */
@@ -325,14 +325,14 @@ public class RedisTemplateHelper {
     /**
      * 包装{@link RedisTemplateHelper#stringIncrWithLimit(String, Long, Long, Long)}提供一体化的判断，满足条件执行，不满足抛出异常
      *
-     * @param key
-     * @param step
-     * @param limit
-     * @param expireSeconds
-     * @param supplier
-     * @param exceptionCode
-     * @param <T>
-     * @param field 参数
+     * @param key 目标键
+     * @param step step参数
+     * @param limit limit参数
+     * @param expireSeconds 过期seconds参数
+     * @param supplier 供应参数
+     * @param exceptionCode 异常编码
+     * @param <T> 泛型类型
+     * @param field 字段名
      * @return
      */
     public <T> T hashIncrWithLimitCheckException(String key, String field, Long step, Long limit, Long expireSeconds,
@@ -348,7 +348,7 @@ public class RedisTemplateHelper {
     /**
      * 基于String结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           要操作的key
+     * @param key           目标键
      * @param step          每次自增的值
      * @param limit         自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
@@ -365,13 +365,13 @@ public class RedisTemplateHelper {
     /**
      * 包装{@link RedisTemplateHelper#stringIncrWithLimit(String, Long, Long, Long)}提供一体化的判断，满足条件执行，不满足抛出异常
      *
-     * @param key
-     * @param step
-     * @param limit
-     * @param expireSeconds
-     * @param supplier
-     * @param exceptionCode
-     * @param <T>
+     * @param key 目标键
+     * @param step step参数
+     * @param limit limit参数
+     * @param expireSeconds 过期seconds参数
+     * @param supplier 供应参数
+     * @param exceptionCode 异常编码
+     * @param <T> 泛型类型
      * @return
      */
     public <T> T stringIncrWithLimitCheckException(String key, Long step, Long limit, Long expireSeconds,
@@ -388,8 +388,8 @@ public class RedisTemplateHelper {
      * 使用场景
      * 比如每次获取3个碎片，当自增到10个碎片后就可以合成一个完整的东西，合成后当前值要减去消耗的数值
      *
-     * @param key    要操作的key
-     * @param field  要操作的hash key
+     * @param key    目标键
+     * @param field  字段名
      * @param step   每次自增的值
      * @param module 模数
      * @return
@@ -407,10 +407,10 @@ public class RedisTemplateHelper {
      * -- 该脚本的作用是提供一个保留最大长度的容器，如果达到最大容器大小最开始存储的数据会丢失。
      * -- 场景举例，比如保留用户进房历史，最多保留20个。那么member就是主播的id, score就可以用进房时间
      *
-     * @param key
-     * @param maxSize
-     * @param member
-     * @param score   在同一个容器内，score必须自增， 因为是用这个来识别数据的前后顺序
+     * @param key 目标键
+     * @param maxSize 最大大小参数
+     * @param member 成员值
+     * @param score   分值
      * @return
      */
     public Integer maxCapacityHistoryContainer(String key, Long maxSize, String member, Double score) {
@@ -425,9 +425,9 @@ public class RedisTemplateHelper {
     /**
      * 支持根据时间计算小数位完成同score排名的自增，分数相同，完成时间越靠前，生成的小数位越大，从而让积分靠前，注意只支持整数业务
      *
-     * @param key
-     * @param score
-     * @param member
+     * @param key 目标键
+     * @param score 分值
+     * @param member 成员值
      * @return
      */
     public Long zIncrByWithTime(String key, Long score, String member) {
@@ -437,9 +437,9 @@ public class RedisTemplateHelper {
     /**
      * 支持根据时间计算小数位完成同score排名的自增，分数相同，完成时间越靠前，生成的小数位越大，从而让积分靠前，注意只支持整数业务
      *
-     * @param key
-     * @param score
-     * @param member
+     * @param key 目标键
+     * @param score 分值
+     * @param member 成员值
      * @param expireSeconds 参数
      * @return
      */
@@ -459,9 +459,9 @@ public class RedisTemplateHelper {
     /**
      * 针对zIncrByWithTime方法取出榜单数据，在这里处理小数问题
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      */
     public Set<ZSetOperations.TypedTuple<String>> reverseRangeWithScoresTime(String key, long start, long end) {
         final Set<ZSetOperations.TypedTuple<String>> tuples = stringRedisTemplate
@@ -486,9 +486,9 @@ public class RedisTemplateHelper {
      * 由于这种会丢失原始分数的小数，这里提供一个方法，可以将值等比例放大， 比如两位小数，那就对原始积分乘100。
      * 取出来的时候，积分别忘记除回去就行。
      *
-     * @param key
-     * @param score
-     * @param member
+     * @param key 目标键
+     * @param score 分值
+     * @param member 成员值
      * @param enlargeMultiple 参数
      * @return
      */
@@ -502,9 +502,9 @@ public class RedisTemplateHelper {
      * 由于这种会丢失原始分数的小数，这里提供一个方法，可以将值等比例放大， 比如两位小数，那就对原始积分乘100。
      * 取出来的时候，积分别忘记除回去就行。
      *
-     * @param key
-     * @param score
-     * @param member
+     * @param key 目标键
+     * @param score 分值
+     * @param member 成员值
      * @param enlargeMultiple 参数
      * @param expireSeconds 参数
      * @return
@@ -550,9 +550,9 @@ public class RedisTemplateHelper {
     /**
      * 针对zIncrDoubleByWithTime方法取出榜单数据，由于同时支持小数和按时间排序，因此数值被放大存储，这里要还原回真实分数
      *
-     * @param key
-     * @param start
-     * @param end
+     * @param key 目标键
+     * @param start 起始位置
+     * @param end 结束位置
      * @param enlargeMultiple 参数
      */
     public Set<ZSetOperations.TypedTuple<String>> reverseRangeDoubleWithScoresTime(String key, long start, long end,
@@ -591,8 +591,8 @@ public class RedisTemplateHelper {
     /**
      * 取出目标元素的排名, 翻译成人类语言，排名从1开始
      *
-     * @param key
-     * @param element
+     * @param key 目标键
+     * @param element element参数
      * @return
      */
     public Long rankByElement(String key, String element) {
@@ -609,10 +609,10 @@ public class RedisTemplateHelper {
     /**
      * 查询指定元素前后榜单数据
      *
-     * @param key
-     * @param element
-     * @param beforeFetchSize
-     * @param afterFetchSize
+     * @param key 目标键
+     * @param element element参数
+     * @param beforeFetchSize beforefetch大小参数
+     * @param afterFetchSize afterfetch大小参数
      * @param enlargeMultiple 参数
      * @return
      */
@@ -648,10 +648,10 @@ public class RedisTemplateHelper {
     /**
      * 查询指定元素前后榜单数据， 有并发问题，留着备用看下以前逻辑
      *
-     * @param key
-     * @param element
-     * @param beforeFetchSize
-     * @param afterFetchSize
+     * @param key 目标键
+     * @param element element参数
+     * @param beforeFetchSize beforefetch大小参数
+     * @param afterFetchSize afterfetch大小参数
      * @return
      */
     @Deprecated
@@ -699,9 +699,9 @@ public class RedisTemplateHelper {
      * 只不过因为达到了最大值，这个时候的倒计时就是幸运时刻的倒计时，然后再次送礼物增加的热度值就会延长幸运时刻的时间。
      * 相当于同一个倒计时，根据是否达到最大值来判定两种状态，是未达到条件的倒计时还是已经达到条件的倒计时。
      *
-     * @param key
-     * @param incrTtl
-     * @param maxTtl
+     * @param key 目标键
+     * @param incrTtl incrTTL参数
+     * @param maxTtl 最大TTL参数
      * @return
      */
     public StringTtlIncrWithLimitResponse stringTtlIncrWithLimit(String key, Integer incrTtl, Integer maxTtl) {
@@ -725,9 +725,9 @@ public class RedisTemplateHelper {
     /**
      * 基于Hash对field进行value的判断， 如果为预期值则删除，否则不删除
      *
-     * @param key
-     * @param field
-     * @param checkValue
+     * @param key 目标键
+     * @param field 字段名
+     * @param checkValue check值
      * @return
      */
     public Integer hashDeleteWithCheckValue(String key, String field, String checkValue) {
@@ -741,8 +741,8 @@ public class RedisTemplateHelper {
     /**
      * 基于String进行value的判断， 如果为预期值则删除，否则不删除
      *
-     * @param key
-     * @param checkValue
+     * @param key 目标键
+     * @param checkValue check值
      * @return
      */
     public Integer stringDeleteWithCheckValue(String key, String checkValue) {
@@ -757,10 +757,10 @@ public class RedisTemplateHelper {
     /**
      * 对hash的field进行incr操作， 当key是第一次操作时，设置过期时间，后续不会设置过期时间
      *
-     * @param key
-     * @param field
-     * @param step
-     * @param ttlSeconds
+     * @param key 目标键
+     * @param field 字段名
+     * @param step step参数
+     * @param ttlSeconds TTLseconds参数
      * @return
      */
     public Long hashIncrWithFirstSetTtl(String key, String field, Long step, Long ttlSeconds) {
@@ -804,7 +804,7 @@ public class RedisTemplateHelper {
         return map;
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param elementKey 参数
      * @param step 参数
      */
@@ -822,9 +822,9 @@ public class RedisTemplateHelper {
     /**
      * 范围查询并删除
      *
-     * @param key
-     * @param min
-     * @param max
+     * @param key 目标键
+     * @param min 最小值
+     * @param max 最大值
      * @return
      */
     public List<String> zsetRangeByscoreZrem(String key, Long min, Long max) {
@@ -842,8 +842,8 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           要操作的key
-     * @param fields        要操作的hash key
+     * @param key           目标键
+     * @param fields        字段集合
      * @param stepList      每次自增的值
      * @param limit         自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
@@ -868,8 +868,8 @@ public class RedisTemplateHelper {
     /**
      * hash结构的结构，对多个redis key 进行固定的field自增并且支持自增上限判定，超过上限，该方法内部提供所有Redis key数据回滚
      *
-     * @param keys          要操作的key
-     * @param field         要操作的hash key
+     * @param keys          键集合
+     * @param field         字段名
      * @param stepList      每次自增的值
      * @param limit         自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
@@ -893,7 +893,7 @@ public class RedisTemplateHelper {
      * 基于zset实现的zadd操作，当score大于已有值时才会更新, 支持小数，因为要同时支持相同分数，先完成的在前面，使用小数设计的，有冲突，因此
      * 该方法内部将小数放大成整数存储，取出来用的时候要注意
      *
-     * @param request 参数
+     * @param request 请求对象
      * @return
      */
     public ZsetZaddWithMaxCheckResponse zSetAddWithMaxCheckSupportBiz(ZSetAddDoubleWithMaxCheckCommand request) {
@@ -923,7 +923,7 @@ public class RedisTemplateHelper {
      * 通过wireshake抓包发现发送的数据包里的keys数量参数变成了2，第三个参数被吃掉了
      * EVAL "local rankingKey = KEYS[1] local detailKey = KEYS[2] local sumKey = KEYS[3] local startIdx = tonumber(ARGV[1]) local endIdx = tonumber(ARGV[2]) local scoreFactor = tonumber(ARGV[3]) local totalElements = redis.call('ZCARD', rankingKey) local totalScore = 0 if sumKey and sumKey ~= '' then local s = redis.call('GET', sumKey) totalScore = s and tonumber(s) or 0 end local rawList = redis.call('ZREVRANGE', rankingKey, startIdx, endIdx, 'WITHSCORES') local resultList = {} if cjson.empty_array_mt then setmetatable(resultList, cjson.empty_array_mt) end local rank = startIdx; for i = 1, #rawList, 2 do rank = rank + 1 local element = rawList[i] local fs = tonumber(rawList[i + 1]) local realScore = math.floor(fs / scoreFactor) local detail if detailKey and detailKey ~= '' then detail = redis.call('HGET', detailKey, element) else detail = nil end table.insert(resultList, { element = element, score = realScore, rank = (rank), detail = detail }) end local result = { totalElements = totalElements, totalScore = totalScore, list = resultList } local jsonResult = cjson.encode(result) if not cjson.empty_array_mt then jsonResult = string.gsub(jsonResult, '\"list\":%s*{}', '\"list\":[]') end return jsonResult" 3 game:{fixed_ranking}:crash_ranking:max_multiple:forever_max game:{fixed_ranking}:crash_ranking:max_multiple:DETAIL:forever_max game:{fixed_ranking}:crash_ranking:max_multiple:SUM:forever_max 0 0 1
      *
-     * @param query
+     * @param query 查询参数
      */
     public ZRevRangeBizRankingResponse zSetRevRangeBizRankingQuery(ZRevRangeBizRankingQuery query) {
         final Integer scoreFactory = query.getScoreFactory();
@@ -959,9 +959,9 @@ public class RedisTemplateHelper {
     /**
      * 处理排名
      *
-     * @param rankResponses
-     * @param element
-     * @param elementRank
+     * @param rankResponses rankresponses参数
+     * @param element element参数
+     * @param elementRank elementrank参数
      */
     private void buildRank(List<RankResponse> rankResponses, String element, Long elementRank) {
         int elementIndex = 0;
@@ -982,7 +982,7 @@ public class RedisTemplateHelper {
     /**
      * 基于hash实现的对指定元素的字段进行选择性更新, value 必须是一个大对象json，否则没必要使用这个脚本
      *
-     * @param command
+     * @param command command参数
      */
     public String hashValueUpdateSelective(HashValueUpdateSelectiveCommand command) {
         return stringRedisTemplate.execute(

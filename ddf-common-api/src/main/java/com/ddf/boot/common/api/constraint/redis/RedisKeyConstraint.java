@@ -54,15 +54,15 @@ public interface RedisKeyConstraint {
      * 获取key的分片规则
      *
      * @return
-     * @param <S>
-     * @param <M>
+     * @param <S> 源泛型类型
+     * @param <M> 消息泛型类型
      */
     <S, M> RedisShardingRule<S, M> getRedisShardingRule();
 
     /**
      * 获取key
      *
-     * @param args
+     * @param args 方法入参数组
      * @return
      */
     default String getKey(String... args) {
@@ -76,7 +76,7 @@ public interface RedisKeyConstraint {
     /**
      * 获取分片的key， 分开两个方法，主要是用来让使用方明确自己的意图，避免混用
      *
-     * @param args
+     * @param args 方法入参数组
      * @return
      */
     default String getShardingKey(String... args) {

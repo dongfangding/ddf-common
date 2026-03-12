@@ -27,9 +27,9 @@ public interface RateLimitKeyGenerator {
     /**
      * 限流key的生成接口
      *
-     * @param joinPoint
-     * @param annotation
-     * @param properties
+     * @param joinPoint joinpoint参数
+     * @param annotation annotation参数
+     * @param properties properties参数
      * @return
      */
     String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties);

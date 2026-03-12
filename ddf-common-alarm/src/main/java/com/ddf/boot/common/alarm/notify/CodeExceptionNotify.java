@@ -66,7 +66,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     /**
      * 发送到钉钉机器人
      *
-     * @param payload
+     * @param payload 事件载荷对象
      */
     private void sendToDingTalk(GlobalExceptionEventPayload payload) {
         try {
@@ -150,7 +150,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     /**
      * 发送到Lark机器人
      *
-     * @param payload
+     * @param payload 事件载荷对象
      */
     private void sendToLark(GlobalExceptionEventPayload payload) {
         try {

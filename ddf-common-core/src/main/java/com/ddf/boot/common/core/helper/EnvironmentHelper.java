@@ -25,7 +25,7 @@ public class EnvironmentHelper {
      * 判断目标环境是否存在于当前激活的环境变量中
      * 只要有一个值匹配当前激活的环境变量，就满足该判断
      *
-     * @param targetProfile
+     * @param targetProfile 目标环境标识
      * @return boolean
      * @since 2019/12/24 0024 13:52
      **/

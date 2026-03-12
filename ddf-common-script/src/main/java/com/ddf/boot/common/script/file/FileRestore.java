@@ -32,8 +32,8 @@ public class FileRestore {
     /**
      * 适用于原手机文件，直接读取文件的创建时间，将文件按创建时间的月份进行归档整理
      *
-     * @param directories
-     * @param baseTargetDirectory
+     * @param directories directories参数
+     * @param baseTargetDirectory basetargetdirectory参数
      */
     public static void computerReadAndMoveFileToMonth(String[] directories, String baseTargetDirectory) {
         String notVidVideoPath = baseTargetDirectory + "/not_vid";
@@ -91,8 +91,8 @@ public class FileRestore {
      * 3. 再创建三级目录到小时2024011223
      * 3. 将源文件夹转移到三级目录下
      *
-     * @param directories
-     * @param baseTargetDirectory
+     * @param directories directories参数
+     * @param baseTargetDirectory basetargetdirectory参数
      */
     public static void packageMonitorVideo2(String[] directories, String baseTargetDirectory) {
         for (String directory : directories) {
@@ -142,7 +142,7 @@ public class FileRestore {
      * 3. 将源文件夹转移到二级目录下
      * 4. 总结就是没有移动以前任何文件，只是嵌套了一下造了两层级目录进行目录层级缩减
      *
-     * @param directories
+     * @param directories directories参数
      * @param targetDirector 参数
      */
     public static void packageMonitorVideo(String[] directories, String targetDirector) {
@@ -230,7 +230,7 @@ public class FileRestore {
     /**
      * 获取文件md5
      *
-     * @param file
+     * @param file 文件参数
      * @return
      * @throws IOException
      * @throws NoSuchAlgorithmException
@@ -262,7 +262,7 @@ public class FileRestore {
     /**
      * 判断文件是否是图片文件的方法
      *
-     * @param file
+     * @param file 文件参数
      * @return
      */
     private static boolean isImageFile(File file) {
@@ -278,7 +278,7 @@ public class FileRestore {
 
     /**
      * 递归遍历目录并删除图片文件
-     * @param directory
+     * @param directory directory参数
      */
     private static void deleteImageFilesRecursively(File directory) {
         File[] files = directory.listFiles();

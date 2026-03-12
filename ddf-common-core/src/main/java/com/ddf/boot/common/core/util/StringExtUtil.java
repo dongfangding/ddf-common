@@ -103,7 +103,7 @@ public class StringExtUtil {
     /**
      * 根据当前时间生成指定长度的随机数
      *
-     * @param length
+     * @param length 长度
      * @return
      */
     public static String randomString(int length) {
@@ -127,7 +127,7 @@ public class StringExtUtil {
     /**
      * 将异常栈输出为字符串
      *
-     * @param e
+     * @param e E参数
      * @return
      */
     public static String exceptionToStringNoLimit(Throwable e) {
@@ -138,8 +138,8 @@ public class StringExtUtil {
     /**
      * 以指定格式分隔后进行固定格式拼接
      *
-     * @param str
-     * @param separator
+     * @param str STR参数
+     * @param separator 分隔符
      * @return
      */
     public static String getShortNameBySplit(String str, String separator) {
@@ -149,8 +149,8 @@ public class StringExtUtil {
     /**
      * 以指定格式分隔后进行固定格式拼接
      *
-     * @param str
-     * @param separator
+     * @param str STR参数
+     * @param separator 分隔符
      * @param replaceSeparator 参数
      * @return
      */
@@ -172,7 +172,7 @@ public class StringExtUtil {
      * 获取首字符小写字符串
      * 如HelloService --> helloService
      *
-     * @param name
+     * @param name 名称
      * @return
      */
     public static String getFirstLowerCaseName(String name) {
@@ -183,7 +183,7 @@ public class StringExtUtil {
     /**
      * 是否有效http协议
      *
-     * @param url
+     * @param url URL 地址
      * @return
      */
     public static boolean isValidHttpScheme(String url) {
@@ -193,7 +193,7 @@ public class StringExtUtil {
     /**
      * 更符合语义的Boolean解析方法
      *
-     * @param value
+     * @param value 参数值
      * @return
      */
     public static Boolean parseBoolean(String value) {

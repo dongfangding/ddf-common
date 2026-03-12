@@ -35,8 +35,8 @@ public class RedirectCmdListener extends MessageListenerAdapter {
      * <p>
      * 当然也可以采用nginx代理， 用nginx将一致性hash将固定请求直接打到固定的机器上
      *
-     * @param message the incoming Redis message
-     * @param pattern
+     * @param message 消息内容
+     * @param pattern 匹配表达式
      * @see #handleListenerException
      */
     @Override

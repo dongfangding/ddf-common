@@ -60,7 +60,7 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
     /**
      * 根据value获取对象
      *
-     * @param value
+     * @param value 参数值
      * @return
      */
     public static OnsBizErrorCodeEnum getByValue(String value) {

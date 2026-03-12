@@ -60,7 +60,7 @@ public class VpsUtil {
      * 对视频进行封面截图
      *
      * @param filePath        可以是本地文件，也可以是在线文件
-     * @param beforeCutSecond
+     * @param beforeCutSecond beforeCUT秒参数
      * @param tmpPath 参数
      * @return 截取后文件本地路径
      */
@@ -94,7 +94,7 @@ public class VpsUtil {
      *
      * group1/M00/00/00/ag8Kh2GnPTWASVlZAM7twHqR7-Y487.mp4
      * 物理的
-     * @param path
+     * @param path 路径
      * @return
      */
     public static String getFDfsPhysicalStorePath(String path) {

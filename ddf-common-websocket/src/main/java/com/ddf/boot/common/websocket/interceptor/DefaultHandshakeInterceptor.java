@@ -60,10 +60,10 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
     /**
      * Invoked before the handshake is processed.
      *
-     * @param request    the current request
-     * @param response   the current response
-     * @param wsHandler  the target WebSocket handler
-     * @param attributes attributes from the HTTP handshake to associate with the WebSocket
+     * @param request    请求对象
+     * @param response   响应对象
+     * @param wsHandler  WShandler参数
+     * @param attributes attributes参数
      *                   session; the provided attributes are copied, the original map is not used.
      * @return whether to proceed with the handshake ({@code true}) or abort ({@code false})
      */
@@ -159,10 +159,10 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
      * Invoked after the handshake is done. The response status and headers indicate
      * the results of the handshake, i.e. whether it was successful or not.
      *
-     * @param request   the current request
-     * @param response  the current response
-     * @param wsHandler the target WebSocket handler
-     * @param exception an exception raised during the handshake, or {@code null} if none
+     * @param request   请求对象
+     * @param response  响应对象
+     * @param wsHandler WShandler参数
+     * @param exception 异常对象
      */
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
@@ -173,8 +173,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
     /**
      * 参数校验
      *
-     * @param handshakeParam
-     * @param response
+     * @param handshakeParam handshake参数参数
+     * @param response 响应对象
      * @return
      * @throws IOException
      */

@@ -128,7 +128,7 @@ public class SecureUtil {
     /**
      * RSA私钥加密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:02
      **/
@@ -140,7 +140,7 @@ public class SecureUtil {
     /**
      * RSA私钥解密, 密文可以为十六进制或者Base64
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 0029 12:03
      **/
@@ -152,7 +152,7 @@ public class SecureUtil {
     /**
      * RSA 公钥加密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:02
      **/
@@ -164,7 +164,7 @@ public class SecureUtil {
     /**
      * RSA公钥解密, 密文可以为十六进制或者Base64
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:03
      **/
@@ -175,8 +175,8 @@ public class SecureUtil {
     /**
      * 生成摘要
      *
-     * @param data
-     * @param key
+     * @param data 待处理数据
+     * @param key 目标键
      * @return java.lang.String
      * @since 2019/11/29 12:06
      **/
@@ -188,7 +188,7 @@ public class SecureUtil {
     /**
      * 使用系统配置的AES加密成十六进制
      *
-     * @param str
+     * @param str STR参数
      * @return
      */
     public static String aesEncryptHex(String str) {
@@ -198,7 +198,7 @@ public class SecureUtil {
     /**
      * 使用系统配置的AES解密解密Hex（16进制）或Base64表示的字符串，默认UTF-8编码
      *
-     * @param str
+     * @param str STR参数
      * @return
      */
     public static String aesDecryptStr(String str) {
@@ -208,8 +208,8 @@ public class SecureUtil {
     /**
      * 使用指定秘钥的AES加密成十六进制
      *
-     * @param str
-     * @param secret 参数
+     * @param str STR参数
+     * @param secret 签名密钥
      * @return
      */
     public static String aesEncryptHexWithKey(String str, String secret) {
@@ -224,8 +224,8 @@ public class SecureUtil {
     /**
      * 使用指定秘钥的AES解密加密后的十六进制数据
      *
-     * @param str
-     * @param secret
+     * @param str STR参数
+     * @param secret 签名密钥
      * @return
      */
     public static String aesDecryptStrWithKey(String str, String secret) {
@@ -240,7 +240,7 @@ public class SecureUtil {
     /**
      * 随机散列函数摘要
      *
-     * @param originStr
+     * @param originStr originSTR参数
      * @return
      */
     public static String bCryptEncoder(String originStr) {
@@ -250,8 +250,8 @@ public class SecureUtil {
     /**
      * 验证随机散列函数摘要是否匹配
      *
-     * @param originStr
-     * @param encodeStr
+     * @param originStr originSTR参数
+     * @param encodeStr encodeSTR参数
      * @return
      */
     public static boolean bCryptMatch(String originStr, String encodeStr) {
@@ -261,7 +261,7 @@ public class SecureUtil {
     /**
      * Calculates the MD5 digest and returns the value as a 32 character hex string.
      *
-     * @param data Data to digest
+     * @param data 待处理数据
      * @return MD5 digest as a hex string
      */
     public static String md5Hex(final String data) {

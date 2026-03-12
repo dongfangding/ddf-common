@@ -65,7 +65,7 @@ public @interface EnumStringValue {
             required = constraintAnnotation.required();
         }
         /**
-         * @param value 参数
+         * @param value 参数值
          * @param context 参数
          */
         @Override

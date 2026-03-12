@@ -30,7 +30,7 @@ public class SnowflakeService {
     /**
      * 批量获取雪花id
      *
-     * @param length
+     * @param length 长度
      * @return
      */
     public ResultList list(int length) {

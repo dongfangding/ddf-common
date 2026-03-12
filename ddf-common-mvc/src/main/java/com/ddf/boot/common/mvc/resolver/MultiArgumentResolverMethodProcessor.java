@@ -106,7 +106,7 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
 
     /**
      * 判断当前参数解析器是否支持解析当前的Content-Type
-     * @param contentType
+     * @param contentType content类型
      * @return
      * @throws HttpMediaTypeNotSupportedException
      */

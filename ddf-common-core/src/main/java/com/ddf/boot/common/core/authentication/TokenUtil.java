@@ -38,7 +38,7 @@ public class TokenUtil {
     /**
      * 生成token规则
      *
-     * @param userClaim
+     * @param userClaim 用户声明信息
      * @return
      */
     public static AuthenticateToken createToken(UserClaim userClaim) {
@@ -56,7 +56,7 @@ public class TokenUtil {
     /**
      * 从完整token中解析用户信息
      *
-     * @param token
+     * @param token token 字符串
      * @return
      */
     public static UserClaim getUserClaim(String token) {
@@ -77,7 +77,7 @@ public class TokenUtil {
     /**
      * 解析token并验证token本身规则
      *
-     * @param token
+     * @param token token 字符串
      * @return
      */
     public static AuthenticateCheckResult checkToken(String token) {
@@ -104,8 +104,8 @@ public class TokenUtil {
     /**
      * 刷新用户token和过期时间
      *
-     * @param userId
-     * @param token
+     * @param userId 用户 ID
+     * @param token token 字符串
      */
     public static void refreshToken(String userId, String token) {
         if (Objects.nonNull(TOKEN_CACHE)) {

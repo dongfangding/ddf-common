@@ -31,8 +31,8 @@ public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Obje
     };
 
     /**
-     * @param returnType
-     * @param converterType
+     * @param returnType return类型
+     * @param converterType converter类型
      * @return
      */
     @Override
@@ -49,8 +49,8 @@ public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Obje
      * @param returnType 参数
      * @param selectedContentType 参数
      * @param selectedConverterType 参数
-     * @param request 参数
-     * @param response 参数
+     * @param request 请求对象
+     * @param response 响应对象
      */
     @Override
     public ResponseData<Object> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,

@@ -28,7 +28,7 @@ public class EnvironmentContext implements EnvironmentAware {
     /**
      * 检查提供的Profile是否在当前激活的Profile列表中
      *
-     * @param targetProfile
+     * @param targetProfile 目标环境标识
      * @return
      */
     public static boolean checkIsExistOr(List<String> targetProfile) {

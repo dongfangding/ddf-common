@@ -37,7 +37,7 @@ public class ConsoleOnsTopicSubDetailRequest implements UserRequest{
     /**
      * 转换为SDK请求参数
      *
-     * @param instanceId
+     * @param instanceId 实例ID
      * @return
      */
     public OnsTopicSubDetailRequest toSdkRequest(String instanceId) {

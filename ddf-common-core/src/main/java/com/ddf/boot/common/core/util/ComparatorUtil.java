@@ -132,9 +132,9 @@ public class ComparatorUtil {
 	 * 当一个元素匹配分隔后的数组中的元素时，就替换。
 	 * 最后返回最新的替换后的字符串
 	 *
-	 * @param originStr
-	 * @param matchStr
-	 * @param replaceStr
+	 * @param originStr originSTR参数
+	 * @param matchStr 匹配字符串
+	 * @param replaceStr replaceSTR参数
 	 * @return
 	 */
 	public static String replaceSplitValueIfMatch(String originStr, String matchStr, String replaceStr) {
@@ -164,8 +164,8 @@ public class ComparatorUtil {
 	 * 当一个元素匹配分隔后的数组中的元素时，删除元素。
 	 * 最后返回最新的替换后的字符串
 	 *
-	 * @param originStr
-	 * @param matchStr
+	 * @param originStr originSTR参数
+	 * @param matchStr 匹配字符串
 	 * @return
 	 */
 	public static String removeSplitValueIfMatch(String originStr, String matchStr) {
@@ -176,8 +176,8 @@ public class ComparatorUtil {
 	/**
 	 * 批量删除匹配的字符串
 	 *
-	 * @param originStr
-	 * @param toRemove
+	 * @param originStr originSTR参数
+	 * @param toRemove TOremove参数
 	 * @return
 	 */
 	public static String removeSplitValueIfMatch(String originStr, Set<String> toRemove) {

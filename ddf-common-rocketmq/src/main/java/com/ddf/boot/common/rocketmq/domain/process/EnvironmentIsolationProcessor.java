@@ -16,7 +16,7 @@ public class EnvironmentIsolationProcessor implements BeanPostProcessor {
     /**
      * 在装载Bean之前实现参数修改
      * @param bean 参数
-     * @param beanName 参数
+     * @param beanName Bean 名称
      */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

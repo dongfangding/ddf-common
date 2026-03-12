@@ -1,7 +1,6 @@
 package com.ddf.boot.common.mvc.util;
 
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.StrUtil;
 import com.ddf.boot.common.core.constant.GlobalConstants;
 import com.ddf.boot.common.mvc.filter.CachingRequestBodyFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +9,12 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -20,6 +22,7 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * Web层辅助工具类
+ * @author snowball
  */
 @Slf4j
 public class WebUtil {
@@ -30,13 +33,21 @@ public class WebUtil {
      * 获取当前ServletRequestAttributes
      */
     public static ServletRequestAttributes getCurServletRequestAttributes() {
-        return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+		if (attributes instanceof ServletRequestAttributes servletRequestAttributes) {
+			return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		}
+		return null;
     }
 
     /**
      * 获取当前HttpServletRequest
      */
     public static HttpServletRequest getCurRequest() {
+		final ServletRequestAttributes attributes = getCurServletRequestAttributes();
+		if (Objects.isNull(attributes)) {
+			return null;
+		}
         return getCurServletRequestAttributes().getRequest();
     }
 
@@ -44,7 +55,11 @@ public class WebUtil {
      * 获取当前HttpServletResponse
      */
     public static HttpServletResponse getCurResponse() {
-        return getCurServletRequestAttributes().getResponse();
+		final ServletRequestAttributes attributes = getCurServletRequestAttributes();
+		if (Objects.isNull(attributes)) {
+			return null;
+		}
+		return attributes.getResponse();
     }
 
 
@@ -53,29 +68,32 @@ public class WebUtil {
      */
     public static String getHost() {
         HttpServletRequest request = getCurRequest();
+		if (Objects.isNull(request)) {
+			return "";
+		}
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && ip.length() != 0 && !UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip != null && !ip.isEmpty() && !UNKNOWN.equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个ip值，第一个ip才是真实ip
             if (ip.contains(GlobalConstants.COMMA)) {
                 ip = ip.split(",")[0];
             }
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         return ip;
@@ -85,8 +103,8 @@ public class WebUtil {
     /**
      * 处理http 响应成功
      *
-     * @param response
-     * @param message
+     * @param response 响应对象
+     * @param message 消息内容
      */
     public static void responseSuccess(HttpServletResponse response, String message) {
         response.setStatus(200);
@@ -102,8 +120,8 @@ public class WebUtil {
     /**
      * 处理http 响应失败
      *
-     * @param response
-     * @param errorMessage
+     * @param response 响应对象
+     * @param errorMessage 错误消息参数
      * @param status 参数
      */
     public static void responseError(HttpServletResponse response, int status, String errorMessage) {
@@ -120,9 +138,9 @@ public class WebUtil {
     /**
      * 返回附件
      *
-     * @param response 响应
+     * @param response 响应对象
      * @param filename 文件名
-     * @param content 附件内容
+     * @param content 内容
      * @throws IOException
      */
     public static void writeAttachment(HttpServletResponse response, String filename, byte[] content) throws IOException {
@@ -136,11 +154,11 @@ public class WebUtil {
     /**
      * 获取User-Agent
      *
-     * @param request
+     * @param request 请求对象
      * @return
      */
     public static String getUserAgent(HttpServletRequest request) {
-        return StrUtil.blankToDefault(request.getHeader("User-Agent"), "");
+        return StringUtils.defaultIfBlank(request.getHeader("User-Agent"), "");
     }
 
     /**
@@ -149,31 +167,28 @@ public class WebUtil {
      * @return
      */
     public static String getUserAgent() {
-        try {
-            HttpServletRequest request = getCurRequest();
-            return StrUtil.blankToDefault(request.getHeader("User-Agent"), "");
-        } catch (Exception e) {
-            log.error("获取User-Agent失败", e);
-            return "";
-        }
+		return getCurrentRequestHeaderIfPresent("User-Agent");
     }
 
-    /**
-     * 获取header
-     *
-     * @param headerName
-     * @return
-     */
-    public static String getHeader(String headerName) {
-        HttpServletRequest request = getCurRequest();
-        return StrUtil.blankToDefault(request.getHeader(headerName), "");
-    }
+	/**
+	 * 安全获取请求头
+	 *
+	 * @param headerName 请求头名称
+	 * @return
+	 */
+	public static String getCurrentRequestHeaderIfPresent(String headerName) {
+		HttpServletRequest request = getCurRequest();
+		if (Objects.isNull(request)) {
+			return "";
+		}
+		return StringUtils.defaultIfBlank(request.getHeader(headerName), "");
+	}
 
 
     /**
      * 读取body, 配合{@link CachingRequestBodyFilter}
      *
-     * @param httpServletRequest
+     * @param httpServletRequest 请求参数
      * @return
      */
     public static String readBody(HttpServletRequest httpServletRequest) {
@@ -196,8 +211,8 @@ public class WebUtil {
     /**
      * 处理http 响应失败
      *
-     * @param response
-     * @param json
+     * @param response 响应对象
+     * @param json JSON 字符串
      */
     public static void writerJson(HttpServletResponse response, String json) {
         response.setStatus(200);

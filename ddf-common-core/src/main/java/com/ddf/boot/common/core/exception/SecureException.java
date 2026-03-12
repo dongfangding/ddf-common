@@ -26,13 +26,13 @@ public class SecureException extends BaseException {
         super(code, message);
     }
     /**
-     * @param baseCallbackCode 参数
+     * @param baseCallbackCode 回调码对象
      */
     public SecureException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode);
     }
     /**
-     * @param baseCallbackCode 参数
+     * @param baseCallbackCode 回调码对象
      * @param message 参数
      */
     public SecureException(BaseCallbackCode baseCallbackCode, String message) {

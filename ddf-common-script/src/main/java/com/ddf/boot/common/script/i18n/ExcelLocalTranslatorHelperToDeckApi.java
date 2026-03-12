@@ -254,8 +254,8 @@ public class ExcelLocalTranslatorHelperToDeckApi {
     public static class OrderedProperties extends Properties {
         private final LinkedHashSet<Object> keys = new LinkedHashSet<>();
         /**
-         * @param key 参数
-         * @param value 参数
+         * @param key 目标键
+         * @param value 参数值
          */
         @Override
         public synchronized Object put(Object key, Object value) {

@@ -34,9 +34,9 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
     /**
      * 服务端操作数据使用对象{@link RequestContent}，最终写入到客户端的时候编码成字节
      *
-     * @param ctx
-     * @param msg
-     * @param out
+     * @param ctx 通道上下文
+     * @param msg 消息内容
+     * @param out OUT参数
      * @throws Exception
      */
     @Override
@@ -52,9 +52,9 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
      * 将客户端传入的解码成服务端使用的{@link RequestContent}
      * 注意TCP的粘包和拆包问题，这里已经使用了{@link io.netty.handler.codec.LineBasedFrameDecoder}解码器来解决，要求客户端比如以换行符结尾
      *
-     * @param ctx
-     * @param in
-     * @param out
+     * @param ctx 通道上下文
+     * @param in IN参数
+     * @param out OUT参数
      * @throws Exception
      */
     @Override

@@ -16,8 +16,8 @@ public interface TokenCache {
     /**
      * 设置token到缓存中
      *
-     * @param userClaim
-     * @param authenticateToken
+     * @param userClaim 用户声明信息
+     * @param authenticateToken 认证令牌对象
      */
     void setToken(UserClaim userClaim, AuthenticateToken authenticateToken);
 
@@ -25,7 +25,7 @@ public interface TokenCache {
     /**
      * 从缓存中取出用户的token
      *
-     * @param userId
+     * @param userId 用户 ID
      * @return
      */
     String getToken(String userId);
@@ -33,8 +33,8 @@ public interface TokenCache {
     /**
      * 刷新token
      *
-     * @param userId
-     * @param token
+     * @param userId 用户 ID
+     * @param token token 字符串
      */
     void refreshToken(String userId, String token);
 }

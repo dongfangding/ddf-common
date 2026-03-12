@@ -56,7 +56,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
      * <p>
      * 3. 不考虑兼容SocketJs
      *
-     * @param registry
+     * @param registry Bean 定义注册器
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

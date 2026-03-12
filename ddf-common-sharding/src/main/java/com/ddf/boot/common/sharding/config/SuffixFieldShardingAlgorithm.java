@@ -29,7 +29,7 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
     }
     /**
      * @param collection 参数
-     * @param value 参数
+     * @param value 参数值
      */
     @Override
     public Collection<String> doSharding(final Collection<String> collection, final RangeShardingValue<Integer> value) {

@@ -22,9 +22,9 @@ public class CustomizeHandshakeHandler extends DefaultHandshakeHandler {
      * <p>Subclasses can provide custom logic for associating a user with a session,
      * for example for assigning a name to anonymous users (i.e. not fully authenticated).
      *
-     * @param request    the handshake request
-     * @param wsHandler  the WebSocket handler that will handle messages
-     * @param attributes handshake attributes to pass to the WebSocket session
+     * @param request    请求对象
+     * @param wsHandler  WShandler参数
+     * @param attributes attributes参数
      * @return the user for the WebSocket session, or {@code null} if not available
      */
     @Override

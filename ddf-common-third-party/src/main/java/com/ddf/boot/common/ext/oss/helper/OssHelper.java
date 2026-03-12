@@ -160,7 +160,7 @@ public class OssHelper {
     /**
      * 获取OSS token, 使用完成后关闭对象
      *
-     * @param stsTokenRequest
+     * @param stsTokenRequest STStoken请求参数
      * @param consumer 参数
      */
     public void getStsOss(StsTokenRequest stsTokenRequest, Consumer<StsOssTransfer> consumer) {
@@ -183,7 +183,7 @@ public class OssHelper {
     /**
      * 获取Acs 响应属性
      *
-     * @param path
+     * @param path 路径
      * @return
      */
     private AssumeRoleResponse getAcsResponse(String path) {
@@ -207,8 +207,8 @@ public class OssHelper {
     /**
      * 获取ObjectKey前缀路径
      *
-     * @param platform
-     * @param identity
+     * @param platform platform参数
+     * @param identity identity参数
      * @return
      */
     private static String getPath(String platform, String identity) {
@@ -221,8 +221,8 @@ public class OssHelper {
     /**
      * 对资源进行动态授权
      *
-     * @param path
-     * @param bucketName
+     * @param path 路径
+     * @param bucketName 存储桶名称参数
      * @return
      */
     private static String getPolicy(String bucketName, String path) {

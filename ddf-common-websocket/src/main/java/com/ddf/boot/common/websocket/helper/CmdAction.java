@@ -49,9 +49,9 @@ public class CmdAction implements CmdStrategy {
     /**
      * 响应指令码，如果没有实现自己的指令码策略，则默认不做任何业务处理，直接响应成功
      *
-     * @param webSocketSessionWrapper
-     * @param authPrincipal
-     * @param message
+     * @param webSocketSessionWrapper WebSocket 会话包装对象
+     * @param authPrincipal 认证主体对象
+     * @param message 消息内容
      */
     @Override
     @Transactional(rollbackFor = Exception.class)

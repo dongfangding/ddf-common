@@ -70,7 +70,7 @@ public class RandomExtUtil {
     /**
      * 百分比概率命中判定
      *
-     * @param proportion
+     * @param proportion 概率值
      * @return
      */
     public static boolean hitPercent(int proportion) {
@@ -80,7 +80,7 @@ public class RandomExtUtil {
     /**
      * 百分比概率命中判定
      *
-     * @param proportion
+     * @param proportion 概率值
      * @return
      */
     public static boolean hitPercent(double proportion) {
@@ -90,7 +90,7 @@ public class RandomExtUtil {
     /**
      * 0~1概率判定
      *
-     * @param proportion
+     * @param proportion 概率值
      * @return
      */
     public static boolean hitProbability(double proportion) {
@@ -100,7 +100,7 @@ public class RandomExtUtil {
     /**
      * 百分比概率命中判定， 同时返回随机到的概率值
      *
-     * @param proportion
+     * @param proportion 概率值
      * @return
      */
     public static ObjectKeyValuePair<Double, Boolean> hitPercentWithProbability(double proportion) {
@@ -111,7 +111,7 @@ public class RandomExtUtil {
     /**
      * 基于权重的中奖概率判定
      *
-     * @param sources 参数
+     * @param sources 源数据列表
      * @return
      */
     public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
@@ -143,8 +143,8 @@ public class RandomExtUtil {
      * <p>
      * 则最终会生成15条数据， 生成的顺序根据权重来判定，每次生成后当前权重减少1
      *
-     * @param sources 参数
-     * @param clazz 参数
+     * @param sources 源数据列表
+     * @param clazz 目标类型
      * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources, Class<T> clazz) {
@@ -182,9 +182,9 @@ public class RandomExtUtil {
      * 这个的实现更加简单且高效，但效果应该是等同于{@link #generateAllByWeight}效果的。
      * 权重即使重复次数，将数据重复生成后，最后打乱，其实和所谓的权重效果是一样的。
      *
-     * @param sources
-     * @param clazz
-     * @param <T>
+     * @param sources 源数据列表
+     * @param clazz 目标类型
+     * @param <T> 泛型类型
      * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByShuffle(List<T> sources, Class<T> clazz) {
@@ -266,9 +266,9 @@ public class RandomExtUtil {
     /**
      * 也是一种平均分包，但多了一些近似绝对平均的属性在里面
      *
-     * @param totalAmount
-     * @param packSize
-     * @param fixedAmount
+     * @param totalAmount 总金额
+     * @param packSize 分包数量
+     * @param fixedAmount 固定金额
      * @return
      */
     public static int[] averageApproximatelyAbsolute(int totalAmount, int packSize, int fixedAmount) {
@@ -308,7 +308,7 @@ public class RandomExtUtil {
     /**
      * 根据时间戳生成小数位数值， 时间戳越小，值越大
      *
-     * @param time
+     * @param time 时间参数
      * @return
      */
     public static BigDecimal calcPointScoreByTime(long time) {
@@ -401,7 +401,7 @@ public class RandomExtUtil {
     /**
      * 随机字母数字
      *
-     * @param length
+     * @param length 长度
      * @return
      */
     public static String randomLetters(int length) {
@@ -411,8 +411,8 @@ public class RandomExtUtil {
     /**
      * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
      *
-     * @param start
-     * @param end
+     * @param start 起始位置
+     * @param end 结束位置
      * @return
      */
     public static Integer randomInt(int start, int end) {
@@ -426,8 +426,8 @@ public class RandomExtUtil {
 	/**
 	 * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
 	 *
-	 * @param start
-	 * @param end
+	 * @param start 起始位置
+	 * @param end 结束位置
 	 * @param scale 参数
 	 * @return
 	 */

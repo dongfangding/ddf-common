@@ -41,7 +41,7 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
     /**
      * @param message 参数
      * @param payload 参数
-     * @param request 参数
+     * @param request 请求对象
      */
     @Override
     public void beforePublish(MqttMessage message, MqttMessagePayload payload, InnerMqttMessageRequest request) {

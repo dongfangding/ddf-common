@@ -15,7 +15,7 @@ public interface DistributedLock {
      * 针对多个路径进行格式化，用以符合zk node格式
      * zk分布式锁时使用
      *
-     * @param path
+     * @param path 路径
      * @return
      */
     static String formatPath(String... path) {
@@ -39,7 +39,7 @@ public interface DistributedLock {
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -52,7 +52,7 @@ public interface DistributedLock {
      * @param lockKey        锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -69,7 +69,7 @@ public interface DistributedLock {
      * @param timeUnit       加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -82,7 +82,7 @@ public interface DistributedLock {
      * @param lockKey        锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
-     * @param <R>
+     * @param <R> 返回值泛型类型
      * @return
      * @throws Exception
      */
@@ -91,7 +91,7 @@ public interface DistributedLock {
     /**
      * 上锁路径格式化， zk专用
      *
-     * @param lockKey
+     * @param lockKey lock键参数
      * @return
      */
     default String formatLockKey(String lockKey) {

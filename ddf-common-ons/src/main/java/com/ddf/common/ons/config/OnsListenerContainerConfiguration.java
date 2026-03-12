@@ -67,7 +67,7 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
         beans.forEach(this::registerListenerContainer);
     }
     /**
-     * @param beanName 参数
+     * @param beanName Bean 名称
      * @param bean 参数
      */
     private void registerListenerContainer(String beanName, Object bean) {
@@ -113,7 +113,7 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
     /**
      * @param annotation 参数
      * @param bean 参数
-     * @param beanName 参数
+     * @param beanName Bean 名称
      */
     private BaseOnsListenerContainer createOnsListenerContainer(OnsMessageListenerAno annotation,
                                                                    Object bean, String beanName) {

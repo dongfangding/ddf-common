@@ -46,7 +46,7 @@ public class RedisTopic {
     /**
      * Publish the message to all subscribers of this topic
      *
-     * @param message to send
+     * @param message 消息内容
      * @return the number of clients that received the message
      */
     public long publish(Object message) {
@@ -58,7 +58,7 @@ public class RedisTopic {
     /**
      * Publish the message to all subscribers of this topic asynchronously
      *
-     * @param message to send
+     * @param message 消息内容
      * @return the <code>RFuture</code> object with number of clients that received the message
      */
     public RFuture<Long> publishAsync(Object message) {
@@ -72,7 +72,7 @@ public class RedisTopic {
      * <code>MessageListener.onMessage</code> is called when any message
      * is published on this topic.
      *
-     * @param listener for messages
+     * @param listener listener参数
      * @param type 参数
      * @return locally unique listener id
      * @see MessageListener

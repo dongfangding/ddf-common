@@ -24,7 +24,7 @@ public class PageUtil {
     /**
      * 空分页
      *
-     * @param <E>
+     * @param <E> 元素泛型类型
      * @return
      */
     public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
@@ -34,8 +34,8 @@ public class PageUtil {
     /**
      * 空分页
      *
-     * @param <E>
-     * @param pageRequest 参数
+     * @param <E> 元素泛型类型
+     * @param pageRequest 分页请求对象
      * @return
      */
     public static <E> PageResult<E> empty(PageRequest pageRequest) {
@@ -46,10 +46,10 @@ public class PageUtil {
     /**
      * 有数据的分页对象
      *
-     * @param pageRequest
-     * @param total
-     * @param content
-     * @param <E>
+     * @param pageRequest 分页请求对象
+     * @param total total参数
+     * @param content 内容
+     * @param <E> 元素泛型类型
      * @return
      */
     public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
@@ -63,12 +63,12 @@ public class PageUtil {
     /**
      * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
      *
-     * @param pageRequest
-     * @param select
-     * @param poClazz
+     * @param pageRequest 分页请求对象
+     * @param select select参数
+     * @param poClazz POclazz参数
      * @return
-     * @param <E>
-     * @param <R>
+     * @param <E> 元素泛型类型
+     * @param <R> 返回值泛型类型
      */
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz) {
         return startPage(pageRequest, select, poClazz, null);
@@ -87,10 +87,10 @@ public class PageUtil {
      *          result, SysRoleConvertMapper.INSTANCE::convert);
      * </pre>
      *
-     * @param pageResult
-     * @param function
-     * @param <E>
-     * @param <R>
+     * @param pageResult 分页结果对象
+     * @param function function参数
+     * @param <E> 元素泛型类型
+     * @param <R> 返回值泛型类型
      * @return
      */
     public static <E, R> PageResult<R> convertPageResult(PageResult<E> pageResult, Function<List<E>, List<R>> function) {
@@ -102,12 +102,12 @@ public class PageUtil {
     /**
      * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 并提供查询对象和实际返回结果的转换
      *
-     * @param pageRequest
-     * @param select
+     * @param pageRequest 分页请求对象
+     * @param select select参数
      * @param poClazz     原始查询出来的对象
      * @param voClazz     要转换的对象
-     * @param <E>
-     * @param <R>
+     * @param <E> 元素泛型类型
+     * @param <R> 返回值泛型类型
      * @return
      */
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz,
@@ -131,12 +131,12 @@ public class PageUtil {
     /**
      * 使用PageHelper分页， 但是会转换为自己的分页结果对象， 需要自己提供转换方法
      *
-     * @param pageRequest
-     * @param select
-     * @param function
+     * @param pageRequest 分页请求对象
+     * @param select select参数
+     * @param function function参数
      * @return
-     * @param <E>
-     * @param <R>
+     * @param <E> 元素泛型类型
+     * @param <R> 返回值泛型类型
      */
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, Function<List<E>, List<R>> function) {
         // 查询出原始对象
@@ -155,10 +155,10 @@ public class PageUtil {
      * 使用PageHelper分页， 转换为自己的分页对象， 但是不转换实体对象
      *
      *
-     * @param pageRequest
-     * @param select
+     * @param pageRequest 分页请求对象
+     * @param select select参数
      * @return
-     * @param <E>
+     * @param <E> 元素泛型类型
      */
     public static <E> PageResult<E> startPage(PageRequest pageRequest, ISelect select) {
         // 查询出原始对象
@@ -173,7 +173,7 @@ public class PageUtil {
     /**
      * 构造基于spring-data基本分页对象
      *
-     * @param pageRequest 参数
+     * @param pageRequest 分页请求对象
      * @return
      */
     public static Pageable toSpringData(PageRequest pageRequest) {
@@ -189,8 +189,8 @@ public class PageUtil {
     /**
      * 从spring-data分页结果对象转换为自定义分页结果对象
      *
-     * @param page
-     * @param <E>
+     * @param page 分页参数
+     * @param <E> 元素泛型类型
      * @return
      */
     public static <E> PageResult<E> convertFromSpringData(@NotNull org.springframework.data.domain.Page<E> page) {

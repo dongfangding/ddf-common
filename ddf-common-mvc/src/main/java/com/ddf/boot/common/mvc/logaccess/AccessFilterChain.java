@@ -26,9 +26,9 @@ public interface AccessFilterChain {
     /**
      * 将aop参数暴露， 允许多实现实现自己的拦截业务处理， 如数据校验、签名校验，用户校验交给原生的filter去做了
      *
-     * @param joinPoint
-     * @param pointClass
-     * @param pointMethod
+     * @param joinPoint joinpoint参数
+     * @param pointClass point类型
+     * @param pointMethod pointmethod参数
      * @return
      */
     boolean filter(ProceedingJoinPoint joinPoint, Class<?> pointClass, MethodSignature pointMethod);

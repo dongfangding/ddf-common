@@ -87,7 +87,7 @@ public class SysMenuFunction implements ITreeTagCollection<String, SysMenuFuncti
     /**
      * code全局唯一
      *
-     * @param o
+     * @param o O参数
      * @return
      */
     @Override

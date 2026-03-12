@@ -48,7 +48,7 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 用来包装其它异常来转换为自定义异常
      *
-     * @param throwable
+     * @param throwable 异常对象
      */
     public BaseException(Throwable throwable) {
         super(throwable);
@@ -60,7 +60,7 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 推荐使用的系统自定义的一套体系的异常使用方式，传入异常错误码类
      *
-     * @param baseCallbackCode
+     * @param baseCallbackCode 回调码对象
      */
     public BaseException(BaseCallbackCode baseCallbackCode) {
         super(baseCallbackCode.getDescription());
@@ -70,8 +70,8 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 推荐使用的系统自定义的一套体系的异常使用方式，传入异常错误码类
      *
-     * @param baseCallbackCode
-     * @param extra
+     * @param baseCallbackCode 回调码对象
+     * @param extra 扩展参数
      */
     public BaseException(BaseCallbackCode baseCallbackCode, Object extra) {
         super(baseCallbackCode.getDescription());
@@ -82,8 +82,8 @@ public abstract class BaseException extends RuntimeException {
      * 同上，但是额外提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
      * 占位字符串采用{0} {1}这种角标方式
      *
-     * @param baseCallbackCode
-     * @param params
+     * @param baseCallbackCode 回调码对象
+     * @param params 格式化参数列表
      */
     public BaseException(BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
@@ -94,9 +94,9 @@ public abstract class BaseException extends RuntimeException {
      * 同上，但是额外提供一种消息占位符的方式， baseCallbackCode中的message包含占位符， 使用的时候格式化参数后作为最终异常消息
      * 占位字符串采用{0} {1}这种角标方式
      *
-     * @param extra
-     * @param baseCallbackCode
-     * @param params
+     * @param extra 扩展参数
+     * @param baseCallbackCode 回调码对象
+     * @param params 格式化参数列表
      */
     public BaseException(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
         super(MessageFormat.format(baseCallbackCode.getDescription(), params));
@@ -106,7 +106,7 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 只简单抛出消息异常
      *
-     * @param description
+     * @param description 描述信息
      */
     public BaseException(String description) {
         super(description);
@@ -117,8 +117,8 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 不走系统定义的错误码定义体系， 但是使用错误码和消息体系
      *
-     * @param code
-     * @param description
+     * @param code 编码值
+     * @param description 描述信息
      */
     public BaseException(String code, String description) {
         super(description);
@@ -128,9 +128,9 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 同上，但是支持占位符
      *
-     * @param code
-     * @param description
-     * @param params
+     * @param code 编码值
+     * @param description 描述信息
+     * @param params 格式化参数列表
      */
     public BaseException(String code, String description, Object... params) {
         super(MessageFormat.format(description, params));
@@ -138,7 +138,7 @@ public abstract class BaseException extends RuntimeException {
     }
     /**
      * @param extra 参数
-     * @param baseCallbackCode 参数
+     * @param baseCallbackCode 回调码对象
      * @param params 参数
      */
     private void initCallback(Object extra, BaseCallbackCode baseCallbackCode, Object... params) {
@@ -156,8 +156,8 @@ public abstract class BaseException extends RuntimeException {
     /**
      * 初始化状态码
      *
-     * @param code
-     * @param description
+     * @param code 编码值
+     * @param description 描述信息
      * @param params 参数
      */
     private void initCallback(String code, String description, Object... params) {

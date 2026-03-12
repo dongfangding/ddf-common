@@ -27,8 +27,8 @@ public class SignatureUtil {
     /**
      * ascii 升序排序参数，仅处理基本数据类型、包装类和字符串，复杂的嵌套对象或者集合等会被忽略。
      *
-     * @param data
-     * @param <T>
+     * @param data 待处理数据
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> String asciiSortToQueryStringOnlyBasicType(T data) {
@@ -38,8 +38,8 @@ public class SignatureUtil {
     /**
      * ascii 升序排序参数, 对于复杂嵌套对象，采用平铺方式处理。如{@code {"a":1,"b":{"c":2,"d":3}}  => a=1&b.c=2&b.d=3}
      *
-     * @param data
-     * @param <T>
+     * @param data 待处理数据
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> String asciiSortToQueryStringFlatten(T data) {
@@ -49,7 +49,7 @@ public class SignatureUtil {
     /**
      * 统一的签名字符串生成逻辑
      *
-     * @param data    原始数据
+     * @param data    待处理数据
      * @param flatten 是否需要平铺嵌套对象
      * @return 排序后的查询字符串
      */
@@ -135,7 +135,7 @@ public class SignatureUtil {
     /**
      * map转查询串
      *
-     * @param dataMap
+     * @param dataMap 数据映射
      * @return
      */
     public static String mapToQueryString(Map<String, Object> dataMap) {
@@ -173,7 +173,7 @@ public class SignatureUtil {
      * 生成自己系统的签名信息规则
      *
      * @param secretKey 产品私钥
-     * @param data      参数对象
+     * @param data      待处理数据
      * @return
      */
     public static <T> String genSelfSignature(String secretKey, T data) {
@@ -191,7 +191,7 @@ public class SignatureUtil {
      * 5. sign参数不建议放在data中， 如果放的话， 这个方法需要识别出这个字段的值是哪个， 否则无法剔除这个字段的影响，目前固定为sign
      *
      * @param secretKey 产品私钥
-     * @param data      参数对象
+     * @param data      待处理数据
      * @param flatten   是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
      * @return
      */
@@ -204,7 +204,7 @@ public class SignatureUtil {
     /**
      * 验证签名
      *
-     * @param data
+     * @param data 待处理数据
      * @param keySecret           秘钥
      * @param nonceTimeoutSeconds 重放校验时间， 单位秒
      * @return
@@ -222,10 +222,10 @@ public class SignatureUtil {
     /**
      * 验证签名，默认不平铺复杂结构
      *
-     * @param data
-     * @param sign
-     * @param keySecret
-     * @param <T>
+     * @param data 待处理数据
+     * @param sign 签名参数
+     * @param keySecret 键密钥参数
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> boolean verifySelfSignature(T data, String sign, String keySecret) {
@@ -255,8 +255,8 @@ public class SignatureUtil {
      * 这个方法就是给出了后面两种解决方案， 第一种方案，太过随机，不建议使用
      *
      * @param keySecret 秘钥
-     * @param sign
-     * @param data      参数对象
+     * @param sign 签名参数
+     * @param data      待处理数据
      * @param flatten   是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
      * @return
      */
@@ -277,7 +277,7 @@ public class SignatureUtil {
     /**
      * 是否基本类型或基本对象
      *
-     * @param obj
+     * @param obj 对象实例
      * @return
      */
     private static boolean isBasicType(Object obj) {
@@ -288,7 +288,7 @@ public class SignatureUtil {
     /**
      * 对键值对参数进行升序url编码后进行sha1
      *
-     * @param params
+     * @param params 格式化参数列表
      * @return
      */
     public static String sha1(Map<String, Object> params) {

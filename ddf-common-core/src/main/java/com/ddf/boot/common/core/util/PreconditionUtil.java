@@ -42,8 +42,8 @@ public class PreconditionUtil {
     /**
      * 检查参数
      *
-     * @param expression
-     * @param message
+     * @param expression expression参数
+     * @param message 消息内容
      */
     public static void checkArgument(boolean expression, String message) {
         if (!expression) {
@@ -54,9 +54,9 @@ public class PreconditionUtil {
     /**
      * 检查参数
      *
-     * @param expression
-     * @param code
-     * @param message
+     * @param expression expression参数
+     * @param code 编码值
+     * @param message 消息内容
      */
     public static void checkArgument(boolean expression, String code, String message) {
         if (!expression) {
@@ -67,8 +67,8 @@ public class PreconditionUtil {
     /**
      * 检查参数
      *
-     * @param expression
-     * @param callbackCode
+     * @param expression expression参数
+     * @param callbackCode callback编码
      */
     public static void checkArgument(boolean expression, BaseCallbackCode callbackCode) {
         if (!expression) {
@@ -79,7 +79,7 @@ public class PreconditionUtil {
     /**
      * 检查参数
      *
-     * @param expression
+     * @param expression expression参数
      * @param baseException 参数
      */
     public static void checkArgument(boolean expression, BaseException baseException) {
@@ -91,8 +91,8 @@ public class PreconditionUtil {
     /**
      * 校验参数抛出外部传入运行时异常
      *
-     * @param expression
-     * @param exception
+     * @param expression expression参数
+     * @param exception 异常对象
      */
     public static void checkArgument(boolean expression, RuntimeException exception) {
         if (!expression) {
@@ -103,9 +103,9 @@ public class PreconditionUtil {
     /**
      * 检查参数并格式化占位符消息
      *
-     * @param expression
-     * @param callbackCode
-     * @param args
+     * @param expression expression参数
+     * @param callbackCode callback编码
+     * @param args 方法入参数组
      */
     public static void checkArgumentAndFormat(boolean expression, @NonNull BaseCallbackCode callbackCode, Object... args) {
         checkArgument(expression, callbackCode.getCode(), MessageFormat.format(callbackCode.getDescription(), args));
@@ -115,8 +115,8 @@ public class PreconditionUtil {
     /**
      * 检查参数
      *
-     * @param expression
-     * @param message
+     * @param expression expression参数
+     * @param message 消息内容
      */
     public static void checkBadRequest(boolean expression, String message) {
         if (!expression) {
@@ -127,7 +127,7 @@ public class PreconditionUtil {
     /**
      * 提供一种手动式的必传参数校验
      *
-     * @param request
+     * @param request 请求对象
      */
     public static <T> void requiredParamCheck(T request) {
         PreconditionUtil.checkArgument(

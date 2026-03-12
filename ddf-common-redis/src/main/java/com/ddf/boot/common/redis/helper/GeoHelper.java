@@ -34,8 +34,8 @@ public class GeoHelper {
     /**
      * 创建GEO对象
      *
-     * @param key
-     * @param <V>
+     * @param key 目标键
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> RGeo<V> get(String key) {
@@ -45,10 +45,10 @@ public class GeoHelper {
     /**
      * 添加地址位置元素
      *
-     * @param key       key
+     * @param key       目标键
      * @param longitude 经度
-     * @param latitude  维度
-     * @param value     要添加的元素
+     * @param latitude  纬度
+     * @param value     参数值
      */
     public <V> long add(String key, double longitude, double latitude, V value) {
         final RGeo<Object> geo = get(key);
@@ -58,11 +58,11 @@ public class GeoHelper {
     /**
      * 计算两个成员之间的距离
      *
-     * @param key          key
+     * @param key          目标键
      * @param firstMember  第一个元素
      * @param secondMember 第二个元素
      * @param geoUnit      距离单位
-     * @param <V>
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> Double dist(String key, V firstMember, V secondMember, GeoUnit geoUnit) {
@@ -72,9 +72,9 @@ public class GeoHelper {
     /**
      * 取出多个成员的定义的地理位置信息, 成员不存在，则返回的map不包含对应的key
      *
-     * @param key     key
-     * @param members 要取出的成员列表
-     * @param <V>
+     * @param key     目标键
+     * @param members 成员列表
+     * @param <V> 值泛型类型
      * @return
      */
     @SafeVarargs
@@ -87,8 +87,8 @@ public class GeoHelper {
      *
      * 返回以给定地址位置计算指定距离半径内满足的地址位置所对应的元素
      *
-     * @param request
-     * @param <V>
+     * @param request 请求对象
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> List<V> radius(GeoCoordinateSearchRequest request) {
@@ -114,8 +114,8 @@ public class GeoHelper {
      * key:   元素value
      * value: 与指定位置相距距离
      *
-     * @param <V>
-     * @param request 参数
+     * @param <V> 值泛型类型
+     * @param request 请求对象
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoCoordinateSearchRequest request) {
@@ -140,8 +140,8 @@ public class GeoHelper {
      * key: 元素value
      * value: 所属地理位置对象
      *
-     * @param request
-     * @param <V>
+     * @param request 请求对象
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoCoordinateSearchRequest request) {
@@ -164,8 +164,8 @@ public class GeoHelper {
      *
      * 返回以给定成员计算指定距离半径内满足的地址位置所对应的元素
      *
-     * @param request
-     * @param <V>
+     * @param request 请求对象
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> List<V> radius(GeoMemberSearchRequest<V> request) {
@@ -192,8 +192,8 @@ public class GeoHelper {
      * key:   元素value
      * value: 与指定位置相距距离
      *
-     * @param <V>
-     * @param request 参数
+     * @param <V> 值泛型类型
+     * @param request 请求对象
      * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoMemberSearchRequest<V> request) {
@@ -218,8 +218,8 @@ public class GeoHelper {
      * key: 元素value
      * value: 所属地理位置对象
      *
-     * @param request
-     * @param <V>
+     * @param request 请求对象
+     * @param <V> 值泛型类型
      * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoMemberSearchRequest<V> request) {

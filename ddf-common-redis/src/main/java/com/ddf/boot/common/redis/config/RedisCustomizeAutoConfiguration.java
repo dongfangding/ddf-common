@@ -57,7 +57,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     /**
      * 注册redis扩展方法类
      *
-     * @param stringRedisTemplate
+     * @param stringRedisTemplate StringRedisTemplate 实例
      * @return
      */
     @Bean
@@ -101,7 +101,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         return template;
     }
     /**
-     * @param stringRedisTemplate 参数
+     * @param stringRedisTemplate StringRedisTemplate 实例
      */
     @Bean
     public RedisCommandHelper redisCommandHelper(StringRedisTemplate stringRedisTemplate) {
@@ -111,7 +111,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     /**
      * 注册geo帮助类
      *
-     * @param redissonClient
+     * @param redissonClient redisson客户端参数
      * @return
      */
     @Bean
@@ -123,7 +123,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     /**
      * Customize the RedissonClient configuration.
      *
-     * @param configuration the {@link Config} to customize
+     * @param configuration configuration参数
      */
     @SneakyThrows
     @Override

@@ -35,13 +35,13 @@ public class UrlReplaceHelper implements BeanFactoryPostProcessor {
         UrlReplaceHelper.beanFactory = beanFactory;
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      */
     public static String replaceHost(String value) {
         return replaceHost(value, "default");
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      * @param bucket 参数
      */
     public static String replaceHost(String value, String bucket) {

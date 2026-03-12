@@ -68,7 +68,7 @@ public class RateLimitAspect {
     /**
      * 处理限流逻辑
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @throws NoSuchMethodException
      */
     @Before(value = "pointCut()")
@@ -171,9 +171,9 @@ public class RateLimitAspect {
     /**
      * 处理条件表达式, 满足条件的才会限流
      *
-     * @param joinPoint
-     * @param annotation
-     * @param currentMethod
+     * @param joinPoint joinpoint参数
+     * @param annotation annotation参数
+     * @param currentMethod currentmethod参数
      * @return
      */
     private boolean condition(JoinPoint joinPoint, RateLimit annotation, MethodSignature currentMethod) {

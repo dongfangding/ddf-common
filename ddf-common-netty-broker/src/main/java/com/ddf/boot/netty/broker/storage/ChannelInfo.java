@@ -79,7 +79,7 @@ public class ChannelInfo {
     /**
      * 注册时连接信息包装
      *
-     * @param channel
+     * @param channel 通道对象
      * @return
      */
     public static ChannelInfo registry(Channel channel) {
@@ -91,7 +91,7 @@ public class ChannelInfo {
     /**
      * 连接激活时修改连接信息
      *
-     * @param channel
+     * @param channel 通道对象
      * @return
      */
     public static ChannelInfo active(Channel channel) {
@@ -101,7 +101,7 @@ public class ChannelInfo {
     /**
      * 连接掉线时修改连接信息
      *
-     * @param channel
+     * @param channel 通道对象
      * @return
      */
     public static ChannelInfo inactive(Channel channel) {

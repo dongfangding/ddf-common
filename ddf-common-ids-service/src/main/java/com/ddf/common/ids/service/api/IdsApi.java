@@ -27,7 +27,7 @@ public interface IdsApi {
     /**
      * 多个雪花id
      *
-     * @param number
+     * @param number 数值
      * @return
      */
     List<String> getSnowflakeIds(Integer number);
@@ -35,7 +35,7 @@ public interface IdsApi {
     /**
      * 单个序列id
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     String getSegmentId(String key);
@@ -43,8 +43,8 @@ public interface IdsApi {
     /**
      * 多个序列id
      *
-     * @param key
-     * @param number
+     * @param key 目标键
+     * @param number 数值
      * @return
      */
     List<String> getSegmentIds(String key, Integer number);
@@ -52,7 +52,7 @@ public interface IdsApi {
     /**
      * 获取组合id
      *
-     * @param key
+     * @param key 目标键
      * @return
      */
     IdsMultiData getMultiId(String key);
@@ -60,8 +60,8 @@ public interface IdsApi {
     /**
      * 批量获取组合id
      *
-     * @param key
-     * @param number
+     * @param key 目标键
+     * @param number 数值
      * @return
      */
     IdsMultiListData getMultiIds(String key, Integer number);

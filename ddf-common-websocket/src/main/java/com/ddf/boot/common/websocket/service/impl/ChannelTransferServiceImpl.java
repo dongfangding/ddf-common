@@ -30,8 +30,8 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 批量创建本机所有设备的消息记录
      *
-     * @param values         [AuthPrincipal该设备的认证，String 发送的内容，{@link Message}对象的json形式]
-     * @param messageRequest
+     * @param values         参数值集合
+     * @param messageRequest 消息请求参数
      * @return
      */
     @Override
@@ -63,7 +63,7 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * @param authPrincipal 参数
      * @param message 参数
-     * @param request 参数
+     * @param request 请求对象
      * @param webSocketSessionWrapper 参数
      * @param messageRequest 参数
      */
@@ -95,10 +95,10 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 记录请求数据
      *
-     * @param authPrincipal
-     * @param request
-     * @param message
-     * @param messageRequest
+     * @param authPrincipal 认证主体对象
+     * @param request 请求对象
+     * @param message 消息内容
+     * @param messageRequest 消息请求参数
      * @return
      */
     @Override
@@ -128,9 +128,9 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 记录响应日志
      *
-     * @param authPrincipal
-     * @param requestId
-     * @param response
+     * @param authPrincipal 认证主体对象
+     * @param requestId 请求 ID
+     * @param response 响应对象
      * @param message 参数
      * @return
      */
@@ -204,10 +204,10 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 将处理状态更新为成功或失败
      *
-     * @param message
-     * @param isSuccess
-     * @param errorMessage
-     * @param response
+     * @param message 消息内容
+     * @param isSuccess 是否success
+     * @param errorMessage 错误消息参数
+     * @param response 响应对象
      * @param serverSend 参数
      * @return
      */
@@ -261,7 +261,7 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 根据requestId获取报文请求时的业务对象
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     @Override
@@ -286,8 +286,8 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 获取指定设备该指定上一次下发指令的历史数据
      *
-     * @param deviceNumber
-     * @param cmd
+     * @param deviceNumber device数值
+     * @param cmd 命令参数
      * @return
      */
     @Override
@@ -310,8 +310,8 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
      * 这样只要查一次就能满足今天的发送次数和最新的一次；如果今天没有，那么也需要知道上次的发送时间；肯定是要发送的，
      * 这里如果是牵扯到第一天和第二天短时间内时间跨度不满足发送间隔的话，我觉得这个问题可以忽略
      *
-     * @param deviceNumber
-     * @param cmd
+     * @param deviceNumber device数值
+     * @param cmd 命令参数
      * @param successCount 是否只有成功的才计数
      * @return
      */
@@ -342,7 +342,7 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 对完整报文做特殊处理
      *
-     * @param content
+     * @param content 内容
      * @return
      */
     private static String toJsonArr(String... content) {
@@ -356,8 +356,8 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
     /**
      * 通过字符串拼接的方式将最新的报文放入完整保温数组中
      *
-     * @param oldValue
-     * @param content
+     * @param oldValue OLD值
+     * @param content 内容
      * @return
      */
     private static String appendJsonArr(String oldValue, String... content) {

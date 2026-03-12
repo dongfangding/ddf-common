@@ -12,14 +12,14 @@ public interface TableNotify {
     /**
      * 通知不存在的表名
      *
-     * @param info
+     * @param info 通知信息
      */
     void notifyNotExistTables(TableNotExistNotifyInfo info);
 
     /**
      * 通知自动建表情况
      *
-     * @param info
+     * @param info 通知信息
      */
     void notifyAuthCreateTable(TableAutoCreateNotifyInfo info);
 }

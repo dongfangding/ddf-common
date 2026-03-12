@@ -67,7 +67,7 @@ public class ConsoleOnsGroupListResponse implements Serializable {
     /**
      * 从SDK响应对象解析
      *
-     * @param response
+     * @param response 响应对象
      * @return
      */
     public static List<ConsoleOnsGroupListResponse> convertFromSdk(OnsGroupListResponse response) {

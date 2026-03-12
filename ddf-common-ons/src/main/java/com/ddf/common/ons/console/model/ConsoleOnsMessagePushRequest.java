@@ -46,8 +46,8 @@ public class ConsoleOnsMessagePushRequest implements UserRequest, Serializable {
     /**
      * 转换为原生SDK请求参数对象
      *
-     * @param clientId
-     * @param instanceId
+     * @param clientId 客户端ID
+     * @param instanceId 实例ID
      * @return
      */
     public OnsMessagePushRequest toSdkRequest(String clientId, String instanceId) {

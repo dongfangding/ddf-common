@@ -57,7 +57,7 @@ public @interface Mobile {
     class MobileValidator implements ConstraintValidator<Mobile, String> {
 
         /**
-         * @param value 参数
+         * @param value 参数值
          * @param context 参数
          */
         @Override

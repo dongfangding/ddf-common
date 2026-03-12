@@ -36,7 +36,7 @@ mvn -Prelease clean deploy
 
 当前首个公开发布候选版本：
 
-- `boot3.5-2026.1`
+- `boot3.5-2026.1-SNAPSHOT`
 
 ## GitHub Actions Secrets
 

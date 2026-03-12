@@ -39,7 +39,7 @@ public enum OsEnum {
     /**
      * 解析枚举值
      *
-     * @param value
+     * @param value 参数值
      * @return
      */
     public static OsEnum resolve(String value) {

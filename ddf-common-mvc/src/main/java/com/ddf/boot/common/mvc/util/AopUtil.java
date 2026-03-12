@@ -33,8 +33,8 @@ public class AopUtil {
     /**
      * 获取在指定方法上的注解，如果方法上没有就到类上去找
      *
-     * @param joinPoint
-     * @param targetAnnotation
+     * @param joinPoint joinpoint参数
+     * @param targetAnnotation targetannotation参数
      * @return T
      * @since 2019/12/20 0020 10:29
      **/
@@ -55,7 +55,7 @@ public class AopUtil {
     /**
      * 获取当前拦截的类
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @return
      */
     public static Class<?> getJoinPointClass(JoinPoint joinPoint) {
@@ -65,7 +65,7 @@ public class AopUtil {
     /**
      * 获取当前拦截的方法
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @return
      */
     public static MethodSignature getJoinPointMethod(JoinPoint joinPoint) {
@@ -76,7 +76,7 @@ public class AopUtil {
     /**
      * 获取指定类型的参数
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @since 2019/12/20 0020 11:28
      **/
     public static Map<Class<?>, Object> getArgs(JoinPoint joinPoint) {
@@ -99,7 +99,7 @@ public class AopUtil {
      * 返回当前方法的参数map， 注意如果入参又不能序列化的对象也会返回，如果要用来做序列不要使用这个方法
      * 可以用{@link AopUtil#getSerializableParamMap(JoinPoint)}代替
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getAllParamMap(JoinPoint joinPoint) {
@@ -117,7 +117,7 @@ public class AopUtil {
     /**
      * 返回可以序列化的当前方法的参数map
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @since 2020/6/12 0012 18:46
      **/
     public static Map<String, Object> getSerializableParamMap(JoinPoint joinPoint) {
@@ -143,7 +143,7 @@ public class AopUtil {
     /**
      * 获取参数中带@RequestBody的参数的对象的值
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @return
      */
     public static Object getRequestBodyParamObj(JoinPoint joinPoint) {
@@ -164,7 +164,7 @@ public class AopUtil {
     /**
      * 序列化参数
      *
-     * @param joinPoint
+     * @param joinPoint joinpoint参数
      * @return
      */
     public static String serializeParam(JoinPoint joinPoint) {
@@ -176,9 +176,9 @@ public class AopUtil {
     /**
      * 动态通过反射修改指定注解实例里的属性的值， 这个是如果只有一个属性要修改时提供的简便方法
      *
-     * @param annotation
-     * @param name
-     * @param value
+     * @param annotation annotation参数
+     * @param name 名称
+     * @param value 参数值
      */
     @SneakyThrows
     public static void modifyAnnotationValue(Annotation annotation, String name, Object value) {

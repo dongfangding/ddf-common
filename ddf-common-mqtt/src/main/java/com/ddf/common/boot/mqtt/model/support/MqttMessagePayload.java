@@ -77,8 +77,8 @@ public class MqttMessagePayload implements Serializable {
      * 通过外部发送消息的请求对象转换为实际要发送mqtt message的payload
      * {@link org.eclipse.paho.mqttv5.common.MqttMessage#setPayload(byte[])} ()}
      *
-     * @param request
-     * @param serverClientId
+     * @param request 请求对象
+     * @param serverClientId 服务端客户端ID
      * @return
      */
     public static MqttMessagePayload fromMessageRequest(InnerMqttMessageRequest request, String serverClientId) {

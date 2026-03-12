@@ -25,16 +25,16 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
     /**
      * 设置验证码过期时间
      *
-     * @param key
-     * @param value
-     * @param expiresInSeconds
+     * @param key 目标键
+     * @param value 参数值
+     * @param expiresInSeconds 过期秒数
      */
     @Override
     public void set(String key, String value, long expiresInSeconds) {
         CacheAdapter.getTemplate().opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      */
     @Override
     public boolean exists(String key) {
@@ -42,21 +42,21 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
         return Objects.nonNull(aBoolean) && aBoolean;
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      */
     @Override
     public void delete(String key) {
         CacheAdapter.getTemplate().delete(key);
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      */
     @Override
     public String get(String key) {
         return CacheAdapter.getTemplate().opsForValue().get(key);
     }
     /**
-     * @param key 参数
+     * @param key 目标键
      * @param val 参数
      */
     @Override

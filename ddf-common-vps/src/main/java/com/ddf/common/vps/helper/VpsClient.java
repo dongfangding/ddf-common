@@ -56,7 +56,7 @@ public class VpsClient {
     /**
      * 上传本地文件
      *
-     * @param filePath
+     * @param filePath 文件路径
      * @param thumbImage 参数
      * @return
      */
@@ -74,7 +74,7 @@ public class VpsClient {
     /**
      * 上传文件并生成缩略图
      *
-     * @param multipartFile
+     * @param multipartFile multipart文件参数
      * @return
      */
     @SneakyThrows
@@ -88,7 +88,7 @@ public class VpsClient {
     /**
      * 上传文件并生成缩略图
      *
-     * @param multipartFile
+     * @param multipartFile multipart文件参数
      * @param cutVideoThumb 如果是视频是否裁剪视频帧获取封面图，支持非常有限，仅提供思路
      * @return
      */
@@ -103,7 +103,7 @@ public class VpsClient {
     /**
      * 批量上传文件
      *
-     * @param multipartFiles
+     * @param multipartFiles multipartfiles参数
      * @return
      */
     public List<UploadResponse> batchUploadFile(MultipartFile[] multipartFiles) {
@@ -120,7 +120,7 @@ public class VpsClient {
      * 如果是视频的话， 视频需要先上传然后调用ffmpeg进行截帧命令， 然后将生成的文件再次调用上传。
      * 因此这个方法能工作的前提必须是有一台专门的服务器用来处理文件上传请求， 然后在这台服务器上要安装ffmpeg，这样才能正常工作
      *
-     * @param fastImageFile
+     * @param fastImageFile fastimage文件参数
      * @param cutVideoThumb 参数
      * @return
      */
@@ -174,7 +174,7 @@ public class VpsClient {
     /**
      * 简单判断是否是图片
      *
-     * @param fileExtName
+     * @param fileExtName 文件EXT名称参数
      * @return
      */
     private boolean isImage(String fileExtName) {

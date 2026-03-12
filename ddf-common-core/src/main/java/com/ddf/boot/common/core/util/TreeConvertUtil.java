@@ -27,7 +27,7 @@ public class TreeConvertUtil {
     /**
      * 构建树形结构
      *
-     * @param domainList
+     * @param domainList domain列表
      * @return
      */
     public static <K, T extends ITreeTagCollection<K, T>> List<T> convert(List<T> domainList) {

@@ -17,8 +17,8 @@ public interface TokenCustomizeCheckService {
     /**
      * 自定义校验规则
      *
-     * @param request
-     * @param authenticateCheckResult
+     * @param request 请求对象
+     * @param authenticateCheckResult 认证校验结果
      * @return 返回最新的用户信息
      */
     UserClaim customizeCheck(HttpServletRequest request, AuthenticateCheckResult authenticateCheckResult);

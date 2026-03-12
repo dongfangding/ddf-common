@@ -32,8 +32,8 @@ public class SpringContextHolder {
      * 如果满足这样的话， 属性初始化就必须写在静态代码块中，而这样的话工具类中使用这个类的时候applicationContext就会为空，然后空指针影响调试
      * 可参考该类 com.nvwa.boot.common.websocket.util.WsSecureUtil
      *
-     * @param requiredType
-     * @param <T>
+     * @param requiredType required类型
+     * @param <T> 泛型类型
      * @return
      * @throws BeansException
      */
@@ -82,8 +82,8 @@ public class SpringContextHolder {
     /**
      * 判断某个bean类型是否存在
      *
-     * @param type
-     * @param <T>
+     * @param type 类型
+     * @param <T> 泛型类型
      * @return
      */
     public static <T> boolean containsBeanType(Class<T> type) {

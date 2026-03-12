@@ -65,8 +65,8 @@ public interface OnsMessageListener<D extends Serializable> {
     /**
      * 业务是否执行成功
      *
-     * @param message
-     * @param domain
+     * @param message 消息内容
+     * @param domain domain参数
      * @return
      * @since 1.3.0
      */

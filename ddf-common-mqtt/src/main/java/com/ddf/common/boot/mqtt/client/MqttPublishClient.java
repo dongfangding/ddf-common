@@ -20,7 +20,7 @@ public class MqttPublishClient {
     /**
      * 发布消息
      *
-     * @param request
+     * @param request 请求对象
      */
     public ResponseData<MqttMessageResponse> publish(InnerMqttMessageRequest request) {
         return mqttDefinition.publish(request);

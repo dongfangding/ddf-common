@@ -56,7 +56,7 @@ public class AliYunSmsHelper {
     /**
      * 发送短信验证码
      *
-     * @param aliYunSmsRequest
+     * @param aliYunSmsRequest ALIYUNSMS请求参数
      */
     public SmsSendResponse sendSms(SmsSendRequest aliYunSmsRequest) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(),

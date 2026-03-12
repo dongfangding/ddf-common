@@ -37,7 +37,7 @@ public class DeferredHelper<D, F, P> {
     /**
      * 获取Deferred对象
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     public Deferred<D, Throwable, P> getDeferred(String requestId) {
@@ -51,8 +51,8 @@ public class DeferredHelper<D, F, P> {
     /**
      * 创建一个带超时的回调函数
      *
-     * @param requestId
-     * @param timeoutMilliSeconds
+     * @param requestId 请求 ID
+     * @param timeoutMilliSeconds 超时milliseconds参数
      * @return
      */
     public Promise<D, Throwable, P> createPromise(String requestId, long timeoutMilliSeconds) {
@@ -82,7 +82,7 @@ public class DeferredHelper<D, F, P> {
     /**
      * 创建promise
      *
-     * @param requestId
+     * @param requestId 请求 ID
      * @return
      */
     public Promise<D, Throwable, P> createPromise(String requestId) {
@@ -90,8 +90,8 @@ public class DeferredHelper<D, F, P> {
     }
 
     /**
-     * @param result
-     * @param id 参数
+     * @param result 结果参数
+     * @param id 标识值
      * @return
      */
     public boolean resolve(String id, D result) {
@@ -104,8 +104,8 @@ public class DeferredHelper<D, F, P> {
     }
 
     /**
-     * @param id
-     * @param exception
+     * @param id 标识值
+     * @param exception 异常对象
      * @return
      */
     public boolean reject(String id, Throwable exception) {
@@ -118,7 +118,7 @@ public class DeferredHelper<D, F, P> {
     }
 
     /**
-     * @param result
+     * @param result 结果参数
      * @return
      */
     public Promise<D, Throwable, P> resolve(D result) {
@@ -128,7 +128,7 @@ public class DeferredHelper<D, F, P> {
     }
 
     /**
-     * @param exception
+     * @param exception 异常对象
      * @return
      */
     public Promise<D, Throwable, P> reject(Throwable exception) {
@@ -139,9 +139,9 @@ public class DeferredHelper<D, F, P> {
 
 
     /**
-     * @param state
-     * @param result
-     * @param exception
+     * @param state state参数
+     * @param result 结果参数
+     * @param exception 异常对象
      * @return
      */
     public Promise<D, Throwable, P> pipeAlways(Promise.State state, D result, Throwable exception) {
@@ -153,7 +153,7 @@ public class DeferredHelper<D, F, P> {
     }
 
     /**
-     * @param id
+     * @param id 标识值
      * @return
      */
     private Deferred<D, Throwable, P> getDeferredAndRemove(String id) {

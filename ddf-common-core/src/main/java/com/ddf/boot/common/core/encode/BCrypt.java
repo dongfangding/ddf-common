@@ -380,9 +380,9 @@ public class BCrypt {
 	 * that this is <strong>not</strong> compatible with the standard MIME-base64
 	 * encoding.
 	 *
-	 * @param d the byte array to encode
-	 * @param len the number of bytes to encode
-	 * @param rs the destination buffer for the base64-encoded string
+	 * @param d D参数
+	 * @param len LEN参数
+	 * @param rs RS参数
 	 * @exception IllegalArgumentException if the length is invalid
 	 */
 	static void encode_base64(byte d[], int len, StringBuilder rs)
@@ -420,7 +420,7 @@ public class BCrypt {
 	/**
 	 * Look up the 3 bits base64-encoded by the specified character,
 	 * range-checking againt conversion table
-	 * @param x	the base64-encoded value
+	 * @param x	X参数
 	 * @return	the decoded value of x
 	 */
 	private static byte char64(char x) {
@@ -433,8 +433,8 @@ public class BCrypt {
 	 * Decode a string encoded using bcrypt's base64 scheme to a
 	 * byte array. Note that this is *not* compatible with
 	 * the standard MIME-base64 encoding.
-	 * @param s	the string to decode
-	 * @param maxolen	the maximum number of bytes to decode
+	 * @param s	S参数
+	 * @param maxolen	maxolen参数
 	 * @return	an array containing the decoded bytes
 	 * @throws IllegalArgumentException if maxolen is invalid
 	 */
@@ -482,8 +482,8 @@ public class BCrypt {
 	/**
 	 * Blowfish encipher a single 64-bit block encoded as
 	 * two 32-bit halves
-	 * @param lr	an array containing the two 32-bit half blocks
-	 * @param off	the position in the array of the blocks
+	 * @param lr	LR参数
+	 * @param off	OFF参数
 	 */
 	private void encipher(int lr[], int off) {
 		int i, n, l = lr[off], r = lr[off + 1];
@@ -510,10 +510,10 @@ public class BCrypt {
 
 	/**
 	 * Cycically extract a word of key material
-	 * @param data	the string to extract the data from
-	 * @param offp	a "pointer" (as a one-entry array) to the
+	 * @param data	待处理数据
+	 * @param offp	offp参数
 	 * current offset into data
-	 * @param signp	a "pointer" (as a one-entry array) to the
+	 * @param signp	signp参数
 	 * cumulative flag for non-benign sign extension
 	 * @return	correct and buggy next word of material from data as int[2]
 	 */
@@ -537,8 +537,8 @@ public class BCrypt {
 
 	/**
 	 * Cycically extract a word of key material
-	 * @param data	the string to extract the data from
-	 * @param offp	a "pointer" (as a one-entry array) to the
+	 * @param data	待处理数据
+	 * @param offp	offp参数
 	 * current offset into data
 	 * @return	the next word of material from data
 	 */
@@ -549,8 +549,8 @@ public class BCrypt {
 
 	/**
 	 * Cycically extract a word of key material, with sign-extension bug
-	 * @param data	the string to extract the data from
-	 * @param offp	a "pointer" (as a one-entry array) to the
+	 * @param data	待处理数据
+	 * @param offp	offp参数
 	 * current offset into data
 	 * @return	the next word of material from data
 	 */
@@ -569,9 +569,9 @@ public class BCrypt {
 
 	/**
 	 * Key the Blowfish cipher
-	 * @param key	an array containing the key
-	 * @param sign_ext_bug	true to implement the 2x bug
-	 * @param safety		bit 16 is set when the safety measure is requested
+	 * @param key	目标键
+	 * @param sign_ext_bug	签名EXTBUG参数
+	 * @param safety		safety参数
 	 */
 	private void key(byte key[], boolean sign_ext_bug, int safety) {
 		int i;
@@ -602,10 +602,10 @@ public class BCrypt {
 	 * Perform the "enhanced key schedule" step described by
 	 * Provos and Mazieres in "A Future-Adaptable Password Scheme"
 	 * https://www.openbsd.org/papers/bcrypt-paper.ps
-	 * @param data	salt information
-	 * @param key	password information
-	 * @param sign_ext_bug	true to implement the 2x bug
-	 * @param safety		bit 16 is set when the safety measure is requested
+	 * @param data	待处理数据
+	 * @param key	目标键
+	 * @param sign_ext_bug	签名EXTBUG参数
+	 * @param safety		safety参数
 	 */
 	private void ekskey(byte data[], byte key[],
 						boolean sign_ext_bug, int safety) {
@@ -681,12 +681,12 @@ public class BCrypt {
 	/**
 	 * Perform the central password hashing step in the
 	 * bcrypt scheme
-	 * @param password	the password to hash
-	 * @param salt	the binary salt to hash with the password
-	 * @param log_rounds	the binary logarithm of the number
+	 * @param password	密码
+	 * @param salt	salt参数
+	 * @param log_rounds	LOGrounds参数
 	 * of rounds of hashing to apply
-	 * @param sign_ext_bug	true to implement the 2x bug
-	 * @param safety		bit 16 is set when the safety measure is requested
+	 * @param sign_ext_bug	签名EXTBUG参数
+	 * @param safety		safety参数
 	 * @return	an array containing the binary hashed password
 	 */
 	private byte[] crypt_raw(byte password[], byte salt[], int log_rounds,
@@ -726,8 +726,8 @@ public class BCrypt {
 
 	/**
 	 * Hash a password using the OpenBSD bcrypt scheme
-	 * @param password	the password to hash
-	 * @param salt	the salt to hash with (perhaps generated
+	 * @param password	密码
+	 * @param salt	salt参数
 	 * using BCrypt.gensalt)
 	 * @return	the hashed password
 	 */
@@ -741,8 +741,8 @@ public class BCrypt {
 
 	/**
 	 * Hash a password using the OpenBSD bcrypt scheme
-	 * @param passwordb	the password to hash, as a byte array
-	 * @param salt	the salt to hash with (perhaps generated
+	 * @param passwordb	passwordb参数
+	 * @param salt	salt参数
 	 * using BCrypt.gensalt)
 	 * @return	the hashed password
 	 */
@@ -809,11 +809,11 @@ public class BCrypt {
 
 	/**
 	 * Generate a salt for use with the BCrypt.hashpw() method
-	 * @param prefix		the prefix value (default $2a)
-	 * @param log_rounds	the log2 of the number of rounds of
+	 * @param prefix		前缀参数
+	 * @param log_rounds	LOGrounds参数
 	 * hashing to apply - the work factor therefore increases as
 	 * 2**log_rounds.
-	 * @param random		an instance of SecureRandom to use
+	 * @param random		random参数
 	 * @return	an encoded salt value
 	 * @exception IllegalArgumentException if prefix or log_rounds is invalid
 	 */
@@ -845,8 +845,8 @@ public class BCrypt {
 
 	/**
 	 * Generate a salt for use with the BCrypt.hashpw() method
-	 * @param prefix		the prefix value (default $2a)
-	 * @param log_rounds	the log2 of the number of rounds of
+	 * @param prefix		前缀参数
+	 * @param log_rounds	LOGrounds参数
 	 * hashing to apply - the work factor therefore increases as
 	 * 2**log_rounds.
 	 * @return	an encoded salt value
@@ -859,10 +859,10 @@ public class BCrypt {
 
 	/**
 	 * Generate a salt for use with the BCrypt.hashpw() method
-	 * @param log_rounds	the log2 of the number of rounds of
+	 * @param log_rounds	LOGrounds参数
 	 * hashing to apply - the work factor therefore increases as
 	 * 2**log_rounds.
-	 * @param random		an instance of SecureRandom to use
+	 * @param random		random参数
 	 * @return	an encoded salt value
 	 * @exception IllegalArgumentException if log_rounds is invalid
 	 */
@@ -873,7 +873,7 @@ public class BCrypt {
 
 	/**
 	 * Generate a salt for use with the BCrypt.hashpw() method
-	 * @param log_rounds	the log2 of the number of rounds of
+	 * @param log_rounds	LOGrounds参数
 	 * hashing to apply - the work factor therefore increases as
 	 * 2**log_rounds.
 	 * @return	an encoded salt value
@@ -903,8 +903,8 @@ public class BCrypt {
 	/**
 	 * Check that a plaintext password matches a previously hashed
 	 * one
-	 * @param plaintext	the plaintext password to verify
-	 * @param hashed	the previously-hashed password
+	 * @param plaintext	plaintext参数
+	 * @param hashed	hashed参数
 	 * @return	true if the passwords match, false otherwise
 	 */
 	public static boolean checkpw(String plaintext, String hashed) {
@@ -914,8 +914,8 @@ public class BCrypt {
 	/**
 	 * Check that a password (as a byte array) matches a previously hashed
 	 * one
-	 * @param passwordb	the password to verify, as a byte array
-	 * @param hashed	the previously-hashed password
+	 * @param passwordb	passwordb参数
+	 * @param hashed	hashed参数
 	 * @return	true if the passwords match, false otherwise
 	 * @since 5.3
 	 */

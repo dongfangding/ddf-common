@@ -131,7 +131,7 @@ public class RocketProducer {
 	 * @param destination 目的地
 	 * @param message 消息内容
 	 * @return
-	 * @param <T>
+	 * @param <T> 泛型类型
 	 */
 	private <T extends MessagePayload> SendResult send(String destination, T message) {
         // 设置业务键，此处根据公共的参数进行处理
@@ -152,7 +152,7 @@ public class RocketProducer {
 	 * @param message 参数
 	 * @param delayTime 参数
 	 * @return
-	 * @param <T>
+	 * @param <T> 泛型类型
 	 */
     private <T extends MessagePayload> SendResult sendDelay(String destination, T message, Long delayTime) {
         Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(

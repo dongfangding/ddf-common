@@ -12,7 +12,7 @@
 
 ### Changed
 
-## [boot3.5-2026.1] - 2026-03-12
+## [boot3.5-2026.1-SNAPSHOT] - 2026-03-12
 
 ### Added
 
@@ -27,7 +27,7 @@
 
 ### Changed
 
-- 将仓库版本从 `boot3.5-2025.1-SNAPSHOT` 提升为首个正式发布候选 `boot3.5-2026.1`。
+- 将仓库版本从 `boot3.5-2025.1-SNAPSHOT` 提升为首个正式发布候选 `boot3.5-2026.1-SNAPSHOT`。
 - 统一子模块的 `name` 与 `description`，提升 Maven Central 展示质量。
 - 在根构建中加入 Java 17 与 Maven 3.9.6+ 的环境约束。
 - 在根构建中加入 UTF-8 reporting 输出编码。

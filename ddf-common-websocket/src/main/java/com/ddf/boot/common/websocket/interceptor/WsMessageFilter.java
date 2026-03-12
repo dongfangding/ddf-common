@@ -18,8 +18,8 @@ public interface WsMessageFilter {
      * 针对发送的参数进行校验，决定是否可以继续发送消息
      * 返回true,则继续执行发送逻辑；返回false, 则中断请求
      *
-     * @param request
-     * @param <Q>
+     * @param request 请求对象
+     * @param <Q> 请求泛型类型
      * @return
      */
     <Q> boolean filter(MessageRequest<Q> request);

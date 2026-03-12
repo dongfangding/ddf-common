@@ -37,7 +37,7 @@ public class TokenCacheImpl implements TokenCache {
     /**
      * 获取token key规则
      *
-     * @param uid
+     * @param uid 用户 ID
      * @return
      */
     public String getTokenKey(String uid) {
@@ -53,8 +53,8 @@ public class TokenCacheImpl implements TokenCache {
                 .getStringRedisTemplate();
     }
     /**
-     * @param userClaim 参数
-     * @param authenticateToken 参数
+     * @param userClaim 用户声明信息
+     * @param authenticateToken 认证令牌对象
      */
     @Override
     public void setToken(UserClaim userClaim, AuthenticateToken authenticateToken) {
@@ -71,7 +71,7 @@ public class TokenCacheImpl implements TokenCache {
     }
     /**
      * @param userId 参数
-     * @param token 参数
+     * @param token token 字符串
      */
     @Override
     public void refreshToken(String userId, String token) {

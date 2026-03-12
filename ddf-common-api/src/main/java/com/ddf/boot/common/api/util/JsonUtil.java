@@ -55,7 +55,7 @@ public final class JsonUtil {
     /**
      * 对象转Json
      *
-     * @param obj
+     * @param obj 对象实例
      * @return
      */
     public static String toJson(Object obj) {
@@ -75,7 +75,7 @@ public final class JsonUtil {
     /**
      * 将对象序列化成json字符串
      *
-     * @param obj
+     * @param obj 对象实例
      * @return
      */
     public static String asString(Object obj) {
@@ -85,8 +85,8 @@ public final class JsonUtil {
     /**
      * Json转对象
      *
-     * @param json
-     * @param type
+     * @param json JSON 字符串
+     * @param type 类型
      * @return
      */
     public static <T> T toBean(String json, Class<T> type) {
@@ -96,8 +96,8 @@ public final class JsonUtil {
     /**
      * Json转对象
      *
-     * @param json
-     * @param type
+     * @param json JSON 字符串
+     * @param type 类型
      * @return
      */
     public static <T> T toBeanChecked(Object json, Class<T> type) {
@@ -110,9 +110,9 @@ public final class JsonUtil {
     /**
      * Json转对象
      *
-     * @param json
-     * @param paramType
-     * @param types
+     * @param json JSON 字符串
+     * @param paramType 参数类型
+     * @param types 类型集合
      * @return
      */
     public static <T> T toBean(String json, Class<?> paramType, Class<?>... types) {
@@ -122,8 +122,8 @@ public final class JsonUtil {
     /**
      * Json转对象
      *
-     * @param json
-     * @param type
+     * @param json JSON 字符串
+     * @param type 类型
      * @return
      */
     public static <T> T toBean(String json, TypeReference<T> type) {
@@ -133,8 +133,8 @@ public final class JsonUtil {
     /**
      * Json转对象
      *
-     * @param json
-     * @param type
+     * @param json JSON 字符串
+     * @param type 类型
      * @return
      */
     public static <T> T toBean(String json, JavaType type) {
@@ -152,7 +152,7 @@ public final class JsonUtil {
     /**
      * 对象转字节
      *
-     * @param obj
+     * @param obj 对象实例
      * @return
      */
     @SneakyThrows
@@ -168,8 +168,8 @@ public final class JsonUtil {
     /**
      * 字节转对象
      *
-     * @param bytes
-     * @param type
+     * @param bytes bytes参数
+     * @param type 类型
      * @return
      */
     @SneakyThrows
@@ -181,7 +181,7 @@ public final class JsonUtil {
      * 将json数据转换成pojo对象list
      *
      *
-     * @param json json数据
+     * @param json JSON 字符串
      * @param beanType 类型
      * @param <T>      类型
      * @return T
@@ -226,8 +226,8 @@ public final class JsonUtil {
     /**
      * 根据策略生成Json
      *
-     * @param obj
-     * @param strategy
+     * @param obj 对象实例
+     * @param strategy 策略参数
      * @return
      */
     public static String toJson(Object obj, Include strategy) {
@@ -250,7 +250,7 @@ public final class JsonUtil {
     /**
      * 初始化ObjectMapperW
      *
-     * @param objectMapper
+     * @param objectMapper ObjectMapper 实例
      * @return
      */
     private static ObjectMapper config(ObjectMapper objectMapper) {

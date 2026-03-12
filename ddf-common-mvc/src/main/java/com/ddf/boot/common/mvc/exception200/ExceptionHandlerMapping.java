@@ -25,7 +25,7 @@ public interface ExceptionHandlerMapping {
     /**
      * 捕捉到的异常给实现方自定义实现返回数据, 这个是可以完全接管内部异常实现的，如果返回的不是null, 就直接返回给客户端了
      *
-     * @param exception
+     * @param exception 异常对象
      * @return 如果当前异常不是自己要处理的类型，请返回{@code null}
      * @see AbstractExceptionHandler#handlerException(Exception, HttpServletRequest, HttpServletResponse)
      */
@@ -38,7 +38,7 @@ public interface ExceptionHandlerMapping {
     /**
      * 解析异常，通用类中由于包引用的限制，无法判定所有的异常，未判定的异常只能统一服务端异常，这个提供一个判定，可以匹配异常，返回自己的异常状态码
      *
-     * @param exception
+     * @param exception 异常对象
      * @return
      */
     default BaseCallbackCode resolveOtherException(Exception exception) {

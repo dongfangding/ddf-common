@@ -12,7 +12,7 @@ The format is based on Keep a Changelog principles, adapted for this repository.
 
 ### Changed
 
-## [boot3.5-2026.1] - 2026-03-12
+## [boot3.5-2026.1-SNAPSHOT] - 2026-03-12
 
 ### Added
 
@@ -27,7 +27,7 @@ The format is based on Keep a Changelog principles, adapted for this repository.
 
 ### Changed
 
-- Promoted the repository version from `boot3.5-2025.1-SNAPSHOT` to the first release candidate `boot3.5-2026.1`.
+- Promoted the repository version from `boot3.5-2025.1-SNAPSHOT` to the first release candidate `boot3.5-2026.1-SNAPSHOT`.
 - Standardized module `name` and `description` metadata for Maven Central visibility.
 - Added root Maven build environment constraints for Java 17 and Maven 3.9.6+.
 - Added UTF-8 reporting output encoding in the root build.

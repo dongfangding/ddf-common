@@ -50,7 +50,7 @@ public class WsSecureUtil {
     /**
      * 私钥加密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:02
      **/
@@ -62,7 +62,7 @@ public class WsSecureUtil {
     /**
      * 私钥解密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 0029 12:03
      **/
@@ -75,7 +75,7 @@ public class WsSecureUtil {
     /**
      * 公钥加密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:02
      **/
@@ -87,7 +87,7 @@ public class WsSecureUtil {
     /**
      * 公钥解密
      *
-     * @param data
+     * @param data 待处理数据
      * @return java.lang.String
      * @since 2019/11/29 12:03
      **/
@@ -98,8 +98,8 @@ public class WsSecureUtil {
     /**
      * 生成摘要
      *
-     * @param data
-     * @param key
+     * @param data 待处理数据
+     * @param key 目标键
      * @return java.lang.String
      * @since 2019/11/29 12:06
      **/

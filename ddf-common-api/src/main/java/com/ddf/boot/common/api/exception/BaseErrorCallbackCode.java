@@ -106,7 +106,7 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     /**
      * 异常消息
-     * @param description 参数
+     * @param description 描述信息
      */
     @Getter
     private final String description;

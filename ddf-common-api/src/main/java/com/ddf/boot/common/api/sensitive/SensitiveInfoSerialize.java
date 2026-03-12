@@ -31,7 +31,7 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
         this.type = type;
     }
     /**
-     * @param value 参数
+     * @param value 参数值
      * @param jsonGenerator 参数
      * @param serializers 参数
      */
