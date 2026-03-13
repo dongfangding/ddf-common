@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2024/06/06 10:37
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionEvent> {

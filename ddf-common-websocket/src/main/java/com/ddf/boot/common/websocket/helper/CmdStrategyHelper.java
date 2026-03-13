@@ -4,10 +4,9 @@ import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.AuthPrincipal;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.model.MessageRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 
 /**
@@ -16,16 +15,15 @@ import org.springframework.web.socket.TextMessage;
  * @author dongfang.ding
  * @since 2019/9/4 15:41
  */
-@Component
 @Slf4j
+@RequiredArgsConstructor
 public class CmdStrategyHelper {
     /**
      * @param authPrincipal 参数
      * @param payload 参数
      * @param message 参数
      */
-    @Autowired
-    private ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool;
+    private final ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool;
 
     /**
      * 记录日志并发送消息
@@ -74,4 +72,3 @@ public class CmdStrategyHelper {
         //        });
     }
 }
-

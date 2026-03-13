@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @ConfigurationProperties(prefix = "customizer.infra.zookeeper.monitor")
-@Component
 public class MonitorProperties {
 
     private static final int DEFAULT_SESSION_TIMEOUT_MS = Integer.getInteger("curator-default-session-timeout",

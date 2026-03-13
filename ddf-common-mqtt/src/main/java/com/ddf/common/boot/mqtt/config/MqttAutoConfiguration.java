@@ -8,10 +8,12 @@ import com.ddf.common.boot.mqtt.client.DefaultMqttPublishImpl;
 import com.ddf.common.boot.mqtt.client.MqttDefinition;
 import com.ddf.common.boot.mqtt.client.MqttPublishClient;
 import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
+import com.ddf.common.boot.mqtt.controller.EmqController;
 import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.enume.MqttQosEnum;
 import com.ddf.common.boot.mqtt.exception.MqttCallbackCode;
 import com.ddf.common.boot.mqtt.extra.MqttPublishListener;
+import com.ddf.common.boot.mqtt.extra.impl.MqttPublishCheckerListener;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -38,7 +40,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -55,7 +57,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @AutoConfiguration
 @EnableConfigurationProperties(value = {EmqConnectionProperties.class})
 @Slf4j
-@ComponentScan(basePackages = {"com.ddf.common.boot.mqtt"})
+@Import(EmqController.class)
 public class MqttAutoConfiguration implements DisposableBean, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -301,6 +303,11 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
     @ConditionalOnProperty(prefix = "customizer.infra.mqtt", value = "enable", havingValue = "true")
     public MqttPublishClient mqttPublishClient(MqttDefinition mqttDefinition) {
         return new MqttPublishClient(mqttDefinition);
+    }
+
+    @Bean
+    public MqttPublishCheckerListener mqttPublishCheckerListener(EmqConnectionProperties emqConnectionProperties) {
+        return new MqttPublishCheckerListener(emqConnectionProperties);
     }
 
     @Override

@@ -10,7 +10,6 @@ import com.ddf.boot.common.websocket.util.WsSecureUtil;
 import java.util.List;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
@@ -22,7 +21,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  * @since 2020/09/15 20:11
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "customize.websocket.properties")
 public class WebSocketProperties {
 

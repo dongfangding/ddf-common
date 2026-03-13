@@ -5,9 +5,7 @@ import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 /**
  * 系统环境变量帮助类
@@ -15,11 +13,13 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @since 2019/12/24 0024 13:49
  */
-@Component
 public class EnvironmentHelper {
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public EnvironmentHelper(Environment environment) {
+        this.environment = environment;
+    }
 
     /**
      * 判断目标环境是否存在于当前激活的环境变量中

@@ -1,4 +1,4 @@
-package com.ddf.boot.common.core.util;
+package com.ddf.boot.common.governance.util;
 
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
 import com.ddf.boot.common.api.exception.ServerErrorException;

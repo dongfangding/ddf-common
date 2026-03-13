@@ -11,14 +11,12 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.CompositeMessageConverter;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 
 @AutoConfiguration
-@ComponentScan(basePackages = {"com.ddf.boot.common.rocketmq"})
 @EnableConfigurationProperties(RocketEnhanceProperties.class)
 public class RocketMQEnhanceAutoConfiguration {
 
@@ -26,8 +24,9 @@ public class RocketMQEnhanceAutoConfiguration {
      * 注入增强的RocketProducer
      */
     @Bean
-    public RocketProducer rocketMQEnhanceTemplate(RocketMQTemplate rocketMQTemplate){
-        return new RocketProducer(rocketMQTemplate);
+    public RocketProducer rocketMQEnhanceTemplate(RocketMQTemplate rocketMQTemplate,
+            RocketEnhanceProperties rocketEnhanceProperties){
+        return new RocketProducer(rocketMQTemplate, rocketEnhanceProperties);
     }
 
     /**

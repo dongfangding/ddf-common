@@ -3,7 +3,6 @@ package com.ddf.boot.netty.broker.server.properties;
 import io.netty.channel.ChannelOption;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * 代理服务器配置类$
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @since 2020/9/20 0020 21:31
  */
-@Component
 @Data
 @ConfigurationProperties(prefix = "netty-broker")
 public class BrokerProperties {

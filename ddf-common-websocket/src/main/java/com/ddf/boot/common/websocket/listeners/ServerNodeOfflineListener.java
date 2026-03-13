@@ -1,10 +1,9 @@
 package com.ddf.boot.common.websocket.listeners;
 
 import com.ddf.boot.zookeeper.listener.NodeEventListener;
+import lombok.RequiredArgsConstructor;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -13,11 +12,10 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2020/10/10 15:59
  */
-@Component
+@RequiredArgsConstructor
 public class ServerNodeOfflineListener implements NodeEventListener {
 
-    @Autowired
-    private RemoveOfflineKeyListener removeOfflineKeyListener;
+    private final RemoveOfflineKeyListener removeOfflineKeyListener;
 
     @Override
     public int getSort() {

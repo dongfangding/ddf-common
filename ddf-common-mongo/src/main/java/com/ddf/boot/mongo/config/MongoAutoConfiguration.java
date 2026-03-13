@@ -1,7 +1,9 @@
 package com.ddf.boot.mongo.config;
 
+import com.ddf.boot.mongo.helper.MongoTemplateHelper;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * <p>description</p >
@@ -13,6 +15,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2020/09/21 19:16
  */
 @AutoConfiguration
-@ComponentScan("com.ddf.boot.mongo")
 public class MongoAutoConfiguration {
+
+    @Bean
+    public MongoTemplateHelper mongoTemplateHelper(MongoTemplate mongoTemplate) {
+        return new MongoTemplateHelper(mongoTemplate);
+    }
 }

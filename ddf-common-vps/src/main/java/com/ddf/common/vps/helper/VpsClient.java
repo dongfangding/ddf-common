@@ -26,7 +26,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -36,7 +35,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 1.0
  * @since 2021/12/01 17:42
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class VpsClient {

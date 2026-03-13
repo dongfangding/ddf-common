@@ -3,7 +3,6 @@ package com.ddf.boot.common.websocket.interceptor;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.websocket.model.Message;
 import com.ddf.boot.common.websocket.util.WsSecureUtil;
-import org.springframework.stereotype.Component;
 
 /**
  * 基于RSA对消息进行加解密的实现$
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @since 2020/9/16 0016 22:43
  */
-@Component
 public class RSAEncryptProcessor implements EncryptProcessor {
 
     /**

@@ -9,6 +9,7 @@ import com.ddf.boot.common.redis.serializer.ObjectStringRedisSerializer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
@@ -17,7 +18,6 @@ import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 import org.redisson.spring.starter.RedissonAutoConfigurationCustomizer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,17 +42,17 @@ import org.springframework.util.ReflectionUtils;
  */
 @Configuration
 @EnableConfigurationProperties({RedissonCustomizeProperties.class, RedisProperties.class})
+@RequiredArgsConstructor
 public class RedisCustomizeAutoConfiguration implements RedissonAutoConfigurationCustomizer {
 
     private static final String REDIS_PROTOCOL_PREFIX = "redis://";
     private static final String REDISS_PROTOCOL_PREFIX = "rediss://";
 
-    @Autowired
-    private RedissonCustomizeProperties redissonCustomizeProperties;
-    @Autowired
-    private RedisProperties redisProperties;
-    @Autowired
-    private EnvironmentHelper environmentHelper;
+    private final RedissonCustomizeProperties redissonCustomizeProperties;
+
+    private final RedisProperties redisProperties;
+
+    private final EnvironmentHelper environmentHelper;
 
     /**
      * 注册redis扩展方法类

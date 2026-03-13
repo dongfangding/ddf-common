@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2024/06/04 14:52
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class TableNotifyImpl implements TableNotify {

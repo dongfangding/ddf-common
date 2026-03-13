@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>mongo帮助类</p >
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2020/09/21 19:11
  */
-@Component
 @RequiredArgsConstructor
 public class MongoTemplateHelper {
 

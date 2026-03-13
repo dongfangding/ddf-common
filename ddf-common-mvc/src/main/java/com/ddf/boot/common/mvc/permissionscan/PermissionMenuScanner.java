@@ -12,9 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
-@Component
 @Slf4j
 public class PermissionMenuScanner {
 	private final ApplicationContext applicationContext;

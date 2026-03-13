@@ -9,7 +9,6 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
  * @since 2020/10/12 13:25
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "customizer.infra.ext.oss")
 public class OssProperties implements InitializingBean {
 

@@ -1,6 +1,7 @@
 package com.ddf.boot.common.s3.config;
 
 import com.ddf.boot.common.s3.api.S3Api;
+import com.ddf.boot.common.s3.helper.FileUploadHelper;
 import com.ddf.boot.common.s3.helper.S3Helper;
 import com.ddf.boot.common.s3.service.S3Service;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -8,8 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 
 /**
  * S3 兼容存储自动配置类.
@@ -20,8 +19,6 @@ import org.springframework.context.annotation.Import;
  * @author snowball
  */
 @AutoConfiguration
-@ComponentScan("com.ddf.boot.common.s3")
-@Import(S3Properties.class)
 @EnableConfigurationProperties(S3Properties.class)
 @ConditionalOnProperty(value = "customizer.infra.s3.enable", havingValue = "true", matchIfMissing = true)
 public class S3AutoConfiguration {
@@ -40,6 +37,12 @@ public class S3AutoConfiguration {
     @ConditionalOnMissingBean(S3Helper.class)
     public S3Helper s3Helper(S3Api s3Api, S3Properties s3Properties) {
         return new S3Helper(s3Api, s3Properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(FileUploadHelper.class)
+    public FileUploadHelper fileUploadHelper(S3Api s3Api, S3Properties s3Properties) {
+        return new FileUploadHelper(s3Api, s3Properties);
     }
 
 }

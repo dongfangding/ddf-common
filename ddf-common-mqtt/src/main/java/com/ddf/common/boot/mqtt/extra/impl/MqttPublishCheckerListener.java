@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.springframework.stereotype.Component;
 
 /**
  * 消息发送前置检查
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Component
 public class MqttPublishCheckerListener implements MqttPublishListener {
 
     private final EmqConnectionProperties emqConnectionProperties;

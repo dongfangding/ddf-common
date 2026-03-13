@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dongfang.ding
  * @since 2019/8/23 9:45
  */
-@Service
 public class ChannelTransferServiceImpl implements ChannelTransferService {
 
     /**

@@ -6,7 +6,6 @@ import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
 import com.google.common.base.Throwables;
-import jakarta.annotation.Resource;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,18 +15,15 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class RocketProducer {
 
     private final RocketMQTemplate template;
 
-    @Resource
-    private RocketEnhanceProperties rocketEnhanceProperties;
+    private final RocketEnhanceProperties rocketEnhanceProperties;
 
     private final String TAG = "RocketProducerPlus:";
 

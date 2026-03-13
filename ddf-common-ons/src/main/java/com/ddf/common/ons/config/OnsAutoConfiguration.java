@@ -3,10 +3,12 @@ package com.ddf.common.ons.config;
 import com.aliyun.openservices.ons.api.bean.OrderProducerBean;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.ddf.common.ons.console.config.OnsClientConfiguration;
+import com.ddf.common.ons.controller.OnsConsoleController;
 import com.ddf.common.ons.properties.OnsProperties;
+import com.ddf.common.ons.transaction.LocalTransactionCheckerImpl;
+import com.ddf.common.ons.transaction.LocalTransactionExecutorImpl;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -17,7 +19,6 @@ import org.springframework.context.annotation.Import;
  **/
 @AutoConfiguration
 @Import({OnsListenerContainerConfiguration.class, OnsClientConfiguration.class})
-@ComponentScan(basePackages = {"com.ddf.common.ons"})
 public class OnsAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
@@ -35,5 +36,20 @@ public class OnsAutoConfiguration {
         OrderProducerBean orderProducerBean = new OrderProducerBean();
         orderProducerBean.setProperties(onsProperties.getOnsProperties());
         return orderProducerBean;
+    }
+
+    @Bean
+    public OnsConsoleController onsConsoleController() {
+        return new OnsConsoleController();
+    }
+
+    @Bean(name = "localTransactionExecutor")
+    public LocalTransactionExecutorImpl localTransactionExecutor() {
+        return new LocalTransactionExecutorImpl();
+    }
+
+    @Bean(name = "localTransactionChecker")
+    public LocalTransactionCheckerImpl localTransactionChecker() {
+        return new LocalTransactionCheckerImpl();
     }
 }

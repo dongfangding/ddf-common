@@ -68,8 +68,8 @@ public class ComparatorUtil {
 	 * @param newArrStr 参数
 	 */
 	public static List<IndexComparatorElement> compareWithWeakReplaceLast(String oldArrStr, String newArrStr) {
-		String[] oldArr = StringUtils.isBlank(oldArrStr) ? new String[0] : Stream.of(oldArrStr.split(",")).map(item -> URLUtil.url(item).getPath()).toArray(String[]::new);
-		String[] newArr = StringUtils.isBlank(newArrStr) ? new String[0] : Stream.of(newArrStr.split(",")).map(item -> URLUtil.url(item).getPath()).toArray(String[]::new);
+		String[] oldArr = StringUtils.isBlank(oldArrStr) ? new String[0] : oldArrStr.split(",");
+		String[] newArr = StringUtils.isBlank(newArrStr) ? new String[0] : newArrStr.split(",");
 
 		List<IndexComparatorElement> result = new ArrayList<>();
 		List<IndexComparatorElement> addList = new ArrayList<>();
@@ -138,13 +138,6 @@ public class ComparatorUtil {
 	 * @return
 	 */
 	public static String replaceSplitValueIfMatch(String originStr, String matchStr, String replaceStr) {
-		if (StringUtils.isNotBlank(matchStr)) {
-			matchStr = URLUtil.url(matchStr).getPath();
-		}
-		if (StringUtils.isNotBlank(replaceStr)) {
-			replaceStr = URLUtil.url(replaceStr).getPath();
-		}
-
 		if (StringUtils.isBlank(originStr)) {
 			return replaceStr;
 		}

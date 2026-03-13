@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(AuthenticationProperties.class)
-@ComponentScan(basePackages = "com.ddf.boot.common.authentication")
+@Import(AuthenticationWebConfiguration.class)
 public class AuthenticationAutoConfiguration {
 
     @Bean

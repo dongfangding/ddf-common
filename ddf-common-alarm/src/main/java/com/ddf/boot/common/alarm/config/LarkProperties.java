@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>Lark配置</p >
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @RefreshScope
-@Configuration
 @ConfigurationProperties(prefix = "customs.alarm.lark")
 public class LarkProperties {
 

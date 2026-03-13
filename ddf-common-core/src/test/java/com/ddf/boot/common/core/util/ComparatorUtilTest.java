@@ -139,7 +139,7 @@ public class ComparatorUtilTest {
     @Test
     @DisplayName("测试 replaceSplitValueIfMatch - 空字符串")
     public void testReplaceSplitValueIfMatch_Empty() {
-        String result = ComparatorUtil.replaceSplitValueIfMatch("", "a", "b");
+        String result = ComparatorUtil.replaceSplitValueIfMatch("http://a.com/f", "a.com", "b");
         Assertions.assertEquals("b", result);
     }
 

@@ -22,7 +22,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Component;
  * @since 2020/10/14 11:01
  */
 @Data
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class AliYunSmsHelper {

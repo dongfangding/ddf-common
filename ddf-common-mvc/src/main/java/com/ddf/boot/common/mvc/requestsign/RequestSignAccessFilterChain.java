@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2022/01/13 21:27
  */
-@Component
 @RequiredArgsConstructor
 public class RequestSignAccessFilterChain implements AccessFilterChain {
 

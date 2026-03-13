@@ -9,12 +9,10 @@ import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -28,12 +26,10 @@ import org.springframework.data.redis.core.ValueOperations;
  * @since 2021/02/05 14:18
  */
 @Slf4j
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class RedisRepeatableValidator implements RepeatableValidator {
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 验证器bean_name

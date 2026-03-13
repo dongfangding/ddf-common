@@ -5,16 +5,31 @@ import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.websocket.handler.CustomizeHandshakeHandler;
 import com.ddf.boot.common.websocket.handler.DefaultWebSocketHandler;
 import com.ddf.boot.common.websocket.handler.HandlerMessageService;
+import com.ddf.boot.common.websocket.handler.impl.HandlerMessageServiceImpl;
+import com.ddf.boot.common.websocket.helper.CmdStrategyHelper;
 import com.ddf.boot.common.websocket.interceptor.DefaultHandshakeInterceptor;
 import com.ddf.boot.common.websocket.interceptor.HandshakeAuth;
+import com.ddf.boot.common.websocket.interceptor.RSAEncryptProcessor;
+import com.ddf.boot.common.websocket.interceptor.WsMessageFilter;
+import com.ddf.boot.common.websocket.listeners.RedirectCmdListener;
+import com.ddf.boot.common.websocket.listeners.RemoveOfflineKeyListener;
 import com.ddf.boot.common.websocket.listeners.WebSocketHandlerListener;
+import com.ddf.boot.common.websocket.listeners.ServerNodeOfflineListener;
 import com.ddf.boot.common.websocket.properties.WebSocketProperties;
+import com.ddf.boot.common.websocket.service.ChannelTransferService;
+import com.ddf.boot.common.websocket.service.WsMessageService;
+import com.ddf.boot.common.websocket.service.impl.ChannelTransferServiceImpl;
+import com.ddf.boot.common.websocket.service.impl.WsMessageServiceImpl;
 import java.util.List;
+import java.util.Optional;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
@@ -36,17 +51,26 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @AutoConfiguration
 @EnableWebSocket
 @MapperScan(basePackages = "com.ddf.boot.common.websocket.mapper")
-@ComponentScan(basePackages = "com.ddf.boot.common.websocket")
+@EnableConfigurationProperties(WebSocketProperties.class)
+@Import(WebsocketThreadConfig.class)
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Autowired
-    private WebSocketProperties webSocketProperties;
-    @Autowired(required = false)
-    private List<HandshakeAuth> handshakeAuthList;
-    @Autowired(required = false)
-    private HandlerMessageService handlerMessageService;
-    @Autowired(required = false)
-    private WebSocketHandlerListener webSocketHandlerListener;
+    private final WebSocketProperties webSocketProperties;
+
+    private final List<HandshakeAuth> handshakeAuthList;
+
+    private final HandlerMessageService handlerMessageService;
+
+    private final WebSocketHandlerListener webSocketHandlerListener;
+
+    public WebSocketConfig(WebSocketProperties webSocketProperties, List<HandshakeAuth> handshakeAuthList,
+            Optional<HandlerMessageService> handlerMessageService,
+            Optional<WebSocketHandlerListener> webSocketHandlerListener) {
+        this.webSocketProperties = webSocketProperties;
+        this.handshakeAuthList = handshakeAuthList;
+        this.handlerMessageService = handlerMessageService.orElse(null);
+        this.webSocketHandlerListener = webSocketHandlerListener.orElse(null);
+    }
 
 
     /**
@@ -92,5 +116,53 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
+    }
+
+    @Bean
+    public RSAEncryptProcessor rsaEncryptProcessor() {
+        return new RSAEncryptProcessor();
+    }
+
+    @Bean
+    public CmdStrategyHelper cmdStrategyHelper(
+            ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool) {
+        return new CmdStrategyHelper(deviceCmdRunningStatePersistencePool);
+    }
+
+    @Bean
+    public ChannelTransferService channelTransferService() {
+        return new ChannelTransferServiceImpl();
+    }
+
+    @Bean
+    public HandlerMessageService handlerMessageService(
+            ThreadPoolTaskExecutor handlerMessagePool, ChannelTransferService channelTransferService,
+            CmdStrategyHelper cmdStrategyHelper) {
+        return new HandlerMessageServiceImpl(handlerMessagePool, channelTransferService,
+                webSocketProperties, cmdStrategyHelper);
+    }
+
+    @Bean
+    public WsMessageService wsMessageService(StringRedisTemplate stringRedisTemplate, Environment environment,
+            ThreadPoolTaskExecutor batchCmdExecutor, ChannelTransferService channelTransferService,
+            List<WsMessageFilter> wsMessageFilters) {
+        return new WsMessageServiceImpl(Optional.of(channelTransferService), stringRedisTemplate,
+                environment, batchCmdExecutor, wsMessageFilters);
+    }
+
+    @Bean
+    public RedirectCmdListener redirectCmdListener(WsMessageService wsMessageService) {
+        return new RedirectCmdListener(wsMessageService);
+    }
+
+    @Bean
+    public RemoveOfflineKeyListener removeOfflineKeyListener(StringRedisTemplate stringRedisTemplate,
+            Environment environment) {
+        return new RemoveOfflineKeyListener(stringRedisTemplate, environment);
+    }
+
+    @Bean
+    public ServerNodeOfflineListener serverNodeOfflineListener(RemoveOfflineKeyListener removeOfflineKeyListener) {
+        return new ServerNodeOfflineListener(removeOfflineKeyListener);
     }
 }

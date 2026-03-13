@@ -30,9 +30,7 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>description</p >
@@ -41,21 +39,28 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2020/10/09 10:51
  */
-@Component
 @Slf4j
 public class MonitorRegistryConfig implements InitializingBean {
 
     private CuratorFramework client;
 
-    @Autowired
-    private MonitorProperties monitorProperties;
-    @Autowired
-    private EnvironmentHelper environmentHelper;
-    @Autowired(required = false)
-    private List<NodeEventListener> nodeEventListeners;
-    @Autowired
+    private final MonitorProperties monitorProperties;
+
+    private final EnvironmentHelper environmentHelper;
+
+    private final List<NodeEventListener> nodeEventListeners;
+
     @Qualifier("zookeeperDistributedLock")
-    private DistributedLock zookeeperDistributedLock;
+    private final DistributedLock zookeeperDistributedLock;
+
+    public MonitorRegistryConfig(MonitorProperties monitorProperties, EnvironmentHelper environmentHelper,
+            List<NodeEventListener> nodeEventListeners,
+            @Qualifier("zookeeperDistributedLock") DistributedLock zookeeperDistributedLock) {
+        this.monitorProperties = monitorProperties;
+        this.environmentHelper = environmentHelper;
+        this.nodeEventListeners = nodeEventListeners;
+        this.zookeeperDistributedLock = zookeeperDistributedLock;
+    }
 
     private final static String DATA_SPLIT_CHAR = ",";
 
@@ -152,9 +157,9 @@ public class MonitorRegistryConfig implements InitializingBean {
                 case NODE_CREATED:
                     log.debug("[{}]节点创建成功...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                        final List<NodeEventListener> sortedListeners = nodeEventListeners.stream().sorted(
                                 Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
-                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                        for (NodeEventListener nodeEventListener : sortedListeners) {
                             nodeEventListener.nodeCreate(client, path, oldData, data);
                         }
                     }
@@ -164,9 +169,9 @@ public class MonitorRegistryConfig implements InitializingBean {
                             data.toString()
                     );
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                        final List<NodeEventListener> sortedListeners = nodeEventListeners.stream().sorted(
                                 Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
-                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                        for (NodeEventListener nodeEventListener : sortedListeners) {
                             nodeEventListener.nodeChange(client, path, oldData, data);
                         }
                     }
@@ -174,9 +179,9 @@ public class MonitorRegistryConfig implements InitializingBean {
                 case NODE_DELETED:
                     log.debug("[{}]节点被删除...........", path);
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                        nodeEventListeners = nodeEventListeners.stream().sorted(
+                        final List<NodeEventListener> sortedListeners = nodeEventListeners.stream().sorted(
                                 Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
-                        for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                        for (NodeEventListener nodeEventListener : sortedListeners) {
                             nodeEventListener.nodeDeleted(client, path, oldData, data);
                         }
                     }
@@ -372,9 +377,9 @@ public class MonitorRegistryConfig implements InitializingBean {
             }
             log.debug("节点检查时发现[{}]被删除", childData.getPath());
             if (CollUtil.isNotEmpty(nodeEventListeners)) {
-                nodeEventListeners = nodeEventListeners.stream().sorted(
+                final List<NodeEventListener> sortedListeners = nodeEventListeners.stream().sorted(
                         Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
-                for (NodeEventListener nodeEventListener : nodeEventListeners) {
+                for (NodeEventListener nodeEventListener : sortedListeners) {
                     nodeEventListener.nodeDeleted(client, childData.getPath(), childData, childData);
                 }
             }

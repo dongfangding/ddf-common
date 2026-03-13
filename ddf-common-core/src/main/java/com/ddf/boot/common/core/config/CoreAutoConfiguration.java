@@ -1,13 +1,17 @@
 package com.ddf.boot.common.core.config;
 
-import com.ddf.boot.common.core.constant.GlobalConstants;
 import com.ddf.boot.common.core.gracefulshutdown.ExecutorServiceGracefulShutdownDefinition;
+import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import com.ddf.boot.common.core.helper.SpringContextHolder;
+import com.ddf.boot.common.core.promise.CompletableFutureHelper;
+import com.ddf.boot.common.core.promise.DeferredHelper;
 import java.util.concurrent.TimeUnit;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 
 /**
  * 核心模块的自动注入
@@ -17,7 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(GlobalProperties.class)
-@ComponentScan(basePackages = GlobalConstants.CORE_BASE_PACKAGE)
+@Import(SpringContextHolder.class)
 public class CoreAutoConfiguration {
 
     /**
@@ -29,5 +33,23 @@ public class CoreAutoConfiguration {
     @ConditionalOnMissingBean
     public ExecutorServiceGracefulShutdownDefinition threadPoolExecutorShutdownDefinition() {
         return new ExecutorServiceGracefulShutdownDefinition(120, TimeUnit.SECONDS);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EnvironmentHelper environmentHelper(Environment environment) {
+        return new EnvironmentHelper(environment);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DeferredHelper<?, ?, ?> deferredHelper() {
+        return new DeferredHelper<>();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CompletableFutureHelper<?> completableFutureHelper() {
+        return new CompletableFutureHelper<>();
     }
 }

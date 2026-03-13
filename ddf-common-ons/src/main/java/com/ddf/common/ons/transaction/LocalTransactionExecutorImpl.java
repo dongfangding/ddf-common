@@ -7,7 +7,6 @@ import com.aliyun.openservices.ons.api.transaction.TransactionStatus;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.util.ObjectUtils;
  * @author steveguo
  * @since 2021-11-01 3:23 PM
  */
-@Component("localTransactionExecutor")
 public class LocalTransactionExecutorImpl implements LocalTransactionExecuter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionExecutor");

@@ -40,7 +40,7 @@ public class AbstractMessageBody implements MessageBody, Serializable {
 
     @Override
     public String getMsgTitle() {
-        return StringUtils.defaultString(msgTitle, StringUtils.isNotBlank(msg) ? msg.substring(0,
+        return StringUtils.defaultIfBlank(msgTitle, StringUtils.isNotBlank(msg) ? msg.substring(0,
                 Math.min(msg.length(), 20)) : "");
     }
 }

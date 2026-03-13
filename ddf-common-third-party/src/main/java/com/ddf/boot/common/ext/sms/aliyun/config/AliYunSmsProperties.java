@@ -6,7 +6,6 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>阿里云sms配置属性类</p >
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
  * @since 2020/10/14 10:54
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "customizer.infra.ext.sms")
 public class AliYunSmsProperties implements InitializingBean {
 

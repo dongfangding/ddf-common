@@ -13,7 +13,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * 回调异常
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
  * @since 2020/4/9 0009 14:38
  */
 @Slf4j
-@Component
 public class CompletableFutureHelper<T> {
 
     /**

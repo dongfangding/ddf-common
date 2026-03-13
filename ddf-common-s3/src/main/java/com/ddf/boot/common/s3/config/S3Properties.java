@@ -9,7 +9,6 @@ import java.util.Set;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * S3 兼容存储配置属性类.
@@ -62,7 +61,6 @@ import org.springframework.stereotype.Component;
  * @author snowball
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "customizer.infra.s3")
 public class S3Properties {
 

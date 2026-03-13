@@ -3,6 +3,7 @@ package com.ddf.boot.common.websocket.model;
 import com.ddf.boot.common.core.model.BaseDomain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class MerchantBaseDeviceRunningState extends BaseDomain {
 
     /**

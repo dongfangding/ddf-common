@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -31,7 +32,6 @@ import org.redisson.spring.data.connection.RedissonConnectionFactory;
 import org.redisson.spring.starter.RedissonProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -54,14 +54,14 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 @EnableConfigurationProperties(ExtraRedisProperties.class)
 @ConditionalOnProperty(prefix = "customizer.infra.redis.extra-multi", value = "enable", havingValue = "true")
+@RequiredArgsConstructor
 public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     private static final String REDIS_PROTOCOL_PREFIX = "redis://";
     private static final String REDISS_PROTOCOL_PREFIX = "rediss://";
 
-    @Autowired
-    private ExtraRedisProperties extraRedisProperties;
-    @Autowired
-    private RedissonProperties redissonProperties;
+    private final ExtraRedisProperties extraRedisProperties;
+
+    private final RedissonProperties redissonProperties;
     private ApplicationContext applicationContext;
 
     private void createRedissonClient() {

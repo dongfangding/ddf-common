@@ -15,10 +15,7 @@ import com.ddf.boot.common.websocket.service.ChannelTransferService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
 /**
@@ -27,14 +24,9 @@ import org.springframework.web.socket.TextMessage;
  * @author dongfang.ding
  * @since 2019/12/21
  */
-@Service
 @Slf4j
-@RequiredArgsConstructor
 public class HandlerMessageServiceImpl implements HandlerMessageService {
-
-    @Autowired
-    @Qualifier(value = "handlerMessagePool")
-    private ThreadPoolTaskExecutor handlerMessagePool;
+    private final ThreadPoolTaskExecutor handlerMessagePool;
     private final ChannelTransferService channelTransferService;
     /**
      * @param authPrincipal 参数
@@ -43,6 +35,15 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
      */
     private final WebSocketProperties webSocketProperties;
     private final CmdStrategyHelper cmdStrategyHelper;
+
+    public HandlerMessageServiceImpl(ThreadPoolTaskExecutor handlerMessagePool,
+            ChannelTransferService channelTransferService, WebSocketProperties webSocketProperties,
+            CmdStrategyHelper cmdStrategyHelper) {
+        this.handlerMessagePool = handlerMessagePool;
+        this.channelTransferService = channelTransferService;
+        this.webSocketProperties = webSocketProperties;
+        this.cmdStrategyHelper = cmdStrategyHelper;
+    }
 
     /**
      * 处理接收到的消息

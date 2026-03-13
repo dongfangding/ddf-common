@@ -10,13 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdeferred2.Deferred;
 import org.jdeferred2.Promise;
 import org.jdeferred2.impl.DeferredObject;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @since 2020/4/9 0009 13:31
  */
-@Component
 @Slf4j
 public class DeferredHelper<D, F, P> {
 

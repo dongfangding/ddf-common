@@ -23,16 +23,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
 /**
@@ -42,21 +41,28 @@ import org.springframework.web.socket.TextMessage;
  * @since 2020-09-16
  */
 @Slf4j
-@Service
 public class WsMessageServiceImpl implements WsMessageService {
-    @Autowired(required = false)
-    private ChannelTransferService channelTransferService;
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-    @Autowired
-    private Environment environment;
-    @Autowired
-    private ThreadPoolTaskExecutor batchCmdExecutor;
+    private final ChannelTransferService channelTransferService;
+
+    private final StringRedisTemplate redisTemplate;
+
+    private final Environment environment;
+
+    private final ThreadPoolTaskExecutor batchCmdExecutor;
     /**
      * @param requestList 参数
      */
-    @Autowired(required = false)
-    private List<WsMessageFilter> wsMessageFilters;
+    private final List<WsMessageFilter> wsMessageFilters;
+
+    public WsMessageServiceImpl(Optional<ChannelTransferService> channelTransferService,
+            StringRedisTemplate redisTemplate, Environment environment, ThreadPoolTaskExecutor batchCmdExecutor,
+            List<WsMessageFilter> wsMessageFilters) {
+        this.channelTransferService = channelTransferService.orElse(null);
+        this.redisTemplate = redisTemplate;
+        this.environment = environment;
+        this.batchCmdExecutor = batchCmdExecutor;
+        this.wsMessageFilters = wsMessageFilters;
+    }
 
 
     /**

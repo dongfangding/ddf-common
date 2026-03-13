@@ -7,12 +7,11 @@ import com.ddf.boot.common.websocket.model.MessageRequest;
 import com.ddf.boot.common.websocket.model.MessageResponse;
 import com.ddf.boot.common.websocket.service.WsMessageService;
 import java.nio.charset.StandardCharsets;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.stereotype.Component;
 
 /**
  * cmd指令转发订阅
@@ -20,12 +19,11 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @since 2019/8/27 15:18
  */
-@Component
 @Slf4j
+@RequiredArgsConstructor
 public class RedirectCmdListener extends MessageListenerAdapter {
 
-    @Autowired
-    private WsMessageService wsMessageService;
+    private final WsMessageService wsMessageService;
 
     /**
      * 由于websocket的session不支持外部存储，所以都存储在连接的那台机器上；

@@ -3,7 +3,6 @@ package com.ddf.boot.common.mvc.exception200;
 import com.ddf.boot.common.api.model.common.response.ResponseData;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @author dongfang.ding
  * @since 2020/11/22 0022 22:11
  */
-@Component
 @RestControllerAdvice(basePackages = "com.nvwa.boot.common")
 public class CommonExceptionAdvice extends AbstractExceptionHandler {
 

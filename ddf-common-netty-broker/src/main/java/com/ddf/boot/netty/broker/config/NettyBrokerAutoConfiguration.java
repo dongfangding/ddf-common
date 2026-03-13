@@ -1,7 +1,8 @@
 package com.ddf.boot.netty.broker.config;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.ddf.boot.netty.broker.server.properties.BrokerProperties;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
  * netty-broker自动配置类$
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author dongfang.ding
  * @since 2020/9/21 0021 23:37
  */
-@Configuration
-@ComponentScan("com.ddf.boot.netty.broker")
+@AutoConfiguration
+@EnableConfigurationProperties(BrokerProperties.class)
 public class NettyBrokerAutoConfiguration {
 }

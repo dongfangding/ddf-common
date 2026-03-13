@@ -10,7 +10,7 @@ import com.ddf.common.ids.service.service.impl.segment.dao.IDAllocDao;
 import com.ddf.common.ids.service.service.impl.segment.dao.impl.IDAllocDaoImpl;
 import com.ddf.common.ids.service.service.impl.snowflake.SnowflakeIDGenImpl;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +46,7 @@ public class IdsServiceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
-    public IDAllocDao idAllocDao(@Autowired DataSource dataSource) {
+    public IDAllocDao idAllocDao(DataSource dataSource) {
         return new IDAllocDaoImpl(dataSource);
     }
 
@@ -58,7 +58,7 @@ public class IdsServiceAutoConfiguration {
      */
     @Bean
     @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
-    public IDGen segmentIDGen(@Autowired IDAllocDao idAllocDao) {
+    public IDGen segmentIDGen(IDAllocDao idAllocDao) {
         return new SegmentIDGenImpl(idAllocDao, idsProperties);
     }
 
@@ -70,9 +70,8 @@ public class IdsServiceAutoConfiguration {
      * @return
      */
     @Bean
-    public IdsApi idsApi(@Autowired(required = false) IDGen segmentIDGen,
-            @Autowired(required = false) SnowflakeService snowflakeService) {
-        return new IdsApiImpl(idsProperties, snowflakeService, segmentIDGen);
+    public IdsApi idsApi(Optional<IDGen> segmentIDGen, Optional<SnowflakeService> snowflakeService) {
+        return new IdsApiImpl(idsProperties, snowflakeService.orElse(null), segmentIDGen.orElse(null));
     }
 
     /**

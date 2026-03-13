@@ -15,15 +15,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
@@ -33,17 +31,23 @@ import org.springframework.core.env.Environment;
  * @version 1.0
  * @since 2024/06/03 16:50
  */
-@RequiredArgsConstructor
 @Slf4j
-@Configuration
 public class TableScan {
     private final Environment environment;
-    @Autowired(required = false)
-    private DataSourceProperties dataSourceProperties;
-    @Autowired(required = false)
-    private TableNotify tableNotify;
-    @Autowired(required = false)
-    private DataSource dataSource;
+
+    private final DataSourceProperties dataSourceProperties;
+
+    private final TableNotify tableNotify;
+
+    private final DataSource dataSource;
+
+    public TableScan(Environment environment, Optional<DataSourceProperties> dataSourceProperties,
+            Optional<TableNotify> tableNotify, Optional<DataSource> dataSource) {
+        this.environment = environment;
+        this.dataSourceProperties = dataSourceProperties.orElse(null);
+        this.tableNotify = tableNotify.orElse(null);
+        this.dataSource = dataSource.orElse(null);
+    }
 
     @PostConstruct
     public void scan() {
@@ -58,15 +62,15 @@ public class TableScan {
                 //                final DatabaseMetaData databaseMetaData = connection.getMetaData();
                 //                final String url = databaseMetaData.getURL();
                 // 特定写法，直接按照目前已有的数据源配置，硬编码，获取数据库连接信息
-                String url = StringUtils.defaultString(
+                String url = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.url"),
                         dataSourceProperties.getUrl()
                 );
-                String username = StringUtils.defaultString(
+                String username = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.username"),
                         dataSourceProperties.getUsername()
                 );
-                String password = StringUtils.defaultString(
+                String password = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.password"),
                         dataSourceProperties.getPassword()
                 );
@@ -146,7 +150,7 @@ public class TableScan {
                                     log.error("分表扫描告警-自动创建表失败, url = {}, createTableSql = {}", url,
                                             createTableSql, e
                                     );
-                                    errorMsg = StringUtils.defaultString(e.getMessage(), "创建失败");
+                                    errorMsg = StringUtils.defaultIfBlank(e.getMessage(), "创建失败");
                                 }
 
                                 final TableAutoCreateNotifyInfo info = new TableAutoCreateNotifyInfo();

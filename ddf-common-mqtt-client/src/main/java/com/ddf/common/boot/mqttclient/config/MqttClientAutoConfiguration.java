@@ -1,8 +1,9 @@
 package com.ddf.common.boot.mqttclient.config;
 
+import com.ddf.common.boot.mqttclient.controller.MqttClientController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 /**
  * <p>mqtt client 配置类</p >
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @AutoConfiguration
 @Slf4j
-@ComponentScan(basePackages = {"com.ddf.common.boot.mqttclient"})
+@Import(MqttClientController.class)
 public class MqttClientAutoConfiguration {
 
 }

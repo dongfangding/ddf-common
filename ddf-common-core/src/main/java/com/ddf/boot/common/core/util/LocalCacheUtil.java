@@ -40,7 +40,7 @@ public class LocalCacheUtil {
 	 */
 	public static <T> T getGuavaCache(LoadingCache<String, T> loadingCache, String template, String... parameter) {
 		try {
-			return loadingCache.get(MessageFormat.format(template, parameter));
+			return loadingCache.get(MessageFormat.format(template, (Object)  parameter));
 		} catch (CacheLoader.InvalidCacheLoadException e) {
 			return null;
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class LocalCacheUtil {
 	public static <T> T getGuavaCacheCheckDefault(LoadingCache<String, T> loadingCache, T defaultValidValue,
 			String template, String... parameter) {
 		try {
-			String key = MessageFormat.format(template, parameter);
+			String key = MessageFormat.format(template, (Object) parameter);
 			T t = loadingCache.get(key);
 			if (defaultValidValue instanceof String) {
 				if (Objects.equals(t, defaultValidValue)) {

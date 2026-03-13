@@ -5,7 +5,6 @@ import com.aliyun.openservices.ons.api.transaction.LocalTransactionChecker;
 import com.aliyun.openservices.ons.api.transaction.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -14,7 +13,6 @@ import org.springframework.util.ObjectUtils;
  * @author SteveGuo
  * @since 2021-10-28 17:36 PM
  */
-@Component("localTransactionChecker")
 public class LocalTransactionCheckerImpl implements LocalTransactionChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionChecker");

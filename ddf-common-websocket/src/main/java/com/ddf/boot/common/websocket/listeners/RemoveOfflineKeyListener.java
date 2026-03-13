@@ -6,14 +6,13 @@ import com.ddf.boot.common.websocket.enumu.CacheKeyEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * 强制删除无效下线key$
@@ -21,16 +20,12 @@ import org.springframework.stereotype.Component;
  * @author dongfang.ding
  * @since 2020/9/17 0017 23:33
  */
-@Component
+@RequiredArgsConstructor
 public class RemoveOfflineKeyListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-    /**
-     * @param event 参数
-     */
-    @Autowired
-    private Environment environment;
+    private final StringRedisTemplate stringRedisTemplate;
+
+    private final Environment environment;
 
 
 

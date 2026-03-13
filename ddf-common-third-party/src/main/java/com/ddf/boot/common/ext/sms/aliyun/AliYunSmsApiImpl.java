@@ -6,7 +6,6 @@ import com.ddf.boot.common.ext.sms.model.SmsSendRequest;
 import com.ddf.boot.common.ext.sms.model.SmsSendResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>基于阿里云实现的短信服务</p >
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 2022/05/19 23:39
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AliYunSmsApiImpl implements SmsApi {
