@@ -108,7 +108,7 @@ services:
       - "9300:9300"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-        # 启动可能会报错，java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes
+      # 启动可能会报错，java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes
       # 手动执行下权限，es镜像内部以elasticsearch用户， uid通常为1000运行，所以可以在宿主机执行，给挂载目录权限。sudo chown -R 1000:1000 ./elasticsearch/data
       - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/logs:/usr/share/elasticsearch/logs
@@ -154,8 +154,9 @@ services:
     volumes:
       - ./rocketmq/broker/logs:/home/rocketmq/rocketmq-5.3.2/logs
       - ./rocketmq/broker/store:/home/rocketmq/rocketmq-5.3.2/store
-      - ./rocketmq/broker/conf/broker.conf:/home/rocketmq/rocketmq-5.3.2/conf/broker.conf
+      - ./rocketmq/broker/conf:/home/rocketmq/rocketmq-5.3.2/conf
     command: sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/rocketmq-5.3.2/conf/broker.conf
+    # command: sh mqbroker -n rocketmq-namesrv:9876
     healthcheck:
       test: [ "CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/10911' || exit 1" ]
       interval: 10s
@@ -196,7 +197,7 @@ services:
     container_name: rocketmq-dashboard
     restart: always
     ports:
-      - "8802:8082"
+      - "8803:8082"
     environment:
       - JAVA_OPTS=-Xmx256m -Xms128m
       - ROCKETMQ_CONFIG_NAMESRVADDR=rocketmq-namesrv:9876
@@ -210,7 +211,7 @@ services:
     container_name: xxl-job-admin
     restart: always
     ports:
-      - "8808:8080"
+      - "8802:8080"
     volumes:
       - ./xxl-job:/data/applogs
     environment:
@@ -255,13 +256,13 @@ services:
 
   nacos:
     image: nacos/nacos-server:${NACOS_VERSION}
-    container_name: nacos-standalone
+    container_name: nacos-standalone-mysql
     env_file:
       - ./nacos/nacos-standalone-mysql.env
     volumes:
       - ./nacos/logs/:/home/nacos/logs
     ports:
-      - "8080:8080"
+      - "8801:8080"
       - "8848:8848"
       - "9848:9848"
     depends_on:
@@ -270,3 +271,30 @@ services:
     restart: always
     networks:
       - middleware-network
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/snippets:/etc/nginx/snippets:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./log:/var/log/nginx
+    networks:
+      - middleware-network
+    healthcheck:
+      # 这里的 /health 记得在 nginx 配置里加上，否则会一直显示 unhealthy
+      test: [ "CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/health || exit 1" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    ulimits:
+      nofile:
+        soft: 200000
+        hard: 200000

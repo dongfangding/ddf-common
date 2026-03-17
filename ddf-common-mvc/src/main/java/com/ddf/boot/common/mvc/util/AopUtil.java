@@ -105,7 +105,7 @@ public class AopUtil {
     public static Map<String, Object> getAllParamMap(JoinPoint joinPoint) {
         Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
         String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-        if (parameterNames.length > 0) {
+        if (Objects.nonNull(parameterNames) && parameterNames.length > 0) {
             for (int i = 0; i < parameterNames.length; i++) {
                 Object value = joinPoint.getArgs()[i];
                 paramsMap.put(parameterNames[i], value);
@@ -124,7 +124,7 @@ public class AopUtil {
         try {
             Map<String, Object> paramsMap = Maps.newHashMapWithExpectedSize(joinPoint.getArgs().length);
             String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-            if (parameterNames.length > 0) {
+            if (Objects.nonNull(parameterNames) && parameterNames.length > 0) {
                 for (int i = 0; i < parameterNames.length; i++) {
                     Object value = joinPoint.getArgs()[i];
                     if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile || value instanceof MultipartFile[]) {
