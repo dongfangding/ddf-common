@@ -40,7 +40,7 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.5.9</spring-boot.version>
+        <spring-boot.version>3.5.12</spring-boot.version>
         <spring-cloud-context.version>4.1.6</spring-cloud-context.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <jdeferred.version>2.0.0</jdeferred.version>
