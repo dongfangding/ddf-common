@@ -165,9 +165,9 @@ public abstract class AbstractExceptionHandler {
             exceptionCode = BaseErrorCallbackCode.SERVER_ERROR.getCode();
             formatDefaultMessage = BaseErrorCallbackCode.SERVER_ERROR.getBizMessage();
         }
-        // 根据异常资源文件格式化消息，找不到的话，使用默认异常本身的消息
+        // 根据异常资源文件格式化消息，找不到的话，使用默认异常本身的消息, 如果exceptionCode不为空，则国际化翻译文本可以缓存
         String finalMessage = MessageSourceUtil.getMessage(
-                StringUtils.defaultIfBlank(formatCode, exceptionCode), formatParams, formatDefaultMessage, locale);
+                StringUtils.defaultIfBlank(formatCode, exceptionCode), formatParams, formatDefaultMessage, locale, StringUtils.isNotBlank(exceptionCode));
 
         if (globalProperties.isExceptionCodeToResponseStatus()) {
             String numberRegex = "\\d+";

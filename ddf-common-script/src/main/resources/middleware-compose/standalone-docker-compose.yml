@@ -285,6 +285,7 @@ services:
       - ./nginx/snippets:/etc/nginx/snippets:ro
       - ./ssl:/etc/nginx/ssl:ro
       - ./log:/var/log/nginx
+      - ./html:/usr/share/nginx/html:ro
     networks:
       - middleware-network
     healthcheck:
