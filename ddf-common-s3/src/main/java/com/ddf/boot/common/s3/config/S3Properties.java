@@ -1,7 +1,5 @@
 package com.ddf.boot.common.s3.config;
 
-import cn.hutool.core.collection.CollUtil;
-import com.google.common.base.Preconditions;
 import jakarta.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
@@ -11,52 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * S3 兼容存储配置属性类.
+ * S3 兼容存储配置属性。
  *
- * <p>支持 MinIO、AWS S3、阿里云 OSS、腾讯云 COS 等 S3 兼容存储服务.</p>
- *
- * <h2>配置示例</h2>
- * <h3>MinIO 本地环境</h3>
- * <pre>
- * customizer.infra:
- *   s3:
- *     enable: true
- *     endpoint: http://localhost:9000
- *     access-key: minioadmin
- *     secret-key: minioadmin
- *     bucket-name: my-bucket
- *     region: us-east-1
- *     secure: false
- *     path-style-access: true
- * </pre>
- *
- * <h3>AWS S3 生产环境</h3>
- * <pre>
- * customizer.infra:
- *   s3:
- *     enable: true
- *     endpoint: https://s3.amazonaws.com
- *     access-key: AWS_ACCESS_KEY
- *     secret-key: AWS_SECRET_KEY
- *     session-token: AWS_SESSION_TOKEN  # 可选，临时凭证
- *     bucket-name: prod-bucket
- *     region: us-east-1
- *     secure: true
- *     path-style-access: false  # AWS S3 推荐使用虚拟主机风格
- * </pre>
- *
- * <h3>阿里云 OSS</h3>
- * <pre>
- * customizer.infra:
- *   s3:
- *     enable: true
- *     endpoint: https://oss-cn-hangzhou.aliyuncs.com
- *     access-key: OSS_ACCESS_KEY
- *     secret-key: OSS_SECRET_KEY
- *     bucket-name: oss-bucket
- *     region: cn-shanghai
- *     secure: true
- * </pre>
+ * <p>当前模块基于 S3 协议抽象，支持 MinIO、AWS S3、阿里云 OSS、腾讯云 COS 等兼容实现。</p>
  *
  * @author snowball
  */
@@ -65,110 +20,87 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class S3Properties {
 
     /**
-     * 是否启用 S3 客户端，默认为 true.
+     * 是否启用 S3 模块。
      */
     private boolean enable = true;
 
     /**
-     * S3 兼容存储服务端点.
-     *
-     * <p>示例:</p>
-     * <ul>
-     *   <li>MinIO: http://localhost:9000</li>
-     *   <li>AWS S3: https://s3.amazonaws.com</li>
-     *   <li>阿里云 OSS: https://oss-cn-hangzhou.aliyuncs.com</li>
-     * </ul>
+     * S3 服务端点。
      */
     private String endpoint;
 
     /**
-     * Access Key / Access Key ID.
+     * 访问凭证 accessKey。
      */
     private String accessKey;
 
     /**
-     * Secret Key / Secret Access Key.
+     * 访问凭证 secretKey。
      */
     private String secretKey;
 
     /**
-     * AWS Session Token（可选），用于临时凭证.
-     *
-     * <p>使用 AWS STS 临时凭证时需要设置.</p>
+     * 临时凭证 sessionToken，可选。
      */
     private String sessionToken;
 
     /**
-     * 默认 Bucket 名称.
+     * 默认 Bucket 名称。
      */
     private String bucketName;
 
     /**
-     * 区域（Region）.
-     *
-     * <p>AWS S3 必须设置正确的 region，部分操作需要 region 信息.</p>
+     * 区域配置。
      */
     private String region = "us-east-1";
 
     /**
-     * 是否使用 HTTPS/SSL.
+     * 是否启用 HTTPS。
      */
     private boolean secure;
 
     /**
-     * 是否使用路径风格访问（Path Style）.
-     *
-     * <p>默认为 true.</p>
-     * <ul>
-     *   <li>true: http://endpoint/bucket/key (MinIO 默认)</li>
-     *   <li>false: http://bucket.endpoint/key (AWS S3 推荐)</li>
-     * </ul>
+     * 是否使用 path-style 风格访问。
      */
     private boolean pathStyleAccess = true;
 
     /**
-     * 自定义域名（可选）.
-     *
-     * <p>用于 CNAME 绑定自定义域名场景.</p>
+     * 自定义访问域名。
      */
     private String customDomain;
 
     /**
-     * 连接超时时间（毫秒）.
+     * 连接超时时间，单位毫秒。
      */
     private int connectionTimeout = 10000;
 
     /**
-     * 读取超时时间（毫秒）.
+     * 读取超时时间，单位毫秒。
      */
     private int readTimeout = 10000;
 
     /**
-     * 多 Bucket 配置.
+     * 多 Bucket 配置。
      */
     private List<S3BucketProperty> buckets;
 
     /**
-     * 允许上传的文件类型（扩展名小写）.
-     *
-     * <p>为空时使用默认值（图片类型）.</p>
+     * 允许上传的文件扩展名集合。
      */
     private Set<String> allowedFileTypes = new HashSet<>();
 
     /**
-     * 最大文件大小（字节）.
-     *
-     * <p>默认为 10MB.</p>
+     * 最大文件大小，单位字节。
      */
     private long maxFileSize = 10 * 1024 * 1024;
 
     /**
-     * 主 Bucket 配置，初始化时自动设置.
+     * 解析后的主 Bucket 配置。
      */
     private S3BucketProperty primaryBucketProperty;
 
     /**
-     * 验证配置并初始化主 Bucket.
+     * 初始化并校验关键配置。
      */
     @PostConstruct
     public void init() {
@@ -176,41 +108,82 @@ public class S3Properties {
             return;
         }
 
-        Preconditions.checkArgument(StringUtils.isNotBlank(endpoint), "S3 endpoint 不能为空");
-        Preconditions.checkArgument(StringUtils.isNotBlank(accessKey), "S3 accessKey 不能为空");
-        Preconditions.checkArgument(StringUtils.isNotBlank(secretKey), "S3 secretKey 不能为空");
+        requireNotBlank(endpoint, "S3 endpoint 不能为空");
+        requireNotBlank(accessKey, "S3 accessKey 不能为空");
+        requireNotBlank(secretKey, "S3 secretKey 不能为空");
 
-        if (CollUtil.isNotEmpty(buckets)) {
-            // 找到主 Bucket
-            primaryBucketProperty = buckets.stream()
-                    .filter(S3BucketProperty::isPrimary)
-                    .findFirst()
-                    .orElse(buckets.get(0));
-        } else if (StringUtils.isNotBlank(bucketName)) {
+        if (buckets != null && !buckets.isEmpty()) {
+            validateBuckets();
+            primaryBucketProperty = resolvePrimaryBucket(buckets);
+            return;
+        }
+
+        if (StringUtils.isNotBlank(bucketName)) {
             primaryBucketProperty = new S3BucketProperty();
             primaryBucketProperty.setBucketName(bucketName);
             primaryBucketProperty.setPrimary(true);
-        } else {
-            Preconditions.checkArgument(false, "请配置 S3 bucketName 或 buckets");
+            return;
         }
+
+        throw new IllegalStateException("请配置 S3 bucketName 或 buckets");
     }
 
     /**
-     * 获取主 Bucket 名称.
+     * 获取主 Bucket 名称。
+     *
+     * @return 主 Bucket 名称
      */
     public String getPrimaryBucketName() {
         return primaryBucketProperty != null ? primaryBucketProperty.getBucketName() : bucketName;
     }
 
     /**
-     * 检查是否使用路径风格访问.
+     * 判断是否使用 path-style 访问。
+     *
+     * @return 是否使用 path-style
      */
     public boolean isPathStyleAccess() {
-        // 如果设置了自定义域名，使用虚拟主机风格
         if (StringUtils.isNotBlank(customDomain)) {
             return false;
         }
         return pathStyleAccess;
     }
 
+    /**
+     * 校验 Bucket 列表配置。
+     */
+    private void validateBuckets() {
+        long primaryBucketCount = buckets.stream()
+                .peek(bucket -> requireNotBlank(bucket.getBucketName(), "S3 buckets 中的 bucketName 不能为空"))
+                .filter(S3BucketProperty::isPrimary)
+                .count();
+        if (primaryBucketCount > 1) {
+            throw new IllegalStateException("S3 buckets 配置中只允许存在一个 primary=true 的 Bucket");
+        }
+    }
+
+    /**
+     * 解析主 Bucket，若没有显式 primary，则取第一个。
+     *
+     * @param bucketProperties Bucket 列表
+     * @return 主 Bucket 配置
+     */
+    private S3BucketProperty resolvePrimaryBucket(List<S3BucketProperty> bucketProperties) {
+        return bucketProperties.stream()
+                .filter(S3BucketProperty::isPrimary)
+                .findFirst()
+                .orElse(bucketProperties.get(0));
+    }
+
+    /**
+     * 校验字符串非空。
+     *
+     * @param value 待校验值
+     * @param message 异常消息
+     */
+    private void requireNotBlank(String value, String message) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalStateException(message);
+        }
+    }
 }

@@ -37,7 +37,7 @@ public class S3Helper {
      * 获取主 Bucket 名称.
      */
     public String getPrimaryBucketName() {
-        return s3Properties.getPrimaryBucketProperty().getBucketName();
+        return s3Properties.getPrimaryBucketName();
     }
 
     /**
@@ -116,12 +116,15 @@ public class S3Helper {
     public void uploadAndOperate(String platform, String identity, String filename,
                                   InputStream inputStream, String contentType, long size,
                                   Consumer<String> consumer) {
+        String uploadedObjectKey = null;
         try {
             UploadResult result = upload(platform, identity, filename, inputStream, contentType, size);
+            uploadedObjectKey = result.getObjectKey();
             consumer.accept(result.getObjectKey());
         } finally {
-            String objectKey = generateObjectKey(platform, identity, filename);
-            s3Api.delete(objectKey);
+            if (uploadedObjectKey != null) {
+                s3Api.delete(uploadedObjectKey);
+            }
         }
     }
 

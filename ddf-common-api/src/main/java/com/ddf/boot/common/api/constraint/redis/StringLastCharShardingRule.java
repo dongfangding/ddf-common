@@ -31,16 +31,17 @@ public class StringLastCharShardingRule implements RedisShardingRule<Integer, In
      */
     private Integer shardingMod;
     @Override
-    public String getSharding(String... args) {
+    public String getSharding(Object... args) {
         if (shardingKeyInArgsIndex >= args.length) {
             throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
         }
-        final String arg = args[shardingKeyInArgsIndex];
+        final String arg = (String) args[shardingKeyInArgsIndex];
         if (shardingMod >= arg.length()) {
             return "";
         }
         return arg.substring(arg.length() - shardingMod);
     }
+
     /**
      * @param args 参数
      */

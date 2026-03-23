@@ -29,13 +29,13 @@ public class NumberShardingRule implements RedisShardingRule<Integer, Integer> {
      */
     private Integer shardingMod;
     @Override
-    public String getSharding(String... args) {
+    public String getSharding(Object... args) {
         if (shardingKeyInArgsIndex >= args.length) {
             throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS);
         }
-        final String arg = args[shardingKeyInArgsIndex];
+        final Object arg = args[shardingKeyInArgsIndex];
         try {
-            return (Integer.parseInt(arg) % shardingMod) + "";
+            return (Integer.parseInt(arg.toString()) % shardingMod) + "";
         } catch (Exception e) {
             throw new ServerErrorException(BaseErrorCallbackCode.REDIS_SHARDING_KEY_NOT_MATCH_ARGS, e);
         }

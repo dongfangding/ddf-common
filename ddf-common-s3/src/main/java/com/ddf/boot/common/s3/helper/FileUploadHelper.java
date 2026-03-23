@@ -11,70 +11,62 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 文件上传辅助类.
+ * 文件上传辅助类。
  *
- * <p>在 S3Helper 基础上扩展，提供文件校验、缩略图生成等功能.</p>
+ * <p>在 S3 上传流程上补充文件校验、对象 key 生成和缩略图生成能力。</p>
  *
  * @author snowball
  */
-@Slf4j
 @RequiredArgsConstructor
 public class FileUploadHelper {
 
-    private final S3Api s3Api;
-    private final S3Properties s3Properties;
-
     /**
-     * 默认允许的图片类型.
+     * 默认允许的图片扩展名。
      */
     private static final Set<String> DEFAULT_ALLOWED_IMAGE_TYPES = Set.of(
             "jpg", "jpeg", "png", "gif", "webp", "bmp"
     );
 
     /**
-     * 默认允许的文档类型.
-     */
-    private static final Set<String> DEFAULT_ALLOWED_DOC_TYPES = Set.of(
-            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt"
-    );
-
-    /**
-     * 默认允许的视频类型.
+     * 默认允许的视频扩展名。
      */
     private static final Set<String> DEFAULT_ALLOWED_VIDEO_TYPES = Set.of(
             "mp4", "avi", "mov", "wmv", "flv", "mkv"
     );
 
     /**
-     * 默认最大文件大小 (10MB).
+     * 默认最大文件大小，10MB。
      */
     private static final long DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     /**
-     * 默认缩略图宽度.
+     * 默认缩略图宽度。
      */
     private static final int DEFAULT_THUMBNAIL_WIDTH = 200;
 
     /**
-     * 默认缩略图高度.
+     * 默认缩略图高度。
      */
     private static final int DEFAULT_THUMBNAIL_HEIGHT = 200;
 
+    private final S3Api s3Api;
+    private final S3Properties s3Properties;
+
     /**
-     * 上传文件（带校验）.
+     * 上传文件，仅做基础校验。
      *
-     * @param platform      平台标识
-     * @param identity      业务标识
-     * @param multipartFile 上传的文件
+     * @param platform 平台标识
+     * @param identity 业务标识
+     * @param multipartFile 上传文件
      * @return 上传结果
      */
     public UploadResult upload(String platform, String identity, MultipartFile multipartFile) {
@@ -82,52 +74,43 @@ public class FileUploadHelper {
     }
 
     /**
-     * 上传文件（带校验和缩略图）.
+     * 上传文件，并按需生成缩略图。
      *
-     * @param platform       平台标识
-     * @param identity       业务标识
-     * @param multipartFile  上传的文件
-     * @param generateThumb  是否生成缩略图
+     * @param platform 平台标识
+     * @param identity 业务标识
+     * @param multipartFile 上传文件
+     * @param generateThumb 是否生成缩略图
      * @return 上传结果
      */
-    public UploadResult upload(String platform, String identity, MultipartFile multipartFile,
-                               boolean generateThumb) {
+    public UploadResult upload(String platform, String identity, MultipartFile multipartFile, boolean generateThumb) {
         return upload(platform, identity, multipartFile, generateThumb, false);
     }
 
     /**
-     * 上传文件（完整参数）.
+     * 上传文件完整入口。
      *
-     * @param platform       平台标识
-     * @param identity       业务标识
-     * @param multipartFile  上传的文件
-     * @param generateThumb  是否生成缩略图
-     * @param allowVideo     是否允许视频上传
+     * @param platform 平台标识
+     * @param identity 业务标识
+     * @param multipartFile 上传文件
+     * @param generateThumb 是否生成缩略图
+     * @param allowVideo 是否允许视频类型
      * @return 上传结果
      */
     public UploadResult upload(String platform, String identity, MultipartFile multipartFile,
                                boolean generateThumb, boolean allowVideo) {
-        // 文件校验
         validateFile(multipartFile, allowVideo);
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             String filename = multipartFile.getOriginalFilename();
-            String contentType = multipartFile.getContentType();
+            String contentType = resolveContentType(multipartFile);
             long size = multipartFile.getSize();
-
-            // 生成 objectKey
             String objectKey = generateObjectKey(platform, identity, filename);
 
-            // 上传原图
             UploadResult result = s3Api.upload(objectKey, inputStream, contentType, size);
-
-            // 生成缩略图
-            if (generateThumb && isImage(filename)) {
-                UploadResult thumbResult = generateAndUploadThumbnail(platform, identity,
-                        multipartFile, objectKey);
+            if (shouldGenerateThumbnail(generateThumb, filename)) {
+                UploadResult thumbResult = generateAndUploadThumbnail(multipartFile, objectKey);
                 result.setThumbPath(thumbResult.getUrl());
             }
-
             return result;
         } catch (IOException e) {
             throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
@@ -135,35 +118,30 @@ public class FileUploadHelper {
     }
 
     /**
-     * 批量上传文件（带校验）.
+     * 批量上传文件。
      *
-     * @param platform      平台标识
-     * @param identity      业务标识
-     * @param multipartFiles 上传的文件数组
+     * @param platform 平台标识
+     * @param identity 业务标识
+     * @param multipartFiles 上传文件数组
      * @return 上传结果列表
      */
-    public List<UploadResult> batchUpload(String platform, String identity,
-                                          MultipartFile[] multipartFiles) {
+    public List<UploadResult> batchUpload(String platform, String identity, MultipartFile[] multipartFiles) {
         return Arrays.stream(multipartFiles)
                 .map(file -> upload(platform, identity, file))
                 .toList();
     }
 
     /**
-     * 生成并上传缩略图.
-     * @param platform 参数
-     * @param identity 参数
-     * @param multipartFile 参数
-     * @param originalObjectKey 参数
+     * 生成并上传缩略图。
+     *
+     * @param multipartFile 原始文件
+     * @param originalObjectKey 原始对象 key
+     * @return 缩略图上传结果
+     * @throws IOException 处理图片失败时抛出
      */
-    private UploadResult generateAndUploadThumbnail(String platform, String identity,
-                                                    MultipartFile multipartFile,
-                                                    String originalObjectKey) throws IOException {
-        // 生成缩略图 objectKey
+    private UploadResult generateAndUploadThumbnail(MultipartFile multipartFile, String originalObjectKey) throws IOException {
         String thumbObjectKey = generateThumbObjectKey(originalObjectKey);
-
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            // 生成缩略图
             Thumbnails.of(multipartFile.getInputStream())
                     .size(DEFAULT_THUMBNAIL_WIDTH, DEFAULT_THUMBNAIL_HEIGHT)
                     .outputFormat("jpg")
@@ -171,79 +149,122 @@ public class FileUploadHelper {
                     .toOutputStream(outputStream);
 
             byte[] thumbData = outputStream.toByteArray();
-            String contentType = "image/jpeg";
-
-            // 上传缩略图
-            return s3Api.upload(thumbObjectKey, new ByteArrayInputStream(thumbData),
-                    contentType, thumbData.length);
+            return s3Api.upload(
+                    thumbObjectKey,
+                    new ByteArrayInputStream(thumbData),
+                    "image/jpeg",
+                    thumbData.length
+            );
         }
     }
 
     /**
-     * 生成缩略图的 objectKey.
-     * @param originalObjectKey 参数
+     * 生成缩略图对象 key。
+     *
+     * @param originalObjectKey 原始对象 key
+     * @return 缩略图对象 key
      */
     private String generateThumbObjectKey(String originalObjectKey) {
-        String basePath = originalObjectKey.substring(0, originalObjectKey.lastIndexOf("."));
-        return basePath + "_thumb.jpg";
+        int extensionIndex = originalObjectKey.lastIndexOf(".");
+        if (extensionIndex < 0) {
+            return originalObjectKey + "_thumb.jpg";
+        }
+        return originalObjectKey.substring(0, extensionIndex) + "_thumb.jpg";
     }
 
     /**
-     * 校验文件.
-     * @param file 参数
-     * @param allowVideo 参数
+     * 校验上传文件。
+     *
+     * @param file 上传文件
+     * @param allowVideo 是否允许视频类型
      */
     private void validateFile(MultipartFile file, boolean allowVideo) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("上传文件不能为空");
         }
 
-        // 文件大小校验
-        long maxSize = s3Properties.getMaxFileSize() > 0
-                ? s3Properties.getMaxFileSize()
-                : DEFAULT_MAX_FILE_SIZE;
-        if (file.getSize() > maxSize) {
-            throw new IllegalArgumentException("文件大小不能超过 " + (maxSize / 1024 / 1024) + "MB");
+        if (file.getSize() > resolveMaxFileSize()) {
+            throw new IllegalArgumentException("文件大小不能超过 " + (resolveMaxFileSize() / 1024 / 1024) + "MB");
         }
 
-        // 文件类型校验
         String filename = file.getOriginalFilename();
         if (StringUtils.isBlank(filename)) {
             throw new IllegalArgumentException("文件名不能为空");
         }
 
         String extension = getFileExtension(filename).toLowerCase();
-
-        // 获取允许的类型
-        Set<String> allowedTypes = s3Properties.getAllowedFileTypes();
-        if (allowedTypes == null || allowedTypes.isEmpty()) {
-            allowedTypes = DEFAULT_ALLOWED_IMAGE_TYPES;
-            if (allowVideo) {
-                allowedTypes = new java.util.HashSet<>(allowedTypes);
-                ((java.util.HashSet<String>) allowedTypes).addAll(DEFAULT_ALLOWED_VIDEO_TYPES);
-            }
-        }
-
-        if (!allowedTypes.contains(extension)) {
+        if (!resolveAllowedTypes(allowVideo).contains(extension)) {
             throw new IllegalArgumentException("不支持的文件类型: " + extension);
         }
     }
 
     /**
-     * 判断是否为图片.
-     * @param filename 参数
+     * 解析允许上传的扩展名集合。
+     *
+     * @param allowVideo 是否允许视频类型
+     * @return 允许的扩展名集合
+     */
+    private Set<String> resolveAllowedTypes(boolean allowVideo) {
+        Set<String> configuredAllowedTypes = s3Properties.getAllowedFileTypes();
+        if (configuredAllowedTypes != null && !configuredAllowedTypes.isEmpty()) {
+            return configuredAllowedTypes;
+        }
+
+        Set<String> defaultAllowedTypes = new HashSet<>(DEFAULT_ALLOWED_IMAGE_TYPES);
+        if (allowVideo) {
+            defaultAllowedTypes.addAll(DEFAULT_ALLOWED_VIDEO_TYPES);
+        }
+        return defaultAllowedTypes;
+    }
+
+    /**
+     * 解析最大文件大小。
+     *
+     * @return 最大文件大小
+     */
+    private long resolveMaxFileSize() {
+        return s3Properties.getMaxFileSize() > 0 ? s3Properties.getMaxFileSize() : DEFAULT_MAX_FILE_SIZE;
+    }
+
+    /**
+     * 判断是否需要生成缩略图。
+     *
+     * @param generateThumb 是否开启缩略图
+     * @param filename 文件名
+     * @return 是否生成缩略图
+     */
+    private boolean shouldGenerateThumbnail(boolean generateThumb, String filename) {
+        return generateThumb && isImage(filename);
+    }
+
+    /**
+     * 判断文件是否为图片类型。
+     *
+     * @param filename 文件名
+     * @return 是否为图片
      */
     private boolean isImage(String filename) {
         if (filename == null) {
             return false;
         }
-        String extension = getFileExtension(filename).toLowerCase();
-        return DEFAULT_ALLOWED_IMAGE_TYPES.contains(extension);
+        return DEFAULT_ALLOWED_IMAGE_TYPES.contains(getFileExtension(filename).toLowerCase());
     }
 
     /**
-     * 获取文件扩展名.
-     * @param filename 参数
+     * 解析上传 Content-Type。
+     *
+     * @param multipartFile 上传文件
+     * @return Content-Type
+     */
+    private String resolveContentType(MultipartFile multipartFile) {
+        return StringUtils.defaultIfBlank(multipartFile.getContentType(), "application/octet-stream");
+    }
+
+    /**
+     * 获取文件扩展名，不包含点号。
+     *
+     * @param filename 文件名
+     * @return 扩展名
      */
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
@@ -253,20 +274,19 @@ public class FileUploadHelper {
     }
 
     /**
-     * 生成对象 Key（路径）.
-     * @param platform 参数
-     * @param identity 参数
-     * @param filename 参数
+     * 生成对象 key。
+     *
+     * @param platform 平台标识
+     * @param identity 业务标识
+     * @param filename 文件名
+     * @return 对象 key
      */
     public String generateObjectKey(String platform, String identity, String filename) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        String format = LocalDateTime.now().format(dtf);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        String datePath = LocalDateTime.now().format(formatter);
         String uuid = IdUtil.simpleUUID();
         String extension = getFileExtension(filename);
-        if (!extension.isEmpty()) {
-            extension = "." + extension;
-        }
-        return String.format("%s/%s/%s/%s%s", platform, format, identity, uuid, extension);
+        String suffix = extension.isEmpty() ? "" : "." + extension;
+        return String.format("%s/%s/%s/%s%s", platform, datePath, identity, uuid, suffix);
     }
-
 }

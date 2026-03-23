@@ -29,7 +29,7 @@ public interface RedisShardingRule<S, M> {
      * @param args key的动态入参变量
      * @return
      */
-    String getSharding(String... args);
+	String getSharding(Object... args);
 
 
 }

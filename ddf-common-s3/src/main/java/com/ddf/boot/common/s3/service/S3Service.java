@@ -14,21 +14,27 @@ import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
+import io.minio.credentials.Provider;
+import io.minio.credentials.StaticProvider;
 import io.minio.http.Method;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * S3 兼容存储服务实现.
+ * S3 兼容存储服务实现。
  *
- * <p>支持 MinIO、AWS S3、阿里云 OSS 等 S3 兼容存储服务.</p>
+ * <p>当前基于 MinIO SDK 适配 S3 兼容协议，保持对 MinIO、AWS S3 以及其他兼容实现的基础能力支持。</p>
  *
  * @author snowball
  */
@@ -37,48 +43,72 @@ public class S3Service implements S3Api {
 
     private final MinioClient minioClient;
     private final S3Properties s3Properties;
+
     public S3Service(S3Properties s3Properties) {
+        this(createMinioClient(s3Properties), s3Properties);
+    }
+
+    /**
+     * 供测试场景注入 MinioClient，避免真实网络调用。
+     *
+     * @param minioClient Minio 客户端
+     * @param s3Properties S3 配置
+     */
+    public S3Service(MinioClient minioClient, S3Properties s3Properties) {
+        this.minioClient = minioClient;
         this.s3Properties = s3Properties;
+    }
 
-        MinioClient.Builder builder = MinioClient.builder()
-                .endpoint(s3Properties.getEndpoint())
-                .credentials(s3Properties.getAccessKey(), s3Properties.getSecretKey())
-                .region(s3Properties.getRegion());
-
-        // 如果配置了 session token，添加到请求头（MinIO SDK 不直接支持，但可以模拟）
+    /**
+     * 根据配置构建 MinioClient，并将超时、临时凭证、地址风格等信息下沉到 SDK 层。
+     *
+     * @param s3Properties S3 配置
+     * @return MinioClient 实例
+     */
+    private static MinioClient createMinioClient(S3Properties s3Properties) {
+        Provider provider;
         if (StringUtils.isNotBlank(s3Properties.getSessionToken())) {
-            // AWS S3 SDK 支持 session token，但 MinIO SDK 需要通过其他方式处理
-            // 这里仅记录，实际使用时需要根据具体 SDK 调整
-            log.warn("当前 MinIO SDK 版本未直接支持 session token，如需使用 AWS 临时凭证，请考虑使用 AWS SDK");
+            provider = new StaticProvider(
+                    s3Properties.getAccessKey(),
+                    s3Properties.getSecretKey(),
+                    s3Properties.getSessionToken()
+            );
+        } else {
+            provider = new StaticProvider(s3Properties.getAccessKey(), s3Properties.getSecretKey(), null);
         }
 
-        this.minioClient = builder.build();
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(s3Properties.getConnectionTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS)
+                .writeTimeout(s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS)
+                .build();
+
+        MinioClient client = MinioClient.builder()
+                .endpoint(s3Properties.getEndpoint())
+                .credentialsProvider(provider)
+                .region(s3Properties.getRegion())
+                .httpClient(httpClient)
+                .build();
+
+        if (!s3Properties.isPathStyleAccess()) {
+            client.enableVirtualStyleEndpoint();
+        }
+        return client;
     }
 
     private String getDefaultBucketName() {
-        return s3Properties.getPrimaryBucketProperty().getBucketName();
+        return s3Properties.getPrimaryBucketName();
     }
 
     public MinioClient getMinioClient() {
         return minioClient;
     }
-    /**
-     * @param objectKey 参数
-     * @param inputStream 参数
-     * @param contentType 参数
-     * @param size 参数
-     */
+
     @Override
     public UploadResult upload(String objectKey, InputStream inputStream, String contentType, long size) {
         return upload(getDefaultBucketName(), objectKey, inputStream, contentType, size);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     * @param inputStream 参数
-     * @param contentType 参数
-     * @param size 参数
-     */
+
     @Override
     public UploadResult upload(String bucketName, String objectKey, InputStream inputStream, String contentType, long size) {
         try {
@@ -92,7 +122,6 @@ public class S3Service implements S3Api {
                     .build();
 
             ObjectWriteResponse response = minioClient.putObject(putObjectArgs);
-
             return UploadResult.builder()
                     .objectKey(objectKey)
                     .url(getUrl(bucketName, objectKey))
@@ -106,10 +135,7 @@ public class S3Service implements S3Api {
             throw new RuntimeException("上传文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     * @param file 参数
-     */
+
     @Override
     public UploadResult upload(String objectKey, File file) {
         try (java.io.FileInputStream inputStream = new java.io.FileInputStream(file)) {
@@ -120,11 +146,7 @@ public class S3Service implements S3Api {
             throw new RuntimeException("上传文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     * @param data 待处理数据
-     * @param contentType 参数
-     */
+
     @Override
     public UploadResult upload(String objectKey, byte[] data, String contentType) {
         try (InputStream inputStream = new ByteArrayInputStream(data)) {
@@ -134,17 +156,12 @@ public class S3Service implements S3Api {
             throw new RuntimeException("上传文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public InputStream download(String objectKey) {
         return download(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public InputStream download(String bucketName, String objectKey) {
         try {
@@ -152,52 +169,39 @@ public class S3Service implements S3Api {
                     .bucket(bucketName)
                     .object(objectKey)
                     .build();
-
             return minioClient.getObject(getObjectArgs);
         } catch (Exception e) {
             log.error("下载文件失败, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
             throw new RuntimeException("下载文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public byte[] downloadAsBytes(String objectKey) {
         return downloadAsBytes(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public byte[] downloadAsBytes(String bucketName, String objectKey) {
         try (InputStream inputStream = download(bucketName, objectKey);
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
             byte[] buffer = new byte[8192];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
-
             return outputStream.toByteArray();
         } catch (IOException e) {
             log.error("下载文件失败, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
             throw new RuntimeException("下载文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public void delete(String objectKey) {
         delete(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public void delete(String bucketName, String objectKey) {
         try {
@@ -211,17 +215,12 @@ public class S3Service implements S3Api {
             throw new RuntimeException("删除文件失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public boolean exists(String objectKey) {
         return exists(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public boolean exists(String bucketName, String objectKey) {
         try {
@@ -235,42 +234,28 @@ public class S3Service implements S3Api {
             return false;
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public String getUrl(String objectKey) {
         return getUrl(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public String getUrl(String bucketName, String objectKey) {
         if (StringUtils.isNotBlank(s3Properties.getCustomDomain())) {
-            return s3Properties.getCustomDomain() + "/" + objectKey;
+            return buildUrlWithBase(s3Properties.getCustomDomain(), objectKey);
         }
-
         if (!s3Properties.isPathStyleAccess()) {
-            return s3Properties.getEndpoint() + "/" + bucketName + "/" + objectKey;
+            return buildVirtualHostStyleUrl(bucketName, objectKey);
         }
-
-        return s3Properties.getEndpoint() + "/" + bucketName + "/" + objectKey;
+        return buildUrlWithBase(s3Properties.getEndpoint(), bucketName + "/" + objectKey);
     }
-    /**
-     * @param objectKey 参数
-     * @param expiry 参数
-     */
+
     @Override
     public PresignedUrlResult getPresignedDownloadUrl(String objectKey, Duration expiry) {
         return getPresignedDownloadUrl(getDefaultBucketName(), objectKey, expiry);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     * @param expiry 参数
-     */
+
     @Override
     public PresignedUrlResult getPresignedDownloadUrl(String bucketName, String objectKey, Duration expiry) {
         try {
@@ -280,9 +265,7 @@ public class S3Service implements S3Api {
                     .expiry((int) expiry.toSeconds())
                     .method(Method.GET)
                     .build();
-
             String url = minioClient.getPresignedObjectUrl(args);
-
             return PresignedUrlResult.builder()
                     .url(url)
                     .objectKey(objectKey)
@@ -293,33 +276,25 @@ public class S3Service implements S3Api {
             throw new RuntimeException("生成预签名下载 URL 失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     * @param contentType 参数
-     * @param expiry 参数
-     */
+
     @Override
     public PresignedUrlResult getPresignedUploadUrl(String objectKey, String contentType, Duration expiry) {
         return getPresignedUploadUrl(getDefaultBucketName(), objectKey, contentType, expiry);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     * @param contentType 参数
-     * @param expiry 参数
-     */
+
     @Override
     public PresignedUrlResult getPresignedUploadUrl(String bucketName, String objectKey, String contentType, Duration expiry) {
         try {
-            GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
+            GetPresignedObjectUrlArgs.Builder builder = GetPresignedObjectUrlArgs.builder()
                     .bucket(bucketName)
                     .object(objectKey)
                     .expiry((int) expiry.toSeconds())
-                    .method(Method.PUT)
-                    .build();
+                    .method(Method.PUT);
+            if (StringUtils.isNotBlank(contentType)) {
+                builder.extraHeaders(Map.of("Content-Type", contentType));
+            }
 
-            String url = minioClient.getPresignedObjectUrl(args);
-
+            String url = minioClient.getPresignedObjectUrl(builder.build());
             return PresignedUrlResult.builder()
                     .url(url)
                     .objectKey(objectKey)
@@ -330,17 +305,12 @@ public class S3Service implements S3Api {
             throw new RuntimeException("生成预签名上传 URL 失败", e);
         }
     }
-    /**
-     * @param objectKey 参数
-     */
+
     @Override
     public S3StatObject getStat(String objectKey) {
         return getStat(getDefaultBucketName(), objectKey);
     }
-    /**
-     * @param bucketName 参数
-     * @param objectKey 参数
-     */
+
     @Override
     public S3StatObject getStat(String bucketName, String objectKey) {
         try {
@@ -348,9 +318,7 @@ public class S3Service implements S3Api {
                     .bucket(bucketName)
                     .object(objectKey)
                     .build();
-
             io.minio.StatObjectResponse response = minioClient.statObject(statObjectArgs);
-
             return S3StatObject.builder()
                     .objectKey(objectKey)
                     .size(response.size())
@@ -363,14 +331,11 @@ public class S3Service implements S3Api {
             throw new RuntimeException("获取文件信息失败", e);
         }
     }
-    /**
-     * @param bucketName 参数
-     */
+
     @Override
     public void makeBucket(String bucketName) {
         try {
-            boolean exists = bucketExists(bucketName);
-            if (!exists) {
+            if (!bucketExists(bucketName)) {
                 MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder()
                         .bucket(bucketName)
                         .build();
@@ -382,9 +347,7 @@ public class S3Service implements S3Api {
             throw new RuntimeException("创建 Bucket 失败", e);
         }
     }
-    /**
-     * @param bucketName 参数
-     */
+
     @Override
     public boolean bucketExists(String bucketName) {
         try {
@@ -397,16 +360,23 @@ public class S3Service implements S3Api {
             return false;
         }
     }
+
     /**
-     * @param bucketName 参数
+     * 上传前确保 Bucket 存在，兼容当前模块的自动建桶约定。
+     *
+     * @param bucketName Bucket 名称
      */
     private void ensureBucketExists(String bucketName) {
         if (!bucketExists(bucketName)) {
             makeBucket(bucketName);
         }
     }
+
     /**
-     * @param filename 参数
+     * 根据文件名推断常见内容类型，避免直接回落到二进制流。
+     *
+     * @param filename 文件名
+     * @return Content-Type
      */
     private String getContentType(String filename) {
         if (StringUtils.isBlank(filename)) {
@@ -432,4 +402,48 @@ public class S3Service implements S3Api {
         };
     }
 
+    /**
+     * 基于 endpoint 构造虚拟主机风格 URL。
+     *
+     * @param bucketName Bucket 名称
+     * @param objectKey 对象 Key
+     * @return 访问地址
+     */
+    private String buildVirtualHostStyleUrl(String bucketName, String objectKey) {
+        URI endpointUri = URI.create(s3Properties.getEndpoint());
+        StringBuilder builder = new StringBuilder()
+                .append(endpointUri.getScheme())
+                .append("://")
+                .append(bucketName)
+                .append(".")
+                .append(endpointUri.getHost());
+        if (endpointUri.getPort() > 0) {
+            builder.append(":").append(endpointUri.getPort());
+        }
+        return appendPath(builder.toString(), objectKey);
+    }
+
+    /**
+     * 基于基础地址拼接路径，统一去除重复斜杠。
+     *
+     * @param baseUrl 基础地址
+     * @param path 路径
+     * @return 完整地址
+     */
+    private String buildUrlWithBase(String baseUrl, String path) {
+        return appendPath(baseUrl, path);
+    }
+
+    /**
+     * 统一处理 URL 路径拼接。
+     *
+     * @param baseUrl 基础地址
+     * @param path 路径
+     * @return 完整地址
+     */
+    private String appendPath(String baseUrl, String path) {
+        String normalizedBaseUrl = StringUtils.removeEnd(baseUrl, "/");
+        String normalizedPath = StringUtils.removeStart(path, "/");
+        return normalizedBaseUrl + "/" + normalizedPath;
+    }
 }

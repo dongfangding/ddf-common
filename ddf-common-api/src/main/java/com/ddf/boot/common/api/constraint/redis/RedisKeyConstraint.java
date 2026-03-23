@@ -65,7 +65,7 @@ public interface RedisKeyConstraint {
      * @param args 方法入参数组
      * @return
      */
-    default String getKey(String... args) {
+    default String getKey(Object... args) {
         String template = getTemplate();
         if (PatternUtil.findChildStrCount(template, TEMPLATE_SPLIT_CHAR) != args.length) {
             throw new ServerErrorException(BaseErrorCallbackCode.REDIS_KEY_ARGS_NOT_MATCH_TEMPLATE);
@@ -79,7 +79,7 @@ public interface RedisKeyConstraint {
      * @param args 方法入参数组
      * @return
      */
-    default String getShardingKey(String... args) {
+    default String getShardingKey(Object... args) {
         final RedisShardingRule<Object, Object> shardingRule = getRedisShardingRule();
         if (Objects.isNull(shardingRule)) {
             return getKey(args);
