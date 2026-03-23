@@ -1,5 +1,7 @@
 package com.ddf.boot.common.governance.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,8 +39,45 @@ public class GovernanceProperties {
     public static class Observability {
 
         /**
-         * Governance observability switch placeholder.
+         * Global governance observability switch.
          */
         private boolean enabled = true;
+
+        /**
+         * Thread pool metrics binding configuration.
+         */
+        private final ThreadPool threadPool = new ThreadPool();
+    }
+
+    @Getter
+    @Setter
+    public static class ThreadPool {
+
+        /**
+         * Enable governance thread pool metrics auto binding.
+         */
+        private boolean enabled = true;
+
+        /**
+         * When true, bind all supported thread pool beans regardless of patterns.
+         */
+        private boolean scanAll = false;
+
+        /**
+         * Micrometer meter name prefix used for executor metrics.
+         */
+        private String metricName = "custom.thread.pool";
+
+        /**
+         * Bean name include patterns. Supports Spring simple wildcard matching.
+         */
+        private List<String> includeBeanNamePatterns = new ArrayList<>(List.of(
+                "*Executor", "*executor", "*Executors", "*executors", "*Pool", "*pool", "*Scheduler", "*scheduler"
+        ));
+
+        /**
+         * Bean name exclude patterns. Supports Spring simple wildcard matching.
+         */
+        private List<String> excludeBeanNamePatterns = new ArrayList<>();
     }
 }

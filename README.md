@@ -85,7 +85,7 @@ It is not a runnable business application template. It is intended to be a reusa
 | `ddf-common-distributed-lock` | Distributed lock implementations based on Redis and Zookeeper. |
 | `ddf-common-log4j` | Log4j2 logging integration support. |
 | `ddf-common-data-mysql-starter` | Aggregates JDBC, MySQL, and Druid as the MySQL data-access starter. |
-| `ddf-common-governance-starter` | Aggregates Mail and Actuator as the entry point for governance, alerting, and observability capabilities. |
+| `ddf-common-governance-starter` | Aggregates Mail, Actuator, and Prometheus registry support as the entry point for governance, alerting, and observability capabilities. |
 | `ddf-common-sharding` | Sharding auto-configuration and rule packaging. |
 | `ddf-common-zookeeper` | Zookeeper listeners, monitoring support, and related helpers. |
 | `ddf-common-mongo` | MongoDB auto-configuration and `MongoTemplate` helper utilities. |
@@ -219,6 +219,7 @@ Aggregated dependencies:
 
 - `spring-boot-starter-mail`
 - `spring-boot-starter-actuator`
+- `micrometer-registry-prometheus`
 
 Unified configuration prefix:
 
@@ -229,12 +230,25 @@ customizer:
       enabled: true
     observability:
       enabled: true
+      thread-pool:
+        enabled: true
+        metric-name: custom.thread.pool
+        scan-all: false
+        include-bean-name-patterns:
+          - "*Executor"
+          - "*Pool"
+          - "*Scheduler"
+        exclude-bean-name-patterns:
+          - "applicationTaskExecutor"
 ```
 
 Notes:
 
 - Importing the governance starter does not fail if `spring.mail.*` is absent.
 - Mail-related beans are only wired when the underlying mail beans exist.
+- Supported thread pool beans can be auto-bound to Micrometer metrics by bean-name wildcard rules.
+- Expose `management.endpoints.web.exposure.include=prometheus` to let Prometheus scrape `/actuator/prometheus`.
+- See `docs/thread-pool-observability.md` for Prometheus, Grafana, and alert rule templates.
 
 ### `ddf-common-starter-default`
 

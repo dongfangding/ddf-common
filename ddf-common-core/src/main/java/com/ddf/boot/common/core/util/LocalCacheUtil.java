@@ -38,9 +38,9 @@ public class LocalCacheUtil {
 	 * @param parameter parameter参数
 	 * @return
 	 */
-	public static <T> T getGuavaCache(LoadingCache<String, T> loadingCache, String template, String... parameter) {
+	public static <T> T getGuavaCache(LoadingCache<String, T> loadingCache, String template, Object... parameter) {
 		try {
-			return loadingCache.get(MessageFormat.format(template, (Object)  parameter));
+			return loadingCache.get(MessageFormat.format(template, parameter));
 		} catch (CacheLoader.InvalidCacheLoadException e) {
 			return null;
 		} catch (Exception e) {
@@ -71,9 +71,9 @@ public class LocalCacheUtil {
 	 * @return
 	 */
 	public static <T> T getGuavaCacheCheckDefault(LoadingCache<String, T> loadingCache, T defaultValidValue,
-			String template, String... parameter) {
+			String template, Object... parameter) {
 		try {
-			String key = MessageFormat.format(template, (Object) parameter);
+			String key = MessageFormat.format(template, parameter);
 			T t = loadingCache.get(key);
 			if (defaultValidValue instanceof String) {
 				if (Objects.equals(t, defaultValidValue)) {
