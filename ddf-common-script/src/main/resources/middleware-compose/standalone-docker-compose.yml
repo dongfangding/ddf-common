@@ -283,14 +283,14 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/snippets:/etc/nginx/snippets:ro
-      - ./ssl:/etc/nginx/ssl:ro
-      - ./log:/var/log/nginx
-      - ./html:/usr/share/nginx/html:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/html:/usr/share/nginx/html:ro
     networks:
       - middleware-network
     healthcheck:
       # 这里的 /health 记得在 nginx 配置里加上，否则会一直显示 unhealthy
-      test: [ "CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q -O - http://127.0.0.1:80/manager/health || exit 1" ]
       interval: 30s
       timeout: 3s
       retries: 3

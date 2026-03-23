@@ -16,6 +16,8 @@ REAL_GROUP_ID=${SUDO_GID:-$(id -g)}
 sudo chown -R ${REAL_USER_ID}:${REAL_GROUP_ID} ${SCRIPT_DIR}
 # mysql内部用户uid是999，必须给对应权限，否则无法操作数据库
 sudo chown -R 999:999 mysql
+# nginx内部使用nginx用户启动，对应101，给与权限，否则无法访问新创建的文件
+sudo chown -R 101:101 nginx
 
 # 创建集群网络
 sudo docker network create \
