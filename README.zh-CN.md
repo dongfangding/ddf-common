@@ -326,38 +326,3 @@ mvn -Prelease clean deploy
 
 Apache License 2.0
 
-## 治理与线程池监控补充说明
-
-`ddf-common-governance-starter` 现在除了 `spring-boot-starter-mail`、`spring-boot-starter-actuator` 之外，
-还聚合了 `micrometer-registry-prometheus`，可以直接暴露 `/actuator/prometheus` 供 Prometheus 抓取。
-
-线程池监控相关配置示例：
-
-```yaml
-customizer:
-  governance:
-    observability:
-      enabled: true
-      thread-pool:
-        enabled: true
-        metric-name: custom.thread.pool
-        scan-all: false
-        include-bean-name-patterns:
-          - "*Executor"
-          - "*Pool"
-          - "*Scheduler"
-        exclude-bean-name-patterns:
-          - "applicationTaskExecutor"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-```
-
-说明：
-
-- 支持按 Bean 名通配符规则自动扫描并绑定线程池 Micrometer 指标
-- 支持的线程池类型包括 `ThreadPoolTaskExecutor`、`ThreadPoolTaskScheduler`、`ThreadPoolExecutor`、`ScheduledThreadPoolExecutor`
-- Prometheus、Grafana 和告警模板见 `docs/thread-pool-observability.md`
