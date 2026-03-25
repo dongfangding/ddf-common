@@ -25,6 +25,8 @@ sudo chown -R 1000:1000 elasticsearch
 
 # 监控相关
 mkdir -p prometheus/data,grafana/data
+sudo chown -R 472:472 grafana
+sudo chown -R 65534:65534 prometheus
 
 # 创建集群网络
 sudo docker network create \
