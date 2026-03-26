@@ -24,9 +24,10 @@ sudo chown -R 1000:1000 emqx
 sudo chown -R 1000:1000 elasticsearch
 
 # 监控相关
-mkdir -p prometheus/data,grafana/data
-sudo chown -R 472:472 grafana
-sudo chown -R 65534:65534 prometheus
+mkdir -p monitor/{otelcol,prometheus/data,grafana/provisioning/datasources}
+
+sudo chown -R 472:472 monitor/grafana
+sudo chown -R 65534:65534 monitor/prometheus
 
 # 创建集群网络
 sudo docker network create \
