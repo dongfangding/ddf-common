@@ -73,6 +73,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
             if (!codeExceptionProperties.isEnabled()) {
                 return;
             }
+            final String parameterMapJson = JsonUtil.toJson(payload.getParameterMap());
             StringBuilder sbl = new StringBuilder();
             sbl.append("# 服务信息: \n");
             sbl
@@ -123,7 +124,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
             sbl
                 .append("## 查询参数: \n")
                 .append(">")
-                .append(JsonUtil.toJson(payload.getParameterMap()))
+                .append(parameterMapJson)
                 .append(" \n");
             sbl
                 .append("## 请求体: \n")
@@ -157,6 +158,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
             if (!propertiesBizResource.isEnabled()) {
                 return;
             }
+            final String parameterMapJson = JsonUtil.toJson(payload.getParameterMap());
             LarkContentRequest request = new LarkContentRequest();
             final List<List<LarkTag>> lists = List.of(
                 List.of(LarkTag.buildText(
@@ -167,7 +169,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
                         "网关转发" + " | uid: " + payload.getUid() + " | os: " + payload.getOs() + " | imei: "
                             + payload.getImei() + " | versionCode: " + payload.getVersionCode() : "内部调用"))),
                 List.of(LarkTag.buildText("url: " + payload.getUrl())),
-                List.of(LarkTag.buildText("查询参数: " + JsonUtil.toJson(payload.getParameterMap()))),
+                List.of(LarkTag.buildText("查询参数: " + parameterMapJson)),
                 List.of(LarkTag.buildText("请求体: " + payload.getBody())),
                 List.of(LarkTag.buildText("请求头: " + payload.getClientHeaderMap())),
                 List.of(LarkTag.buildText("异常详情: " + payload.getErrorMessage())), List.of(LarkTag.buildAtAll())

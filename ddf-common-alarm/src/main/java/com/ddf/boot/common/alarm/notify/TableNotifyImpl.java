@@ -42,6 +42,9 @@ public class TableNotifyImpl implements TableNotify {
      */
     private void notifyNotExistTablesToDingTalk(TableNotExistNotifyInfo info) {
         final DingTalkProperties.Properties propertiesBizResource = dingTalkProperties.getBizResource();
+        if (Objects.isNull(propertiesBizResource) || !propertiesBizResource.isEnabled()) {
+            return;
+        }
         final List<String> nextMonthNotExistTables = info.getNextMonthNotExistTables();
         if (CollUtil.isEmpty(nextMonthNotExistTables)) {
             return;

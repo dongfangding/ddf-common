@@ -1,7 +1,10 @@
 package com.ddf.boot.common.api.model.common.request;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
 
@@ -165,5 +168,20 @@ public enum RequestHeaderEnum {
 
     public static Map<String, RequestHeaderEnum> getRequiredClientHeaders() {
         return REQUIRED_CLIENT_HEADERS;
+    }
+
+    /**
+     * 解析客户端请求头，将请求中的值映射为字符串。
+     * 如果请求头不存在，则使用默认值。
+     *
+     * @param request HTTP 请求对象
+     * @return 请求头名称到值的映射
+     */
+    public static Map<String, String> resolveClientHeaders(HttpServletRequest request) {
+        Map<String, String> clientHeaderMap = new HashMap<>(32);
+        ALL_CLIENT_HEADERS.forEach((name, headerEnum) -> {
+            clientHeaderMap.put(name, Optional.ofNullable(request.getHeader(name)).orElse(headerEnum.getDefaultValue()));
+        });
+        return clientHeaderMap;
     }
 }

@@ -2,7 +2,7 @@ package com.ddf.boot.common.lock.zk.impl;
 
 import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
-import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -153,7 +153,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
      */
     @Override
     public String formatLockKey(String lockKey) {
-        if (Strings.isNullOrEmpty(lockKey) || !lockKey.startsWith("/")) {
+        if (StringUtils.isBlank(lockKey) || !lockKey.startsWith("/")) {
             throw new IllegalStateException(" lockKey error, lockKey must start with /, lockKey=" + lockKey);
         }
         return distributedLockZookeeperProperties.getRoot() + "/" + env + "/locks" + lockKey;

@@ -318,7 +318,7 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
             return;
         }
         try {
-            final MqttClient mqttClient = applicationContext.getBean(MqttClient.class);
+            final MqttAsyncClient mqttClient = applicationContext.getBean(MqttAsyncClient.class);
             if (Objects.nonNull(mqttClient) && mqttClient.isConnected()) {
                 mqttClient.disconnect();
                 log.info("MQTT client 已成功断开连接");

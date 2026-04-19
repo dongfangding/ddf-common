@@ -81,7 +81,6 @@ public class SignatureUtil {
                     .append("=")
                     .append(entry.getValue());
         }
-        System.out.println("queryString: " + paramBuffer.toString());
         return paramBuffer.toString();
     }
 

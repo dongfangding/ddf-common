@@ -2,6 +2,7 @@ package com.ddf.boot.common.redis.constant;
 
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.google.common.base.Joiner;
+import java.util.Optional;
 import reactor.util.annotation.NonNull;
 
 /**
@@ -18,8 +19,16 @@ public class ApplicationNamedKeyGenerator {
 
     private static final String GLOBAL_NAME = "global";
 
-    private static final String APPLICATION_NAME = SpringContextHolder
-            .getApplicationContext().getEnvironment().getProperty("spring.application.name");
+    private static String getApplicationName() {
+        return Holder.APPLICATION_NAME;
+    }
+
+    private static class Holder {
+        private static final String APPLICATION_NAME = Optional
+                .ofNullable(SpringContextHolder.getApplicationContext())
+                .map(ctx -> ctx.getEnvironment().getProperty("spring.application.name"))
+                .orElse("unknown");
+    }
 
     /**
      * 拼凑key
@@ -40,7 +49,7 @@ public class ApplicationNamedKeyGenerator {
      */
     public static String genKey(boolean ignoreApplicationName, @NonNull String... keys) {
         String[] params = new String[keys.length + 1];
-        params[0] = ignoreApplicationName ? GLOBAL_NAME : APPLICATION_NAME;
+        params[0] = ignoreApplicationName ? GLOBAL_NAME : getApplicationName();
         System.arraycopy(keys, 0, params, 1, params.length - 1);
         return JOINER.join(params);
     }

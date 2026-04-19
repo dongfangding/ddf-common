@@ -2,9 +2,9 @@ package com.ddf.boot.common.limit.ratelimit.keygenerator;
 
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
+import com.ddf.boot.common.mvc.util.AopUtil;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 
 /**
  * <p>全局接口限流key生成规则， 直接使用类全路径和方法名作为限流</p >
@@ -31,11 +31,8 @@ public class GlobalRateLimitKeyGenerator implements RateLimitKeyGenerator {
      */
     @Override
     public String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties) {
-        // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature()
-                .getDeclaringType();
-        // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
-        return ApplicationNamedKeyGenerator.genKey(getPrefix(), currentClass.getName(), currentMethod.getName());
+        return ApplicationNamedKeyGenerator.genKey(getPrefix(),
+                AopUtil.getJoinPointClass(joinPoint).getName(),
+                AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 }

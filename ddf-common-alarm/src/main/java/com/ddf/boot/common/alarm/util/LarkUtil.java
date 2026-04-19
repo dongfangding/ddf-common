@@ -28,6 +28,11 @@ import org.apache.commons.codec.binary.Base64;
 @Slf4j
 public class LarkUtil {
 
+    /**
+     * 飞书 @所有人的标签。
+     */
+    private static final String LARK_AT_ALL_TAG = "<at user_id=\"all\">所有人</at>";
+
     private static final LarkProperties LARK_PROPERTIES;
 
     static {
@@ -151,7 +156,7 @@ public class LarkUtil {
 
         Map<String, Object> textParams = new HashMap<>();
         if (isAtAll) {
-            textParams.put("text", "<at user_id=\"all\">所有人</at>" + text);
+            textParams.put("text", LARK_AT_ALL_TAG + text);
         } else {
             textParams.put("text", text);
         }

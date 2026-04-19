@@ -97,8 +97,7 @@ public class DingTalkUtil {
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
             String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), "UTF-8");
-            System.out.println(sign);
-            //sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
+            // sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
             String url = "https://oapi.dingtalk.com/robot/send?sign=%s&timestamp=%s&access_token=%s".formatted(
                     sign, timestamp, accessToken
             );
@@ -106,7 +105,8 @@ public class DingTalkUtil {
             OapiRobotSendRequest req = buildMarkdownRequest(title, content, isAtAll, atUserIds);
             OapiRobotSendResponse rsp = client.execute(req);
             if (!rsp.isSuccess()) {
-                log.error("钉钉机器人消息发送失败， rsp = {}", rsp.getBody());
+                log.error("钉钉机器人消息发送失败，errcode={}, errmsg={}, body={}",
+                        rsp.getErrcode(), rsp.getErrmsg(), rsp.getBody());
             }
         } catch (Exception e) {
             log.error("钉钉机器人发送消息失败", e);

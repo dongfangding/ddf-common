@@ -110,6 +110,7 @@ public class RedisDistributedLock implements DistributedLock {
             if (Objects.nonNull(failureHandler)) {
                 return failureHandler.handle();
             }
+            return null;
         }
 
         try {

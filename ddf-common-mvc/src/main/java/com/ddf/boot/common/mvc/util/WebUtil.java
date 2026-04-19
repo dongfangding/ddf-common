@@ -35,7 +35,7 @@ public class WebUtil {
     public static ServletRequestAttributes getCurServletRequestAttributes() {
 		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 		if (attributes instanceof ServletRequestAttributes servletRequestAttributes) {
-			return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+			return servletRequestAttributes;
 		}
 		return null;
     }
@@ -48,7 +48,7 @@ public class WebUtil {
 		if (Objects.isNull(attributes)) {
 			return null;
 		}
-        return getCurServletRequestAttributes().getRequest();
+        return attributes.getRequest();
     }
 
     /**

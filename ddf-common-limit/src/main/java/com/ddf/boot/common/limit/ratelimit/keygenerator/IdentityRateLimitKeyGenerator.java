@@ -3,10 +3,10 @@ package com.ddf.boot.common.limit.ratelimit.keygenerator;
 import com.ddf.boot.common.api.util.UserContextUtil;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
+import com.ddf.boot.common.mvc.util.AopUtil;
 import com.ddf.boot.common.redis.constant.ApplicationNamedKeyGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 
 /**
  * <p>身份级别的限流key生成规则, 即不同身份对接口访问次数的频率控制是分开限制的</p >
@@ -37,11 +37,8 @@ public class IdentityRateLimitKeyGenerator implements RateLimitKeyGenerator {
         String identityNo = StringUtils.defaultIfBlank(StringUtils.defaultIfBlank(
                 UserContextUtil.getUserId(),
                         UserContextUtil.getImei()), getPrefix());
-        // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature()
-                .getDeclaringType();
-        // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
-        return ApplicationNamedKeyGenerator.genKey(getPrefix(), identityNo, currentClass.getName(), currentMethod.getName());
+        return ApplicationNamedKeyGenerator.genKey(getPrefix(), identityNo,
+                AopUtil.getJoinPointClass(joinPoint).getName(),
+                AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 }

@@ -199,10 +199,7 @@ public class WsMessageServiceImpl implements WsMessageService {
      * @return
      */
     private <T, Q> MessageResponse<T> tryLoadByLocalCache(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
-        try {
-        } catch (Exception e) {
-            log.error("处理指令[{}]发送前检查失败！", request);
-        }
+        // TODO: 本地缓存加载逻辑待实现
         return null;
     }
 

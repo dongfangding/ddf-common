@@ -1,11 +1,10 @@
 package com.ddf.boot.common.rocketmq.handler;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.constant.EnhanceMessageConstant;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
 import com.ddf.boot.common.rocketmq.producer.RocketProducer;
-import com.google.common.base.Throwables;
 import jakarta.annotation.Resource;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -130,7 +129,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
      */
     public void dispatchMessage(MessagePayload<T> message) {
         // 基础日志记录被父类处理了
-        String messageJson = JSONObject.toJSONString(message);
+        String messageJson = JsonUtil.toJson(message);
         log.info("[{}] 消费者收到消息[{}]", TAG, messageJson);
         if (filter(message)) {
             log.info("[{}] 消息id{}不满足消费条件,中断消费...", TAG, message.getMessageId());
@@ -148,11 +147,11 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             long costTime = System.currentTimeMillis() - now;
             log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG,message.getMessageId(),messageJson, costTime);
         } catch (Exception e) {
-            log.info("[{}] 消息id:{}消费异常,e:{}",TAG, message.getMessageId(), Throwables.getStackTraceAsString(e));
+            log.info("[{}] 消息id:{}消费异常,e:{}",TAG, message.getMessageId(), e);
             // 是捕获异常还是抛出，由子类决定
             if (throwException()) {
                 // 抛出异常，由DefaultMessageListenerConcurrently类处理
-                throw new RuntimeException(e);
+                throw new RuntimeException("消息消费异常", e);
             }
             // 此时如果不开启重试机制，则默认ACK了
             if (isRetry()) {
@@ -189,7 +188,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             delayRocketMqMessage.setDelayTime(getDelaySeconds());
             sendResult = rocketProducer.syncSend(delayRocketMqMessage);
         } catch (Exception ex) {
-            log.error("[{}] 消息id:{},发送重试消息异常,e:{}",TAG, message.getMessageId(), Throwables.getStackTraceAsString(ex));
+            log.error("[{}] 消息id:{},发送重试消息异常,e:{}",TAG, message.getMessageId(), ex);
         }
         // 发送失败的处理就是不进行ACK，由RocketMQ重试
         if (Objects.isNull(sendResult) || sendResult.getSendStatus() != SendStatus.SEND_OK) {

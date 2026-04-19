@@ -41,7 +41,7 @@ public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
      * @return
      */
     public String getBoxedBizTopicPrefix() {
-        return getBizTopicPrefix().startsWith(GlobalStorage.TOPIC_SEPARATOR) ? getBizTopicPrefix() : GlobalStorage.TOPIC_SEPARATOR + getBoxedBizTopicPrefix();
+        return getBizTopicPrefix().startsWith(GlobalStorage.TOPIC_SEPARATOR) ? getBizTopicPrefix() : GlobalStorage.TOPIC_SEPARATOR + getBizTopicPrefix();
     }
 
     /**

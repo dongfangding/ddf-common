@@ -1,7 +1,6 @@
 package com.ddf.common.captcha.producer;
 
 import com.google.code.kaptcha.text.impl.DefaultTextCreator;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -11,15 +10,14 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class MathKaptchaTextCreator extends DefaultTextCreator
 {
-    private static final String[] CNUMBERS = "0,1,2,3,4,5,6,7,8,9,10".split(",");
+    private static final String[] CNUMBERS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
     @Override
     public String getText()
     {
         Integer result = 0;
-        Random random = new Random();
-        int x = random.nextInt(10);
-        int y = random.nextInt(10);
+        int x = ThreadLocalRandom.current().nextInt(10);
+        int y = ThreadLocalRandom.current().nextInt(10);
         StringBuilder suChinese = new StringBuilder();
         int randomoperands = (int) Math.round(ThreadLocalRandom.current().nextDouble() * 2);
         if (randomoperands == 0)
@@ -101,8 +99,9 @@ public class MathKaptchaTextCreator extends DefaultTextCreator
      */
     public static Data parse(String mathText) {
         final Data data = new Data();
-        data.setCalcCode(mathText.substring(0, mathText.lastIndexOf("@")));
-        data.setCalcResult(mathText.substring(mathText.lastIndexOf("@") + 1));
+        int atIndex = mathText.lastIndexOf("@");
+        data.setCalcCode(mathText.substring(0, atIndex));
+        data.setCalcResult(mathText.substring(atIndex + 1));
         return data;
     }
 }

@@ -107,9 +107,6 @@ public class AjCaptchaProperties {
         return reqFrequencyLimitEnable;
     }
 
-    public boolean getReqFrequencyLimitEnable() {
-        return reqFrequencyLimitEnable;
-    }
     /**
      * @param reqFrequencyLimitEnable 参数
      */
@@ -148,7 +145,7 @@ public class AjCaptchaProperties {
     }
 
     public int getReqCheckMinuteLimit() {
-        return reqGetMinuteLimit;
+        return reqCheckMinuteLimit;
     }
     /**
      * @param reqCheckMinuteLimit 参数

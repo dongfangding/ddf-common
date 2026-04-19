@@ -3,11 +3,13 @@ package com.ddf.common.captcha.config;
 import com.anji.captcha.service.CaptchaService;
 import com.ddf.common.captcha.constants.CaptchaConst;
 import com.ddf.common.captcha.helper.CaptchaHelper;
+import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
 import com.ddf.common.captcha.repository.CacheAdapter;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.impl.NoNoise;
 import com.google.code.kaptcha.util.Config;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +61,9 @@ public class CaptchaAutoConfiguration {
     public DefaultKaptcha mathKaptcha() {
         final Properties properties = buildProperties();
         // 验证码文本生成器
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, "com.ddf.common.captcha.producer.MathKaptchaTextCreator");
+        properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, MathKaptchaTextCreator.class.getName());
         // 干扰实现类, 数学计算无干扰线
-        properties.setProperty(Constants.KAPTCHA_NOISE_IMPL, "com.google.code.kaptcha.impl.NoNoise");
+        properties.setProperty(Constants.KAPTCHA_NOISE_IMPL, NoNoise.class.getName());
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         defaultKaptcha.setConfig(new Config(properties));
         return defaultKaptcha;

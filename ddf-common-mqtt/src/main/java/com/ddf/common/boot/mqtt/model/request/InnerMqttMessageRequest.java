@@ -43,7 +43,7 @@ public class InnerMqttMessageRequest implements Serializable {
     /**
      * 控制mqtt消息行为参数
      */
-    private MqttMessageControl control = MqttMessageControl.DEFAULT;
+    private MqttMessageControl control = MqttMessageControl.getDefault();
 
     /**
      * 接收端topic

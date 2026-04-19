@@ -23,7 +23,7 @@ public interface RateLimitPropertiesCollect {
      * @see RateLimitKeyGenerator
      * @return
      */
-    String getKeyGenerators();
+    String getKeyGenerator();
 
     /**
      * 令牌桶最大数量
@@ -45,7 +45,7 @@ public interface RateLimitPropertiesCollect {
      * @param properties properties参数
      */
     default void copyToProperties(RateLimitProperties properties) {
-        properties.setKeyGenerator(getKeyGenerators());
+        properties.setKeyGenerator(getKeyGenerator());
         properties.setMax(getMax());
         properties.setRate(getRate());
     }

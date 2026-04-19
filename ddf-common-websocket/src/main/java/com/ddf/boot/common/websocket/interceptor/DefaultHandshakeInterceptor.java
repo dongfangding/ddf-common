@@ -97,8 +97,7 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
                     if (encryptProcessor == null) {
                         throw new NoSuchBeanDefinitionException(webSocketProperties.getSecretBeanName());
                     }
-                    token = ENCRYPT_PROCESSORS.get(webSocketProperties.getSecretBeanName()).decryptHandshakeToken(
-                            token);
+                    token = encryptProcessor.decryptHandshakeToken(token);
                 }
                 handshakeParam = JsonUtil.toBean(token, HandshakeParam.class);
                 if (!validArgument(handshakeParam, response)) {

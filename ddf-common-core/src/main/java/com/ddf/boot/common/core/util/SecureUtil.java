@@ -104,9 +104,10 @@ public class SecureUtil {
             configuredPublicKey = GLOBAL_PROPERTIES.getRsaPublicKey();
         }
 
-        // 主密钥对
-        PRIVATE_RSA = initRsa(configuredPrivateKey, configuredPublicKey, "RSA密钥对");
-        PUBLIC_RSA = initRsa(configuredPrivateKey, configuredPublicKey, "RSA密钥对");
+        // 主密钥对 - 同一个 RSA 实例同时包含公钥和私钥
+        RSA rsaKeyPair = initRsa(configuredPrivateKey, configuredPublicKey, "RSA密钥对");
+        PRIVATE_RSA = rsaKeyPair;
+        PUBLIC_RSA = rsaKeyPair;
         // AES 密钥 - 延迟初始化，在首次使用时检查配置
         AES = null;
     }

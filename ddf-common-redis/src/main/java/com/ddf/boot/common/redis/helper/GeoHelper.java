@@ -243,8 +243,8 @@ public class GeoHelper {
     public static void main(String[] args) {
         final Config config = new Config();
         config.useSingleServer()
-                .setAddress("redis://www.rebot.fans:6379")
-                .setPassword("Dongfang.ding_redis");
+                .setAddress("redis://localhost:6379")
+                .setPassword("xxxxx");
         config.setCodec(new JsonJacksonCodec());
         final RedissonClient redisson = Redisson.create(config);
         final GeoHelper helper = new GeoHelper(redisson);

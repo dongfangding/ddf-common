@@ -23,6 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseData<T> {
 
     /**
+     * 成功响应码常量，缓存避免重复查找。
+     */
+    private static final String SUCCESS_CODE = BaseErrorCallbackCode.COMPLETE.getCode();
+    private static final String SUCCESS_MESSAGE = BaseErrorCallbackCode.COMPLETE.getDescription();
+
+    /**
      * 返回消息代码
      */
     private String code;
@@ -60,37 +66,23 @@ public class ResponseData<T> {
      * 之后， 再次抛出异常，会丢失这个填充内容，因此需要再全局异常里把这个内容放进来，这样上层才可以再次抛出这个异常并填充这个内容
      */
     private Object[] formatParams;
-    public ResponseData(String code, String message, String subMessage, long timestamp, T data) {
-        this.code = code;
-        this.message = message;
-        this.subMessage = subMessage;
-        this.timestamp = timestamp;
-        this.data = data;
-    }
+
     /**
-     * @param code 参数
-     * @param message 参数
-     * @param subMessage 参数
-     * @param timestamp 参数
-     * @param data 待处理数据
-     * @param extra 参数
+     * 4参数构造器。
+     */
+    public ResponseData(String code, String message, String subMessage, long timestamp, T data) {
+        this(code, message, subMessage, timestamp, data, null, null);
+    }
+
+    /**
+     * 5参数构造器（带 extra）。
      */
     public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra) {
-        this.code = code;
-        this.message = message;
-        this.subMessage = subMessage;
-        this.timestamp = timestamp;
-        this.data = data;
-        this.extra = extra;
+        this(code, message, subMessage, timestamp, data, extra, null);
     }
+
     /**
-     * @param code 参数
-     * @param message 参数
-     * @param subMessage 参数
-     * @param timestamp 参数
-     * @param data 待处理数据
-     * @param extra 参数
-     * @param formatParams 参数
+     * 全参数构造器。
      */
     public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra, Object[] formatParams) {
         this.code = code;
@@ -99,7 +91,8 @@ public class ResponseData<T> {
         this.timestamp = timestamp;
         this.data = data;
         this.extra = extra;
-        this.formatParams = formatParams;
+        // 防御拷贝，保持不可变性
+        this.formatParams = formatParams != null ? formatParams.clone() : null;
     }
 
     /**
@@ -107,13 +100,10 @@ public class ResponseData<T> {
      *
      * @param data 待处理数据
      * @param <T> 泛型类型
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data) {
-        return new ResponseData<>(
-                BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), data
-        );
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, null, null);
     }
 
     /**
@@ -121,36 +111,32 @@ public class ResponseData<T> {
      *
      * @param data 待处理数据
      * @param desc 提示语
+     * @param <T> 泛型类型
+     * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data, String desc) {
-        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
-                desc, System.currentTimeMillis(), data
-        );
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, desc, System.currentTimeMillis(), data, null, null);
     }
 
     /**
      * 成功返回数据方法
      *
      * @param data 待处理数据
+     * @param extra 扩展数据
      * @param <T> 泛型类型
-     * @param extra 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data, Object extra) {
-        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), data, extra
-        );
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, extra, null);
     }
 
     /**
      * 返回空数据
      *
-     * @return
+     * @return 空响应数据
      */
     public static ResponseData<Void> empty() {
-        return new ResponseData<>(BaseErrorCallbackCode.COMPLETE.getCode(), BaseErrorCallbackCode.COMPLETE.getCode(),
-                BaseErrorCallbackCode.COMPLETE.getDescription(), System.currentTimeMillis(), null
-        );
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), null, null, null);
     }
 
     /**
@@ -158,26 +144,24 @@ public class ResponseData<T> {
      *
      * @param baseCallbackCode 回调码对象
      * @param <T> 泛型类型
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode) {
         return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(),
-                baseCallbackCode.getDescription(), System.currentTimeMillis(), null
-        );
+                baseCallbackCode.getDescription(), System.currentTimeMillis(), null, null, null);
     }
 
     /**
      * 失败返回消息方法
      *
      * @param baseCallbackCode 回调码对象
+     * @param extra 扩展数据
      * @param <T> 泛型类型
-     * @param extra 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(BaseCallbackCode baseCallbackCode, Object extra) {
         return new ResponseData<>(baseCallbackCode.getCode(), baseCallbackCode.getBizMessage(),
-                baseCallbackCode.getDescription(), System.currentTimeMillis(), null, extra
-        );
+                baseCallbackCode.getDescription(), System.currentTimeMillis(), null, extra, null);
     }
 
     /**
@@ -186,10 +170,10 @@ public class ResponseData<T> {
      * @param code 编码值
      * @param message 消息内容
      * @param <T> 泛型类型
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(String code, String message) {
-        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null);
+        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null, null, null);
     }
 
     /**
@@ -197,12 +181,12 @@ public class ResponseData<T> {
      *
      * @param code 编码值
      * @param message 消息内容
+     * @param subMessage 详细消息
      * @param <T> 泛型类型
-     * @param subMessage 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage) {
-        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null);
+        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, null, null);
     }
 
     /**
@@ -210,12 +194,12 @@ public class ResponseData<T> {
      *
      * @param code 编码值
      * @param message 消息内容
+     * @param extra 扩展数据
      * @param <T> 泛型类型
-     * @param extra 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(String code, String message, Object extra) {
-        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null, extra);
+        return new ResponseData<>(code, message, message, System.currentTimeMillis(), null, extra, null);
     }
 
     /**
@@ -223,13 +207,13 @@ public class ResponseData<T> {
      *
      * @param code 编码值
      * @param message 消息内容
+     * @param subMessage 详细消息
+     * @param extra 扩展数据
      * @param <T> 泛型类型
-     * @param subMessage 参数
-     * @param extra 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra) {
-        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra);
+        return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra, null);
     }
 
     /**
@@ -237,11 +221,11 @@ public class ResponseData<T> {
      *
      * @param code 编码值
      * @param message 消息内容
+     * @param subMessage 详细消息
+     * @param extra 扩展数据
+     * @param formatParams 格式化参数
      * @param <T> 泛型类型
-     * @param subMessage 参数
-     * @param extra 参数
-     * @param formatParams 参数
-     * @return
+     * @return 响应数据
      */
     public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra, Object[] formatParams) {
         return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra, formatParams);
@@ -251,17 +235,17 @@ public class ResponseData<T> {
     /**
      * 判断返回结果是否是成功
      *
-     * @return
+     * @return 是否成功
      */
     public boolean isSuccess() {
-        return Objects.equals(code, BaseErrorCallbackCode.COMPLETE.getCode());
+        return SUCCESS_CODE.equals(code);
     }
 
 
     /**
      * 获取返回数据， 如果响应码非成功，则抛出异常
      *
-     * @return
+     * @return 响应数据
      */
     public T requiredSuccess() {
         if (isSuccess()) {
@@ -275,7 +259,7 @@ public class ResponseData<T> {
      * 获取返回数据， 如果响应码非成功，返回指定默认值
      *
      * @param defaultValue 默认值
-     * @return
+     * @return 响应数据或默认值
      */
     public T failureDefault(T defaultValue) {
         if (!isSuccess()) {

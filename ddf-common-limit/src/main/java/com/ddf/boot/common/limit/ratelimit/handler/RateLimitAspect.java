@@ -108,28 +108,27 @@ public class RateLimitAspect {
             return;
         }
 
+        // 处理扩展接口，可使用外部特性时时刷新属性，如使用Spring-Cloud的配置时时刷新特性
+        if (rateLimitProperties.isCloudRefresh()) {
+            final RateLimitPropertiesCollect propertiesCollectIfAvailable =
+                    rateLimitPropertiesCollect.getIfAvailable();
+            if (Objects.isNull(propertiesCollectIfAvailable)) {
+                throw new NoSuchBeanDefinitionException(
+                        "当使用了cloudRefresh=true时， 请务必同时实现接口[%s]".formatted(
+                                RateLimitPropertiesCollect.class.getName()));
+            }
+            propertiesCollectIfAvailable.copyToProperties(rateLimitProperties);
+        }
+        // 属性检查（全局属性，循环外执行一次即可）
+        rateLimitProperties.check();
+		// 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
+        String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei());
+
         // 允许多个限流规则存在，如接口全局限流以及也同时需要控制用户级别的防刷
         for (RateLimit annotation : rules) {
-            // 处理扩展接口， 可使用外部特性时时刷新属性, 如使用Spring-Cloud的配置时时刷新特性
-            // 这个特性基本上只会用在全局限流规则， 其它个性化的限流规则，其实应该用不到这个，不过这里代码统一，反正只要使用的时候，
-            // 自己在方法级别设置自己的限流规则就行了
-            if (rateLimitProperties.isCloudRefresh()) {
-                final RateLimitPropertiesCollect propertiesCollectIfAvailable =
-                        rateLimitPropertiesCollect.getIfAvailable();
-                if (Objects.isNull(propertiesCollectIfAvailable)) {
-                    throw new NoSuchBeanDefinitionException(
-                            "当使用了cloudRefresh=true时， 请务必同时实现接口[%s]".formatted(
-                                    RateLimitPropertiesCollect.class.getName()));
-                }
-                // 使用外部接口类填充全局属性
-                propertiesCollectIfAvailable.copyToProperties(rateLimitProperties);
-            }
-            // 属性检查
-            rateLimitProperties.check();
             // 获取限流最大令牌桶数量
-            Integer max =
-                    annotation.max() == rateLimitProperties.getMax() ? rateLimitProperties.getMax() : annotation.max();
-            if (Objects.equals(RateLimitProperties.NOT_CONTROL, max)) {
+            Integer max = annotation.max();
+            if (Objects.equals(RateLimitProperties.NOT_CONTROL, max) || !condition(joinPoint, annotation, currentMethod)) {
                 continue;
             }
             // 获取key生成器
@@ -139,11 +138,9 @@ public class RateLimitAspect {
                 return;
             }
 
-            // 身份标识 这里如果用户不存在，但是是c端应用的话，可能会有设备号或者之类的标识客户端的唯一身份的，如果有，最好使用这个
-            String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei());
             // 获取令牌恢复速率
-            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() :
-                    annotation.rate();
+			Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() :
+					annotation.rate();
             if (Objects.equals(RateLimitProperties.NOT_CONTROL, rate)) {
                 return;
             }
@@ -174,7 +171,7 @@ public class RateLimitAspect {
      * @param joinPoint joinpoint参数
      * @param annotation annotation参数
      * @param currentMethod currentmethod参数
-     * @return
+     * @return 返回条件表达式是否满足
      */
     private boolean condition(JoinPoint joinPoint, RateLimit annotation, MethodSignature currentMethod) {
         if (StringUtils.isBlank(annotation.condition())) {

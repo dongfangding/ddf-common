@@ -51,11 +51,9 @@ public class RepeatAspect {
     @Before(value = "pointCut()")
     public void before(JoinPoint joinPoint) throws NoSuchMethodException {
         // 获取当前拦截类
-        final Class<?> currentClass = joinPoint
-                .getSignature()
-                .getDeclaringType();
+        final Class<?> currentClass = AopUtil.getJoinPointClass(joinPoint);
         // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
+        MethodSignature currentMethod = AopUtil.getJoinPointMethod(joinPoint);
         // 可能会有些接口不需要登录，无法拿到用户id, 则拿设备编号
         // 身份标识
         String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei());

@@ -10,6 +10,7 @@ import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.captcha.CaptchaType;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
+import com.ddf.boot.common.api.model.captcha.response.CaptchaCheckResult;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
@@ -27,7 +28,7 @@ import javax.imageio.ImageIO;
 import org.springframework.util.FastByteArrayOutputStream;
 
 /**
- * <p>验证码生成器帮助类</p >
+ * <p>验证码生成器帮助类</p>
  *
  * @author Snowball
  * @version 1.0
@@ -46,10 +47,17 @@ public class CaptchaHelper {
     private CaptchaCacheService captchaCacheService;
 
     /**
-     * key取名这个是因为三方库的key使用的名字是这个， 自定义的与它保持一致吧，这样都放在一块
+     * key 取名与三方库保持一致，便于统一管理。
      */
     public final static String CAPTCHA_KEY_PREFIX = "RUNNING:CAPTCHA:";
-    public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties, CaptchaService captchaService) {
+
+    /**
+     * 校验成功响应码，与anji-captcha三方库保持一致。
+     */
+    private static final String CAPTCHA_SUCCESS_CODE = "0000";
+
+    public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha,
+            CaptchaProperties captchaProperties, CaptchaService captchaService) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
@@ -58,10 +66,10 @@ public class CaptchaHelper {
     }
 
     /**
-     * 生成验证码
+     * 生成验证码。
      *
      * @param captchaRequest 参数
-     * @return
+     * @return 验证码结果
      */
     public CaptchaResult generate(CaptchaRequest captchaRequest) {
         switch (captchaRequest.getCaptchaType()) {
@@ -78,70 +86,57 @@ public class CaptchaHelper {
         }
     }
 
-
     /**
-     * 生成图形验证码
+     * 生成图形验证码。
      *
-     * @return
-     * @throws IOException
+     * @return 验证码结果
      */
     public CaptchaResult generateText() {
-        final KaptchaProperties kaptchaProperties = captchaProperties.getKaptcha();
-        final CaptchaResult result = new CaptchaResult();
         final String text = defaultKaptcha.createText();
-        result.setVerifyCode(text);
-        result.setWidth(kaptchaProperties.getWidth());
-        result.setHeight(kaptchaProperties.getHeight());
         final BufferedImage image = defaultKaptcha.createImage(text);
-        final FastByteArrayOutputStream stream = new FastByteArrayOutputStream();
-        try {
-            ImageIO.write(image, "jpg", stream);
-        } catch (IOException e) {
-            throw new IllegalStateException("验证码生成失败");
-        }
-        result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
-//        result.setImageBase64(result.getOriginalImageBase64());
-        final String uuid = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
-        result.setUuid(uuid);
-        captchaCacheService.set(uuid, text, captchaProperties.getKeyExpiredSeconds());
-        return result;
+        return buildCaptchaResult(text, image, text);
     }
 
     /**
-     * 生成数学表达式验证码
+     * 生成数学表达式验证码。
      *
-     * @return
-     * @throws IOException
+     * @return 验证码结果
      */
     public CaptchaResult generateMath() {
-        final KaptchaProperties kaptchaProperties = captchaProperties.getKaptcha();
         final String text = mathKaptcha.createText();
         final MathKaptchaTextCreator.Data parse = MathKaptchaTextCreator.parse(text);
+        final BufferedImage image = mathKaptcha.createImage(parse.getCalcCode());
+        return buildCaptchaResult(parse.getCalcResult(), image, parse.getCalcResult());
+    }
 
+    private CaptchaResult buildCaptchaResult(String verifyCode, BufferedImage image, String cacheValue) {
+        final KaptchaProperties kaptchaProperties = captchaProperties.getKaptcha();
         final CaptchaResult result = new CaptchaResult();
-        result.setVerifyCode(parse.getCalcResult());
+        result.setVerifyCode(verifyCode);
         result.setWidth(kaptchaProperties.getWidth());
         result.setHeight(kaptchaProperties.getHeight());
-        final BufferedImage image = defaultKaptcha.createImage(parse.getCalcCode());
+        result.setOriginalImageBase64(encodeImage(image));
+        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
+        result.setUuid(token);
+        captchaCacheService.set(token, cacheValue, captchaProperties.getKeyExpiredSeconds());
+        return result;
+    }
+
+    private String encodeImage(BufferedImage image) {
         final FastByteArrayOutputStream stream = new FastByteArrayOutputStream();
         try {
             ImageIO.write(image, "jpg", stream);
         } catch (IOException e) {
             throw new IllegalStateException("验证码生成失败");
         }
-        result.setOriginalImageBase64(Base64.getEncoder().encodeToString(stream.toByteArray()));
-//        result.setImageBase64(result.getOriginalImageBase64());
-        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
-        result.setUuid(token);
-        captchaCacheService.set(token, parse.getCalcResult(), captchaProperties.getKeyExpiredSeconds());
-        return result;
+        return Base64.getEncoder().encodeToString(stream.toByteArray());
     }
 
     /**
-     * 获取文字点击验证码/获取图片滑块验证码
+     * 获取文字点选验证码或图片滑块验证码。
      *
-     * @param captchaTypeEnum 参数
-     * @return
+     * @param captchaTypeEnum 验证码类型
+     * @return 验证码结果
      */
     public CaptchaResult generateAjCaptcha(CaptchaTypeEnum captchaTypeEnum) {
         final CaptchaVO vo = new CaptchaVO();
@@ -159,13 +154,14 @@ public class CaptchaHelper {
         return result;
     }
 
-
     /**
-     * 校验验证码
+     * 校验验证码。
+     * 一次校验成功后返回二次校验凭证，二次校验或普通验证码返回空结果。
+     *
      * @param request 请求对象
+     * @return 校验结果包装对象
      */
-    public boolean check(CaptchaCheckRequest request) {
-//        PreconditionUtil.requiredParamCheck(request);
+    public CaptchaCheckResult check(CaptchaCheckRequest request) {
         final CaptchaType captchaType = request.getCaptchaType();
         if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
             final CaptchaVO vo = new CaptchaVO();
@@ -177,31 +173,32 @@ public class CaptchaHelper {
                 vo.setCaptchaType(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue());
             }
             vo.setCaptchaVerification(request.getCaptchaVerification());
-            final ResponseModel checkResult;
-            if (request.isVerification()) {
-                checkResult = captchaService.verification(vo);
-            } else {
-                checkResult = captchaService.check(vo);
-            }
-            if (!"0000".equals(checkResult.getRepCode())) {
+            final ResponseModel checkResult = request.isVerification()
+                    ? captchaService.verification(vo)
+                    : captchaService.check(vo);
+            if (!CAPTCHA_SUCCESS_CODE.equals(checkResult.getRepCode())) {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
             }
-        } else {
-            final String verifyCode = captchaCacheService.get(request.getUuid());
-            PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
-            PreconditionUtil.checkArgument(
-                    java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
-            // 校验成功后删除验证码，防止重放攻击
-            captchaCacheService.delete(request.getUuid());
+            if (request.isVerification()) {
+                return CaptchaCheckResult.SUCCESS_EMPTY;
+            }
+            final CaptchaVO captchaVO = JsonUtil.toBean(JsonUtil.toJson(checkResult.getRepData()), CaptchaVO.class);
+            final String captchaVerification = captchaVO.getCaptchaVerification();
+            return CaptchaCheckResult.of(true, captchaVerification == null ? "" : captchaVerification);
         }
-        return Boolean.TRUE;
+        final String verifyCode = captchaCacheService.get(request.getUuid());
+        PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
+        PreconditionUtil.checkArgument(
+                java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
+        captchaCacheService.delete(request.getUuid());
+        return CaptchaCheckResult.SUCCESS_EMPTY;
     }
 
     /**
-     * 获取s验证码
+     * 根据 token 获取验证码。
      *
      * @param token token 字符串
-     * @return
+     * @return 验证码
      */
     public String getVerifyCodeByToken(String token) {
         return captchaCacheService.get(CAPTCHA_KEY_PREFIX + token);

@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -44,7 +43,7 @@ public class RedisRepeatableValidator implements RepeatableValidator {
     /**
      * 固定value
      */
-    public static final String FIXED_VALUE = "1";
+    private static final String FIXED_VALUE = "1";
 
     /**
      * 执行表单放重校验逻辑
@@ -56,10 +55,6 @@ public class RedisRepeatableValidator implements RepeatableValidator {
      */
     @Override
     public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties) {
-        // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
-        // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
         // 获取定义的间隔时间
         final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
 
@@ -67,8 +62,10 @@ public class RedisRepeatableValidator implements RepeatableValidator {
         // 使用用户uid做盐值
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, currentUid.getBytes(StandardCharsets.UTF_8));
         // 生成key规则
-        String redisKey = ApplicationNamedKeyGenerator.genKey(KEY_PREFIX, currentUid, currentClass.getName(),
-                currentMethod.getName(), mac.digestHex(paramValue));
+        String redisKey = ApplicationNamedKeyGenerator.genKey(KEY_PREFIX, currentUid,
+                AopUtil.getJoinPointClass(joinPoint).getName(),
+                AopUtil.getJoinPointMethod(joinPoint).getName(),
+                mac.digestHex(paramValue));
         final ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
         // 执行校验逻辑，key存在则校验不通过，不存在，则存入key
         final Boolean bool = operations.setIfAbsent(redisKey, FIXED_VALUE, interval, TimeUnit.MILLISECONDS);

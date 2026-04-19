@@ -242,18 +242,6 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
 //        }
 //        return update(null, updateWrapper);
     }
-    /**
-     * @param requestId 参数
-     */
-    private ChannelTransfer getByRequestId(String requestId) {
-//        if (StringUtils.isBlank(requestId)) {
-//            return null;
-//        }
-//        LambdaQueryWrapper<ChannelTransfer> queryWrapper = Wrappers.lambdaQuery();
-//        queryWrapper.eq(ChannelTransfer::getRequestId, requestId);
-//        return getOne(queryWrapper);
-        return null;
-    }
 
 
     /**
@@ -350,21 +338,4 @@ public class ChannelTransferServiceImpl implements ChannelTransferService {
         return "[" + StringUtils.join(content, ",") + "]";
     }
 
-
-    /**
-     * 通过字符串拼接的方式将最新的报文放入完整保温数组中
-     *
-     * @param oldValue OLD值
-     * @param content 内容
-     * @return
-     */
-    private static String appendJsonArr(String oldValue, String... content) {
-        if (StringUtils.isBlank(oldValue)) {
-            return toJsonArr(content);
-        }
-        if (content == null || content.length == 0) {
-            return oldValue;
-        }
-        return oldValue.substring(0, oldValue.length() - 1) + "," + StringUtils.join(content, ",") + "]";
-    }
 }

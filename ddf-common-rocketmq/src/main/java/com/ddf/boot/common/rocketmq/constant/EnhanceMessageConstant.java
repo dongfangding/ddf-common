@@ -1,18 +1,10 @@
 package com.ddf.boot.common.rocketmq.constant;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author YiMing
- * @description:
  * @since 2023/10/9 14:02
  */
-@Slf4j
 public class EnhanceMessageConstant {
-    /**
-     * 实体类型描述标签
-     */
-    private static final String TAG = "";
 
 
     /**

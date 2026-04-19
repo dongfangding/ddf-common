@@ -30,12 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -79,7 +76,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             throws Exception {
         String url = request.getServletPath();
         // 通用请求头解析
-        final Map<String, String> clientHeaderMap = resolveClientHeaders(request, null);
+        final Map<String, String> clientHeaderMap = resolveClientHeaders(request);
         // 自定义请求头解析， 处理过程中可以额外添加请求头，最终会被统一添加到请求头中
         final Map<String, String> customizeHeaderMap = new HashMap<>();
         if (SYSTEM_IGNORE_PATH.contains(url)) {
@@ -126,7 +123,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             userClaim = UserClaim.getDefaultUser();
         }
         // 添加服务端请求头
-        clientHeaderMap.putAll(resolveServerHeaders(request, userClaim));
+        clientHeaderMap.putAll(resolveServerHeaders(request, userClaim, clientIp));
 
         final HashMap<String, String> allHeaderMap = new HashMap<>(clientHeaderMap);
         allHeaderMap.putAll(customizeHeaderMap);
@@ -134,7 +131,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         userClaimService.afterTokenVerifySuccess(request, userClaim, allHeaderMap, customizeHeaderMap);
 
         // 重放简单校验
-        final long nonce = Long.parseLong(Objects.requireNonNull(request.getHeader(RequestHeaderEnum.NONCE.getName())));
+        final long nonce = Long.parseLong(
+                StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0"));
         final long currentTimeMillis = System.currentTimeMillis();
         final Integer timeForceCheckDiffMinute = authenticateProperties.getTimeForceCheckDiffMinute();
         if (nonce < currentTimeMillis - TimeUnit.MINUTES.toMillis(timeForceCheckDiffMinute)
@@ -179,7 +177,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param clientIp 客户端 IP
      * @param token token 字符串
      */
-    public void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
+    private void buildContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // 解析请求头
         resolveRequestContext(request, userClaim, clientIp, token);
         MDC.put(AuthenticateConstant.MDC_USER_ID, UserContextUtil.getUserId());
@@ -276,7 +274,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
         }
         String token = tokenHeader;
-        if (StringUtils.isNotBlank(authenticateProperties.getTokenPrefix())) {
+        if (StringUtils.isNotBlank(tokenPrefix) && tokenHeader.contains(tokenPrefix)) {
             token = tokenHeader.split(tokenPrefix)[1];
         }
 
@@ -290,21 +288,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * 解析客户端请求头
      *
      * @param request 请求对象
-     * @param userClaim 用户声明信息
-     * @return
+     * @return 请求头映射
      */
-    private Map<String, String> resolveClientHeaders(HttpServletRequest request, UserClaim userClaim) {
-        Map<String, String> clientHeaderMap = new HashMap<>();
-        // 处理客户端传递的约定好的请求头
-        final Map<String, RequestHeaderEnum> clientHeaders = RequestHeaderEnum.getAllClientHeaders();
-        clientHeaders.forEach((name, obj) -> {
-            clientHeaderMap.put(
-                    name, Optional
-                            .ofNullable(request.getHeader(name))
-                            .orElse(obj.getDefaultValue())
-            );
-        });
-        return clientHeaderMap;
+    private Map<String, String> resolveClientHeaders(HttpServletRequest request) {
+        return RequestHeaderEnum.resolveClientHeaders(request);
     }
 
     /**
@@ -312,12 +299,13 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      *
      * @param request 请求对象
      * @param userClaim 用户声明信息
+     * @param clientIp 客户端 IP
      * @return
      */
-    private Map<String, String> resolveServerHeaders(HttpServletRequest request, UserClaim userClaim) {
+    private Map<String, String> resolveServerHeaders(HttpServletRequest request, UserClaim userClaim, String clientIp) {
         Map<String, String> serverHeaderMap = new HashMap<>();
         // 处理服务端内部的请求头
-        serverHeaderMap.put(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName(), WebUtil.getHost());
+        serverHeaderMap.put(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName(), clientIp);
         serverHeaderMap.put(
                 RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName(),
                 Objects.nonNull(userClaim) ? userClaim.getUserId() : request.getHeader(RequestHeaderEnum.IMEI.getName())
@@ -339,7 +327,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param clientIp 客户端 IP
      * @param token token 字符串
      */
-    public void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
+    private void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用
         UserContextUtil.setRequestContext(RequestContext
                 .builder()
@@ -365,7 +353,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     }
 
 
-    public void removeContext() {
+    private void removeContext() {
         // 移除用户信息
         UserContextUtil.removeRequestContext();
         UserContextUtil.removeUserClaim();
@@ -375,24 +363,4 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         MDC.remove(AuthenticateConstant.MDC_IMEI);
     }
 
-
-    @Data
-    @Accessors(chain = true)
-    public static class AuthInfo {
-
-        /**
-         * 真实token内容
-         */
-        private String realToken;
-
-        /**
-         * 解析后自定义对象
-         */
-        private UserClaim userClaim;
-
-        /**
-         * 根据解析对象接口实现返回最新的UserClaim对象信息
-         */
-        private UserClaim storeUserClaim;
-    }
 }

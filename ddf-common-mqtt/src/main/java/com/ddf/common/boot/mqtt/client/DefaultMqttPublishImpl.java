@@ -52,6 +52,12 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
     private final Map<String, MqttPublishListener> listenerMap;
     private final EmqConnectionProperties emqConnectionProperties;
     private final RetryTemplate retryTemplate;
+
+    /**
+     * MQTT 缓冲区已满错误码
+     * @see <a href="https://github.com/eclipse/paho.mqttv5.client/blob/master/org.eclipse.paho.client.mqttv5/src/main/java/org/eclipse/paho/mqttv5/common/packet/MqttProperties.java">MqttReasonCode</a>
+     */
+    private static final int MQTT_REASON_BUFFER_FULL = 32202;
     public DefaultMqttPublishImpl(
             MqttAsyncClient mqttAsyncClient,
             Map<String, MqttPublishListener> listenerMap,
@@ -102,6 +108,12 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                         mqttAsyncClient.publish(request.getTopic(), message);
                         return null;
                     });
+                    // 异步发送成功后触发监听器
+                    if (CollUtil.isNotEmpty(listenerMap)) {
+                        listenerMap.forEach((beanName, bean) -> {
+                            bean.afterPublish(message, payload);
+                        });
+                    }
                 } catch (MqttException e) {
                     log.error("MQTT异步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), e);
                 }
@@ -147,7 +159,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             int reasonCode = mqttException.getReasonCode();
             // org.eclipse.paho.mqttv5.common.MqttException.getMessage
             // 这个错误码，是发送的消息未确认的过多，就会报这个错，这种就不要重试了
-            if (reasonCode == 32202) {
+            if (reasonCode == MQTT_REASON_BUFFER_FULL) {
                 log.error("MQTT缓冲区已满，放弃当前发送重试，topic={}", request.getTopic());
                 return ResponseData.failure("mqtt_congestion", "发送缓冲区已满");
             }

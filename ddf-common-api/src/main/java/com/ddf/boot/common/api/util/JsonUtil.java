@@ -73,10 +73,10 @@ public final class JsonUtil {
     }
 
     /**
-     * 将对象序列化成json字符串
+     * 对象转字符串（委托 toJson）
      *
      * @param obj 对象实例
-     * @return
+     * @return JSON 字符串
      */
     public static String asString(Object obj) {
         return toJson(obj);

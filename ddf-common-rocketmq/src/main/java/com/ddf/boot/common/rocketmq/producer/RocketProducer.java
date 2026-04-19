@@ -1,11 +1,9 @@
 package com.ddf.boot.common.rocketmq.producer;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.rocketmq.config.RocketEnhanceProperties;
 import com.ddf.boot.common.rocketmq.domain.MessagePayload;
 import com.ddf.boot.common.rocketmq.domain.RocketMqMessage;
-import com.google.common.base.Throwables;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,18 +85,14 @@ public class RocketProducer {
                  */
                 @Override
                 public void onException(Throwable e) {
-                    log.error("[{}] Failed to send message to MQ {},TAG:{}, msg {}, cause {}", TAG, topic, tag,message,
-                            Throwables.getStackTraceAsString(e)
-                    );
+                    log.error("[{}] Failed to send message to MQ {},TAG:{}, msg {}, cause {}", TAG, topic, tag, message, e);
                 }
             };
             Message<MessagePayload> build = MessageBuilder.withPayload(message).setHeader(
                     RocketMQHeaders.KEYS, message.getMessageId()).build();
             template.asyncSend(buildDestination(topic, tag), build, callback);
         } catch (Exception e) {
-            log.error("[{}] Failed to send message to MQ! TOPIC: {},TAG:{}, message: {}, stackTrace: {}", TAG, topic,tag,message,
-                    Throwables.getStackTraceAsString(e)
-            );
+            log.error("[{}] Failed to send message to MQ! TOPIC: {},TAG:{}, message: {}", TAG, topic, tag, message, e);
         }
     }
 
@@ -187,7 +181,7 @@ public class RocketProducer {
 				RocketMQHeaders.KEYS, message.getMessageId()).build();
 		SendResult sendResult = template.syncSendDelayTimeMills(destination, sendMessage, delayMilliseconds);
 		log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayMilliseconds,
-				JSONObject.toJSON(message), JSONObject.toJSON(sendResult)
+				JsonUtil.toJson(message), JsonUtil.toJson(sendResult)
 		);
 		return sendResult;
 	}

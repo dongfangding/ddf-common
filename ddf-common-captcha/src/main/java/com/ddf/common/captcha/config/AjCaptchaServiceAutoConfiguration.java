@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,8 @@ import org.springframework.util.FileCopyUtils;
 public class AjCaptchaServiceAutoConfiguration {
 
 
+    private static final AtomicBoolean baseMapInitialized = new AtomicBoolean(false);
+
     public AjCaptchaServiceAutoConfiguration() {
     }
 
@@ -41,14 +44,8 @@ public class AjCaptchaServiceAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean
     public CaptchaService captchaService(AjCaptchaProperties prop) {
-        Properties config = buildProperties(prop);
-        if (StringUtils.isNotBlank(prop.getJigsaw()) && prop.getJigsaw().startsWith("classpath:") || StringUtils.isNotBlank(prop.getPicClick()) && prop.getPicClick().startsWith("classpath:")) {
-            config.put("captcha.init.original", "true");
-            initializeBaseMap(prop.getJigsaw(), prop.getPicClick());
-        }
-        return CaptchaServiceFactory.getInstance(config);
+        return createCaptchaService(prop, null);
     }
-
 
     /**
      * 另一个非默认的验证码类型也注册上去，因验证码类型已固定，目前没有采用动态注册
@@ -58,13 +55,23 @@ public class AjCaptchaServiceAutoConfiguration {
      */
     @Bean
     public CaptchaService otherCaptchaService(AjCaptchaProperties prop) {
+        CaptchaTypeEnum otherType = Objects.equals(CaptchaTypeEnum.CLICKWORD, prop.getType())
+                ? CaptchaTypeEnum.BLOCKPUZZLE : CaptchaTypeEnum.CLICKWORD;
+        return createCaptchaService(prop, otherType);
+    }
+
+    private CaptchaService createCaptchaService(AjCaptchaProperties prop, CaptchaTypeEnum overrideType) {
         Properties config = buildProperties(prop);
-        if (StringUtils.isNotBlank(prop.getJigsaw()) && prop.getJigsaw().startsWith("classpath:") || StringUtils.isNotBlank(prop.getPicClick()) && prop.getPicClick().startsWith("classpath:")) {
+        if ((StringUtils.isNotBlank(prop.getJigsaw()) && prop.getJigsaw().startsWith("classpath:"))
+                || (StringUtils.isNotBlank(prop.getPicClick()) && prop.getPicClick().startsWith("classpath:"))) {
             config.put("captcha.init.original", "true");
-            initializeBaseMap(prop.getJigsaw(), prop.getPicClick());
+            if (baseMapInitialized.compareAndSet(false, true)) {
+                initializeBaseMap(prop.getJigsaw(), prop.getPicClick());
+            }
         }
-        config.put(Const.CAPTCHA_TYPE, Objects.equals(CaptchaTypeEnum.CLICKWORD, prop.getType()) ?
-                CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue() : CaptchaTypeEnum.CLICKWORD.getCodeValue());
+        if (overrideType != null) {
+            config.put(Const.CAPTCHA_TYPE, overrideType.getCodeValue());
+        }
         return CaptchaServiceFactory.getInstance(config);
     }
     /**
@@ -86,7 +93,7 @@ public class AjCaptchaServiceAutoConfiguration {
         config.put("captcha.cache.number", prop.getCacheNumber());
         config.put("captcha.timing.clear", prop.getTimingClear());
         config.put("captcha.history.data.clear.enable", prop.isHistoryDataClearEnable() ? "1" : "0");
-        config.put("captcha.req.frequency.limit.enable", prop.getReqFrequencyLimitEnable() ? "1" : "0");
+        config.put("captcha.req.frequency.limit.enable", prop.isReqFrequencyLimitEnable() ? "1" : "0");
         config.put("captcha.req.get.lock.limit", prop.getReqGetLockLimit() + "");
         config.put("captcha.req.get.lock.seconds", prop.getReqGetLockSeconds() + "");
         config.put("captcha.req.get.minute.limit", prop.getReqGetMinuteLimit() + "");
@@ -105,23 +112,19 @@ public class AjCaptchaServiceAutoConfiguration {
      * @param path 参数
      */
     public static Map<String, String> getResourcesImagesFile(String path) {
-        Map<String, String> imgMap = new HashMap();
+        Map<String, String> imgMap = new HashMap<>();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
             Resource[] resources = resolver.getResources(path);
-            Resource[] var4 = resources;
-            int var5 = resources.length;
-
-            for(int var6 = 0; var6 < var5; ++var6) {
-                Resource resource = var4[var6];
+            for (Resource resource : resources) {
                 byte[] bytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
-                String string = Base64Utils.encodeToString(bytes);
+                String base64 = Base64Utils.encodeToString(bytes);
                 String filename = resource.getFilename();
-                imgMap.put(filename, string);
+                imgMap.put(filename, base64);
             }
-        } catch (Exception var11) {
-            var11.printStackTrace();
+        } catch (Exception e) {
+            log.error("加载验证码图片资源失败, path={}", path, e);
         }
 
         return imgMap;

@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 
 /**
  * <p>基于本地缓存实现的防重提交验证器</p >
@@ -52,13 +51,11 @@ public class LocalRepeatableValidator implements RepeatableValidator {
         final String key = getRequestMapKey(joinPoint, currentUid);
         // 获取当前请求value对象
         final RequestValue currentValue = getRequestMapValue(joinPoint);
-        if (!requestMap.containsKey(key)) {
+        final RequestValue cacheValue = requestMap.get(key);
+        if (cacheValue == null) {
             requestMap.put(key, currentValue);
             return true;
         }
-
-        // 获取缓存的value
-        final RequestValue cacheValue = requestMap.get(key);
 
         // 执行校验逻辑
         if (Objects.equals(currentValue.getValue(), cacheValue.getValue())
@@ -78,11 +75,9 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      * @return
      */
     private String getRequestMapKey(JoinPoint joinPoint, String currentUid) {
-        // 获取当前拦截类
-        final Class<?> currentClass = joinPoint.getSignature().getDeclaringType();
-        // 获取当前拦截方法
-        MethodSignature currentMethod = (MethodSignature) joinPoint.getSignature();
-        return StrUtil.join(":", currentUid, currentClass.getName(), currentMethod.getName());
+        return StrUtil.join(":", currentUid,
+                AopUtil.getJoinPointClass(joinPoint).getName(),
+                AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 
     /**

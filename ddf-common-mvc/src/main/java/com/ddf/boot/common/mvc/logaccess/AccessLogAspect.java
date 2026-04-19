@@ -114,7 +114,7 @@ public class AccessLogAspect {
                     throwable.getClass().getName())) {
                 logger.error("[{}]-[{}]{}请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(),
                         pointMethod.getName(), logName, paramJson, AbstractExceptionHandler
-                                .resolveExceptionMessage(throwable).formatDefaultMessage(),
+                                .resolveExceptionMessage(throwable, null).formatDefaultMessage(),
                         throwable
                 );
             }

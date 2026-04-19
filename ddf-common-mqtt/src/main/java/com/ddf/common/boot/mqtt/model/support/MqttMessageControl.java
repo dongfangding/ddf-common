@@ -57,12 +57,6 @@ public class MqttMessageControl implements Serializable {
     }
 
     /**
-     * @deprecated 请使用 {@link #getDefault()} 方法获取默认配置
-     */
-    @Deprecated
-    public static MqttMessageControl DEFAULT = getDefault();
-
-    /**
      * 消息质量，请参考mqtt协议qos的设计含义
      */
     private MqttQosEnum qos = MqttQosEnum.AT_LAST_ONCE;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @author dongfang.ding
  * @since 2020/11/22 0022 22:11
  */
-@RestControllerAdvice(basePackages = "com.nvwa.boot.common")
+@RestControllerAdvice(basePackages = "com.ddf.boot.common")
 public class CommonExceptionAdvice extends AbstractExceptionHandler {
 
     /**

@@ -20,7 +20,7 @@ public class PermissionMenuScanner {
 	}
 
 	// 预编译正则
-	Pattern pattern = Pattern.compile("@el\\.check\\('([^']+)'\\)");
+	private static final Pattern PATTERN = Pattern.compile("@el\\.check\\('([^']+)'\\)");
 
 	public ScanPermissionPayload scanPreAuthorizeMethods() {
 		Map<String, Object> beans = applicationContext.getBeansWithAnnotation(
@@ -53,7 +53,6 @@ public class PermissionMenuScanner {
 				currentMenu.setParentName(classPermissionMenu.parentName());
 				currentMenu.setType(classPermissionMenu.type());
 				currentMenu.setName(classPermissionMenu.name());
-				currentMenu.setCode(classPermissionMenu.code());
 				currentMenu.setCode(StringUtils.defaultIfBlank(classPermissionMenu.code(), classPermissionMenu.name()));
 				currentMenu.setSort(classPermissionMenu.sort());
 				currentMenu.setPermission(classPermissionMenu.permission());

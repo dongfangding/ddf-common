@@ -23,7 +23,7 @@ public interface DistributedLock {
     }
 
     /**
-     * 默认等待时间 10s
+     * 默认等待时间 1s
      */
     Integer DEFAULT_ACQUIRE_TIME = 1000;
     /**

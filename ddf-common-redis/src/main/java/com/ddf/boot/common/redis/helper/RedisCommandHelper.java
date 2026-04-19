@@ -519,6 +519,9 @@ public class RedisCommandHelper {
     public Map<String, String> hMGetMap(String key, Collection<String> fields) {
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         List<String> values = hashOperations.multiGet(key, fields);
+        if (values == null) {
+            return new LinkedHashMap<>();
+        }
         HashMap<String, String> data = new LinkedHashMap<>();
         List<String> fieldList = new ArrayList<>(fields);
         for (int i = 0; i < fieldList.size(); i++) {

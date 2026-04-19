@@ -45,21 +45,6 @@ public interface BaseCallbackCode {
         private String description;
         private String bizMessage;
 
-
-        @Override
-        public String getCode() {
-            return code;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getBizMessage() {
-            return bizMessage;
-        }
         /**
          * @param code 参数
          * @param description 描述信息
