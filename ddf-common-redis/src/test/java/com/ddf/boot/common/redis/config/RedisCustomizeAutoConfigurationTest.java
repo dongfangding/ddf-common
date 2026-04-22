@@ -12,6 +12,10 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +31,18 @@ class RedisCustomizeAutoConfigurationTest {
             assertThat(context).hasSingleBean(RedisTemplateHelper.class);
             assertThat(context).hasSingleBean(RedisCommandHelper.class);
             assertThat(context).hasSingleBean(GeoHelper.class);
+        });
+    }
+
+    @Test
+    void shouldCreateDefaultRedisTemplatesWithExpectedSerializers() {
+        contextRunner.run(context -> {
+            RedisTemplate<?, ?> redisTemplate = context.getBean("redisTemplate", RedisTemplate.class);
+            StringRedisTemplate stringRedisTemplate = context.getBean("stringRedisTemplate", StringRedisTemplate.class);
+
+            assertThat(redisTemplate.getKeySerializer()).isInstanceOf(StringRedisSerializer.class);
+            assertThat(redisTemplate.getValueSerializer()).isInstanceOf(GenericJackson2JsonRedisSerializer.class);
+            assertThat(stringRedisTemplate.getConnectionFactory()).isNotNull();
         });
     }
 

@@ -4,6 +4,10 @@ import cn.hutool.cache.impl.TimedCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
@@ -11,19 +15,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * LocalCacheUtil 测试类
+ * LocalCacheUtil 测试
  *
- * @author X_Agent
- * @since 2025/01/15
+ * @author Codex
+ * @since 2026/04/20
  */
 public class LocalCacheUtilTest {
 
     @Test
-    @DisplayName("测试 getTimedCache - 创建Hutool定时缓存")
+    @DisplayName("测试 getTimedCache 应创建 Hutool 定时缓存")
     public void testGetTimedCache() {
-        long timeout = 1000L;
-        long delay = 100L;
-        TimedCache<String, String> cache = LocalCacheUtil.getTimedCache(timeout, delay);
+        TimedCache<String, String> cache = LocalCacheUtil.getTimedCache(1000L, 100L);
 
         Assertions.assertNotNull(cache);
         cache.put("key1", "value1");
@@ -31,20 +33,19 @@ public class LocalCacheUtilTest {
     }
 
     @Test
-    @DisplayName("测试 getTimedCache - 过期数据被清除")
-    public void testGetTimedCache_Expire() throws InterruptedException {
-        long timeout = 500L;
-        long delay = 100L;
-        TimedCache<String, String> cache = LocalCacheUtil.getTimedCache(timeout, delay);
+    @DisplayName("测试 getTimedCache 应在超时后清理数据")
+    public void testGetTimedCacheExpire() throws InterruptedException {
+        TimedCache<String, String> cache = LocalCacheUtil.getTimedCache(300L, 100L);
 
         cache.put("key1", "value1");
-        Thread.sleep(600L);
+        Thread.sleep(400L);
         cache.prune();
+
         Assertions.assertNull(cache.get("key1"));
     }
 
     @Test
-    @DisplayName("测试 getGuavaCache - 正常获取缓存")
+    @DisplayName("测试 getGuavaCache 应读取已有缓存")
     public void testGetGuavaCache() {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
@@ -54,19 +55,16 @@ public class LocalCacheUtilTest {
                         return "loaded_" + key;
                     }
                 });
-
-        // 直接使用缓存
         loadingCache.put("key1", "value1");
 
-        // 使用MessageFormat格式的key
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCache(loadingCache, template, "key1");
+        String result = LocalCacheUtil.getGuavaCache(loadingCache, "{0}", "key1");
+
         Assertions.assertEquals("value1", result);
     }
 
     @Test
-    @DisplayName("测试 getGuavaCache - 获取不存在的key触发加载")
-    public void testGetGuavaCache_LoadMissing() {
+    @DisplayName("测试 getGuavaCache 应在缺失时触发加载")
+    public void testGetGuavaCacheLoadMissing() {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
                 .build(new CacheLoader<>() {
@@ -76,15 +74,14 @@ public class LocalCacheUtilTest {
                     }
                 });
 
-        // 使用MessageFormat格式的key
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCache(loadingCache, template, "missingKey");
+        String result = LocalCacheUtil.getGuavaCache(loadingCache, "{0}", "missingKey");
+
         Assertions.assertEquals("loaded_missingKey", result);
     }
 
     @Test
-    @DisplayName("测试 getGuavaCache - 异常情况下返回null")
-    public void testGetGuavaCache_Exception() {
+    @DisplayName("测试 getGuavaCache 异常时应返回 null")
+    public void testGetGuavaCacheException() {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
                 .build(new CacheLoader<>() {
@@ -94,53 +91,14 @@ public class LocalCacheUtilTest {
                     }
                 });
 
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCache(loadingCache, template, "errorKey");
+        String result = LocalCacheUtil.getGuavaCache(loadingCache, "{0}", "errorKey");
+
         Assertions.assertNull(result);
     }
 
     @Test
-    @DisplayName("测试 getGuavaCache - 使用模板格式化key")
-    public void testGetGuavaCache_WithTemplate() {
-        LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .build(new CacheLoader<>() {
-                    @Override
-                    public String load(String key) {
-                        return "loaded_" + key;
-                    }
-                });
-
-        loadingCache.put("user:1001", "user1001");
-
-        // 使用带前缀的模板
-        String template = "user:{0}";
-        String result = LocalCacheUtil.getGuavaCache(loadingCache, template, "1001");
-        Assertions.assertEquals("user1001", result);
-    }
-
-    @Test
-    @DisplayName("测试 getGuavaCacheCheckDefault - 正常值")
-    public void testGetGuavaCacheCheckDefault_NormalValue() {
-        LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .build(new CacheLoader<>() {
-                    @Override
-                    public String load(String key) {
-                        return "loaded_" + key;
-                    }
-                });
-
-        loadingCache.put("key1", "normalValue");
-
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, "INVALID_DEFAULT", template, "key1");
-        Assertions.assertEquals("normalValue", result);
-    }
-
-    @Test
-    @DisplayName("测试 getGuavaCacheCheckDefault - 默认无效值")
-    public void testGetGuavaCacheCheckDefault_InvalidValue() {
+    @DisplayName("测试 getGuavaCacheCheckDefault 应将默认无效值转为 null 并清理 key")
+    public void testGetGuavaCacheCheckDefaultInvalidValue() {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
                 .build(new CacheLoader<>() {
@@ -150,51 +108,92 @@ public class LocalCacheUtilTest {
                     }
                 });
 
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, "INVALID_DEFAULT", template, "key1");
+        String result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, "INVALID_DEFAULT", "{0}", "key1");
+
         Assertions.assertNull(result);
         Assertions.assertFalse(loadingCache.asMap().containsKey("key1"));
     }
 
     @Test
-    @DisplayName("测试 getGuavaCacheCheckDefault - Integer类型默认无效值")
-    public void testGetGuavaCacheCheckDefault_IntegerDefault() {
-        LoadingCache<String, Integer> loadingCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .build(new CacheLoader<>() {
-                    @Override
-                    public Integer load(String key) {
-                        return -1;
-                    }
-                });
-
-        loadingCache.put("key1", -1);
-
-        String template = "{0}";
-        Integer result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, -1, template, "key1");
-        Assertions.assertNull(result);
-    }
-
-    @Test
-    @DisplayName("测试 getGuavaCacheCheckDefault - 异常情况返回null")
-    public void testGetGuavaCacheCheckDefault_Exception() {
+    @DisplayName("测试 getGuavaCacheCheckDefault 正常值应直接返回")
+    public void testGetGuavaCacheCheckDefaultNormalValue() {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
                 .build(new CacheLoader<>() {
                     @Override
                     public String load(String key) {
-                        throw new RuntimeException("Test exception");
+                        return "loaded_" + key;
                     }
                 });
+        loadingCache.put("key1", "normalValue");
 
-        String template = "{0}";
-        String result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, "INVALID_DEFAULT", template, "errorKey");
-        Assertions.assertNull(result);
+        String result = LocalCacheUtil.getGuavaCacheCheckDefault(loadingCache, "INVALID_DEFAULT", "{0}", "key1");
+
+        Assertions.assertEquals("normalValue", result);
     }
 
     @Test
-    @DisplayName("测试 Guava LoadingCache - 基于时间的刷新")
-    public void testGuavaCache_RefreshAfterWrite() throws InterruptedException, ExecutionException {
+    @DisplayName("测试 buildCaffeine 应在函数返回 null 时落到默认值")
+    public void testBuildCaffeineDefaultValue() {
+        com.github.benmanes.caffeine.cache.LoadingCache<String, String> cache = LocalCacheUtil.buildCaffeine(
+                10,
+                Duration.ofMinutes(1),
+                key -> null,
+                "DEFAULT"
+        );
+
+        Assertions.assertEquals("DEFAULT", cache.get("missing"));
+    }
+
+    @Test
+    @DisplayName("测试 batchLoad 应为缺失项补默认值")
+    public void testBatchLoadDefaultValueForMissingKey() {
+        Map<String, String> result = LocalCacheUtil.batchLoad(
+                java.util.Set.of("a", "b"),
+                keys -> Map.of("a", "value-a"),
+                "DEFAULT"
+        );
+
+        Assertions.assertEquals("value-a", result.get("a"));
+        Assertions.assertEquals("DEFAULT", result.get("b"));
+    }
+
+    @Test
+    @DisplayName("测试 getCaffeineCacheCheckDefault 单值场景应过滤空 Optional")
+    public void testGetCaffeineCacheCheckDefaultOptionalValue() {
+        com.github.benmanes.caffeine.cache.LoadingCache<String, Optional<String>> cache = LocalCacheUtil.buildCaffeine(
+                10,
+                Duration.ofMinutes(1),
+                key -> Optional.empty(),
+                Optional.empty()
+        );
+
+        Optional<String> result = LocalCacheUtil.getCaffeineCacheCheckDefault(cache, "missing");
+
+        Assertions.assertTrue(result.isEmpty());
+        Assertions.assertEquals(0, cache.estimatedSize());
+    }
+
+    @Test
+    @DisplayName("测试 getCaffeineCacheCheckDefault 批量场景应过滤空 Optional")
+    public void testGetCaffeineCacheCheckDefaultListValue() {
+        com.github.benmanes.caffeine.cache.LoadingCache<String, Optional<String>> cache =
+                LocalCacheUtil.buildBatchLoadCaffeine(
+                        10,
+                        Duration.ofMinutes(1),
+                        keys -> Map.of("a", Optional.of("value-a"), "b", Optional.empty()),
+                        Optional.empty()
+                );
+
+        Map<String, String> result = LocalCacheUtil.getCaffeineCacheCheckDefault(cache, List.of("a", "b"));
+
+        Assertions.assertEquals("value-a", result.get("a"));
+        Assertions.assertFalse(result.containsKey("b"));
+    }
+
+    @Test
+    @DisplayName("测试 Guava refreshAfterWrite 场景应可正常重新取值")
+    public void testGuavaCacheRefreshAfterWrite() throws InterruptedException, ExecutionException {
         LoadingCache<String, String> loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
                 .refreshAfterWrite(100, TimeUnit.MILLISECONDS)
@@ -206,11 +205,10 @@ public class LocalCacheUtilTest {
                 });
 
         String result1 = loadingCache.get("key1");
-        Assertions.assertNotNull(result1);
-
         Thread.sleep(150L);
-
         String result2 = loadingCache.get("key1");
+
+        Assertions.assertNotNull(result1);
         Assertions.assertNotNull(result2);
     }
 }

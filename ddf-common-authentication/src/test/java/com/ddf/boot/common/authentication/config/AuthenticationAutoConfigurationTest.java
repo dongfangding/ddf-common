@@ -3,6 +3,7 @@ package com.ddf.boot.common.authentication.config;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.authentication.annotation.EnableAuthenticate;
 import com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter;
+import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
 import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServiceImpl;
 import com.ddf.boot.common.core.authentication.TokenCache;
@@ -30,6 +31,28 @@ class AuthenticationAutoConfigurationTest {
             assertThat(context).hasSingleBean(DefaultTokenCheckServiceImpl.class);
             assertThat(context).hasSingleBean(TokenCache.class);
         });
+    }
+
+    @Test
+    void shouldBackOffWhenCustomTokenCustomizeCheckServiceProvided() {
+        contextRunner.withBean(TokenCustomizeCheckService.class, () -> Mockito.mock(TokenCustomizeCheckService.class))
+                .run(context -> {
+                    assertThat(context).hasSingleBean(TokenCustomizeCheckService.class);
+                    assertThat(context).doesNotHaveBean(DefaultTokenCheckServiceImpl.class);
+                });
+    }
+
+    @Test
+    void shouldNotRegisterCoreBeansWithoutAuthenticateFilter() {
+        new ApplicationContextRunner()
+                .withConfiguration(AutoConfigurations.of(AuthenticationAutoConfiguration.class))
+                .withBean(UserClaimService.class, () -> (request, userClaim) -> UserClaim.getDefaultUser())
+                .withBean(StringRedisTemplate.class, () -> Mockito.mock(StringRedisTemplate.class))
+                .withBean(EnvironmentHelper.class, () -> Mockito.mock(EnvironmentHelper.class))
+                .run(context -> {
+                    assertThat(context).doesNotHaveBean(DefaultTokenCheckServiceImpl.class);
+                    assertThat(context).doesNotHaveBean(TokenCache.class);
+                });
     }
 
     @Configuration(proxyBeanMethods = false)
