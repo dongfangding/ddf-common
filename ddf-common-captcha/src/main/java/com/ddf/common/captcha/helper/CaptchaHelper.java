@@ -5,11 +5,11 @@ import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaCacheService;
 import com.anji.captcha.service.CaptchaService;
-import com.anji.captcha.service.impl.CaptchaServiceFactory;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.captcha.CaptchaType;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest;
 import com.ddf.boot.common.api.model.captcha.request.CaptchaRequest;
+import com.ddf.boot.common.api.model.captcha.request.CaptchaSecondCheckRequest;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaCheckResult;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
@@ -19,6 +19,7 @@ import com.ddf.common.captcha.constants.CaptchaErrorCode;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
+import com.ddf.common.captcha.repository.CacheAdapter;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.common.base.Objects;
 import java.awt.image.BufferedImage;
@@ -36,33 +37,32 @@ import org.springframework.util.FastByteArrayOutputStream;
  */
 public class CaptchaHelper {
 
-    private DefaultKaptcha defaultKaptcha;
+    private final DefaultKaptcha defaultKaptcha;
 
-    private DefaultKaptcha mathKaptcha;
+    private final DefaultKaptcha mathKaptcha;
 
-    private CaptchaProperties captchaProperties;
+    private final CaptchaProperties captchaProperties;
 
-    private CaptchaService captchaService;
+    private final CaptchaService captchaService;
 
-    private CaptchaCacheService captchaCacheService;
+    private final CaptchaCacheService captchaCacheService;
 
-    /**
-     * key 取名与三方库保持一致，便于统一管理。
-     */
-    public final static String CAPTCHA_KEY_PREFIX = "RUNNING:CAPTCHA:";
+	private final CacheAdapter cacheAdapter;
 
     /**
-     * 校验成功响应码，与anji-captcha三方库保持一致。
+     * 校验成功响应码，与 anji-captcha 三方库保持一致。
      */
     private static final String CAPTCHA_SUCCESS_CODE = "0000";
 
     public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha,
-            CaptchaProperties captchaProperties, CaptchaService captchaService) {
+            CaptchaProperties captchaProperties, CaptchaService captchaService,
+            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
         this.captchaService = captchaService;
-        this.captchaCacheService = CaptchaServiceFactory.getCache(captchaProperties.getCacheType().name());
+        this.captchaCacheService = captchaCacheService;
+		this.cacheAdapter = cacheAdapter;
     }
 
     /**
@@ -116,7 +116,7 @@ public class CaptchaHelper {
         result.setWidth(kaptchaProperties.getWidth());
         result.setHeight(kaptchaProperties.getHeight());
         result.setOriginalImageBase64(encodeImage(image));
-        final String token = CAPTCHA_KEY_PREFIX + IdsUtil.getNextStrId();
+        final String token = String.format("%s:%s", CacheAdapter.CAPTCHA_KEY_PREFIX, IdsUtil.getUniqueId());
         result.setUuid(token);
         captchaCacheService.set(token, cacheValue, captchaProperties.getKeyExpiredSeconds());
         return result;
@@ -145,17 +145,17 @@ public class CaptchaHelper {
         final CaptchaVO captchaVO = JsonUtil.toBean(JsonUtil.toJson(model.getRepData()), CaptchaVO.class);
         final CaptchaResult result = new CaptchaResult();
         result.setUuid(captchaVO.getToken());
-        // 底图base64编码
         result.setOriginalImageBase64(captchaVO.getOriginalImageBase64());
-        // 滑块图base64编码
         result.setImageBase64(captchaVO.getJigsawImageBase64());
         result.setWordList(captchaVO.getWordList());
         result.setVerifyCode(captchaVO.getPointJson());
+		result.setWidth(310);
+		result.setHeight(155);
         return result;
     }
 
     /**
-     * 校验验证码。
+     * 校验验证码, 这个是给前端调用的
      * 一次校验成功后返回二次校验凭证，二次校验或普通验证码返回空结果。
      *
      * @param request 请求对象
@@ -172,27 +172,30 @@ public class CaptchaHelper {
             } else {
                 vo.setCaptchaType(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue());
             }
-            vo.setCaptchaVerification(request.getCaptchaVerification());
-            final ResponseModel checkResult = request.isVerification()
-                    ? captchaService.verification(vo)
-                    : captchaService.check(vo);
+            final ResponseModel checkResult = captchaService.check(vo);
             if (!CAPTCHA_SUCCESS_CODE.equals(checkResult.getRepCode())) {
                 throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
             }
-            if (request.isVerification()) {
-                return CaptchaCheckResult.SUCCESS_EMPTY;
-            }
-            final CaptchaVO captchaVO = JsonUtil.toBean(JsonUtil.toJson(checkResult.getRepData()), CaptchaVO.class);
-            final String captchaVerification = captchaVO.getCaptchaVerification();
-            return CaptchaCheckResult.of(true, captchaVerification == null ? "" : captchaVerification);
         }
-        final String verifyCode = captchaCacheService.get(request.getUuid());
-        PreconditionUtil.checkArgument(java.util.Objects.nonNull(verifyCode), CaptchaErrorCode.VERIFY_CODE_EXPIRED);
-        PreconditionUtil.checkArgument(
-                java.util.Objects.equals(verifyCode, request.getVerifyCode()), CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
-        captchaCacheService.delete(request.getUuid());
-        return CaptchaCheckResult.SUCCESS_EMPTY;
+		final String captchaVerification = IdsUtil.getUniqueId();
+		cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
+        return CaptchaCheckResult.builder()
+				.uuid(request.getUuid())
+                .captchaVerification(captchaVerification)
+                .build();
     }
+
+	/**
+	 * 服务端二次校验接口
+	 *
+	 * @param request
+	 */
+	public void serverSecondCheck(CaptchaSecondCheckRequest request) {
+		final boolean b = cacheAdapter.hasCaptchaVerification(request.getUuid(), request.getCaptchaVerification());
+		if (!b) {
+			throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
+		}
+	}
 
     /**
      * 根据 token 获取验证码。
@@ -201,6 +204,6 @@ public class CaptchaHelper {
      * @return 验证码
      */
     public String getVerifyCodeByToken(String token) {
-        return captchaCacheService.get(CAPTCHA_KEY_PREFIX + token);
+        return captchaCacheService.get(String.format("%s:%s", CacheAdapter.CAPTCHA_KEY_PREFIX, token));
     }
 }

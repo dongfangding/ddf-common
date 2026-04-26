@@ -1,6 +1,8 @@
 package com.ddf.common.captcha.config;
 
+import com.anji.captcha.service.CaptchaCacheService;
 import com.anji.captcha.service.CaptchaService;
+import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import com.ddf.common.captcha.constants.CaptchaConst;
 import com.ddf.common.captcha.helper.CaptchaHelper;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
@@ -12,7 +14,6 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.impl.NoNoise;
 import com.google.code.kaptcha.util.Config;
 import java.util.Properties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,9 +23,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_IMPL;
 
-
 /**
- * <p>Kaptcha自动配置类</p >
+ * <p>Kaptcha 自动配置类</p>
  *
  * @author Snowball
  * @version 1.0
@@ -43,7 +43,7 @@ public class CaptchaAutoConfiguration {
     /**
      * 默认验证码实现器
      *
-     * @return
+     * @return 实例
      */
     @Bean(name = CaptchaConst.KAPTCHA_DEFAULT)
     public DefaultKaptcha defaultKaptcha() {
@@ -53,32 +53,25 @@ public class CaptchaAutoConfiguration {
     }
 
     /**
-     * 基于数字计算的验证码实现其
+     * 基于数字计算的验证码实现器
      *
-     * @return
+     * @return 实例
      */
     @Bean(name = CaptchaConst.KAPTCHA_MATH)
     public DefaultKaptcha mathKaptcha() {
         final Properties properties = buildProperties();
-        // 验证码文本生成器
         properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, MathKaptchaTextCreator.class.getName());
-        // 干扰实现类, 数学计算无干扰线
         properties.setProperty(Constants.KAPTCHA_NOISE_IMPL, NoNoise.class.getName());
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         defaultKaptcha.setConfig(new Config(properties));
         return defaultKaptcha;
     }
 
-    /**
-     * 适配缓存代理类
-     *
-     * @param stringRedisTemplate StringRedisTemplate 实例
-     * @return
-     */
     @Bean
     @ConditionalOnMissingBean
-    public CacheAdapter cacheAdapter(@Autowired StringRedisTemplate stringRedisTemplate) {
-        return new CacheAdapter(stringRedisTemplate);
+    public CacheAdapter cacheAdapter(StringRedisTemplate stringRedisTemplate,
+            RedisTemplateHelper redisTemplateHelper) {
+        return new CacheAdapter(stringRedisTemplate, redisTemplateHelper);
     }
 
     /**
@@ -87,54 +80,44 @@ public class CaptchaAutoConfiguration {
      * @param defaultKaptcha 默认验证码实例
      * @param mathKaptcha 数学验证码实例
      * @param captchaService 验证码服务实例
-     * @return
+     * @param captchaCacheService 验证码缓存服务实例
+     * @return 帮助类实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public CaptchaHelper captchaHelper(@Autowired @Qualifier(value = CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
-            @Autowired @Qualifier(value = CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
-            @Autowired CaptchaService captchaService) {
-        return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService);
+    public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
+            @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
+            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
+        return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService, cacheAdapter);
     }
-
-
 
     /**
      * 构建属性类
      *
-     * @return
+     * @return 属性
      */
     private Properties buildProperties() {
         Properties prop = new Properties();
         final KaptchaProperties kaptchaProperties = properties.getKaptcha();
 
-        // 宽高
         prop.setProperty(Constants.KAPTCHA_IMAGE_WIDTH, String.valueOf(kaptchaProperties.getWidth()));
         prop.setProperty(Constants.KAPTCHA_IMAGE_HEIGHT, String.valueOf(kaptchaProperties.getHeight()));
-        // 图片样式
-        // 水纹 com.google.code.kaptcha.impl.WaterRipple
-        // 鱼眼 com.google.code.kaptcha.impl.FishEyeGimpy
-        // 阴影 com.google.code.kaptcha.impl.ShadowGimpy
         prop.setProperty(Constants.KAPTCHA_OBSCURIFICATOR_IMPL, kaptchaProperties.getObscurificator());
 
-        // 文本内容属性
         final KaptchaProperties.Content content = kaptchaProperties.getContent();
         prop.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_STRING, content.getSource());
         prop.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, String.valueOf(content.getLength()));
         prop.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_SPACE, String.valueOf(content.getSpace()));
 
-        // 背景颜色
         KaptchaProperties.BackgroundColor backgroundColor = kaptchaProperties.getBackgroundColor();
         prop.setProperty(Constants.KAPTCHA_BACKGROUND_CLR_FROM, backgroundColor.getFrom());
         prop.setProperty(Constants.KAPTCHA_BACKGROUND_CLR_TO, backgroundColor.getTo());
 
-        // 边框
         KaptchaProperties.Border border = kaptchaProperties.getBorder();
         prop.setProperty(Constants.KAPTCHA_BORDER, border.getEnabled() ? "yes" : "no");
         prop.setProperty(Constants.KAPTCHA_BORDER_COLOR, border.getColor());
         prop.setProperty(Constants.KAPTCHA_BORDER_THICKNESS, String.valueOf(border.getThickness()));
 
-        // 字体
         KaptchaProperties.Font font = kaptchaProperties.getFont();
         prop.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, font.getName());
         prop.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_SIZE, String.valueOf(font.getSize()));
@@ -142,5 +125,4 @@ public class CaptchaAutoConfiguration {
 
         return prop;
     }
-
 }

@@ -2,6 +2,7 @@ package com.ddf.boot.common.api.model.captcha.response;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,20 +17,16 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor(staticName = "of")
+@Builder
+@AllArgsConstructor
 public class CaptchaCheckResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 空凭证的成功结果，供多处复用。
-     */
-    public static final CaptchaCheckResult SUCCESS_EMPTY = new CaptchaCheckResult(true, "");
-
 	/**
-	 * 是否成功
+	 * 二次校验时携带的uuid
 	 */
-	private boolean success;
+	private String uuid;
 
     /**
      * 二次校验凭证，用于登录等业务接口的服务端二次验证。

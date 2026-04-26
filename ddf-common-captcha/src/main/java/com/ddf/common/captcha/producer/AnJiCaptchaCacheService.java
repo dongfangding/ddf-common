@@ -1,14 +1,12 @@
 package com.ddf.common.captcha.producer;
 
 import com.anji.captcha.service.CaptchaCacheService;
-import com.ddf.common.captcha.repository.CacheAdapter;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import com.ddf.boot.common.redis.helper.RedisCommandHelper;
 
 /**
- * 滑块或点选文字验证码实现
+ * 滑块或点选文字验证码缓存实现
  *
- * <p>https://github.com/anji-plus/captcha</p >
+ * <p>https://github.com/anji-plus/captcha</p>
  *
  * @author Snowball
  * @version 1.0
@@ -16,10 +14,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class AnJiCaptchaCacheService implements CaptchaCacheService {
 
+    private final RedisCommandHelper redisCommandHelper;
+
     /**
-     * 必须保留空构造， 有load SPI
+     * 保留空构造，兼容 SPI；但运行时不建议使用该实例。
      */
     public AnJiCaptchaCacheService() {
+        this.redisCommandHelper = null;
+    }
+
+    public AnJiCaptchaCacheService(RedisCommandHelper redisCommandHelper) {
+        this.redisCommandHelper = redisCommandHelper;
     }
 
     /**
@@ -31,44 +36,47 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
      */
     @Override
     public void set(String key, String value, long expiresInSeconds) {
-        CacheAdapter.getTemplate().opsForValue().set(key, value, expiresInSeconds, TimeUnit.SECONDS);
+        redisCommandHelper.set(key, value, expiresInSeconds);
     }
+
     /**
      * @param key 目标键
      */
     @Override
     public boolean exists(String key) {
-        final Boolean aBoolean = CacheAdapter.getTemplate().hasKey(key);
-        return Objects.nonNull(aBoolean) && aBoolean;
+        return redisCommandHelper.hasKey(key);
     }
+
     /**
      * @param key 目标键
      */
     @Override
     public void delete(String key) {
-        CacheAdapter.getTemplate().delete(key);
+        redisCommandHelper.delete(key);
     }
+
     /**
      * @param key 目标键
      */
     @Override
     public String get(String key) {
-        return CacheAdapter.getTemplate().opsForValue().get(key);
+        return redisCommandHelper.get(key);
     }
+
     /**
      * @param key 目标键
      * @param val 参数
      */
     @Override
     public Long increment(String key, long val) {
-        return CacheAdapter.getTemplate().opsForValue().increment(key,val);
+        return redisCommandHelper.incrBy(key, val);
     }
 
     /**
      * 缓存类型-local/redis/memcache/..
-     * 通过java SPI机制，接入方可自定义实现类
+     * 通过 java SPI 机制，接入方可自定义实现类
      *
-     * @return
+     * @return 类型
      */
     @Override
     public String type() {

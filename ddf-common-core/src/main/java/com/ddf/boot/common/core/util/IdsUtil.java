@@ -2,6 +2,7 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.util.UUID;
@@ -60,9 +61,6 @@ public class IdsUtil {
      * @since 2019/12/9 0009 11:38
      **/
     public static String getUniqueId() {
-        return getNextStrId() + UUID
-                .randomUUID()
-                .toString()
-                .replaceAll("-", "");
+        return  IdsUtil.getNextStrId() + RandomUtil.randomString(32);
     }
 }

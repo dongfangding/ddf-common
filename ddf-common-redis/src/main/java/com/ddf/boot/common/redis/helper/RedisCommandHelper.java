@@ -37,7 +37,7 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
  */
 
 public class RedisCommandHelper {
-    private StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate redisTemplate;
     public RedisCommandHelper(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

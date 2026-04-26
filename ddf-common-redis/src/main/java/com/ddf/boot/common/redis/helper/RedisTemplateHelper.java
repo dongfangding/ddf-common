@@ -745,12 +745,12 @@ public class RedisTemplateHelper {
      * @param checkValue check值
      * @return
      */
-    public Integer stringDeleteWithCheckValue(String key, String checkValue) {
+    public Boolean stringDeleteWithCheckValue(String key, String checkValue) {
         final String execute = stringRedisTemplate.execute(
             RedisLuaScript.STRING_DELETE_WITH_CHECK_VALUE,
             Collections.singletonList(key), checkValue
         );
-        return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
+		return Integer.parseInt(execute) == 1;
     }
 
 
