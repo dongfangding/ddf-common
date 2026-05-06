@@ -18,7 +18,9 @@ sudo chown -R ${REAL_USER_ID}:${REAL_GROUP_ID} ${SCRIPT_DIR}
 sudo chown -R 999:999 mysql
 # nginx内部使用nginx用户启动，对应101，给与权限，否则无法访问新创建的文件
 sudo chown -R 101:101 nginx
+
 # emqx文件权限
+sudo mkdir -p emqx
 sudo chown -R 1000:1000 emqx
 # ES目录权限
 sudo chown -R 1000:1000 elasticsearch
