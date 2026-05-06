@@ -1,12 +1,33 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# --- 默认策略 ---
+* text=auto eol=lf
 
-# --- 源码与配置文件 ---
+# --- Windows 脚本 ---
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# --- Shell 脚本 ---
+*.sh text eol=lf
+
+# --- Java / 配置 ---
 *.java text eol=lf
 *.xml text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
 *.env text eol=lf
 *.py text eol=lf
-*.sh text eol=lf
 *.md text eol=lf
+
+# Maven wrapper（必须 LF）
+/mvnw text eol=lf
+
+# --- 二进制 ---
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+*.war binary
+*.zip binary

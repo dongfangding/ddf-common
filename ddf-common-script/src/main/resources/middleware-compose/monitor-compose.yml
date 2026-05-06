@@ -29,6 +29,7 @@ services:
       start_period: 10s
     mem_limit: 1536m
     cpus: 1.5
+
   jaeger:
     image: jaegertracing/jaeger:2.16.0
     container_name: jaeger
@@ -50,7 +51,6 @@ services:
     restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
- #     - --web.enable-lifecycle
       - --web.enable-otlp-receiver
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=15d
@@ -114,4 +114,4 @@ services:
 volumes:
   otelcol_data:
   prometheus_data:
-  grafana_data:
+  grafana_data:ls
