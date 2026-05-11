@@ -1,332 +1,398 @@
 # ddf-common-core
 
-轻量核心基础模块。
+> Generic kernel module: on top of `ddf-common-api`, this ships a curated set of **business-agnostic
+> utilities** — Spring context access, thread-pool governance, snowflake IDs, crypto/signature,
+> local caching, bean copy, tree assembly, pagination bridging, and more. Almost every other
+> ddf-common module depends on it transitively; **application services rarely need to declare it
+> directly**.
 
-定位：
+English · [简体中文](./README.zh-CN.md)
 
-- 为整个 `ddf-common` 体系提供通用工具、公共模型和 Spring 支撑
-- 作为 `ddf-common-starter-web`、`ddf-common-data-mysql-starter`、`ddf-common-governance-starter` 的底层依赖
-- 不再直接承载数据库、邮件、治理等重型基础设施
+---
 
-## 当前职责
+## 1. When to Use This Module
 
-- 通用工具类
-- 公共模型与基础对象
-- Spring 上下文辅助
-- 线程池与优雅停机
-- 缓存辅助
-- 不绑定具体中间件的公共支撑能力
+In the four-layer architecture `ddf-common-core` lives in the **kernel layer**. It supplies the
+Spring/JDK-level common infrastructure that everything above it builds on, but it does **not**
+ship a database, Redis, MQ, or any other concrete infrastructure — it gives those infrastructure
+modules a shared foundation.
 
-## 不再承载的能力
+| Category | Typical Problem | What the Module Provides |
+| ----- | ----- | ----- |
+| Spring bean access from non-bean code | A `static` helper needs `RedisTemplate` | `SpringContextHolder.getBeanWithStatic(...)` with silent degradation |
+| Distributed snowflake IDs | workerId / dataCenterId must be unique per instance | `IdsUtil.getNextLongId()` + `customizer.infra.global-properties` |
+| RSA / AES / HMAC | Gateway signing, link-layer encryption, at-rest encryption | `SecureUtil` + `rsa-*`/`aes-secret`/`sign-secret` |
+| Request signatures | ASCII-sorted, nested-DTO-flattened HMAC signing | `SignatureUtil` over `BaseSign` |
+| Thread-pool governance | Graceful shutdown, leak detection, unified metrics | `ThreadBuilderHelper.buildThreadPoolTaskExecutor` (auto-registered) |
+| Tree assembly | Department / menu / region trees | `TreeConvertUtil.convert(...)` |
+| Pagination bridging | Convert between MyBatis PageHelper and Spring Data `Pageable` | `PageUtil` |
+| Bean copy | Hot path DTO ↔ entity conversion | `BeanCopierUtils` (CGLIB BeanCopier + ReflectASM constructor cache) |
+| Promise / blocking await | "Place order, then wait for the async callback, time out otherwise" | `DeferredHelper` / `CompletableFutureHelper` |
+| Environment awareness | prod/dev/test detection, skip-on-profile | `EnvironmentHelper` |
+| Local cache | High-frequency, low-cardinality reads without distributed coherence | `LocalCacheUtil` (Caffeine + Guava + Hutool `TimedCache`) |
 
-- JDBC
-- MySQL 驱动
-- Druid
-- Mail
-- Actuator
+> ⚠️ JDBC / Druid / Mail / Actuator implementations have **already been moved out** of core into
+> dedicated starters. If you need those, depend on `ddf-common-data-mysql-starter` /
+> `ddf-common-governance-starter`.
 
-这些能力已迁移到：
+---
 
-- `ddf-common-data-mysql-starter`
-- `ddf-common-governance-starter`
+## 2. Maven Dependency
 
-## 使用建议
+In most cases you should **not** depend on `ddf-common-core` directly. The composite starters
+(`ddf-common-starter-web` / `ddf-common-starter-default`) pull it in transitively. Declare it
+explicitly only when you need a specific utility (e.g. `IdsUtil`, `SecureUtil`) from a leaf
+library project:
 
-不建议业务项目直接依赖 `ddf-common-core`。
+```xml
+<dependency>
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-core</artifactId>
+    <version>${ddf-common.version}</version>
+    <!-- Recommended: optional, so Spring / Hutool / Caffeine are not pushed downstream -->
+    <optional>true</optional>
+</dependency>
+```
 
-推荐方式：
+Major transitive dependencies:
 
-- Web 服务使用 `ddf-common-starter-web`
-- 常规业务服务使用 `ddf-common-starter-default`
+- `ddf-common-api` (protocol root: `BaseSign` / `ITreeTagCollection` / `ResponseData`, …)
+- `spring-cloud-context` (provides `@RefreshScope` so `GlobalProperties` is hot-reloadable)
+- `spring-boot-starter-cache`, `caffeine`, `guava` (local caching)
+- `hutool-core` / `crypto` / `cache` / `extra` / `http` / `json` — **do not** mix with `hutool-all`
+- `aspectjweaver`, `httpclient5`, `jdeferred-core`, `reflectasm`
 
-如果你只是扩展 `ddf-common` 内部模块，可以继续依赖 `ddf-common-core`。
+---
 
+## 3. Minimum Configuration
 
-核心功能包
+All knobs are centralized in `GlobalProperties` under prefix **`customizer.infra.global-properties`**.
+Every field is optional; configure only what you actually use:
 
-### 特性和功能
-- 自定义参数解析器
-    - 基础
-        - [SpringBoot项目实用功能之如何自定义参数解析器](https://blog.csdn.net/yichen0429/article/details/115417188)
-    - 项目特性
-        - [自定义参数解析器同一个参数支持多种Content-Type](https://blog.csdn.net/yichen0429/article/details/108337122)
-- 配置跨域
-    - 基础
-        - [SpringBoot如何配置全局跨域](https://blog.csdn.net/yichen0429/article/details/115418043)
-    - 项目特性
-        - [项目已配置全局跨域](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreWebConfig.java)
-- 自定义拦截器
-    - 基础
-        - [SpringBoot如何自定义拦截器](https://blog.csdn.net/yichen0429/article/details/115418426)
-- 配置线程池
-    - 基础
-        - [SpringBoot项目如何配置线程池](https://blog.csdn.net/yichen0429/article/details/115418659)
-        - [线程池优雅关闭方案](https://blog.csdn.net/yichen0429/article/details/119818681)
-    - 项目特性
-        - [快速构建线程池对象帮助类](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/helper/ThreadBuilderHelper.java)
-        - [让普通线程池具备优雅停机逻辑](https://github.com/dongfangding/ddf-common/blob/dev/ddf-common-core/src/main/java/com/ddf/boot/common/core/shutdown/ThreadPoolExecutorShutdownDefinition.java)
-- ControllerAdvice和@RestControllerAdvice的使用
-    - [全局对象包装和异常处理](https://blog.csdn.net/yichen0429/article/details/120087311)
+```yaml
+customizer:
+  infra:
+    global-properties:
+      # Snowflake ID (workerId MUST be unique across instances)
+      snowflake-worker-id: 1
+      snowflake-data-center-id: 1
 
+      # RSA key pair (PEM text). Required when calling SecureUtil#rsa* — otherwise IllegalStateException.
+      rsa-private-key: |
+        -----BEGIN PRIVATE KEY-----
+        ...
+        -----END PRIVATE KEY-----
+      rsa-public-key: |
+        -----BEGIN PUBLIC KEY-----
+        ...
+        -----END PUBLIC KEY-----
 
-### 基本配置
+      # AES / HMAC keys (required when calling SecureUtil#aes* / SignatureUtil)
+      aes-secret: ${AES_SECRET:}
+      sign-secret: ${SIGN_SECRET:}
 
-位于包`com.ddf.boot.common.core.config`路径下
+      # When true, BusinessException's code is mirrored to HTTP response.status
+      exception-code-to-response-status: false
 
-包含swagger基本配置， `mvc`跨域基本配置，默认线程池和任务调度线程池
+      # Verbose logging + log-suppression blacklist
+      global-log-print-details: false
+      ignore-log-exception-class-name:
+        - org.springframework.web.servlet.NoHandlerFoundException
+```
 
-### 基类实体
+> The class carries `@RefreshScope`, so config-center pushes (Nacos / Apollo / SCG) followed by
+> `POST /actuator/refresh` take effect immediately — but be careful with in-flight logic that was
+> already mid-execution at the moment of refresh.
 
-* com.ddf.boot.common.core.model.BaseDomain
+### 3.1 Auto-wired Beans
 
-  提供了一个实体层的基类，并使用了mybatis和spring-data等注解进行修饰， **id必须自己生成**
+After startup `CoreAutoConfiguration` injects:
 
-* com.ddf.boot.common.core.model.BaseQuery
+| Bean | Type | Notes |
+| ----- | ----- | ----- |
+| `globalProperties` | `GlobalProperties` | Hot-reloadable global knobs |
+| `springContextHolder` | `SpringContextHolder` | Enables Hutool `SpringUtil`; provides static bean lookup |
+| `environmentHelper` | `EnvironmentHelper` | App name / port / profile helpers |
+| `threadPoolExecutorShutdownDefinition` | `ExecutorServiceGracefulShutdownDefinition` | Default: 120 s graceful shutdown |
+| `deferredHelper` | `DeferredHelper<?, ?, ?>` | jdeferred-backed "await callback" helper |
+| `completableFutureHelper` | `CompletableFutureHelper<?>` | Helpers around `CompletableFuture` |
 
-  提供了所有查询对象的基类，提供了分页和排序参数， 查询对象继承该对象，根据自己使用框架，该对象提供了
+Every bean carries `@ConditionalOnMissingBean` — override freely from your own configuration.
 
-  `ofSpringData`和`ofMybatis`方法，将与分页和排序相关属性抽成对象框架所需要的分页对象
+---
 
-### 异常处理
+## 4. Core API Guide
 
-位于包`com.ddf.boot.common.core.exception200`路径下
-
-#### 基本使用
-
-默认为将所有的错误都映射为http状态码200，通过对象参数将业务异常包含的异常状态吗返回给前端
-
-* com.ddf.boot.common.core.exception200.ExceptionHandlerAdvice
-
-  异常处理类
-
-* com.ddf.boot.common.core.exception200.BaseException
-
-  异常基类， 建议自定义实现的异常要继承该类，该类基类提供了异常状态码和异常消息的处理
-
-* 可直接使用的异常类及状态码
-
-  | 异常类                | 状态码 | 建议使用场景                         |
-    | --------------------- | ------ | ------------------------------------ |
-  | AccessDeniedException | 403    | 可以获取用户身份，但对请求无权限     |
-  | BadRequestException   | 400    | 请求参数不合法                       |
-  | BusinessException     | 500    | 用户开发人员自身抛出的业务方面的异常 |
-  | ServerErrorException  | 500    | 服务本身异常                         |
-  | UnauthorizedException | 401    | 一般用于登录，用户身份校验不通过     |
-
-#### 扩展
-
-1.  如果想要出现异常时，接管异常处理，可以实现接口`com.ddf.boot.common.core.exception200.ExceptionHandlerMapping`
-
-接管异常大致有两个方面的需求
-
-* 仅仅是希望异常时做一些额外的处理，那么做自己想做的，但是最终返回null， 程序依然会去执行异常逻辑
-* 有一些异常需要额外的处理，就是不想用默认的异常封装处理，那么返回自己想要的即可，只要不为null，就会以实现为准
-
-2. 出现异常了，就是不想要http的状态码为200
-
-   由于目前设计的异常基类都必须包含一个code字段， 因此系统在`com.ddf.boot.common.core.config.GlobalProperties#exceptionCodeToResponseStatus`提供了一个属性，可以在出现异常时，将异常的状态码作为http的状态码返回，你只需要定义自己的异常，将异常的状态码定义成想要返回的http状态码即可
-
-   ```yaml
-   customizer: # 自定义的属性最好都写在customizer前缀下，方便辨认
-     infra:  
-       global-properties:
-         exceptionCodeToResponseStatus: true
-   ```
-
-3. 异常时我想要返回给前端详细的异常堆栈，方便前端出现问题，直接将异常堆栈抛出来，而不用每次查询日志怎么办？
-
-   这个参数其实默认是开启的，出现异常时会有一个stack返回；那么如果想要在生产环境时关闭该敏感信息怎么处理，
-
-   同样系统也提供了也给属性`com.ddf.boot.common.core.config.GlobalProperties#ignoreErrorTraceProfile`， 由于默认时开启状态，因此该属性的含义是允许你配置某些环境不要返回这个信息。
-
-   如下为当profile为pre或prod时，该异常堆栈不会返回
-
-   ```yaml
-    customizer: # 自定义的属性最好都写在customizer前缀下，方便辨认
-      infra:  
-        global-properties:
-          ignoreErrorTraceProfile:  # 过滤将异常堆栈信息输出打前端接口返回值的环境
-            - pre
-            - prod
-   ```
-
-### 统一返回对象
-
-希望能够返回给前端一个通用对象，这样方便整个对接以及数据的统一。该实现方式由于是基于`@RestControllerAdvice`和`@ControllerAdvice`， **因此使用时在控制器层返回自己的原始数据对象即可**
-
-该类结构如下，实际上异常返回是遵循的即是此类。自己返回的数据即包含在属性data下， 程序内部以处理控制器直接返回`String`时会出现的问题
+### 4.1 SpringContextHolder — Access the container from non-bean code
 
 ```java
-public class ResponseData<T> {
-    /** 返回消息代码 */
-    private String code;
-    /** 返回消息 */
-    private String message;
-    /**
-     * 错误堆栈信息
-     */
-    private String stack;
-    /** 响应时间 */
-    private long timestamp;
-    /** 返回数据 */
-    private T data;
+// Standard: throws NoSuchBeanDefinitionException when the bean is absent
+RedisTemplate<?, ?> redisTemplate = SpringContextHolder.getBean(RedisTemplate.class);
+
+// Silent degradation: returns null when the bean / context is missing
+GlobalProperties props = SpringContextHolder.getBeanWithStatic(GlobalProperties.class);
+if (props == null) { /* fall back to defaults or unit-test stub */ }
+
+// Type + name combo
+PrincipalFactory factory = SpringContextHolder.getBean("customPrincipalFactory", PrincipalFactory.class);
+
+// Whole family
+Map<String, RedisKeyConstraint> all = SpringContextHolder.getBeansOfType(RedisKeyConstraint.class);
+```
+
+> `SpringContextHolder` is enabled transitively via Hutool's `@EnableSpringUtil`. **As long as
+> `ddf-common-core` is on the classpath**, no extra wiring is needed.
+
+### 4.2 IdsUtil — Snowflake IDs
+
+```java
+long orderId = IdsUtil.getNextLongId();        // 64-bit numeric
+String traceId = IdsUtil.getNextStrId();       // Stringified (handy for logs / Mongo)
+```
+
+Backed by Hutool `IdUtil.getSnowflake(workerId, dataCenterId)`, with values read from
+`GlobalProperties`.
+
+> ⚠️ **In a multi-instance deployment, `snowflake-worker-id` MUST differ per instance** (inject via
+> ConfigMap / start-up arg, etc.); otherwise you risk ID collisions. For high-volume systems, prefer
+> the centralized service in `ddf-common-ids-service` and treat the local snowflake as a fallback.
+
+### 4.3 SecureUtil — RSA / AES
+
+```java
+// RSA (PKCS#8 PEM keys are eagerly loaded from GlobalProperties)
+String signature = SecureUtil.rsaSign("payload-to-sign");
+boolean ok = SecureUtil.rsaVerify("payload-to-sign", signature);
+
+// Payload encryption
+String cipher = SecureUtil.rsaEncryptByPublicKey("sensitive-data");
+String plain  = SecureUtil.rsaDecryptByPrivateKey(cipher);
+
+// AES
+String aesCipher = SecureUtil.aesEncrypt("plain-text");
+String aesPlain  = SecureUtil.aesDecrypt(aesCipher);
+
+// Password hashing
+String hash = SecureUtil.bcryptEncode("user-password");
+boolean matches = SecureUtil.bcryptMatches("user-password", hash);
+```
+
+> Calling these methods without configured keys throws `IllegalStateException`. Inject private
+> material via KMS / Vault / env vars into `customizer.infra.global-properties.rsa-private-key` —
+> do not commit it to `application.yml`.
+
+### 4.4 SignatureUtil — Request signing
+
+```java
+// Nested objects flattened, fields sorted by ASCII, salt appended, HMAC-SHA256 emitted
+BaseSign sign = SignatureUtil.signature(requestDto);
+httpHeaders.set("X-Signature", sign.getSign());
+httpHeaders.set("X-Timestamp", String.valueOf(sign.getTimestamp()));
+
+// Server-side verification
+SignatureUtil.verify(requestDto, sign);   // throws BusinessException on mismatch
+```
+
+Internally `SignatureUtil` calls `asciiSortToQueryStringOnlyBasicType` to flatten payloads into
+`a=1&b.c=2&b.d=3` form, so nested DTOs are signed stably.
+
+### 4.5 ThreadBuilderHelper — Governed thread pools
+
+```java
+ThreadPoolTaskExecutor executor = ThreadBuilderHelper.buildThreadPoolTaskExecutor(
+        "order-callback",   // thread-name prefix (shows up in logs)
+        4,                  // core
+        16,                 // max
+        500,                // queueCapacity
+        60                  // keepAliveSeconds
+);
+executor.execute(() -> handleCallback(payload));
+```
+
+Pools built this way come with three guarantees:
+
+1. **Auto-registered for graceful shutdown** — bound by `ExecutorServiceGracefulShutdownDefinition` (120 s default)
+2. **Tracked in a static `POOLS` list** — periodic logger prints `active / queue / completed` counters
+3. **Unified rejection policy** — defaults to `CallerRunsPolicy` so tasks aren't silently dropped
+
+### 4.6 BeanCopierUtils — Fast bean copy
+
+```java
+UserDTO dto = BeanCopierUtils.copyProperties(userEntity, UserDTO.class);
+List<UserDTO> list = BeanCopierUtils.copyListProperties(entities, UserDTO::new);
+```
+
+Caches CGLIB `BeanCopier` per source/target pair and constructs targets via ReflectASM
+`ConstructorAccess` — an order of magnitude faster than pure reflection.
+
+> ⚠️ Unlike Spring `BeanUtils.copyProperties`, **CGLIB does not auto-convert `int ↔ Integer`,
+> `Long ↔ String`, etc.** — mismatching types are silently skipped. Keep field types aligned (e.g.
+> with `BaseDomain` + Lombok) or perform a manual fix-up after copying.
+
+### 4.7 TreeConvertUtil — Tree assembly
+
+```java
+// DTO implements ITreeTagCollection<Long, DeptDTO>
+List<DeptDTO> flatList = deptMapper.listAll();
+List<DeptDTO> tree = TreeConvertUtil.convert(flatList);
+
+// Sorted children (relies on ITreeTagCollection#getSort)
+List<DeptDTO> sortedTree = TreeConvertUtil.convertWithSort(flatList);
+```
+
+DTOs must implement `ITreeTagCollection<K, T>` to expose self-ID, parent-ID, and child container.
+
+### 4.8 PageUtil — Pagination bridge
+
+```java
+// Service-side: PageRequest → PageHelper
+PageHelper.startPage(PageUtil.toPageNum(query), query.getPageSize());
+List<UserVO> list = userMapper.list(query);
+
+// Return: PageInfo → unified PageResult
+return PageUtil.buildPageResult(new PageInfo<>(list));
+```
+
+`PageResult<T>` comes from `ddf-common-api` and is consumed by frontends through a uniform shape.
+
+### 4.9 LocalCacheUtil — Local cache
+
+```java
+// Caffeine with auto-expiry
+String region = LocalCacheUtil.computeIfAbsent("region:" + cityCode,
+        Duration.ofMinutes(10),
+        () -> cityClient.queryRegion(cityCode));
+
+// Guava LoadingCache: best for small key space + very high call frequency
+LoadingCache<Long, UserBaseInfo> userCache = LocalCacheUtil.buildLoadingCache(
+        Duration.ofMinutes(5), 5_000, userId -> userMapper.findById(userId));
+```
+
+> Local caches are **not** distributed-consistent. Use `ddf-common-redis` for state that must be
+> shared across instances.
+
+### 4.10 Async await — Deferred / CompletableFuture
+
+```java
+// Pattern: kick off async payment, block until callback or time out after 30 s
+String txId = paymentClient.pay(request);
+PaymentCallback callback = deferredHelper.acquire(txId, 30_000);   // blocks
+
+// Resolver thread (HTTP / MQ / Webhook)
+deferredHelper.resolve(txId, callback);
+```
+
+Both helpers manage the "business-ID ↔ Future" registry and timeout cleanup; the actual signal
+(HTTP, MQ, Webhook) is delivered by your own code.
+
+### 4.11 BaseDomain — Persistence base class
+
+```java
+@SuperBuilder(toBuilder = true)
+@Data @EqualsAndHashCode(callSuper = true)
+public class UserDO extends BaseDomain {
+    private String username;
+    private String mobile;
 }
 ```
 
-**问题列表**
+`BaseDomain` ships `id`, `gmtCreated`, `gmtModified` (millisecond timestamps) — keeps naming and
+auditing consistent across all persistence-layer entities.
 
-* 如果某个返回对象，我就是不想再被统一对象包装怎么办？
+---
 
-  提供了一个属性`com.ddf.boot.common.core.controllerwrapper.CommonResponseBodyAdviceProperties#ignoreReturnType`，
+## 5. Advanced Usage / Extension Points
 
-  当控制器层返回的对象全类名包含在配置列表中时， 统一返回对象将不会继续执行包装逻辑
+### 5.1 Custom graceful-shutdown window
 
-  ```yaml
-  customizer:
-    infra:
-      response-body-advice:
-        ignoreReturnType:
-        - 要忽略的类的全类名
-  ```
+Default is 120 s. Override the bean in your own `@Configuration`:
 
-
-
-### 访问日志打印和慢接口事件回调
-
-该功能位于包`com.ddf.boot.common.core.logaccess`路径下
-
-默认关闭，如需开启需在配置类上使用注解`@EnableLogAspect`打开该功能的支持
-
-**提供功能**
-
-* 程序运行正常时，打印入参和出参对象，以及接口耗时
-
-* 程序运行异常时，打印入参对象信息和异常信息
-
-* 提供慢接口统计，使用注解中的`slowTime`方法来指定慢接口的时间界定值，一旦方法运行时间超过这个值，则提供一个接口触发事件，实现接口`com.ddf.boot.common.core.logaccess.SlowEventAction`即可完成对该接口的自定义处理
-
-* 忽略某个接口的慢接口统计，可能慢接口我们更希望的是一种绝大部分的一个值，但是有个别接口由于业务比较复杂，预先已经能够预料到，所以我们可能希望这个接口就不需要触发慢接口事件了。
-
-  使用注解中的属性`ignore`类指定类名，目前仅支持到类名，则该类不会被统计满接口
-
-### 关键信息修改日志回调
-
-该功能位于包`com.ddf.boot.common.core.logbool`下
-
-注意该类不是广义上的接口修改日志，而是针对特定关键信息的修改；
-
-由于修改失败存在两种情况，一是对应的数据不存在，则修改失败；二是对应的数据存在，但由于数据库中的值已经是要修改的值；
-
-如果我们要针对某些特定功能做修改日志，自己实现时就会面临上面那个情况，需要自己写判断；但其实最终我们只关心结果，有没有修改成功，存在不存在还是其它的我都不关心；
-
-而且可能系统不止一个功能需要做修改日志，那么每个都要自己写一遍就会很麻烦。
-
-如果是上面这种情况，那么当前功能则能够很好的支持，并且减少开发量
-
-**使用步骤**
-
-* 使用注解`@LogBoolReturn`标识方法
-
-* 方法返回对象必须为`com.ddf.boot.common.core.logbool.BoolReturn`
-
-  该类包含的信息如下：
-
-  需要告知系统，你有没有修改成功，这个是很关键的；以及修改人相关信息
-
-  ```java
-      /**
-       * 执行结果，因为有的接口操作，一旦到达某个状态就直接return true，没有执行业务，
-       * 日志需要知道调用接口时到底有没有对数据进行修改，结果如何
-       */
-      private boolean modifySuccess;
- 
-      /**
-       * 不在这个包里融合进业务系统对用户上下文获取的方式
-       */
-      private String userId;
- 
-      private String userName;
-  ```
-
-* 最终拦截类会生成日志对象`com.ddf.boot.common.core.logbool.LogBoolReturnResult`
-
-  ```java
-  @Data
-  @Accessors(chain = true)
-  public class LogBoolReturnResult {
- 
-      private BoolReturn boolReturn;
- 
-      /**
-       * 日志名称
-       */
-      private String logName;
- 
-      /**
-       * 执行类名
-       */
-      private String className;
- 
-      /**
-       * 执行方法名
-       */
-      private String methodName;
- 
-      /**
-       * 参数json格式
-       */
-      private String param;
-  }
-  ```
-
-* 实现接口`com.ddf.boot.common.core.logbool.LogBoolReturnAction`
-
-  最后一步，当前工具并不负责持久化日志，遵循了约定之后，会返回上述关键日志信息，通过该接口回调实现；你只需要实现该接口，然后是直接持久化这部分信息还是扩展一些其它字段再持久化，看你需要
-
-* 最后一个吐槽，你可能会觉得这一切似乎并没有什么鸟用；但当修改日志多了之后，就会发现，自己只需要实现一个接口去实现日志落库以及遵循一些小的约定，这一切看起来还是值得的
-
-### 工具包和帮助类
-
-- 常用工具包
-  首选Hutool
-
-- com.ddf.boot.common.core.util.BeanUtil
-
-  提供bean拷贝工具
-
-- com.ddf.boot.common.core.util.IdsUtil
-  基于Hutool单机版直接使用的雪花id
-
-- com.ddf.boot.common.core.util.JsonUtil
-  Json相关序列化方法
-
-- com.ddf.boot.common.core.helper.SpringContextHolder
-  提供在非Spring容器中静态获取Spring bean的功能
-
-- com.ddf.boot.common.core.helper.EnvironmentHelper
-
-  与环境变量相关的帮助类，如判断某个环境是否包含在当前应用激活的profile中，这个会经常经常用户代码在不同环境中的逻辑隔离
-
-- com.ddf.boot.common.core.helper.ThreadBuilderHelper
-
-  快速构建线程池的帮助类，默认拒绝策略为`CallerRunsPolicy`
-
-- com.ddf.boot.common.core.util.WebUtil
-  提供提供获取HttpServlet对象及常用方法
-
-- com.ddf.boot.common.core.util.VerifyCodeUtil
-  网上摘录的验证码生成工具
-
-## ddf-common-distributed-lock
-
-分布式锁实现包， 目前仅仅提供基于zookeeper的分布式锁实现
-
-**配置属性**
-
-```yaml
-distributed:
-  lock: 
-    zookeeper: 
-      connectString: 127.0.0.1:2181 # 配置zk的连接地址
-      root: "/ddf" # 配置分布式所产生的文件所在的跟目录，注意必须遵循zk文件路径以/开头
+```java
+@Bean
+public ExecutorServiceGracefulShutdownDefinition threadPoolExecutorShutdownDefinition() {
+    return new ExecutorServiceGracefulShutdownDefinition(30, TimeUnit.SECONDS);
+}
 ```
+
+### 5.2 Register a hand-rolled `ExecutorService` for graceful shutdown
+
+If you didn't build the pool via `ThreadBuilderHelper`, register it manually:
+
+```java
+@Bean
+public ExecutorService bizExecutor(GracefulShutdownRegistry registry) {
+    ExecutorService es = new ThreadPoolExecutor(...);
+    registry.register(es);   // awaited under the unified shutdown definition
+    return es;
+}
+```
+
+### 5.3 Subscribe to global exception events
+
+`GlobalExceptionEvent` is fired from the unified exception handler — listen to it for
+observability / alerting:
+
+```java
+@EventListener
+public void onGlobalException(GlobalExceptionEvent event) {
+    GlobalExceptionEventPayload payload = event.getPayload();
+    alarmService.send(payload.getErrorCode(), payload.getMessage(), payload.getStackTrace());
+}
+```
+
+---
+
+## 6. Interplay with Other Modules
+
+| Module | How They Cooperate |
+| ----- | ----- |
+| `ddf-common-api` | Upstream of core: ships `BaseSign` / `ResponseData` / `ITreeTagCollection` / `PageResult` |
+| `ddf-common-mvc` | Reuses `SpringContextHolder` + `GlobalExceptionEvent` for the global exception handler and request logging |
+| `ddf-common-authentication` | Uses `SecureUtil` / `SignatureUtil` for token issuance and signature validation |
+| `ddf-common-redis` | `ApplicationNamedKeyGenerator` resolves `spring.application.name` through `SpringContextHolder` |
+| `ddf-common-data-mysql-starter` | Reuses `BaseDomain`, `PageUtil`, `IdsUtil` and inherits thread-pool governance |
+| `ddf-common-ids-service` | Provides centralized ID dispatch; `IdsUtil` snowflake remains as local fallback |
+| `ddf-common-limit` / `ddf-common-alarm` | Pull `RedisTemplate` and other infra beans through `SpringContextHolder` |
+
+---
+
+## 7. FAQ
+
+**Q1: `SecureUtil` throws `IllegalStateException: rsa private key is blank`. Why?**  
+`customizer.infra.global-properties.rsa-private-key` is not set. In production, inject the value
+via environment variable or a secret manager — do not store it in `application.yml`.
+
+**Q2: How do I debug duplicate snowflake IDs across instances?**  
+Check that every process has a distinct `customizer.infra.global-properties.snowflake-worker-id`.
+For Kubernetes, derive workerId from `metadata.uid` / pod ordinal; for high-volume systems, use
+`ddf-common-ids-service` instead.
+
+**Q3: `BeanCopierUtils` left some fields null — why?**  
+CGLIB requires exact field-name + exact type matches; `int ↔ Integer`, `Long ↔ String`, etc. are
+silently skipped. Align field types or perform a manual fix-up after copying.
+
+**Q4: Where do the `ThreadBuilderHelper` metrics show up?**  
+Look for `[ThreadPoolMonitor]` in the logs (every 60 s by default). To export to Prometheus,
+enable Micrometer integration via `ddf-common-governance-starter` — the default `executor.*` metrics
+will be picked up automatically.
+
+**Q5: Can I use these utilities outside Spring?**  
+- `SpringContextHolder.getBeanWithStatic(...)` — yes, returns `null`.
+- `IdsUtil` / `SecureUtil` / `SignatureUtil` — they depend on `GlobalProperties`; you must either
+  bootstrap a Spring context (`@SpringBootTest`) or construct `GlobalProperties` manually and
+  inject it through `SpringContextHolder`.
+
+**Q6: I'm worried about `@RefreshScope` causing transient inconsistency. What should I do?**  
+`snowflake-worker-id` / `snowflake-data-center-id` should **not** be hot-refreshed — flipping them
+at runtime can produce colliding IDs. Roll the instance instead if you must change them.
+
+---
+
+## 8. References
+
+- Source: `config/GlobalProperties.java`, `config/CoreAutoConfiguration.java`
+- Source: `helper/SpringContextHolder.java`, `helper/ThreadBuilderHelper.java`
+- Source: `util/IdsUtil.java`, `util/SecureUtil.java`, `util/SignatureUtil.java`
+- Source: `util/BeanCopierUtils.java`, `util/PageUtil.java`, `util/TreeConvertUtil.java`, `util/LocalCacheUtil.java`
+- Source: `promise/DeferredHelper.java`, `promise/CompletableFutureHelper.java`
+- Hutool reference: <https://hutool.cn/docs/>
