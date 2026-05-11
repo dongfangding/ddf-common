@@ -81,3 +81,5 @@ node_modules
 .claude/settings.local.json
 .codex/settings-snowball-local.xml
 .m2-local/
+# Added by code-review-graph
+.code-review-graph/
