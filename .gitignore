@@ -83,3 +83,7 @@ node_modules
 .m2-local/
 # Added by code-review-graph
 .code-review-graph/
+.claude/skills/debug-issue
+.claude/skills/explore-codebase
+.claude/skills/refactor-safely
+.claude/skills/review-changes
