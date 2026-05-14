@@ -18,11 +18,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class AuthenticationWebConfiguration implements WebMvcConfigurer {
 
     private final ObjectProvider<AuthenticateTokenFilter> authenticateTokenFilter;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         authenticateTokenFilter.ifAvailable(filter -> {
-            registry.addInterceptor(filter)
-                    .addPathPatterns("/**");
+            registry.addInterceptor(filter).addPathPatterns("/**");
         });
     }
 }

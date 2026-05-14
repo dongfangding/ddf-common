@@ -15,10 +15,7 @@ public interface AccessFilterChain {
 
     /**
      * 实现的执行顺序
-     *
      * order越小，优先级越高
-     *
-     * @return
      */
     Integer getOrder();
 
@@ -29,7 +26,6 @@ public interface AccessFilterChain {
      * @param joinPoint joinpoint参数
      * @param pointClass point类型
      * @param pointMethod pointmethod参数
-     * @return
      */
     boolean filter(ProceedingJoinPoint joinPoint, Class<?> pointClass, MethodSignature pointMethod);
 }

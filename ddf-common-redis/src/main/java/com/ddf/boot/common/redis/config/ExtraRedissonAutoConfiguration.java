@@ -93,10 +93,10 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
         map.forEach((clientName, properties) -> {
             String beanName = clientName + "RedissonConnectionFactory";
             String redissonClientBeanName = clientName + "RedissonClient";
-            final RedissonClient redissonClient = applicationContext.getBean(
-                    redissonClientBeanName, RedissonClient.class);
-            genericApplicationContext.registerBean(
-                    beanName, RedissonConnectionFactory.class, () -> new RedissonConnectionFactory(redissonClient));
+            final RedissonClient redissonClient = applicationContext.getBean(redissonClientBeanName,
+                    RedissonClient.class);
+            genericApplicationContext.registerBean(beanName, RedissonConnectionFactory.class,
+                    () -> new RedissonConnectionFactory(redissonClient));
         });
 
         map.forEach((clientName, properties) -> {
@@ -134,11 +134,10 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
         map.forEach((clientName, properties) -> {
             String redisCommandHelperBeanName = clientName + "RedisCommandHelper";
             String redisTemplateBeanName = clientName + "StringRedisTemplate";
-            final StringRedisTemplate redisTemplateBean = applicationContext.getBean(
-                    redisTemplateBeanName, StringRedisTemplate.class);
+            final StringRedisTemplate redisTemplateBean = applicationContext.getBean(redisTemplateBeanName,
+                    StringRedisTemplate.class);
             genericApplicationContext.registerBean(redisCommandHelperBeanName, RedisCommandHelper.class,
-                    () -> new RedisCommandHelper(redisTemplateBean)
-            );
+                    () -> new RedisCommandHelper(redisTemplateBean));
         });
     }
 
@@ -146,7 +145,6 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
      * 获取redis连接协议前缀
      *
      * @param isSsl 参数
-     * @return
      */
     private String getPrefix(boolean isSsl) {
         return isSsl ? REDISS_PROTOCOL_PREFIX : REDIS_PROTOCOL_PREFIX;
@@ -155,8 +153,6 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
 
     /**
      * 创建config
-     *
-     * @return
      */
     private Config createCommonConfig() {
         Config config = null;
@@ -186,6 +182,7 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
         }
         return config;
     }
+
     /**
      * @param nodesObject 参数
      */
@@ -212,6 +209,7 @@ public class ExtraRedissonAutoConfiguration implements SmartInitializingSingleto
     public void afterSingletonsInstantiated() {
         createRedissonClient();
     }
+
     /**
      * @param applicationContext 参数
      */

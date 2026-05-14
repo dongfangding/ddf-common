@@ -11,12 +11,12 @@
 
 `ddf-common-zookeeper` 解决的是 **"分布式协调与状态同步"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| --- | --- | --- |
-| 配置中心 | 多实例配置变更需逐个重启 | ZK 节点监听，配置热更新 |
-| 服务注册发现 | 微服务上下线无法自动感知 | 临时节点注册，自动下线 |
-| 分布式协调 | 选主、计数器、队列需求 | Curator Recipes（LeaderLatch、DistributedAtomicLong 等）|
-| 分布式锁底层 | 需要强一致性锁 | 基于 ZK 的 `InterProcessMutex` |
+| 场景     | 典型问题         | 模块提供的能力                                              |
+|--------|--------------|------------------------------------------------------|
+| 配置中心   | 多实例配置变更需逐个重启 | ZK 节点监听，配置热更新                                        |
+| 服务注册发现 | 微服务上下线无法自动感知 | 临时节点注册，自动下线                                          |
+| 分布式协调  | 选主、计数器、队列需求  | Curator Recipes（LeaderLatch、DistributedAtomicLong 等） |
+| 分布式锁底层 | 需要强一致性锁      | 基于 ZK 的 `InterProcessMutex`                          |
 
 ---
 
@@ -158,11 +158,11 @@ AtomicValue<Long> value = counter.increment();
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
+| 模块                            | 协作方式                                     |
+|-------------------------------|------------------------------------------|
 | `ddf-common-distributed-lock` | ZK 分布式锁的上层封装，推荐业务使用 `DistributedLock` 接口 |
-| `ddf-common-ids-service` | 分布式 ID 可能依赖 ZK 作为号段分配协调器 |
-| `ddf-common-core` | JSON 序列化、字符串工具等基础支撑 |
+| `ddf-common-ids-service`      | 分布式 ID 可能依赖 ZK 作为号段分配协调器                 |
+| `ddf-common-core`             | JSON 序列化、字符串工具等基础支撑                      |
 
 ---
 

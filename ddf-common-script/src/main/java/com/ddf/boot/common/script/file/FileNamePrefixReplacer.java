@@ -12,9 +12,9 @@ public class FileNamePrefixReplacer {
     /**
      * 入口方法：递归处理所有文件
      *
-     * @param folderPath  根文件夹路径
+     * @param folderPath 根文件夹路径
      * @param matchPrefix 要匹配的文件名前缀
-     * @param newPrefix   要替换的新前缀
+     * @param newPrefix 要替换的新前缀
      */
     public static void replaceFileNamePrefix(String folderPath, String matchPrefix, String newPrefix) {
         File rootFolder = new File(folderPath);
@@ -28,13 +28,16 @@ public class FileNamePrefixReplacer {
 
     /**
      * 递归处理文件夹
+     *
      * @param folder 参数
      * @param matchPrefix 参数
      * @param newPrefix 参数
      */
     private static void processFolderRecursively(File folder, String matchPrefix, String newPrefix) {
         File[] files = folder.listFiles();
-        if (files == null) return;
+        if (files == null) {
+            return;
+        }
 
         for (File file : files) {
             if (file.isDirectory()) {
@@ -61,6 +64,7 @@ public class FileNamePrefixReplacer {
 
     /**
      * 替换文件内部的 public class/interface/enum 后跟的前缀
+     *
      * @param file 参数
      * @param matchPrefix 参数
      * @param newPrefix 参数
@@ -68,10 +72,8 @@ public class FileNamePrefixReplacer {
     public static void replaceClassNameInsideFile(File file, String matchPrefix, String newPrefix) {
         File tempFile = new File(file.getAbsolutePath() + ".tmp");
 
-        try (
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
-        ) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String trimmed = line.trim();
@@ -86,7 +88,7 @@ public class FileNamePrefixReplacer {
                         String newClassNamePart = newPrefix;
                         // 找到 leadingPart 后，剩下的就是类名，进行替换
                         line = line.replaceFirst(leadingPart + "\\s+" + oldClassNamePart,
-                                                 leadingPart + " " + newClassNamePart);
+                                leadingPart + " " + newClassNamePart);
                         System.out.println("🔧 替换类名: " + line.trim());
                     }
                 }
@@ -106,6 +108,7 @@ public class FileNamePrefixReplacer {
 
     /**
      * 判断一行是否匹配 class/interface/enum 且后面带有匹配前缀
+     *
      * @param line 参数
      * @param matchPrefix 参数
      */
@@ -117,6 +120,7 @@ public class FileNamePrefixReplacer {
 
     /**
      * 获取声明部分（例如 "public static class"、"public interface"）
+     *
      * @param line 参数
      */
     private static String getLeadingDeclarationPart(String line) {
@@ -131,10 +135,13 @@ public class FileNamePrefixReplacer {
         }
         return null;
     }
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) {
-        replaceFileNamePrefix("D:\\IdeaWorkspaces\\seaway\\game\\game-core\\src\\main\\java\\com\\kewta\\biz\\game\\core\\domain\\jinhua", "TigerLoong", "JinHua");
+        replaceFileNamePrefix(
+                "D:\\IdeaWorkspaces\\seaway\\game\\game-core\\src\\main\\java\\com\\kewta\\biz\\game\\core\\domain\\jinhua",
+                "TigerLoong", "JinHua");
     }
 }

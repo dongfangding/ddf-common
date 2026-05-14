@@ -75,8 +75,7 @@ public class RandomExtUtilTest {
             }
         }
         // 允许一定偏差，50% ± 5%
-        Assertions.assertTrue(hitCount > 450 && hitCount < 550,
-                "50%概率应在450-550之间，实际命中: " + hitCount);
+        Assertions.assertTrue(hitCount > 450 && hitCount < 550, "50%概率应在450-550之间，实际命中: " + hitCount);
     }
 
     @Test
@@ -170,7 +169,8 @@ public class RandomExtUtilTest {
         sources.add(DefaultWeightProportion.of("A", 1.0));
         sources.add(DefaultWeightProportion.of("B", 2.0));
 
-        List<DefaultWeightProportion> result = RandomExtUtil.generateAllByShuffle(sources, DefaultWeightProportion.class);
+        List<DefaultWeightProportion> result = RandomExtUtil.generateAllByShuffle(sources,
+                DefaultWeightProportion.class);
 
         // 总权重为3，应该生成3条数据
         Assertions.assertEquals(3, result.size());

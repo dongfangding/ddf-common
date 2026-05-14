@@ -55,9 +55,7 @@ class MessagePackUtilTest {
     @DisplayName("新建 ObjectMapper 应忽略未知字段")
     void shouldIgnoreUnknownProperties() {
         UserClaim claim = MessagePackUtil.readValue(
-                MessagePackUtil.writeValueAsBytes(Map.of("userId", "u-2", "unknownField", "ignored")),
-                UserClaim.class
-        );
+                MessagePackUtil.writeValueAsBytes(Map.of("userId", "u-2", "unknownField", "ignored")), UserClaim.class);
 
         assertEquals("u-2", claim.getUserId());
     }

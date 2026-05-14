@@ -15,14 +15,13 @@ public class ConsumeException extends BaseException {
 
     private String code;
     private String message;
+
     public ConsumeException(String message) {
         super(message);
     }
 
     /**
      * 当前异常默认响应状态码
-     *
-     * @return
      */
     @Override
     public BaseCallbackCode defaultCallback() {
@@ -33,6 +32,7 @@ public class ConsumeException extends BaseException {
     public boolean isMaskErrorDetails() {
         return true;
     }
+
     /**
      * @param code 参数
      * @param message 参数

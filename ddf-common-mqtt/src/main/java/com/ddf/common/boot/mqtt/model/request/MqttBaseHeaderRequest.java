@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>mqtt 请求头 请求对象 </p >
- *
  * 调用方可以在请求头里放入一些自己需要的数据，也可以放入一些唯一标识符之类的数据方便消息追溯
  *
  * @author Snowball

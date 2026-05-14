@@ -69,54 +69,54 @@ It is not a runnable business application template. It is intended to be a reusa
 
 ### Core Foundation Layer
 
-| Module | Description |
-| --- | --- |
-| `ddf-common-api` | Shared constants, context models, validation contracts, common enums, base interfaces, and reusable DTO conventions. |
-| `ddf-common-core` | Core utilities, cache and crypto support, global properties, event models, and foundational supporting components. |
-| `ddf-common-mvc` | MVC auto-configuration, unified response wrapping, global exception handling, filters, access logs, and web foundation support. |
-| `ddf-common-authentication` | Authentication filters, token validation extension points, authentication properties, and login-state cache integration. |
-| `ddf-common-limit` | Rate limiting and repeat-submission protection, including annotations, aspects, key generators, and related configuration. |
+| Module                      | Description                                                                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-api`            | Shared constants, context models, validation contracts, common enums, base interfaces, and reusable DTO conventions.            |
+| `ddf-common-core`           | Core utilities, cache and crypto support, global properties, event models, and foundational supporting components.              |
+| `ddf-common-mvc`            | MVC auto-configuration, unified response wrapping, global exception handling, filters, access logs, and web foundation support. |
+| `ddf-common-authentication` | Authentication filters, token validation extension points, authentication properties, and login-state cache integration.        |
+| `ddf-common-limit`          | Rate limiting and repeat-submission protection, including annotations, aspects, key generators, and related configuration.      |
 
 ### Infrastructure Layer
 
-| Module | Description |
-| --- | --- |
-| `ddf-common-redis` | Redis and Redisson auto-configuration, cache manager support, local cache support, and Redis helper utilities. |
-| `ddf-common-distributed-lock` | Distributed lock implementations based on Redis and Zookeeper. |
-| `ddf-common-log4j` | Log4j2 logging integration support. |
-| `ddf-common-data-mysql-starter` | Aggregates JDBC, MySQL, and Druid as the MySQL data-access starter. |
+| Module                          | Description                                                                                                                             |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-redis`              | Redis and Redisson auto-configuration, cache manager support, local cache support, and Redis helper utilities.                          |
+| `ddf-common-distributed-lock`   | Distributed lock implementations based on Redis and Zookeeper.                                                                          |
+| `ddf-common-log4j`              | Log4j2 logging integration support.                                                                                                     |
+| `ddf-common-data-mysql-starter` | Aggregates JDBC, MySQL, and Druid as the MySQL data-access starter.                                                                     |
 | `ddf-common-governance-starter` | Aggregates Mail, Actuator, and Prometheus registry support as the entry point for governance, alerting, and observability capabilities. |
-| `ddf-common-sharding` | Sharding auto-configuration and rule packaging. |
-| `ddf-common-zookeeper` | Zookeeper listeners, monitoring support, and related helpers. |
-| `ddf-common-mongo` | MongoDB auto-configuration and `MongoTemplate` helper utilities. |
-| `ddf-common-es` | Elasticsearch dependency integration module. |
+| `ddf-common-sharding`           | Sharding auto-configuration and rule packaging.                                                                                         |
+| `ddf-common-zookeeper`          | Zookeeper listeners, monitoring support, and related helpers.                                                                           |
+| `ddf-common-mongo`              | MongoDB auto-configuration and `MongoTemplate` helper utilities.                                                                        |
+| `ddf-common-es`                 | Elasticsearch dependency integration module.                                                                                            |
 
 ### Scenario And Extension Layer
 
-| Module | Description |
-| --- | --- |
-| `ddf-common-alarm` | Alerting for exceptions, logs, and rule-driven scenarios, including DingTalk and Lark notification integrations. |
-| `ddf-common-captcha` | Image captcha and behavior captcha integration support. |
-| `ddf-common-ids-service` | Distributed ID generation configuration, API contracts, and implementations. |
-| `ddf-common-rocketmq` | RocketMQ enhancement layer for message wrapping, environment isolation, and producer support. |
-| `ddf-common-ons` | Alibaba Cloud ONS integration and listener container support. |
-| `ddf-common-mqtt` | Core MQTT client connectivity, publishing support, and related connection settings. |
-| `ddf-common-mqtt-client` | Higher-level topic and message model abstractions on top of `ddf-common-mqtt`. |
-| `ddf-common-websocket` | WebSocket configuration, handshake support, message handling, and related business support points. |
-| `ddf-common-netty-broker` | Netty-based broker or message proxy samples and foundational implementation. |
-| `ddf-common-third-party` | Third-party integration utilities, currently focused on Alibaba Cloud OSS and SMS support. |
-| `ddf-common-s3` | Object storage abstractions compatible with the S3 protocol. |
-| `ddf-common-vps` | File and image processing support. |
-| `ddf-common-xxl-executor` | XXL-Job executor module and baseline configuration. |
-| `ddf-common-canal` | Canal subscription message dispatch support. |
-| `ddf-common-script` | Internal scripts and offline utility code. |
+| Module                    | Description                                                                                                      |
+|---------------------------|------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-alarm`        | Alerting for exceptions, logs, and rule-driven scenarios, including DingTalk and Lark notification integrations. |
+| `ddf-common-captcha`      | Image captcha and behavior captcha integration support.                                                          |
+| `ddf-common-ids-service`  | Distributed ID generation configuration, API contracts, and implementations.                                     |
+| `ddf-common-rocketmq`     | RocketMQ enhancement layer for message wrapping, environment isolation, and producer support.                    |
+| `ddf-common-ons`          | Alibaba Cloud ONS integration and listener container support.                                                    |
+| `ddf-common-mqtt`         | Core MQTT client connectivity, publishing support, and related connection settings.                              |
+| `ddf-common-mqtt-client`  | Higher-level topic and message model abstractions on top of `ddf-common-mqtt`.                                   |
+| `ddf-common-websocket`    | WebSocket configuration, handshake support, message handling, and related business support points.               |
+| `ddf-common-netty-broker` | Netty-based broker or message proxy samples and foundational implementation.                                     |
+| `ddf-common-third-party`  | Third-party integration utilities, currently focused on Alibaba Cloud OSS and SMS support.                       |
+| `ddf-common-s3`           | Object storage abstractions compatible with the S3 protocol.                                                     |
+| `ddf-common-vps`          | File and image processing support.                                                                               |
+| `ddf-common-xxl-executor` | XXL-Job executor module and baseline configuration.                                                              |
+| `ddf-common-canal`        | Canal subscription message dispatch support.                                                                     |
+| `ddf-common-script`       | Internal scripts and offline utility code.                                                                       |
 
 ### Aggregation And Dependency Management Layer
 
-| Module | Description |
-| --- | --- |
-| `ddf-common-dependency` | Centralized dependency version management suitable for BOM import. |
-| `ddf-common-starter-web` | Aggregates common web foundation modules as the starting point for lightweight web services. |
+| Module                       | Description                                                                                        |
+|------------------------------|----------------------------------------------------------------------------------------------------|
+| `ddf-common-dependency`      | Centralized dependency version management suitable for BOM import.                                 |
+| `ddf-common-starter-web`     | Aggregates common web foundation modules as the starting point for lightweight web services.       |
 | `ddf-common-starter-default` | Aggregates web, MySQL, governance, and other baseline capabilities for standard business services. |
 
 ## Recommended Integration Patterns

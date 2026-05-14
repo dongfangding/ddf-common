@@ -70,9 +70,8 @@ public class ThreadBuilderHelperTest {
     @DisplayName("测试 buildThreadExecutor 拒绝策略和优雅关闭")
     public void testBuildThreadExecutorWithHandlerAndGraceful() {
         RejectedExecutionHandler handler = new ThreadPoolExecutor.DiscardPolicy();
-        ThreadPoolTaskExecutor executor = ThreadBuilderHelper.buildThreadExecutor(
-                "test-handler-graceful", 60, 100, 4, 8, handler, true
-        );
+        ThreadPoolTaskExecutor executor = ThreadBuilderHelper.buildThreadExecutor("test-handler-graceful", 60, 100, 4,
+                8, handler, true);
 
         executor.initialize();
         try {
@@ -88,13 +87,13 @@ public class ThreadBuilderHelperTest {
     @DisplayName("测试 buildThreadExecutor 完全自定义参数")
     public void testBuildThreadExecutorFullCustom() {
         RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
-        ThreadPoolTaskExecutor executor = ThreadBuilderHelper.buildThreadExecutor(
-                "test-custom", 60, 100, 4, 8, handler, true, true
-        );
+        ThreadPoolTaskExecutor executor = ThreadBuilderHelper.buildThreadExecutor("test-custom", 60, 100, 4, 8, handler,
+                true, true);
 
         executor.initialize();
         try {
-            assertTrue(executor.getThreadPoolExecutor().getRejectedExecutionHandler() instanceof ThreadPoolExecutor.AbortPolicy);
+            assertTrue(executor.getThreadPoolExecutor()
+                    .getRejectedExecutionHandler() instanceof ThreadPoolExecutor.AbortPolicy);
         } finally {
             executor.destroy();
         }
@@ -113,8 +112,7 @@ public class ThreadBuilderHelperTest {
     @DisplayName("测试 buildScheduledExecutorService 自定义线程数")
     public void testBuildScheduledExecutorServiceCustomSize() {
         ScheduledThreadPoolExecutor executor = ThreadBuilderHelper.buildScheduledExecutorService(
-                "test-scheduled-custom", 60, true, 4, 8
-        );
+                "test-scheduled-custom", 60, true, 4, 8);
 
         assertNotNull(executor);
         assertEquals(4, executor.getCorePoolSize());

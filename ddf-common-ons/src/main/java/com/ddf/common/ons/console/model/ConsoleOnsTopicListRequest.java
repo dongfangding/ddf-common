@@ -26,6 +26,7 @@ public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
 
     /**
      * 环境key
+     *
      * @see com.ddf.common.ons.console.config.EnvClientProperties#getClients()
      */
     private String env;
@@ -39,11 +40,8 @@ public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
      * 转换为SDK请求对象
      *
      * @param instanceId 实例ID
-     * @return
      */
     public OnsTopicListRequest toSdkRequest(String instanceId) {
-        return new OnsTopicListRequest()
-                .setTopic(topic)
-                .setInstanceId(instanceId);
+        return new OnsTopicListRequest().setTopic(topic).setInstanceId(instanceId);
     }
 }

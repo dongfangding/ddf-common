@@ -39,10 +39,8 @@ public class RedirectCmdListener extends MessageListenerAdapter {
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        log.info(
-                "====================指令转发收到消息: {}==================",
-                new String(message.getBody(), StandardCharsets.UTF_8)
-        );
+        log.info("====================指令转发收到消息: {}==================",
+                new String(message.getBody(), StandardCharsets.UTF_8));
         String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
         if (WebsocketConst.REDIRECT_CMD_TOPIC.equals(channel)) {
             wsMessageService.executeCmd(JsonUtil.toBean(message.getBody(), MessageRequest.class));

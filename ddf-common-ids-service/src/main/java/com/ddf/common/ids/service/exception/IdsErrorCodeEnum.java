@@ -38,6 +38,7 @@ public enum IdsErrorCodeEnum implements BaseCallbackCode {
 
     @Getter
     private final String bizMessage;
+
     IdsErrorCodeEnum(String code, String description) {
         this.code = code;
         this.description = description;

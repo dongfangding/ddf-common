@@ -19,7 +19,6 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
     /**
      * ONS错误码
      * https://help.aliyun.com/document_detail/44425.html?spm=a2c4g.11186623.6.681.7a4051afN9iUQR
-     *
      */
     ONS_SYSTEM_ERROR("ONS_SYSTEM_ERROR", "消息队列 RocketMQ 版后端异常"),
     ONS_SERVICE_UNSUPPORTED("ONS_SERVICE_UNSUPPORTED", "当前调用在对应的地域不支持"),
@@ -36,9 +35,7 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
     BIZ_PUBLISH_INFO_NOT_FOUND("BIZ_PUBLISH_INFO_NOT_FOUND", "请求的 GID 没有找到"),
     EMPOWER_EXIST_ERROR("EMPOWER_EXIST_ERROR", "当前授权关系已经存在"),
     EMPOWER_OWNER_CHECK_ERROR("EMPOWER_OWNER_CHECK_ERROR", "当前用户不是授权 Topic 的 Owner"),
-    AUTH_RESOURCE_OWNER_ERROR("AUTH_RESOURCE_OWNER_ERROR", "没有权限操作或者资源不存在")
-
-    ;
+    AUTH_RESOURCE_OWNER_ERROR("AUTH_RESOURCE_OWNER_ERROR", "没有权限操作或者资源不存在");
 
     private final String code;
 
@@ -51,6 +48,7 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
     static {
         VALUE_MAPPINGS = Arrays.stream(values()).collect(Collectors.toMap(OnsBizErrorCodeEnum::getCode, val -> val));
     }
+
     OnsBizErrorCodeEnum(String value, String description) {
         this.code = value;
         this.description = description;
@@ -61,7 +59,6 @@ public enum OnsBizErrorCodeEnum implements BaseCallbackCode {
      * 根据value获取对象
      *
      * @param value 参数值
-     * @return
      */
     public static OnsBizErrorCodeEnum getByValue(String value) {
         return VALUE_MAPPINGS.get(value);

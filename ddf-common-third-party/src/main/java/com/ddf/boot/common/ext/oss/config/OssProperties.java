@@ -95,8 +95,7 @@ public class OssProperties implements InitializingBean {
             return;
         }
         Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()),
-                "请检查oss配置属性"
-        );
+                "请检查oss配置属性");
         Preconditions.checkArgument(CollUtil.isNotEmpty(this.getBuckets()), "请检查bucket列表配置");
         Preconditions.checkArgument(StringUtils.isNotBlank(stsEndpoint), "sts的接入地址不能为空");
         Preconditions.checkArgument(StringUtils.isNotBlank(roleArn), "roleArn不能为空");

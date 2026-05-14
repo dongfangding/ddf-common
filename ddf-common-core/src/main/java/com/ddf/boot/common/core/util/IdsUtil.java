@@ -24,7 +24,8 @@ import java.util.UUID;
  */
 public class IdsUtil {
 
-    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(GlobalProperties.class);
+    private static final GlobalProperties GLOBAL_PROPERTIES = SpringContextHolder.getBeanWithStatic(
+            GlobalProperties.class);
 
     /**
      * 获取string格式的id
@@ -61,6 +62,6 @@ public class IdsUtil {
      * @since 2019/12/9 0009 11:38
      **/
     public static String getUniqueId() {
-        return  IdsUtil.getNextStrId() + RandomUtil.randomString(32);
+        return IdsUtil.getNextStrId() + RandomUtil.randomString(32);
     }
 }

@@ -19,8 +19,6 @@ public interface IdsApi {
 
     /**
      * 单个雪花id
-     *
-     * @return
      */
     String getSnowflakeId();
 
@@ -28,7 +26,6 @@ public interface IdsApi {
      * 多个雪花id
      *
      * @param number 数值
-     * @return
      */
     List<String> getSnowflakeIds(Integer number);
 
@@ -36,7 +33,6 @@ public interface IdsApi {
      * 单个序列id
      *
      * @param key 目标键
-     * @return
      */
     String getSegmentId(String key);
 
@@ -45,7 +41,6 @@ public interface IdsApi {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     List<String> getSegmentIds(String key, Integer number);
 
@@ -53,7 +48,6 @@ public interface IdsApi {
      * 获取组合id
      *
      * @param key 目标键
-     * @return
      */
     IdsMultiData getMultiId(String key);
 
@@ -62,28 +56,22 @@ public interface IdsApi {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     IdsMultiListData getMultiIds(String key, Integer number);
 
     /**
      * 获取号段模式缓存信息
-     *
-     * @return
      */
     Map<String, SegmentBufferView> getSegmentCache();
 
 
     /**
      * 获取号段模式db信息
-     *
-     * @return
      */
     List<LeafAlloc> getDb();
 
     /**
      * 解析雪花id信息
-     *
      */
     DecodeSnowflakeIdData decodeSnowflakeId(String snowflakeId);
 }

@@ -8,8 +8,11 @@ import java.util.List;
  */
 public interface MachineStrategy {
     void initSymbols(List<TigerMachineApp.Symbol> symbols);
+
     List<List<TigerMachineApp.SymbolPool>> getPoolConfigs();
+
     List<String> getIllegalSymbolStrings();
+
     // 处理特殊机台的生成逻辑
     void handleSpecialMatrixLogic(int[][] matrix, int r, int c, boolean isFreeSpin);
 

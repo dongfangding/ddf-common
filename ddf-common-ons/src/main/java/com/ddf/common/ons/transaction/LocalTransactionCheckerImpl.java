@@ -16,27 +16,29 @@ import org.springframework.util.ObjectUtils;
 public class LocalTransactionCheckerImpl implements LocalTransactionChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionChecker");
-   /**
-    * @param msg 参数
-    */
-   @Override
-   public TransactionStatus check(Message msg) {
-       String messageId = msg.getMsgID();
-       TransactionStatus transactionStatus = TransactionStatus.RollbackTransaction;
-       try {
-           String routeKey = msg.getUserProperties(TransactionConst.TRANSACTION_BIZ_ROUTE_KEY);
-           if(ObjectUtils.isEmpty(routeKey)) {
-               LOGGER.error("BizId of Message(MessageId:[{}]) is empty", messageId);
-           } else {
-               boolean isSuccess = BizResultCheckerPool.get(routeKey).isSuccess(msg);
-               // 本地事务已成功则提交消息, 本地事务已失败则回滚消息
-               transactionStatus = isSuccess ? TransactionStatus.CommitTransaction : TransactionStatus.RollbackTransaction;
-           }
-       } catch (Exception e) {
-           LOGGER.error("Check Biz Result of Message(MessageId:[{}]) occur error", messageId, e);
-       }
-       LOGGER.info("MessageId:[{}],TransactionStatus:[{}]", messageId, transactionStatus.name());
-       return transactionStatus;
-   }
 
- }                        
+    /**
+     * @param msg 参数
+     */
+    @Override
+    public TransactionStatus check(Message msg) {
+        String messageId = msg.getMsgID();
+        TransactionStatus transactionStatus = TransactionStatus.RollbackTransaction;
+        try {
+            String routeKey = msg.getUserProperties(TransactionConst.TRANSACTION_BIZ_ROUTE_KEY);
+            if (ObjectUtils.isEmpty(routeKey)) {
+                LOGGER.error("BizId of Message(MessageId:[{}]) is empty", messageId);
+            } else {
+                boolean isSuccess = BizResultCheckerPool.get(routeKey).isSuccess(msg);
+                // 本地事务已成功则提交消息, 本地事务已失败则回滚消息
+                transactionStatus =
+                        isSuccess ? TransactionStatus.CommitTransaction : TransactionStatus.RollbackTransaction;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Check Biz Result of Message(MessageId:[{}]) occur error", messageId, e);
+        }
+        LOGGER.info("MessageId:[{}],TransactionStatus:[{}]", messageId, transactionStatus.name());
+        return transactionStatus;
+    }
+
+}

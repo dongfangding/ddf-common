@@ -61,16 +61,13 @@ public class ConsoleOnsTopicCreateRequest implements EnvRequest, UserRequest, Se
 
     /**
      * 转换为SDK内部提供的参数对象
-     *
-     * @return
      */
     public OnsTopicCreateRequest toSdkRequest(String instanceId) {
-        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
-        PreconditionUtil.checkArgument(Objects.nonNull(TopicMessageType.getByValue(messageType)), new IllegalArgumentException("消息类型值有误"));
-        return new OnsTopicCreateRequest()
-                .setTopic(topic)
-                .setMessageType(messageType)
-                .setRemark(remark)
-                .setInstanceId(instanceId);
+        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId),
+                new IllegalArgumentException("InstanceId不能为空"));
+        PreconditionUtil.checkArgument(Objects.nonNull(TopicMessageType.getByValue(messageType)),
+                new IllegalArgumentException("消息类型值有误"));
+        return new OnsTopicCreateRequest().setTopic(topic).setMessageType(messageType).setRemark(remark).setInstanceId(
+                instanceId);
     }
 }

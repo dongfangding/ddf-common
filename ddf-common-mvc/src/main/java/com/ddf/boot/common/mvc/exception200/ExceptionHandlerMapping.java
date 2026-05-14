@@ -39,7 +39,6 @@ public interface ExceptionHandlerMapping {
      * 解析异常，通用类中由于包引用的限制，无法判定所有的异常，未判定的异常只能统一服务端异常，这个提供一个判定，可以匹配异常，返回自己的异常状态码
      *
      * @param exception 异常对象
-     * @return
      */
     default BaseCallbackCode resolveOtherException(Exception exception) {
         return null;

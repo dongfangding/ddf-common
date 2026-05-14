@@ -17,6 +17,7 @@ public class ClientOutboundHandler extends ChannelOutboundHandlerAdapter {
         log.debug("向服务端发送数据: {}", ((RequestContent<?>) msg).serial());
         ctx.writeAndFlush((msg));
     }
+
     /**
      * @param ctx 参数
      * @param cause 参数

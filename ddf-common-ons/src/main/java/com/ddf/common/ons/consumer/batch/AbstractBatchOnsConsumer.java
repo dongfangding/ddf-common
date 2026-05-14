@@ -26,7 +26,6 @@ public abstract class AbstractBatchOnsConsumer implements OnsConsumer {
 
     /**
      * 创建消费者Bean
-     * @return
      */
     protected BatchConsumerBean createBatchConsumerBean() {
         BatchConsumerBean consumerBean = new BatchConsumerBean();
@@ -51,7 +50,6 @@ public abstract class AbstractBatchOnsConsumer implements OnsConsumer {
 
     /**
      * 获取并发消费者数量
-     * @return
      */
     @Override
     public String getConsumeThreadNums() {
@@ -60,7 +58,6 @@ public abstract class AbstractBatchOnsConsumer implements OnsConsumer {
 
     /**
      * 获取消息监听器
-     * @return
      */
     protected abstract BatchMessageListener getMessageListener();
 

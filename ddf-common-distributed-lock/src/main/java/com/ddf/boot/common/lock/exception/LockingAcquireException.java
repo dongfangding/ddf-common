@@ -10,6 +10,7 @@ public class LockingAcquireException extends Exception {
     public LockingAcquireException(Exception e) {
         super(e);
     }
+
     /**
      * @param lockKey 参数
      */

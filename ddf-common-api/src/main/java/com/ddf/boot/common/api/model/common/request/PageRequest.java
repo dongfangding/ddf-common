@@ -34,8 +34,6 @@ public interface PageRequest {
 
     /**
      * 实际使用用这个，能够解决默认值问题
-     *
-     * @return
      */
     default Integer getPageNumAdaptive() {
         return ObjectUtils.defaultIfNull(getPageNum(), DEFAULT_PAGE_NUM);
@@ -43,8 +41,6 @@ public interface PageRequest {
 
     /**
      * 实际使用用这个，能够解决默认值问题
-     *
-     * @return
      */
     default Integer getPageSizeAdaptive() {
         return ObjectUtils.defaultIfNull(getPageSize(), DEFAULT_PAGE_SIZE);
@@ -52,8 +48,6 @@ public interface PageRequest {
 
     /**
      * 页码
-     *
-     * @return
      */
     default Integer getPageNum() {
         return DEFAULT_PAGE_NUM;
@@ -61,8 +55,6 @@ public interface PageRequest {
 
     /**
      * 每页条数
-     *
-     * @return
      */
     default Integer getPageSize() {
         return DEFAULT_PAGE_SIZE;
@@ -70,8 +62,6 @@ public interface PageRequest {
 
     /**
      * 开始行
-     *
-     * @return
      */
     default Integer getStartIndex() {
         checkArgument();
@@ -88,8 +78,6 @@ public interface PageRequest {
 
     /**
      * 结束行
-     *
-     * @return
      */
     default Integer getEndIndex() {
         checkArgument();
@@ -98,7 +86,6 @@ public interface PageRequest {
 
     /**
      * 参数校验
-     *
      */
     default void checkArgument() {
         Assert.notNull(getPageNumAdaptive(), "pageNum不能为空");
@@ -115,6 +102,7 @@ public interface PageRequest {
          */
         private Integer pageNum;
         private Integer pageSize;
+
         public static PageRequest of(Integer pageNum, Integer pageSize) {
             return new DefaultPageRequest(pageNum, pageSize);
         }

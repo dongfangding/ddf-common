@@ -13,8 +13,6 @@ public interface RedisTemplateSupport {
 
     /**
      * 实现该接口方法可以决定使用指定的StringRedisTemplate
-     *
-     * @return
      */
     StringRedisTemplate getStringRedisTemplate();
 }

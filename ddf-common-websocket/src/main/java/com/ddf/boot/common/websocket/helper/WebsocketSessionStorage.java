@@ -79,7 +79,6 @@ public class WebsocketSessionStorage {
      * 返回当前认证身份对应的WebSocketSession
      *
      * @param authPrincipal 认证主体对象
-     * @return
      */
     public static WebSocketSessionWrapper get(AuthPrincipal authPrincipal) {
         return WEB_SOCKET_SESSION_MAP.get(authPrincipal);
@@ -98,19 +97,16 @@ public class WebsocketSessionStorage {
             int port = ENVIRONMENT_HELPER.getPort();
             WebSocketSessionWrapper wrapper = new WebSocketSessionWrapper(authPrincipal,
                     new ConcurrentWebSocketSessionDecorator(webSocketSession, WEB_SOCKET_PROPERTIES.getSendTimeLimit(),
-                            WEB_SOCKET_PROPERTIES.getBufferSizeLimit()
-                    ), WebSocketSessionWrapper.STATUS_ON_LINE, false, System.currentTimeMillis(),
-                    serverHost + ":" + port, webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + ""
-            );
+                            WEB_SOCKET_PROPERTIES.getBufferSizeLimit()), WebSocketSessionWrapper.STATUS_ON_LINE, false,
+                    System.currentTimeMillis(), serverHost + ":" + port,
+                    webSocketSession.getAttributes().get(WebsocketConst.CLIENT_REAL_IP) + "");
             WEB_SOCKET_SESSION_MAP.put(authPrincipal, wrapper);
 
             // 同步节点
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
-                    wrapper.getServerAddress()
-            );
+                    wrapper.getServerAddress());
             String hashKey = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), serverHost, port,
-                    authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()
-            );
+                    authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode());
             Object val = REDIS_TEMPLATE.opsForHash().get(key, hashKey);
             boolean isOverride = true;
             // 判断当前状态变化时间要大于已存储的数据的时间，才允许覆盖
@@ -124,9 +120,7 @@ public class WebsocketSessionStorage {
                 REDIS_TEMPLATE.opsForHash().put(key,
                         MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), serverHost, port,
                                 authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                                authPrincipal.getAuthCode()
-                        ), JsonUtil.asString(wrapper)
-                );
+                                authPrincipal.getAuthCode()), JsonUtil.asString(wrapper));
             }
             return null;
         }, null);
@@ -155,8 +149,6 @@ public class WebsocketSessionStorage {
 
     /**
      * 获取所有连接信息
-     *
-     * @return
      */
     public static ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> getAll() {
         return WEB_SOCKET_SESSION_MAP;
@@ -167,7 +159,6 @@ public class WebsocketSessionStorage {
      * 判断指定认证的可用连接是否在本机
      *
      * @param authPrincipal 认证主体对象
-     * @return
      * @since 2019/9/24 15:17
      */
     public static boolean isSocketSessionOn(AuthPrincipal authPrincipal) {
@@ -181,7 +172,6 @@ public class WebsocketSessionStorage {
      * @param authPrincipal 认证主体对象
      * @param status 状态参数
      * @param webSocketSession 参数
-     * @return
      */
     public static boolean modifyStatus(AuthPrincipal authPrincipal, Integer status, WebSocketSession webSocketSession) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -197,11 +187,9 @@ public class WebsocketSessionStorage {
             String serverHost = webSocketSession.getAttributes().get(WebsocketConst.SERVER_IP) + "";
             String port = ENVIRONMENT.getProperty("server.port");
             String key = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
-                    webSocketSessionWrapper.getServerAddress()
-            );
+                    webSocketSessionWrapper.getServerAddress());
             String hashKey = MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), serverHost, port,
-                    authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode()
-            );
+                    authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(), authPrincipal.getAuthCode());
             Object val = REDIS_TEMPLATE.opsForHash().get(key, hashKey);
             boolean isOverride = true;
             // 判断当前状态变化时间要大于已存储的数据的时间，才允许覆盖
@@ -216,9 +204,7 @@ public class WebsocketSessionStorage {
                 REDIS_TEMPLATE.opsForHash().delete(key,
                         MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), serverHost, port,
                                 authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                                authPrincipal.getAuthCode()
-                        ), JsonUtil.asString(webSocketSessionWrapper)
-                );
+                                authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
                 return true;
             }
         }
@@ -230,7 +216,6 @@ public class WebsocketSessionStorage {
      *
      * @param authPrincipal 认证主体对象
      * @param sync sync参数
-     * @return
      */
     public static boolean modifySync(AuthPrincipal authPrincipal, boolean sync) {
         WebSocketSessionWrapper webSocketSessionWrapper = get(authPrincipal);
@@ -289,7 +274,6 @@ public class WebsocketSessionStorage {
      * 针对客户端的响应判断是否响应成功，如果没有成功则将响应结果返回给调用者
      *
      * @param message 消息内容
-     * @return
      */
     public static boolean checkResponseIsSuccess(@NotNull Message<?> message) {
         Objects.requireNonNull(message, "message不能为空!");
@@ -301,14 +285,11 @@ public class WebsocketSessionStorage {
             MessageResponse<?> messageResponse;
             if (message.getBody() != null && StringUtils.isNotBlank(message.getBody().toString())) {
                 messageResponse = MessageResponse.failure(message.getRequestId(), MessageResponse.SERVER_CODE_ERROR,
-                        message.getBody().toString()
-                );
+                        message.getBody().toString());
             } else {
                 messageResponse = MessageResponse.failure(message.getRequestId(), MessageResponse.SERVER_CODE_ERROR,
-                        "客户端针对请求[%s]响应了非成功状态码[%s]，但是没有告诉我原因^_^".formatted(message.getRequestId(),
-                                message.getCode()
-                        )
-                );
+                        "客户端针对请求[%s]响应了非成功状态码[%s]，但是没有告诉我原因^_^".formatted(
+                                message.getRequestId(), message.getCode()));
             }
             WebsocketSessionStorage.putResponse(message.getRequestId(), messageResponse);
             throw new ClientMessageCodeException(messageResponse.getMessage());
@@ -322,7 +303,6 @@ public class WebsocketSessionStorage {
      *
      * @param requestId 请求 ID
      * @param blockMilliSeconds blockmilliseconds参数
-     * @return
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId, long blockMilliSeconds) {
         long initTime = System.currentTimeMillis();
@@ -349,7 +329,6 @@ public class WebsocketSessionStorage {
      * 判断响应值是否已经被取走
      *
      * @param requestId 请求 ID
-     * @return
      * @since 2019/9/26 18:39
      */
     public static boolean responseIsTake(String requestId) {
@@ -360,7 +339,6 @@ public class WebsocketSessionStorage {
      * 是否没有放入过数据
      *
      * @param requestId 请求 ID
-     * @return
      * @since 2019/9/26 20:35
      */
     public static boolean isNone(String requestId) {
@@ -372,7 +350,6 @@ public class WebsocketSessionStorage {
      * 获取响应,如果超过阻塞时间则视为失败,默认5秒
      *
      * @param requestId 请求 ID
-     * @return
      */
     public static <T> MessageResponse<T> getResponse(@NotNull String requestId) {
         return getResponse(requestId, 10000);
@@ -406,8 +383,7 @@ public class WebsocketSessionStorage {
             AuthPrincipal authPrincipal = webSocketSessionWrapper.getAuthPrincipal();
             TextMessage textMessage = Message.wrapper(message);
             log.info("向[{}-{}-{}]发送数据：{}", authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                    authPrincipal.getAuthCode(), textMessage.getPayload()
-            );
+                    authPrincipal.getAuthCode(), textMessage.getPayload());
             if (WEB_SOCKET_PROPERTIES.isMessageSecret()) {
                 // 执行加密接口
                 EncryptProcessor encryptProcessor = ENCRYPT_PROCESSORS.get(WEB_SOCKET_PROPERTIES.getSecretBeanName());
@@ -416,8 +392,7 @@ public class WebsocketSessionStorage {
                 }
                 TextMessage secretMessage = new TextMessage(encryptProcessor.encryptMessage(message));
                 log.info("向[{}-{}-{}]发送加密数据：{}", authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                        authPrincipal.getAuthCode(), secretMessage.getPayload()
-                );
+                        authPrincipal.getAuthCode(), secretMessage.getPayload());
                 webSocketSessionWrapper.getWebSocketSession().sendMessage(secretMessage);
             } else {
                 webSocketSessionWrapper.getWebSocketSession().sendMessage(textMessage);

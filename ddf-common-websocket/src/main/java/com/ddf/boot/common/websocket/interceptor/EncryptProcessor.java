@@ -16,7 +16,6 @@ public interface EncryptProcessor {
      * 如果客户端加密了的话
      *
      * @param token token 字符串
-     * @return
      */
     default String decryptHandshakeToken(String token) {
         return token;
@@ -27,7 +26,6 @@ public interface EncryptProcessor {
      *
      * @param message 消息内容
      * @param <T> 泛型类型
-     * @return
      */
     default <T> String encryptMessage(Message<T> message) {
         return JsonUtil.asString(message);

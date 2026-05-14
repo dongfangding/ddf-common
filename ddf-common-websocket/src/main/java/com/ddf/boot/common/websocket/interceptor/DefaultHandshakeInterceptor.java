@@ -46,6 +46,7 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
 
     private static final Map<String, EncryptProcessor> ENCRYPT_PROCESSORS = SpringContextHolder.getBeansOfType(
             EncryptProcessor.class);
+
     /**
      * @param webSocketProperties 参数
      * @param handshakeAuthList 参数
@@ -60,11 +61,11 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
     /**
      * Invoked before the handshake is processed.
      *
-     * @param request    请求对象
-     * @param response   响应对象
-     * @param wsHandler  WShandler参数
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param wsHandler WShandler参数
      * @param attributes attributes参数
-     *                   session; the provided attributes are copied, the original map is not used.
+     * session; the provided attributes are copied, the original map is not used.
      * @return whether to proceed with the handshake ({@code true}) or abort ({@code false})
      */
     @Override
@@ -158,8 +159,8 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
      * Invoked after the handshake is done. The response status and headers indicate
      * the results of the handshake, i.e. whether it was successful or not.
      *
-     * @param request   请求对象
-     * @param response  响应对象
+     * @param request 请求对象
+     * @param response 响应对象
      * @param wsHandler WShandler参数
      * @param exception 异常对象
      */
@@ -174,12 +175,11 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
      *
      * @param handshakeParam handshake参数参数
      * @param response 响应对象
-     * @return
-     * @throws IOException
      */
     private boolean validArgument(HandshakeParam handshakeParam, ServerHttpResponse response) throws IOException {
         if (StringUtils.isAnyBlank(handshakeParam.getAccessKeyId(), handshakeParam.getAuthCode())) {
-            log.error("关键字信息和授权码都不能为空！, {}, {}", handshakeParam.getAccessKeyId(), handshakeParam.getAuthCode());
+            log.error("关键字信息和授权码都不能为空！, {}, {}", handshakeParam.getAccessKeyId(),
+                    handshakeParam.getAuthCode());
             response.getBody().write("关键字信息和授权码都不能为空".getBytes(StandardCharsets.UTF_8));
             return false;
         }

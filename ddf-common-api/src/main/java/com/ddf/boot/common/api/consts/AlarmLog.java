@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2024/01/06 00:09
  */
-public class AlarmLog  {
+public class AlarmLog {
     private static final Logger LOGGER = LoggerFactory.getLogger("ALARM_FILE");
 
     /**
@@ -30,7 +30,7 @@ public class AlarmLog  {
      * is disabled for the DEBUG level. </p>
      *
      * @param format 格式字符串
-     * @param arg    参数值
+     * @param arg 参数值
      */
     public static void debug(String format, Object arg) {
         LOGGER.debug(format, arg);
@@ -44,8 +44,8 @@ public class AlarmLog  {
      * is disabled for the DEBUG level. </p>
      *
      * @param format 格式字符串
-     * @param arg1   第一个参数
-     * @param arg2   第二个参数
+     * @param arg1 第一个参数
+     * @param arg2 第二个参数
      */
     public static void debug(String format, Object arg1, Object arg2) {
         LOGGER.debug(format, arg1, arg2);
@@ -62,7 +62,7 @@ public class AlarmLog  {
      * {@link #debug(String, Object) one} and {@link #debug(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    格式字符串
+     * @param format 格式字符串
      * @param arguments 参数列表
      */
     public static void debug(String format, Object... arguments) {
@@ -74,7 +74,7 @@ public class AlarmLog  {
      * accompanying message.
      *
      * @param msg 消息内容
-     * @param t   异常对象
+     * @param t 异常对象
      */
     public static void debug(String msg, Throwable t) {
         LOGGER.debug(msg, t);
@@ -98,7 +98,7 @@ public class AlarmLog  {
      * is disabled for the INFO level. </p>
      *
      * @param format 格式字符串
-     * @param arg    参数值
+     * @param arg 参数值
      */
     public static void info(String format, Object arg) {
         LOGGER.info(format, arg);
@@ -112,8 +112,8 @@ public class AlarmLog  {
      * is disabled for the INFO level. </p>
      *
      * @param format 格式字符串
-     * @param arg1   第一个参数
-     * @param arg2   第二个参数
+     * @param arg1 第一个参数
+     * @param arg2 第二个参数
      */
     public static void info(String format, Object arg1, Object arg2) {
         LOGGER.info(format, arg1, arg2);
@@ -130,7 +130,7 @@ public class AlarmLog  {
      * {@link #info(String, Object) one} and {@link #info(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    格式字符串
+     * @param format 格式字符串
      * @param arguments 参数列表
      */
     public static void info(String format, Object... arguments) {
@@ -142,7 +142,7 @@ public class AlarmLog  {
      * accompanying message.
      *
      * @param msg 消息内容
-     * @param t   异常对象
+     * @param t 异常对象
      */
     public static void info(String msg, Throwable t) {
         LOGGER.info(msg, t);
@@ -166,7 +166,7 @@ public class AlarmLog  {
      * is disabled for the WARN level. </p>
      *
      * @param format 格式字符串
-     * @param arg    参数值
+     * @param arg 参数值
      */
     public static void warn(String format, Object arg) {
         LOGGER.warn(format, arg);
@@ -183,7 +183,7 @@ public class AlarmLog  {
      * {@link #warn(String, Object) one} and {@link #warn(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    格式字符串
+     * @param format 格式字符串
      * @param arguments 参数列表
      */
     public static void warn(String format, Object... arguments) {
@@ -198,8 +198,8 @@ public class AlarmLog  {
      * is disabled for the WARN level. </p>
      *
      * @param format 格式字符串
-     * @param arg1   第一个参数
-     * @param arg2   第二个参数
+     * @param arg1 第一个参数
+     * @param arg2 第二个参数
      */
     public static void warn(String format, Object arg1, Object arg2) {
         LOGGER.warn(format, arg1, arg2);
@@ -210,7 +210,7 @@ public class AlarmLog  {
      * accompanying message.
      *
      * @param msg 消息内容
-     * @param t   异常对象
+     * @param t 异常对象
      */
     public static void warn(String msg, Throwable t) {
         LOGGER.warn(msg, t);
@@ -234,7 +234,7 @@ public class AlarmLog  {
      * is disabled for the ERROR level. </p>
      *
      * @param format 格式字符串
-     * @param arg    参数值
+     * @param arg 参数值
      */
     public static void error(String format, Object arg) {
         LOGGER.error(format, arg);
@@ -248,8 +248,8 @@ public class AlarmLog  {
      * is disabled for the ERROR level. </p>
      *
      * @param format 格式字符串
-     * @param arg1   第一个参数
-     * @param arg2   第二个参数
+     * @param arg1 第一个参数
+     * @param arg2 第二个参数
      */
     public static void error(String format, Object arg1, Object arg2) {
         LOGGER.error(format, arg1, arg2);
@@ -266,7 +266,7 @@ public class AlarmLog  {
      * {@link #error(String, Object) one} and {@link #error(String, Object, Object) two}
      * arguments exist solely in order to avoid this hidden cost.</p>
      *
-     * @param format    格式字符串
+     * @param format 格式字符串
      * @param arguments 参数列表
      */
     public static void error(String format, Object... arguments) {
@@ -278,7 +278,7 @@ public class AlarmLog  {
      * accompanying message.
      *
      * @param msg 消息内容
-     * @param t   异常对象
+     * @param t 异常对象
      */
     public static void error(String msg, Throwable t) {
         LOGGER.error(msg, t);

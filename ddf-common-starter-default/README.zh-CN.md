@@ -11,14 +11,15 @@
 
 `ddf-common-starter-default` 解决的是 **"常规业务应用一站式基础能力"** 问题。
 
-| 场景 | 典型问题 | 本 starter 提供的能力 |
-| --- | --- | --- |
-| 常规单体 / 微服务业务应用 | 每次新建工程都要重复引入 Web、DB、治理依赖 | 一个依赖，全部就绪 |
-| CRUD 型后台服务 | 需要统一响应格式 + 数据库 + 邮件告警 | 开箱即用的全套基础能力 |
-| 需要快速原型验证 | 不想在依赖配置上花费时间 | 引入即用，专注业务逻辑 |
-| 中小型业务团队 | 缺乏基础组件维护人力 | 统一版本、统一行为、统一升级 |
+| 场景             | 典型问题                     | 本 starter 提供的能力 |
+|----------------|--------------------------|-----------------|
+| 常规单体 / 微服务业务应用 | 每次新建工程都要重复引入 Web、DB、治理依赖 | 一个依赖，全部就绪       |
+| CRUD 型后台服务     | 需要统一响应格式 + 数据库 + 邮件告警    | 开箱即用的全套基础能力     |
+| 需要快速原型验证       | 不想在依赖配置上花费时间             | 引入即用，专注业务逻辑     |
+| 中小型业务团队        | 缺乏基础组件维护人力               | 统一版本、统一行为、统一升级  |
 
 **不适用场景**：
+
 - 纯 Web 网关 / 无数据库的服务 → 使用 `ddf-common-starter-web`
 - 使用非 MySQL 数据库（PostgreSQL、Oracle、MongoDB 等）→ 使用 `ddf-common-starter-web` + 自定义数据层
 - 只需要 Web + DB 但不需要 Mail / Actuator → 使用 `ddf-common-starter-web` + `ddf-common-data-mysql-starter`
@@ -45,28 +46,28 @@
 
 ### 3.1 `ddf-common-starter-web`（Web 基础层）
 
-| 子模块 | 核心能力 |
-| --- | --- |
-| `ddf-common-api` | 统一响应体 `ResponseData`、业务异常 `BusinessException`、错误码体系 |
-| `ddf-common-core` | 工具集（Hutool/Guava/Fastjson2）、加密、雪花 ID、本地缓存、线程池 |
-| `ddf-common-mvc` | 全局异常处理、响应体自动包装、Jackson 配置、用户上下文 `UserContextUtil` |
-| `ddf-common-limit` | 令牌桶限流 `@RateLimit`、防重复提交 `@Repeatable` |
-| `ddf-common-log4j` | Log4j2 + Disruptor 异步日志（已排除 Logback） |
+| 子模块                | 核心能力                                                |
+|--------------------|-----------------------------------------------------|
+| `ddf-common-api`   | 统一响应体 `ResponseData`、业务异常 `BusinessException`、错误码体系 |
+| `ddf-common-core`  | 工具集（Hutool/Guava/Fastjson2）、加密、雪花 ID、本地缓存、线程池       |
+| `ddf-common-mvc`   | 全局异常处理、响应体自动包装、Jackson 配置、用户上下文 `UserContextUtil`   |
+| `ddf-common-limit` | 令牌桶限流 `@RateLimit`、防重复提交 `@Repeatable`              |
+| `ddf-common-log4j` | Log4j2 + Disruptor 异步日志（已排除 Logback）                |
 
 ### 3.2 `ddf-common-data-mysql-starter`（数据接入层）
 
-| 能力 | 说明 |
-| --- | --- |
-| JDBC + MySQL 驱动 | `spring-boot-starter-jdbc` + `mysql-connector-j` |
-| Druid 连接池 | `druid-spring-boot-3-starter`，含 `usePingMethod` 兼容性修复 |
-| MyBatis | `mybatis-spring-boot-starter` |
+| 能力              | 说明                                                    |
+|-----------------|-------------------------------------------------------|
+| JDBC + MySQL 驱动 | `spring-boot-starter-jdbc` + `mysql-connector-j`      |
+| Druid 连接池       | `druid-spring-boot-3-starter`，含 `usePingMethod` 兼容性修复 |
+| MyBatis         | `mybatis-spring-boot-starter`                         |
 
 ### 3.3 `ddf-common-governance-starter`（治理扩展层）
 
-| 能力 | 说明 |
-| --- | --- |
+| 能力      | 说明                                                                           |
+|---------|------------------------------------------------------------------------------|
 | Mail 服务 | `MailService` / `DefaultMailService` / `MailUtil`，条件注册（需 `spring.mail.*` 配置） |
-| 线程池指标 | `ThreadPoolMetricsBinder` 自动扫描线程池 Bean 并绑定到 Micrometer |
+| 线程池指标   | `ThreadPoolMetricsBinder` 自动扫描线程池 Bean 并绑定到 Micrometer                       |
 
 ---
 
@@ -241,25 +242,27 @@ customizer:
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
-| `ddf-common-starter-web` | `starter-default` 的底层 Web 基础层 |
-| `ddf-common-data-mysql-starter` | `starter-default` 的数据层 |
-| `ddf-common-governance-starter` | `starter-default` 的治理层 |
-| `ddf-common-redis` | 可叠加，提供 Redis 缓存与分布式锁基础 |
-| `ddf-common-distributed-lock` | 可叠加，提供 Redisson / Zookeeper 分布式锁 |
-| `ddf-common-authentication` | 可叠加，提供 AES Token 认证增强 |
+| 模块                              | 协作方式                             |
+|---------------------------------|----------------------------------|
+| `ddf-common-starter-web`        | `starter-default` 的底层 Web 基础层    |
+| `ddf-common-data-mysql-starter` | `starter-default` 的数据层           |
+| `ddf-common-governance-starter` | `starter-default` 的治理层           |
+| `ddf-common-redis`              | 可叠加，提供 Redis 缓存与分布式锁基础           |
+| `ddf-common-distributed-lock`   | 可叠加，提供 Redisson / Zookeeper 分布式锁 |
+| `ddf-common-authentication`     | 可叠加，提供 AES Token 认证增强            |
 
 ---
 
 ## 7. FAQ
 
 **Q1：`starter-default` 和 `starter-web` 有什么区别？**
+
 - `starter-web` = Web 基础能力（API + Core + MVC + Limit + Log4j2）
 - `starter-default` = `starter-web` + MySQL 数据层 + 治理层（Mail + Actuator 线程池指标）
 
 **Q2：不想用 Druid，想换 HikariCP 怎么办？**
 `ddf-common-data-mysql-starter` 默认引入 Druid。如需使用 HikariCP：
+
 1. 排除 `druid-spring-boot-3-starter`
 2. 在 `application.yml` 中配置 `spring.datasource.type=com.zaxxer.hikari.HikariDataSource`
 
@@ -270,9 +273,11 @@ customizer:
 可以但不推荐，因为 `starter-default` 已经包含 `starter-web`，重复引入只会增加冗余解析，不会导致冲突。
 
 **Q5：如何查看当前 starter 引入了哪些具体依赖？**
+
 ```bash
 cd ddf-common-starter-default && mvn dependency:tree
 ```
+
 或在 IDE 的 Maven 面板中查看依赖树。
 
 ---

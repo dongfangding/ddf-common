@@ -11,12 +11,12 @@
 
 `ddf-common-s3` 解决的是 **"业务系统需要统一接入多种对象存储服务"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| --- | --- | --- |
-| 本地开发测试 | 不想依赖外部云存储 | MinIO 本地部署，配置即连 |
-| 生产环境切换云厂商 | 不同厂商 SDK 差异大，迁移成本高 | 统一 `S3Api` 接口，切换仅需改配置 |
-| 图片上传与预览 | 需要缩略图、预签名访问 | `FileUploadHelper` 自动生成缩略图，`S3Api` 生成临时访问 URL |
-| 临时文件分享 | 私有 Bucket 文件需要限时访问 | 预签名下载链接，到期自动失效 |
+| 场景        | 典型问题               | 模块提供的能力                                       |
+|-----------|--------------------|-----------------------------------------------|
+| 本地开发测试    | 不想依赖外部云存储          | MinIO 本地部署，配置即连                               |
+| 生产环境切换云厂商 | 不同厂商 SDK 差异大，迁移成本高 | 统一 `S3Api` 接口，切换仅需改配置                         |
+| 图片上传与预览   | 需要缩略图、预签名访问        | `FileUploadHelper` 自动生成缩略图，`S3Api` 生成临时访问 URL |
+| 临时文件分享    | 私有 Bucket 文件需要限时访问 | 预签名下载链接，到期自动失效                                |
 
 ---
 
@@ -140,12 +140,12 @@ s3Api.delete(objectKey);
 
 只需修改配置即可切换兼容实现，业务代码零改动：
 
-| 服务商 | endpoint 示例 | path-style-access |
-| --- | --- | --- |
-| MinIO | `http://localhost:9000` | `true` |
-| AWS S3 | `https://s3.amazonaws.com` | `false` |
-| 阿里云 OSS | `https://oss-cn-hangzhou.aliyuncs.com` | `false` |
-| 腾讯云 COS | `https://cos.ap-guangzhou.myqcloud.com` | `false` |
+| 服务商     | endpoint 示例                             | path-style-access |
+|---------|-----------------------------------------|-------------------|
+| MinIO   | `http://localhost:9000`                 | `true`            |
+| AWS S3  | `https://s3.amazonaws.com`              | `false`           |
+| 阿里云 OSS | `https://oss-cn-hangzhou.aliyuncs.com`  | `false`           |
+| 腾讯云 COS | `https://cos.ap-guangzhou.myqcloud.com` | `false`           |
 
 ### 5.2 Bucket 自动创建
 
@@ -186,11 +186,11 @@ customizer:
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
-| `ddf-common-vps` | VPS 模块提供 FastDFS 文件存储；S3 模块提供云对象存储，可按场景二选一或组合使用 |
-| `ddf-common-core` | JSON 序列化、工具类支撑 |
-| `ddf-common-api` | `UploadResult`、`PresignedUrlResult` 等响应 DTO 定义 |
+| 模块                | 协作方式                                            |
+|-------------------|-------------------------------------------------|
+| `ddf-common-vps`  | VPS 模块提供 FastDFS 文件存储；S3 模块提供云对象存储，可按场景二选一或组合使用 |
+| `ddf-common-core` | JSON 序列化、工具类支撑                                  |
+| `ddf-common-api`  | `UploadResult`、`PresignedUrlResult` 等响应 DTO 定义  |
 
 ---
 

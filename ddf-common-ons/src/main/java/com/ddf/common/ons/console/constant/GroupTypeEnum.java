@@ -16,9 +16,8 @@ public enum GroupTypeEnum {
      * 协议
      */
     TCP("tcp"),
-    HTTP("http")
+    HTTP("http");
 
-    ;
     GroupTypeEnum(String value) {
         this.value = value;
     }

@@ -41,18 +41,18 @@ public class RateLimitRegistrar implements ImportBeanDefinitionRegistrar {
             attributes.forEach(rateLimitProperties::addPropertyValue);
         }
         // 注册全局属性类
-		SpringSupport.registerIfAbsent(registry, RateLimitProperties.BEAN_NAME, rateLimitProperties);
+        SpringSupport.registerIfAbsent(registry, RateLimitProperties.BEAN_NAME, rateLimitProperties);
 
         // 注册限流处理类
-		SpringSupport.registerIfAbsent(registry, RateLimitAspect.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, RateLimitAspect.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(RateLimitAspect.class));
 
         // 注册限流key规则生成器
-		SpringSupport.registerIfAbsent(registry, GlobalRateLimitKeyGenerator.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, GlobalRateLimitKeyGenerator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(GlobalRateLimitKeyGenerator.class));
-		SpringSupport.registerIfAbsent(registry, IdentityRateLimitKeyGenerator.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, IdentityRateLimitKeyGenerator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(IdentityRateLimitKeyGenerator.class));
-		SpringSupport.registerIfAbsent(registry, IpRateLimitKeyGenerator.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, IpRateLimitKeyGenerator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(IpRateLimitKeyGenerator.class));
     }
 }

@@ -40,7 +40,8 @@ public class RepeatAspect {
      */
     private final Map<String, RepeatableValidator> handlerMapping;
 
-    @Pointcut(value = "@annotation(com.ddf.boot.common.limit.repeatable.annotation.Repeatable) || @within(com.ddf.boot.common.limit.repeatable.annotation.Repeatable)")
+    @Pointcut(
+            value = "@annotation(com.ddf.boot.common.limit.repeatable.annotation.Repeatable) || @within(com.ddf.boot.common.limit.repeatable.annotation.Repeatable)")
     public void pointCut() {
 
     }
@@ -59,40 +60,31 @@ public class RepeatAspect {
         String identityNo = StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei());
 
         // 判断当前方法是否需要忽略， 因为@Repeatable是可以加在类上的， 这里想支持个别忽略
-        final boolean ignore = currentMethod
-                .getMethod()
-                .isAnnotationPresent(RepeatableIgnore.class);
+        final boolean ignore = currentMethod.getMethod().isAnnotationPresent(RepeatableIgnore.class);
         if (ignore) {
-            log.info(
-                    "忽略执行[{}-{}]-[{}]的防重复提交检查>>>>>>>>>>>>>>>>>>>>>>", identityNo, currentClass.getName(),
-                    currentMethod.getName()
-            );
+            log.info("忽略执行[{}-{}]-[{}]的防重复提交检查>>>>>>>>>>>>>>>>>>>>>>", identityNo, currentClass.getName(),
+                    currentMethod.getName());
             return;
         }
-        log.info(
-                "开始执行[{}, {}]-[{}]的防重复提交检查>>>>>>>>>>>>>>>>>>>>>>", identityNo, currentClass.getName(),
-                currentMethod.getName()
-        );
+        log.info("开始执行[{}, {}]-[{}]的防重复提交检查>>>>>>>>>>>>>>>>>>>>>>", identityNo, currentClass.getName(),
+                currentMethod.getName());
 
         // 处理是否需要检查
         final Repeatable annotation = AopUtil.getAnnotation(joinPoint, Repeatable.class);
 
         // 获取校验器
-        String validator = StringUtils.defaultIfBlank(
-                annotation.validator(), repeatableProperties.getGlobalValidator());
+        String validator = StringUtils.defaultIfBlank(annotation.validator(),
+                repeatableProperties.getGlobalValidator());
         if (!handlerMapping.containsKey(validator)) {
             throw new NoSuchBeanDefinitionException(validator, "请检查校验器实现bean是否存在");
         }
 
         // 执行校验逻辑
-        final boolean check = handlerMapping
-                .get(validator)
-                .check(joinPoint, annotation, identityNo, repeatableProperties);
+        final boolean check = handlerMapping.get(validator).check(joinPoint, annotation, identityNo,
+                repeatableProperties);
         if (!check && annotation.throwError()) {
-            log.info(
-                    "接口【{}-{}-{}】对应参数【{}】请求过于频繁， 记录日志>>>>>>>", identityNo, currentClass.getName(),
-                    currentMethod.getName(), AopUtil.serializeParam(joinPoint)
-            );
+            log.info("接口【{}-{}-{}】对应参数【{}】请求过于频繁， 记录日志>>>>>>>", identityNo, currentClass.getName(),
+                    currentMethod.getName(), AopUtil.serializeParam(joinPoint));
             throw new BusinessException(LimitExceptionCode.REPEAT_SUBMIT);
         }
     }

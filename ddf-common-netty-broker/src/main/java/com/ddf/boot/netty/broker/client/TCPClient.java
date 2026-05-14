@@ -54,6 +54,7 @@ public class TCPClient {
     private ExecutorService executorService;
     private NioEventLoopGroup worker;
     private boolean startSsl;
+
     public TCPClient(String host, int port, ExecutorService executorService, boolean startSsl) {
         this.host = host;
         this.port = port;
@@ -156,6 +157,7 @@ public class TCPClient {
             }
         }
     }
+
     /**
      * @param args 参数
      */

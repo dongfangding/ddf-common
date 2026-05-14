@@ -31,8 +31,8 @@ class PermissionMenuScannerTest {
         controllerBeans.put("demoPermissionController", new DemoPermissionController());
 
         when(applicationContext.getBeansWithAnnotation(Controller.class)).thenReturn(controllerBeans);
-        when(applicationContext.getBeansWithAnnotation(org.springframework.web.bind.annotation.RestController.class))
-            .thenReturn(new LinkedHashMap<>());
+        when(applicationContext.getBeansWithAnnotation(
+                org.springframework.web.bind.annotation.RestController.class)).thenReturn(new LinkedHashMap<>());
         when(applicationContext.getBean(PermissionValueSelector.class)).thenReturn(new DemoPermissionValueSelector());
 
         PermissionMenuScanner scanner = new PermissionMenuScanner(applicationContext);
@@ -58,22 +58,17 @@ class PermissionMenuScannerTest {
         assertTrue(childCodes.contains("user-create"));
 
         SysMenuFunction createButton = menu.getChildren()
-            .stream()
-            .filter(item -> "user-create".equals(item.getCode()))
-            .findFirst()
-            .orElseThrow();
+                .stream()
+                .filter(item -> "user-create".equals(item.getCode()))
+                .findFirst()
+                .orElseThrow();
         assertEquals(PermissionMenuType.BUTTON, createButton.getType());
         assertEquals("permission:createUser", createButton.getPermission());
     }
 
     @Controller
-    @PermissionMenu(
-        name = "用户菜单",
-        code = "user-menu",
-        parentName = "系统管理",
-        parentCode = "system",
-        parentType = PermissionMenuType.CATELOG
-    )
+    @PermissionMenu(name = "用户菜单", code = "user-menu", parentName = "系统管理", parentCode = "system",
+            parentType = PermissionMenuType.CATELOG)
     static class DemoPermissionController {
 
         @PermissionFunction(name = "查询用户", code = "user-query", permission = "query-user")
@@ -84,6 +79,7 @@ class PermissionMenuScannerTest {
         public void createUser() {
         }
     }
+
 
     static class DemoPermissionValueSelector implements PermissionValueSelector {
 

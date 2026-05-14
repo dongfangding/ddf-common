@@ -20,8 +20,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 @Data
 @ConfigurationProperties(prefix = "customizer.infra.captcha")
-@AutoConfigureBefore(value = {
-        AjCaptchaServiceAutoConfiguration.class, AjCaptchaAutoConfiguration.class})
+@AutoConfigureBefore(value = {AjCaptchaServiceAutoConfiguration.class, AjCaptchaAutoConfiguration.class})
 public class CaptchaProperties implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -56,6 +55,7 @@ public class CaptchaProperties implements ApplicationContextAware {
         BeanCopierUtils.copy(aj, ajCaptchaProperties);
         ajCaptchaProperties.setCacheType(cacheType);
     }
+
     /**
      * @param applicationContext 参数
      */

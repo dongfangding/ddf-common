@@ -32,11 +32,13 @@ public class TableNotifyImpl implements TableNotify {
     private final DingTalkProperties dingTalkProperties;
     private final LarkProperties larkProperties;
     private final SmartInitializingSingleton loadBalancedAsyncRestTemplateInitializer;
+
     @Override
     public void notifyNotExistTables(TableNotExistNotifyInfo info) {
         notifyNotExistTablesToDingTalk(info);
         notifyNotExistTablesToLark(info);
     }
+
     /**
      * @param info 参数
      */
@@ -90,14 +92,13 @@ public class TableNotifyImpl implements TableNotify {
             }
             lists.addAll(tablesList);
             request.setContent(lists);
-            LarkUtil.sendPostMsgType(
-                propertiesBizResource.getWebhookUrl(), propertiesBizResource.getSecret(),
-                "自动创建表结构", request
-            );
+            LarkUtil.sendPostMsgType(propertiesBizResource.getWebhookUrl(), propertiesBizResource.getSecret(),
+                    "自动创建表结构", request);
         } catch (Exception e) {
             log.error("发送lark异常告警失败", e);
         }
     }
+
     /**
      * @param info 参数
      */
@@ -106,6 +107,7 @@ public class TableNotifyImpl implements TableNotify {
         notifyAuthCreateTableToLark(info);
         notifyAuthCreateTableToDingTalk(info);
     }
+
     /**
      * @param info 参数
      */
@@ -121,8 +123,9 @@ public class TableNotifyImpl implements TableNotify {
         sbl.append("## 当月表名: \n").append(">").append(info.getCurrentMonthTableName()).append(" \n");
         sbl.append("## 下月表名: \n").append(">").append(info.getNextMonthTableName()).append(" \n");
         sbl.append("## 预建表语句: \n").append(">").append(info.getCreateTableSql()).append(" \n");
-        sbl.append("## 建表结果: \n").append(">").append(StringUtils.isBlank(info.getErrorMsg()) ? "创建成功 \n" : "创建失败 \n").append(StringUtils.defaultIfBlank(
-            info.getErrorMsg(), info.getShowCreateTableSql())).append(" \n");
+        sbl.append("## 建表结果: \n").append(">").append(
+                StringUtils.isBlank(info.getErrorMsg()) ? "创建成功 \n" : "创建失败 \n").append(
+                StringUtils.defaultIfBlank(info.getErrorMsg(), info.getShowCreateTableSql())).append(" \n");
         DingTalkUtil.sendMarkdownMsgToAll(propertiesBizResource.getSecret(), propertiesBizResource.getAccessToken(),
                 "自动创建表结构", sbl.toString());
     }
@@ -130,6 +133,7 @@ public class TableNotifyImpl implements TableNotify {
 
     /**
      * 使用lark通知建表结果
+     *
      * @param info 参数
      */
     private void notifyAuthCreateTableToLark(TableAutoCreateNotifyInfo info) {
@@ -139,21 +143,19 @@ public class TableNotifyImpl implements TableNotify {
                 return;
             }
             LarkContentRequest request = new LarkContentRequest();
-            final List<List<LarkTag>> lists = List.of(
-                List.of(LarkTag.buildText("数据表自动创建: ")),
-                List.of(LarkTag.buildText("数据库: " + info.getDatabase())),
-                List.of(LarkTag.buildText("所属连接: : " + info.getCurrentMonthTableName())),
-                List.of(LarkTag.buildText("当月表名: " + info.getDatabase())),
-                List.of(LarkTag.buildText("下月表名: " + info.getNextMonthTableName())),
-                List.of(LarkTag.buildText("预建表语句: " + info.getCreateTableSql())),
-                List.of(LarkTag.buildText("建表结果: " + (StringUtils.isBlank(info.getErrorMsg()) ? "创建成功" : "创建失败" + StringUtils.defaultIfBlank(info.getErrorMsg(), info.getShowCreateTableSql())))),
-                List.of(LarkTag.buildText("数据库: " + info.getDatabase()))
-            );
+            final List<List<LarkTag>> lists = List.of(List.of(LarkTag.buildText("数据表自动创建: ")),
+                    List.of(LarkTag.buildText("数据库: " + info.getDatabase())),
+                    List.of(LarkTag.buildText("所属连接: : " + info.getCurrentMonthTableName())),
+                    List.of(LarkTag.buildText("当月表名: " + info.getDatabase())),
+                    List.of(LarkTag.buildText("下月表名: " + info.getNextMonthTableName())),
+                    List.of(LarkTag.buildText("预建表语句: " + info.getCreateTableSql())), List.of(LarkTag.buildText(
+                            "建表结果: " + (StringUtils.isBlank(info.getErrorMsg()) ? "创建成功" :
+                                    "创建失败" + StringUtils.defaultIfBlank(info.getErrorMsg(),
+                                            info.getShowCreateTableSql())))),
+                    List.of(LarkTag.buildText("数据库: " + info.getDatabase())));
             request.setContent(lists);
-            LarkUtil.sendPostMsgType(
-                propertiesBizResource.getWebhookUrl(), propertiesBizResource.getSecret(),
-                "自动创建表结构", request
-            );
+            LarkUtil.sendPostMsgType(propertiesBizResource.getWebhookUrl(), propertiesBizResource.getSecret(),
+                    "自动创建表结构", request);
         } catch (Exception e) {
             log.error("发送lark异常告警失败", e);
         }

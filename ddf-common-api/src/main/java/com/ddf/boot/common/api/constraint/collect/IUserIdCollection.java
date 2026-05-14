@@ -13,8 +13,6 @@ public interface IUserIdCollection {
 
     /**
      * 收集用户id, 提供一个通用接口，方便做一个工具类直接通过这个接口收集用户信息
-     *
-     * @return
      */
     Set<String> getUserIds();
 }

@@ -41,11 +41,8 @@ class ShardingAutoConfigurationTest {
         props.setProps(new Properties());
         ShardingAutoConfiguration configuration = new ShardingAutoConfiguration(props);
 
-        DataSource dataSource = configuration.shardingSphereDataSource(
-                provider(Collections.emptyMap()),
-                provider(new ArrayList<RuleConfiguration>()),
-                provider(null)
-        );
+        DataSource dataSource = configuration.shardingSphereDataSource(provider(Collections.emptyMap()),
+                provider(new ArrayList<RuleConfiguration>()), provider(null));
 
         assertNull(dataSource);
     }
@@ -57,10 +54,7 @@ class ShardingAutoConfigurationTest {
         props.setProps(new Properties());
         ShardingAutoConfiguration configuration = new ShardingAutoConfiguration(props);
 
-        DataSource dataSource = configuration.dataSource(
-                provider(Collections.emptyMap()),
-                provider(null)
-        );
+        DataSource dataSource = configuration.dataSource(provider(Collections.emptyMap()), provider(null));
 
         assertNull(dataSource);
     }

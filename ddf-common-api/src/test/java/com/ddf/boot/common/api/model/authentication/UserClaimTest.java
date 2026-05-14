@@ -9,10 +9,7 @@ class UserClaimTest {
 
     @Test
     void builderShouldPreserveDefaultPropertiesMap() {
-        UserClaim claim = UserClaim.builder()
-                .userId("1")
-                .username("tester")
-                .build();
+        UserClaim claim = UserClaim.builder().userId("1").username("tester").build();
 
         assertNotNull(claim.getProperties());
         assertTrue(claim.getProperties().isEmpty());

@@ -27,6 +27,7 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
         final String baseTableName = first.substring(0, first.lastIndexOf("_"));
         return baseTableName + "_" + suffix;
     }
+
     /**
      * @param collection 参数
      * @param value 参数值
@@ -54,6 +55,7 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
     public String getType() {
         return "SUFFIX_FIELD_SHARDING_ALGORITHM";
     }
+
     /**
      * @param properties 参数
      */

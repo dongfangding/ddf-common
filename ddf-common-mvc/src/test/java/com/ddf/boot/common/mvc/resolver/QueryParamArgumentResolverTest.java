@@ -43,12 +43,7 @@ class QueryParamArgumentResolverTest {
         Method method = DemoController.class.getDeclaredMethod("supported", List.class);
         NativeWebRequest webRequest = new ServletWebRequest(new MockHttpServletRequest());
 
-        List<QueryParam> result = resolver.resolveArgument(
-            new MethodParameter(method, 0),
-            null,
-            webRequest,
-            null
-        );
+        List<QueryParam> result = resolver.resolveArgument(new MethodParameter(method, 0), null, webRequest, null);
 
         assertTrue(result.isEmpty());
     }
@@ -58,18 +53,11 @@ class QueryParamArgumentResolverTest {
     void shouldResolveQueryParamsAndApplyDefaults() throws Exception {
         Method method = DemoController.class.getDeclaredMethod("supported", List.class);
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(
-            ContextKey.queryParams.name(),
-            "[{\"key\":\"name\",\"value\":\"codex\"},{\"key\":\"age\",\"op\":\"GT\",\"value\":18,\"relative\":\"OR\"}]"
-        );
+        request.addParameter(ContextKey.queryParams.name(),
+                "[{\"key\":\"name\",\"value\":\"codex\"},{\"key\":\"age\",\"op\":\"GT\",\"value\":18,\"relative\":\"OR\"}]");
         NativeWebRequest webRequest = new ServletWebRequest(request);
 
-        List<QueryParam> result = resolver.resolveArgument(
-            new MethodParameter(method, 0),
-            null,
-            webRequest,
-            null
-        );
+        List<QueryParam> result = resolver.resolveArgument(new MethodParameter(method, 0), null, webRequest, null);
 
         assertEquals(2, result.size());
         assertEquals("name", result.get(0).getKey());

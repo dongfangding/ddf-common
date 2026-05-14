@@ -40,6 +40,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * QoS 等级到线程池的映射，预先构建消除运行时查找
+     *
      * @param mqttAsyncClient 参数
      * @param listenerMap 参数
      * @param emqConnectionProperties 参数
@@ -55,14 +56,13 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * MQTT 缓冲区已满错误码
+     *
      * @see <a href="https://github.com/eclipse/paho.mqttv5.client/blob/master/org.eclipse.paho.client.mqttv5/src/main/java/org/eclipse/paho/mqttv5/common/packet/MqttProperties.java">MqttReasonCode</a>
      */
     private static final int MQTT_REASON_BUFFER_FULL = 32202;
-    public DefaultMqttPublishImpl(
-            MqttAsyncClient mqttAsyncClient,
-            Map<String, MqttPublishListener> listenerMap,
-            EmqConnectionProperties emqConnectionProperties,
-            Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
+
+    public DefaultMqttPublishImpl(MqttAsyncClient mqttAsyncClient, Map<String, MqttPublishListener> listenerMap,
+            EmqConnectionProperties emqConnectionProperties, Map<MqttQosEnum, ThreadPoolTaskExecutor> qosExecutors,
             RetryTemplate retryTemplate) {
         this.mqttAsyncClient = mqttAsyncClient;
         this.listenerMap = listenerMap;
@@ -84,7 +84,8 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
         message.setQos(control.getQos().getQos());
         message.setRetained(control.getRetain());
         // 将请求对象转换为实际的mqtt message payload
-        final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request, mqttAsyncClient.getClientId());
+        final MqttMessagePayload payload = MqttMessagePayload.fromMessageRequest(request,
+                mqttAsyncClient.getClientId());
         final byte[] bytes = MessagePackUtil.writeValueAsBytes(payload);
         message.setPayload(bytes);
         // 预留的发送前置处理监听
@@ -115,7 +116,8 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                         });
                     }
                 } catch (MqttException e) {
-                    log.error("MQTT异步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), e);
+                    log.error("MQTT异步消息发送失败, topic={}, message={}", request.getTopic(),
+                            JsonUtil.asString(request), e);
                 }
             });
             return ResponseData.success(messageResponse);
@@ -125,15 +127,14 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
 
     /**
      * 同步发送消息
+     *
      * @param request 请求对象
      * @param message 参数
      * @param payload 参数
      * @param messageResponse 参数
      */
-    private ResponseData<MqttMessageResponse> publishSync(InnerMqttMessageRequest request,
-                                                           MqttMessage message,
-                                                           MqttMessagePayload payload,
-                                                           MqttMessageResponse messageResponse) {
+    private ResponseData<MqttMessageResponse> publishSync(InnerMqttMessageRequest request, MqttMessage message,
+            MqttMessagePayload payload, MqttMessageResponse messageResponse) {
         try {
             final IMqttToken mqttToken = mqttAsyncClient.publish(request.getTopic(), message);
             // mqttAsyncClient不会关心实际结果
@@ -146,6 +147,7 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                     // 只有成功收到 PUBACK (QoS > 1) 才会进这里
                     log.debug("消息发送成功: {}", request.getTopic());
                 }
+
                 /**
                  * @param asyncActionToken 参数
                  * @param exception 参数
@@ -163,7 +165,8 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
                 log.error("MQTT缓冲区已满，放弃当前发送重试，topic={}", request.getTopic());
                 return ResponseData.failure("mqtt_congestion", "发送缓冲区已满");
             }
-            log.error("MQTT同步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request), mqttException);
+            log.error("MQTT同步消息发送失败, topic={}, message={}", request.getTopic(), JsonUtil.asString(request),
+                    mqttException);
             return ResponseData.failure("mqtt_error", mqttException.getMessage());
         }
         // 预留的发送成功处理监听

@@ -20,6 +20,7 @@ public class ServerOutboundHandler extends ChannelOutboundHandlerAdapter {
         log.info("向客户端[{}]发送数据: {}", ctx.channel().remoteAddress(), ((RequestContent<?>) msg).serial());
         ctx.writeAndFlush(msg);
     }
+
     /**
      * @param ctx 参数
      * @param cause 参数

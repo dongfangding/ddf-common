@@ -18,55 +18,55 @@ Current status for a first public Maven Central release:
 
 ## Auto-configuration Smoke Test Coverage
 
-| Module | Auto Configuration | Test Files | Smoke Test |
-| --- | --- | ---: | --- |
-| ddf-common-alarm | Yes | 0 | - |
-| ddf-common-api | Yes | 4 | - |
-| ddf-common-authentication | Yes | 1 | AuthenticationAutoConfigurationTest |
-| ddf-common-canal | No | 0 | - |
-| ddf-common-captcha | Yes | 0 | - |
-| ddf-common-core | Yes | 12 | - |
-| ddf-common-data-mysql-starter | Yes | 1 | DataMysqlAutoConfigurationTest |
-| ddf-common-dependency | No | 0 | - |
-| ddf-common-distributed-lock | Yes | 0 | - |
-| ddf-common-es | No | 0 | - |
-| ddf-common-governance-starter | Yes | 1 | GovernanceAutoConfigurationTest |
-| ddf-common-ids-service | Yes | 0 | - |
-| ddf-common-limit | Yes | 0 | - |
-| ddf-common-log4j | No | 0 | - |
-| ddf-common-mongo | Yes | 1 | MongoAutoConfigurationTest |
-| ddf-common-mqtt | Yes | 0 | - |
-| ddf-common-mqtt-client | Yes | 1 | MqttClientAutoConfigurationTest |
-| ddf-common-mvc | Yes | 0 | - |
-| ddf-common-netty-broker | Yes | 0 | - |
-| ddf-common-ons | Yes | 0 | - |
-| ddf-common-redis | Yes | 1 | RedisCustomizeAutoConfigurationTest |
-| ddf-common-rocketmq | Yes | 0 | - |
-| ddf-common-s3 | Yes | 0 | - |
-| ddf-common-script | No | 0 | - |
-| ddf-common-sharding | Yes | 0 | - |
-| ddf-common-starter-default | No | 0 | - |
-| ddf-common-starter-web | No | 0 | - |
-| ddf-common-third-party | Yes | 0 | - |
-| ddf-common-vps | Yes | 0 | - |
-| ddf-common-websocket | Yes | 0 | - |
-| ddf-common-xxl-executor | Yes | 0 | - |
-| ddf-common-zookeeper | Yes | 0 | - |
+| Module                        | Auto Configuration | Test Files | Smoke Test                          |
+|-------------------------------|--------------------|-----------:|-------------------------------------|
+| ddf-common-alarm              | Yes                |          0 | -                                   |
+| ddf-common-api                | Yes                |          4 | -                                   |
+| ddf-common-authentication     | Yes                |          1 | AuthenticationAutoConfigurationTest |
+| ddf-common-canal              | No                 |          0 | -                                   |
+| ddf-common-captcha            | Yes                |          0 | -                                   |
+| ddf-common-core               | Yes                |         12 | -                                   |
+| ddf-common-data-mysql-starter | Yes                |          1 | DataMysqlAutoConfigurationTest      |
+| ddf-common-dependency         | No                 |          0 | -                                   |
+| ddf-common-distributed-lock   | Yes                |          0 | -                                   |
+| ddf-common-es                 | No                 |          0 | -                                   |
+| ddf-common-governance-starter | Yes                |          1 | GovernanceAutoConfigurationTest     |
+| ddf-common-ids-service        | Yes                |          0 | -                                   |
+| ddf-common-limit              | Yes                |          0 | -                                   |
+| ddf-common-log4j              | No                 |          0 | -                                   |
+| ddf-common-mongo              | Yes                |          1 | MongoAutoConfigurationTest          |
+| ddf-common-mqtt               | Yes                |          0 | -                                   |
+| ddf-common-mqtt-client        | Yes                |          1 | MqttClientAutoConfigurationTest     |
+| ddf-common-mvc                | Yes                |          0 | -                                   |
+| ddf-common-netty-broker       | Yes                |          0 | -                                   |
+| ddf-common-ons                | Yes                |          0 | -                                   |
+| ddf-common-redis              | Yes                |          1 | RedisCustomizeAutoConfigurationTest |
+| ddf-common-rocketmq           | Yes                |          0 | -                                   |
+| ddf-common-s3                 | Yes                |          0 | -                                   |
+| ddf-common-script             | No                 |          0 | -                                   |
+| ddf-common-sharding           | Yes                |          0 | -                                   |
+| ddf-common-starter-default    | No                 |          0 | -                                   |
+| ddf-common-starter-web        | No                 |          0 | -                                   |
+| ddf-common-third-party        | Yes                |          0 | -                                   |
+| ddf-common-vps                | Yes                |          0 | -                                   |
+| ddf-common-websocket          | Yes                |          0 | -                                   |
+| ddf-common-xxl-executor       | Yes                |          0 | -                                   |
+| ddf-common-zookeeper          | Yes                |          0 | -                                   |
 
 ## Release Strengths
 
 - The root README explains module layering, starters, release flow, and public or private publishing boundaries.
 - Child module Maven metadata is consistent enough for repository index display.
 - Several key auto-configuration modules already have minimal smoke tests:
-  - authentication
-  - data mysql starter
-  - governance starter
-  - mongo
-  - mqtt-client
-  - redis
+    - authentication
+    - data mysql starter
+    - governance starter
+    - mongo
+    - mqtt-client
+    - redis
 - Non-public modules are explicitly excluded from default Central publishing:
-  - `ddf-common-script`
-  - `ddf-common-netty-broker`
+    - `ddf-common-script`
+    - `ddf-common-netty-broker`
 
 ## Remaining Gaps
 

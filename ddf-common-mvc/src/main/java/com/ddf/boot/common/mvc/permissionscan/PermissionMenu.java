@@ -22,22 +22,16 @@ public @interface PermissionMenu {
 
     /**
      * 菜单标题
-     *
-     * @return
      */
     String name();
 
     /**
      * 菜单编码，如果需要的话，不需要默认取菜单标题
-     *
-     * @return
      */
     String code() default "";
 
     /**
      * 菜单类型
-     *
-     * @return
      */
     PermissionMenuType type() default PermissionMenuType.MENU;
 
@@ -53,37 +47,27 @@ public @interface PermissionMenu {
 
     /**
      * 菜单权限
-     *
-     * @return
      */
     String permission() default "";
 
     /**
      * 父类菜单名称
-     *
-     * @return
      */
     String parentName() default "";
 
 
     /**
      * 父类菜单编码，如果需要的话，不需要默认取父类菜单名称
-     *
-     * @return
      */
     String parentCode() default "";
 
     /**
      * 菜单类型
-     *
-     * @return
      */
     PermissionMenuType parentType() default PermissionMenuType.CATELOG;
 
     /**
      * 排序
-     *
-     * @return
      */
     int sort() default 1;
 

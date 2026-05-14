@@ -32,8 +32,6 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
      * 实现的执行顺序
      * <p>
      * order越小，优先级越高
-     *
-     * @return
      */
     @Override
     public Integer getOrder() {
@@ -42,14 +40,12 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
 
     /**
      * 将aop参数暴露， 允许多实现实现自己的拦截业务处理， 如数据校验、签名校验，用户校验交给原生的filter去做了
-     *
      * 1. sign相关参数并没有放到请求头中，这是因为很容易被猜到，一看到字段就知道含义。现在是放到请求参数中，如果是查询串就固定参数sign,
      * 如果是json, 就固定字段sign
      *
      * @param joinPoint joinpoint参数
      * @param pointClass point类型
      * @param pointMethod pointmethod参数
-     * @return
      */
     @Override
     public boolean filter(ProceedingJoinPoint joinPoint, Class<?> pointClass, MethodSignature pointMethod) {
@@ -100,7 +96,8 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
                 timestamp = Long.parseLong((String) paramMap.get(BaseSign.SELF_TIMESTAMP_FIELD));
             }
             // 时间戳参数超过一定间隔，视作重放
-            if (timestamp < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds())) {
+            if (timestamp < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(
+                    requestSign.nonceIntervalSeconds())) {
                 throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
         }

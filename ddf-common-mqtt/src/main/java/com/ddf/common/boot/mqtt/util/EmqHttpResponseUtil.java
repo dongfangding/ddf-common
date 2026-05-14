@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class EmqHttpResponseUtil {
- 
+
     /**
      * 认证成功：API 返回 200 状态码
      *
@@ -31,7 +31,7 @@ public class EmqHttpResponseUtil {
             log.error("{} = {}", message, e);
         }
     }
- 
+
     /**
      * 认证失败：API 返回 4xx 状态码
      *

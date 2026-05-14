@@ -27,13 +27,9 @@ class AopUtilTest {
     @Test
     @DisplayName("应解析 JoinPoint 的类和方法签名")
     void shouldResolveJoinPointClassAndMethod() throws NoSuchMethodException {
-        JoinPoint joinPoint = mockJoinPoint(
-                DemoService.class,
-                "process",
-                new Class<?>[] {String.class, DemoPayload.class},
-                new Object[] {"demo", new DemoPayload("payload")},
-                new String[] {"plainText", "body"}
-        );
+        JoinPoint joinPoint = mockJoinPoint(DemoService.class, "process",
+                new Class<?>[] {String.class, DemoPayload.class}, new Object[] {"demo", new DemoPayload("payload")},
+                new String[] {"plainText", "body"});
 
         assertEquals(DemoService.class, AopUtil.getJoinPointClass(joinPoint));
         assertEquals("process", AopUtil.getJoinPointMethod(joinPoint).getName());
@@ -44,13 +40,10 @@ class AopUtilTest {
     @DisplayName("应提取所有参数与可序列化参数")
     void shouldResolveAllAndSerializableArguments() throws NoSuchMethodException {
         ServletRequest servletRequest = mock(ServletRequest.class);
-        JoinPoint joinPoint = mockJoinPoint(
-                DemoService.class,
-                "serialize",
+        JoinPoint joinPoint = mockJoinPoint(DemoService.class, "serialize",
                 new Class<?>[] {String.class, DemoPayload.class, ServletRequest.class},
                 new Object[] {"demo", new DemoPayload("payload"), servletRequest},
-                new String[] {"plainText", "body", "request"}
-        );
+                new String[] {"plainText", "body", "request"});
 
         Map<Class<?>, Object> args = AopUtil.getArgs(joinPoint);
         Map<String, Object> allParamMap = AopUtil.getAllParamMap(joinPoint);
@@ -94,9 +87,11 @@ class AopUtilTest {
         }
     }
 
+
     @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
     @interface DemoAnnotation {
     }
+
 
     record DemoPayload(String value) {
     }

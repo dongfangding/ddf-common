@@ -62,15 +62,13 @@ public class EntityGenerateUtil {
 
     /**
      * 初始化数据库连接对象
-     *
-     * @return
-     * @throws Exception
      */
     private static Connection getConnection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/boot-quick?characterEncoding"
                 + "=utf8&useSSL=true&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull", "root", "123456");
     }
+
     /**
      * @param args 参数
      */
@@ -96,7 +94,6 @@ public class EntityGenerateUtil {
      * 生成实体源码
      *
      * @param tableType table类型
-     * @throws Exception
      */
     private static void generateEntity(TableType tableType) throws Exception {
         Connection conn = getConnection();
@@ -163,8 +160,7 @@ public class EntityGenerateUtil {
         File file = new File(SOURCE_ROOT + File.separator + packageDir + File.separator + className + ".java");
         file.createNewFile();
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file),
-                StandardCharsets.UTF_8
-        )) {
+                StandardCharsets.UTF_8)) {
             String sourceStr = sbl.toString();
             if (isDateImport) {
                 sourceStr = sourceStr.formatted("import java.util.Date;" + LINE);
@@ -180,7 +176,6 @@ public class EntityGenerateUtil {
      *
      * @param type 类型
      * @param columnName column名称参数
-     * @return
      */
     private static String castSqlType(int type, String columnName) {
         if (Types.TINYINT == type || Types.SMALLINT == type || Types.BIT == type) {
@@ -202,6 +197,7 @@ public class EntityGenerateUtil {
 
     /**
      * 下划线转驼峰
+     *
      * @param str 参数
      */
     private static String lineToHump(String str) {
@@ -221,10 +217,9 @@ public class EntityGenerateUtil {
      * 初始化包名，要导入的包、类名和通用注解等
      *
      * @param packageName 要生成的包名
-     * @param tableName   表名
-     * @param className   类名
+     * @param tableName 表名
+     * @param className 类名
      * @param tableRemarks 参数
-     * @return
      */
     public static StringBuffer initClass(String packageName, String tableName, String tableRemarks, String className) {
         StringBuffer sbl = new StringBuffer(200);
@@ -256,7 +251,6 @@ public class EntityGenerateUtil {
      * 将输入的包名转换为文件路径
      *
      * @param packageName package名称参数
-     * @return
      */
     private static String packageNameToFileDir(String packageName) {
         return packageName.replaceAll("\\.", "\\" + File.separator);

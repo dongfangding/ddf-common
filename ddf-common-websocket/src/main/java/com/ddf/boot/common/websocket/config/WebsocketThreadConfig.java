@@ -17,8 +17,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 批量指令对设备发送的逻辑组装线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor batchCmdExecutor() {
@@ -28,8 +26,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 处理接收到消息之后的任务线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor handlerMessagePool() {
@@ -38,8 +34,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 处理接收到匹配模板的单个任务线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor handlerMatchTemplateExecutor() {
@@ -48,8 +42,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 处理与APP通讯的消息异步处理
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor handlerMessageBusiness() {
@@ -58,8 +50,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 处理接收到之后消息记录日志记录的线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor channelTransferPool() {
@@ -69,8 +59,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 消息推送任务线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor wsSendMessagePool() {
@@ -79,8 +67,6 @@ public class WebsocketThreadConfig {
 
     /**
      * 设备指令监控持久化发送数据的线程池
-     *
-     * @return
      */
     @Bean("deviceCmdRunningStatePersistencePool")
     public ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool() {

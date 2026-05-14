@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>对点推送通知类topic格式</p >
- *
  * 与聊天的区别是， 聊天是将消息追加到聊天区域中， 而通知类的则是一些提醒，当然最终作用还是看使用方的定义
  *
  * @author Snowball
@@ -41,7 +40,6 @@ public class Notice2PointMqttTopic extends AbstractPoint2PointTopic {
      * 按照规则通过完整的topic路径反解析成对应的topic对象
      *
      * @param fullTopic full主题参数
-     * @return
      */
     @Override
     public MqttTopicDefine convertTopicObj(String fullTopic) {

@@ -16,7 +16,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 /**
  * Governance starter entry point.
- *
  * <p>This starter must remain safe to import with zero mail-specific
  * configuration. Feature-specific beans should be guarded by conditions.
  *

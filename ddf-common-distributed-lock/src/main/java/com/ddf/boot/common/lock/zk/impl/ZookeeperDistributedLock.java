@@ -23,6 +23,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
 
     private final CuratorFramework client;
     private final DistributedLockZookeeperProperties distributedLockZookeeperProperties;
+
     public ZookeeperDistributedLock(CuratorFramework client,
             DistributedLockZookeeperProperties distributedLockZookeeperProperties) {
         this.client = client;
@@ -35,14 +36,12 @@ public class ZookeeperDistributedLock implements DistributedLock {
     /**
      * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
      *
-     * @param lockKey        锁
-     * @param waitTime       加锁等待时间
-     * @param timeUnit       加锁等待时间单位
+     * @param lockKey 锁
+     * @param waitTime 加锁等待时间
+     * @param timeUnit 加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
      * @param <R> 返回值泛型类型
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
@@ -53,11 +52,8 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             acquired = lock.acquire(waitTime, timeUnit);
         } catch (Exception e) {
-            log.error(
-                    "zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms", Thread
-                            .currentThread()
-                            .getName(), lockKey, timeUnit.toMillis(waitTime)
-            );
+            log.error("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(),
+                    lockKey, timeUnit.toMillis(waitTime));
         }
         if (!acquired) {
             if (Objects.nonNull(failureHandler)) {
@@ -83,14 +79,12 @@ public class ZookeeperDistributedLock implements DistributedLock {
     /**
      * 指定等待时间加锁并执行业务
      *
-     * @param lockKey        锁
-     * @param waitTime       加锁等待时间
-     * @param timeUnit       加锁等待时间单位
+     * @param lockKey 锁
+     * @param waitTime 加锁等待时间
+     * @param timeUnit 加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
      * @param <R> 返回值泛型类型
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R lockWork(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
@@ -101,11 +95,8 @@ public class ZookeeperDistributedLock implements DistributedLock {
         try {
             locked = lock.acquire(waitTime, timeUnit);
         } catch (Exception e) {
-            log.error(
-                    "zk-加锁失败, thread = {}, lockKey = {}, time = {}ms", Thread
-                            .currentThread()
-                            .getName(), lockKey, timeUnit.toMillis(waitTime), e
-            );
+            log.error("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey,
+                    timeUnit.toMillis(waitTime), e);
         }
         if (!locked) {
             if (Objects.nonNull(failureHandler)) {
@@ -130,26 +121,21 @@ public class ZookeeperDistributedLock implements DistributedLock {
     /**
      * 等待默认时间加锁并执行业务
      *
-     * @param lockKey        锁
+     * @param lockKey 锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
      * @param <R> 返回值泛型类型
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) {
-        return lockWork(
-                lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT,
-                successHandler, failureHandler
-        );
+        return lockWork(lockKey, DistributedLock.DEFAULT_ACQUIRE_TIME, DistributedLock.DEFAULT_ACQUIRE_TIME_UNIT,
+                successHandler, failureHandler);
     }
 
     /**
      * 上锁路径格式化
      *
      * @param lockKey lock键参数
-     * @return
      */
     @Override
     public String formatLockKey(String lockKey) {

@@ -24,7 +24,6 @@ public class AliYunSmsApiImpl implements SmsApi {
      * 发送模板短信
      *
      * @param request 请求对象
-     * @return
      */
     @Override
     public SmsSendResponse send(SmsSendRequest request) {

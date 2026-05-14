@@ -84,7 +84,8 @@ public class ResponseData<T> {
     /**
      * 全参数构造器。
      */
-    public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra, Object[] formatParams) {
+    public ResponseData(String code, String message, String subMessage, long timestamp, T data, Object extra,
+            Object[] formatParams) {
         this.code = code;
         this.message = message;
         this.subMessage = subMessage;
@@ -103,7 +104,8 @@ public class ResponseData<T> {
      * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data) {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, null, null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, null,
+                null);
     }
 
     /**
@@ -127,7 +129,8 @@ public class ResponseData<T> {
      * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data, Object extra) {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, extra, null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, extra,
+                null);
     }
 
     /**
@@ -136,7 +139,8 @@ public class ResponseData<T> {
      * @return 空响应数据
      */
     public static ResponseData<Void> empty() {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), null, null, null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), null, null,
+                null);
     }
 
     /**
@@ -227,7 +231,8 @@ public class ResponseData<T> {
      * @param <T> 泛型类型
      * @return 响应数据
      */
-    public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra, Object[] formatParams) {
+    public static <T> ResponseData<T> failure(String code, String message, String subMessage, Object extra,
+            Object[] formatParams) {
         return new ResponseData<>(code, message, subMessage, System.currentTimeMillis(), null, extra, formatParams);
     }
 

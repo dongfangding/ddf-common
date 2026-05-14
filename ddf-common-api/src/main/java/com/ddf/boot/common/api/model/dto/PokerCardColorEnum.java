@@ -34,7 +34,6 @@ public enum PokerCardColorEnum {
     }
 
     public static String[] getColorArray() {
-        return Arrays
-                .stream(values()).map(PokerCardColorEnum::getColor).toArray(String[]::new);
+        return Arrays.stream(values()).map(PokerCardColorEnum::getColor).toArray(String[]::new);
     }
 }

@@ -72,7 +72,8 @@ public class ObjectUtilTest {
     @Test
     @DisplayName("测试 getOrDefault - 集合类型默认值")
     public void testGetOrDefaultWithCollection() {
-        java.util.List<String> result = ObjectUtil.getOrDefault(null, java.util.Collections.emptyList(), java.util.List::of);
+        java.util.List<String> result = ObjectUtil.getOrDefault(null, java.util.Collections.emptyList(),
+                java.util.List::of);
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.isEmpty());
     }

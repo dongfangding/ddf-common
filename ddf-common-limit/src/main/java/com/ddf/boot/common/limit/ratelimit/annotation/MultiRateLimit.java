@@ -20,8 +20,6 @@ public @interface MultiRateLimit {
 
     /**
      * 定义多个限流规则
-     *
-     * @return
      */
     RateLimit[] rules() default {};
 }

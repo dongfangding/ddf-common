@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
  * @author dongfang.ding on 2018/11/7
  * @see LogAspectRegistrar
  */

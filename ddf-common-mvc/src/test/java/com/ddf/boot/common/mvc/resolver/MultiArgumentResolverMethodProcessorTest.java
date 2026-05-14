@@ -94,17 +94,14 @@ class MultiArgumentResolverMethodProcessorTest {
         Method method = DemoController.class.getDeclaredMethod("supported", DemoBody.class);
         MethodParameter parameter = new MethodParameter(method, 0);
 
-        HttpMediaTypeNotSupportedException nullException = assertThrows(
-            HttpMediaTypeNotSupportedException.class,
-            () -> processor.resolveArgument(parameter, new ModelAndViewContainer(), new ServletWebRequest(new MockHttpServletRequest()), null)
-        );
+        HttpMediaTypeNotSupportedException nullException = assertThrows(HttpMediaTypeNotSupportedException.class,
+                () -> processor.resolveArgument(parameter, new ModelAndViewContainer(),
+                        new ServletWebRequest(new MockHttpServletRequest()), null));
         assertTrue(nullException.getMessage().contains("contentType"));
 
         MockHttpServletRequest xmlRequest = buildRequest("application/xml");
-        HttpMediaTypeNotSupportedException xmlException = assertThrows(
-            HttpMediaTypeNotSupportedException.class,
-            () -> processor.resolveArgument(parameter, null, new ServletWebRequest(xmlRequest), null)
-        );
+        HttpMediaTypeNotSupportedException xmlException = assertThrows(HttpMediaTypeNotSupportedException.class,
+                () -> processor.resolveArgument(parameter, null, new ServletWebRequest(xmlRequest), null));
         assertTrue(xmlException.getMessage().contains("Content-Type"));
     }
 
@@ -149,6 +146,7 @@ class MultiArgumentResolverMethodProcessorTest {
         public void unsupported(DemoBody body) {
         }
     }
+
 
     static class DemoBody {
     }

@@ -25,7 +25,6 @@ public class PageUtil {
      * 空分页
      *
      * @param <E> 元素泛型类型
-     * @return
      */
     public static <E> PageResult<E> empty(Integer pageNum, Integer pageSize) {
         return new PageResult<>(pageNum, pageSize);
@@ -36,7 +35,6 @@ public class PageUtil {
      *
      * @param <E> 元素泛型类型
      * @param pageRequest 分页请求对象
-     * @return
      */
     public static <E> PageResult<E> empty(PageRequest pageRequest) {
         pageRequest.checkArgument();
@@ -50,7 +48,6 @@ public class PageUtil {
      * @param total total参数
      * @param content 内容
      * @param <E> 元素泛型类型
-     * @return
      */
     public static <E> PageResult<E> ofPageRequest(PageRequest pageRequest, long total, List<E> content) {
         pageRequest.checkArgument();
@@ -66,7 +63,6 @@ public class PageUtil {
      * @param pageRequest 分页请求对象
      * @param select select参数
      * @param poClazz POclazz参数
-     * @return
      * @param <E> 元素泛型类型
      * @param <R> 返回值泛型类型
      */
@@ -77,7 +73,6 @@ public class PageUtil {
 
     /**
      * 由一个db查询出来的分页对象转换为自定义响应对象
-     *
      * <pre>
      * final PageResult<SysRole> result = sysRoleService.pageList(request);
      * if (result.isEmpty()) {
@@ -91,10 +86,11 @@ public class PageUtil {
      * @param function function参数
      * @param <E> 元素泛型类型
      * @param <R> 返回值泛型类型
-     * @return
      */
-    public static <E, R> PageResult<R> convertPageResult(PageResult<E> pageResult, Function<List<E>, List<R>> function) {
-        final PageResult<R> result = new PageResult<>(pageResult.getPageNum(), pageResult.getPageSize(), pageResult.getTotal());
+    public static <E, R> PageResult<R> convertPageResult(PageResult<E> pageResult,
+            Function<List<E>, List<R>> function) {
+        final PageResult<R> result = new PageResult<>(pageResult.getPageNum(), pageResult.getPageSize(),
+                pageResult.getTotal());
         result.setContent(function.apply(pageResult.getContent()));
         return result;
     }
@@ -104,17 +100,16 @@ public class PageUtil {
      *
      * @param pageRequest 分页请求对象
      * @param select select参数
-     * @param poClazz     原始查询出来的对象
-     * @param voClazz     要转换的对象
+     * @param poClazz 原始查询出来的对象
+     * @param voClazz 要转换的对象
      * @param <E> 元素泛型类型
      * @param <R> 返回值泛型类型
-     * @return
      */
     public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, @NotNull Class<E> poClazz,
             @Nullable Class<R> voClazz) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
-                .doSelectPageInfo(select);
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(),
+                pageRequest.getPageSizeAdaptive()).doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
         }
@@ -123,7 +118,8 @@ public class PageUtil {
             List<R> rtnList = (List<R>) pageInfo.getList();
             return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), rtnList);
         } else {
-            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), Convert.toList(voClazz, pageInfo.getList()));
+            return new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(),
+                    Convert.toList(voClazz, pageInfo.getList()));
         }
     }
 
@@ -134,18 +130,19 @@ public class PageUtil {
      * @param pageRequest 分页请求对象
      * @param select select参数
      * @param function function参数
-     * @return
      * @param <E> 元素泛型类型
      * @param <R> 返回值泛型类型
      */
-    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select, Function<List<E>, List<R>> function) {
+    public static <E, R> PageResult<R> startPage(PageRequest pageRequest, ISelect select,
+            Function<List<E>, List<R>> function) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
-                .doSelectPageInfo(select);
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(),
+                pageRequest.getPageSizeAdaptive()).doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
         }
-        final PageResult<R> result = new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal());
+        final PageResult<R> result = new PageResult<>(pageInfo.getPageNum(), pageInfo.getPageSize(),
+                pageInfo.getTotal());
         result.setContent(function.apply(pageInfo.getList()));
         return result;
     }
@@ -154,16 +151,14 @@ public class PageUtil {
     /**
      * 使用PageHelper分页， 转换为自己的分页对象， 但是不转换实体对象
      *
-     *
      * @param pageRequest 分页请求对象
      * @param select select参数
-     * @return
      * @param <E> 元素泛型类型
      */
     public static <E> PageResult<E> startPage(PageRequest pageRequest, ISelect select) {
         // 查询出原始对象
-        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(), pageRequest.getPageSizeAdaptive())
-                .doSelectPageInfo(select);
+        final PageInfo<E> pageInfo = PageHelper.startPage(pageRequest.getPageNumAdaptive(),
+                pageRequest.getPageSizeAdaptive()).doSelectPageInfo(select);
         if (pageInfo.getSize() <= 0) {
             return empty(pageRequest);
         }
@@ -174,7 +169,6 @@ public class PageUtil {
      * 构造基于spring-data基本分页对象
      *
      * @param pageRequest 分页请求对象
-     * @return
      */
     public static Pageable toSpringData(PageRequest pageRequest) {
         pageRequest.checkArgument();
@@ -182,8 +176,8 @@ public class PageUtil {
             return Pageable.unpaged();
         }
         // spring-data的分页从0开始
-        return org.springframework.data.domain.PageRequest.of(
-                (int) pageRequest.getPageNumAdaptive() - 1, (int) pageRequest.getPageSizeAdaptive());
+        return org.springframework.data.domain.PageRequest.of((int) pageRequest.getPageNumAdaptive() - 1,
+                (int) pageRequest.getPageSizeAdaptive());
     }
 
     /**
@@ -191,7 +185,6 @@ public class PageUtil {
      *
      * @param page 分页参数
      * @param <E> 元素泛型类型
-     * @return
      */
     public static <E> PageResult<E> convertFromSpringData(@NotNull org.springframework.data.domain.Page<E> page) {
         final PageResult<E> result = new PageResult<E>(page.getNumber(), page.getSize(), page.getTotalElements());

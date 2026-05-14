@@ -10,6 +10,7 @@ public class LockingBusinessException extends RuntimeException {
     public LockingBusinessException(Exception e) {
         super(e);
     }
+
     /**
      * @param msg 参数
      */

@@ -59,6 +59,7 @@ public class RedisTemplateHelper {
     private final StringRedisTemplate stringRedisTemplate;
 
     private final RedissonClient redissonClient;
+
     public RedisTemplateHelper(StringRedisTemplate stringRedisTemplate, RedissonClient redissonClient) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.redissonClient = redissonClient;
@@ -67,14 +68,13 @@ public class RedisTemplateHelper {
     /**
      * 构造布隆过滤器
      *
-     * @param name               名称
+     * @param name 名称
      * @param expectedInsertions 预计容器数量
-     * @param falseProbability   允许误差率 0~1
+     * @param falseProbability 允许误差率 0~1
      * @param <T> 泛型类型
-     * @return
      */
     public <T> RedisBloomFilter<T> createRedisBloomFilter(String name, long expectedInsertions,
-        double falseProbability) {
+            double falseProbability) {
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(name);
         return new RedisBloomFilter<>(name, bloomFilter, expectedInsertions, falseProbability);
     }
@@ -83,17 +83,16 @@ public class RedisTemplateHelper {
      * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
      * 业务方面的单位时间逻辑次数控制
      *
-     * @param key            目标键
-     * @param maxCount       单位时间内最大访问次数
+     * @param key 目标键
+     * @param maxCount 单位时间内最大访问次数
      * @param windowInSecond 窗口时间，单位秒
-     * @return
      */
     public AccessLimitResponse sliderWindowAccess(final String key, final long maxCount, final int windowInSecond) {
-        final String result = String.valueOf(stringRedisTemplate.execute(
-            RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key), String.valueOf(maxCount),
-            String.valueOf(TimeUnit.SECONDS.toMillis(windowInSecond)), String.valueOf(System.currentTimeMillis()),
-            System.currentTimeMillis() + "-" + IdUtil.randomUUID()
-        ));
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(TimeUnit.SECONDS.toMillis(windowInSecond)),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()));
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
 
@@ -102,18 +101,17 @@ public class RedisTemplateHelper {
      * 控制某个时间窗口类，对访问总次数进行控制， 如果是偏向流量限流使用的话，应注意时间临界点带来的流量溢出问题， 不建议直接作为限流使用， 更偏向于
      * 业务方面的单位时间逻辑次数控制
      *
-     * @param key              目标键
-     * @param maxCount         单位时间内最大访问次数
+     * @param key 目标键
+     * @param maxCount 单位时间内最大访问次数
      * @param windowInMillions 窗口时间，单位毫秒
-     * @return
      */
     public AccessLimitResponse sliderWindowAccessMillions(final String key, final long maxCount,
-        final int windowInMillions) {
-        final String result = String.valueOf(stringRedisTemplate.execute(
-            RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key), String.valueOf(maxCount),
-            String.valueOf(windowInMillions), String.valueOf(System.currentTimeMillis()),
-            System.currentTimeMillis() + "-" + IdUtil.randomUUID()
-        ));
+            final int windowInMillions) {
+        final String result = String.valueOf(
+                stringRedisTemplate.execute(RedisLuaScript.SLIDER_WINDOW_COUNT, Collections.singletonList(key),
+                        String.valueOf(maxCount), String.valueOf(windowInMillions),
+                        String.valueOf(System.currentTimeMillis()),
+                        System.currentTimeMillis() + "-" + IdUtil.randomUUID()));
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
 
@@ -127,10 +125,9 @@ public class RedisTemplateHelper {
      * @param supplier 供应参数
      * @param exceptionCode 异常编码
      * @param <T> 泛型类型
-     * @return
      */
     public <T> T sliderWindowAccessCheckException(final String key, final long maxCount, final int windowInSecond,
-        Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+            Supplier<T> supplier, BaseCallbackCode exceptionCode) {
         final boolean isLimit = sliderWindowAccess(key, maxCount, windowInSecond).isLimited();
         if (isLimit) {
             throw new BusinessException(exceptionCode);
@@ -150,19 +147,17 @@ public class RedisTemplateHelper {
      * last_time 上次恢复令牌时间
      * current_token为剩余的token，注意这个数量有可能不是最新的， 因为要在获取的时间才会按照恢复速率重新计算剩余令牌数
      *
-     * @param key  目标键
-     * @param max  最大值
+     * @param key 目标键
+     * @param max 最大值
      * @param rate 每秒钟令牌桶恢复速率
-     * @return
      */
     public boolean tokenBucketRateLimitAcquire(String key, Integer max, Integer rate) {
-        return tokenBucketRateLimitAcquire(RateLimitRequest
-            .builder()
-            .key(key)
-            .max(max)
-            .rate(rate)
-            .ignorePrefix(true)
-            .build());
+        return tokenBucketRateLimitAcquire(RateLimitRequest.builder()
+                .key(key)
+                .max(max)
+                .rate(rate)
+                .ignorePrefix(true)
+                .build());
     }
 
     /**
@@ -179,34 +174,30 @@ public class RedisTemplateHelper {
      * @param request 请求对象
      */
     public boolean tokenBucketRateLimitAcquire(RateLimitRequest request) {
-        final String result = String.valueOf(stringRedisTemplate.execute(
-            RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT, Collections.singletonList(request.getKey()),
-            String.valueOf(request.getMax()), String.valueOf(request.getRate()),
-            String.valueOf(System.currentTimeMillis())
-        ));
+        final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
+                Collections.singletonList(request.getKey()), String.valueOf(request.getMax()),
+                String.valueOf(request.getRate()), String.valueOf(System.currentTimeMillis())));
         return Objects.equals("1", result);
     }
 
     /**
      * 对String类型的key进行递增递减并设置过期值的原子脚本, 初始值为0， 每次递增+1
      *
-     * @param key           目标键
+     * @param key 目标键
      * @param expireSeconds 过期秒值
      * @return 缓存key对应的最新值
      */
     public Long incrementKeyExpire(String key, long expireSeconds) {
-        return Long.parseLong(
-            Objects.requireNonNull(stringRedisTemplate.execute(
-                RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE, Collections.singletonList(key), "1",
-                String.valueOf(expireSeconds)
-            )));
+        return Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE, Collections.singletonList(key),
+                        "1", String.valueOf(expireSeconds))));
     }
 
 
     /**
      * 对String类型的key进行递增递减并设置过期指定指定时间的原子脚本
      *
-     * @param key      目标键
+     * @param key 目标键
      * @param expireAt 指定过期的具体时间
      * @return 缓存key对应的最新值
      */
@@ -214,11 +205,11 @@ public class RedisTemplateHelper {
         if (System.currentTimeMillis() > expireAt.getTime()) {
             throw new IllegalArgumentException("过期时间不能早于当前时间");
         }
-        return Long.parseLong(Objects.requireNonNull(stringRedisTemplate.execute(
-            RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE_AT, Collections.singletonList(key), "1",
-            // 这个单位是秒
-            String.valueOf(expireAt.getTime() / 1000)
-        )));
+        return Long.parseLong(Objects.requireNonNull(
+                stringRedisTemplate.execute(RedisLuaScript.STRING_KEY_INCREMENT_EXPIRE_AT,
+                        Collections.singletonList(key), "1",
+                        // 这个单位是秒
+                        String.valueOf(expireAt.getTime() / 1000))));
     }
 
 
@@ -228,14 +219,11 @@ public class RedisTemplateHelper {
      * https://github.com/redisson/redisson/wiki/6.-Distributed-objects
      *
      * @param request 请求对象
-     * @return
      */
     public boolean leakyBucketRateLimitAcquire(LeakyBucketRateLimitRequest request) {
         RRateLimiter limiter = redissonClient.getRateLimiter(request.getKey());
-        boolean result = limiter.trySetRate(
-            RateType.OVERALL, request.getRate(), request.getRateIntervalSeconds(),
-            RateIntervalUnit.SECONDS
-        );
+        boolean result = limiter.trySetRate(RateType.OVERALL, request.getRate(), request.getRateIntervalSeconds(),
+                RateIntervalUnit.SECONDS);
         if (!Objects.equals(Boolean.TRUE, result)) {
             return Boolean.FALSE;
         }
@@ -246,37 +234,31 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           目标键
-     * @param field         字段名
-     * @param step          每次自增的值
-     * @param limit         自增上限值，超过这个值不会继续自增
+     * @param key 目标键
+     * @param field 字段名
+     * @param step 每次自增的值
+     * @param limit 自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
      */
     public AccessLimitResponse hashIncreaseCheck(String key, String field, Long step, Long limit, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_INCREMENT_CHECK,
-            Collections.singletonList(key), field, String.valueOf(step), String.valueOf(limit),
-            String.valueOf(expireSeconds)
-        );
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_CHECK,
+                Collections.singletonList(key), field, String.valueOf(step), String.valueOf(limit),
+                String.valueOf(expireSeconds));
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
 
     /**
      * 基于hash结构的自减并且支持自减下限判定，低于下限，该方法内部提供数据回滚
      *
-     * @param key           目标键
-     * @param field         字段名
-     * @param step          每次自增的值
-     * @param limit         自减下限值，低于这个值不会继续自减
+     * @param key 目标键
+     * @param field 字段名
+     * @param step 每次自增的值
+     * @param limit 自减下限值，低于这个值不会继续自减
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
      */
     public AccessLimitResponse hashDecreaseCheck(String key, String field, Long step, Long limit, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_DECREMENT_CHECK,
-            Collections.singletonList(key), field, String.valueOf(step), String.valueOf(limit), expireSeconds
-        );
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_DECREMENT_CHECK,
+                Collections.singletonList(key), field, String.valueOf(step), String.valueOf(limit), expireSeconds);
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
 
@@ -284,23 +266,20 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增（正负值）进行上下限判定，如果超出上下限，则将值设置为对应的上下限值
      *
-     * @param key           目标键
-     * @param field         字段名
-     * @param step          每次自增的值
-     * @param minValue      小于这个值，则将值设置为这个值
-     * @param maxValue      自增上限值，超过这个值不会继续自增
+     * @param key 目标键
+     * @param field 字段名
+     * @param step 每次自增的值
+     * @param minValue 小于这个值，则将值设置为这个值
+     * @param maxValue 自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
-     * @return
      */
     public HashIncrementPersistLimitValueResponse hashIncrPersistLimitValue(String key, String field, Double step,
-        Long minValue, Long maxValue, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_INCREMENT_PERSIST_LIMIT_VALUE, Collections.singletonList(key), field,
-            String.valueOf(step), Objects.nonNull(minValue) ? String.valueOf(minValue) : "",
-            Objects.nonNull(maxValue) ? String.valueOf(maxValue) : "",
-            Objects.nonNull(expireSeconds) ? String.valueOf(expireSeconds) : ""
-        );
+            Long minValue, Long maxValue, Long expireSeconds) {
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREMENT_PERSIST_LIMIT_VALUE,
+                Collections.singletonList(key), field, String.valueOf(step),
+                Objects.nonNull(minValue) ? String.valueOf(minValue) : "",
+                Objects.nonNull(maxValue) ? String.valueOf(maxValue) : "",
+                Objects.nonNull(expireSeconds) ? String.valueOf(expireSeconds) : "");
         return JsonUtil.toBean(result, HashIncrementPersistLimitValueResponse.class);
     }
 
@@ -308,17 +287,14 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自减并且支持自减下限判定，低于下限，该方法内部提供数据回滚
      *
-     * @param key   目标键
+     * @param key 目标键
      * @param field 字段名
-     * @param step  每次自增的值
-     * @return
+     * @param step 每次自增的值
      */
     public HashDecreaseUntilFirstLessThanZeroResponse hashDecreaseUntilFirstLessThanZero(String key, String field,
-        Long step) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO,
-            Collections.singletonList(key), field, String.valueOf(step)
-        );
+            Long step) {
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO,
+                Collections.singletonList(key), field, String.valueOf(step));
         return JsonUtil.toBean(result, HashDecreaseUntilFirstLessThanZeroResponse.class);
     }
 
@@ -333,10 +309,9 @@ public class RedisTemplateHelper {
      * @param exceptionCode 异常编码
      * @param <T> 泛型类型
      * @param field 字段名
-     * @return
      */
     public <T> T hashIncrWithLimitCheckException(String key, String field, Long step, Long limit, Long expireSeconds,
-        Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+            Supplier<T> supplier, BaseCallbackCode exceptionCode) {
         final boolean isLimit = hashIncreaseCheck(key, field, step, limit, expireSeconds).isLimited();
         if (isLimit) {
             throw new BusinessException(exceptionCode);
@@ -348,17 +323,15 @@ public class RedisTemplateHelper {
     /**
      * 基于String结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           目标键
-     * @param step          每次自增的值
-     * @param limit         自增上限值，超过这个值不会继续自增
+     * @param key 目标键
+     * @param step 每次自增的值
+     * @param limit 自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
      */
     public AccessLimitResponse stringIncrWithLimit(String key, Long step, Long limit, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.STRING_INCREMENT_CHECK,
-            Collections.singletonList(key), String.valueOf(step), String.valueOf(limit), String.valueOf(expireSeconds)
-        );
+        final String result = stringRedisTemplate.execute(RedisLuaScript.STRING_INCREMENT_CHECK,
+                Collections.singletonList(key), String.valueOf(step), String.valueOf(limit),
+                String.valueOf(expireSeconds));
         return JsonUtil.toBean(result, AccessLimitResponse.class);
     }
 
@@ -372,10 +345,9 @@ public class RedisTemplateHelper {
      * @param supplier 供应参数
      * @param exceptionCode 异常编码
      * @param <T> 泛型类型
-     * @return
      */
     public <T> T stringIncrWithLimitCheckException(String key, Long step, Long limit, Long expireSeconds,
-        Supplier<T> supplier, BaseCallbackCode exceptionCode) {
+            Supplier<T> supplier, BaseCallbackCode exceptionCode) {
         final boolean isLimit = stringIncrWithLimit(key, step, limit, expireSeconds).isLimited();
         if (isLimit) {
             throw new BusinessException(exceptionCode);
@@ -388,17 +360,14 @@ public class RedisTemplateHelper {
      * 使用场景
      * 比如每次获取3个碎片，当自增到10个碎片后就可以合成一个完整的东西，合成后当前值要减去消耗的数值
      *
-     * @param key    目标键
-     * @param field  字段名
-     * @param step   每次自增的值
+     * @param key 目标键
+     * @param field 字段名
+     * @param step 每次自增的值
      * @param module 模数
-     * @return
      */
     public Integer hashIncreaseRoundingReduce(String key, String field, Long step, Long module) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_INCREASE_ROUNDING_REDUCE,
-            Collections.singletonList(key), field, String.valueOf(step), String.valueOf(module)
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCREASE_ROUNDING_REDUCE,
+                Collections.singletonList(key), field, String.valueOf(step), String.valueOf(module));
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 
@@ -410,14 +379,11 @@ public class RedisTemplateHelper {
      * @param key 目标键
      * @param maxSize 最大大小参数
      * @param member 成员值
-     * @param score   分值
-     * @return
+     * @param score 分值
      */
     public Integer maxCapacityHistoryContainer(String key, Long maxSize, String member, Double score) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.MAX_CAPACITY_HISTORY_CONTAINER,
-            Collections.singletonList(key), String.valueOf(maxSize), member, String.valueOf(score)
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_CAPACITY_HISTORY_CONTAINER,
+                Collections.singletonList(key), String.valueOf(maxSize), member, String.valueOf(score));
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 
@@ -428,7 +394,6 @@ public class RedisTemplateHelper {
      * @param key 目标键
      * @param score 分值
      * @param member 成员值
-     * @return
      */
     public Long zIncrByWithTime(String key, Long score, String member) {
         return zIncrByWithTime(key, score, member, 0L);
@@ -441,18 +406,13 @@ public class RedisTemplateHelper {
      * @param score 分值
      * @param member 成员值
      * @param expireSeconds 参数
-     * @return
      */
     public Long zIncrByWithTime(String key, Long score, String member, Long expireSeconds) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_INCR_WITH_TIME,
-            Collections.singletonList(key), member, String.valueOf(score),
-            String.valueOf(calcPointScoreByTime(System.currentTimeMillis())), String.valueOf(expireSeconds)
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_INCR_WITH_TIME,
+                Collections.singletonList(key), member, String.valueOf(score),
+                String.valueOf(calcPointScoreByTime(System.currentTimeMillis())), String.valueOf(expireSeconds));
         // 舍弃小数位
-        return StringUtils.isNotBlank(execute) ? BigDecimal
-            .valueOf(Double.parseDouble(execute))
-            .longValue() : 0L;
+        return StringUtils.isNotBlank(execute) ? BigDecimal.valueOf(Double.parseDouble(execute)).longValue() : 0L;
     }
 
 
@@ -464,18 +424,14 @@ public class RedisTemplateHelper {
      * @param end 结束位置
      */
     public Set<ZSetOperations.TypedTuple<String>> reverseRangeWithScoresTime(String key, long start, long end) {
-        final Set<ZSetOperations.TypedTuple<String>> tuples = stringRedisTemplate
-            .opsForZSet()
-            .reverseRangeWithScores(key, start, end);
+        final Set<ZSetOperations.TypedTuple<String>> tuples = stringRedisTemplate.opsForZSet().reverseRangeWithScores(
+                key, start, end);
         if (Objects.nonNull(tuples) && !tuples.isEmpty()) {
-            return tuples
-                .stream()
-                .map(tuple -> {
-                    // 原始分数，包含小数的，需要处理掉
-                    final BigDecimal originScore = BigDecimal.valueOf(tuple.getScore());
-                    return ZSetOperations.TypedTuple.of(tuple.getValue(), (double) originScore.longValue());
-                })
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            return tuples.stream().map(tuple -> {
+                // 原始分数，包含小数的，需要处理掉
+                final BigDecimal originScore = BigDecimal.valueOf(tuple.getScore());
+                return ZSetOperations.TypedTuple.of(tuple.getValue(), (double) originScore.longValue());
+            }).collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return tuples;
     }
@@ -490,7 +446,6 @@ public class RedisTemplateHelper {
      * @param score 分值
      * @param member 成员值
      * @param enlargeMultiple 参数
-     * @return
      */
     public Double zIncrDoubleByWithTime(String key, BigDecimal score, String member, Integer enlargeMultiple) {
         return zIncrDoubleByWithTime(key, score, member, enlargeMultiple, 0L);
@@ -507,10 +462,9 @@ public class RedisTemplateHelper {
      * @param member 成员值
      * @param enlargeMultiple 参数
      * @param expireSeconds 参数
-     * @return
      */
     public Double zIncrDoubleByWithTime(String key, BigDecimal score, String member, Integer enlargeMultiple,
-        Long expireSeconds) {
+            Long expireSeconds) {
         if (Objects.isNull(enlargeMultiple) || (enlargeMultiple % 10 != 0 && enlargeMultiple != 1)) {
             throw new IllegalArgumentException("enlargeMultiple must be a multiple of 10 or 1");
         }
@@ -526,11 +480,9 @@ public class RedisTemplateHelper {
             // 放大分数
             logicScore = score.multiply(BigDecimal.valueOf(enlargeMultiple));
         }
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_INCR_WITH_TIME,
-            Collections.singletonList(key), member, logicScore,
-            String.valueOf(calcPointScoreByTime(System.currentTimeMillis())), String.valueOf(expireSeconds)
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_INCR_WITH_TIME,
+                Collections.singletonList(key), member, logicScore,
+                String.valueOf(calcPointScoreByTime(System.currentTimeMillis())), String.valueOf(expireSeconds));
 
         // 原始分数，包含小数的，需要处理掉
         final BigDecimal originScore = BigDecimal.valueOf(Double.parseDouble(execute));
@@ -541,9 +493,7 @@ public class RedisTemplateHelper {
         }
 
         // 还原成原始分数，逻辑处理
-        return originScore
-            .divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN)
-            .doubleValue();
+        return originScore.divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN).doubleValue();
     }
 
 
@@ -556,34 +506,28 @@ public class RedisTemplateHelper {
      * @param enlargeMultiple 参数
      */
     public Set<ZSetOperations.TypedTuple<String>> reverseRangeDoubleWithScoresTime(String key, long start, long end,
-        Integer enlargeMultiple) {
+            Integer enlargeMultiple) {
         if (Objects.isNull(enlargeMultiple) || (enlargeMultiple % 10 != 0 && enlargeMultiple != 1)) {
             throw new IllegalArgumentException("enlargeMultiple must be a multiple of 10 or 1");
         }
-        final Set<ZSetOperations.TypedTuple<String>> tuples = stringRedisTemplate
-            .opsForZSet()
-            .reverseRangeWithScores(key, start, end);
+        final Set<ZSetOperations.TypedTuple<String>> tuples = stringRedisTemplate.opsForZSet().reverseRangeWithScores(
+                key, start, end);
         // 反算出小数位
         // 反算出小数位
         final int scale = enlargeMultiple == 1 ? 0 : enlargeMultiple / 10;
         if (Objects.nonNull(tuples) && !tuples.isEmpty()) {
-            return tuples
-                .stream()
-                .map(tuple -> {
-                    // 原始分数， 本身有小数被放大存储，这里还原成原始分数，逻辑处理。
-                    final BigDecimal originScore = BigDecimal.valueOf(tuple.getScore());
-                    if (enlargeMultiple == 1) {
-                        // 放大一倍的即默认是整数， 直接取整返回了
-                        return ZSetOperations.TypedTuple.of(tuple.getValue(), (double) originScore.longValue());
-                    }
-                    // 否则反算回去返回真实逻辑double
-                    return ZSetOperations.TypedTuple.of(
-                        tuple.getValue(), originScore
-                            .divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN)
-                            .doubleValue()
-                    );
-                })
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            return tuples.stream().map(tuple -> {
+                // 原始分数， 本身有小数被放大存储，这里还原成原始分数，逻辑处理。
+                final BigDecimal originScore = BigDecimal.valueOf(tuple.getScore());
+                if (enlargeMultiple == 1) {
+                    // 放大一倍的即默认是整数， 直接取整返回了
+                    return ZSetOperations.TypedTuple.of(tuple.getValue(), (double) originScore.longValue());
+                }
+                // 否则反算回去返回真实逻辑double
+                return ZSetOperations.TypedTuple.of(tuple.getValue(),
+                        originScore.divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN)
+                                .doubleValue());
+            }).collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return tuples;
     }
@@ -593,12 +537,9 @@ public class RedisTemplateHelper {
      *
      * @param key 目标键
      * @param element element参数
-     * @return
      */
     public Long rankByElement(String key, String element) {
-        final Long rank = stringRedisTemplate
-            .opsForZSet()
-            .reverseRank(key, element);
+        final Long rank = stringRedisTemplate.opsForZSet().reverseRank(key, element);
         if (Objects.isNull(rank)) {
             return 0L;
         }
@@ -614,19 +555,16 @@ public class RedisTemplateHelper {
      * @param beforeFetchSize beforefetch大小参数
      * @param afterFetchSize afterfetch大小参数
      * @param enlargeMultiple 参数
-     * @return
      */
     public List<RankResponse> rankAround(String key, String element, Integer beforeFetchSize, Integer afterFetchSize,
-        Integer enlargeMultiple) {
+            Integer enlargeMultiple) {
         if (Objects.isNull(enlargeMultiple) || (enlargeMultiple % 10 != 0 && enlargeMultiple != 1)) {
             throw new IllegalArgumentException("enlargeMultiple must be a multiple of 10 or 1");
         }
         // 反算出小数位
         final int scale = enlargeMultiple == 1 ? 0 : enlargeMultiple / 10;
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_AROUND_ELEMENT_RANK,
-            Collections.singletonList(key), element, beforeFetchSize.toString(), afterFetchSize.toString()
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_AROUND_ELEMENT_RANK,
+                Collections.singletonList(key), element, beforeFetchSize.toString(), afterFetchSize.toString());
         final List<RankResponse> list = JsonUtil.toList(execute, RankResponse.class);
         // 如果 enlargeMultiple 为 1，直接返回原始分数
         if (enlargeMultiple == 1) {
@@ -636,9 +574,8 @@ public class RedisTemplateHelper {
             // 原始分数， 本身有小数被放大存储，这里还原成原始分数，逻辑处理。
             final BigDecimal originScore = BigDecimal.valueOf(response.getScore());
             // 还原成原始分数，逻辑处理
-            response.setScore(originScore
-                .divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN)
-                .doubleValue());
+            response.setScore(
+                    originScore.divide(BigDecimal.valueOf(enlargeMultiple), scale, RoundingMode.DOWN).doubleValue());
         }
 
         return list;
@@ -652,11 +589,10 @@ public class RedisTemplateHelper {
      * @param element element参数
      * @param beforeFetchSize beforefetch大小参数
      * @param afterFetchSize afterfetch大小参数
-     * @return
      */
     @Deprecated
     public List<RankResponse> rankAround2BackUp(String key, String element, Integer beforeFetchSize,
-        Integer afterFetchSize) {
+            Integer afterFetchSize) {
         final Long rank = rankByElement(key, element);
         if (rank == 0L) {
             return new ArrayList<>();
@@ -667,25 +603,16 @@ public class RedisTemplateHelper {
         final long endIndex = zeroBasedRank + afterFetchSize;
         final Set<ZSetOperations.TypedTuple<String>> tuples = reverseRangeWithScoresTime(key, beforeIndex, endIndex);
         if (CollUtil.isEmpty(tuples)) {
-            log.error(
-                "rankAround error, key: {}, element: {}, beforeFetchSize: {}, afterFetchSize: {}", key, element,
-                beforeFetchSize, afterFetchSize
-            );
+            log.error("rankAround error, key: {}, element: {}, beforeFetchSize: {}, afterFetchSize: {}", key, element,
+                    beforeFetchSize, afterFetchSize);
             return new ArrayList<>();
         }
-        final List<RankResponse> collect = tuples
-            .stream()
-            .map(t -> RankResponse.of(t.getValue(), t.getScore(), 0L))
-            .collect(Collectors.toList());
-        if (collect
-            .stream()
-            .noneMatch(r -> r
-                .getElement()
-                .equals(element))) {
-            log.error(
-                "rankAround error, key: {}, element: {}, beforeFetchSize: {}, afterFetchSize: {}, collect= {}",
-                key, element, beforeFetchSize, afterFetchSize, JsonUtil.toJson(collect)
-            );
+        final List<RankResponse> collect = tuples.stream()
+                .map(t -> RankResponse.of(t.getValue(), t.getScore(), 0L))
+                .collect(Collectors.toList());
+        if (collect.stream().noneMatch(r -> r.getElement().equals(element))) {
+            log.error("rankAround error, key: {}, element: {}, beforeFetchSize: {}, afterFetchSize: {}, collect= {}",
+                    key, element, beforeFetchSize, afterFetchSize, JsonUtil.toJson(collect));
         }
         buildRank(collect, element, rank);
         return collect;
@@ -702,13 +629,10 @@ public class RedisTemplateHelper {
      * @param key 目标键
      * @param incrTtl incrTTL参数
      * @param maxTtl 最大TTL参数
-     * @return
      */
     public StringTtlIncrWithLimitResponse stringTtlIncrWithLimit(String key, Integer incrTtl, Integer maxTtl) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.STRING_TTL_INCR_WITH_LIMIT,
-            Collections.singletonList(key), String.valueOf(incrTtl), String.valueOf(maxTtl)
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.STRING_TTL_INCR_WITH_LIMIT,
+                Collections.singletonList(key), String.valueOf(incrTtl), String.valueOf(maxTtl));
         final StringTtlIncrWithLimitResponse response = new StringTtlIncrWithLimitResponse();
         response.setTtl(0);
         response.setFull(false);
@@ -728,13 +652,10 @@ public class RedisTemplateHelper {
      * @param key 目标键
      * @param field 字段名
      * @param checkValue check值
-     * @return
      */
     public Integer hashDeleteWithCheckValue(String key, String field, String checkValue) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_DELETE_WITH_CHECK_VALUE,
-            Collections.singletonList(key), field, checkValue
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_DELETE_WITH_CHECK_VALUE,
+                Collections.singletonList(key), field, checkValue);
         return StringUtils.isNotBlank(execute) ? Integer.parseInt(execute) : 0;
     }
 
@@ -743,14 +664,11 @@ public class RedisTemplateHelper {
      *
      * @param key 目标键
      * @param checkValue check值
-     * @return
      */
     public Boolean stringDeleteWithCheckValue(String key, String checkValue) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.STRING_DELETE_WITH_CHECK_VALUE,
-            Collections.singletonList(key), checkValue
-        );
-		return Integer.parseInt(execute) == 1;
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.STRING_DELETE_WITH_CHECK_VALUE,
+                Collections.singletonList(key), checkValue);
+        return Integer.parseInt(execute) == 1;
     }
 
 
@@ -761,13 +679,10 @@ public class RedisTemplateHelper {
      * @param field 字段名
      * @param step step参数
      * @param ttlSeconds TTLseconds参数
-     * @return
      */
     public Long hashIncrWithFirstSetTtl(String key, String field, Long step, Long ttlSeconds) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_INCR_WITH_FIRST_SET_TTL,
-            Collections.singletonList(key), field, step, ttlSeconds
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCR_WITH_FIRST_SET_TTL,
+                Collections.singletonList(key), field, step, ttlSeconds);
         return Long.parseLong(execute);
     }
 
@@ -776,19 +691,16 @@ public class RedisTemplateHelper {
      * 该脚本的作用类似于对集合进行最大值判断，当达到最后值后，将组成当前最大值的所有子元素以及对应的数量返回
      *
      * @param maxElementKey 当前集合元素数量的key, string结构
-     * @param elementKey    存储子元素的key， hash结构， hash key为identity
-     * @param completeSeq   每次集合数量满一次，这个数量便+1
-     * @param identity      elementKey的field
+     * @param elementKey 存储子元素的key， hash结构， hash key为identity
+     * @param completeSeq 每次集合数量满一次，这个数量便+1
+     * @param identity elementKey的field
      * @param increaseValue 本次增加的数量
-     * @param maxValue      最大允许的数量
-     * @return
+     * @param maxValue 最大允许的数量
      */
     public Map<String, String> maxElementDict(String maxElementKey, String elementKey, String completeSeq,
-        String identity, Long increaseValue, Long maxValue) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.MAX_ELEMENT_DICT,
-            Lists.newArrayList(maxElementKey, elementKey, completeSeq), identity, increaseValue, maxValue
-        );
+            String identity, Long increaseValue, Long maxValue) {
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.MAX_ELEMENT_DICT,
+                Lists.newArrayList(maxElementKey, elementKey, completeSeq), identity, increaseValue, maxValue);
         if (StringUtils.isBlank(execute)) {
             return Collections.emptyMap();
         }
@@ -803,16 +715,15 @@ public class RedisTemplateHelper {
         }
         return map;
     }
+
     /**
      * @param key 目标键
      * @param elementKey 参数
      * @param step 参数
      */
     public Long hashIncrFloatRoundDecimal(String key, String elementKey, Double step) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_INCR_FLOAT_ROUND_DECIMAL,
-            Lists.newArrayList(key), elementKey, step.toString()
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.HASH_INCR_FLOAT_ROUND_DECIMAL,
+                Lists.newArrayList(key), elementKey, step.toString());
         if (Objects.isNull(execute)) {
             return 0L;
         }
@@ -825,13 +736,10 @@ public class RedisTemplateHelper {
      * @param key 目标键
      * @param min 最小值
      * @param max 最大值
-     * @return
      */
     public List<String> zsetRangeByscoreZrem(String key, Long min, Long max) {
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_RANGEBYSCORE_ZREM,
-            Lists.newArrayList(key), min.toString(), max.toString()
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_RANGEBYSCORE_ZREM,
+                Lists.newArrayList(key), min.toString(), max.toString());
         if (StringUtils.isBlank(execute) || "{}".equals(execute)) {
             return new ArrayList<>();
         }
@@ -842,25 +750,18 @@ public class RedisTemplateHelper {
     /**
      * 基于hash结构的自增并且支持自增上限判定，超过上限，该方法内部提供数据回滚
      *
-     * @param key           目标键
-     * @param fields        字段集合
-     * @param stepList      每次自增的值
-     * @param limit         自增上限值，超过这个值不会继续自增
+     * @param key 目标键
+     * @param fields 字段集合
+     * @param stepList 每次自增的值
+     * @param limit 自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
      */
     public BatchIncreaseCheckRoundResponse batchHashIncreaseCheck(String key, List<String> fields, List<Long> stepList,
-        List<Long> limit, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.HASH_BATCH_INCREMENT_CHECK, Collections.singletonList(key), String.join(",", fields),
-            stepList
-                .stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(",")), limit
-                .stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(",")), String.valueOf(expireSeconds)
-        );
+            List<Long> limit, Long expireSeconds) {
+        final String result = stringRedisTemplate.execute(RedisLuaScript.HASH_BATCH_INCREMENT_CHECK,
+                Collections.singletonList(key), String.join(",", fields),
+                stepList.stream().map(String::valueOf).collect(Collectors.joining(",")),
+                limit.stream().map(String::valueOf).collect(Collectors.joining(",")), String.valueOf(expireSeconds));
         return JsonUtil.toBean(result, BatchIncreaseCheckRoundResponse.class);
     }
 
@@ -868,24 +769,17 @@ public class RedisTemplateHelper {
     /**
      * hash结构的结构，对多个redis key 进行固定的field自增并且支持自增上限判定，超过上限，该方法内部提供所有Redis key数据回滚
      *
-     * @param keys          键集合
-     * @param field         字段名
-     * @param stepList      每次自增的值
-     * @param limit         自增上限值，超过这个值不会继续自增
+     * @param keys 键集合
+     * @param field 字段名
+     * @param stepList 每次自增的值
+     * @param limit 自增上限值，超过这个值不会继续自增
      * @param expireSeconds 对key设置最大的过期时间
-     * @return
      */
     public BatchIncreaseCheckRoundResponse multipleHashBatchHashIncreaseCheck(List<String> keys, String field,
-        List<Long> stepList, List<Long> limit, Long expireSeconds) {
-        final String result = stringRedisTemplate.execute(
-            RedisLuaScript.MULTIPLE_HASH_BATCH_INCREMENT_CHECK, keys, field, stepList
-                .stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(",")), limit
-                .stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(",")), String.valueOf(expireSeconds)
-        );
+            List<Long> stepList, List<Long> limit, Long expireSeconds) {
+        final String result = stringRedisTemplate.execute(RedisLuaScript.MULTIPLE_HASH_BATCH_INCREMENT_CHECK, keys,
+                field, stepList.stream().map(String::valueOf).collect(Collectors.joining(",")),
+                limit.stream().map(String::valueOf).collect(Collectors.joining(",")), String.valueOf(expireSeconds));
         return JsonUtil.toBean(result, BatchIncreaseCheckRoundResponse.class);
     }
 
@@ -894,22 +788,17 @@ public class RedisTemplateHelper {
      * 该方法内部将小数放大成整数存储，取出来用的时候要注意
      *
      * @param request 请求对象
-     * @return
      */
     public ZsetZaddWithMaxCheckResponse zSetAddWithMaxCheckSupportBiz(ZSetAddDoubleWithMaxCheckCommand request) {
         final Integer scoreFactory = request.getScoreFactory();
         if (Objects.isNull(scoreFactory) || (scoreFactory != 1 && scoreFactory % 10 != 0)) {
             throw new IllegalArgumentException("scoreFactory must be a multiple of 10 or 1");
         }
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_ZADD_WITH_TIME_MAX_CHECK,
-            Lists.newArrayList(request.getRankingKey(), request.getDetailKey(), request.getSumKey()),
-            request.getElement(), request
-                .getScore()
-                .toString(), String.valueOf(request.getScoreFactory()), String.valueOf(request.getScoreDecimal()),
-            String.valueOf(request.getExpireSeconds()),
-            StringUtils.isNotBlank(request.getDetailJson()) ? request.getDetailJson() : ""
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_ZADD_WITH_TIME_MAX_CHECK,
+                Lists.newArrayList(request.getRankingKey(), request.getDetailKey(), request.getSumKey()),
+                request.getElement(), request.getScore().toString(), String.valueOf(request.getScoreFactory()),
+                String.valueOf(request.getScoreDecimal()), String.valueOf(request.getExpireSeconds()),
+                StringUtils.isNotBlank(request.getDetailJson()) ? request.getDetailJson() : "");
         return JsonUtil.toBean(execute, ZsetZaddWithMaxCheckResponse.class);
     }
 
@@ -930,14 +819,13 @@ public class RedisTemplateHelper {
         if (Objects.isNull(scoreFactory) || (scoreFactory != 1 && scoreFactory % 10 != 0)) {
             throw new IllegalArgumentException("scoreFactory must be a multiple of 10 or 1");
         }
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_REV_RANGE_BIZ_RANKING_QUERY,
-            Lists.newArrayList(query.getRankingKey(), query.getDetailKey(), query.getSumKey()),
-            String.valueOf(query.getStartIndex()), String.valueOf(query.getEndIndex()),
-            String.valueOf(query.getScoreFactory())
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_REV_RANGE_BIZ_RANKING_QUERY,
+                Lists.newArrayList(query.getRankingKey(), query.getDetailKey(), query.getSumKey()),
+                String.valueOf(query.getStartIndex()), String.valueOf(query.getEndIndex()),
+                String.valueOf(query.getScoreFactory()));
         return JsonUtil.toBean(execute, ZRevRangeBizRankingResponse.class);
     }
+
     /**
      * @param time 参数
      */
@@ -949,9 +837,7 @@ public class RedisTemplateHelper {
         //        ));
 
         BigDecimal t = new BigDecimal(time);
-        BigDecimal pow = BigDecimal.TEN.pow(String
-            .valueOf(time)
-            .length());
+        BigDecimal pow = BigDecimal.TEN.pow(String.valueOf(time).length());
         return BigDecimal.ONE.subtract(t.divide(pow, 20, RoundingMode.DOWN));
     }
 
@@ -985,32 +871,30 @@ public class RedisTemplateHelper {
      * @param command command参数
      */
     public String hashValueUpdateSelective(HashValueUpdateSelectiveCommand command) {
-        return stringRedisTemplate.execute(
-            RedisLuaScript.HASH_VALUE_UPDATE_SELECTIVE, Collections.singletonList(command.getKey()), command.getField(),
-            command.getValue()
-        );
+        return stringRedisTemplate.execute(RedisLuaScript.HASH_VALUE_UPDATE_SELECTIVE,
+                Collections.singletonList(command.getKey()), command.getField(), command.getValue());
     }
 
     /**
      * 对榜单的单个元素进行多维度数据获取查询
+     *
      * @param query 参数
      */
     public ZRevRangeBizRankingResponse.Element zSetRevRangeBizRankingQueryElement(
-        ZRevRangeBizRankingElementQuery query) {
+            ZRevRangeBizRankingElementQuery query) {
         final Integer scoreFactory = query.getScoreFactory();
         if (Objects.isNull(scoreFactory) || (scoreFactory != 1 && scoreFactory % 10 != 0)) {
             throw new IllegalArgumentException("scoreFactory must be a multiple of 10 or 1");
         }
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY,
-            Lists.newArrayList(query.getRankingKey(), query.getDetailKey()), query.getElement(),
-            String.valueOf(query.getScoreFactory())
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY,
+                Lists.newArrayList(query.getRankingKey(), query.getDetailKey()), query.getElement(),
+                String.valueOf(query.getScoreFactory()));
         return JsonUtil.toBean(execute, ZRevRangeBizRankingResponse.Element.class);
     }
 
     /**
      * 多维度业务榜单榜单回滚, 如果积分匹配的话，则执行回滚
+     *
      * @param command 参数
      */
     public ZsetZaddWithMaxCheckResponse zSetDeleteWithMaxScoreCheck(ZSetAddDoubleWithMaxCheckCommand command) {
@@ -1018,14 +902,10 @@ public class RedisTemplateHelper {
         if (Objects.isNull(scoreFactory) || (scoreFactory != 1 && scoreFactory % 10 != 0)) {
             throw new IllegalArgumentException("scoreFactory must be a multiple of 10 or 1");
         }
-        final String execute = stringRedisTemplate.execute(
-            RedisLuaScript.ZSET_DELETE_WITH_MAX_SCORE_CHECK,
-            Lists.newArrayList(command.getRankingKey(), command.getDetailKey(), command.getSumKey()),
-            command.getElement(), command
-                .getScore()
-                .toString(), String.valueOf(command.getScoreFactory()), String.valueOf(command.getScoreDecimal()),
-            String.valueOf(command.getExpireSeconds())
-        );
+        final String execute = stringRedisTemplate.execute(RedisLuaScript.ZSET_DELETE_WITH_MAX_SCORE_CHECK,
+                Lists.newArrayList(command.getRankingKey(), command.getDetailKey(), command.getSumKey()),
+                command.getElement(), command.getScore().toString(), String.valueOf(command.getScoreFactory()),
+                String.valueOf(command.getScoreDecimal()), String.valueOf(command.getExpireSeconds()));
         return JsonUtil.toBean(execute, ZsetZaddWithMaxCheckResponse.class);
     }
 }

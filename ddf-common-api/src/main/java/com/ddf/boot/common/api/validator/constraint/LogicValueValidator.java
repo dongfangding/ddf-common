@@ -30,33 +30,26 @@ public @interface LogicValueValidator {
 
     /**
      * 错误消息
-     *
-     * @return
      */
     String message() default "逻辑字段的有效值只能是0和1";
 
     /**
      * 有效值, 默认0 和 1
-     *
-     * @return
      */
     int[] values() default {0, 1};
 
     /**
      * 即使用不到也要保留，否则会报错
-     * @return
      */
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
     /**
      * 即使用不到也要保留，否则会报错
-     * @return
      */
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
     /**
      * 验证器实现
-     *
      */
     class ActiveValidatorImpl implements ConstraintValidator<LogicValueValidator, Integer> {
 
@@ -81,8 +74,7 @@ public @interface LogicValueValidator {
         }
 
         /**
-         *
-         * @param value   参数值
+         * @param value 参数值
          * @param context 上下文参数
          * @return {@code false} if {@code value} does not pass the constraint
          */

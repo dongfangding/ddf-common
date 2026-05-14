@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
  * 1. SSL证书密码必须通过配置文件管理，禁止使用默认值
  * 2. 生产环境应使用复杂的随机密码
  * </p>
- *
  * <p>
  * 1. 生成服务端密钥对,证书密码是123456
  * keytool -genkey -alias server_jks -keysize 2048 -validity 365 -keyalg RSA -dname "CN=localhost" -keypass server_123456 -storepass server_123456 -keystore server.jks
@@ -76,35 +75,26 @@ public class KeyManagerFactoryHelper {
 
     /**
      * 创建默认的服务端SslContext
-     *
-     * @return
-     * @throws Exception
      */
     public static SslContext defaultServerContext() throws Exception {
-        return createServerContext(
-                System.getProperty("user.dir") + "/src/main/resources/cer/server.jks",
+        return createServerContext(System.getProperty("user.dir") + "/src/main/resources/cer/server.jks",
                 "server_123456");
     }
 
     /**
      * 创建默认的客户端SslContext
-     *
-     * @return
-     * @throws Exception
      */
     public static SslContext defaultClientContext() throws Exception {
-        return createClientContext(
-                System.getProperty("user.dir") + "/src/main/resources/cer/client.jks",
+        return createClientContext(System.getProperty("user.dir") + "/src/main/resources/cer/client.jks",
                 "client_123456");
     }
 
     /**
      * 生成服务端SslContext
      *
-     * @param caPath     证书路径
+     * @param caPath 证书路径
      * @param caPassword 证书密码
      * @return SslContext
-     * @throws Exception
      */
     public static SslContext createServerContext(String caPath, String caPassword) throws Exception {
         validatePassword(caPassword, "Server");
@@ -117,10 +107,9 @@ public class KeyManagerFactoryHelper {
     /**
      * 生成客户端SslContext
      *
-     * @param caPath     证书路径
+     * @param caPath 证书路径
      * @param caPassword 证书密码
      * @return SslContext
-     * @throws Exception
      */
     public static SslContext createClientContext(String caPath, String caPassword) throws Exception {
         validatePassword(caPassword, "Client");

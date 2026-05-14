@@ -9,7 +9,6 @@ import java.time.Duration;
 
 /**
  * S3 兼容存储操作接口.
- *
  * <p>支持 MinIO、AWS S3、阿里云 OSS 等 S3 兼容存储服务.</p>
  *
  * @author snowball

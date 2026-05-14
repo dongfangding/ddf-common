@@ -19,7 +19,6 @@ public class IdentityRateLimitKeyGenerator implements RateLimitKeyGenerator {
 
     /**
      * 该类的bean_name
-     *
      */
     public static final String BEAN_NAME = "identityRateLimitKeyGenerator";
 
@@ -29,16 +28,13 @@ public class IdentityRateLimitKeyGenerator implements RateLimitKeyGenerator {
      * @param joinPoint joinpoint参数
      * @param annotation annotation参数
      * @param properties properties参数
-     * @return
      */
     @Override
     public String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties) {
         // 身份标识
-        String identityNo = StringUtils.defaultIfBlank(StringUtils.defaultIfBlank(
-                UserContextUtil.getUserId(),
-                        UserContextUtil.getImei()), getPrefix());
+        String identityNo = StringUtils.defaultIfBlank(
+                StringUtils.defaultIfBlank(UserContextUtil.getUserId(), UserContextUtil.getImei()), getPrefix());
         return ApplicationNamedKeyGenerator.genKey(getPrefix(), identityNo,
-                AopUtil.getJoinPointClass(joinPoint).getName(),
-                AopUtil.getJoinPointMethod(joinPoint).getName());
+                AopUtil.getJoinPointClass(joinPoint).getName(), AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 }

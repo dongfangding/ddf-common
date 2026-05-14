@@ -31,6 +31,7 @@ public class XxlJobAutoConfiguration {
     private final XxlJobConfig xxlJobConfig;
 
     private final Environment environment;
+
     public XxlJobAutoConfiguration(XxlJobConfig xxlJobConfig, Environment environment) {
         this.xxlJobConfig = xxlJobConfig;
         this.environment = environment;
@@ -38,8 +39,6 @@ public class XxlJobAutoConfiguration {
 
     /**
      * 注册执行器
-     *
-     * @return
      */
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor() {
@@ -59,8 +58,6 @@ public class XxlJobAutoConfiguration {
 
     /**
      * 获取app name  保留了原设计中为空的含义， 只有为auto时才使用application.name
-     *
-     * @return
      */
     private String getAppName() {
         String appName = xxlJobConfig.getAppName();

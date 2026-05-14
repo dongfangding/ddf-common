@@ -16,6 +16,7 @@ public class Segment {
      */
     private int fillLength;
     private SegmentBuffer buffer;
+
     public Segment(SegmentBuffer buffer) {
         this.buffer = buffer;
     }

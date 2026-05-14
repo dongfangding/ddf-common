@@ -11,8 +11,6 @@ public interface UserRequest {
 
     /**
      * 获取当前用户
-     *
-     * @return
      */
     String getCurrentUser();
 }

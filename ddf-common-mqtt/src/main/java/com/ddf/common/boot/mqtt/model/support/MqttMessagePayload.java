@@ -13,7 +13,6 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 /**
  * <p>发送的mqtt的实际消息对象， 该对象通过发送消息请求对象构建,舍弃了一些无必要参数，同时增加了一些自己作为服务端代码的一些参数</p >
  *
- *
  * @author Snowball
  * @version 1.0
  * @since 2022/03/19 18:24
@@ -59,7 +58,6 @@ public class MqttMessagePayload implements Serializable {
 
     /**
      * 消息业务类型，这个类型大于消息代码， 标识某个业务下的消息，一个业务类型下面可以有很多消息类型
-     *
      * 比如业务类型是某个群聊， 在群里发的消息类型有聊天文本， 有红包消息， 有送礼消息
      * 业务类型是一对一私聊，同样也存在消息代码时聊天文本、红包消息、送礼消息等
      */
@@ -79,7 +77,6 @@ public class MqttMessagePayload implements Serializable {
      *
      * @param request 请求对象
      * @param serverClientId 服务端客户端ID
-     * @return
      */
     public static MqttMessagePayload fromMessageRequest(InnerMqttMessageRequest request, String serverClientId) {
         final MqttMessagePayload payload = new MqttMessagePayload();

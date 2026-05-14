@@ -42,6 +42,7 @@ public class BrokerServer {
     private EventLoopGroup boss;
     private EventLoopGroup worker;
     private ScheduledExecutorService syncExecutor;
+
     public BrokerServer(BrokerProperties brokerProperties) {
         this.brokerProperties = brokerProperties;
     }
@@ -84,8 +85,7 @@ public class BrokerServer {
                 t.setDaemon(true);
                 return t;
             });
-            syncExecutor.scheduleAtFixedRate(
-                    new ChannelStoreSyncTask(), 10, 10, TimeUnit.SECONDS);
+            syncExecutor.scheduleAtFixedRate(new ChannelStoreSyncTask(), 10, 10, TimeUnit.SECONDS);
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("启动服务端失败", e);

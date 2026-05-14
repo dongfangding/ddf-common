@@ -28,9 +28,7 @@ class AbstractExceptionHandlerResolveTest {
     @DisplayName("BaseException 应按异常自身规则解析")
     void shouldResolveBaseException() {
         AbstractExceptionHandler.ExceptionResolveResult result = AbstractExceptionHandler.resolveExceptionMessage(
-            new BadRequestException("字段不能为空"),
-            null
-        );
+                new BadRequestException("字段不能为空"), null);
 
         assertEquals(BaseErrorCallbackCode.BAD_REQUEST.getCode(), result.exceptionCode());
         assertEquals(BaseErrorCallbackCode.BAD_REQUEST.getCode(), result.formatCode());
@@ -42,9 +40,7 @@ class AbstractExceptionHandlerResolveTest {
     @DisplayName("IllegalArgumentException 应映射为 BAD_REQUEST")
     void shouldResolveIllegalArgumentExceptionAsBadRequest() {
         AbstractExceptionHandler.ExceptionResolveResult result = AbstractExceptionHandler.resolveExceptionMessage(
-            new IllegalArgumentException("参数非法"),
-            null
-        );
+                new IllegalArgumentException("参数非法"), null);
 
         assertEquals(BaseErrorCallbackCode.BAD_REQUEST.getCode(), result.exceptionCode());
         assertEquals("", result.subMessage());
@@ -59,9 +55,7 @@ class AbstractExceptionHandlerResolveTest {
         BindException bindException = new BindException(bindingResult);
 
         AbstractExceptionHandler.ExceptionResolveResult result = AbstractExceptionHandler.resolveExceptionMessage(
-            bindException,
-            null
-        );
+                bindException, null);
 
         assertEquals(BaseErrorCallbackCode.BAD_REQUEST.getCode(), result.exceptionCode());
         assertEquals("name不能为空", result.formatCode());
@@ -72,15 +66,11 @@ class AbstractExceptionHandlerResolveTest {
     @DisplayName("唯一约束异常应映射为 DUPLICATE_KEY")
     void shouldResolveDuplicateKeyExceptions() {
         AbstractExceptionHandler.ExceptionResolveResult springResult = AbstractExceptionHandler.resolveExceptionMessage(
-            new DuplicateKeyException("duplicate"),
-            null
-        );
+                new DuplicateKeyException("duplicate"), null);
         assertEquals(BaseErrorCallbackCode.DUPLICATE_KEY.getCode(), springResult.exceptionCode());
 
         AbstractExceptionHandler.ExceptionResolveResult sqlResult = AbstractExceptionHandler.resolveExceptionMessage(
-            new SQLIntegrityConstraintViolationException("duplicate"),
-            null
-        );
+                new SQLIntegrityConstraintViolationException("duplicate"), null);
         assertEquals(BaseErrorCallbackCode.DUPLICATE_KEY.getCode(), sqlResult.exceptionCode());
     }
 
@@ -98,9 +88,7 @@ class AbstractExceptionHandlerResolveTest {
         };
 
         AbstractExceptionHandler.ExceptionResolveResult result = AbstractExceptionHandler.resolveExceptionMessage(
-            new IllegalStateException("busy"),
-            mapping
-        );
+                new IllegalStateException("busy"), mapping);
 
         assertEquals(BaseErrorCallbackCode.REQUEST_TOO_MANY.getCode(), result.exceptionCode());
         assertEquals(BaseErrorCallbackCode.REQUEST_TOO_MANY.getBizMessage(), result.formatDefaultMessage());
@@ -110,9 +98,7 @@ class AbstractExceptionHandlerResolveTest {
     @DisplayName("未识别异常应保留原始消息作为子消息")
     void shouldKeepOriginalMessageForUnknownException() {
         AbstractExceptionHandler.ExceptionResolveResult result = AbstractExceptionHandler.resolveExceptionMessage(
-            new RuntimeException("unknown-error"),
-            null
-        );
+                new RuntimeException("unknown-error"), null);
 
         assertEquals("", result.exceptionCode());
         assertEquals("unknown-error", result.subMessage());

@@ -11,12 +11,12 @@
 
 `ddf-common-starter-web` 解决的是 **"轻量 Web 服务快速启动"** 问题。
 
-| 场景 | 典型问题 | 本 starter 提供的能力 |
-| --- | --- | --- |
-| 纯 Web 网关 / BFF 层 | 只需要接口转发、统一响应格式、全局异常处理 | API 协议 + MVC 拦截器 + 响应包装 |
-| 配置中心 / 注册中心客户端 | 不需要持久化存储，只需暴露管理端点 | Core 工具 + 限流保护 |
-| 文件处理 / 计算型微服务 | 业务逻辑轻，不依赖数据库 | 线程池、加密、ID 生成、本地缓存 |
-| 已有独立数据层的业务 | 数据层用其他技术栈（如 MongoDB、PostgreSQL） | Web 基础能力，数据层自行选择 |
+| 场景               | 典型问题                            | 本 starter 提供的能力         |
+|------------------|---------------------------------|-------------------------|
+| 纯 Web 网关 / BFF 层 | 只需要接口转发、统一响应格式、全局异常处理           | API 协议 + MVC 拦截器 + 响应包装 |
+| 配置中心 / 注册中心客户端   | 不需要持久化存储，只需暴露管理端点               | Core 工具 + 限流保护          |
+| 文件处理 / 计算型微服务    | 业务逻辑轻，不依赖数据库                    | 线程池、加密、ID 生成、本地缓存       |
+| 已有独立数据层的业务       | 数据层用其他技术栈（如 MongoDB、PostgreSQL） | Web 基础能力，数据层自行选择        |
 
 **不适用场景**：需要 JDBC / MySQL / Druid / MyBatis 时，请使用 `ddf-common-starter-default` 或单独引入 `ddf-common-data-mysql-starter`。
 
@@ -40,15 +40,16 @@
 
 本 starter 是以下模块的聚合，引入一个即可获得全部能力：
 
-| 子模块 | 核心能力 | 自动配置 |
-| --- | --- | --- |
-| `ddf-common-api` | 统一响应体 `ResponseData`、业务异常 `BusinessException`、错误码接口 `BaseCallbackCode`、预定义枚举 `BaseErrorCallbackCode` | 无（纯协议，无 Bean） |
-| `ddf-common-core` | Hutool / Guava / Fastjson2 工具集、Spring 上下文支撑、AES/MD5/SHA 加密、雪花 ID、本地缓存（Caffeine/Guava/Hutool）、线程池 | `CoreAutoConfiguration` |
-| `ddf-common-mvc` | 全局异常处理、响应体自动包装 (`@ResponseBodyAdvice`)、Jackson 序列化配置、用户上下文 `UserContextUtil`、登录拦截器 | `MvcAutoConfiguration` |
-| `ddf-common-limit` | 令牌桶限流 (`@RateLimit`)、防重复提交 (`@Repeatable`)、限流 Key 生成器扩展 | `RateLimitAutoConfiguration` |
-| `ddf-common-log4j` | Log4j2 + Disruptor 异步日志、已排除 Spring Boot 默认 Logback | 无（依赖替换） |
+| 子模块                | 核心能力                                                                                                 | 自动配置                         |
+|--------------------|------------------------------------------------------------------------------------------------------|------------------------------|
+| `ddf-common-api`   | 统一响应体 `ResponseData`、业务异常 `BusinessException`、错误码接口 `BaseCallbackCode`、预定义枚举 `BaseErrorCallbackCode` | 无（纯协议，无 Bean）                |
+| `ddf-common-core`  | Hutool / Guava / Fastjson2 工具集、Spring 上下文支撑、AES/MD5/SHA 加密、雪花 ID、本地缓存（Caffeine/Guava/Hutool）、线程池     | `CoreAutoConfiguration`      |
+| `ddf-common-mvc`   | 全局异常处理、响应体自动包装 (`@ResponseBodyAdvice`)、Jackson 序列化配置、用户上下文 `UserContextUtil`、登录拦截器                   | `MvcAutoConfiguration`       |
+| `ddf-common-limit` | 令牌桶限流 (`@RateLimit`)、防重复提交 (`@Repeatable`)、限流 Key 生成器扩展                                              | `RateLimitAutoConfiguration` |
+| `ddf-common-log4j` | Log4j2 + Disruptor 异步日志、已排除 Spring Boot 默认 Logback                                                   | 无（依赖替换）                      |
 
 **不包含的能力**：
+
 - 数据库接入（JDBC / MySQL / Druid / MyBatis）
 - 邮件服务（Mail / JavaMailSender）
 - Actuator 治理扩展（线程池指标绑定等）
@@ -196,19 +197,20 @@ public class CustomRateLimitKeyGenerator implements RateLimitKeyGenerator {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
-| `ddf-common-data-mysql-starter` | 追加数据库能力，与 `starter-web` 互补 |
-| `ddf-common-governance-starter` | 追加 Mail + Actuator 治理能力 |
-| `ddf-common-starter-default` | 聚合了 `starter-web` + 数据库 + 治理，是完整版 |
-| `ddf-common-redis` | 如需 Redis 缓存 / 分布式锁，单独引入 |
-| `ddf-common-distributed-lock` | 如需分布式锁，单独引入 |
+| 模块                              | 协作方式                              |
+|---------------------------------|-----------------------------------|
+| `ddf-common-data-mysql-starter` | 追加数据库能力，与 `starter-web` 互补        |
+| `ddf-common-governance-starter` | 追加 Mail + Actuator 治理能力           |
+| `ddf-common-starter-default`    | 聚合了 `starter-web` + 数据库 + 治理，是完整版 |
+| `ddf-common-redis`              | 如需 Redis 缓存 / 分布式锁，单独引入           |
+| `ddf-common-distributed-lock`   | 如需分布式锁，单独引入                       |
 
 ---
 
 ## 7. FAQ
 
 **Q1：`starter-web` 和 `starter-default` 怎么选？**
+
 - 只需要 Web + 工具 + 限流 → `starter-web`
 - 还需要 MySQL + Druid + Mail + Actuator → `starter-default`
 
@@ -220,6 +222,7 @@ public class CustomRateLimitKeyGenerator implements RateLimitKeyGenerator {
 
 **Q4：可以在 `starter-web` 基础上只排除某个子模块吗？**
 可以。例如只需要 Web 能力但不需要限流：
+
 ```xml
 <exclusions>
     <exclusion>
@@ -228,6 +231,7 @@ public class CustomRateLimitKeyGenerator implements RateLimitKeyGenerator {
     </exclusion>
 </exclusions>
 ```
+
 但通常建议直接按需引入底层模块（如只引 `ddf-common-api` + `ddf-common-core` + `ddf-common-mvc`），而非在 starter 里做大量排除。
 
 **Q5：`starter-web` 是否支持微服务注册中心（如 Nacos / Eureka）？**

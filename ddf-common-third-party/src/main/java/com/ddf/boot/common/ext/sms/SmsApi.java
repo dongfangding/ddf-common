@@ -16,7 +16,6 @@ public interface SmsApi {
      * 发送模板短信
      *
      * @param request 请求对象
-     * @return
      */
     SmsSendResponse send(SmsSendRequest request);
 }

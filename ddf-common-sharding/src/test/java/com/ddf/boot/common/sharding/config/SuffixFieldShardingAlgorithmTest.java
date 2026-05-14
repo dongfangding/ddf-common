@@ -27,10 +27,8 @@ class SuffixFieldShardingAlgorithmTest {
     @Test
     @DisplayName("精确分片应按后缀直接拼接表名")
     void shouldShardPreciselyBySuffix() {
-        String actual = algorithm.doSharding(
-                List.of("order_1", "order_2"),
-                new PreciseShardingValue<>("order", "user_id", dataNodeInfo, 2)
-        );
+        String actual = algorithm.doSharding(List.of("order_1", "order_2"),
+                new PreciseShardingValue<>("order", "user_id", dataNodeInfo, 2));
 
         assertEquals("order_2", actual);
     }
@@ -38,10 +36,8 @@ class SuffixFieldShardingAlgorithmTest {
     @Test
     @DisplayName("空集合精确分片应返回 null")
     void shouldReturnNullWhenPreciseCollectionEmpty() {
-        String actual = algorithm.doSharding(
-                List.of(),
-                new PreciseShardingValue<>("order", "user_id", dataNodeInfo, 2)
-        );
+        String actual = algorithm.doSharding(List.of(),
+                new PreciseShardingValue<>("order", "user_id", dataNodeInfo, 2));
 
         assertNull(actual);
     }
@@ -49,10 +45,8 @@ class SuffixFieldShardingAlgorithmTest {
     @Test
     @DisplayName("范围分片应返回命中的目标表")
     void shouldReturnMatchedTargetTableForRangeSharding() {
-        Collection<String> actual = algorithm.doSharding(
-                List.of("order_1", "order_2", "order_3"),
-                new RangeShardingValue<>("order", "user_id", dataNodeInfo, Range.closed(2, 5))
-        );
+        Collection<String> actual = algorithm.doSharding(List.of("order_1", "order_2", "order_3"),
+                new RangeShardingValue<>("order", "user_id", dataNodeInfo, Range.closed(2, 5)));
 
         assertEquals(List.of("order_2"), actual.stream().toList());
     }
@@ -60,10 +54,8 @@ class SuffixFieldShardingAlgorithmTest {
     @Test
     @DisplayName("范围分片未命中时应返回空集合")
     void shouldReturnEmptyCollectionWhenRangeTargetMissing() {
-        Collection<String> actual = algorithm.doSharding(
-                List.of("order_1", "order_2"),
-                new RangeShardingValue<>("order", "user_id", dataNodeInfo, Range.closed(3, 5))
-        );
+        Collection<String> actual = algorithm.doSharding(List.of("order_1", "order_2"),
+                new RangeShardingValue<>("order", "user_id", dataNodeInfo, Range.closed(3, 5)));
 
         assertTrue(actual.isEmpty());
         assertEquals("SUFFIX_FIELD_SHARDING_ALGORITHM", algorithm.getType());

@@ -26,10 +26,9 @@ class OssHelperTest {
     @Test
     @DisplayName("应初始化并返回主存储桶配置")
     void shouldInitPrimaryBucketProperty() {
-        OssProperties properties = buildProperties("https://cdn.example.com", List.of(
-                bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", false),
-                bucket("bucket-b", "https://bucket-b.oss-cn-hangzhou.aliyuncs.com", true)
-        ));
+        OssProperties properties = buildProperties("https://cdn.example.com",
+                List.of(bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", false),
+                        bucket("bucket-b", "https://bucket-b.oss-cn-hangzhou.aliyuncs.com", true)));
         OssHelper helper = new OssHelper(acsClient, ossClient, properties);
 
         helper.init();
@@ -41,9 +40,8 @@ class OssHelperTest {
     @Test
     @DisplayName("应按是否使用 CDN 返回 OSS 前缀")
     void shouldReturnOssPrefixByCdnFlag() {
-        OssProperties properties = buildProperties("https://cdn.example.com", List.of(
-                bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", true)
-        ));
+        OssProperties properties = buildProperties("https://cdn.example.com",
+                List.of(bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", true)));
         OssHelper helper = new OssHelper(acsClient, ossClient, properties);
         helper.init();
 
@@ -55,9 +53,8 @@ class OssHelperTest {
     @Test
     @DisplayName("应拼接对象真实访问地址")
     void shouldBuildRealObjectUrl() {
-        OssProperties properties = buildProperties("", List.of(
-                bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", true)
-        ));
+        OssProperties properties = buildProperties("",
+                List.of(bucket("bucket-a", "https://bucket-a.oss-cn-hangzhou.aliyuncs.com", true)));
         OssHelper helper = new OssHelper(acsClient, ossClient, properties);
         helper.init();
 

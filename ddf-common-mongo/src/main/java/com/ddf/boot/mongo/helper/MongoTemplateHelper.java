@@ -31,12 +31,11 @@ public class MongoTemplateHelper {
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换， 这个返回的是自己包装的分页对象，建议优先使用
      *
      * @param pageRequest 分页请求对象
-     * @param query     查询对象
-     * @param poClazz   原始Mongo对象类型
-     * @param voClazz   输出对象
-     * @param <T>       原始Mongo对象类型
-     * @param <R>       要转换的输出的实体类型
-     * @return
+     * @param query 查询对象
+     * @param poClazz 原始Mongo对象类型
+     * @param voClazz 输出对象
+     * @param <T> 原始Mongo对象类型
+     * @param <R> 要转换的输出的实体类型
      */
     @SuppressWarnings("unchecked")
     public <T, R> PageResult<R> handlerPageResult(@NotNull PageRequest pageRequest, @NotNull Query query,
@@ -63,10 +62,9 @@ public class MongoTemplateHelper {
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个， 这个返回的是自己包装的分页对象，建议优先使用
      *
      * @param pageRequest 分页请求对象
-     * @param query     查询对象
-     * @param poClazz   原始Mongo对象类型
-     * @param <T>       原始Mongo对象类型
-     * @return
+     * @param query 查询对象
+     * @param poClazz 原始Mongo对象类型
+     * @param <T> 原始Mongo对象类型
      */
     public <T> PageResult<T> handlerPageResult(@NotNull PageRequest pageRequest, @NotNull Query query,
             @NotNull Class<T> poClazz) {
@@ -79,16 +77,15 @@ public class MongoTemplateHelper {
      * 分页通用方法处理， 这个方法用于查询出来的对象和返回的不是同一个，内部会提供转换, 这个返回的是spring-data自己的分页对象
      *
      * @param pageRequest 分页请求对象
-     * @param query     查询对象
-     * @param poClazz   原始Mongo对象类型
-     * @param voClazz   输出对象
-     * @param <T>       原始Mongo对象类型
-     * @param <R>       要转换的输出的实体类型
-     * @return
+     * @param query 查询对象
+     * @param poClazz 原始Mongo对象类型
+     * @param voClazz 输出对象
+     * @param <T> 原始Mongo对象类型
+     * @param <R> 要转换的输出的实体类型
      */
     @SuppressWarnings("unchecked")
-    public <T, R> Page<R> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query,
-            @NotNull Class<T> poClazz, @Nullable Class<R> voClazz) {
+    public <T, R> Page<R> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query, @NotNull Class<T> poClazz,
+            @Nullable Class<R> voClazz) {
         long count = mongoTemplate.count(query, poClazz);
         Pageable pageable = PageUtil.toSpringData(pageRequest);
         if (count <= 0) {
@@ -108,13 +105,11 @@ public class MongoTemplateHelper {
      * 分页通用方法处理, 这个方法用户查询出来的对象和要返回的对象是同一个, 这个返回的是spring-data自己的分页对象
      *
      * @param pageRequest 分页请求对象
-     * @param query     查询对象
-     * @param poClazz   原始Mongo对象类型
-     * @param <T>       原始Mongo对象类型
-     * @return
+     * @param query 查询对象
+     * @param poClazz 原始Mongo对象类型
+     * @param <T> 原始Mongo对象类型
      */
-    public <T> Page<T> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query,
-            @NotNull Class<T> poClazz) {
+    public <T> Page<T> handlerPage(@NotNull PageRequest pageRequest, @NotNull Query query, @NotNull Class<T> poClazz) {
         return handlerPage(pageRequest, query, poClazz, null);
     }
 }

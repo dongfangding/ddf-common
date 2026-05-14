@@ -30,7 +30,6 @@ public class VerifyCodeUtil {
      * 使用系统默认字符源生成验证码
      *
      * @param verifySize 验证码长度
-     * @return
      */
     public static String generateVerifyCode(int verifySize) {
         return generateVerifyCode(verifySize, VERIFY_CODES);
@@ -40,8 +39,7 @@ public class VerifyCodeUtil {
      * 使用指定源生成验证码
      *
      * @param verifySize 验证码长度
-     * @param sources    源数据列表
-     * @return
+     * @param sources 源数据列表
      */
     public static String generateVerifyCode(int verifySize, String sources) {
         if (sources == null || sources.length() == 0) {
@@ -63,7 +61,6 @@ public class VerifyCodeUtil {
      * @param h H参数
      * @param os OS参数
      * @param code 编码值
-     * @throws IOException
      */
     public static void outputImage(int w, int h, OutputStream os, String code) throws IOException {
         int verifySize = code.length();
@@ -72,10 +69,9 @@ public class VerifyCodeUtil {
         Graphics2D g2 = image.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color[] colors = new Color[5];
-        Color[] colorSpaces = new Color[] {
-                Color.WHITE, Color.CYAN, Color.GRAY, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE, Color.PINK,
-                Color.YELLOW
-        };
+        Color[] colorSpaces =
+                new Color[] {Color.WHITE, Color.CYAN, Color.GRAY, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE,
+                        Color.PINK, Color.YELLOW};
         float[] fractions = new float[colors.length];
         for (int i = 0; i < colors.length; i++) {
             colors[i] = colorSpaces[rand.nextInt(colorSpaces.length)];
@@ -125,10 +121,8 @@ public class VerifyCodeUtil {
         char[] chars = code.toCharArray();
         for (int i = 0; i < verifySize; i++) {
             AffineTransform affine = new AffineTransform();
-            affine.setToRotation(
-                    Math.PI / 4 * rand.nextDouble() * (rand.nextBoolean() ? 1 : -1),
-                    (w / verifySize) * i + fontSize / 2, h / 2
-            );
+            affine.setToRotation(Math.PI / 4 * rand.nextDouble() * (rand.nextBoolean() ? 1 : -1),
+                    (w / verifySize) * i + fontSize / 2, h / 2);
             g2.setTransform(affine);
             g2.drawChars(chars, i, 1, ((w - 10) / verifySize) * i + 5, h / 2 + fontSize / 2 - 10);
         }
@@ -136,6 +130,7 @@ public class VerifyCodeUtil {
         g2.dispose();
         ImageIO.write(image, "jpg", os);
     }
+
     /**
      * @param fc 参数
      * @param bc 参数
@@ -170,6 +165,7 @@ public class VerifyCodeUtil {
         }
         return rgb;
     }
+
     /**
      * @param g 参数
      * @param w1 参数
@@ -180,6 +176,7 @@ public class VerifyCodeUtil {
         shearX(g, w1, h1, color);
         shearY(g, w1, h1, color);
     }
+
     /**
      * @param g 参数
      * @param w1 参数
@@ -206,6 +203,7 @@ public class VerifyCodeUtil {
         }
 
     }
+
     /**
      * @param g 参数
      * @param w1 参数

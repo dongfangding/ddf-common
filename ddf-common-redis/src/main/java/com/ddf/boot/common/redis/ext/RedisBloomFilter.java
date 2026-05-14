@@ -37,18 +37,18 @@ public class RedisBloomFilter<T> {
     /**
      * 构造布隆过滤器
      *
-     * @param name               名称
-     * @param redissonClient     redisson客户端参数
+     * @param name 名称
+     * @param redissonClient redisson客户端参数
      * @param expectedInsertions 预计容器数量
-     * @param falseProbability   允许误差率 0~1
+     * @param falseProbability 允许误差率 0~1
      * @param <T> 泛型类型
-     * @return
      */
     public static <T> RedisBloomFilter<T> newInstance(String name, RedissonClient redissonClient,
             long expectedInsertions, double falseProbability) {
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(name);
         return new RedisBloomFilter<>(name, bloomFilter, expectedInsertions, falseProbability);
     }
+
     /**
      * @param name 参数
      * @param bloomFilter 参数
@@ -66,7 +66,6 @@ public class RedisBloomFilter<T> {
      * 判断是否包含指定元素
      *
      * @param object 对象
-     * @return
      */
     public boolean contains(T object) {
         boolean result = bloomFilter.contains(object);
@@ -79,7 +78,6 @@ public class RedisBloomFilter<T> {
      * 添加元素
      *
      * @param object 对象
-     * @return
      */
     public boolean add(T object) {
         boolean result = bloomFilter.add(object);

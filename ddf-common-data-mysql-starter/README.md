@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-data-mysql-starter` solves the **"data-layer dependency standardization"** problem.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| New project bootstrap | Hand-writing jdbc/mysql/druid dependencies every time | One starter brings in the entire data-layer foundation |
-| Tech stack alignment | Inconsistent Druid / MySQL driver versions across projects | Versions centrally managed in `ddf-common-dependency` BOM |
-| Druid compatibility | `usePingMethod` causing connection validation errors under Spring Boot 3.x | Auto-sets `druid.mysql.usePingMethod=false` |
-| MyBatis integration | Need to manually add MyBatis Spring Boot Starter | Included transitively, ready to use out of the box |
+| Category              | Typical Problem                                                            | What the Module Provides                                  |
+|-----------------------|----------------------------------------------------------------------------|-----------------------------------------------------------|
+| New project bootstrap | Hand-writing jdbc/mysql/druid dependencies every time                      | One starter brings in the entire data-layer foundation    |
+| Tech stack alignment  | Inconsistent Druid / MySQL driver versions across projects                 | Versions centrally managed in `ddf-common-dependency` BOM |
+| Druid compatibility   | `usePingMethod` causing connection validation errors under Spring Boot 3.x | Auto-sets `druid.mysql.usePingMethod=false`               |
+| MyBatis integration   | Need to manually add MyBatis Spring Boot Starter                           | Included transitively, ready to use out of the box        |
 
 > ⚠️ This module does **not** include ORM mapping, code generation, or sharding capabilities.
 > For sharding, add `ddf-common-sharding` separately.
@@ -81,9 +81,9 @@ customizer:
         use-ping-method: false         # Maps to druid.mysql.usePingMethod, default false
 ```
 
-| Property | Description | Default |
-| ----- | ----- | ----- |
-| `enabled` | Whether to enable this starter's data-layer enhancements | `true` |
+| Property                | Description                                               | Default |
+|-------------------------|-----------------------------------------------------------|---------|
+| `enabled`               | Whether to enable this starter's data-layer enhancements  | `true`  |
 | `druid.use-ping-method` | Whether Druid uses `mysql_ping` for connection validation | `false` |
 
 > Rationale for `use-ping-method: false`: under certain MySQL server configurations, `mysql_ping`
@@ -206,13 +206,13 @@ exclude Druid and add HikariCP:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-dependency` | Versions centrally declared in BOM; child modules omit version tags |
-| `ddf-common-core` | `BaseDomain` entity base and `PageUtil` pagination utilities work with MyBatis |
-| `ddf-common-sharding` | Add ShardingSphere configuration for sharding scenarios |
-| `ddf-common-starter-default` | This module is already included in the default starter |
-| `ddf-common-governance-starter` | If Actuator is enabled, Druid monitoring data can be aggregated and exposed |
+| Module                          | How They Cooperate                                                             |
+|---------------------------------|--------------------------------------------------------------------------------|
+| `ddf-common-dependency`         | Versions centrally declared in BOM; child modules omit version tags            |
+| `ddf-common-core`               | `BaseDomain` entity base and `PageUtil` pagination utilities work with MyBatis |
+| `ddf-common-sharding`           | Add ShardingSphere configuration for sharding scenarios                        |
+| `ddf-common-starter-default`    | This module is already included in the default starter                         |
+| `ddf-common-governance-starter` | If Actuator is enabled, Druid monitoring data can be aggregated and exposed    |
 
 ---
 
@@ -236,14 +236,17 @@ connections to be incorrectly judged as dead and recreated frequently.
 package and its sub-packages. If Mappers reside in external jars, explicitly configure `@MapperScan`
 on the main class.
 
-**Q5: How do I disable all enhancements from this starter?**  
+**Q5: How do I disable all enhancements from this starter?**
+
 ```yaml
 customizer:
   data:
     mysql:
       enabled: false
 ```
+
 Or exclude the auto-configuration class:
+
 ```yaml
 spring:
   autoconfigure:

@@ -16,14 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author dongfang.ding
  * @since 2019/8/23 9:45
  */
-public interface ChannelTransferService  {
+public interface ChannelTransferService {
 
     /**
      * 批量创建本机所有设备的消息记录
      *
-     * @param values  参数值集合
+     * @param values 参数值集合
      * @param request 请求对象
-     * @return
      */
     <T> Map<AuthPrincipal, String> batchRecordRequest(ConcurrentHashMap<AuthPrincipal, WebSocketSessionWrapper> values,
             MessageRequest<T> request);
@@ -35,7 +34,6 @@ public interface ChannelTransferService  {
      * @param request 请求对象
      * @param message 消息内容
      * @param messageRequest 消息请求参数
-     * @return
      */
     <M, R> boolean recordRequest(AuthPrincipal authPrincipal, String request, Message<M> message,
             MessageRequest<R> messageRequest);
@@ -59,7 +57,6 @@ public interface ChannelTransferService  {
      * @param errorMessage 错误消息参数
      * @param response 响应对象
      * @param serverSend 服务端send参数
-     * @return
      */
     <M> boolean updateToComplete(Message<M> message, boolean isSuccess, String errorMessage, String response,
             String serverSend);
@@ -68,7 +65,6 @@ public interface ChannelTransferService  {
      * 根据requestId获取报文请求时的业务对象记录
      *
      * @param requestId 请求 ID
-     * @return
      */
     String getPayloadByRequestId(String requestId);
 
@@ -78,7 +74,6 @@ public interface ChannelTransferService  {
      *
      * @param accessKeyId 访问键ID
      * @param cmd 命令参数
-     * @return
      */
     ChannelTransfer getPreLog(String accessKeyId, String cmd);
 
@@ -89,7 +84,6 @@ public interface ChannelTransferService  {
      * @param accessKeyId 访问键ID
      * @param cmd 命令参数
      * @param successCount 是否只查询成功的才计数
-     * @return
      */
     List<ChannelTransfer> getTodayLog(String accessKeyId, String cmd, boolean successCount);
 }

@@ -89,6 +89,7 @@ public class Message<T> {
 
     /**
      * 解析请求头存放的对象，非报文传输字段
+     *
      * @param type 参数
      * @param requestId 参数
      * @param sendModel 参数
@@ -103,6 +104,7 @@ public class Message<T> {
      * 主体数据内容
      */
     private T body;
+
     public Message(Type type, String requestId, String sendModel, String cmd, T body, String clientChannel) {
         this.type = type;
         this.requestId = requestId;
@@ -112,6 +114,7 @@ public class Message<T> {
         this.timestamp = System.currentTimeMillis();
         this.clientChannel = clientChannel;
     }
+
     /**
      * @param type 参数
      * @param requestId 参数
@@ -148,19 +151,16 @@ public class Message<T> {
      * 客户端连接上来的欢迎语
      *
      * @param payload 事件载荷对象
-     * @return
      */
     public static Message<String> echo(String payload) {
         return new Message<>(Type.RESPONSE, StringExtUtil.randomString(64), SEND_MODEL_SERVER,
-                InternalCmdEnum.PONG.name(), payload, null
-        );
+                InternalCmdEnum.PONG.name(), payload, null);
     }
 
     /**
      * 服务端响应客户端未登录
      *
      * @param message 参数
-     * @return
      */
     public static Message<String> responseNotLogin(@NotNull WebSocketMessage<?> message) {
         if (message == null) {
@@ -169,15 +169,13 @@ public class Message<T> {
         String payload = (String) message.getPayload();
         Message<?> message1 = JsonUtil.toBean(payload, Message.class);
         return new Message<>(Type.RESPONSE, message1.getRequestId(), SEND_MODEL_SERVER, message1.getCmd(), "未登录",
-                MessageResponse.SERVER_CODE_NOT_LOGIN, null
-        );
+                MessageResponse.SERVER_CODE_NOT_LOGIN, null);
     }
 
     /**
      * 服务端响应客户端的数据在服务端没有对应的请求
      *
      * @param message 参数
-     * @return
      */
     public static <O> Message<String> responseNotMatchRequest(@NotNull Message<O> message) {
         if (message == null) {
@@ -191,7 +189,6 @@ public class Message<T> {
      * 服务端响应客户端在重复请求数据
      *
      * @param message 参数
-     * @return
      */
     public static <O> Message<String> responseRepeatRequest(@NotNull Message<O> message) {
         if (message == null) {
@@ -204,7 +201,6 @@ public class Message<T> {
      * 将Message对象包装成发送的TextMessage
      *
      * @param message 消息内容
-     * @return
      */
     public static <T> TextMessage wrapper(@NotNull Message<T> message) {
         if (message == null) {
@@ -218,7 +214,6 @@ public class Message<T> {
      * 加密加签封装
      *
      * @param message 消息内容
-     * @return
      */
     public static <T> Message<T> wrapperWithSign(@NotNull Message<T> message) {
         if (message == null) {
@@ -237,7 +232,6 @@ public class Message<T> {
      * @param cmd 命令参数
      * @param clientChannel 客户端通道参数
      * @param body 请求体参数
-     * @return
      */
     public static <T> Message<T> request(String cmd, String clientChannel, T body) {
         return new Message<>(Type.REQUEST, StringExtUtil.randomString(64), SEND_MODEL_SERVER, cmd, body, clientChannel);
@@ -250,7 +244,6 @@ public class Message<T> {
      * @param <T> 泛型类型
      * @param body 参数
      * @param code 参数
-     * @return
      */
     public static <O, T> Message<T> responseReceived(Message<O> message, T body, Integer code) {
         if (message != null) {
@@ -263,7 +256,6 @@ public class Message<T> {
      * 通用响应客户端数据处理成功
      *
      * @param message 消息内容
-     * @return
      */
     public static <O> Message<String> responseSuccess(Message<O> message) {
         return responseReceived(message, "处理成功", MessageResponse.SERVER_CODE_COMPLETE);
@@ -276,15 +268,13 @@ public class Message<T> {
      * @param body 请求体参数
      * @param code 编码值
      * @param <T> 泛型类型
-     * @return
      */
     public static <O, T> Message<T> buildResponseMessage(Message<O> message, T body, Integer code) {
         if (message == null) {
             return null;
         }
         return new Message<>(Type.RESPONSE, message.getRequestId(), SEND_MODEL_SERVER, message.getCmd(), body, code,
-                message.getClientChannel()
-        );
+                message.getClientChannel());
     }
 
     /**
@@ -292,7 +282,6 @@ public class Message<T> {
      *
      * @param key 目标键
      * @param value 参数值
-     * @return
      */
     public Message<T> addExtra(String key, String value) {
         if (extra == null) {
@@ -304,6 +293,7 @@ public class Message<T> {
         parseExtra();
         return this;
     }
+
     /**
      * @param extra 参数
      */
@@ -340,7 +330,6 @@ public class Message<T> {
      * 对报文数据进行解密与验签
      *
      * @param textMessagePayload 文本消息载荷参数
-     * @return
      */
     public static Message<?> unSign(String textMessagePayload) {
         log.debug("待解密数据: {}", textMessagePayload);
@@ -366,7 +355,6 @@ public class Message<T> {
      * 将收到的消息转换为Message对象
      *
      * @param textMessage 文本消息对象
-     * @return
      */
     public static Message<?> toMessage(TextMessage textMessage) {
         String payload = textMessage.getPayload();

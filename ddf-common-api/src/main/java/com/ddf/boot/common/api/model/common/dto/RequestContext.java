@@ -34,10 +34,10 @@ public class RequestContext implements Serializable {
     @Serial
     private static final long serialVersionUID = -7528108356364083934L;
 
-	/**
-	 * 认证的token
-	 */
-	private String token;
+    /**
+     * 认证的token
+     */
+    private String token;
 
     /**
      * 用户token对象
@@ -122,7 +122,7 @@ public class RequestContext implements Serializable {
     /**
      * 是否网关转发
      */
-	@Builder.Default
+    @Builder.Default
     private Boolean isGatewayDispatch = Boolean.FALSE;
 
     /**
@@ -138,7 +138,7 @@ public class RequestContext implements Serializable {
     /**
      * 自定义属性
      */
-	@Builder.Default
+    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
 
 
@@ -146,15 +146,12 @@ public class RequestContext implements Serializable {
      * 从请求头map中根据规则解析到RequestContext中
      *
      * @param headers 请求头集合
-     * @return
      */
     public static RequestContext fromHeaderMap(Map<String, Object> headers) {
         RequestContext context = new RequestContext();
         final Map<String, Object> contextProperties = context.getProperties();
         headers.forEach((key, value) -> {
-            RequestHeaderEnum headerEnum = RequestHeaderEnum
-                    .getAllMappings()
-                    .get(key);
+            RequestHeaderEnum headerEnum = RequestHeaderEnum.getAllMappings().get(key);
             if (headerEnum != null) {
                 Pattern pattern = Pattern.compile("_(.)");
                 final String fieldName = getRequestContextFieldName(pattern, headerEnum);
@@ -170,19 +167,16 @@ public class RequestContext implements Serializable {
 
         return context;
     }
+
     /**
      * @param pattern 匹配表达式
      * @param headerEnum 参数
      */
     private static String getRequestContextFieldName(Pattern pattern, RequestHeaderEnum headerEnum) {
-        Matcher matcher = pattern.matcher(headerEnum
-                .name()
-                .toLowerCase());
+        Matcher matcher = pattern.matcher(headerEnum.name().toLowerCase());
         StringBuilder fieldNameBuffer = new StringBuilder();
         while (matcher.find()) {
-            matcher.appendReplacement(fieldNameBuffer, matcher
-                    .group(1)
-                    .toUpperCase());
+            matcher.appendReplacement(fieldNameBuffer, matcher.group(1).toUpperCase());
         }
         return fieldNameBuffer.toString();
     }

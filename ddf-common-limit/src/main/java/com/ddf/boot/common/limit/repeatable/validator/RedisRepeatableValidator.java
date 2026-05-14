@@ -17,7 +17,6 @@ import org.springframework.data.redis.core.ValueOperations;
 
 /**
  * <p>基于redis实现防重复提交校验器</p >
- *
  * 使用了最简单的方式，直接根据请求按照规则生成key并设置过期时间， 如果下次请求相同的key存在，则校验不通过
  *
  * @author dongfang.ding
@@ -48,13 +47,14 @@ public class RedisRepeatableValidator implements RepeatableValidator {
     /**
      * 执行表单放重校验逻辑
      *
-     * @param joinPoint  织入点
+     * @param joinPoint 织入点
      * @param repeatable 注解
      * @param currentUid 用户uid
      * @return 是否通过校验
      */
     @Override
-    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties) {
+    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid,
+            RepeatableProperties repeatableProperties) {
         // 获取定义的间隔时间
         final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
 
@@ -63,8 +63,7 @@ public class RedisRepeatableValidator implements RepeatableValidator {
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, currentUid.getBytes(StandardCharsets.UTF_8));
         // 生成key规则
         String redisKey = ApplicationNamedKeyGenerator.genKey(KEY_PREFIX, currentUid,
-                AopUtil.getJoinPointClass(joinPoint).getName(),
-                AopUtil.getJoinPointMethod(joinPoint).getName(),
+                AopUtil.getJoinPointClass(joinPoint).getName(), AopUtil.getJoinPointMethod(joinPoint).getName(),
                 mac.digestHex(paramValue));
         final ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
         // 执行校验逻辑，key存在则校验不通过，不存在，则存入key

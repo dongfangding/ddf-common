@@ -11,15 +11,11 @@ public interface WeightProportion {
 
     /**
      * 记录的唯一标识符
-     *
-     * @return
      */
     String getKey();
 
     /**
      * 当前记录所占权重
-     *
-     * @return
      */
     Double getWeightValue();
 

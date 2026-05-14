@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 public class EnvironmentIsolationProcessor implements BeanPostProcessor {
     private RocketEnhanceProperties rocketEnhanceProperties;
+
     public EnvironmentIsolationProcessor(RocketEnhanceProperties rocketEnhanceProperties) {
         this.rocketEnhanceProperties = rocketEnhanceProperties;
     }
@@ -15,6 +16,7 @@ public class EnvironmentIsolationProcessor implements BeanPostProcessor {
 
     /**
      * 在装载Bean之前实现参数修改
+     *
      * @param bean 参数
      * @param beanName Bean 名称
      */

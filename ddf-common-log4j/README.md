@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-log4j` solves the **"high-performance, structured log output"** problem.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
+| Category                 | Typical Problem                                                  | What the Module Provides                                          |
+|--------------------------|------------------------------------------------------------------|-------------------------------------------------------------------|
 | High-concurrency logging | Synchronous logging blocks business threads, reducing throughput | `disruptor` + `AsyncLogger` for fully async, lock-free log output |
-| Log level separation | INFO / WARN / ERROR mixed in one file makes troubleshooting hard | `ThresholdFilter` routes each level to independent files |
-| Distributed tracing | Logs lack user identity and trace IDs | Supports `%X{user_id}`, `%X{trace_id}` and other MDC variables |
-| Log rotation | Log files grow unbounded, filling up disk | `TimeBasedTriggeringPolicy` daily rolling with 30-day retention |
+| Log level separation     | INFO / WARN / ERROR mixed in one file makes troubleshooting hard | `ThresholdFilter` routes each level to independent files          |
+| Distributed tracing      | Logs lack user identity and trace IDs                            | Supports `%X{user_id}`, `%X{trace_id}` and other MDC variables    |
+| Log rotation             | Log files grow unbounded, filling up disk                        | `TimeBasedTriggeringPolicy` daily rolling with 30-day retention   |
 
 ---
 
@@ -126,11 +126,11 @@ This module includes `disruptor`, enabling fully async logging via `asyncRoot` /
 
 Routes different log levels to separate files via `ThresholdFilter`:
 
-| Appender | Filter level | Purpose |
-| ----- | ----- | ----- |
-| `INFO_FILE` | `INFO`+ | Full logs, retained for 30 days |
-| `WARN_FILE` | `WARN`+ | Alert logs for quick issue localization |
-| `ERROR_FILE` | `ERROR`+ | Error logs for alerting system integration |
+| Appender     | Filter level | Purpose                                    |
+|--------------|--------------|--------------------------------------------|
+| `INFO_FILE`  | `INFO`+      | Full logs, retained for 30 days            |
+| `WARN_FILE`  | `WARN`+      | Alert logs for quick issue localization    |
+| `ERROR_FILE` | `ERROR`+     | Error logs for alerting system integration |
 
 ### 4.3 MDC variables
 
@@ -157,6 +157,7 @@ try {
 ```
 
 Output example:
+
 ```
 [2024-01-15 10:23:45.123] [http-nio-8080-exec-1] INFO [1001#abc123] OrderService - Processing order 12345
 ```
@@ -215,23 +216,25 @@ curl -X POST "http://localhost:8080/actuator/loggers/com.ddf.boot.common" \
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-mvc` | User ID from `UserContextUtil` can be injected into the log context via MDC |
-| `ddf-common-governance-starter` | Actuator exposes `/actuator/loggers` endpoint for dynamic level adjustment |
+| Module                                                  | How They Cooperate                                                                               |
+|---------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `ddf-common-mvc`                                        | User ID from `UserContextUtil` can be injected into the log context via MDC                      |
+| `ddf-common-governance-starter`                         | Actuator exposes `/actuator/loggers` endpoint for dynamic level adjustment                       |
 | `ddf-common-starter-web` / `ddf-common-starter-default` | Defaults to Logback; to use Log4j2, exclude `spring-boot-starter-logging` and import this module |
 
 ---
 
 ## 7. FAQ
 
-**Q1: No logs are output after importing this module?**  
+**Q1: No logs are output after importing this module?**
+
 1. Confirm `log4j2.xml` is placed under `src/main/resources`
 2. Confirm `spring-boot-starter-logging` (Logback) has been excluded
 3. Check `Configuration status="warn"` for configuration parsing errors printed to console
 
 **Q2: Some logs are lost with async logging?**  
 If the `RingBuffer` still has unflushed events at application shutdown, they may be lost. For production:
+
 - Increase `shutdownTimeout` (AsyncAppender attribute)
 - Sleep for a few hundred milliseconds in Spring's `ContextClosedEvent` before exiting
 

@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * <p>ONS控制台</p >
  *
- * @menu ONS控制台
  * @author Snowball
  * @version 1.0
+ * @menu ONS控制台
  * @since 2021/05/14 17:50
  */
 @RestController
@@ -44,8 +44,6 @@ public class OnsConsoleController {
 
     /**
      * 获取配置的环境列表
-     *
-     * @return
      */
     @GetMapping("/env")
     public Set<String> getEnvList() {
@@ -56,11 +54,10 @@ public class OnsConsoleController {
      * 创建多环境TOPIC
      *
      * @param request 请求对象
-     * @return
      */
     @PostMapping("topic")
-    public static Map<String, OnsTopicCreateResponse> onsTopicCreate(@RequestBody @Validated
-    ConsoleOnsTopicCreateRequest request) {
+    public static Map<String, OnsTopicCreateResponse> onsTopicCreate(
+            @RequestBody @Validated ConsoleOnsTopicCreateRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsTopicCreate(request);
     }
@@ -70,11 +67,10 @@ public class OnsConsoleController {
      * 删除多环境TOPIC
      *
      * @param request 请求对象
-     * @return
      */
     @DeleteMapping("/topic")
-    public static Map<String, OnsTopicDeleteResponse> onsTopicDelete(@RequestBody @Validated
-    ConsoleOnsTopicDeleteRequest request) {
+    public static Map<String, OnsTopicDeleteResponse> onsTopicDelete(
+            @RequestBody @Validated ConsoleOnsTopicDeleteRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsTopicDelete(request);
     }
@@ -83,11 +79,10 @@ public class OnsConsoleController {
      * 多环境查询账号下所有 Topic 的信息列表
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("topic")
-    public static Map<String, List<ConsoleOnsTopicListResponse>> onsTopicList(@Validated
-    ConsoleOnsTopicListRequest request) {
+    public static Map<String, List<ConsoleOnsTopicListResponse>> onsTopicList(
+            @Validated ConsoleOnsTopicListRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsTopicList(request);
     }
@@ -96,11 +91,10 @@ public class OnsConsoleController {
      * 查看Topic的在线订阅组
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("topic/subs")
-    public static List<ConsoleOnsTopicSubListResponse> onsTopicSubDetail(@Validated
-    ConsoleOnsTopicSubDetailRequest request) {
+    public static List<ConsoleOnsTopicSubListResponse> onsTopicSubDetail(
+            @Validated ConsoleOnsTopicSubDetailRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsTopicSubDetail(request);
     }
@@ -110,11 +104,10 @@ public class OnsConsoleController {
      * 创建多环境GROUP
      *
      * @param request 请求对象
-     * @return
      */
     @PostMapping("/group")
-    public static Map<String, OnsGroupCreateResponse> onsGroupCreate(@RequestBody @Validated
-    ConsoleOnsGroupCreateRequest request) {
+    public static Map<String, OnsGroupCreateResponse> onsGroupCreate(
+            @RequestBody @Validated ConsoleOnsGroupCreateRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsGroupCreate(request);
     }
@@ -124,11 +117,10 @@ public class OnsConsoleController {
      * 删除多环境GROUP
      *
      * @param request 请求对象
-     * @return
      */
     @DeleteMapping("/group")
-    public static Map<String, OnsGroupDeleteResponse> onsGroupDelete(@RequestBody @Validated
-    ConsoleOnsGroupDeleteRequest request) {
+    public static Map<String, OnsGroupDeleteResponse> onsGroupDelete(
+            @RequestBody @Validated ConsoleOnsGroupDeleteRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsGroupDelete(request);
     }
@@ -138,11 +130,10 @@ public class OnsConsoleController {
      * 多环境获取Group_Id资源列表
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("group")
-    public static Map<String, List<ConsoleOnsGroupListResponse>> onsGroupList(@Validated
-    ConsoleOnsGroupListRequest request) {
+    public static Map<String, List<ConsoleOnsGroupListResponse>> onsGroupList(
+            @Validated ConsoleOnsGroupListRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsGroupList(request);
     }
@@ -152,11 +143,10 @@ public class OnsConsoleController {
      * 根据messageId查询死信队列
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("DLQ/by_msg_id")
-    public ConsoleOnsDLQMessagePageQueryByGroupResponse onsDLQMessageGetByIdRequest(@Validated
-    ConsoleOnsDLQMessageGetByIdRequest request) {
+    public ConsoleOnsDLQMessagePageQueryByGroupResponse onsDLQMessageGetByIdRequest(
+            @Validated ConsoleOnsDLQMessageGetByIdRequest request) {
         request.setCurrentUser("");
         return OnsClientOperations.onsDLQMessageGetByIdRequest(request);
     }
@@ -165,7 +155,6 @@ public class OnsConsoleController {
      * 根据GroupId下的死信队列消息
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("DLQ/by_group_id")
     public PageResult<ConsoleOnsDLQMessagePageQueryByGroupResponse> onsDLQMessagePageQueryByGroupId(

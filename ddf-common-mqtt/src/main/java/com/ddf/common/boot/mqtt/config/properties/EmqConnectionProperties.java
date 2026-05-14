@@ -113,24 +113,18 @@ public class EmqConnectionProperties {
      * 获取指定协议的配置
      *
      * @param protocol protocol参数
-     * @return
      */
     public ConnectionConfig getConnectionUrl(String protocol) {
-        Map<String, ConnectionConfig> protocolMap = connectionUrls
-                .stream()
-                .collect(Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
+        Map<String, ConnectionConfig> protocolMap = connectionUrls.stream().collect(
+                Collectors.toMap(ConnectionConfig::getProtocol, obj -> obj));
         return protocolMap.get(protocol);
     }
 
     /**
      * 获取服务端使用的clientId
-     *
-     * @return
      */
     public String getClientId() {
-        return String.join(
-                "-", getClient().getClientIdPrefix(), NetUtil.getLocalhostStr() + "",
-                GlobalStorage.APPLICATION_PORT + ""
-        );
+        return String.join("-", getClient().getClientIdPrefix(), NetUtil.getLocalhostStr() + "",
+                GlobalStorage.APPLICATION_PORT + "");
     }
 }

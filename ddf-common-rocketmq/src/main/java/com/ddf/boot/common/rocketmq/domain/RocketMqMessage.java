@@ -47,7 +47,7 @@ public class RocketMqMessage implements Serializable {
     private Long delayTime;
 
 
-    public void check(){
+    public void check() {
         Assert.hasLength(getTopic(), "Topic不能为空");
         Assert.hasLength(getExpression(), "Expression不能为空");
 

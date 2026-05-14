@@ -20,6 +20,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 public class MessagePackUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = newInstance();
+
     /**
      * @param value 参数值
      */
@@ -27,6 +28,7 @@ public class MessagePackUtil {
     public static byte[] writeValueAsBytes(Object value) {
         return OBJECT_MAPPER.writeValueAsBytes(value);
     }
+
     /**
      * @param value 参数值
      */
@@ -34,6 +36,7 @@ public class MessagePackUtil {
     public static String writeValueAsHex(Object value) {
         return HexFormat.of().formatHex(writeValueAsBytes(value));
     }
+
     /**
      * @param src 参数
      * @param valueType 参数
@@ -50,13 +53,13 @@ public class MessagePackUtil {
      *
      * @param content 内容
      * @param valueType 值类型
-     * @return
      * @param <T> 泛型类型
      */
     @SneakyThrows
     public static <T> T readHexValue(String content, Class<T> valueType) {
         return OBJECT_MAPPER.readValue(hexToBinary(content), valueType);
     }
+
     /**
      * @param args 参数
      */
@@ -69,9 +72,7 @@ public class MessagePackUtil {
         claim.setDetail("测试用户详情");
         claim.setProperties(Map.of("key1", "value1", "key2", "value2"));
         // 1. 获取 JSON 字节
-        byte[] jsonBytes = JsonUtil
-                .toJson(claim)
-                .getBytes(StandardCharsets.UTF_8);
+        byte[] jsonBytes = JsonUtil.toJson(claim).getBytes(StandardCharsets.UTF_8);
         // 2. 获取 MsgPack 字节
         byte[] msgPackBytes = writeValueAsBytes(claim);
         final String hex = writeValueAsHex(claim);
@@ -83,11 +84,10 @@ public class MessagePackUtil {
 
         UserClaim userClaim = readValue(msgPackBytes, UserClaim.class);
 
-        System.out.println(readHexValue(hex,
-                UserClaim.class
-        ));
+        System.out.println(readHexValue(hex, UserClaim.class));
         System.out.println(userClaim);
     }
+
     /**
      * @param hexString 参数
      */
@@ -95,9 +95,7 @@ public class MessagePackUtil {
         if (hexString == null || hexString.isEmpty()) {
             return new byte[0];
         }
-        return HexFormat
-                .of()
-                .parseHex(hexString);
+        return HexFormat.of().parseHex(hexString);
     }
 
     /**

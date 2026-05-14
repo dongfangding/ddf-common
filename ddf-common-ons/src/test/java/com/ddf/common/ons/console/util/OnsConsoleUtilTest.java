@@ -23,13 +23,11 @@ class OnsConsoleUtilTest {
     @Test
     @DisplayName("应根据消息模式生成重试表达式")
     void shouldBuildRetryExpression() {
-        assertEquals(
-                "topic-listener-group",
-                OnsConsoleUtil.getRetryExpression("topic", "listener", "group", MessageModel.CLUSTERING.getModel())
-        );
+        assertEquals("topic-listener-group",
+                OnsConsoleUtil.getRetryExpression("topic", "listener", "group", MessageModel.CLUSTERING.getModel()));
 
-        String expression = OnsConsoleUtil.getRetryExpression(
-                "topic", "listener", "group", MessageModel.BROADCASTING.getModel());
+        String expression = OnsConsoleUtil.getRetryExpression("topic", "listener", "group",
+                MessageModel.BROADCASTING.getModel());
         String expectedPrefix = "topic-listener-group-";
         assertEquals(expectedPrefix + OnsConsoleUtil.getLocalHost(), expression);
     }
@@ -58,6 +56,7 @@ class OnsConsoleUtilTest {
 
         String group();
     }
+
 
     @DemoAnnotation(topic = "origin-topic", group = "origin-group")
     static class DemoAnnotatedClass {

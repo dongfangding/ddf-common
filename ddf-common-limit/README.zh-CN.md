@@ -11,13 +11,13 @@
 
 `ddf-common-limit` 解决的是 **"接口流量治理与表单安全"** 这一横切问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 接口防刷 | 登录、短信验证码接口被高频调用 | `@RateLimit` 令牌桶限流，支持全局 / 用户级 / 自定义维度 |
-| 多级限流 | 同一接口既要防总流量击穿，又要控单用户频率 | `@MultiRateLimit` 多规则叠加，一次校验多道闸门 |
-| 条件限流 | 只有特定参数值才触发限流 | `@RateLimit(condition = "#type == 'VIP'")` SpEL 条件表达式 |
-| 防重复提交 | 用户快速双击导致订单重复创建 | `@Repeatable` 基于请求参数指纹的防重校验 |
-| 压测开关 | 全局限流规则影响压测结果 | `@EnableRateLimit` / `@EnableRepeatable` 全局一键开关 |
+| 场景    | 典型问题                  | 模块提供的能力                                               |
+|-------|-----------------------|-------------------------------------------------------|
+| 接口防刷  | 登录、短信验证码接口被高频调用       | `@RateLimit` 令牌桶限流，支持全局 / 用户级 / 自定义维度                 |
+| 多级限流  | 同一接口既要防总流量击穿，又要控单用户频率 | `@MultiRateLimit` 多规则叠加，一次校验多道闸门                      |
+| 条件限流  | 只有特定参数值才触发限流          | `@RateLimit(condition = "#type == 'VIP'")` SpEL 条件表达式 |
+| 防重复提交 | 用户快速双击导致订单重复创建        | `@Repeatable` 基于请求参数指纹的防重校验                           |
+| 压测开关  | 全局限流规则影响压测结果          | `@EnableRateLimit` / `@EnableRepeatable` 全局一键开关       |
 
 > ⚠️ 防重复提交的默认实现（`LocalRepeatableValidator`）基于**本地缓存**，不支持分布式集群场景。若业务部署多实例，需自行实现 `RepeatableValidator` 基于 Redis 做分布式防重。
 
@@ -58,12 +58,12 @@ public class Application {
 
 `@EnableRateLimit` 属性（全局默认值）：
 
-| 属性 | 说明 | 默认值 |
-| ----- | ----- | ----- |
-| `max` | 令牌桶最大容量，`0` 表示不控制 | `0` |
-| `rate` | 令牌恢复速率（个/秒），`0` 表示不控制 | `0` |
-| `keyGenerator` | 限流 Key 生成器 Bean 名称 | `globalRateLimitKeyGenerator` |
-| `cloudRefresh` | 是否开启动态刷新（需外部实现 `RateLimitPropertiesCollect`） | `false` |
+| 属性             | 说明                                           | 默认值                           |
+|----------------|----------------------------------------------|-------------------------------|
+| `max`          | 令牌桶最大容量，`0` 表示不控制                            | `0`                           |
+| `rate`         | 令牌恢复速率（个/秒），`0` 表示不控制                        | `0`                           |
+| `keyGenerator` | 限流 Key 生成器 Bean 名称                           | `globalRateLimitKeyGenerator` |
+| `cloudRefresh` | 是否开启动态刷新（需外部实现 `RateLimitPropertiesCollect`） | `false`                       |
 
 ### 3.2 启用防重复提交
 
@@ -77,10 +77,10 @@ public class Application {
 
 `@EnableRepeatable` 属性：
 
-| 属性 | 说明 | 默认值 |
-| ----- | ----- | ----- |
-| `interval` | 同一次请求的间隔时间（毫秒） | `1000` |
-| `globalValidator` | 全局校验器 Bean 名称 | `localRepeatableValidator` |
+| 属性                | 说明             | 默认值                        |
+|-------------------|----------------|----------------------------|
+| `interval`        | 同一次请求的间隔时间（毫秒） | `1000`                     |
+| `globalValidator` | 全局校验器 Bean 名称  | `localRepeatableValidator` |
 
 > 两个注解互相独立，可按需只启用其一。
 
@@ -171,11 +171,11 @@ public class OrderController {
 
 `@Repeatable` 属性：
 
-| 属性 | 说明 | 默认值 |
-| ----- | ----- | ----- |
-| `interval` | 间隔时间（毫秒），`0` 表示使用 `@EnableRepeatable` 全局值 | `0` |
-| `validator` | 校验器 Bean 名称，空串表示使用全局值 | `""` |
-| `throwError` | 检测到重复时是否抛异常；若为 `false` 则静默放行 | `true` |
+| 属性           | 说明                                        | 默认值    |
+|--------------|-------------------------------------------|--------|
+| `interval`   | 间隔时间（毫秒），`0` 表示使用 `@EnableRepeatable` 全局值 | `0`    |
+| `validator`  | 校验器 Bean 名称，空串表示使用全局值                     | `""`   |
+| `throwError` | 检测到重复时是否抛异常；若为 `false` 则静默放行              | `true` |
 
 > `throwError = false` 的适用场景：重复请求到达时，若正常请求的响应可能慢于重复请求，前端收到异常会导致页面错误。设为 `false` 可让重复请求也走到业务层（由业务幂等兜底）。
 
@@ -183,10 +183,10 @@ public class OrderController {
 
 模块内置两种 Key 生成器，决定限流维度：
 
-| 生成器 | Bean 名称 | 维度 | 适用场景 |
-| ----- | ----- | ----- | ----- |
-| 全局方法级 | `globalRateLimitKeyGenerator` | 类名 + 方法名 | 接口总流量控制 |
-| 身份级别 | `identityRateLimitKeyGenerator` | userId / imei + 类名 + 方法名 | 单用户频率控制 |
+| 生成器   | Bean 名称                         | 维度                       | 适用场景    |
+|-------|---------------------------------|--------------------------|---------|
+| 全局方法级 | `globalRateLimitKeyGenerator`   | 类名 + 方法名                 | 接口总流量控制 |
+| 身份级别  | `identityRateLimitKeyGenerator` | userId / imei + 类名 + 方法名 | 单用户频率控制 |
 
 自定义 Key 生成器：
 
@@ -306,13 +306,13 @@ public class ApiController {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-authentication` | `IdentityRateLimitKeyGenerator` 通过 `UserContextUtil.getUserId()` / `getImei()` 获取身份标识 |
-| `ddf-common-redis` | 令牌桶算法由 `RedisTemplateHelper.tokenBucketRateLimitAcquire` 提供；Key 前缀通过 `ApplicationNamedKeyGenerator` 拼接 |
-| `ddf-common-mvc` | 限流异常 / 防重复异常由全局异常处理器统一捕获并包装为 `ResponseData` |
-| `ddf-common-api` | 异常码 `LimitExceptionCode.RATE_LIMIT`、`LimitExceptionCode.REPEAT_SUBMIT` 实现 `BaseCallbackCode` |
-| `ddf-common-starter-web` | 本模块是 starter 的核心能力组成部分 |
+| 模块                          | 协作方式                                                                                                   |
+|-----------------------------|--------------------------------------------------------------------------------------------------------|
+| `ddf-common-authentication` | `IdentityRateLimitKeyGenerator` 通过 `UserContextUtil.getUserId()` / `getImei()` 获取身份标识                  |
+| `ddf-common-redis`          | 令牌桶算法由 `RedisTemplateHelper.tokenBucketRateLimitAcquire` 提供；Key 前缀通过 `ApplicationNamedKeyGenerator` 拼接 |
+| `ddf-common-mvc`            | 限流异常 / 防重复异常由全局异常处理器统一捕获并包装为 `ResponseData`                                                            |
+| `ddf-common-api`            | 异常码 `LimitExceptionCode.RATE_LIMIT`、`LimitExceptionCode.REPEAT_SUBMIT` 实现 `BaseCallbackCode`           |
+| `ddf-common-starter-web`    | 本模块是 starter 的核心能力组成部分                                                                                 |
 
 ---
 

@@ -77,15 +77,12 @@ public class MonitorRegistryConfig implements InitializingBean {
     public void initClient() {
         log.info("zk节点监控连接信息, connectionStr is [{}]", monitorProperties.getConnectAddress());
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-       this.client =  CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
-                monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy
-        );
+        this.client = CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
+                monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy);
     }
 
     /**
      * 初始化节点创建以及事件监听
-     *
-     * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -114,7 +111,6 @@ public class MonitorRegistryConfig implements InitializingBean {
      * 获取监听节点路径
      *
      * @param monitor 监控参数
-     * @return
      */
     private String getMonitorPath(MonitorNode monitor) {
         if (MonitorNode.HOST_MODE_AUTO.equals(monitor.getMonitorHost())) {
@@ -123,23 +119,17 @@ public class MonitorRegistryConfig implements InitializingBean {
         }
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) throws Exception {
         final CuratorFramework framework = CuratorFrameworkFactory.newClient("www.snowball.fans:2181", 4000, 40000,
-                new RetryNTimes(3, 2000)
-        );
+                new RetryNTimes(3, 2000));
         framework.start();
-        framework.create()
-                .creatingParentsIfNeeded()
-                .withMode(CreateMode.PERSISTENT)
-                .forPath("/persistent_demo");
+        framework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/persistent_demo");
 
-        framework.create()
-                .withTtl(5000)
-                .withMode(CreateMode.PERSISTENT_SEQUENTIAL_WITH_TTL)
-                .forPath("/ttl_demo");
+        framework.create().withTtl(5000).withMode(CreateMode.PERSISTENT_SEQUENTIAL_WITH_TTL).forPath("/ttl_demo");
     }
 
 
@@ -166,8 +156,7 @@ public class MonitorRegistryConfig implements InitializingBean {
                     break;
                 case NODE_CHANGED:
                     log.debug("[{}]节点数据发生改变, 老数据为: {}, 最新数据为: {}...........", path, oldData.toString(),
-                            data.toString()
-                    );
+                            data.toString());
                     if (CollUtil.isNotEmpty(nodeEventListeners)) {
                         final List<NodeEventListener> sortedListeners = nodeEventListeners.stream().sorted(
                                 Comparator.comparingInt(NodeEventListener::getSort)).collect(Collectors.toList());
@@ -197,7 +186,6 @@ public class MonitorRegistryConfig implements InitializingBean {
      *
      * @param path 路径
      * @param monitor 监控参数
-     * @throws Exception
      */
     private void createNode(String path, MonitorNode monitor) throws Exception {
         String hostPath = NetUtil.getLocalhostStr() + ":" + environmentHelper.getPort();
@@ -229,8 +217,7 @@ public class MonitorRegistryConfig implements InitializingBean {
         if (monitor.isUseDefaultTimeStampUpload()) {
             if (client.checkExists().forPath(path) == null) {
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path,
-                        String.valueOf(System.currentTimeMillis()).getBytes()
-                );
+                        String.valueOf(System.currentTimeMillis()).getBytes());
             }
             // 子节点存储时间戳数据
             client.setData().forPath(path, String.valueOf(System.currentTimeMillis()).getBytes());
@@ -283,7 +270,7 @@ public class MonitorRegistryConfig implements InitializingBean {
      */
     private void scheduleUploadData() {
         Executors.newSingleThreadScheduledExecutor(
-                ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-upload").build())
+                        ThreadFactoryBuilder.create().setNamePrefix("monitor-schedule-node-upload").build())
                 .scheduleAtFixedRate(this::updateNode, 10, 10, TimeUnit.SECONDS);
     }
 
@@ -321,7 +308,8 @@ public class MonitorRegistryConfig implements InitializingBean {
             for (MonitorNode monitor : monitors) {
                 monitorPath = getMonitorPath(monitor);
                 try {
-                    String data = new String(client.getData().forPath(monitor.getMonitorPath()), StandardCharsets.UTF_8);
+                    String data = new String(client.getData().forPath(monitor.getMonitorPath()),
+                            StandardCharsets.UTF_8);
                     if (StringUtils.isBlank(data)) {
                         continue;
                     }
@@ -343,17 +331,17 @@ public class MonitorRegistryConfig implements InitializingBean {
                             callbackNode(monitorPath, monitor, disjunction);
                             // 同步完成后就可以将父节点下的数据同步为当前节点列表了, 否则下次比较依然会触发删除事件
                             client.setData().forPath(monitor.getMonitorPath(),
-                                    StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8)
-                            );
+                                    StringUtils.join(nodes, DATA_SPLIT_CHAR).getBytes(StandardCharsets.UTF_8));
                         }
                     }
                 } catch (Exception e) {
-                        log.error("节点检查时发现[{}]被删除时出现异常", monitorPath, e);
+                    log.error("节点检查时发现[{}]被删除时出现异常", monitorPath, e);
                 }
             }
             return null;
         }, () -> {return null;});
     }
+
     /**
      * @param monitorPath 参数
      * @param monitor 参数
@@ -365,8 +353,7 @@ public class MonitorRegistryConfig implements InitializingBean {
         for (String currNode : allNodes) {
             try {
                 childData = new ChildData(monitor.getMonitorPath().concat("/").concat(currNode),
-                        client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath)
-                );
+                        client.checkExists().forPath(monitorPath), client.getData().forPath(monitorPath));
             } catch (KeeperException.NoNodeException exception) {
                 // fixme 节点不存在的时候把数据删掉， 但是这一块比较复杂，如果真的采取以当前数据判断覆盖的话，容易产生数据错误，会把当前程序以外同时新增或删除的节点给覆盖掉， 所以如果不用父节点存数据的话，
                 // 直接用另外一个节点存全部节点，使用path来处理就会简单很多

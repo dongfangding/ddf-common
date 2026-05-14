@@ -17,6 +17,7 @@ import javax.net.ssl.SSLEngine;
  */
 public class ClientChannelInit extends ChannelInitializer<Channel> {
     private final SslContext context;
+
     public ClientChannelInit(SslContext context) {
         this.context = context;
     }
@@ -24,6 +25,7 @@ public class ClientChannelInit extends ChannelInitializer<Channel> {
     public ClientChannelInit() {
         context = null;
     }
+
     /**
      * @param ch 参数
      */

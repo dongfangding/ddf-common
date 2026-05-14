@@ -31,8 +31,6 @@ public class RateLimitRequest {
 
     /**
      * 获取Builder， 主要是因为可能会对属性做一些判断修改，所以自己写了构建器，方便改写
-     *
-     * @return
      */
     public static RateLimitRequestBuilder builder() {
         return new RateLimitRequestBuilder();
@@ -53,6 +51,7 @@ public class RateLimitRequest {
 
         /**
          * 令牌桶的最大大小
+         *
          * @param key 目标键
          */
         private Integer max;
@@ -66,10 +65,12 @@ public class RateLimitRequest {
          * 是否忽略使用前缀
          */
         private boolean ignorePrefix;
+
         public RateLimitRequestBuilder key(String key) {
             this.key = key;
             return this;
         }
+
         /**
          * @param max 最大值
          */
@@ -77,6 +78,7 @@ public class RateLimitRequest {
             this.max = max;
             return this;
         }
+
         /**
          * @param rate 参数
          */
@@ -84,6 +86,7 @@ public class RateLimitRequest {
             this.rate = rate;
             return this;
         }
+
         /**
          * @param ignorePrefix 参数
          */

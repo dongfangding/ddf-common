@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-captcha` solves the **"human verification and anti-bot protection"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Login / registration anti-bot | Interfaces brute-forced by scripts | Graphical captcha pre-check |
-| SMS bombing protection | Send API called at high frequency | Math / slider captcha interception |
-| High-security scenarios | Regular captchas easily OCR'd | Slider + click-on-words interactive verification |
-| Distributed deployment | Captcha state out of sync across instances | Redis cache shares verification state |
+| Scenario                      | Typical Problem                            | What the Module Provides                         |
+|-------------------------------|--------------------------------------------|--------------------------------------------------|
+| Login / registration anti-bot | Interfaces brute-forced by scripts         | Graphical captcha pre-check                      |
+| SMS bombing protection        | Send API called at high frequency          | Math / slider captcha interception               |
+| High-security scenarios       | Regular captchas easily OCR'd              | Slider + click-on-words interactive verification |
+| Distributed deployment        | Captcha state out of sync across instances | Redis cache shares verification state            |
 
 ---
 
@@ -108,12 +108,12 @@ boolean valid = captchaHelper.check(
 
 ### 4.3 Captcha type comparison
 
-| Type | Interaction | Anti-OCR | Suitable For |
-| --- | --- | --- | --- |
-| `TEXT` | Type characters | Moderate | Ordinary login / registration |
-| `MATH` | Type calculation result | Good | Anti-simple-OCR |
-| `PIC_SLIDE` | Drag slider | Strong | High-security login / payment |
-| `CLICK_WORDS` | Click words | Strong | High-security scenarios |
+| Type          | Interaction             | Anti-OCR | Suitable For                  |
+|---------------|-------------------------|----------|-------------------------------|
+| `TEXT`        | Type characters         | Moderate | Ordinary login / registration |
+| `MATH`        | Type calculation result | Good     | Anti-simple-OCR               |
+| `PIC_SLIDE`   | Drag slider             | Strong   | High-security login / payment |
+| `CLICK_WORDS` | Click words             | Strong   | High-security scenarios       |
 
 ---
 
@@ -172,9 +172,9 @@ ddf:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-redis` | Required when `cache-type=REDIS` for shared captcha state |
+| Module             | How They Cooperate                                                                     |
+|--------------------|----------------------------------------------------------------------------------------|
+| `ddf-common-redis` | Required when `cache-type=REDIS` for shared captcha state                              |
 | `ddf-common-limit` | Can work with `@RateLimit` to relax rate limits only after captcha verification passes |
 
 ---

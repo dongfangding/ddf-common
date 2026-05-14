@@ -65,8 +65,8 @@ public class SegmentIDGenImpl implements IDGen {
      * 一个Segment维持时间为15分钟
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
-    private ExecutorService service = new ThreadPoolExecutor(
-            5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
+    private ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
     private volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     /**
@@ -75,6 +75,7 @@ public class SegmentIDGenImpl implements IDGen {
      */
     private IDAllocDao dao;
     private IdsProperties idsProperties;
+
     public SegmentIDGenImpl(IDAllocDao dao, IdsProperties idsProperties) {
         this.dao = dao;
         this.idsProperties = idsProperties;
@@ -88,6 +89,7 @@ public class SegmentIDGenImpl implements IDGen {
         private static synchronized int nextThreadNum() {
             return threadInitNumber++;
         }
+
         /**
          * @param r 参数
          */
@@ -167,7 +169,6 @@ public class SegmentIDGenImpl implements IDGen {
      * 获取id
      *
      * @param key 目标键
-     * @return
      */
     @Override
     public Result get(final String key) {
@@ -206,7 +207,6 @@ public class SegmentIDGenImpl implements IDGen {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     @Override
     public ResultList list(String key, int number) {
@@ -221,6 +221,7 @@ public class SegmentIDGenImpl implements IDGen {
         }
         return resultList;
     }
+
     /**
      * @param key 目标键
      * @param segment 参数
@@ -256,8 +257,7 @@ public class SegmentIDGenImpl implements IDGen {
                 nextStep = nextStep / 2 >= buffer.getMinStep() ? nextStep / 2 : nextStep;
             }
             logger.info("leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(),
-                    "%.2f".formatted(((double) duration / (1000 * 60))), nextStep
-            );
+                    "%.2f".formatted(((double) duration / (1000 * 60))), nextStep);
             LeafAlloc temp = new LeafAlloc();
             temp.setKey(key);
             temp.setStep(nextStep);
@@ -275,6 +275,7 @@ public class SegmentIDGenImpl implements IDGen {
         segment.setStep(buffer.getStep());
         segment.setFillLength(buffer.getFillLength());
     }
+
     /**
      * @param buffer 参数
      */
@@ -333,6 +334,7 @@ public class SegmentIDGenImpl implements IDGen {
             }
         }
     }
+
     /**
      * @param buffer 参数
      */
@@ -357,7 +359,6 @@ public class SegmentIDGenImpl implements IDGen {
      *
      * @param value 参数值
      * @param segment segment参数
-     * @return
      */
     private String fillValue(long value, Segment segment) {
         String strValue = value + "";
@@ -378,6 +379,7 @@ public class SegmentIDGenImpl implements IDGen {
     public IDAllocDao getDao() {
         return dao;
     }
+
     /**
      * @param dao 参数
      */

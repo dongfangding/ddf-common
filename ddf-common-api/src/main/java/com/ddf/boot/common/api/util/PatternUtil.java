@@ -19,7 +19,6 @@ public class PatternUtil {
      * 从html中解析出图片链接
      *
      * @param htmlStr HTML 字符串
-     * @return
      */
     public static Set<String> findImgSrcUrl(String htmlStr) {
         Set<String> pics = new HashSet<>();
@@ -48,14 +47,13 @@ public class PatternUtil {
      *
      * @param sourceStr 源字符串
      * @param matchStr 匹配字符串
-     * @return
      */
     public static int findChildStrCount(String sourceStr, String matchStr) {
         Pattern p = Pattern.compile(matchStr, Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(sourceStr);
         int count = 0;
         while (m.find()) {
-            count ++;
+            count++;
         }
         return count;
     }
@@ -65,7 +63,6 @@ public class PatternUtil {
      * 从数据库连接地址中取出数据库名
      *
      * @param dbUrl 数据库连接地址
-     * @return
      */
     public static String extractDatabaseName(String dbUrl) {
         // 正则表达式匹配数据库名

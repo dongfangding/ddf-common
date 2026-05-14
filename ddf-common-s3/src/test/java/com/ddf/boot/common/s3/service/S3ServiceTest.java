@@ -50,13 +50,13 @@ class S3ServiceTest {
     void shouldAddContentTypeHeaderForPresignedUploadUrl() throws Exception {
         S3Properties properties = createProperties();
         MinioClient minioClient = Mockito.mock(MinioClient.class);
-        when(minioClient.getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class)))
-                .thenReturn("https://signed.example.com/upload");
+        when(minioClient.getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class))).thenReturn(
+                "https://signed.example.com/upload");
 
         S3Service service = new S3Service(minioClient, properties);
 
-        PresignedUrlResult result = service.getPresignedUploadUrl(
-                "archive", "path/demo.txt", "image/png", Duration.ofMinutes(15));
+        PresignedUrlResult result = service.getPresignedUploadUrl("archive", "path/demo.txt", "image/png",
+                Duration.ofMinutes(15));
 
         ArgumentCaptor<GetPresignedObjectUrlArgs> captor = ArgumentCaptor.forClass(GetPresignedObjectUrlArgs.class);
         verify(minioClient).getPresignedObjectUrl(captor.capture());

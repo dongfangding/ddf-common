@@ -48,10 +48,7 @@ class RateLimitPropertiesTest {
         nullMaxProperties.setMax(null);
         nullMaxProperties.setRate(1);
 
-        IllegalArgumentException nullException = assertThrows(
-            IllegalArgumentException.class,
-            nullMaxProperties::check
-        );
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, nullMaxProperties::check);
         assertEquals("令牌桶最大数量参数异常", nullException.getMessage());
 
         RateLimitProperties negativeMaxProperties = new RateLimitProperties();
@@ -59,10 +56,8 @@ class RateLimitPropertiesTest {
         negativeMaxProperties.setMax(-1);
         negativeMaxProperties.setRate(1);
 
-        IllegalArgumentException negativeException = assertThrows(
-            IllegalArgumentException.class,
-            negativeMaxProperties::check
-        );
+        IllegalArgumentException negativeException = assertThrows(IllegalArgumentException.class,
+                negativeMaxProperties::check);
         assertEquals("令牌桶最大数量参数异常", negativeException.getMessage());
     }
 
@@ -74,10 +69,8 @@ class RateLimitPropertiesTest {
         nullRateProperties.setMax(10);
         nullRateProperties.setRate(null);
 
-        IllegalArgumentException nullException = assertThrows(
-            IllegalArgumentException.class,
-            nullRateProperties::check
-        );
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class,
+                nullRateProperties::check);
         assertEquals("令牌恢复速率参数异常", nullException.getMessage());
 
         RateLimitProperties negativeRateProperties = new RateLimitProperties();
@@ -85,10 +78,8 @@ class RateLimitPropertiesTest {
         negativeRateProperties.setMax(10);
         negativeRateProperties.setRate(-1);
 
-        IllegalArgumentException negativeException = assertThrows(
-            IllegalArgumentException.class,
-            negativeRateProperties::check
-        );
+        IllegalArgumentException negativeException = assertThrows(IllegalArgumentException.class,
+                negativeRateProperties::check);
         assertEquals("令牌恢复速率参数异常", negativeException.getMessage());
     }
 }

@@ -20,15 +20,11 @@ public @interface RequestSign {
 
     /**
      * 是否进行重新判断
-     *
-     * @return
      */
     boolean nonce() default false;
 
     /**
      * 视作重新攻击的时间间隔，单位秒
-     *
-     * @return
      */
     long nonceIntervalSeconds() default 60;
 }

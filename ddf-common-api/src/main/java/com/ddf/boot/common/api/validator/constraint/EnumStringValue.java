@@ -32,8 +32,6 @@ public @interface EnumStringValue {
 
     /**
      * 是否必传参数， 如果是的话， 不能为空
-     *
-     * @return
      */
     boolean required() default true;
 
@@ -64,6 +62,7 @@ public @interface EnumStringValue {
             enumClass = constraintAnnotation.enumClass();
             required = constraintAnnotation.required();
         }
+
         /**
          * @param value 参数值
          * @param context 参数
@@ -79,9 +78,7 @@ public @interface EnumStringValue {
 
             // 遍历枚举常量，检查值是否存在
             for (IEnum<?> enumConstant : enumConstants) {
-                if (enumConstant
-                    .getValue()
-                    .equals(value)) {
+                if (enumConstant.getValue().equals(value)) {
                     return true;
                 }
             }

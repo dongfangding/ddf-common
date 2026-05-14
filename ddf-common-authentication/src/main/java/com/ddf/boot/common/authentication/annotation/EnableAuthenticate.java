@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- *
  * 开启认证模块
  *
  * @author dongfang.ding

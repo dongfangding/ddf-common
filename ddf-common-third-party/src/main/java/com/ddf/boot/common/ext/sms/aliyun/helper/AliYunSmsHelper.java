@@ -39,15 +39,10 @@ public class AliYunSmsHelper {
 
     /**
      * 随机生成基于验证码变量code的短信模板参数
-     *
-     * @return
      */
     public TemplateParamObj randomCodeTemplateParam() {
         int code = RandomUtil.randomInt(100000, 999999);
-        return TemplateParamObj.builder()
-                .templateParam("{\"code\": " + code + "}")
-                .code(code + "")
-                .build();
+        return TemplateParamObj.builder().templateParam("{\"code\": " + code + "}").code(code + "").build();
     }
 
 
@@ -58,8 +53,7 @@ public class AliYunSmsHelper {
      */
     public SmsSendResponse sendSms(SmsSendRequest aliYunSmsRequest) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", smsProperties.getAccessKeyId(),
-                smsProperties.getAccessKeySecret()
-        );
+                smsProperties.getAccessKeySecret());
         String templateParam = aliYunSmsRequest.getTemplateParam();
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
@@ -103,9 +97,6 @@ public class AliYunSmsHelper {
                 throw new BusinessException(message);
             }
         }
-        return SmsSendResponse.builder()
-                .templateParam(templateParam)
-                .randomCode(templateParamObj.getCode())
-                .build();
+        return SmsSendResponse.builder().templateParam(templateParam).randomCode(templateParamObj.getCode()).build();
     }
 }

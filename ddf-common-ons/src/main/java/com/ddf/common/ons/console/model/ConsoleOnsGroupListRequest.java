@@ -27,6 +27,7 @@ public class ConsoleOnsGroupListRequest implements UserRequest, Serializable {
 
     /**
      * 环境key
+     *
      * @see com.ddf.common.ons.console.config.EnvClientProperties#getClients()
      */
     private String env;
@@ -41,11 +42,9 @@ public class ConsoleOnsGroupListRequest implements UserRequest, Serializable {
      * 转换为SDK内部请求类
      *
      * @param instanceId 实例ID
-     * @return
      */
     public OnsGroupListRequest toSdkRequest(String instanceId) {
-        return new OnsGroupListRequest()
-                .setGroupId(getGroupId())
+        return new OnsGroupListRequest().setGroupId(getGroupId())
                 .setGroupType(GroupTypeEnum.TCP.getValue())
                 .setInstanceId(instanceId);
     }

@@ -18,9 +18,8 @@ public enum MqttCallbackCode implements BaseCallbackCode {
     MQTT_CONFIG_CONNECTION_CLIENT_MISS("mqtt0001", "mqtt 连接未配置client属性"),
     MQTT_CONFIG_CONNECTION_TCP_PROTOCOL_ERROR("mqtt0002", "mqtt 连接为配置tcp协议地址"),
     MQTT_CONFIG_CREATE_CLIENT_ERROR("mqtt0001", "mqtt 创建客户端错误"),
-    MQTT_CONFIG_CONNECTION_ERROR("mqtt0001", "mqtt 连接配置错误")
+    MQTT_CONFIG_CONNECTION_ERROR("mqtt0001", "mqtt 连接配置错误");
 
-    ;
     MqttCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;

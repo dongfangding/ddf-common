@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestContentCodec extends ByteToMessageCodec<Object> {
     private final Charset charset;
+
     public RequestContentCodec(Charset charset) {
         if (charset == null) {
             charset = CharsetUtil.UTF_8;
@@ -37,7 +38,6 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
      * @param ctx 通道上下文
      * @param msg 消息内容
      * @param out OUT参数
-     * @throws Exception
      */
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
@@ -55,7 +55,6 @@ public class RequestContentCodec extends ByteToMessageCodec<Object> {
      * @param ctx 通道上下文
      * @param in IN参数
      * @param out OUT参数
-     * @throws Exception
      */
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {

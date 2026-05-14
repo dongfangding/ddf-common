@@ -61,9 +61,7 @@ public class ExcelLocalTranslatorHelperToDeckApi {
      * 导出 Excel 多语言内容到 properties 文件
      *
      * @param excelFilePath Excel 文件路径
-     * @param appendMode    true-追加模式，false-覆盖模式
-     * @throws IOException
-     * @throws InvalidFormatException
+     * @param appendMode true-追加模式，false-覆盖模式
      */
     public void exportTranslations(String excelFilePath, boolean appendMode)
             throws IOException, InvalidFormatException {
@@ -113,7 +111,9 @@ public class ExcelLocalTranslatorHelperToDeckApi {
         // 遍历 Excel 中的每一行（从第二行开始）
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
-            if (row == null) continue;
+            if (row == null) {
+                continue;
+            }
 
             // 仅处理第一列不为 "0" 的行
             String flag = getCellStringValue(row.getCell(0)).trim();
@@ -123,9 +123,13 @@ public class ExcelLocalTranslatorHelperToDeckApi {
 
             // 获取错误码（第二列，索引 1）
             Cell codeCell = row.getCell(1);
-            if (codeCell == null) continue;
+            if (codeCell == null) {
+                continue;
+            }
             String errorCode = getCellStringValue(codeCell).trim();
-            if (errorCode.isEmpty()) continue;
+            if (errorCode.isEmpty()) {
+                continue;
+            }
             System.out.println("处理第 " + (i + 1) + " 行，错误码: " + errorCode);
 
             // 遍历每个文件对应的列
@@ -163,6 +167,7 @@ public class ExcelLocalTranslatorHelperToDeckApi {
 
     /**
      * 将 Properties 按照插入顺序写入输出流（UTF-8编码），模拟 Properties.store() 的行为
+     *
      * @param props 参数
      * @param out 参数
      * @param comments 参数
@@ -190,13 +195,14 @@ public class ExcelLocalTranslatorHelperToDeckApi {
     }
 
     // 参考 java.util.Properties 的 saveConvert 方法，简单实现转义（这里只处理常见字符）
+
     /**
      * @param theString 参数
      * @param escapeSpace 参数
      */
     private String saveConvert(String theString, boolean escapeSpace) {
-        theString = theString.replaceAll("###\\[","").replaceAll("]###","");
-        theString = theString.replaceAll("###\\{","").replaceAll("}###","");
+        theString = theString.replaceAll("###\\[", "").replaceAll("]###", "");
+        theString = theString.replaceAll("###\\{", "").replaceAll("}###", "");
         int len = theString.length();
 
         StringBuilder outBuffer = new StringBuilder(len * 2);
@@ -204,8 +210,9 @@ public class ExcelLocalTranslatorHelperToDeckApi {
             char aChar = theString.charAt(x);
             switch (aChar) {
                 case ' ':
-                    if (x == 0 || escapeSpace)
+                    if (x == 0 || escapeSpace) {
                         outBuffer.append('\\');
+                    }
                     outBuffer.append(' ');
                     break;
                 case '\\':
@@ -240,10 +247,13 @@ public class ExcelLocalTranslatorHelperToDeckApi {
 
     /**
      * 将单元格内容转换为字符串（支持不同类型）
+     *
      * @param cell 参数
      */
     private String getCellStringValue(Cell cell) {
-        if (cell == null) return "";
+        if (cell == null) {
+            return "";
+        }
         DataFormatter formatter = new DataFormatter();
         return formatter.formatCellValue(cell);
     }
@@ -253,6 +263,7 @@ public class ExcelLocalTranslatorHelperToDeckApi {
      */
     public static class OrderedProperties extends Properties {
         private final LinkedHashSet<Object> keys = new LinkedHashSet<>();
+
         /**
          * @param key 目标键
          * @param value 参数值
@@ -275,12 +286,14 @@ public class ExcelLocalTranslatorHelperToDeckApi {
     }
 
     // 测试 main 方法
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) {
         ExcelLocalTranslatorHelperToDeckApi exporter = new ExcelLocalTranslatorHelperToDeckApi();
-        String excelPath = System.getProperty("user.dir") + "/wheel/wheel-docs/src/main/resources/toDeckApi.xlsx";  // 请替换为实际路径
+        String excelPath = System.getProperty("user.dir")
+                + "/wheel/wheel-docs/src/main/resources/toDeckApi.xlsx";  // 请替换为实际路径
         boolean appendMode; // true 为追加模式，false 为覆盖模式
 
 

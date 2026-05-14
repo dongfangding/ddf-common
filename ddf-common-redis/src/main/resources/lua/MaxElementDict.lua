@@ -3,18 +3,18 @@
 -- 特殊逻辑，当积分超过1000分，因为分数是一直在变化的，超过部分的分数要保留，哪个用户触发的则哪个用户超出的分数要保留，而且总的分数也要保留
 
 -- gets all fields from a hash as a dictionary
-local hgetall = function (key)
-  local bulk = redis.call('HGETALL', key)
-	local result = {}
-	local nextkey
-	for i, v in ipairs(bulk) do
-		if i % 2 == 1 then
-			nextkey = v
-		else
-			result[nextkey] = v
-		end
-	end
-	return result
+local hgetall = function(key)
+    local bulk = redis.call('HGETALL', key)
+    local result = {}
+    local nextkey
+    for i, v in ipairs(bulk) do
+        if i % 2 == 1 then
+            nextkey = v
+        else
+            result[nextkey] = v
+        end
+    end
+    return result
 end
 -- 身份，即hash key
 local identity = ARGV[1]

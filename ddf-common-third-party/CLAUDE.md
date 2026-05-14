@@ -6,11 +6,11 @@
 
 ## 核心类
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.third.party.oss.OssApi` | OSS 操作接口 |
-| `com.ddf.boot.common.third.party.sms.SmsApi` | 短信发送接口 |
-| `com.ddf.boot.common.third.party.config.ThirdPartyProperties` | 配置属性 |
+| 类路径                                                           | 功能       |
+|---------------------------------------------------------------|----------|
+| `com.ddf.boot.common.third.party.oss.OssApi`                  | OSS 操作接口 |
+| `com.ddf.boot.common.third.party.sms.SmsApi`                  | 短信发送接口   |
+| `com.ddf.boot.common.third.party.config.ThirdPartyProperties` | 配置属性     |
 
 ## 使用说明
 

@@ -13,16 +13,14 @@ public interface BizTransactionExecutor extends SmartInitializingSingleton {
 
     /**
      * 执行
+     *
      * @param msg 消息内容
      * @param arg 参数值
-     * @return
      */
     boolean execute(Message msg, Object arg);
 
     /**
      * 获取业务实现路由key
-     *
-     * @return
      */
     String getRouteKey();
 

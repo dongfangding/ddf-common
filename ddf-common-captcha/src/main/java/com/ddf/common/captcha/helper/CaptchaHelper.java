@@ -47,22 +47,21 @@ public class CaptchaHelper {
 
     private final CaptchaCacheService captchaCacheService;
 
-	private final CacheAdapter cacheAdapter;
+    private final CacheAdapter cacheAdapter;
 
     /**
      * 校验成功响应码，与 anji-captcha 三方库保持一致。
      */
     private static final String CAPTCHA_SUCCESS_CODE = "0000";
 
-    public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha,
-            CaptchaProperties captchaProperties, CaptchaService captchaService,
-            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
+    public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
+            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
         this.captchaService = captchaService;
         this.captchaCacheService = captchaCacheService;
-		this.cacheAdapter = cacheAdapter;
+        this.cacheAdapter = cacheAdapter;
     }
 
     /**
@@ -149,8 +148,8 @@ public class CaptchaHelper {
         result.setImageBase64(captchaVO.getJigsawImageBase64());
         result.setWordList(captchaVO.getWordList());
         result.setVerifyCode(captchaVO.getPointJson());
-		result.setWidth(310);
-		result.setHeight(155);
+        result.setWidth(310);
+        result.setHeight(155);
         return result;
     }
 
@@ -174,28 +173,26 @@ public class CaptchaHelper {
             }
             final ResponseModel checkResult = captchaService.check(vo);
             if (!CAPTCHA_SUCCESS_CODE.equals(checkResult.getRepCode())) {
-                throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(), checkResult.getRepMsg());
+                throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(),
+                        checkResult.getRepMsg());
             }
         }
-		final String captchaVerification = IdsUtil.getUniqueId();
-		cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
-        return CaptchaCheckResult.builder()
-				.uuid(request.getUuid())
-                .captchaVerification(captchaVerification)
-                .build();
+        final String captchaVerification = IdsUtil.getUniqueId();
+        cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
+        return CaptchaCheckResult.builder().uuid(request.getUuid()).captchaVerification(captchaVerification).build();
     }
 
-	/**
-	 * 服务端二次校验接口
-	 *
-	 * @param request
-	 */
-	public void serverSecondCheck(CaptchaSecondCheckRequest request) {
-		final boolean b = cacheAdapter.hasCaptchaVerification(request.getUuid(), request.getCaptchaVerification());
-		if (!b) {
-			throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
-		}
-	}
+    /**
+     * 服务端二次校验接口
+     *
+     * @param request
+     */
+    public void serverSecondCheck(CaptchaSecondCheckRequest request) {
+        final boolean b = cacheAdapter.hasCaptchaVerification(request.getUuid(), request.getCaptchaVerification());
+        if (!b) {
+            throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
+        }
+    }
 
     /**
      * 根据 token 获取验证码。

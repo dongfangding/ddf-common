@@ -28,6 +28,7 @@ public abstract class AbstractOnsMessageListener<D extends Serializable> impleme
     public Class<D> getDomainClass() {
         return domainClass;
     }
+
     /**
      * @param message 参数
      * @param domain 参数

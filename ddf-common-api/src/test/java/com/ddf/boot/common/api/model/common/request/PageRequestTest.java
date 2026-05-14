@@ -34,6 +34,7 @@ class PageRequestTest {
         }
     }
 
+
     @Nested
     @DisplayName("isUnPaged 方法测试")
     class IsUnPagedTests {
@@ -45,6 +46,7 @@ class PageRequestTest {
             assertThat(request.isUnPaged()).isFalse();
         }
     }
+
 
     @Nested
     @DisplayName("getPageNumAdaptive 方法测试")
@@ -73,6 +75,7 @@ class PageRequestTest {
         }
     }
 
+
     @Nested
     @DisplayName("getPageSizeAdaptive 方法测试")
     class GetPageSizeAdaptiveTests {
@@ -91,6 +94,7 @@ class PageRequestTest {
             assertThat(request.getPageSizeAdaptive()).isEqualTo(PageRequest.DEFAULT_PAGE_SIZE);
         }
     }
+
 
     @Nested
     @DisplayName("getStartIndex 方法测试")
@@ -139,6 +143,7 @@ class PageRequestTest {
         }
     }
 
+
     @Nested
     @DisplayName("getEndIndex 方法测试")
     class GetEndIndexTests {
@@ -164,6 +169,7 @@ class PageRequestTest {
             assertThat(request.getEndIndex()).isEqualTo(40);
         }
     }
+
 
     @Nested
     @DisplayName("checkArgument 方法测试")
@@ -202,6 +208,7 @@ class PageRequestTest {
         }
     }
 
+
     @Nested
     @DisplayName("DefaultPageRequest 静态工厂测试")
     class DefaultPageRequestTests {
@@ -233,6 +240,7 @@ class PageRequestTest {
             assertThat(request.getEndIndex()).isEqualTo(100); // 80 + 20
         }
     }
+
 
     @Nested
     @DisplayName("分页计算集成测试")
@@ -267,6 +275,7 @@ class PageRequestTest {
             assertThat(request.getEndIndex()).isEqualTo(100);
         }
     }
+
 
     /**
      * 测试用 PageRequest 实现类

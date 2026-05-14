@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- *
  * 批量组合id
  *
  * @author dongfang.ding

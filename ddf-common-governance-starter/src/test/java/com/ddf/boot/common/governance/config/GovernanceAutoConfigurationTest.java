@@ -14,9 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GovernanceAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(GovernanceAutoConfiguration.class))
-            .withUserConfiguration(MailSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(GovernanceAutoConfiguration.class)).withUserConfiguration(
+            MailSupportConfiguration.class);
 
     @Test
     void shouldCreateMailServiceWhenMailDependenciesExist() {
@@ -25,9 +25,8 @@ class GovernanceAutoConfigurationTest {
 
     @Test
     void shouldNotCreateMailServiceWhenMailFeatureDisabled() {
-        contextRunner
-                .withPropertyValues("customizer.governance.mail.enabled=false")
-                .run(context -> assertThat(context).doesNotHaveBean(MailService.class));
+        contextRunner.withPropertyValues("customizer.governance.mail.enabled=false").run(
+                context -> assertThat(context).doesNotHaveBean(MailService.class));
     }
 
     @Configuration(proxyBeanMethods = false)

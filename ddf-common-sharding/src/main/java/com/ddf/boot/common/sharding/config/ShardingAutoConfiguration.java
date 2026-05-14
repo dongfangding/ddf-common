@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * ShardingSphere 自动配置类.
- *
  * <p>注意: ShardingSphere 5.4.0 推荐使用 YAML 配置文件方式.
  * 此自动配置类用于从 YAML 配置文件加载 ShardingSphere 配置.</p>
  *
@@ -61,20 +60,19 @@ public class ShardingAutoConfiguration {
      * </p>
      *
      * @param dataSourceMapProvider 数据源 Map Provider
-     * @param rulesProvider         规则配置 Provider
-     * @param modeConfigProvider    模式配置 Provider
+     * @param rulesProvider 规则配置 Provider
+     * @param modeConfigProvider 模式配置 Provider
      * @return 数据源 Bean
      * @throws SQLException SQL 异常
      */
     @Bean
     @Conditional(LocalRulesCondition.class)
-    public DataSource shardingSphereDataSource(
-            final ObjectProvider<Map<String, DataSource>> dataSourceMapProvider,
+    public DataSource shardingSphereDataSource(final ObjectProvider<Map<String, DataSource>> dataSourceMapProvider,
             final ObjectProvider<Collection<RuleConfiguration>> rulesProvider,
             final ObjectProvider<ModeConfiguration> modeConfigProvider) throws SQLException {
         Map<String, DataSource> dataSourceMap = dataSourceMapProvider.getIfAvailable(Collections::emptyMap);
-        Collection<RuleConfiguration> ruleConfigs = Optional.ofNullable(rulesProvider.getIfAvailable())
-                .orElseGet(ArrayList::new);
+        Collection<RuleConfiguration> ruleConfigs = Optional.ofNullable(rulesProvider.getIfAvailable()).orElseGet(
+                ArrayList::new);
         ModeConfiguration modeConfiguration = modeConfigProvider.getIfAvailable();
 
         if (dataSourceMap.isEmpty() && ruleConfigs.isEmpty()) {
@@ -82,8 +80,8 @@ public class ShardingAutoConfiguration {
         }
 
         // ShardingSphere 5.4.0 API: createDataSource(ModeConfiguration, Map, Collection, Properties)
-        return ShardingSphereDataSourceFactory.createDataSource(
-                modeConfiguration, dataSourceMap, ruleConfigs, props.getProps());
+        return ShardingSphereDataSourceFactory.createDataSource(modeConfiguration, dataSourceMap, ruleConfigs,
+                props.getProps());
     }
 
     /**
@@ -93,14 +91,13 @@ public class ShardingAutoConfiguration {
      * </p>
      *
      * @param dataSourceMapProvider 数据源 Map Provider
-     * @param modeConfigProvider    模式配置 Provider
+     * @param modeConfigProvider 模式配置 Provider
      * @return 数据源 Bean
      * @throws SQLException SQL 异常
      */
     @Bean
     @ConditionalOnMissingBean(DataSource.class)
-    public DataSource dataSource(
-            final ObjectProvider<Map<String, DataSource>> dataSourceMapProvider,
+    public DataSource dataSource(final ObjectProvider<Map<String, DataSource>> dataSourceMapProvider,
             final ObjectProvider<ModeConfiguration> modeConfigProvider) throws SQLException {
         Map<String, DataSource> dataSourceMap = dataSourceMapProvider.getIfAvailable(Collections::emptyMap);
         ModeConfiguration modeConfiguration = modeConfigProvider.getIfAvailable();
@@ -114,7 +111,7 @@ public class ShardingAutoConfiguration {
         }
 
         // ShardingSphere 5.4.0 API: createDataSource(ModeConfiguration, Map, Collection, Properties)
-        return ShardingSphereDataSourceFactory.createDataSource(
-                modeConfiguration, dataSourceMap, Collections.emptyList(), props.getProps());
+        return ShardingSphereDataSourceFactory.createDataSource(modeConfiguration, dataSourceMap,
+                Collections.emptyList(), props.getProps());
     }
 }

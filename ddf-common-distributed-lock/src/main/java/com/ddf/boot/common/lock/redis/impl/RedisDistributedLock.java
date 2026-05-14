@@ -31,6 +31,7 @@ public class RedisDistributedLock implements DistributedLock {
      * redis锁属性类
      */
     private final DistributedLockRedisProperties distributedLockRedisProperties;
+
     public RedisDistributedLock(RedissonClient redissonClient, DistributedLockRedisProperties properties) {
         this.redissonClient = redissonClient;
         this.distributedLockRedisProperties = properties;
@@ -40,13 +41,11 @@ public class RedisDistributedLock implements DistributedLock {
      * 尝试获取锁并执行业务, 这个获取锁在指定的 waitTime 内是阻塞等待的。
      * 如果在 waitTime 时间内未获取到锁，则返回失败。
      *
-     * @param lockKey        锁
-     * @param waitTime       加锁等待时间
-     * @param timeUnit       加锁等待时间单位
+     * @param lockKey 锁
+     * @param waitTime 加锁等待时间
+     * @param timeUnit 加锁等待时间单位
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则返回null
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R tryLock(String lockKey, int waitTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
@@ -60,9 +59,7 @@ public class RedisDistributedLock implements DistributedLock {
             locked = lock.tryLock(waitTime, timeUnit);
         } catch (InterruptedException e) {
             // 恢复中断状态，供后续代码或框架判断线程状态
-            Thread
-                    .currentThread()
-                    .interrupt();
+            Thread.currentThread().interrupt();
             log.warn("redisson-获取锁时线程被中断, lockKey = {}", lockKey);
         }
         if (!locked) {
@@ -86,13 +83,11 @@ public class RedisDistributedLock implements DistributedLock {
      * leaseTime是拿到锁之后多久释放锁，使用这个特性看门狗会失效
      * 注意：由于 lock.lock() 是阻塞的，此方法除非抛出异常，否则必然会执行 successHandler。
      *
-     * @param lockKey        锁
-     * @param leaseTime      锁获取到之后多久释放锁
-     * @param timeUnit       锁获取到之后多久释放锁
+     * @param lockKey 锁
+     * @param leaseTime 锁获取到之后多久释放锁
+     * @param timeUnit 锁获取到之后多久释放锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调（注：在完全阻塞模式下，此参数基本无效，除非 lock 抛出异常）
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R lockWork(String lockKey, int leaseTime, TimeUnit timeUnit, BusinessHandler<R> successHandler,
@@ -102,11 +97,8 @@ public class RedisDistributedLock implements DistributedLock {
             // 该方法会一直阻塞直到获取锁成功或发生异常
             lock.lock(leaseTime, timeUnit);
         } catch (Exception e) {
-            log.error(
-                    "redisson-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread
-                            .currentThread()
-                            .getName(), lockKey, e
-            );
+            log.error("redisson-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey,
+                    e);
             if (Objects.nonNull(failureHandler)) {
                 return failureHandler.handle();
             }
@@ -125,11 +117,9 @@ public class RedisDistributedLock implements DistributedLock {
     /**
      * lock时不指定leaseTime使用看门狗特性来执行加锁业务
      *
-     * @param lockKey        锁
+     * @param lockKey 锁
      * @param successHandler 加锁成功回调
      * @param failureHandler 加锁失败回调， 如果未提供则抛出加锁失败异常
-     * @return
-     * @throws Exception
      */
     @Override
     public <R> R lockWork(String lockKey, BusinessHandler<R> successHandler, BusinessHandler<R> failureHandler) {
@@ -138,10 +128,8 @@ public class RedisDistributedLock implements DistributedLock {
             // 默认阻塞式获取锁，并启用看门狗续期
             lock.lock();
         } catch (Exception e) {
-            log.error("redisson看门狗-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread
-                    .currentThread()
-                    .getName(), lockKey, e
-            );
+            log.error("redisson看门狗-阻塞加锁发生异常, thread = {}, lockKey = {}", Thread.currentThread().getName(),
+                    lockKey, e);
             if (Objects.nonNull(failureHandler)) {
                 return failureHandler.handle();
             }

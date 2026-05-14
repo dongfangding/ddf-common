@@ -57,11 +57,13 @@ public class AuthPrincipal implements Principal, Serializable {
      * 为了防止参数被拿走之后用
      */
     private Long timeStamp;
+
     public AuthPrincipal(String accessKeyId, String authCode, LoginType loginType) {
         this.accessKeyId = accessKeyId;
         this.authCode = authCode;
         this.loginType = loginType;
     }
+
     /**
      * @param accessKeyId 参数
      * @param accessKeyName 参数
@@ -86,7 +88,6 @@ public class AuthPrincipal implements Principal, Serializable {
      * @param accessKeyId 访问键ID
      * @param authCode 参数
      * @param loginType 参数
-     * @return
      */
     public static AuthPrincipal buildChannelPrincipal(String accessKeyId, String authCode, LoginType loginType) {
         return new AuthPrincipal(accessKeyId, authCode, loginType);
@@ -97,7 +98,6 @@ public class AuthPrincipal implements Principal, Serializable {
      *
      * @param accessKeyId 访问键ID
      * @param loginType 参数
-     * @return
      */
     public static AuthPrincipal buildChannelPrincipal(String accessKeyId, LoginType loginType) {
         return new AuthPrincipal(accessKeyId, DEFAULT_AUTH_CODE, loginType);
@@ -112,6 +112,7 @@ public class AuthPrincipal implements Principal, Serializable {
     public String getName() {
         return accessKeyId;
     }
+
     /**
      * @param o 参数
      */

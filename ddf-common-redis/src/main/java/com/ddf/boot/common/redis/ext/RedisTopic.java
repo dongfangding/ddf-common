@@ -12,7 +12,6 @@ import org.redisson.api.listener.MessageListener;
  * @author Mitchell
  * @version 1.0
  * @since 2020/09/18 13:42
- *
  * <pre>
  *     @Test
  *     public void test() {
@@ -30,10 +29,12 @@ public class RedisTopic {
     private final String name;
 
     private final RTopic topic;
+
     public static RedisTopic newInstance(String name, RedissonClient redissonClient) {
         RTopic topic = redissonClient.getTopic(name);
         return new RedisTopic(name, topic);
     }
+
     /**
      * @param name 参数
      * @param topic 参数

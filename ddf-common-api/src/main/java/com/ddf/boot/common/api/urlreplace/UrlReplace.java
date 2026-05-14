@@ -24,8 +24,6 @@ public @interface UrlReplace {
 
     /**
      * 存储桶名称
-     *
-     * @return
      */
     String bucket() default "default";
 }

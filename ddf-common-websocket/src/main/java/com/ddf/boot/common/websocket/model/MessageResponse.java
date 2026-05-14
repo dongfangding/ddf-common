@@ -79,6 +79,7 @@ public class MessageResponse<T> implements Serializable {
      * 响应的数据
      */
     private T payload;
+
     public MessageResponse(Integer code, String message, T payload) {
         this.code = code;
         this.message = message;
@@ -87,8 +88,6 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 代表没有返回值的空对象
-     *
-     * @return
      */
     public static MessageResponse<?> none() {
         return NONE;
@@ -97,12 +96,14 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> successWithNoneRequestId() {
         return success(null, null);
     }
+
     /**
      * @param requestId 参数
      */
     public static <T> MessageResponse<T> success(String requestId) {
         return success(requestId, null);
     }
+
     /**
      * @param requestId 参数
      * @param payload 参数
@@ -110,6 +111,7 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> success(String requestId, T payload) {
         return new MessageResponse<>(SERVER_CODE_COMPLETE, "操作成功", requestId, payload);
     }
+
     /**
      * @param requestId 参数
      * @param message 参数
@@ -117,6 +119,7 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> failure(String requestId, String message) {
         return failure(requestId, SERVER_CODE_ERROR, message);
     }
+
     /**
      * @param code 参数
      * @param message 参数
@@ -124,12 +127,14 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> fastFailure(Integer code, String message) {
         return failure(null, code, message);
     }
+
     /**
      * @param message 参数
      */
     public static <T> MessageResponse<T> fastFailure(String message) {
         return failure(null, SERVER_CODE_ERROR, message);
     }
+
     /**
      * @param requestId 参数
      * @param code 参数
@@ -138,6 +143,7 @@ public class MessageResponse<T> implements Serializable {
     public static <T> MessageResponse<T> failure(String requestId, Integer code, String message) {
         return new MessageResponse<>(code, message, requestId, null);
     }
+
     /**
      * @param requestId 参数
      * @param message 参数
@@ -156,7 +162,6 @@ public class MessageResponse<T> implements Serializable {
      * 阻塞实现如果超时的一个提示方法
      *
      * @param requestId 参数
-     * @return
      */
     public static <T> MessageResponse<T> delay(String requestId) {
         return new MessageResponse<>(SERVER_CODE_RECEIVED, "【" + requestId + "】指令已经下发，请稍后确认结果！", null);
@@ -164,8 +169,6 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 异步提示方法
-     *
-     * @return
      */
     public static <T> MessageResponse<T> confirm() {
         return new MessageResponse<>(SERVER_CODE_COMPLETE, "下发指令成功，请稍后确认结果！", null);
@@ -173,8 +176,6 @@ public class MessageResponse<T> implements Serializable {
 
     /**
      * 客户端针对同一个业务主键进行重复请求
-     *
-     * @return
      */
     public static <T> MessageResponse<T> repeatRequest() {
         return new MessageResponse<>(SERVER_CODE_CLIENT_REPEAT_REQUEST, "重复请求！", null);

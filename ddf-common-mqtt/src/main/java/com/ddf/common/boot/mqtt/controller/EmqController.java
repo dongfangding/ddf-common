@@ -53,8 +53,6 @@ public class EmqController {
      * 演示发送消息，非正式使用
      *
      * @param message 消息内容
-     * @return
-     * @throws MqttException
      */
     @GetMapping("send")
     public ResponseData<String> send(String message) throws MqttException {
@@ -69,7 +67,6 @@ public class EmqController {
      * 原始发布消息，忽略处理一些规则，使用String接受参数，否则无法反序列化，定制化的接口在这个上层包装再处理
      *
      * @param request 请求对象
-     * @return
      */
     @PostMapping("publish")
     public ResponseData<MqttMessageResponse> publish(@RequestBody InnerMqttMessageRequest request) {
@@ -80,7 +77,6 @@ public class EmqController {
      * 获取emq连接信息
      *
      * @param request 请求对象
-     * @return
      */
     @GetMapping("getConnectionInfo")
     public ResponseData<ConnectionInfoResponse> getConnectionInfo(ConnectionInfoRequest request) {
@@ -110,16 +106,14 @@ public class EmqController {
             final String clientId = client.getClientIdPrefix();
 
             // 服务端用户
-            if (request
-                    .getClientId()
-                    .startsWith(clientId)) {
+            if (request.getClientId().startsWith(clientId)) {
                 if (StringUtils.isAllBlank(username, password)) {
                     EmqHttpResponseUtil.success(response, "服务端未配置用户名和密码无需校验，服务端连接认证通过");
                     return;
                 }
                 // 匹配用户名和密码
-                if (Objects.equals(username, request.getUsername()) && Objects.equals(
-                        password, request.getPassword())) {
+                if (Objects.equals(username, request.getUsername()) && Objects.equals(password,
+                        request.getPassword())) {
                     EmqHttpResponseUtil.success(response, "服务端连接认证通过");
                 } else {
                     EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
@@ -173,9 +167,7 @@ public class EmqController {
      */
     @PostMapping("acl")
     public void acl(@RequestBody EmqAclRequest request, HttpServletResponse response) {
-        if (request
-                .getTopic()
-                .contains(GlobalStorage.WILDCARD_CHARACTER)) {
+        if (request.getTopic().contains(GlobalStorage.WILDCARD_CHARACTER)) {
             EmqHttpResponseUtil.error(response, "普通用户ACL未认证通过");
         }
         // 普通用户（一般为客户端）不允许直接使用调用底层的连接进行发布，必须请求服务端接口，服务端接口使用超级用户进行发布数据

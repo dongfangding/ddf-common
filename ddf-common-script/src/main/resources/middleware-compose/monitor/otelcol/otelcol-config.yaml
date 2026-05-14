@@ -55,7 +55,7 @@ exporters:
       max_elapsed_time: 10m
 
 service:
-  extensions: [health_check, file_storage]
+  extensions: [ health_check, file_storage ]
 
   telemetry:
     metrics:
@@ -68,11 +68,11 @@ service:
 
   pipelines:
     traces:
-      receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [otlp/jaeger]
+      receivers: [ otlp ]
+      processors: [ memory_limiter, batch ]
+      exporters: [ otlp/jaeger ]
 
     metrics:
-      receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [otlphttp/prometheus]
+      receivers: [ otlp ]
+      processors: [ memory_limiter, batch ]
+      exporters: [ otlphttp/prometheus ]

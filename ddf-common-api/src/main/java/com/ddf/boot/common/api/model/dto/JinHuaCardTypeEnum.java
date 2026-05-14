@@ -31,15 +31,15 @@ public enum JinHuaCardTypeEnum {
     private static final Map<String, JinHuaCardTypeEnum> MAPPINGS;
 
     static {
-        MAPPINGS = Arrays
-                .stream(values())
-                .collect(Collectors.toMap(JinHuaCardTypeEnum::getType, obj -> obj));
+        MAPPINGS = Arrays.stream(values()).collect(Collectors.toMap(JinHuaCardTypeEnum::getType, obj -> obj));
 
     }
+
     JinHuaCardTypeEnum(String type, String desc) {
         this.type = type;
         this.desc = desc;
     }
+
     /**
      * @param value 参数值
      */

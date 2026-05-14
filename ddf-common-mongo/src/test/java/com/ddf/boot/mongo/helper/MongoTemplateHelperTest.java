@@ -127,6 +127,7 @@ class MongoTemplateHelperTest {
         }
     }
 
+
     public static class DemoVo {
         private String name;
 

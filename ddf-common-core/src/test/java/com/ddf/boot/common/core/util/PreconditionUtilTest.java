@@ -21,26 +21,20 @@ class PreconditionUtilTest {
     @Test
     @DisplayName("checkArgument 失败时应抛出业务异常")
     void shouldThrowBusinessExceptionWhenCheckArgumentFails() {
-        BusinessException messageException = assertThrows(
-            BusinessException.class,
-            () -> PreconditionUtil.checkArgument(false, "参数错误")
-        );
+        BusinessException messageException = assertThrows(BusinessException.class,
+                () -> PreconditionUtil.checkArgument(false, "参数错误"));
         assertEquals("参数错误", messageException.getDescription());
 
-        BusinessException callbackException = assertThrows(
-            BusinessException.class,
-            () -> PreconditionUtil.checkArgument(false, BaseErrorCallbackCode.REQUEST_TOO_MANY)
-        );
+        BusinessException callbackException = assertThrows(BusinessException.class,
+                () -> PreconditionUtil.checkArgument(false, BaseErrorCallbackCode.REQUEST_TOO_MANY));
         assertEquals(BaseErrorCallbackCode.REQUEST_TOO_MANY.getCode(), callbackException.getCode());
     }
 
     @Test
     @DisplayName("checkBadRequest 失败时应抛出 BadRequestException")
     void shouldThrowBadRequestExceptionWhenCheckBadRequestFails() {
-        BadRequestException exception = assertThrows(
-            BadRequestException.class,
-            () -> PreconditionUtil.checkBadRequest(false, "请求非法")
-        );
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> PreconditionUtil.checkBadRequest(false, "请求非法"));
 
         assertEquals("请求非法", exception.getDescription());
     }
@@ -48,19 +42,15 @@ class PreconditionUtilTest {
     @Test
     @DisplayName("requiredParamCheck 应校验空对象与约束对象")
     void shouldValidateRequiredParameters() {
-        BusinessException nullException = assertThrows(
-            BusinessException.class,
-            () -> PreconditionUtil.requiredParamCheck(null)
-        );
+        BusinessException nullException = assertThrows(BusinessException.class,
+                () -> PreconditionUtil.requiredParamCheck(null));
         assertEquals(BaseErrorCallbackCode.BAD_REQUEST.getCode(), nullException.getCode());
 
         DemoParam invalidParam = new DemoParam();
         invalidParam.setName("");
 
-        BadRequestException invalidException = assertThrows(
-            BadRequestException.class,
-            () -> PreconditionUtil.requiredParamCheck(invalidParam)
-        );
+        BadRequestException invalidException = assertThrows(BadRequestException.class,
+                () -> PreconditionUtil.requiredParamCheck(invalidParam));
         assertEquals("name不能为空", invalidException.getDescription());
     }
 

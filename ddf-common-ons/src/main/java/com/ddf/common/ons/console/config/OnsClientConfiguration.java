@@ -54,19 +54,18 @@ public class OnsClientConfiguration implements SmartInitializingSingleton, Appli
             prop.checkRequired();
             String onsClientBeanName = ConsoleConstants.getOnsClientBeanName(env.toUpperCase());
             genericApplicationContext.registerBean(onsClientBeanName, Client.class, () -> {
-                Config config = new Config()
-                        .setAccessKeyId(prop.getAccessKeyId())
-                        .setAccessKeySecret(prop.getAccessKeySecret())
-                        .setEndpoint(prop.getEndpoint());
+                Config config = new Config().setAccessKeyId(prop.getAccessKeyId()).setAccessKeySecret(
+                        prop.getAccessKeySecret()).setEndpoint(prop.getEndpoint());
                 try {
                     return new Client(config);
                 } catch (Exception e) {
-                    throw new IllegalStateException(
-                            "初始化ONS SDK Client异常， env: %s, props: %s".formatted(env, prop), e);
+                    throw new IllegalStateException("初始化ONS SDK Client异常， env: %s, props: %s".formatted(env, prop),
+                            e);
                 }
             });
         });
     }
+
     /**
      * @param applicationContext 参数
      */

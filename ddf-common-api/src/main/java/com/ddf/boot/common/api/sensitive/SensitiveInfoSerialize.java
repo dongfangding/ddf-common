@@ -24,12 +24,14 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
 
     public SensitiveInfoSerialize() {
     }
+
     /**
      * @param type 参数
      */
     public SensitiveInfoSerialize(final SensitiveTypeEnum type) {
         this.type = type;
     }
+
     /**
      * @param value 参数值
      * @param jsonGenerator 参数
@@ -79,6 +81,7 @@ public class SensitiveInfoSerialize extends JsonSerializer<String> implements Co
                 break;
         }
     }
+
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider serializerProvider, BeanProperty beanProperty)
             throws JsonMappingException {

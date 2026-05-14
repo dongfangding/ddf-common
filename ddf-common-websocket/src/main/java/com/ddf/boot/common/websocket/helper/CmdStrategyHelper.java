@@ -46,7 +46,7 @@ public class CmdStrategyHelper {
      *
      * @param authPrincipal 认证主体对象
      * @param message 消息内容
-     * @param isResponse    是否时响应数据
+     * @param isResponse 是否时响应数据
      */
     public void buildDeviceCmdRunningState(AuthPrincipal authPrincipal, Message<?> message, boolean isResponse) {
         //        deviceCmdRunningStatePersistencePool.execute(() -> {

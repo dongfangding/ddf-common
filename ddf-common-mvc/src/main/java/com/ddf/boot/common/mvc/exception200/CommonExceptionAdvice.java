@@ -22,7 +22,6 @@ public class CommonExceptionAdvice extends AbstractExceptionHandler {
      * @param exception 异常对象
      * @param httpServletRequest httpservlet请求参数
      * @param response 响应对象
-     * @return
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody

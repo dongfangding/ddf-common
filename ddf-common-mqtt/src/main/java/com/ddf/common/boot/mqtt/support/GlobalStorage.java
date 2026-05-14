@@ -4,7 +4,6 @@ import com.ddf.common.boot.mqtt.config.properties.EmqConnectionProperties;
 
 /**
  * <p>全局数据源</p >
- *
  * 该类用来静态存储全局使用的变量， 在系统内部任意地方可全局使用这里的变量。
  * 有些是常量，有些是外部注入对象， 内部会负责将与之对应的数据存储进去， 使用方尽管使用即可
  *
@@ -37,8 +36,6 @@ public class GlobalStorage {
 
     /**
      * 获取系统clientId前缀，因为这个值可以配置，所以提供判断方法获取
-     *
-     * @return
      */
     public static String getSystemClientIdPrefix() {
         return GlobalStorage.SYSTEM_CLIENT_ID_PREFIX.startsWith(GlobalStorage.TOPIC_SEPARATOR) ?

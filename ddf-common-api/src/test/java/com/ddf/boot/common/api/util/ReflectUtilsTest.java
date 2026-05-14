@@ -53,6 +53,7 @@ class ReflectUtilsTest {
         private String parentValue = "parent";
     }
 
+
     public static class DemoChild extends DemoParent {
         private String name;
 

@@ -41,12 +41,14 @@ public class LarkTag {
     public static LarkTag buildText(String content) {
         return LarkTag.of("text", content, "", "");
     }
+
     /**
      * @param href 参数
      */
     public static LarkTag buildHref(String href) {
         return LarkTag.of("a", "", href, "");
     }
+
     /**
      * @param userId 参数
      */

@@ -11,12 +11,12 @@
 
 `ddf-common-dependency` 解决的是 **"依赖版本碎片化与冲突"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 多模块版本对齐 | 20+ 子模块各自声明版本，升级时改漏 | 一处声明，全局生效 |
-| 依赖冲突 | A 模块用 Redisson 3.20，B 模块用 3.50 | BOM 统一锁定版本 |
-| 业务接入简化 | 业务工程需要记忆大量版本号 | 引入 BOM 后，版本号全省略 |
-| 技术栈升级 | Spring Boot 3.3 → 3.5 需要改几十个 pom | 改 BOM 中一个属性即可 |
+| 场景      | 典型问题                             | 模块提供的能力         |
+|---------|----------------------------------|-----------------|
+| 多模块版本对齐 | 20+ 子模块各自声明版本，升级时改漏              | 一处声明，全局生效       |
+| 依赖冲突    | A 模块用 Redisson 3.20，B 模块用 3.50   | BOM 统一锁定版本      |
+| 业务接入简化  | 业务工程需要记忆大量版本号                    | 引入 BOM 后，版本号全省略 |
+| 技术栈升级   | Spring Boot 3.3 → 3.5 需要改几十个 pom | 改 BOM 中一个属性即可   |
 
 ---
 
@@ -62,22 +62,22 @@
 
 BOM 中所有版本号集中在 `<properties>` 中管理：
 
-| 属性 | 当前版本 | 说明 |
-| ----- | ----- | ----- |
-| `spring-boot.version` | `3.5.9` | Spring Boot 基础版本 |
-| `revision` | `boot3.5-2026.1-SNAPSHOT` | ddf-common 全局版本 |
-| `java.version` | `17` | JDK 版本 |
-| `mysql.version` | `9.1.0` | MySQL 驱动 |
-| `druid.version` | `1.2.27` | Druid 连接池 |
-| `redisson.version` | `3.52.0` | Redisson |
-| `mybatis.version` | `3.0.4` | MyBatis Spring Boot Starter |
-| `jwt.version` | `0.12.6` | JJWT |
-| `hutool.version` | `5.8.42` | Hutool |
-| `curator.version` | `5.3.0` | Curator (Zookeeper) |
-| `rocketmq.version` | `2.3.3` | RocketMQ Spring Boot Starter |
-| `fastjson2.version` | `2.0.58` | Fastjson2 |
-| `guava.version` | `33.4.8-jre` | Guava |
-| `xxl-job-version` | `3.3.0` | XXL-Job |
+| 属性                    | 当前版本                      | 说明                           |
+|-----------------------|---------------------------|------------------------------|
+| `spring-boot.version` | `3.5.9`                   | Spring Boot 基础版本             |
+| `revision`            | `boot3.5-2026.1-SNAPSHOT` | ddf-common 全局版本              |
+| `java.version`        | `17`                      | JDK 版本                       |
+| `mysql.version`       | `9.1.0`                   | MySQL 驱动                     |
+| `druid.version`       | `1.2.27`                  | Druid 连接池                    |
+| `redisson.version`    | `3.52.0`                  | Redisson                     |
+| `mybatis.version`     | `3.0.4`                   | MyBatis Spring Boot Starter  |
+| `jwt.version`         | `0.12.6`                  | JJWT                         |
+| `hutool.version`      | `5.8.42`                  | Hutool                       |
+| `curator.version`     | `5.3.0`                   | Curator (Zookeeper)          |
+| `rocketmq.version`    | `2.3.3`                   | RocketMQ Spring Boot Starter |
+| `fastjson2.version`   | `2.0.58`                  | Fastjson2                    |
+| `guava.version`       | `33.4.8-jre`              | Guava                        |
+| `xxl-job-version`     | `3.3.0`                   | XXL-Job                      |
 
 ### 3.2 依赖管理范围
 
@@ -110,11 +110,13 @@ BOM 管理两类依赖：
 在 `ddf-common-dependency/pom.xml` 中执行两步：
 
 1. 在 `properties` 节添加版本号：
+
 ```xml
 <my-new-lib.version>1.0.0</my-new-lib.version>
 ```
 
 2. 在 `dependencyManagement` 节添加依赖声明：
+
 ```xml
 <dependency>
     <groupId>com.example</groupId>
@@ -137,17 +139,18 @@ mvn -Prelease clean deploy
 
 ## 5. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| 所有 `ddf-common-*` 模块 | 版本由 BOM 的 `${revision}` 统一管理 |
+| 模块                         | 协作方式                                     |
+|----------------------------|------------------------------------------|
+| 所有 `ddf-common-*` 模块       | 版本由 BOM 的 `${revision}` 统一管理             |
 | `spring-boot-dependencies` | BOM 先 import Spring Boot BOM，再在其上补充自定义依赖 |
-| 业务工程 | 通过 `scope=import` 引入 BOM，省略所有版本号 |
+| 业务工程                       | 通过 `scope=import` 引入 BOM，省略所有版本号         |
 
 ---
 
 ## 6. FAQ
 
-**Q1：BOM 和父 POM 有什么区别？**  
+**Q1：BOM 和父 POM 有什么区别？**
+
 - 父 POM（`ddf-common/pom.xml`）：管理模块聚合、构建插件、发布配置
 - BOM（`ddf-common-dependency/pom.xml`）：只管理依赖版本，不管理构建生命周期
 - 业务工程通常只引入 BOM，不继承父 POM
@@ -155,10 +158,12 @@ mvn -Prelease clean deploy
 **Q2：为什么有些依赖在 BOM 中没有版本号？**  
 `spring-boot-dependencies` 已经管理的依赖（如 `spring-boot-starter-web`、`lombok`），BOM 直接复用其版本，不再重复声明。
 
-**Q3：如何查看当前 BOM 中所有管理的依赖？**  
+**Q3：如何查看当前 BOM 中所有管理的依赖？**
+
 ```bash
 cd ddf-common-dependency && mvn dependency:tree
 ```
+
 或查看 `.flattened-pom.xml` 中的完整 `dependencyManagement` 列表。
 
 **Q4：子模块可以声明自己的版本吗？**  

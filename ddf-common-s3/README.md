@@ -12,12 +12,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-s3` solves the **"business systems need unified access to multiple object storage services"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Local development testing | Don't want to depend on external cloud storage | Local MinIO deployment, config-and-connect |
-| Production cloud vendor switching | Different vendor SDKs have large differences; migration cost is high | Unified `S3Api` interface; switching only requires config changes |
-| Image upload and preview | Need thumbnails and presigned access | `FileUploadHelper` auto-generates thumbnails; `S3Api` generates temporary access URLs |
-| Temporary file sharing | Private Bucket files need time-limited access | Presigned download links that expire automatically |
+| Scenario                          | Typical Problem                                                      | What the Module Provides                                                              |
+|-----------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| Local development testing         | Don't want to depend on external cloud storage                       | Local MinIO deployment, config-and-connect                                            |
+| Production cloud vendor switching | Different vendor SDKs have large differences; migration cost is high | Unified `S3Api` interface; switching only requires config changes                     |
+| Image upload and preview          | Need thumbnails and presigned access                                 | `FileUploadHelper` auto-generates thumbnails; `S3Api` generates temporary access URLs |
+| Temporary file sharing            | Private Bucket files need time-limited access                        | Presigned download links that expire automatically                                    |
 
 ---
 
@@ -141,12 +141,12 @@ s3Api.delete(objectKey);
 
 Only configuration changes are needed to switch compatible implementations; zero business code changes:
 
-| Provider | endpoint example | path-style-access |
-| --- | --- | --- |
-| MinIO | `http://localhost:9000` | `true` |
-| AWS S3 | `https://s3.amazonaws.com` | `false` |
-| Alibaba Cloud OSS | `https://oss-cn-hangzhou.aliyuncs.com` | `false` |
-| Tencent Cloud COS | `https://cos.ap-guangzhou.myqcloud.com` | `false` |
+| Provider          | endpoint example                        | path-style-access |
+|-------------------|-----------------------------------------|-------------------|
+| MinIO             | `http://localhost:9000`                 | `true`            |
+| AWS S3            | `https://s3.amazonaws.com`              | `false`           |
+| Alibaba Cloud OSS | `https://oss-cn-hangzhou.aliyuncs.com`  | `false`           |
+| Tencent Cloud COS | `https://cos.ap-guangzhou.myqcloud.com` | `false`           |
 
 ### 5.2 Automatic Bucket Creation
 
@@ -187,11 +187,11 @@ customizer:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-vps` | VPS module provides FastDFS file storage; S3 module provides cloud object storage. Choose one by scenario or combine them |
-| `ddf-common-core` | JSON serialization and utility support |
-| `ddf-common-api` | Response DTO definitions such as `UploadResult`, `PresignedUrlResult` |
+| Module            | How They Cooperate                                                                                                        |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-vps`  | VPS module provides FastDFS file storage; S3 module provides cloud object storage. Choose one by scenario or combine them |
+| `ddf-common-core` | JSON serialization and utility support                                                                                    |
+| `ddf-common-api`  | Response DTO definitions such as `UploadResult`, `PresignedUrlResult`                                                     |
 
 ---
 

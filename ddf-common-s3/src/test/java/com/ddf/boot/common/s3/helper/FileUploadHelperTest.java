@@ -34,10 +34,8 @@ class FileUploadHelperTest {
         FileUploadHelper helper = new FileUploadHelper(s3Api, new S3Properties());
         MockMultipartFile file = new MockMultipartFile("file", "empty.png", "image/png", new byte[0]);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> helper.upload("platform", "identity", file)
-        );
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> helper.upload("platform", "identity", file));
 
         assertEquals("上传文件不能为空", exception.getMessage());
     }
@@ -47,17 +45,10 @@ class FileUploadHelperTest {
     void shouldRejectNonImageFileByDefault() {
         S3Api s3Api = Mockito.mock(S3Api.class);
         FileUploadHelper helper = new FileUploadHelper(s3Api, new S3Properties());
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "report.pdf",
-                "application/pdf",
-                "demo".getBytes()
-        );
+        MockMultipartFile file = new MockMultipartFile("file", "report.pdf", "application/pdf", "demo".getBytes());
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> helper.upload("platform", "identity", file)
-        );
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> helper.upload("platform", "identity", file));
 
         assertEquals("不支持的文件类型: pdf", exception.getMessage());
     }
@@ -69,13 +60,9 @@ class FileUploadHelperTest {
         S3Properties properties = new S3Properties();
         properties.setAllowedFileTypes(Set.of("pdf"));
         FileUploadHelper helper = new FileUploadHelper(s3Api, properties);
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "report.pdf",
-                "application/pdf",
-                "demo".getBytes()
-        );
-        UploadResult uploadResult = UploadResult.builder().objectKey("uploaded/report.pdf").url("https://cdn/report.pdf").build();
+        MockMultipartFile file = new MockMultipartFile("file", "report.pdf", "application/pdf", "demo".getBytes());
+        UploadResult uploadResult = UploadResult.builder().objectKey("uploaded/report.pdf").url(
+                "https://cdn/report.pdf").build();
         when(s3Api.upload(any(String.class), any(), eq("application/pdf"), eq(4L))).thenReturn(uploadResult);
 
         UploadResult result = helper.upload("platform", "identity", file);
@@ -88,15 +75,14 @@ class FileUploadHelperTest {
     void shouldUploadThumbnailAndSetThumbPath() {
         S3Api s3Api = Mockito.mock(S3Api.class);
         FileUploadHelper helper = new FileUploadHelper(s3Api, new S3Properties());
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "avatar.png",
-                "image/png",
-                Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7Z0a4AAAAASUVORK5CYII=")
-        );
-        when(s3Api.upload(any(String.class), any(), any(String.class), any(Long.class)))
-                .thenReturn(UploadResult.builder().objectKey("origin/path/avatar.png").url("https://cdn/origin.png").build())
-                .thenReturn(UploadResult.builder().objectKey("origin/path/avatar_thumb.jpg").url("https://cdn/avatar_thumb.jpg").build());
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.png", "image/png", Base64.getDecoder()
+                .decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7Z0a4AAAAASUVORK5CYII="));
+        when(s3Api.upload(any(String.class), any(), any(String.class), any(Long.class))).thenReturn(
+                        UploadResult.builder().objectKey("origin/path/avatar.png").url("https://cdn/origin.png").build())
+                .thenReturn(UploadResult.builder()
+                        .objectKey("origin/path/avatar_thumb.jpg")
+                        .url("https://cdn/avatar_thumb.jpg")
+                        .build());
 
         UploadResult result = helper.upload("platform", "identity", file, true);
 
@@ -111,17 +97,10 @@ class FileUploadHelperTest {
         S3Properties properties = new S3Properties();
         properties.setMaxFileSize(3);
         FileUploadHelper helper = new FileUploadHelper(s3Api, properties);
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "avatar.png",
-                "image/png",
-                "demo".getBytes()
-        );
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.png", "image/png", "demo".getBytes());
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> helper.upload("platform", "identity", file)
-        );
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> helper.upload("platform", "identity", file));
 
         assertEquals("文件大小不能超过 0MB", exception.getMessage());
     }
@@ -131,12 +110,7 @@ class FileUploadHelperTest {
     void shouldFallbackToOctetStreamWhenContentTypeMissing() {
         S3Api s3Api = Mockito.mock(S3Api.class);
         FileUploadHelper helper = new FileUploadHelper(s3Api, new S3Properties());
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "avatar.png",
-                null,
-                "demo".getBytes()
-        );
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.png", null, "demo".getBytes());
         UploadResult uploadResult = UploadResult.builder().objectKey("uploaded/avatar.png").build();
         when(s3Api.upload(any(String.class), any(), eq("application/octet-stream"), eq(4L))).thenReturn(uploadResult);
 

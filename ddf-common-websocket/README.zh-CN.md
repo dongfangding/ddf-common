@@ -11,12 +11,12 @@
 
 `ddf-common-websocket` 解决的是 **"Spring Boot 应用中实时双向通信"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| --- | --- | --- |
-| 服务端推送 | 订单状态变更后需即时通知客户端 | `WsMessageServiceImpl.sendCmd` 点对点推送 |
-| 即时通讯 | 聊天消息需要广播给多个用户 | `WsMessageServiceImpl.sendCmdAll` 全量广播 |
-| 在线管理后台 | 管理员需要查看当前在线连接数 | `WebsocketSessionStorage` 统一管理 Session |
-| 安全握手 | WebSocket 连接需校验 Token | `HandshakeAuth` 扩展点 |
+| 场景     | 典型问题                  | 模块提供的能力                                |
+|--------|-----------------------|----------------------------------------|
+| 服务端推送  | 订单状态变更后需即时通知客户端       | `WsMessageServiceImpl.sendCmd` 点对点推送   |
+| 即时通讯   | 聊天消息需要广播给多个用户         | `WsMessageServiceImpl.sendCmdAll` 全量广播 |
+| 在线管理后台 | 管理员需要查看当前在线连接数        | `WebsocketSessionStorage` 统一管理 Session |
+| 安全握手   | WebSocket 连接需校验 Token | `HandshakeAuth` 扩展点                    |
 
 ---
 
@@ -172,11 +172,11 @@ public class ConnectionListener implements WebSocketHandlerListener {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
-| `ddf-common-redis` | 集群环境下可通过 Redis Topic 实现跨实例消息广播 |
-| `ddf-common-authentication` | Token 校验可复用认证模块的 TokenUtil |
-| `ddf-common-core` | JSON 序列化、线程池等基础支撑 |
+| 模块                          | 协作方式                           |
+|-----------------------------|--------------------------------|
+| `ddf-common-redis`          | 集群环境下可通过 Redis Topic 实现跨实例消息广播 |
+| `ddf-common-authentication` | Token 校验可复用认证模块的 TokenUtil     |
+| `ddf-common-core`           | JSON 序列化、线程池等基础支撑              |
 
 ---
 

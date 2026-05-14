@@ -22,7 +22,7 @@ public class ListWrapperResponse<E> {
      * 静态构建
      *
      * @param list 原始数据集合
-     * @param <E>  集合泛型
+     * @param <E> 集合泛型
      * @return 返回包装后类型
      */
     public static <E> ListWrapperResponse<E> of(List<E> list) {

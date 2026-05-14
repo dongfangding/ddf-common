@@ -56,7 +56,6 @@ public final class JsonUtil {
      * 对象转Json
      *
      * @param obj 对象实例
-     * @return
      */
     public static String toJson(Object obj) {
         if (ObjectUtils.isEmpty(obj)) {
@@ -87,7 +86,6 @@ public final class JsonUtil {
      *
      * @param json JSON 字符串
      * @param type 类型
-     * @return
      */
     public static <T> T toBean(String json, Class<T> type) {
         return toBean(json, OBJECT_MAPPER.getTypeFactory().constructType(type));
@@ -98,7 +96,6 @@ public final class JsonUtil {
      *
      * @param json JSON 字符串
      * @param type 类型
-     * @return
      */
     public static <T> T toBeanChecked(Object json, Class<T> type) {
         if (Objects.isNull(json) || StringUtils.isBlank(json.toString())) {
@@ -113,7 +110,6 @@ public final class JsonUtil {
      * @param json JSON 字符串
      * @param paramType 参数类型
      * @param types 类型集合
-     * @return
      */
     public static <T> T toBean(String json, Class<?> paramType, Class<?>... types) {
         return toBean(json, OBJECT_MAPPER.getTypeFactory().constructParametricType(paramType, types));
@@ -124,7 +120,6 @@ public final class JsonUtil {
      *
      * @param json JSON 字符串
      * @param type 类型
-     * @return
      */
     public static <T> T toBean(String json, TypeReference<T> type) {
         return toBean(json, OBJECT_MAPPER.getTypeFactory().constructType(type));
@@ -135,7 +130,6 @@ public final class JsonUtil {
      *
      * @param json JSON 字符串
      * @param type 类型
-     * @return
      */
     public static <T> T toBean(String json, JavaType type) {
         try {
@@ -153,7 +147,6 @@ public final class JsonUtil {
      * 对象转字节
      *
      * @param obj 对象实例
-     * @return
      */
     @SneakyThrows
     public static byte[] toByte(Object obj) {
@@ -170,7 +163,6 @@ public final class JsonUtil {
      *
      * @param bytes bytes参数
      * @param type 类型
-     * @return
      */
     @SneakyThrows
     public static <T> T toBean(byte[] bytes, Class<T> type) {
@@ -180,10 +172,9 @@ public final class JsonUtil {
     /**
      * 将json数据转换成pojo对象list
      *
-     *
      * @param json JSON 字符串
      * @param beanType 类型
-     * @param <T>      类型
+     * @param <T> 类型
      * @return T
      */
     @SneakyThrows
@@ -201,34 +192,33 @@ public final class JsonUtil {
     }
 
 
-//    public static void main(String[] args) throws JsonProcessingException {
-//        String json = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
-//        long now = System.currentTimeMillis();
-//        final List<ClubBackground> x = toList(json, ClubBackground.class);
-//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-//
-//        // 这个的性能最好
-//        now = System.currentTimeMillis();
-//        final List<ClubBackground> backgrounds = getInstance().readValue(
-//                json, new TypeReference<List<ClubBackground>>() {});
-//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-//
-//        now = System.currentTimeMillis();
-//        JSONUtil.toList(new JSONArray(json), ClubBackground.class);
-//        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
-//
-//        // 上述结果， 因此还是用第二种方式
-//        //  循环耗时: 83
-//        //  循环耗时: 5
-//        //  循环耗时: 54
-//    }
+    //    public static void main(String[] args) throws JsonProcessingException {
+    //        String json = "[{\"invitePicUrl\": \"SYSTEM/club_background/1-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/1-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/1-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/1-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/2-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/2-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/2-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/2-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/3-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/3-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/3-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/3-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/4-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/4-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/4-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/4-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/5-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/5-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/5-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/5-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/6-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/6-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/6-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/6-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/7-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/7-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/7-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/7-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/8-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/8-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/8-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/8-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/9-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/9-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/9-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/9-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/10-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/10-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/10-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/10-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/11-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/11-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/11-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/11-3.png\"}, {\"invitePicUrl\": \"SYSTEM/club_background/12-4.png\", \"myClubPicUrl\": \"SYSTEM/club_background/12-2.png\", \"recommendPicUrl\": \"SYSTEM/club_background/12-1.png\", \"personalCenterPicUrl\": \"SYSTEM/club_background/12-3.png\"}]";
+    //        long now = System.currentTimeMillis();
+    //        final List<ClubBackground> x = toList(json, ClubBackground.class);
+    //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+    //
+    //        // 这个的性能最好
+    //        now = System.currentTimeMillis();
+    //        final List<ClubBackground> backgrounds = getInstance().readValue(
+    //                json, new TypeReference<List<ClubBackground>>() {});
+    //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+    //
+    //        now = System.currentTimeMillis();
+    //        JSONUtil.toList(new JSONArray(json), ClubBackground.class);
+    //        System.out.println("循环耗时: " + (System.currentTimeMillis() - now));
+    //
+    //        // 上述结果， 因此还是用第二种方式
+    //        //  循环耗时: 83
+    //        //  循环耗时: 5
+    //        //  循环耗时: 54
+    //    }
 
     /**
      * 根据策略生成Json
      *
      * @param obj 对象实例
      * @param strategy 策略参数
-     * @return
      */
     public static String toJson(Object obj, Include strategy) {
         if (ObjectUtils.isEmpty(obj)) {
@@ -251,7 +241,6 @@ public final class JsonUtil {
      * 初始化ObjectMapperW
      *
      * @param objectMapper ObjectMapper 实例
-     * @return
      */
     private static ObjectMapper config(ObjectMapper objectMapper) {
         // 忽略反序列化时在json字符串中存在, 但在java对象中不存在的属性

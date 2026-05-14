@@ -27,11 +27,8 @@ class GlobalRateLimitKeyGeneratorTest {
         GlobalRateLimitKeyGenerator generator = new GlobalRateLimitKeyGenerator();
         JoinPoint joinPoint = mockJoinPoint(DemoController.class, "submit");
 
-        String key = generator.generateKey(
-                joinPoint,
-                DemoController.class.getMethod("submit").getAnnotation(RateLimit.class),
-                new RateLimitProperties()
-        );
+        String key = generator.generateKey(joinPoint,
+                DemoController.class.getMethod("submit").getAnnotation(RateLimit.class), new RateLimitProperties());
 
         assertTrue(key.contains("rate_limit"));
         assertTrue(key.contains(DemoController.class.getName()));

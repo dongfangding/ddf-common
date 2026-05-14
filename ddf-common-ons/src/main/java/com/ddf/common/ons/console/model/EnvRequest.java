@@ -13,8 +13,6 @@ public interface EnvRequest {
 
     /**
      * 获取要操作的环境
-     *
-     * @return
      */
     Set<String> getEnvList();
 

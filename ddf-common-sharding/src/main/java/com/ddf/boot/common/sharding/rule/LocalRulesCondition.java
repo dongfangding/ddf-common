@@ -26,15 +26,16 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * Local rules condition for ShardingSphere.
- *
  * <p>Checks if ShardingSphere rule configuration exists in local file
  * (application.yml/properties) by looking for the prefix "spring.shardingsphere.rules".</p>
  */
 public final class LocalRulesCondition extends SpringBootCondition {
 
     private static final String SHARDING_PREFIX = "spring.shardingsphere.rules";
+
     @Override
-    public ConditionOutcome getMatchOutcome(final ConditionContext conditionContext, final AnnotatedTypeMetadata annotatedTypeMetadata) {
+    public ConditionOutcome getMatchOutcome(final ConditionContext conditionContext,
+            final AnnotatedTypeMetadata annotatedTypeMetadata) {
         ConfigurableEnvironment environment = (ConfigurableEnvironment) conditionContext.getEnvironment();
         // 检查是否包含 ShardingSphere 规则配置前缀
         if (containsPropertyPrefix(environment, SHARDING_PREFIX)) {
@@ -52,15 +53,15 @@ public final class LocalRulesCondition extends SpringBootCondition {
      * Check if environment contains property with given prefix.
      *
      * @param environment environment参数
-     * @param prefix      前缀参数
+     * @param prefix 前缀参数
      * @return true if any property starts with the prefix
      */
     private boolean containsPropertyPrefix(final ConfigurableEnvironment environment, final String prefix) {
         for (PropertySource<?> propertySource : environment.getPropertySources()) {
             Object source = propertySource.getSource();
             if (source instanceof java.util.Map) {
-                @SuppressWarnings("unchecked")
-                java.util.Map<String, Object> map = (java.util.Map<String, Object>) source;
+                @SuppressWarnings("unchecked") java.util.Map<String, Object> map =
+                        (java.util.Map<String, Object>) source;
                 for (String key : map.keySet()) {
                     if (key.startsWith(prefix)) {
                         return true;

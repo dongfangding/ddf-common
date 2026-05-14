@@ -22,6 +22,7 @@ public class StringLastCharShardingRule implements RedisShardingRule<Integer, In
 
     /**
      * 分片字段的值在模板中的第几个位置
+     *
      * @param args 参数
      */
     private Integer shardingKeyInArgsIndex;
@@ -30,6 +31,7 @@ public class StringLastCharShardingRule implements RedisShardingRule<Integer, In
      * 分片取当前分片字段的最后几个字符
      */
     private Integer shardingMod;
+
     @Override
     public String getSharding(Object... args) {
         if (shardingKeyInArgsIndex >= args.length) {

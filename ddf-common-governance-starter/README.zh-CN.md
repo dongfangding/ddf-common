@@ -11,12 +11,12 @@
 
 `ddf-common-governance-starter` 解决的是 **"运维与治理能力的标准化收口"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 告警邮件 | 系统异常时需要发送通知邮件 | `MailService` / `MailUtil` 安全发送，未配置时不初始化 |
-| 线程池可观测 | 自定义线程池的活跃数、队列堆积无监控 | 自动扫描并绑定 Micrometer 指标到 Prometheus |
-| 健康检查 | Spring Boot Actuator 需要统一暴露端点 | 聚合 `spring-boot-starter-actuator` + `micrometer-registry-prometheus` |
-| 治理层扩展 | 后续审计、链路追踪、告警需要统一入口 | 治理层约定前缀 `customizer.governance.*`，能力可插拔 |
+| 场景     | 典型问题                          | 模块提供的能力                                                              |
+|--------|-------------------------------|----------------------------------------------------------------------|
+| 告警邮件   | 系统异常时需要发送通知邮件                 | `MailService` / `MailUtil` 安全发送，未配置时不初始化                             |
+| 线程池可观测 | 自定义线程池的活跃数、队列堆积无监控            | 自动扫描并绑定 Micrometer 指标到 Prometheus                                    |
+| 健康检查   | Spring Boot Actuator 需要统一暴露端点 | 聚合 `spring-boot-starter-actuator` + `micrometer-registry-prometheus` |
+| 治理层扩展  | 后续审计、链路追踪、告警需要统一入口            | 治理层约定前缀 `customizer.governance.*`，能力可插拔                              |
 
 ---
 
@@ -77,12 +77,12 @@ management:
         include: health,info,metrics,prometheus
 ```
 
-| 属性 | 说明 | 默认值 |
-| ----- | ----- | ----- |
-| `mail.enabled` | 是否允许注册邮件服务 | `true` |
-| `observability.enabled` | 是否允许注册可观测性组件 | `true` |
-| `observability.thread-pool.enabled` | 是否绑定线程池指标 | `true` |
-| `observability.thread-pool.scan-all` | 是否扫描全部线程池 Bean | `false` |
+| 属性                                      | 说明                    | 默认值                  |
+|-----------------------------------------|-----------------------|----------------------|
+| `mail.enabled`                          | 是否允许注册邮件服务            | `true`               |
+| `observability.enabled`                 | 是否允许注册可观测性组件          | `true`               |
+| `observability.thread-pool.enabled`     | 是否绑定线程池指标             | `true`               |
+| `observability.thread-pool.scan-all`    | 是否扫描全部线程池 Bean        | `false`              |
 | `observability.thread-pool.metric-name` | Micrometer meter 名称前缀 | `custom.thread.pool` |
 
 > `mail.enabled=true` 不代表邮件一定启动。只有同时满足 `spring.mail.*` 已配置 + `JavaMailSender` Bean 存在时，`MailService` 才会注册。因此本 starter 可以**安全地**引入到所有项目中。
@@ -212,12 +212,12 @@ management:
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-core` | `SpringContextHolder` 为 `MailUtil` 提供延迟 Bean 查找 |
-| `ddf-common-api` | 邮件发送失败抛出 `ServerErrorException`，由全局异常处理器统一包装 |
-| `ddf-common-mvc` | Actuator 健康检查、Prometheus 指标端点由 Web 层承载 |
-| `ddf-common-starter-default` | 默认 starter 已包含本模块 |
+| 模块                           | 协作方式                                            |
+|------------------------------|-------------------------------------------------|
+| `ddf-common-core`            | `SpringContextHolder` 为 `MailUtil` 提供延迟 Bean 查找 |
+| `ddf-common-api`             | 邮件发送失败抛出 `ServerErrorException`，由全局异常处理器统一包装    |
+| `ddf-common-mvc`             | Actuator 健康检查、Prometheus 指标端点由 Web 层承载          |
+| `ddf-common-starter-default` | 默认 starter 已包含本模块                               |
 
 ---
 
@@ -229,7 +229,8 @@ management:
 **Q2：`MailUtil.sendMimeMail` 在邮件未配置时调用会怎样？**  
 会抛出 `ServerErrorException(MAIL_SEND_FAILURE)`。若业务希望在邮件不可用时静默忽略，请自行捕获异常或注入 `MailService` 前做存在性检查。
 
-**Q3：线程池指标为什么在 Prometheus 中看不到？**  
+**Q3：线程池指标为什么在 Prometheus 中看不到？**
+
 1. 确认 `management.endpoints.web.exposure.include` 包含 `prometheus`
 2. 确认线程池 Bean 名称匹配 `include-bean-name-patterns`
 3. 确认线程池 Bean 的类型在支持列表内（见 4.2 节）
@@ -237,6 +238,7 @@ management:
 
 **Q4：邮件的 `from` 地址从哪里读取？**  
 从 `spring.mail.properties.from` 读取。示例：
+
 ```yaml
 spring:
   mail:

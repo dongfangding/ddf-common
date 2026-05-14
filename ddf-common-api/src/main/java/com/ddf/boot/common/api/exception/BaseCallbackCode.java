@@ -15,22 +15,16 @@ public interface BaseCallbackCode {
 
     /**
      * 响应状态码
-     *
-     * @return
      */
     String getCode();
 
     /**
      * 响应消息
-     *
-     * @return
      */
     String getDescription();
 
     /**
      * 响应业务消息, 最终返回给用户的，如果需要隐藏系统异常细节，要记得重写这个方法
-     *
-     * @return
      */
     default String getBizMessage() {
         return getDescription();

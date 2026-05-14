@@ -5,7 +5,6 @@ import com.ddf.common.ids.service.model.common.ResultList;
 
 
 /**
- *
  * 雪花id业务接口
  *
  * @author dongfang.ding
@@ -13,14 +12,13 @@ import com.ddf.common.ids.service.model.common.ResultList;
  **/
 public class SnowflakeService {
     private final IDGen idGen;
+
     public SnowflakeService(IDGen idGen) {
         this.idGen = idGen;
     }
 
     /**
      * 获取雪花id
-     *
-     * @return
      */
     public Result get() {
         return idGen.get(null);
@@ -31,7 +29,6 @@ public class SnowflakeService {
      * 批量获取雪花id
      *
      * @param length 长度
-     * @return
      */
     public ResultList list(int length) {
         return idGen.list(null, length);

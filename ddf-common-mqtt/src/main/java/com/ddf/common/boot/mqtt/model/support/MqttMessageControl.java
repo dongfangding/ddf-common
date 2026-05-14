@@ -23,6 +23,7 @@ public class MqttMessageControl implements Serializable {
     @Serial
     private static final long serialVersionUID = -5649107898855362417L;
 
+
     /**
      * 默认配置单例，使用枚举模式避免序列化问题和线程安全问题
      */
@@ -82,8 +83,8 @@ public class MqttMessageControl implements Serializable {
      */
     private Boolean includeSender = Boolean.FALSE;
 
-     /**
-      * 是否异步发送
-      */
+    /**
+     * 是否异步发送
+     */
     private Boolean async = Boolean.FALSE;
 }

@@ -14,8 +14,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
 /**
- *
- *
  * 一个工具类，用于获取{@code Spring}的{@link ApplicationContext}，并直接对外暴露一些常用的的方法，
  *
  * @author dongfang.ding on 2018/12/31
@@ -34,8 +32,6 @@ public class SpringContextHolder {
      *
      * @param requiredType required类型
      * @param <T> 泛型类型
-     * @return
-     * @throws BeansException
      */
     public static <T> T getBeanWithStatic(Class<T> requiredType) throws BeansException {
         try {
@@ -44,18 +40,21 @@ public class SpringContextHolder {
             return null;
         }
     }
+
     /**
      * @param requiredType 参数
      */
     public static <T> T getBean(Class<T> requiredType) throws BeansException {
         return SpringUtil.getBean(requiredType);
     }
+
     /**
      * @param name 参数
      */
     public static Object getBean(String name) throws BeansException {
         return SpringUtil.getBean(name);
     }
+
     /**
      * @param name 参数
      * @param requiredType 参数
@@ -63,6 +62,7 @@ public class SpringContextHolder {
     public static <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return SpringUtil.getBean(name, requiredType);
     }
+
     /**
      * @param type 参数
      */
@@ -84,7 +84,6 @@ public class SpringContextHolder {
      *
      * @param type 类型
      * @param <T> 泛型类型
-     * @return
      */
     public static <T> boolean containsBeanType(Class<T> type) {
         try {

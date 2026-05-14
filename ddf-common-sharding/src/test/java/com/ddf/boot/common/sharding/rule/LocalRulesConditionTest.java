@@ -29,9 +29,7 @@ class LocalRulesConditionTest {
     void shouldMatchWhenRulePrefixExists() {
         MockEnvironment environment = new MockEnvironment();
         environment.getPropertySources().addFirst(new MockPropertySource().withProperty(
-                "spring.shardingsphere.rules.sharding.tables.user.actual-data-nodes",
-                "ds_${0..1}.user_${0..1}"
-        ));
+                "spring.shardingsphere.rules.sharding.tables.user.actual-data-nodes", "ds_${0..1}.user_${0..1}"));
 
         assertTrue(condition.getMatchOutcome(mockContext(environment), metadata).isMatch());
     }
@@ -39,8 +37,8 @@ class LocalRulesConditionTest {
     @Test
     @DisplayName("数据源地址包含 sharding 时应命中条件")
     void shouldMatchWhenDatasourceUrlContainsSharding() {
-        MockEnvironment environment = new MockEnvironment()
-                .withProperty("spring.datasource.url", "jdbc:shardingsphere:classpath:sharding.yaml");
+        MockEnvironment environment = new MockEnvironment().withProperty("spring.datasource.url",
+                "jdbc:shardingsphere:classpath:sharding.yaml");
 
         assertTrue(condition.getMatchOutcome(mockContext(environment), metadata).isMatch());
     }
@@ -48,8 +46,8 @@ class LocalRulesConditionTest {
     @Test
     @DisplayName("缺少规则配置时不应命中条件")
     void shouldNotMatchWhenNoRuleConfigurationFound() {
-        MockEnvironment environment = new MockEnvironment()
-                .withProperty("spring.datasource.url", "jdbc:mysql://127.0.0.1:3306/demo");
+        MockEnvironment environment = new MockEnvironment().withProperty("spring.datasource.url",
+                "jdbc:mysql://127.0.0.1:3306/demo");
 
         assertFalse(condition.getMatchOutcome(mockContext(environment), metadata).isMatch());
     }

@@ -10,6 +10,7 @@ public class LockingReleaseException extends Exception {
     public LockingReleaseException(Exception e) {
         super(e);
     }
+
     /**
      * @param msg 参数
      */

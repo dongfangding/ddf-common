@@ -20,9 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(AuthenticationAutoConfiguration.class))
-            .withUserConfiguration(AuthenticationTestConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(AuthenticationAutoConfiguration.class)).withUserConfiguration(
+            AuthenticationTestConfiguration.class);
 
     @Test
     void shouldRegisterAuthenticationBeansWhenEnabled() {
@@ -44,8 +44,7 @@ class AuthenticationAutoConfigurationTest {
 
     @Test
     void shouldNotRegisterCoreBeansWithoutAuthenticateFilter() {
-        new ApplicationContextRunner()
-                .withConfiguration(AutoConfigurations.of(AuthenticationAutoConfiguration.class))
+        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(AuthenticationAutoConfiguration.class))
                 .withBean(UserClaimService.class, () -> (request, userClaim) -> UserClaim.getDefaultUser())
                 .withBean(StringRedisTemplate.class, () -> Mockito.mock(StringRedisTemplate.class))
                 .withBean(EnvironmentHelper.class, () -> Mockito.mock(EnvironmentHelper.class))

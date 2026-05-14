@@ -5,7 +5,6 @@ import com.ddf.boot.common.redis.helper.RedisCommandHelper;
 
 /**
  * 滑块或点选文字验证码缓存实现
- *
  * <p>https://github.com/anji-plus/captcha</p>
  *
  * @author Snowball

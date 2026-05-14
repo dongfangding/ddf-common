@@ -74,8 +74,7 @@ public class HttpClientUtil {
                 // 建立连接超时
                 .setConnectTimeout(Timeout.ofSeconds(10))
                 // 超过这个时间的连接使用前要校验一次连接是否还能用，所以如果对方服务设置了最大的keep-alive小于这个值，可能会存在问题，要单独处理,目前增加了NoHttpResponseException的重试
-                .setValidateAfterInactivity(TimeValue.ofSeconds(30))
-                .build();
+                .setValidateAfterInactivity(TimeValue.ofSeconds(30)).build();
         CM = new PoolingHttpClientConnectionManager();
         // 最多缓存连接池数量
         CM.setMaxTotal(300);
@@ -127,6 +126,7 @@ public class HttpClientUtil {
 
                 return false;
             }
+
             /**
              * @param response 响应对象
              * @param execCount 参数
@@ -157,13 +157,10 @@ public class HttpClientUtil {
             }
         };
 
-        return HttpClients
-                .custom()
-                .setRetryStrategy(retryStrategy)
-                .setConnectionManager(CM)
-                .setDefaultRequestConfig(DEFAULT_REQUEST_CONFIG)
-                .build();
+        return HttpClients.custom().setRetryStrategy(retryStrategy).setConnectionManager(CM).setDefaultRequestConfig(
+                DEFAULT_REQUEST_CONFIG).build();
     }
+
     /**
      * @param timeoutMillis 参数
      */
@@ -177,8 +174,7 @@ public class HttpClientUtil {
                 // 从连接池中获取连接的超时时间
                 .setConnectionRequestTimeout(1000, TimeUnit.MILLISECONDS)
                 // 是否启用 HTTP 的 Expect: 100-Continue 机制，用于在发送POST/PUT请求体之前检查服务器是否可以处理请求
-                .setExpectContinueEnabled(true)
-                .build();
+                .setExpectContinueEnabled(true).build();
         REQUEST_CONFIG_MAP.put(timeoutMillis, requestConfig);
         return requestConfig;
     }
@@ -187,29 +183,18 @@ public class HttpClientUtil {
      * 定时打印连接池信息
      */
     private static void printState() {
-        Executors
-                .newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(
-                        () -> {
-                            final PoolingHttpClientConnectionManager cm = HttpClientUtil.CM;
-                            final Set<HttpRoute> routes = cm.getRoutes();
-                            for (HttpRoute route : routes) {
-                                log.info(
-                                        "连接池状态: total={}, defaultRoute={}, route = {}, available={}, leased={}, pending={}",
-                                        cm
-                                                .getTotalStats()
-                                                .getMax(), cm.getDefaultMaxPerRoute(), route.toString(), cm
-                                                .getStats(route)
-                                                .getAvailable(), cm
-                                                .getStats(route)
-                                                .getLeased(), cm
-                                                .getStats(route)
-                                                .getPending()
-                                );
-                            }
-                        }, 30, 30, TimeUnit.SECONDS
-                );
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            final PoolingHttpClientConnectionManager cm = HttpClientUtil.CM;
+            final Set<HttpRoute> routes = cm.getRoutes();
+            for (HttpRoute route : routes) {
+                log.info("连接池状态: total={}, defaultRoute={}, route = {}, available={}, leased={}, pending={}",
+                        cm.getTotalStats().getMax(), cm.getDefaultMaxPerRoute(), route.toString(),
+                        cm.getStats(route).getAvailable(), cm.getStats(route).getLeased(),
+                        cm.getStats(route).getPending());
+            }
+        }, 30, 30, TimeUnit.SECONDS);
     }
+
     /**
      * @param request 请求对象
      * @param headers 请求头集合
@@ -221,6 +206,7 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST JSON -----------------
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -228,6 +214,7 @@ public class HttpClientUtil {
     public static String postJson(String url, String postData) {
         return postJson(url, postData, null, DEFAULT_REQUEST_CONFIG);
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -236,6 +223,7 @@ public class HttpClientUtil {
     public static String postJson(String url, String postData, int timeoutMillis) {
         return postJson(url, postData, null, buildRequestConfig(timeoutMillis));
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -244,6 +232,7 @@ public class HttpClientUtil {
     public static String postJson(String url, String postData, Map<String, String> headers) {
         return postJson(url, postData, headers, DEFAULT_REQUEST_CONFIG);
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -253,6 +242,7 @@ public class HttpClientUtil {
     public static String postJson(String url, String postData, Map<String, String> headers, int timeoutMillis) {
         return postJson(url, postData, headers, buildRequestConfig(timeoutMillis));
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -269,6 +259,7 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST QUERY STRING -----------------
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -277,6 +268,7 @@ public class HttpClientUtil {
     public static String postQueryString(String url, String postData, Map<String, String> headers) {
         return postQueryString(url, postData, headers, DEFAULT_REQUEST_CONFIG);
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -286,6 +278,7 @@ public class HttpClientUtil {
     public static String postQueryString(String url, String postData, Map<String, String> headers, int timeoutMillis) {
         return postQueryString(url, postData, headers, buildRequestConfig(timeoutMillis));
     }
+
     /**
      * @param url 参数
      * @param postData 参数
@@ -303,6 +296,7 @@ public class HttpClientUtil {
     }
 
     // ----------------- POST WITHOUT BODY -----------------
+
     /**
      * @param url 参数
      * @param headers 请求头集合
@@ -310,6 +304,7 @@ public class HttpClientUtil {
     public static String post(String url, List<Header> headers) {
         return post(url, headers, DEFAULT_REQUEST_CONFIG);
     }
+
     /**
      * @param url 参数
      * @param headers 请求头集合
@@ -318,6 +313,7 @@ public class HttpClientUtil {
     public static String post(String url, List<Header> headers, int timeoutMillis) {
         return post(url, headers, buildRequestConfig(timeoutMillis));
     }
+
     /**
      * @param url 参数
      * @param headers 请求头集合
@@ -333,12 +329,14 @@ public class HttpClientUtil {
     }
 
     // ----------------- GET -----------------
+
     /**
      * @param url 参数
      */
     public static String get(String url) {
         return get(url, DEFAULT_REQUEST_CONFIG);
     }
+
     /**
      * @param url 参数
      * @param timeoutMillis 参数
@@ -346,6 +344,7 @@ public class HttpClientUtil {
     public static String get(String url, int timeoutMillis) {
         return get(url, buildRequestConfig(timeoutMillis));
     }
+
     /**
      * @param url 参数
      * @param config 参数
@@ -358,6 +357,7 @@ public class HttpClientUtil {
     }
 
     // ----------------- EXECUTE -----------------
+
     /**
      * @param request 请求对象
      */
@@ -371,20 +371,18 @@ public class HttpClientUtil {
         }
         try {
             // 使用 ResponseHandler 自动管理资源释放
-            return CLIENT.execute(
-                    request, response -> {
-                        int statusCode = response.getCode();
-                        if (statusCode != HttpStatus.SC_OK) {
-                            log.error("HTTP请求失败 - url: {}, 状态码: {}", uri, statusCode);
-                            // 必须消费掉 Entity 以便释放连接
-                            EntityUtils.consume(response.getEntity());
-                            return "";
-                        }
+            return CLIENT.execute(request, response -> {
+                int statusCode = response.getCode();
+                if (statusCode != HttpStatus.SC_OK) {
+                    log.error("HTTP请求失败 - url: {}, 状态码: {}", uri, statusCode);
+                    // 必须消费掉 Entity 以便释放连接
+                    EntityUtils.consume(response.getEntity());
+                    return "";
+                }
 
-                        HttpEntity resEntity = response.getEntity();
-                        return resEntity != null ? EntityUtils.toString(resEntity, StandardCharsets.UTF_8) : "";
-                    }
-            );
+                HttpEntity resEntity = response.getEntity();
+                return resEntity != null ? EntityUtils.toString(resEntity, StandardCharsets.UTF_8) : "";
+            });
         } catch (Exception e) {
             log.error("HTTP请求异常 - url: {}", uri, e);
             throw new BusinessException(BaseErrorCallbackCode.RESOURCE_REQUEST_ERROR);

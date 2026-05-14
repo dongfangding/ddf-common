@@ -25,6 +25,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     public static Map<String, ChannelInfo> channelStore = new ConcurrentHashMap<>();
+
     /**
      * @param ctx 参数
      */
@@ -32,6 +33,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     public void channelRegistered(ChannelHandlerContext ctx) {
         log.debug("客户端[{}]注册成功>>>>>", ctx.channel().remoteAddress());
     }
+
     /**
      * @param ctx 参数
      */
@@ -41,6 +43,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
         channels.add(ctx.channel());
         channelStore.put(ctx.channel().remoteAddress().toString(), ChannelInfo.registry(ctx.channel()));
     }
+
     /**
      * @param ctx 参数
      */
@@ -57,7 +60,6 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
      *
      * @param ctx 通道上下文
      * @param msg 消息内容
-     * @throws JsonProcessingException
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RequestContent<?> msg) throws JsonProcessingException {
@@ -65,6 +67,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
         log.debug("接收到客户端[{}]发送的数据: {}", ctx.channel().remoteAddress(), msg.serial());
         ctx.writeAndFlush(RequestContent.responseAccept(msg));
     }
+
     /**
      * @param ctx 参数
      * @param cause 参数

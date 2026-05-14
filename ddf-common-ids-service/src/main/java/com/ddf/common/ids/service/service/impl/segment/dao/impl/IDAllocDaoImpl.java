@@ -15,6 +15,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 public class IDAllocDaoImpl implements IDAllocDao {
     SqlSessionFactory sqlSessionFactory;
+
     public IDAllocDaoImpl(DataSource dataSource) {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
@@ -27,11 +28,13 @@ public class IDAllocDaoImpl implements IDAllocDao {
     public List<LeafAlloc> getAllLeafAllocs() {
         SqlSession sqlSession = sqlSessionFactory.openSession(false);
         try {
-            return sqlSession.selectList("com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getAllLeafAllocs");
+            return sqlSession.selectList(
+                    "com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getAllLeafAllocs");
         } finally {
             sqlSession.close();
         }
     }
+
     /**
      * @param tag 参数
      */
@@ -40,13 +43,15 @@ public class IDAllocDaoImpl implements IDAllocDao {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             sqlSession.update("com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.updateMaxId", tag);
-            LeafAlloc result = sqlSession.selectOne("com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getLeafAlloc", tag);
+            LeafAlloc result = sqlSession.selectOne(
+                    "com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getLeafAlloc", tag);
             sqlSession.commit();
             return result;
         } finally {
             sqlSession.close();
         }
     }
+
     /**
      * @param leafAlloc 参数
      */
@@ -55,7 +60,9 @@ public class IDAllocDaoImpl implements IDAllocDao {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             sqlSession.update("com.ddf.common.ids.service.service.impl.segment.dao.updateMaxIdByCustomStep", leafAlloc);
-            LeafAlloc result = sqlSession.selectOne("com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getLeafAlloc", leafAlloc.getKey());
+            LeafAlloc result = sqlSession.selectOne(
+                    "com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getLeafAlloc",
+                    leafAlloc.getKey());
             sqlSession.commit();
             return result;
         } finally {
@@ -67,7 +74,8 @@ public class IDAllocDaoImpl implements IDAllocDao {
     public List<String> getAllTags() {
         SqlSession sqlSession = sqlSessionFactory.openSession(false);
         try {
-            return sqlSession.selectList("com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getAllTags");
+            return sqlSession.selectList(
+                    "com.ddf.common.ids.service.service.impl.segment.dao.IDAllocMapper.getAllTags");
         } finally {
             sqlSession.close();
         }

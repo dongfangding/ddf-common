@@ -20,19 +20,16 @@ public @interface Log {
 
     /**
      * 日志名称
-     * @return
      */
     String desc() default "";
 
     /**
      * 是否打印入参
-     * @return
      */
     boolean printParams() default true;
 
     /**
      * 是否打印结果
-     * @return
      */
     boolean printResult() default false;
 }

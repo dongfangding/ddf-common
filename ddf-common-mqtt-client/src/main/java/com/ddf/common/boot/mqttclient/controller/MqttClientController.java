@@ -33,11 +33,11 @@ public class MqttClientController {
      * 发布消息
      *
      * @param request 请求对象
-     * @return
      */
     @PostMapping("publish")
     public ResponseData<MqttMessageResponse> publish(@RequestBody MqttMessageRequest request) {
-        final InnerMqttMessageRequest innerMqttMessageRequest = BeanCopierUtils.copy(request, InnerMqttMessageRequest.class);
+        final InnerMqttMessageRequest innerMqttMessageRequest = BeanCopierUtils.copy(request,
+                InnerMqttMessageRequest.class);
         innerMqttMessageRequest.setTopic(request.getTopic().getFullTopic());
         innerMqttMessageRequest.setBody(JsonUtil.toJson(request.getBody()));
         return mqttPublishClient.publish(innerMqttMessageRequest);

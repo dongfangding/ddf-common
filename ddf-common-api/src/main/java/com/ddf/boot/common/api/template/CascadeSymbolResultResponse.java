@@ -31,6 +31,7 @@ public class CascadeSymbolResultResponse {
      * 免费结果
      */
     private List<CascadeSymbolMatrixRound> children = new ArrayList<>();
+
     /**
      * @param self 参数
      * @param totalMultiple 参数

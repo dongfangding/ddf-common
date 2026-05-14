@@ -85,9 +85,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         WebSocketHandlerRegistration registration = registry.addHandler(
-                new DefaultWebSocketHandler(handlerMessageService, webSocketHandlerListener),
-                webSocketProperties.getEndPoint()
-        ).setHandshakeHandler(new CustomizeHandshakeHandler()).setAllowedOrigins("*");
+                        new DefaultWebSocketHandler(handlerMessageService, webSocketHandlerListener),
+                        webSocketProperties.getEndPoint())
+                .setHandshakeHandler(new CustomizeHandshakeHandler())
+                .setAllowedOrigins("*");
         if (CollUtil.isNotEmpty(webSocketProperties.getHandshakeInterceptors())) {
             registration.addInterceptors(
                     webSocketProperties.getHandshakeInterceptors().toArray(new HandshakeInterceptor[0]));
@@ -98,8 +99,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     /**
      * 每个底层WebSocket引擎都公开控制运行时特征的配置属性，例如消息缓冲区大小，空闲超时等。
-     *
-     * @return
      */
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
@@ -124,8 +123,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     }
 
     @Bean
-    public CmdStrategyHelper cmdStrategyHelper(
-            ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool) {
+    public CmdStrategyHelper cmdStrategyHelper(ThreadPoolTaskExecutor deviceCmdRunningStatePersistencePool) {
         return new CmdStrategyHelper(deviceCmdRunningStatePersistencePool);
     }
 
@@ -135,19 +133,18 @@ public class WebSocketConfig implements WebSocketConfigurer {
     }
 
     @Bean
-    public HandlerMessageService handlerMessageService(
-            ThreadPoolTaskExecutor handlerMessagePool, ChannelTransferService channelTransferService,
-            CmdStrategyHelper cmdStrategyHelper) {
-        return new HandlerMessageServiceImpl(handlerMessagePool, channelTransferService,
-                webSocketProperties, cmdStrategyHelper);
+    public HandlerMessageService handlerMessageService(ThreadPoolTaskExecutor handlerMessagePool,
+            ChannelTransferService channelTransferService, CmdStrategyHelper cmdStrategyHelper) {
+        return new HandlerMessageServiceImpl(handlerMessagePool, channelTransferService, webSocketProperties,
+                cmdStrategyHelper);
     }
 
     @Bean
     public WsMessageService wsMessageService(StringRedisTemplate stringRedisTemplate, Environment environment,
             ThreadPoolTaskExecutor batchCmdExecutor, ChannelTransferService channelTransferService,
             List<WsMessageFilter> wsMessageFilters) {
-        return new WsMessageServiceImpl(Optional.of(channelTransferService), stringRedisTemplate,
-                environment, batchCmdExecutor, wsMessageFilters);
+        return new WsMessageServiceImpl(Optional.of(channelTransferService), stringRedisTemplate, environment,
+                batchCmdExecutor, wsMessageFilters);
     }
 
     @Bean

@@ -22,7 +22,8 @@ public class SecureUtilTest {
         Assertions.assertEquals(data, SecureUtil.aesDecryptStr(SecureUtil.aesEncryptHex(data)));
 
         String aesSecret = "ggwegweegwegwegwegwegqasfsafweqe";
-        Assertions.assertEquals(data, SecureUtil.aesDecryptStrWithKey(SecureUtil.aesEncryptHexWithKey(data, aesSecret), aesSecret));
+        Assertions.assertEquals(data,
+                SecureUtil.aesDecryptStrWithKey(SecureUtil.aesEncryptHexWithKey(data, aesSecret), aesSecret));
     }
 
 

@@ -30,10 +30,10 @@ public class ServerNodeOfflineListener implements NodeEventListener {
      * <p>
      * client.setData().forPath(finalPath, "要放入的数据".getBytes())
      *
-     * @param client  客户端连接对象
-     * @param path    被创建的节点
+     * @param client 客户端连接对象
+     * @param path 被创建的节点
      * @param oldData 节点旧数据
-     * @param data    待处理数据
+     * @param data 待处理数据
      */
     @Override
     public void nodeCreate(CuratorFramework client, String path, ChildData oldData, ChildData data) {
@@ -43,10 +43,10 @@ public class ServerNodeOfflineListener implements NodeEventListener {
     /**
      * 节点数据改变事件
      *
-     * @param client  客户端连接对象
-     * @param path    被创建的节点
+     * @param client 客户端连接对象
+     * @param path 被创建的节点
      * @param oldData 节点旧数据
-     * @param data    待处理数据
+     * @param data 待处理数据
      */
     @Override
     public void nodeChange(CuratorFramework client, String path, ChildData oldData, ChildData data) {
@@ -58,10 +58,10 @@ public class ServerNodeOfflineListener implements NodeEventListener {
      * <p>
      * 还有一种情况，当集群中的服务是属于同一个服务时， 如果集群中的所有服务挂掉了，就没有人来处理这个事件了
      *
-     * @param client  客户端连接对象
-     * @param path    被创建的节点
+     * @param client 客户端连接对象
+     * @param path 被创建的节点
      * @param oldData 节点旧数据
-     * @param data    待处理数据
+     * @param data 待处理数据
      */
     @Override
     public void nodeDeleted(CuratorFramework client, String path, ChildData oldData, ChildData data) {

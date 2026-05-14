@@ -44,8 +44,7 @@ public class OssBeanAutoConfiguration {
     @Primary
     public OSS defaultOssClient(OssProperties ossProperties) {
         return new OSSClientBuilder().build(ossProperties.getEndpoint(), ossProperties.getAccessKeyId(),
-                ossProperties.getAccessKeySecret()
-        );
+                ossProperties.getAccessKeySecret());
     }
 
     /**
@@ -56,11 +55,11 @@ public class OssBeanAutoConfiguration {
     public IAcsClient defaultAcsClient(OssProperties ossProperties) {
         DefaultProfile.addEndpoint("", "Sts", ossProperties.getStsEndpoint());
         IClientProfile profile = DefaultProfile.getProfile("", ossProperties.getAccessKeyId(),
-                ossProperties.getAccessKeySecret()
-        );
+                ossProperties.getAccessKeySecret());
         // 用profile构造client
         return new DefaultAcsClient(profile);
     }
+
     /**
      * @param defaultAcsClient 参数
      * @param defaultOssClient 参数

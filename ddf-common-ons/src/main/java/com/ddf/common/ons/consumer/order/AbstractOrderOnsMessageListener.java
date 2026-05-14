@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2021/8/26 16:34
  **/
 @Slf4j
-public abstract class AbstractOrderOnsMessageListener<D extends Serializable>
-        extends AbstractOnsMessageListener<D> implements MessageOrderListener {
+public abstract class AbstractOrderOnsMessageListener<D extends Serializable> extends AbstractOnsMessageListener<D>
+        implements MessageOrderListener {
     @Override
     public OrderAction consume(final Message message, final ConsumeOrderContext context) {
         String payLoad = new String(message.getBody());
@@ -37,12 +37,14 @@ public abstract class AbstractOrderOnsMessageListener<D extends Serializable>
             }
             // 调用子类的执行业务方法
             executeBiz(domain);
-            LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] ShadingKey [{}] 消息",
+            LOGGER.info(
+                    "类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] ShadingKey [{}] 消息",
                     member, messageId, topic, message.getTag(), payLoad, message.getKey(), message.getShardingKey());
             infoMessage(message);
             return OrderAction.Success;
         } catch (Exception e) {
-            LOGGER.error("类 [{}] 消费失败 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] ShadingKey [{}] 消息, 原因:",
+            LOGGER.error(
+                    "类 [{}] 消费失败 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] ShadingKey [{}] 消息, 原因:",
                     member, messageId, topic, message.getTag(), payLoad, message.getKey(), message.getShardingKey(), e);
             errorMessage(message, e.getMessage());
             // 如果消费失败，挂起当前队列，那么后面的都会堵塞，所以这里消费失败要返回成功，然后通过日志去手工重试

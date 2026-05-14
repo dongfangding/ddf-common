@@ -35,76 +35,80 @@ import org.springframework.util.Assert;
  */
 public class ObjectStringRedisSerializer implements RedisSerializer<Object> {
 
-	private final Charset charset;
+    private final Charset charset;
 
-	/**
-	 * {@link ObjectStringRedisSerializer} to use 7 bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic Latin block of the Unicode
-	 * character set.
-	 *
-	 * @see StandardCharsets#US_ASCII
-	 * @since 2.1
-	 */
-	public static final ObjectStringRedisSerializer US_ASCII = new ObjectStringRedisSerializer(StandardCharsets.US_ASCII);
+    /**
+     * {@link ObjectStringRedisSerializer} to use 7 bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic Latin block of the Unicode
+     * character set.
+     *
+     * @see StandardCharsets#US_ASCII
+     * @since 2.1
+     */
+    public static final ObjectStringRedisSerializer US_ASCII = new ObjectStringRedisSerializer(
+            StandardCharsets.US_ASCII);
 
-	/**
-	 * {@link ObjectStringRedisSerializer} to use ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.
-	 *
-	 * @see StandardCharsets#ISO_8859_1
-	 * @since 2.1
-	 */
-	public static final ObjectStringRedisSerializer ISO_8859_1 = new ObjectStringRedisSerializer(StandardCharsets.ISO_8859_1);
+    /**
+     * {@link ObjectStringRedisSerializer} to use ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.
+     *
+     * @see StandardCharsets#ISO_8859_1
+     * @since 2.1
+     */
+    public static final ObjectStringRedisSerializer ISO_8859_1 = new ObjectStringRedisSerializer(
+            StandardCharsets.ISO_8859_1);
 
-	/**
-	 * {@link ObjectStringRedisSerializer} to use 8 bit UCS Transformation Format.
-	 *
-	 * @see StandardCharsets#UTF_8
-	 * @since 2.1
-	 */
-	public static final ObjectStringRedisSerializer UTF_8 = new ObjectStringRedisSerializer(StandardCharsets.UTF_8);
+    /**
+     * {@link ObjectStringRedisSerializer} to use 8 bit UCS Transformation Format.
+     *
+     * @see StandardCharsets#UTF_8
+     * @since 2.1
+     */
+    public static final ObjectStringRedisSerializer UTF_8 = new ObjectStringRedisSerializer(StandardCharsets.UTF_8);
 
-	/**
-	 * Creates a new {@link ObjectStringRedisSerializer} using {@link StandardCharsets#UTF_8 UTF-8}.
-	 */
-	public ObjectStringRedisSerializer() {
-		this(StandardCharsets.UTF_8);
-	}
+    /**
+     * Creates a new {@link ObjectStringRedisSerializer} using {@link StandardCharsets#UTF_8 UTF-8}.
+     */
+    public ObjectStringRedisSerializer() {
+        this(StandardCharsets.UTF_8);
+    }
 
-	/**
-	 * Creates a new {@link ObjectStringRedisSerializer} using the given {@link Charset} to encode and decode strings.
-	 *
-	 * @param charset charset参数
-	 */
-	public ObjectStringRedisSerializer(Charset charset) {
-		Assert.notNull(charset, "Charset must not be null!");
-		this.charset = charset;
-	}
+    /**
+     * Creates a new {@link ObjectStringRedisSerializer} using the given {@link Charset} to encode and decode strings.
+     *
+     * @param charset charset参数
+     */
+    public ObjectStringRedisSerializer(Charset charset) {
+        Assert.notNull(charset, "Charset must not be null!");
+        this.charset = charset;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.redis.serializer.RedisSerializer#deserialize(byte[])
-	 */
-	/**
-	 * @param bytes 参数
-	 */
-	@Override
-	public String deserialize(@Nullable byte[] bytes) {
-		return (bytes == null ? null : new String(bytes, charset));
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.springframework.data.redis.serializer.RedisSerializer#deserialize(byte[])
+     */
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.redis.serializer.RedisSerializer#serialize(java.lang.Object)
-	 */
-	/**
-	 * @param string 参数
-	 */
-	@Override
-	public byte[] serialize(@Nullable Object string) {
-		return (string == null ? null : string.toString().getBytes(charset));
-	}
+    /**
+     * @param bytes 参数
+     */
+    @Override
+    public String deserialize(@Nullable byte[] bytes) {
+        return (bytes == null ? null : new String(bytes, charset));
+    }
 
-	@Override
-	public Class<?> getTargetType() {
-		return String.class;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.springframework.data.redis.serializer.RedisSerializer#serialize(java.lang.Object)
+     */
+
+    /**
+     * @param string 参数
+     */
+    @Override
+    public byte[] serialize(@Nullable Object string) {
+        return (string == null ? null : string.toString().getBytes(charset));
+    }
+
+    @Override
+    public Class<?> getTargetType() {
+        return String.class;
+    }
 }

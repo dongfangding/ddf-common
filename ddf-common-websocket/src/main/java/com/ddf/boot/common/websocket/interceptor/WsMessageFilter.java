@@ -20,7 +20,6 @@ public interface WsMessageFilter {
      *
      * @param request 请求对象
      * @param <Q> 请求泛型类型
-     * @return
      */
     <Q> boolean filter(MessageRequest<Q> request);
 }

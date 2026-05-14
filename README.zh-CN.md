@@ -69,55 +69,55 @@
 
 ### 基础内核层
 
-| 模块 | 功能说明 |
-| --- | --- |
-| `ddf-common-api` | 提供公共常量、上下文、约束定义、通用枚举、基础接口与部分通用 DTO/约定。 |
-| `ddf-common-core` | 提供核心工具类、缓存与加密基础能力、全局属性、事件模型、基础组件支撑。 |
-| `ddf-common-mvc` | 提供 MVC 自动配置、统一响应包装、全局异常处理、过滤器、访问日志等 Web 基础能力。 |
-| `ddf-common-authentication` | 提供认证过滤器、Token 校验扩展、认证配置和登录态缓存接入。 |
-| `ddf-common-limit` | 提供限流与防重复提交能力，包括注解、切面、Key 生成器和相关配置。 |
+| 模块                          | 功能说明                                          |
+|-----------------------------|-----------------------------------------------|
+| `ddf-common-api`            | 提供公共常量、上下文、约束定义、通用枚举、基础接口与部分通用 DTO/约定。        |
+| `ddf-common-core`           | 提供核心工具类、缓存与加密基础能力、全局属性、事件模型、基础组件支撑。           |
+| `ddf-common-mvc`            | 提供 MVC 自动配置、统一响应包装、全局异常处理、过滤器、访问日志等 Web 基础能力。 |
+| `ddf-common-authentication` | 提供认证过滤器、Token 校验扩展、认证配置和登录态缓存接入。              |
+| `ddf-common-limit`          | 提供限流与防重复提交能力，包括注解、切面、Key 生成器和相关配置。            |
 
 ### 基础设施层
 
-| 模块 | 功能说明 |
-| --- | --- |
-| `ddf-common-redis` | 提供 Redis/Redisson 自动配置、缓存管理器、本地缓存、Redis 扩展工具。 |
-| `ddf-common-distributed-lock` | 提供基于 Redis 和 Zookeeper 的分布式锁实现。 |
-| `ddf-common-log4j` | 提供 Log4j2 基础日志能力接入。 |
+| 模块                              | 功能说明                                          |
+|---------------------------------|-----------------------------------------------|
+| `ddf-common-redis`              | 提供 Redis/Redisson 自动配置、缓存管理器、本地缓存、Redis 扩展工具。 |
+| `ddf-common-distributed-lock`   | 提供基于 Redis 和 Zookeeper 的分布式锁实现。               |
+| `ddf-common-log4j`              | 提供 Log4j2 基础日志能力接入。                           |
 | `ddf-common-data-mysql-starter` | 聚合 JDBC、MySQL、Druid，作为 MySQL 数据访问 starter 使用。 |
-| `ddf-common-governance-starter` | 聚合 Mail 和 Actuator，提供基础治理、告警和可观测能力入口。 |
-| `ddf-common-sharding` | 提供分库分表自动配置与规则封装。 |
-| `ddf-common-zookeeper` | 提供 Zookeeper 监听、监控与相关辅助能力。 |
-| `ddf-common-mongo` | 提供 MongoDB 自动配置和 `MongoTemplate` 辅助工具。 |
-| `ddf-common-es` | 提供 Elasticsearch 依赖接入模块。 |
+| `ddf-common-governance-starter` | 聚合 Mail 和 Actuator，提供基础治理、告警和可观测能力入口。         |
+| `ddf-common-sharding`           | 提供分库分表自动配置与规则封装。                              |
+| `ddf-common-zookeeper`          | 提供 Zookeeper 监听、监控与相关辅助能力。                    |
+| `ddf-common-mongo`              | 提供 MongoDB 自动配置和 `MongoTemplate` 辅助工具。        |
+| `ddf-common-es`                 | 提供 Elasticsearch 依赖接入模块。                      |
 
 ### 场景与扩展层
 
-| 模块 | 功能说明 |
-| --- | --- |
-| `ddf-common-alarm` | 提供异常、日志与规则相关告警能力，包含钉钉、飞书等通知集成。 |
-| `ddf-common-captcha` | 提供图形验证码与行为验证码能力封装。 |
-| `ddf-common-ids-service` | 提供分布式 ID 生成相关配置、接口与实现。 |
-| `ddf-common-rocketmq` | 提供 RocketMQ 增强封装，如消息包装、环境隔离、生产者封装。 |
-| `ddf-common-ons` | 提供阿里云 ONS 接入与监听容器相关能力。 |
-| `ddf-common-mqtt` | 提供 MQTT 基础客户端、连接配置、发布能力与扩展监听。 |
-| `ddf-common-mqtt-client` | 基于 `ddf-common-mqtt` 提供更上层的话题与消息模型封装。 |
-| `ddf-common-websocket` | 提供 WebSocket 相关配置、握手、消息处理和业务支撑能力。 |
-| `ddf-common-netty-broker` | 提供基于 Netty 的 Broker/消息代理示例和基础实现。 |
-| `ddf-common-third-party` | 提供第三方扩展能力，当前主要包含阿里云 OSS、短信等封装。 |
-| `ddf-common-s3` | 提供兼容 S3 协议的对象存储能力封装。 |
-| `ddf-common-vps` | 提供图片与文件处理相关能力。 |
-| `ddf-common-xxl-executor` | 提供 XXL-Job 执行器模块和基础配置。 |
-| `ddf-common-canal` | 提供 Canal 订阅消息分发能力。 |
-| `ddf-common-script` | 存放项目内部使用的脚本与离线工具类。 |
+| 模块                        | 功能说明                                  |
+|---------------------------|---------------------------------------|
+| `ddf-common-alarm`        | 提供异常、日志与规则相关告警能力，包含钉钉、飞书等通知集成。        |
+| `ddf-common-captcha`      | 提供图形验证码与行为验证码能力封装。                    |
+| `ddf-common-ids-service`  | 提供分布式 ID 生成相关配置、接口与实现。                |
+| `ddf-common-rocketmq`     | 提供 RocketMQ 增强封装，如消息包装、环境隔离、生产者封装。    |
+| `ddf-common-ons`          | 提供阿里云 ONS 接入与监听容器相关能力。                |
+| `ddf-common-mqtt`         | 提供 MQTT 基础客户端、连接配置、发布能力与扩展监听。         |
+| `ddf-common-mqtt-client`  | 基于 `ddf-common-mqtt` 提供更上层的话题与消息模型封装。 |
+| `ddf-common-websocket`    | 提供 WebSocket 相关配置、握手、消息处理和业务支撑能力。     |
+| `ddf-common-netty-broker` | 提供基于 Netty 的 Broker/消息代理示例和基础实现。      |
+| `ddf-common-third-party`  | 提供第三方扩展能力，当前主要包含阿里云 OSS、短信等封装。        |
+| `ddf-common-s3`           | 提供兼容 S3 协议的对象存储能力封装。                  |
+| `ddf-common-vps`          | 提供图片与文件处理相关能力。                        |
+| `ddf-common-xxl-executor` | 提供 XXL-Job 执行器模块和基础配置。                |
+| `ddf-common-canal`        | 提供 Canal 订阅消息分发能力。                    |
+| `ddf-common-script`       | 存放项目内部使用的脚本与离线工具类。                    |
 
 ### 聚合与依赖管理层
 
-| 模块 | 功能说明 |
-| --- | --- |
-| `ddf-common-dependency` | 统一管理项目内部依赖版本，适合作为 BOM 使用。 |
-| `ddf-common-starter-web` | 聚合 Web 常用基础模块，适合作为轻量 Web 服务的起点。 |
-| `ddf-common-starter-default` | 聚合 Web、MySQL、治理等常规业务服务基础能力。 |
+| 模块                           | 功能说明                            |
+|------------------------------|---------------------------------|
+| `ddf-common-dependency`      | 统一管理项目内部依赖版本，适合作为 BOM 使用。       |
+| `ddf-common-starter-web`     | 聚合 Web 常用基础模块，适合作为轻量 Web 服务的起点。 |
+| `ddf-common-starter-default` | 聚合 Web、MySQL、治理等常规业务服务基础能力。     |
 
 ## 推荐接入方式
 

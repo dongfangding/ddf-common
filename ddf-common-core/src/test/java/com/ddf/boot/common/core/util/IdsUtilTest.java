@@ -111,8 +111,7 @@ public class IdsUtilTest {
         String idStr = Long.toString(id);
 
         // 雪花算法生成的ID通常是19位数字
-        assertTrue(idStr.length() >= 18 && idStr.length() <= 19,
-                "雪花ID应该是18-19位，实际: " + idStr.length());
+        assertTrue(idStr.length() >= 18 && idStr.length() <= 19, "雪花ID应该是18-19位，实际: " + idStr.length());
     }
 
     @Test

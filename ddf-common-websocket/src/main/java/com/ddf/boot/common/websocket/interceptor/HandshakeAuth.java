@@ -8,7 +8,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.socket.WebSocketHandler;
 
 /**
- *
  * @author dongfang.ding
  * @since 2019/12/27 0027 13:44
  */
@@ -22,7 +21,6 @@ public interface HandshakeAuth {
      * @param wsHandler WShandler参数
      * @param attributes attributes参数
      * @param handshakeParam handshake参数参数
-     * @return
      * @see DefaultHandshakeInterceptor
      */
     AuthPrincipal validPrincipal(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,

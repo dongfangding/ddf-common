@@ -29,7 +29,6 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
      * 判断当前参数是否需要解析，该解析器用来解析参数类型为List<QueryParam>
      *
      * @param parameter parameter参数
-     * @return
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -52,8 +51,6 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
      * @param mavContainer MAVcontainer参数
      * @param webRequest WEB请求参数
      * @param binderFactory binderfactory参数
-     * @return
-     * @throws Exception
      */
     @Override
     public List<QueryParam> resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
@@ -62,9 +59,8 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
         if (StrUtil.isBlank(queryParamsStr)) {
             return Collections.emptyList();
         }
-        final List<QueryParam> params = JsonUtil
-                .getInstance()
-                .readValue(queryParamsStr, new TypeReference<List<QueryParam>>() {
+        final List<QueryParam> params = JsonUtil.getInstance().readValue(queryParamsStr,
+                new TypeReference<List<QueryParam>>() {
                     @Override
                     public Type getType() {
                         return super.getType();

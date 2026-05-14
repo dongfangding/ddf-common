@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 
 /**
  * S3 兼容存储自动配置类.
- *
  * <p>支持 MinIO、AWS S3、阿里云 OSS 等 S3 兼容存储服务.</p>
  * <p>当配置文件中 <code>customizer.infra.s3.enable=true</code> 时，此自动配置生效.</p>
  *

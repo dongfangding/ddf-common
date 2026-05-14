@@ -70,7 +70,6 @@ public class LarkProperties {
      * 获取告警机器人配置
      *
      * @param mappingCode 映射编码
-     * @return
      */
     public Properties getCodeProperties(String mappingCode) {
         if (CollUtil.isNotEmpty(mappingException) && mappingException.containsKey(mappingCode)) {
@@ -83,7 +82,6 @@ public class LarkProperties {
      * 获取告警机器人配置
      *
      * @param mappingCode 映射编码
-     * @return
      */
     public Properties getBizProperties(String mappingCode) {
         if (CollUtil.isNotEmpty(mappingException) && mappingException.containsKey(mappingCode)) {

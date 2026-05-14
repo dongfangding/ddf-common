@@ -55,8 +55,6 @@ public class ConfigResponse<T> {
 
     /**
      * 判定当前配置是否是空对象
-     *
-     * @return
      */
     public boolean isEmpty() {
         return this == EMPTY_CONFIG;
@@ -64,8 +62,6 @@ public class ConfigResponse<T> {
 
     /**
      * 获取配置
-     *
-     * @return
      */
     public T resolveConfig() {
         if (ObjectUtils.isEmpty(configJson)) {
@@ -83,8 +79,6 @@ public class ConfigResponse<T> {
 
     /**
      * 获取列表配置bi
-     *
-     * @return
      */
     public List<T> resolveListConfig() {
         if (ObjectUtils.isEmpty(configJson)) {
@@ -95,7 +89,6 @@ public class ConfigResponse<T> {
 
     /**
      * 获取基本数据类型的装箱类型
-     * @return
      */
     private T resolveBox() {
         try {

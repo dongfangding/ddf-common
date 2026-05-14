@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-script` solves the **"development process needs batch data processing or ops script support"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Batch data import/export | Need to read/write Excel files for data migration | Apache POI encapsulation, supports .xlsx read/write |
-| Development environment initialization | Repetitive database initialization and config generation | Scripted batch execution |
-| Offline data statistics | Process local data files without starting the service | Standalone command-line tool entry |
-| Ops script accumulation | Team ops operations are scattered and hard to reuse | Unified script directory, version-controlled |
+| Scenario                               | Typical Problem                                          | What the Module Provides                            |
+|----------------------------------------|----------------------------------------------------------|-----------------------------------------------------|
+| Batch data import/export               | Need to read/write Excel files for data migration        | Apache POI encapsulation, supports .xlsx read/write |
+| Development environment initialization | Repetitive database initialization and config generation | Scripted batch execution                            |
+| Offline data statistics                | Process local data files without starting the service    | Standalone command-line tool entry                  |
+| Ops script accumulation                | Team ops operations are scattered and hard to reuse      | Unified script directory, version-controlled        |
 
 > **Note**: This module is **not** in the default Maven Central release set (see `excludeArtifacts` in parent `pom.xml`),
 > and is **not** included in any starter. For use, build locally or configure separately.
@@ -113,9 +113,9 @@ chmod +x ddf-common-script/src/main/script/*.sh
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-core` | Utility reuse and foundational support |
+| Module                          | How They Cooperate                                        |
+|---------------------------------|-----------------------------------------------------------|
+| `ddf-common-core`               | Utility reuse and foundational support                    |
 | `ddf-common-data-mysql-starter` | Script-generated data can be directly imported into MySQL |
 
 ---

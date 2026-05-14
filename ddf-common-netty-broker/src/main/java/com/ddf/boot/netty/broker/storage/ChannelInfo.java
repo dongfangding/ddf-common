@@ -56,6 +56,7 @@ public class ChannelInfo {
     public ChannelInfo() {
 
     }
+
     /**
      * @param channel 参数
      * @param remoteAddress 参数
@@ -80,19 +81,16 @@ public class ChannelInfo {
      * 注册时连接信息包装
      *
      * @param channel 通道对象
-     * @return
      */
     public static ChannelInfo registry(Channel channel) {
         return new ChannelInfo(channel, channel.remoteAddress().toString(), STATUS_REGISTRY, new Date(), new Date(),
-                new ArrayBlockingQueue<>(1024), false
-        );
+                new ArrayBlockingQueue<>(1024), false);
     }
 
     /**
      * 连接激活时修改连接信息
      *
      * @param channel 通道对象
-     * @return
      */
     public static ChannelInfo active(Channel channel) {
         return modify(channel, STATUS_ACTIVE);
@@ -102,11 +100,11 @@ public class ChannelInfo {
      * 连接掉线时修改连接信息
      *
      * @param channel 通道对象
-     * @return
      */
     public static ChannelInfo inactive(Channel channel) {
         return modify(channel, STATUS_INACTIVE);
     }
+
     /**
      * @param channel 参数
      * @param status 参数
@@ -122,6 +120,7 @@ public class ChannelInfo {
         info.setSyncDone(false);
         return info;
     }
+
     /**
      * @param status 参数
      */
@@ -139,6 +138,7 @@ public class ChannelInfo {
     public Channel getChannel() {
         return channel;
     }
+
     /**
      * @param channel 参数
      */
@@ -149,6 +149,7 @@ public class ChannelInfo {
     public String getRemoteAddress() {
         return remoteAddress;
     }
+
     /**
      * @param remoteAddress 参数
      */
@@ -159,6 +160,7 @@ public class ChannelInfo {
     public int getStatus() {
         return status;
     }
+
     /**
      * @param status 参数
      */
@@ -169,6 +171,7 @@ public class ChannelInfo {
     public Date getRegistryTime() {
         return registryTime;
     }
+
     /**
      * @param registryTime 参数
      */
@@ -179,6 +182,7 @@ public class ChannelInfo {
     public Date getModifyTime() {
         return modifyTime;
     }
+
     /**
      * @param modifyTime 参数
      */
@@ -189,6 +193,7 @@ public class ChannelInfo {
     public BlockingQueue<RequestContent> getQueue() {
         return queue;
     }
+
     /**
      * @param queue 参数
      */
@@ -199,6 +204,7 @@ public class ChannelInfo {
     public boolean isSyncDone() {
         return syncDone;
     }
+
     /**
      * @param syncDone 参数
      */

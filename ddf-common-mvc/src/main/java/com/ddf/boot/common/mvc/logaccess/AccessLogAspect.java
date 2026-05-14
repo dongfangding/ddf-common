@@ -42,7 +42,8 @@ public class AccessLogAspect {
     private final ObjectProvider<Map<String, AccessFilterChain>> accessFilterChainMapProvider;
 
     // @Pointcut(value = "execution(public * com..controller..*(..)) || execution(public * com..provider..*(..))")
-    @Pointcut(value = "@annotation(com.ddf.boot.common.mvc.logaccess.Log) || @within(com.ddf.boot.common.mvc.logaccess.Log)")
+    @Pointcut(
+            value = "@annotation(com.ddf.boot.common.mvc.logaccess.Log) || @within(com.ddf.boot.common.mvc.logaccess.Log)")
     public void pointCut() {
     }
 
@@ -54,7 +55,6 @@ public class AccessLogAspect {
      * 因为操作日志如果不做到对请求前和请求后的数据获取的话，仅仅记录调用本身意义也不大
      *
      * @param joinPoint joinpoint参数
-     * @return
      */
     @Around("pointCut()")
     public Object handler(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -91,16 +91,13 @@ public class AccessLogAspect {
                 if (globalProperties.isGlobalLogPrintDetails()
                         || logAnnotation.printParams() && logAnnotation.printResult()) {
                     logger.info("[{}]-[{}]{}请求参数: {}, 执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(),
-                            pointMethod.getName(), logName, paramJson, JsonUtil.asString(proceed), consumerTime
-                    );
+                            pointMethod.getName(), logName, paramJson, JsonUtil.asString(proceed), consumerTime);
                 } else if (logAnnotation.printParams()) {
                     logger.info("[{}]-[{}]{}请求参数: {}, 执行结束, 共耗时: [{}ms]", pointClass.getName(),
-                            pointMethod.getName(), logName, paramJson, consumerTime
-                    );
+                            pointMethod.getName(), logName, paramJson, consumerTime);
                 } else if (logAnnotation.printResult()) {
                     logger.info("[{}]-[{}]{}执行返回结果: {}, 共耗时: [{}ms]", pointClass.getName(),
-                            pointMethod.getName(), logName, JsonUtil.asString(proceed), consumerTime
-                    );
+                            pointMethod.getName(), logName, JsonUtil.asString(proceed), consumerTime);
                 }
                 // 执行慢接口逻辑判断
                 dealSlowTimeHandler(pointClass.getSimpleName(), pointMethod.getName(), paramJson, consumerTime);
@@ -113,10 +110,9 @@ public class AccessLogAspect {
             if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
                     throwable.getClass().getName())) {
                 logger.error("[{}]-[{}]{}请求参数: {}, 执行出现异常！异常消息 = {}", pointClass.getName(),
-                        pointMethod.getName(), logName, paramJson, AbstractExceptionHandler
-                                .resolveExceptionMessage(throwable, null).formatDefaultMessage(),
-                        throwable
-                );
+                        pointMethod.getName(), logName, paramJson,
+                        AbstractExceptionHandler.resolveExceptionMessage(throwable, null).formatDefaultMessage(),
+                        throwable);
             }
             throw throwable;
         }
@@ -136,8 +132,7 @@ public class AccessLogAspect {
         if (consumerTime > slowTime && slowEventAction != null && !checkIgnore(className)) {
             // 需要使用方自己去实现doAction接口接收参数自定义自己的处理机制
             SlowEventAction.SlowEvent slowEvent = new SlowEventAction.SlowEvent(className, methodName, params,
-                    consumerTime, slowTime
-            );
+                    consumerTime, slowTime);
             logger.info("{}-{}耗时{}，准备执行处理回调。。。。", className, methodName, consumerTime);
             // 实际使用过程中，自行决定是否要异步执行
             slowEventAction.doAction(slowEvent);
@@ -149,7 +144,6 @@ public class AccessLogAspect {
      * 这个功能的意义是有些接口天生就是慢接口的，但是又不想统计这个接口，因为开发时已经知道了，所以要跳过这个接口处理
      *
      * @param className 类型名称参数
-     * @return
      */
     private boolean checkIgnore(String className) {
         String[] ignore = logAspectConfiguration.getIgnore();

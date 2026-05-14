@@ -100,25 +100,27 @@ public class OnsClientOperations {
      * key   InstanceId-GroupId
      * value ClientId集合
      */
-    private static final Cache<String, List<String>> ONS_CONSUMER_CONNECTIONS_MAP = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.SECONDS)
-            .softValues()
-            .build();
+    private static final Cache<String, List<String>> ONS_CONSUMER_CONNECTIONS_MAP =
+            CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).softValues().build();
 
     /*
       初始化属性
      */
     static {
-        PreconditionUtil.checkArgument(Objects.nonNull(CURRENT_ENV), new IllegalArgumentException("当前环境信息获取失败......"));
+        PreconditionUtil.checkArgument(Objects.nonNull(CURRENT_ENV),
+                new IllegalArgumentException("当前环境信息获取失败......"));
         CURRENT_ENV = CURRENT_ENV.toUpperCase();
         ENV_CLIENT_MAP = SpringContextHolder.getBeansOfType(Client.class);
-        Preconditions.checkArgument(!CollectionUtils.isEmpty(ENV_CLIENT_MAP), new OnsClientExecuteException("多环境ONS客户端初始化失败"));
+        Preconditions.checkArgument(!CollectionUtils.isEmpty(ENV_CLIENT_MAP),
+                new OnsClientExecuteException("多环境ONS客户端初始化失败"));
 
         CURRENT_ENV_CLIENT = ENV_CLIENT_MAP.get(ConsoleConstants.getOnsClientBeanName(CURRENT_ENV));
-        Preconditions.checkArgument(Objects.nonNull(CURRENT_ENV_CLIENT), new OnsClientExecuteException("当前环境ONS客户端初始化失败【" + CURRENT_ENV + "】"));
+        Preconditions.checkArgument(Objects.nonNull(CURRENT_ENV_CLIENT),
+                new OnsClientExecuteException("当前环境ONS客户端初始化失败【" + CURRENT_ENV + "】"));
 
         ENV_CLIENT_PROPERTIES = SpringContextHolder.getBean(EnvClientProperties.class);
-        Preconditions.checkArgument(Objects.nonNull(ENV_CLIENT_PROPERTIES), new OnsClientExecuteException("获取环境配置信息失败"));
+        Preconditions.checkArgument(Objects.nonNull(ENV_CLIENT_PROPERTIES),
+                new OnsClientExecuteException("获取环境配置信息失败"));
 
         CURRENT_CLIENT_PROPERTIES = ENV_CLIENT_PROPERTIES.getClients().get(CURRENT_ENV);
         CURRENT_ENV_INSTANCE_ID = CURRENT_CLIENT_PROPERTIES.getInstanceId();
@@ -128,13 +130,13 @@ public class OnsClientOperations {
      * 创建多环境topic
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, OnsTopicCreateResponse> onsTopicCreate(ConsoleOnsTopicCreateRequest request) {
         checkCurrentUser(request);
         return envAction(1, request, (client, env) -> {
             try {
-                return client.onsTopicCreate(request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
+                return client.onsTopicCreate(
+                        request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
             } catch (Exception e) {
                 log.error("Topic创建失败， Topic: {}, env: {}", request.getTopic(), env, e);
                 throw OnsClientExecuteException.convertTeaException(e, env);
@@ -147,14 +149,14 @@ public class OnsClientOperations {
      * 多环境删除Topic
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, OnsTopicDeleteResponse> onsTopicDelete(ConsoleOnsTopicDeleteRequest request) {
         checkCurrentUser(request);
         checkSystemTopic(request.getTopic());
         return envAction(1, request, (client, env) -> {
             try {
-                return client.onsTopicDelete(request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
+                return client.onsTopicDelete(
+                        request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
             } catch (Exception e) {
                 log.error("Topic删除失败， Topic: {}, env: {}", request.getTopic(), env, e);
                 throw OnsClientExecuteException.convertTeaException(e, env);
@@ -167,13 +169,13 @@ public class OnsClientOperations {
      * 多环境创建GROUP_ID
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, OnsGroupCreateResponse> onsGroupCreate(ConsoleOnsGroupCreateRequest request) {
         checkCurrentUser(request);
         return envAction(1, request, (client, env) -> {
             try {
-                return client.onsGroupCreate(request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
+                return client.onsGroupCreate(
+                        request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
             } catch (Exception e) {
                 log.error("Group创建失败， GroupId: {}, env: {}", request.getGroupId(), env, e);
                 throw OnsClientExecuteException.convertTeaException(e, env);
@@ -185,14 +187,14 @@ public class OnsClientOperations {
      * 多环境删除GROUP_ID
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, OnsGroupDeleteResponse> onsGroupDelete(ConsoleOnsGroupDeleteRequest request) {
         checkCurrentUser(request);
         checkSystemGroup(request.getGroupId());
         return envAction(1, request, (client, env) -> {
             try {
-                return client.onsGroupDelete(request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
+                return client.onsGroupDelete(
+                        request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId()));
             } catch (Exception e) {
                 log.error("Group删除失败， GroupId: {}, env: {}", request.getGroupId(), env, e);
                 throw OnsClientExecuteException.convertTeaException(e, env);
@@ -208,7 +210,6 @@ public class OnsClientOperations {
      * @param request 请求对象
      * @param function function参数
      * @param <R> 返回值泛型类型
-     * @return
      */
     @SneakyThrows
     private static <R> Map<String, R> envAction(int qps, EnvRequest request, BiFunction<Client, String, R> function) {
@@ -220,7 +221,7 @@ public class OnsClientOperations {
         Map<String, R> returnMap = Maps.newHashMapWithExpectedSize(envList.size());
         int lastLoop = 0;
         for (String env : envList) {
-            lastLoop ++;
+            lastLoop++;
             final Client client = ENV_CLIENT_MAP.get(ConsoleConstants.getOnsClientBeanName(env));
             if (Objects.isNull(client)) {
                 log.warn("[{}]未找到对应的客户端环境配置， 无法执行，跳过处理>>>>", env);
@@ -240,15 +241,14 @@ public class OnsClientOperations {
      *
      * @param topicId 主题ID
      * @param msgId 消息 ID
-     * @return
      */
     public static OnsMessageGetByMsgIdResponse onsMessageGetByMsgId(String topicId, String msgId) {
-        OnsMessageGetByMsgIdRequest onsMessageGetByMsgIdRequest = new OnsMessageGetByMsgIdRequest()
-                .setMsgId(msgId)
+        OnsMessageGetByMsgIdRequest onsMessageGetByMsgIdRequest = new OnsMessageGetByMsgIdRequest().setMsgId(msgId)
                 .setTopic(topicId)
                 .setInstanceId(CURRENT_ENV_INSTANCE_ID);
         try {
-            OnsMessageGetByMsgIdResponse response = CURRENT_ENV_CLIENT.onsMessageGetByMsgId(onsMessageGetByMsgIdRequest);
+            OnsMessageGetByMsgIdResponse response = CURRENT_ENV_CLIENT.onsMessageGetByMsgId(
+                    onsMessageGetByMsgIdRequest);
             log.info("查询到消息记录>>>>>>>:{}", JsonUtil.asString(response.getBody().getData()));
             return response;
         } catch (Exception e) {
@@ -262,13 +262,11 @@ public class OnsClientOperations {
      *
      * @param instanceId 实例ID
      * @param groupId 分组ID
-     * @return
      */
     public static OnsConsumerGetConnectionResponse onsConsumerGetConnection(String instanceId, String groupId) {
         try {
-            final OnsConsumerGetConnectionRequest request = new OnsConsumerGetConnectionRequest()
-                    .setInstanceId(instanceId)
-                    .setGroupId(groupId);
+            final OnsConsumerGetConnectionRequest request = new OnsConsumerGetConnectionRequest().setInstanceId(
+                    instanceId).setGroupId(groupId);
             return CURRENT_ENV_CLIENT.onsConsumerGetConnection(request);
         } catch (Exception e) {
             log.error("获取GroupId下消费者连接失败，GroupId: {}, InstanceId: {}", instanceId, groupId, e);
@@ -280,7 +278,6 @@ public class OnsClientOperations {
      * 从缓存中获取ONS消费者连接信息ClientId集合
      *
      * @param groupId 分组ID
-     * @return
      */
     public static List<String> getOnsConsumerClientIdListFromCache(String groupId) {
         final List<String> clientIdList = ONS_CONSUMER_CONNECTIONS_MAP.getIfPresent(
@@ -288,7 +285,8 @@ public class OnsClientOperations {
         if (!CollectionUtils.isEmpty(clientIdList)) {
             return clientIdList;
         }
-        putOnsConsumerConnections(CURRENT_ENV_INSTANCE_ID, groupId, onsConsumerGetConnection(CURRENT_ENV_INSTANCE_ID, groupId));
+        putOnsConsumerConnections(CURRENT_ENV_INSTANCE_ID, groupId,
+                onsConsumerGetConnection(CURRENT_ENV_INSTANCE_ID, groupId));
         return ONS_CONSUMER_CONNECTIONS_MAP.getIfPresent(
                 getOnsConsumerConnectionsKey(CURRENT_ENV_INSTANCE_ID, groupId));
     }
@@ -297,25 +295,24 @@ public class OnsClientOperations {
      * 向指定的消费者推送消息, MsgId会重新生成， 但是用重新生成的MsgId获取消息记录，指向的还是之前的MsgId
      *
      * @param request 请求对象
-     * @throws Exception
      */
     public static void onsMessagePush(ConsoleOnsMessagePushRequest request) {
         checkCurrentUser(request);
         final List<String> cacheClientIdList = getOnsConsumerClientIdListFromCache(request.getGroupId());
         if (CollectionUtils.isEmpty(cacheClientIdList)) {
             throw new OnsClientExecuteException(
-                    "无法获取消费者ClientId, 暂时不可推送！InstanceId: %s, GroupId: %s".formatted(CURRENT_ENV_INSTANCE_ID,
-                            request.getGroupId()
-                    ));
+                    "无法获取消费者ClientId, 暂时不可推送！InstanceId: %s, GroupId: %s".formatted(
+                            CURRENT_ENV_INSTANCE_ID, request.getGroupId()));
         }
         onsMessageGetByMsgId(request.getTopic(), request.getMsgId());
         // 暂时不考虑广播模式
-        final OnsMessagePushRequest onsMessagePushRequest = request.toSdkRequest(cacheClientIdList.get(0), CURRENT_ENV_INSTANCE_ID);
+        final OnsMessagePushRequest onsMessagePushRequest = request.toSdkRequest(cacheClientIdList.get(0),
+                CURRENT_ENV_INSTANCE_ID);
         try {
             CURRENT_ENV_CLIENT.onsMessagePush(onsMessagePushRequest);
         } catch (Exception e) {
-            log.error("消息推送失败！MsdId = {}, InstanceId: {}, GroupId: {}", request.getMsgId(), CURRENT_ENV_INSTANCE_ID,
-                    request.getGroupId(), e);
+            log.error("消息推送失败！MsdId = {}, InstanceId: {}, GroupId: {}", request.getMsgId(),
+                    CURRENT_ENV_INSTANCE_ID, request.getGroupId(), e);
             throw OnsClientExecuteException.convertTeaException(e);
         }
     }
@@ -327,14 +324,13 @@ public class OnsClientOperations {
      * @param msgId 消息 ID
      */
     public static OnsDLQMessageResendByIdResponse onsDLQMessageResendByIdRequest(String groupId, String msgId) {
-        OnsDLQMessageResendByIdRequest onsDLQMessageResendByIdRequest = new OnsDLQMessageResendByIdRequest()
-                .setMsgId(msgId)
-                .setGroupId(groupId)
-                .setInstanceId(CURRENT_ENV_INSTANCE_ID);
+        OnsDLQMessageResendByIdRequest onsDLQMessageResendByIdRequest = new OnsDLQMessageResendByIdRequest().setMsgId(
+                msgId).setGroupId(groupId).setInstanceId(CURRENT_ENV_INSTANCE_ID);
         try {
             return CURRENT_ENV_CLIENT.onsDLQMessageResendById(onsDLQMessageResendByIdRequest);
         } catch (Exception e) {
-            log.error("重发死信消息失败， InstanceId: {}, GroupId: {}, MsgId: {}", CURRENT_ENV_INSTANCE_ID, groupId, msgId, e);
+            log.error("重发死信消息失败， InstanceId: {}, GroupId: {}, MsgId: {}", CURRENT_ENV_INSTANCE_ID, groupId,
+                    msgId, e);
             throw OnsClientExecuteException.convertTeaException(e);
         }
     }
@@ -343,7 +339,6 @@ public class OnsClientOperations {
      * 根据MsgId查询死信消息
      *
      * @param request 请求对象
-     * @return
      */
     public static ConsoleOnsDLQMessagePageQueryByGroupResponse onsDLQMessageGetByIdRequest(
             ConsoleOnsDLQMessageGetByIdRequest request) {
@@ -353,16 +348,14 @@ public class OnsClientOperations {
         try {
             final OnsDLQMessageGetByIdResponse response = CURRENT_ENV_CLIENT.onsDLQMessageGetById(
                     request.toSdkRequest(CURRENT_ENV_INSTANCE_ID));
-            if (Objects.nonNull(response) && Objects.nonNull(response.getBody()) && Objects.nonNull(response.getBody().getData())) {
-                final OnsDLQMessageGetByIdResponseBody.OnsDLQMessageGetByIdResponseBodyData data = response.getBody()
-                        .getData();
-                final Map<String, String> propertiesMap = data.getPropertyList()
-                        .getMessageProperty()
-                        .stream()
-                        .collect(Collectors.toMap(
+            if (Objects.nonNull(response) && Objects.nonNull(response.getBody()) && Objects.nonNull(
+                    response.getBody().getData())) {
+                final OnsDLQMessageGetByIdResponseBody.OnsDLQMessageGetByIdResponseBodyData data =
+                        response.getBody().getData();
+                final Map<String, String> propertiesMap = data.getPropertyList().getMessageProperty().stream().collect(
+                        Collectors.toMap(
                                 OnsDLQMessageGetByIdResponseBody.OnsDLQMessageGetByIdResponseBodyDataPropertyListMessageProperty::getName,
-                                OnsDLQMessageGetByIdResponseBody.OnsDLQMessageGetByIdResponseBodyDataPropertyListMessageProperty::getValue
-                        ));
+                                OnsDLQMessageGetByIdResponseBody.OnsDLQMessageGetByIdResponseBodyDataPropertyListMessageProperty::getValue));
                 return ConsoleOnsDLQMessagePageQueryByGroupResponse.builder()
                         .storeSize(data.getStoreSize())
                         .reconsumeTimes(data.getReconsumeTimes())
@@ -381,7 +374,8 @@ public class OnsClientOperations {
                         .build();
             }
         } catch (Exception e) {
-            log.error("查询死信消息失败， InstanceId: {}, GroupId: {}, MsgId: {}", CURRENT_ENV_INSTANCE_ID, groupId, msgId, e);
+            log.error("查询死信消息失败， InstanceId: {}, GroupId: {}, MsgId: {}", CURRENT_ENV_INSTANCE_ID, groupId,
+                    msgId, e);
             throw OnsClientExecuteException.convertTeaException(e);
         }
         return null;
@@ -392,7 +386,6 @@ public class OnsClientOperations {
      * 查询GroupId下所有死信消息
      *
      * @param request 请求对象
-     * @return
      */
     public static PageResult<ConsoleOnsDLQMessagePageQueryByGroupResponse> onsDLQMessagePageQueryByGroupId(
             ConsoleOnsDLQMessagePageQueryByGroupIdRequest request) {
@@ -401,49 +394,38 @@ public class OnsClientOperations {
             final OnsDLQMessagePageQueryByGroupIdResponse response = CURRENT_ENV_CLIENT.onsDLQMessagePageQueryByGroupId(
                     request.toSdkRequest(CURRENT_ENV_INSTANCE_ID));
             final List<OnsDLQMessagePageQueryByGroupIdResponseBody.OnsDLQMessagePageQueryByGroupIdResponseBodyMsgFoundDoMsgFoundListOnsRestMessageDo>
-                    list = response.getBody()
-                    .getMsgFoundDo()
-                    .getMsgFoundList()
-                    .getOnsRestMessageDo();
+                    list = response.getBody().getMsgFoundDo().getMsgFoundList().getOnsRestMessageDo();
             if (CollectionUtils.isEmpty(list)) {
                 return new PageResult<>(request.getCurrentPage(), request.getPageSize(), 0);
             }
-            final List<ConsoleOnsDLQMessagePageQueryByGroupResponse> content = list.stream()
-                    .map(val -> {
-                        final Map<String, String> propertiesMap = val.getPropertyList()
-                                .getMessageProperty()
-                                .stream()
-                                .collect(Collectors.toMap(
-                                        OnsDLQMessagePageQueryByGroupIdResponseBody.OnsDLQMessagePageQueryByGroupIdResponseBodyMsgFoundDoMsgFoundListOnsRestMessageDoPropertyListMessageProperty::getName,
-                                        OnsDLQMessagePageQueryByGroupIdResponseBody.OnsDLQMessagePageQueryByGroupIdResponseBodyMsgFoundDoMsgFoundListOnsRestMessageDoPropertyListMessageProperty::getValue
-                                ));
-                        return ConsoleOnsDLQMessagePageQueryByGroupResponse.builder()
-                                .storeSize(val.getStoreSize())
-                                .reconsumeTimes(val.getReconsumeTimes())
-                                .storeTimestamp(val.getStoreTimestamp())
-                                .instanceId(val.getInstanceId())
-                                .msgId(val.getMsgId())
-                                .storeHost(val.getStoreHost())
-                                .topic(val.getTopic())
-                                .bornTimestamp(val.getBornTimestamp())
-                                .bodyCRC(val.getBodyCRC())
-                                .bornHost(val.getBornHost())
-                                .realTopic(propertiesMap.get("REAL_TOPIC"))
-                                .originMessageId(propertiesMap.get("ORIGIN_MESSAGE_ID"))
-                                .keys(propertiesMap.get("KEYS"))
-                                .tags(propertiesMap.get("TAGS"))
-                                .build();
-                    })
-                    .collect(Collectors.toList());
+            final List<ConsoleOnsDLQMessagePageQueryByGroupResponse> content = list.stream().map(val -> {
+                final Map<String, String> propertiesMap = val.getPropertyList().getMessageProperty().stream().collect(
+                        Collectors.toMap(
+                                OnsDLQMessagePageQueryByGroupIdResponseBody.OnsDLQMessagePageQueryByGroupIdResponseBodyMsgFoundDoMsgFoundListOnsRestMessageDoPropertyListMessageProperty::getName,
+                                OnsDLQMessagePageQueryByGroupIdResponseBody.OnsDLQMessagePageQueryByGroupIdResponseBodyMsgFoundDoMsgFoundListOnsRestMessageDoPropertyListMessageProperty::getValue));
+                return ConsoleOnsDLQMessagePageQueryByGroupResponse.builder()
+                        .storeSize(val.getStoreSize())
+                        .reconsumeTimes(val.getReconsumeTimes())
+                        .storeTimestamp(val.getStoreTimestamp())
+                        .instanceId(val.getInstanceId())
+                        .msgId(val.getMsgId())
+                        .storeHost(val.getStoreHost())
+                        .topic(val.getTopic())
+                        .bornTimestamp(val.getBornTimestamp())
+                        .bodyCRC(val.getBodyCRC())
+                        .bornHost(val.getBornHost())
+                        .realTopic(propertiesMap.get("REAL_TOPIC"))
+                        .originMessageId(propertiesMap.get("ORIGIN_MESSAGE_ID"))
+                        .keys(propertiesMap.get("KEYS"))
+                        .tags(propertiesMap.get("TAGS"))
+                        .build();
+            }).collect(Collectors.toList());
             // 这个总数是假的，没返回这里也没法知道，这里给最大值是方便页数计算
-            return new PageResult<>(request.getCurrentPage(), request.getPageSize(), response.getBody()
-                    .getMsgFoundDo()
-                    .getMaxPageCount() * request.getPageSize(), content);
+            return new PageResult<>(request.getCurrentPage(), request.getPageSize(),
+                    response.getBody().getMsgFoundDo().getMaxPageCount() * request.getPageSize(), content);
         } catch (Exception e) {
-            log.error(
-                    "查询GroupId下所有死信消息失败， InstanceId: {}, GroupId: {}, json: {}", CURRENT_ENV_INSTANCE_ID,
-                    request.getGroupId(), JsonUtil.asString(request), e
-            );
+            log.error("查询GroupId下所有死信消息失败， InstanceId: {}, GroupId: {}, json: {}", CURRENT_ENV_INSTANCE_ID,
+                    request.getGroupId(), JsonUtil.asString(request), e);
             throw OnsClientExecuteException.convertTeaException(e);
         }
     }
@@ -453,7 +435,6 @@ public class OnsClientOperations {
      * 多环境查询账号下所有 Topic 的信息列表
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, List<ConsoleOnsTopicListResponse>> onsTopicList(ConsoleOnsTopicListRequest request) {
         checkCurrentUser(request);
@@ -476,7 +457,6 @@ public class OnsClientOperations {
      * 多环境获取Group_Id资源列表
      *
      * @param request 请求对象
-     * @return
      */
     public static Map<String, List<ConsoleOnsGroupListResponse>> onsGroupList(ConsoleOnsGroupListRequest request) {
         checkCurrentUser(request);
@@ -500,7 +480,6 @@ public class OnsClientOperations {
      * 查看Topic的在线订阅组
      *
      * @param request 请求对象
-     * @return
      */
     public static List<ConsoleOnsTopicSubListResponse> onsTopicSubDetail(ConsoleOnsTopicSubDetailRequest request) {
         checkCurrentUser(request);
@@ -508,8 +487,8 @@ public class OnsClientOperations {
         final Client client = ENV_CLIENT_MAP.get(ConsoleConstants.getOnsClientBeanName(env));
         Preconditions.checkArgument(Objects.nonNull(client), new IllegalArgumentException("env不存在"));
         try {
-            return ConsoleOnsTopicSubListResponse.convertFromSdk(client.onsTopicSubDetail(request.toSdkRequest(
-                    ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId())));
+            return ConsoleOnsTopicSubListResponse.convertFromSdk(client.onsTopicSubDetail(
+                    request.toSdkRequest(ENV_CLIENT_PROPERTIES.getClients().get(env).getInstanceId())));
         } catch (Exception e) {
             log.error("查看Topic的在线订阅组失败>>>", e);
             throw OnsClientExecuteException.convertTeaException(e, env);
@@ -518,8 +497,6 @@ public class OnsClientOperations {
 
     /**
      * 获取当前配置的ONS环境列表
-     *
-     * @return
      */
     public static Set<String> getOnsEnvKeySet() {
         return ENV_CLIENT_PROPERTIES.getClients().keySet();
@@ -528,8 +505,6 @@ public class OnsClientOperations {
 
     /**
      * 初始化多环境请求响应Map
-     *
-     * @return
      */
     public static <T> Map<String, T> initEnvResponseMap() {
         final Set<String> set = getOnsEnvKeySet();
@@ -543,7 +518,6 @@ public class OnsClientOperations {
      *
      * @param instanceId 实例ID
      * @param groupId 分组ID
-     * @return
      */
     public static String getOnsConsumerConnectionsKey(String instanceId, String groupId) {
         return instanceId + "-" + groupId;
@@ -572,14 +546,11 @@ public class OnsClientOperations {
      * 校验用户名
      *
      * @param userRequest 用户请求参数
-     * @return
      */
     private static void checkCurrentUser(UserRequest userRequest) {
         final String user = userRequest.getCurrentUser();
         boolean bool = StringUtils.isNotBlank(user) && Objects.nonNull(ENV_CLIENT_PROPERTIES.getAdminUserName())
-                && ENV_CLIENT_PROPERTIES.getAdminUserName()
-                .stream()
-                .anyMatch(name -> name.equals(user));
+                && ENV_CLIENT_PROPERTIES.getAdminUserName().stream().anyMatch(name -> name.equals(user));
         if (!bool) {
             throw new OnsClientExecuteException("当前用户非ONS控台管理员，无法操作！");
         }
@@ -591,7 +562,8 @@ public class OnsClientOperations {
      * @param topic 主题参数
      */
     private static void checkSystemTopic(String topic) {
-        boolean isSystemTopic = !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemTopic()) && ENV_CLIENT_PROPERTIES.getSystemTopic().contains(topic);
+        boolean isSystemTopic = !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemTopic())
+                && ENV_CLIENT_PROPERTIES.getSystemTopic().contains(topic);
         if (isSystemTopic) {
             throw new OnsClientExecuteException("当前Topic[" + topic + "]为系统Topic, 不可操作!");
         }
@@ -604,7 +576,8 @@ public class OnsClientOperations {
      * @param group 分组参数
      */
     private static void checkSystemGroup(String group) {
-        boolean isSystemGroup= !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemGroup()) && ENV_CLIENT_PROPERTIES.getSystemGroup().contains(group);
+        boolean isSystemGroup = !CollectionUtils.isEmpty(ENV_CLIENT_PROPERTIES.getSystemGroup())
+                && ENV_CLIENT_PROPERTIES.getSystemGroup().contains(group);
         if (isSystemGroup) {
             throw new OnsClientExecuteException("当前Group[" + group + "]为系统Group, 不可操作!");
         }

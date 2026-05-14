@@ -22,12 +22,12 @@ public class ReflectUtils {
      * @param fieldName 字段名称参数
      * @param value 参数值
      * @param forceAccess 是否强制访问
-     * @throws IllegalAccessException
      */
     public static void setFiledValue(final Object target, final String fieldName, final Object value,
             final boolean forceAccess) throws IllegalAccessException {
         FieldUtils.writeField(target, fieldName, value, true);
     }
+
     /**
      * @param aClass 参数
      */
@@ -41,7 +41,6 @@ public class ReflectUtils {
      * @param aClass A类型
      * @param methodName 方法名
      * @param parameterTypes 参数类型列表
-     * @return
      */
     public static Method getMethod(final Class<?> aClass, final String methodName, final Class<?>... parameterTypes) {
         return MethodUtils.getAccessibleMethod(aClass, methodName, parameterTypes);

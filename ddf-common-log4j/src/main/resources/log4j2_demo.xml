@@ -4,18 +4,19 @@
     <Properties>
         <Property name="application_name">game</Property>
         <Property name="LOG_BASE_DIR">/data/logs/${application_name}</Property>
-        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}} %clr{[%t]} %clr{%-5p} %clr{[%X{user_id}#%X{trace_id}]} %clr{%c(%L)} %clr{%m%n}
+        <Property
+                name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}} %clr{[%t]} %clr{%-5p} %clr{[%X{user_id}#%X{trace_id}]} %clr{%c(%L)} %clr{%m%n}
         </Property>
         <Property name="FILE_LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] %-5p [%X{user_id}#%X{trace_id}] %c{1.} - %msg%n</Property>
     </Properties>
 
     <Appenders>
         <ErrorInterceptor name="ErrorInterceptor">
-            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}" />
+            <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
         </ErrorInterceptor>
 
         <Async name="AsyncError" includeLocation="false" shutdownTimeout="10000" blocking="false">
-            <AppenderRef ref="ErrorInterceptor" />
+            <AppenderRef ref="ErrorInterceptor"/>
         </Async>
 
         <!-- 输出到控制台 -->
@@ -25,7 +26,7 @@
         </Console>
 
         <RollingRandomAccessFile name="INFO_FILE" fileName="${LOG_BASE_DIR}/${application_name}.log"
-                                 filePattern="${LOG_BASE_DIR}/${application_name}-%d{yyyy-MM-dd}.log">
+                filePattern="${LOG_BASE_DIR}/${application_name}-%d{yyyy-MM-dd}.log">
             <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
@@ -39,7 +40,7 @@
         </RollingRandomAccessFile>
 
         <RollingRandomAccessFile name="WARN_FILE" fileName="${LOG_BASE_DIR}/${application_name}-warn.log"
-                                 filePattern="${LOG_BASE_DIR}/${application_name}-warn-%d{yyyy-MM-dd}.log">
+                filePattern="${LOG_BASE_DIR}/${application_name}-warn-%d{yyyy-MM-dd}.log">
             <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->
@@ -53,7 +54,7 @@
         </RollingRandomAccessFile>
 
         <RollingRandomAccessFile name="ERROR_FILE" fileName="${LOG_BASE_DIR}/${application_name}-error.log"
-                                 filePattern="${LOG_BASE_DIR}/${application_name}-error-%d{yyyy-MM-dd}-error.log">
+                filePattern="${LOG_BASE_DIR}/${application_name}-error-%d{yyyy-MM-dd}-error.log">
             <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 需要记录的格式 -->

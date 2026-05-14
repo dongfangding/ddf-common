@@ -13,19 +13,19 @@
 `ddf-common-core` 在四层架构中位于**基础内核层**，向上承担 Spring/JDK 层面的"通用基础设施"，
 向下只依赖 `ddf-common-api`。它不提供数据库、Redis、MQ 等基础设施，但**为这些基础设施提供共用能力**。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 非 Bean 环境访问 Spring Bean | `static` 工具类里需要拿到 `RedisTemplate` | `SpringContextHolder.getBeanWithStatic(...)` 静默降级 |
-| 分布式雪花 ID | 不同实例 ID 不可重复，需配置 workerId / dataCenterId | `IdsUtil.getNextLongId()` + `customizer.infra.global-properties` |
-| RSA / AES / HMAC | 网关签名、链路加密、敏感字段落库加密 | `SecureUtil` + 启动期注入的 `rsa-*`/`aes-secret`/`sign-secret` |
-| 接口签名 | 三方对接需要 ASCII 排序、嵌套对象扁平化 | `SignatureUtil` 围绕 `BaseSign` 实现 |
-| 线程池治理 | 优雅停机、连接池泄漏排查、统一监控指标 | `ThreadBuilderHelper.buildThreadPoolTaskExecutor` 自动登记 |
-| 树形结构组装 | 部门树、菜单树、地区树 | `TreeConvertUtil.convert(...)` |
-| 分页桥接 | MyBatis PageHelper 与 Spring Data Pageable 互转 | `PageUtil` |
-| Bean 拷贝 | DTO ↔ Entity 高频转换，反射开销大 | `BeanCopierUtils`（CGLIB BeanCopier + ReflectASM 构造缓存） |
-| Promise / 异步等待 | "下单后等回调，超时即失败" 的同步等待场景 | `DeferredHelper` / `CompletableFutureHelper` |
-| 环境识别 | 区分 prod/dev/test，自动跳过某些初始化 | `EnvironmentHelper` |
-| 本地缓存 | 频繁但低基数读、不需要分布式一致性 | `LocalCacheUtil`（Caffeine + Guava + Hutool TimedCache） |
+| 场景                      | 典型问题                                         | 模块提供的能力                                                          |
+|-------------------------|----------------------------------------------|------------------------------------------------------------------|
+| 非 Bean 环境访问 Spring Bean | `static` 工具类里需要拿到 `RedisTemplate`            | `SpringContextHolder.getBeanWithStatic(...)` 静默降级                |
+| 分布式雪花 ID                | 不同实例 ID 不可重复，需配置 workerId / dataCenterId     | `IdsUtil.getNextLongId()` + `customizer.infra.global-properties` |
+| RSA / AES / HMAC        | 网关签名、链路加密、敏感字段落库加密                           | `SecureUtil` + 启动期注入的 `rsa-*`/`aes-secret`/`sign-secret`         |
+| 接口签名                    | 三方对接需要 ASCII 排序、嵌套对象扁平化                      | `SignatureUtil` 围绕 `BaseSign` 实现                                 |
+| 线程池治理                   | 优雅停机、连接池泄漏排查、统一监控指标                          | `ThreadBuilderHelper.buildThreadPoolTaskExecutor` 自动登记           |
+| 树形结构组装                  | 部门树、菜单树、地区树                                  | `TreeConvertUtil.convert(...)`                                   |
+| 分页桥接                    | MyBatis PageHelper 与 Spring Data Pageable 互转 | `PageUtil`                                                       |
+| Bean 拷贝                 | DTO ↔ Entity 高频转换，反射开销大                      | `BeanCopierUtils`（CGLIB BeanCopier + ReflectASM 构造缓存）            |
+| Promise / 异步等待          | "下单后等回调，超时即失败" 的同步等待场景                       | `DeferredHelper` / `CompletableFutureHelper`                     |
+| 环境识别                    | 区分 prod/dev/test，自动跳过某些初始化                   | `EnvironmentHelper`                                              |
+| 本地缓存                    | 频繁但低基数读、不需要分布式一致性                            | `LocalCacheUtil`（Caffeine + Guava + Hutool TimedCache）           |
 
 > ⚠️ 当前阶段 core 已经把 JDBC / Druid / Mail / Actuator 等"基础设施实现"迁出到独立 starter。
 > 如果你需要这些能力，请改用 `ddf-common-data-mysql-starter` / `ddf-common-governance-starter`。
@@ -99,14 +99,14 @@ customizer:
 
 `CoreAutoConfiguration` 启动后默认得到：
 
-| Bean | 类型 | 说明 |
-| ----- | ----- | ----- |
-| `globalProperties` | `GlobalProperties` | 全局可调项（`@RefreshScope`） |
-| `springContextHolder` | `SpringContextHolder` | 启用 Hutool `SpringUtil`，提供静态 Bean 查找 |
-| `environmentHelper` | `EnvironmentHelper` | 当前应用名 / 端口 / profile 工具 |
-| `threadPoolExecutorShutdownDefinition` | `ExecutorServiceGracefulShutdownDefinition` | 默认 120s 优雅停机 |
-| `deferredHelper` | `DeferredHelper<?, ?, ?>` | jdeferred 适配的"等待回调"工具 |
-| `completableFutureHelper` | `CompletableFutureHelper<?>` | 围绕 `CompletableFuture` 的工具 |
+| Bean                                   | 类型                                          | 说明                                  |
+|----------------------------------------|---------------------------------------------|-------------------------------------|
+| `globalProperties`                     | `GlobalProperties`                          | 全局可调项（`@RefreshScope`）              |
+| `springContextHolder`                  | `SpringContextHolder`                       | 启用 Hutool `SpringUtil`，提供静态 Bean 查找 |
+| `environmentHelper`                    | `EnvironmentHelper`                         | 当前应用名 / 端口 / profile 工具             |
+| `threadPoolExecutorShutdownDefinition` | `ExecutorServiceGracefulShutdownDefinition` | 默认 120s 优雅停机                        |
+| `deferredHelper`                       | `DeferredHelper<?, ?, ?>`                   | jdeferred 适配的"等待回调"工具               |
+| `completableFutureHelper`              | `CompletableFutureHelper<?>`                | 围绕 `CompletableFuture` 的工具          |
 
 所有 Bean 都带 `@ConditionalOnMissingBean`，业务可自行覆盖。
 
@@ -329,15 +329,15 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-api` | core 的上游；`BaseSign` / `ResponseData` / `ITreeTagCollection` / `PageResult` 等协议对象 |
-| `ddf-common-mvc` | 复用 `SpringContextHolder` + `GlobalExceptionEvent` 做全局异常处理与日志增强 |
-| `ddf-common-authentication` | 使用 `SecureUtil` / `SignatureUtil` 完成 Token / 验签 |
-| `ddf-common-redis` | `ApplicationNamedKeyGenerator` 通过 `SpringContextHolder` 读取 `spring.application.name` |
-| `ddf-common-data-mysql-starter` | 复用 `BaseDomain`、`PageUtil`、`IdsUtil`，并接管线程池治理 |
-| `ddf-common-ids-service` | 提供集中式 ID 分发；`IdsUtil` 雪花是它的本地兜底 |
-| `ddf-common-limit` / `ddf-common-alarm` | 通过 `SpringContextHolder` 拿到 RedisTemplate 等基础 Bean |
+| 模块                                      | 协作方式                                                                                 |
+|-----------------------------------------|--------------------------------------------------------------------------------------|
+| `ddf-common-api`                        | core 的上游；`BaseSign` / `ResponseData` / `ITreeTagCollection` / `PageResult` 等协议对象     |
+| `ddf-common-mvc`                        | 复用 `SpringContextHolder` + `GlobalExceptionEvent` 做全局异常处理与日志增强                       |
+| `ddf-common-authentication`             | 使用 `SecureUtil` / `SignatureUtil` 完成 Token / 验签                                      |
+| `ddf-common-redis`                      | `ApplicationNamedKeyGenerator` 通过 `SpringContextHolder` 读取 `spring.application.name` |
+| `ddf-common-data-mysql-starter`         | 复用 `BaseDomain`、`PageUtil`、`IdsUtil`，并接管线程池治理                                        |
+| `ddf-common-ids-service`                | 提供集中式 ID 分发；`IdsUtil` 雪花是它的本地兜底                                                      |
+| `ddf-common-limit` / `ddf-common-alarm` | 通过 `SpringContextHolder` 拿到 RedisTemplate 等基础 Bean                                   |
 
 ---
 
@@ -359,7 +359,8 @@ CGLIB 严格按字段名 + 完全一致的类型匹配，`int ↔ Integer`、`Lo
 日志关键字 `[ThreadPoolMonitor]`，默认每 60 秒打印一次。如需接 Prometheus，请在 `ddf-common-governance-starter`
 里启用 Micrometer 指标采集，自动包含 `executor.*` 指标。
 
-**Q5：可以在非 Spring 环境使用这些工具吗？**  
+**Q5：可以在非 Spring 环境使用这些工具吗？**
+
 - `SpringContextHolder.getBeanWithStatic(...)`：可，返回 null
 - `IdsUtil` / `SecureUtil` / `SignatureUtil`：依赖 `GlobalProperties` Bean，**无法在纯单测环境直接用**，
   需要手动构造 `GlobalProperties` 并塞入 `SpringContextHolder`，或通过 `@SpringBootTest` 启动上下文。

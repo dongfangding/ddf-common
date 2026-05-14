@@ -98,6 +98,7 @@ public class RequestContent<T> implements Serializable {
 
     @JsonIgnore
     private transient Map<String, String> extraMap;
+
     public RequestContent(String requestId, Type type, String cmd, Integer sendMode, String clientChannel,
             Long timestamp, T content) {
         this.requestId = requestId;
@@ -112,24 +113,20 @@ public class RequestContent<T> implements Serializable {
     /**
      * 主动发起请求推送数据
      *
-     * @param cmd     指令碼
+     * @param cmd 指令碼
      * @param content 内容
-     * @param <T>     内容类型
-     * @return
+     * @param <T> 内容类型
      */
     public static <T> RequestContent<T> request(String cmd, T content) {
-        return new RequestContent<>(
-                IdsUtil.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null,
-                System.currentTimeMillis(), content
-        );
+        return new RequestContent<>(IdsUtil.getNextStrId(), Type.REQUEST, cmd, SEND_MODE_SERVER, null,
+                System.currentTimeMillis(), content);
     }
 
     /**
      * 对收到的请求应答数据已收到
      *
      * @param requestContent 收到的数据
-     * @param <T>            数据body类型
-     * @return
+     * @param <T> 数据body类型
      */
     public static <T> RequestContent<T> responseAccept(RequestContent<T> requestContent) {
         return response(requestContent, ResponseCodeEnum.CODE_RECEIVED.getCode(), null);
@@ -139,10 +136,9 @@ public class RequestContent<T> implements Serializable {
      * 对收到的请求应答业务处理成功同时返回给客户端数据
      *
      * @param requestContent 收到的数据
-     * @param data           待处理数据
-     * @param <T>            收到的数据body类型
-     * @param <R>            返回的body数据内容
-     * @return
+     * @param data 待处理数据
+     * @param <T> 收到的数据body类型
+     * @param <R> 返回的body数据内容
      */
     public static <T, R> RequestContent<R> responseSuccess(RequestContent<T> requestContent, R data) {
         return response(requestContent, ResponseCodeEnum.CODE_COMPLETE.getCode(), data);
@@ -152,8 +148,7 @@ public class RequestContent<T> implements Serializable {
      * 对收到的请求应答业务处理成功同时返回给客户端数据
      *
      * @param requestContent 收到的数据
-     * @param <T>            收到的数据body类型
-     * @return
+     * @param <T> 收到的数据body类型
      */
     public static <T> RequestContent<T> responseSuccess(RequestContent<T> requestContent) {
         return response(requestContent, ResponseCodeEnum.CODE_COMPLETE.getCode(), null);
@@ -161,8 +156,6 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * 服务端向客户端发送心跳检测命令
-     *
-     * @return
      */
     public static <T> RequestContent<T> heart() {
         return request(Cmd.PING.name(), null);
@@ -171,9 +164,8 @@ public class RequestContent<T> implements Serializable {
     /**
      * 添加扩展字段
      *
-     * @param key   目标键
+     * @param key 目标键
      * @param value 参数值
-     * @return
      */
     public RequestContent<T> addExtra(String key, String value) {
         if (extra == null) {
@@ -188,8 +180,6 @@ public class RequestContent<T> implements Serializable {
 
     /**
      * 序列化RequestContent
-     *
-     * @return
      */
     public String serial() {
         return JsonUtil.asString(this);
@@ -200,11 +190,10 @@ public class RequestContent<T> implements Serializable {
      * 根据请求数据构造响应数据
      *
      * @param requestContent 收到的数据
-     * @param code           响应code码
-     * @param data           待处理数据
-     * @param <T>            收到的数据内容类型
-     * @param <R>            返回的数据内容类型
-     * @return
+     * @param code 响应code码
+     * @param data 待处理数据
+     * @param <T> 收到的数据内容类型
+     * @param <R> 返回的数据内容类型
      */
     private static <T, R> RequestContent<R> response(RequestContent<T> requestContent, Integer code, R data) {
         RequestContent<R> response = new RequestContent<>();
@@ -246,7 +235,6 @@ public class RequestContent<T> implements Serializable {
      * 由于set添加扩展值容易出错，因此不对外提供，进攻解码器使用
      *
      * @param extra 扩展参数
-     * @return
      */
     private RequestContent<T> setExtra(String extra) {
         this.extra = extra;
@@ -256,6 +244,7 @@ public class RequestContent<T> implements Serializable {
     public Map<String, String> getExtraMap() {
         return extraMap;
     }
+
     /**
      * @param extraMap 参数
      */

@@ -67,6 +67,7 @@ public class ChannelTransfer {
 
     /**
      * 客户端类型
+     *
      * @see com.ddf.boot.quick.websocket.model.AuthPrincipal.LoginType
      */
     private String loginType;

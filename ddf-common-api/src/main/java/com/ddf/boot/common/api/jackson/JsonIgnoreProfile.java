@@ -7,10 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
  * 对原有JsonIgnore的不足进行扩充，现在可以根据不同的环境来决定是否忽略字段
+ * // * @see JacksonAnnotationIntrospector#_isIgnorable(com.fasterxml.jackson.databind.introspect.Annotated)
  *
-// * @see JacksonAnnotationIntrospector#_isIgnorable(com.fasterxml.jackson.databind.introspect.Annotated)
  * @author snowball
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
@@ -22,7 +21,6 @@ public @interface JsonIgnoreProfile {
 
     /**
      * 要满足的环境，当value为true且profile满足时才忽略字段的序列化
-     * @return
      */
     String[] profile() default {};
 }

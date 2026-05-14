@@ -32,20 +32,15 @@ class TokenCacheImplTest {
         AuthenticationProperties properties = new AuthenticationProperties();
         EnvironmentHelper environmentHelper = mock(EnvironmentHelper.class);
         StringRedisTemplate defaultRedisTemplate = mock(StringRedisTemplate.class);
-        @SuppressWarnings("unchecked")
-        ObjectProvider<RedisTemplateSupport> objectProvider = mock(ObjectProvider.class);
+        @SuppressWarnings("unchecked") ObjectProvider<RedisTemplateSupport> objectProvider = mock(ObjectProvider.class);
         StringRedisTemplate selectedRedisTemplate = mock(StringRedisTemplate.class);
         RedisTemplateSupport redisTemplateSupport = () -> selectedRedisTemplate;
 
         when(environmentHelper.getApplicationName()).thenReturn("demo-app");
         when(objectProvider.getIfAvailable(org.mockito.ArgumentMatchers.any())).thenReturn(redisTemplateSupport);
 
-        TokenCacheImpl tokenCache = new TokenCacheImpl(
-            properties,
-            environmentHelper,
-            defaultRedisTemplate,
-            objectProvider
-        );
+        TokenCacheImpl tokenCache = new TokenCacheImpl(properties, environmentHelper, defaultRedisTemplate,
+                objectProvider);
 
         assertEquals("demo-app:authentication:token:1001", tokenCache.getTokenKey("1001"));
     }
@@ -58,10 +53,8 @@ class TokenCacheImplTest {
         EnvironmentHelper environmentHelper = mock(EnvironmentHelper.class);
         StringRedisTemplate defaultRedisTemplate = mock(StringRedisTemplate.class);
         StringRedisTemplate selectedRedisTemplate = mock(StringRedisTemplate.class);
-        @SuppressWarnings("unchecked")
-        ObjectProvider<RedisTemplateSupport> objectProvider = mock(ObjectProvider.class);
-        @SuppressWarnings("unchecked")
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
+        @SuppressWarnings("unchecked") ObjectProvider<RedisTemplateSupport> objectProvider = mock(ObjectProvider.class);
+        @SuppressWarnings("unchecked") ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         RedisTemplateSupport redisTemplateSupport = () -> selectedRedisTemplate;
 
         when(environmentHelper.getApplicationName()).thenReturn("demo-app");
@@ -69,12 +62,8 @@ class TokenCacheImplTest {
         when(selectedRedisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("demo-app:authentication:token:1001")).thenReturn("1001.detail-token");
 
-        TokenCacheImpl tokenCache = new TokenCacheImpl(
-            properties,
-            environmentHelper,
-            defaultRedisTemplate,
-            objectProvider
-        );
+        TokenCacheImpl tokenCache = new TokenCacheImpl(properties, environmentHelper, defaultRedisTemplate,
+                objectProvider);
         UserClaim userClaim = UserClaim.mockUser("1001");
         AuthenticateToken authenticateToken = AuthenticateToken.of("1001", "detail-token");
 
@@ -82,19 +71,9 @@ class TokenCacheImplTest {
         String token = tokenCache.getToken("1001");
         tokenCache.refreshToken("1001", "1001.new-detail");
 
-        verify(valueOperations).set(
-            "demo-app:authentication:token:1001",
-            "1001.detail-token",
-            30,
-            TimeUnit.MINUTES
-        );
+        verify(valueOperations).set("demo-app:authentication:token:1001", "1001.detail-token", 30, TimeUnit.MINUTES);
         verify(valueOperations).get("demo-app:authentication:token:1001");
-        verify(valueOperations).set(
-            "demo-app:authentication:token:1001",
-            "1001.new-detail",
-            30,
-            TimeUnit.MINUTES
-        );
+        verify(valueOperations).set("demo-app:authentication:token:1001", "1001.new-detail", 30, TimeUnit.MINUTES);
         assertEquals("1001.detail-token", token);
     }
 }

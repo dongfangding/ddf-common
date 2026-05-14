@@ -8,11 +8,10 @@ import com.ddf.common.ons.console.model.OnsBizErrorCodeEnum;
 import java.util.Objects;
 
 /**
- *
  * ONS 客户端调用异常
  *
- * @author  Jonni Kanerva
- * @since   JDK1.1
+ * @author Jonni Kanerva
+ * @since JDK1.1
  */
 public class OnsClientExecuteException extends BaseException {
     static final long serialVersionUID = -1848914673093119416L;
@@ -24,8 +23,6 @@ public class OnsClientExecuteException extends BaseException {
 
     /**
      * 当前异常默认响应状态码
-     *
-     * @return
      */
     @Override
     public BaseCallbackCode defaultCallback() {
@@ -36,6 +33,7 @@ public class OnsClientExecuteException extends BaseException {
     public boolean isMaskErrorDetails() {
         return true;
     }
+
     /**
      * @param message 参数
      * @param cause 参数
@@ -43,18 +41,21 @@ public class OnsClientExecuteException extends BaseException {
     public OnsClientExecuteException(String message, Throwable cause) {
         super(ONS_COMMON_CODE, message, cause);
     }
+
     /**
      * @param message 参数
      */
     public OnsClientExecuteException(String message) {
         super(ONS_COMMON_CODE, message);
     }
+
     /**
      * @param cause 参数
      */
     public OnsClientExecuteException(Throwable cause) {
         super(cause);
     }
+
     /**
      * @param code 参数
      * @param message 参数

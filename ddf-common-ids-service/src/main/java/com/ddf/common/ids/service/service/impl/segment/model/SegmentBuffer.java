@@ -29,7 +29,7 @@ public class SegmentBuffer {
     private volatile long updateTimestamp;
 
     public SegmentBuffer() {
-        segments = new Segment[]{new Segment(this), new Segment(this)};
+        segments = new Segment[] {new Segment(this), new Segment(this)};
         currentPos = 0;
         nextReady = false;
         initOk = false;

@@ -36,8 +36,6 @@ public class IndexComparatorElement {
 
     /**
      * 判断这个元素是否被删除
-     *
-     * @return
      */
     public boolean isDelete() {
         return status == 3;
@@ -45,8 +43,6 @@ public class IndexComparatorElement {
 
     /**
      * 判断当前value是否是替换之前元素的
-     *
-     * @return
      */
     public boolean isChange() {
         return status == 2;
@@ -55,8 +51,6 @@ public class IndexComparatorElement {
 
     /**
      * 判断这个元素是否是新增的
-     *
-     * @return
      */
     public boolean isAdd() {
         return status == 1;

@@ -23,6 +23,7 @@ public abstract class BizResultCheckerPool {
 
     /**
      * 注册业务结果查询器实例
+     *
      * @param routeKey 业务实现路由key
      * @param instance 业务结果查询器实例
      */
@@ -33,12 +34,12 @@ public abstract class BizResultCheckerPool {
 
     /**
      * 根据主题获取业务结果查询器实例
+     *
      * @param routeKey 参数
-     * @return
      */
     public static <T extends BizResultChecker> T get(String routeKey) {
         BizResultChecker instance = INSTANCE_POOL.get(routeKey);
-        if(Objects.isNull(instance)) {
+        if (Objects.isNull(instance)) {
             throw new RuntimeException("没有找到：[" + routeKey + "]的业务结果查询器实例");
         }
         return (T) instance;

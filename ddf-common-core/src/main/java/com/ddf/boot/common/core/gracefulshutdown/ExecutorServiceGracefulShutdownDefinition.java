@@ -21,24 +21,22 @@ import org.springframework.util.CollectionUtils;
 /**
  * <p>参考{@link ExecutorConfigurationSupport#shutdown()} 实现的对线程池优雅关闭的注册类</p >
  * <p>Spring已经实现了线程池的优雅关闭逻辑， 需要满足几个前提和注意事项</p >
- *      <li>1. 使用Spring封装的线程池类， 如{@link ThreadPoolTaskExecutor}, 线程池必须交由Spring容器管理， 优雅关闭的方法是在父类中{@link ExecutorConfigurationSupport#shutdown()}定义的</li>
- *      <li>2. 必须调用线程池父类的{@link ExecutorConfigurationSupport#setWaitForTasksToCompleteOnShutdown(boolean)}
- *             和{@link ExecutorConfigurationSupport#setAwaitTerminationSeconds(int)}方法来满足优雅关闭的判断前提</li>
- *      <li>3. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，{@link Order}似乎不是你用来控制容器初始化顺序的，想来应该也和容器依赖有关，根本无法保证有序</li>
- *      <li>4. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
- *       在关闭单例池时执行到{@link DefaultSingletonBeanRegistry#destroySingletons()}时有个属性{@link DefaultSingletonBeanRegistry#disposableBeans},
- *       销毁的时候是按照这个顺序来定义的，而且这个属性本身有序，这个属性里存的bean都是实现了Spring生命周期相关方法的bean,
- *       具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(String, Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
- *  <p></p>
- *
- *  <p>
- *      如果不使用上述方式， 则本类提供另外一种逻辑， 即依赖于{@link org.springframework.context.support.AbstractApplicationContext#close()}
- *  方法中定义的逻辑，在Spring容器关闭的前面会先发布一个容器关闭事件， 则可以监听容器关闭事件，在容器关闭事件中将Spring实现的线程池
- *  关闭的方法抄过来， 这样可以用来处理一些未交由Spring容器管理的线程池，而且该类保证线程池的关闭逻辑一定是早于所有Spring容器的，因为不存在
- *  上述方案需要定义线程池优先级的问题
- *  </p>
- *
- *  <p></p>
+ * <li>1. 使用Spring封装的线程池类， 如{@link ThreadPoolTaskExecutor}, 线程池必须交由Spring容器管理， 优雅关闭的方法是在父类中{@link ExecutorConfigurationSupport#shutdown()}定义的</li>
+ * <li>2. 必须调用线程池父类的{@link ExecutorConfigurationSupport#setWaitForTasksToCompleteOnShutdown(boolean)}
+ * 和{@link ExecutorConfigurationSupport#setAwaitTerminationSeconds(int)}方法来满足优雅关闭的判断前提</li>
+ * <li>3. 注意容器销毁顺序， 如果线程池中使用需要使用数据源，则必须保证数据源在线程池后面被销毁，{@link Order}似乎不是你用来控制容器初始化顺序的，想来应该也和容器依赖有关，根本无法保证有序</li>
+ * <li>4. 具体Spring的关闭钩子方法逻辑在{@link org.springframework.context.support.AbstractApplicationContext#close()},
+ * 在关闭单例池时执行到{@link DefaultSingletonBeanRegistry#destroySingletons()}时有个属性{@link DefaultSingletonBeanRegistry#disposableBeans},
+ * 销毁的时候是按照这个顺序来定义的，而且这个属性本身有序，这个属性里存的bean都是实现了Spring生命周期相关方法的bean,
+ * 具体逻辑见{@link AbstractBeanFactory#registerDisposableBeanIfNecessary(String, Object, org.springframework.beans.factory.support.RootBeanDefinition)}</li>
+ * <p></p>
+ * <p>
+ * 如果不使用上述方式， 则本类提供另外一种逻辑， 即依赖于{@link org.springframework.context.support.AbstractApplicationContext#close()}
+ * 方法中定义的逻辑，在Spring容器关闭的前面会先发布一个容器关闭事件， 则可以监听容器关闭事件，在容器关闭事件中将Spring实现的线程池
+ * 关闭的方法抄过来， 这样可以用来处理一些未交由Spring容器管理的线程池，而且该类保证线程池的关闭逻辑一定是早于所有Spring容器的，因为不存在
+ * 上述方案需要定义线程池优先级的问题
+ * </p>
+ * <p></p>
  * <p><b>NOTE:</b></p>
  * <p>1. 如果是web项目， 停机无法解决流量继续转发进来的问题， 如nginx, 需要配合运维手段将发布机器从nginx负载中下线</p>
  * <p>2. 如果是Dubbo项目，需要先执行Dubbo的优雅停机，确保先将提供者从注册中心移除，不再有新的消费者请求进来</p>
@@ -59,6 +57,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
     private final long awaitTermination;
 
     private final TimeUnit timeUnit;
+
     public ExecutorServiceGracefulShutdownDefinition(long awaitTermination, TimeUnit timeUnit) {
         this.awaitTermination = awaitTermination;
         this.timeUnit = timeUnit;
@@ -90,7 +89,6 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
      * 注意如果调用这个方法的话，而线程池又是由Spring管理的，则必须等待这个bean初始化完成后才可以调用
      * 因为依赖的{@link ThreadPoolTaskExecutor#getThreadPoolExecutor()}必须要在bean的父类方法中定义的
      * 初始化{@link ExecutorConfigurationSupport#afterPropertiesSet()}方法中才会赋值
-     *
      * 重写了{@link ThreadPoolTaskScheduler#initializeExecutor(java.util.concurrent.ThreadFactory, java.util.concurrent.RejectedExecutionHandler)}
      * 来对父类的{@link ExecutorConfigurationSupport#executor}赋值
      *
@@ -124,8 +122,7 @@ public class ExecutorServiceGracefulShutdownDefinition implements ApplicationLis
                         log.warn("Timed out while waiting for executor [{}] to terminate", pool);
                     }
                 }
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 if (log.isWarnEnabled()) {
                     log.warn("Timed out while waiting for executor [{}] to terminate", pool);
                 }

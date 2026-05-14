@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RedisCustomizeAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(RedisCustomizeAutoConfiguration.class))
-            .withUserConfiguration(RedisSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(RedisCustomizeAutoConfiguration.class)).withUserConfiguration(
+            RedisSupportConfiguration.class);
 
     @Test
     void shouldRegisterRedisHelperBeans() {

@@ -23,6 +23,7 @@ public abstract class BizTransactionExecutorPool {
 
     /**
      * 注册业务事务执行器实例
+     *
      * @param routeKey 业务实现的路由key
      * @param instance 业务事务执行器实例
      */
@@ -33,12 +34,12 @@ public abstract class BizTransactionExecutorPool {
 
     /**
      * 根据主题获取业务事务执行器实例
+     *
      * @param routeKey 参数
-     * @return
      */
     public static <T extends BizTransactionExecutor> T get(String routeKey) {
         BizTransactionExecutor instance = INSTANCE_POOL.get(routeKey);
-        if(Objects.isNull(instance)) {
+        if (Objects.isNull(instance)) {
             throw new RuntimeException("没有找到：[" + routeKey + "]的业务事务执行器实例");
         }
         return (T) instance;

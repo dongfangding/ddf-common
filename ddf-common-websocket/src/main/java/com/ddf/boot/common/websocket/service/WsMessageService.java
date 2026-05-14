@@ -20,7 +20,6 @@ public interface WsMessageService {
      * 执行指令
      *
      * @param request 请求对象
-     * @return
      */
     <T, Q> MessageResponse<T> executeCmd(MessageRequest<Q> request);
 
@@ -28,7 +27,6 @@ public interface WsMessageService {
      * 针对每个设备的数据不一样的批量发送接口指令
      *
      * @param requests requests参数
-     * @return
      */
     <T, Q> MessageResponse<T> executeCmd(List<MessageRequest<Q>> requests);
 }

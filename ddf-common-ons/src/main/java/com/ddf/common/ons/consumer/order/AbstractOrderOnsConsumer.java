@@ -47,7 +47,6 @@ public abstract class AbstractOrderOnsConsumer implements OnsConsumer {
 
     /**
      * 获取并发消费者数量
-     * @return
      */
     @Override
     public String getConsumeThreadNums() {
@@ -56,7 +55,6 @@ public abstract class AbstractOrderOnsConsumer implements OnsConsumer {
 
     /**
      * 获取有序消息监听器
-     * @return
      */
     protected abstract MessageOrderListener getMessageOrderListener();
 

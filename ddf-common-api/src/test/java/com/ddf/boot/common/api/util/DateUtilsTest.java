@@ -24,9 +24,7 @@ class DateUtilsTest {
     @Test
     @DisplayName("应按月格式返回当月第一天秒级时间戳")
     void shouldResolveMonthFirstSecondsFromFormatterValue() {
-        long expected = LocalDate.of(2024, 1, 1)
-                .atStartOfDay(ZoneOffset.ofHours(8))
-                .toEpochSecond();
+        long expected = LocalDate.of(2024, 1, 1).atStartOfDay(ZoneOffset.ofHours(8)).toEpochSecond();
 
         assertEquals(expected, DateUtils.getMonthFirstSecondsByDayFormatter(202401));
     }
@@ -34,13 +32,8 @@ class DateUtilsTest {
     @Test
     @DisplayName("应按天格式返回当天开始和结束秒级时间戳")
     void shouldResolveDayBoundarySeconds() {
-        long expectedStart = LocalDate.of(2024, 1, 1)
-                .atStartOfDay(ZoneOffset.ofHours(8))
-                .toEpochSecond();
-        long expectedEnd = LocalDate.of(2024, 1, 1)
-                .atTime(23, 59, 59)
-                .atZone(ZoneOffset.ofHours(8))
-                .toEpochSecond();
+        long expectedStart = LocalDate.of(2024, 1, 1).atStartOfDay(ZoneOffset.ofHours(8)).toEpochSecond();
+        long expectedEnd = LocalDate.of(2024, 1, 1).atTime(23, 59, 59).atZone(ZoneOffset.ofHours(8)).toEpochSecond();
 
         assertEquals(expectedStart, DateUtils.getDayFirstSecondsByDayFormatter(20240101));
         assertEquals(expectedEnd, DateUtils.getDayLastSecondsByDayFormatter(20240101));
@@ -82,9 +75,7 @@ class DateUtilsTest {
     @Test
     @DisplayName("应计算月首和月末日期")
     void shouldResolveMonthBoundaryDates() {
-        Date date = Date.from(LocalDate.of(2024, 2, 18)
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant());
+        Date date = Date.from(LocalDate.of(2024, 2, 18).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         Date monthFirstDate = DateUtils.getMonthFirstDate(date);
         Date monthLastDate = DateUtils.getMonthLastDate(date);

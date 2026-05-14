@@ -13,9 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MongoAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(MongoAutoConfiguration.class))
-            .withUserConfiguration(MongoSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(MongoAutoConfiguration.class)).withUserConfiguration(MongoSupportConfiguration.class);
 
     @Test
     void shouldRegisterMongoTemplateHelperWhenMongoTemplateExists() {

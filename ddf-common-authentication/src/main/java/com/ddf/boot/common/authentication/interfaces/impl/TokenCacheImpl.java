@@ -38,7 +38,6 @@ public class TokenCacheImpl implements TokenCache {
      * 获取token key规则
      *
      * @param uid 用户 ID
-     * @return
      */
     public String getTokenKey(String uid) {
         return TOKEN_KEY.formatted(environmentHelper.getApplicationName(), uid);
@@ -48,10 +47,10 @@ public class TokenCacheImpl implements TokenCache {
             StringRedisTemplate defaultRedisTemplate, ObjectProvider<RedisTemplateSupport> redisTemplateSupport) {
         this.authenticationProperties = authenticationProperties;
         this.environmentHelper = environmentHelper;
-        this.stringRedisTemplate = redisTemplateSupport
-                .getIfAvailable(() -> () -> defaultRedisTemplate)
+        this.stringRedisTemplate = redisTemplateSupport.getIfAvailable(() -> () -> defaultRedisTemplate)
                 .getStringRedisTemplate();
     }
+
     /**
      * @param userClaim 用户声明信息
      * @param authenticateToken 认证令牌对象
@@ -62,6 +61,7 @@ public class TokenCacheImpl implements TokenCache {
         stringRedisTemplate.opsForValue().set(getTokenKey(userClaim.getUserId()), authenticateToken.getToken(),
                 authenticationProperties.getExpiredMinute(), TimeUnit.MINUTES);
     }
+
     /**
      * @param userId 参数
      */
@@ -69,6 +69,7 @@ public class TokenCacheImpl implements TokenCache {
     public String getToken(String userId) {
         return stringRedisTemplate.opsForValue().get(getTokenKey(userId));
     }
+
     /**
      * @param userId 参数
      * @param token token 字符串
@@ -76,7 +77,7 @@ public class TokenCacheImpl implements TokenCache {
     @Override
     public void refreshToken(String userId, String token) {
         // token存入缓存
-        stringRedisTemplate.opsForValue().set(getTokenKey(userId), token,
-                authenticationProperties.getExpiredMinute(), TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(getTokenKey(userId), token, authenticationProperties.getExpiredMinute(),
+                TimeUnit.MINUTES);
     }
 }

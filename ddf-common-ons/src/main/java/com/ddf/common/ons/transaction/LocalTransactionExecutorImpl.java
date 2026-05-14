@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 public class LocalTransactionExecutorImpl implements LocalTransactionExecuter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger("LocalTransactionExecutor");
+
     /**
      * @param msg 参数
      * @param arg 参数
@@ -28,7 +29,7 @@ public class LocalTransactionExecutorImpl implements LocalTransactionExecuter {
         TransactionStatus transactionStatus;
         try {
             String routeKey = msg.getUserProperties(TransactionConst.TRANSACTION_BIZ_ROUTE_KEY);
-            if(ObjectUtils.isEmpty(routeKey) || Objects.isNull(BizTransactionExecutorPool.get(routeKey))) {
+            if (ObjectUtils.isEmpty(routeKey) || Objects.isNull(BizTransactionExecutorPool.get(routeKey))) {
                 LOGGER.error("没有找到对应消息的事务处理器, routeKey = {}, msg = {}", routeKey, msg);
             }
             boolean isSuccess = BizTransactionExecutorPool.get(routeKey).execute(msg, arg);

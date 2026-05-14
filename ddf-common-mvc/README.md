@@ -15,16 +15,16 @@ English · [简体中文](./README.zh-CN.md)
 `ddf-common-mvc` is the **glue and governance layer** for the web tier. All cross-cutting concerns
 shared by controllers live here, so business code can focus purely on endpoint logic.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Global exception handling | Hand-written try-catch in every controller, inconsistent formats | `AbstractExceptionHandler` auto-captures and maps to `ResponseData` |
-| Unified response wrapping | Some endpoints return raw objects, others manually wrap `ResponseData` | `AbstractCommonResponseBodyAdvice` auto-wraps |
-| Multiple request-body reads | Signature verification needs to read the body first, then the framework reads it again | `CachingRequestBodyFilter` wraps with `ContentCachingRequestWrapper` |
-| Access logging + slow endpoints | Need to log every endpoint's params, result, and elapsed time; alert on timeout | `@EnableLogAspect` enables AOP logging and slow-event callbacks |
-| Permission-menu scanning | Need to auto-collect all `@PermissionMenu` annotations to build an RBAC menu tree | `PermissionMenuScanner` scans `@PermissionMenu` on controllers |
-| Request tamper protection | Open-gateway integration needs signature verification | `RequestSignAccessFilterChain` auto-verifies based on `BaseSign` |
-| Custom argument resolution | Same parameter needs to support multiple content-type parsers | `MultiArgumentResolver` / `QueryParamArgumentResolver` |
-| i18n error messages | Error messages should be returned in the client's language | `AbstractExceptionHandler` resolves Locale from `app_language` header |
+| Category                        | Typical Problem                                                                        | What the Module Provides                                              |
+|---------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| Global exception handling       | Hand-written try-catch in every controller, inconsistent formats                       | `AbstractExceptionHandler` auto-captures and maps to `ResponseData`   |
+| Unified response wrapping       | Some endpoints return raw objects, others manually wrap `ResponseData`                 | `AbstractCommonResponseBodyAdvice` auto-wraps                         |
+| Multiple request-body reads     | Signature verification needs to read the body first, then the framework reads it again | `CachingRequestBodyFilter` wraps with `ContentCachingRequestWrapper`  |
+| Access logging + slow endpoints | Need to log every endpoint's params, result, and elapsed time; alert on timeout        | `@EnableLogAspect` enables AOP logging and slow-event callbacks       |
+| Permission-menu scanning        | Need to auto-collect all `@PermissionMenu` annotations to build an RBAC menu tree      | `PermissionMenuScanner` scans `@PermissionMenu` on controllers        |
+| Request tamper protection       | Open-gateway integration needs signature verification                                  | `RequestSignAccessFilterChain` auto-verifies based on `BaseSign`      |
+| Custom argument resolution      | Same parameter needs to support multiple content-type parsers                          | `MultiArgumentResolver` / `QueryParamArgumentResolver`                |
+| i18n error messages             | Error messages should be returned in the client's language                             | `AbstractExceptionHandler` resolves Locale from `app_language` header |
 
 > ⚠️ Database connection pools, Druid, and similar infrastructure have been moved to
 > `ddf-common-data-mysql-starter`.
@@ -91,13 +91,13 @@ throw new ServerErrorException("System error");
 
 Exception handling behavior:
 
-| Exception type | HTTP status | Masked? | Notes |
-| ----- | ----- | ----- | ----- |
-| `BusinessException` | 200 | No | Returns `description` directly |
-| `BadRequestException` | 200 | Yes | Returns `bizMessage` (default: "Bad request") |
-| `ServerErrorException` | 200 | Yes | Returns `bizMessage` (default: "Request failed, please contact support") |
-| `BindException` | 200 | No | Concatenates all field validation errors |
-| `DuplicateKeyException` | 200 | No | Maps to `DUPLICATE_KEY` |
+| Exception type          | HTTP status | Masked? | Notes                                                                    |
+|-------------------------|-------------|---------|--------------------------------------------------------------------------|
+| `BusinessException`     | 200         | No      | Returns `description` directly                                           |
+| `BadRequestException`   | 200         | Yes     | Returns `bizMessage` (default: "Bad request")                            |
+| `ServerErrorException`  | 200         | Yes     | Returns `bizMessage` (default: "Request failed, please contact support") |
+| `BindException`         | 200         | No      | Concatenates all field validation errors                                 |
+| `DuplicateKeyException` | 200         | No      | Maps to `DUPLICATE_KEY`                                                  |
 
 > When `customizer.infra.global-properties.exception-code-to-response-status: true`, some exception
 > codes are also mirrored to the HTTP response.status.
@@ -161,6 +161,7 @@ public class LogConfig {
 ```
 
 Features:
+
 - Auto-prints controller method params, result, and elapsed time
 - On exception, prints params and the exception
 - When elapsed time exceeds `slowTime`, triggers the `SlowEventAction` callback — hook it into
@@ -215,6 +216,7 @@ public class GatewayRequest implements BaseSign {
 ```
 
 `RequestSignAccessFilterChain` will:
+
 1. Extract `sign` and `nonceTimestamp`
 2. Re-compute the HMAC-SHA256 signature
 3. Throw `BusinessException(SIGN_ERROR)` on mismatch
@@ -302,14 +304,14 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-api` | Exception taxonomy (`BaseException` / `ResponseData`), signing interface (`BaseSign`), request-header enum (`RequestHeaderEnum`) |
-| `ddf-common-core` | Reuses `GlobalProperties` (status mapping, ignored log exception classes), `EnvironmentHelper`, `SpringContextHolder` |
-| `ddf-common-authentication` | Auth exceptions (`UnauthorizedException` / `AccessDeniedException`) are uniformly wrapped by the global handler |
-| `ddf-common-redis` | Signature verification reads `sign-secret` from `GlobalProperties` |
-| `ddf-common-limit` | Rate-limit interceptor exceptions are caught and wrapped by the global handler |
-| `ddf-common-starter-web` | This module is the web-layer core of that starter |
+| Module                      | How They Cooperate                                                                                                               |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-api`            | Exception taxonomy (`BaseException` / `ResponseData`), signing interface (`BaseSign`), request-header enum (`RequestHeaderEnum`) |
+| `ddf-common-core`           | Reuses `GlobalProperties` (status mapping, ignored log exception classes), `EnvironmentHelper`, `SpringContextHolder`            |
+| `ddf-common-authentication` | Auth exceptions (`UnauthorizedException` / `AccessDeniedException`) are uniformly wrapped by the global handler                  |
+| `ddf-common-redis`          | Signature verification reads `sign-secret` from `GlobalProperties`                                                               |
+| `ddf-common-limit`          | Rate-limit interceptor exceptions are caught and wrapped by the global handler                                                   |
+| `ddf-common-starter-web`    | This module is the web-layer core of that starter                                                                                |
 
 ---
 
@@ -320,7 +322,8 @@ public void onGlobalException(GlobalExceptionEvent event) {
 `ResponseData`, it is passed through as-is. If you see double wrapping, check whether a custom
 `ResponseBodyAdvice` is running with higher precedence than the default one.
 
-**Q2: What's the difference between `@WrapperIgnore` and `ignoreReturnType`?**  
+**Q2: What's the difference between `@WrapperIgnore` and `ignoreReturnType`?**
+
 - `@WrapperIgnore`: Method-level annotation, fine-grained, use on-the-fly
 - `ignoreReturnType`: YAML configuration, excludes by fully-qualified return-type class name,
   useful for third-party framework return types

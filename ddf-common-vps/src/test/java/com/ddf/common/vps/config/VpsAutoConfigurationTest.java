@@ -16,9 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class VpsAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(VpsAutoConfiguration.class))
-            .withUserConfiguration(VpsSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(VpsAutoConfiguration.class)).withUserConfiguration(VpsSupportConfiguration.class);
 
     @Test
     void shouldRegisterVpsClient() {

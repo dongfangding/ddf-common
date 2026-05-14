@@ -139,18 +139,14 @@ public enum RequestHeaderEnum {
     private static final Map<String, RequestHeaderEnum> REQUIRED_CLIENT_HEADERS;
 
     static {
-        MAPPINGS = Arrays
-                .stream(values())
-                .collect(Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
-        ALL_CLIENT_HEADERS = Arrays
-                .stream(values())
-                .filter(RequestHeaderEnum::isClientHeader)
-                .collect(Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
-        REQUIRED_CLIENT_HEADERS = Arrays
-                .stream(values())
+        MAPPINGS = Arrays.stream(values()).collect(Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
+        ALL_CLIENT_HEADERS = Arrays.stream(values()).filter(RequestHeaderEnum::isClientHeader).collect(
+                Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
+        REQUIRED_CLIENT_HEADERS = Arrays.stream(values())
                 .filter(obj -> obj.isClientHeader() && obj.isRequired())
                 .collect(Collectors.toMap(RequestHeaderEnum::getName, obj -> obj));
     }
+
     RequestHeaderEnum(String name, boolean isRequired, boolean isClientHeader, String defaultValue) {
         this.name = name;
         this.isRequired = isRequired;
@@ -180,7 +176,8 @@ public enum RequestHeaderEnum {
     public static Map<String, String> resolveClientHeaders(HttpServletRequest request) {
         Map<String, String> clientHeaderMap = new HashMap<>(32);
         ALL_CLIENT_HEADERS.forEach((name, headerEnum) -> {
-            clientHeaderMap.put(name, Optional.ofNullable(request.getHeader(name)).orElse(headerEnum.getDefaultValue()));
+            clientHeaderMap.put(name,
+                    Optional.ofNullable(request.getHeader(name)).orElse(headerEnum.getDefaultValue()));
         });
         return clientHeaderMap;
     }

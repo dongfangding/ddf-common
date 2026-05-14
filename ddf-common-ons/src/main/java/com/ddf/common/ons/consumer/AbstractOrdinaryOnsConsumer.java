@@ -25,7 +25,6 @@ public abstract class AbstractOrdinaryOnsConsumer implements OnsConsumer {
 
     /**
      * 创建消费者Bean
-     * @return
      */
     protected ConsumerBean createConsumerBean() {
         ConsumerBean consumerBean = new ConsumerBean();
@@ -50,7 +49,6 @@ public abstract class AbstractOrdinaryOnsConsumer implements OnsConsumer {
 
     /**
      * 获取并发消费者数量
-     * @return
      */
     @Override
     public String getConsumeThreadNums() {
@@ -59,7 +57,6 @@ public abstract class AbstractOrdinaryOnsConsumer implements OnsConsumer {
 
     /**
      * 获取消息监听器
-     * @return
      */
     protected abstract MessageListener getMessageListener();
 

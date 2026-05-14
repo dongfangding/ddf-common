@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
  */
 public class ChannelStoreSyncTask implements Runnable {
     private ExecutorService executorService;
+
     public ChannelStoreSyncTask(ExecutorService executorService) {
         this.executorService = executorService;
     }

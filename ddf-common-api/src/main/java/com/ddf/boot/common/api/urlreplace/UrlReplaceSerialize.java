@@ -29,12 +29,14 @@ public class UrlReplaceSerialize extends JsonSerializer<String> implements Conte
 
     public UrlReplaceSerialize() {
     }
+
     /**
      * @param bucket 参数
      */
     public UrlReplaceSerialize(final String bucket) {
         this.bucket = bucket;
     }
+
     /**
      * @param value 参数值
      * @param jsonGenerator 参数
@@ -45,6 +47,7 @@ public class UrlReplaceSerialize extends JsonSerializer<String> implements Conte
             throws IOException {
         jsonGenerator.writeString(UrlReplaceHelper.replaceHost(value, bucket));
     }
+
     /**
      * @param serializerProvider 参数
      * @param beanProperty 参数
@@ -55,9 +58,7 @@ public class UrlReplaceSerialize extends JsonSerializer<String> implements Conte
         // 为空直接跳过
         if (beanProperty != null) {
             // 非 String 类直接跳过
-            if (Objects.equals(beanProperty
-                    .getType()
-                    .getRawClass(), String.class)) {
+            if (Objects.equals(beanProperty.getType().getRawClass(), String.class)) {
                 UrlReplace urlReplace = beanProperty.getAnnotation(UrlReplace.class);
                 if (urlReplace == null) {
                     urlReplace = beanProperty.getContextAnnotation(UrlReplace.class);

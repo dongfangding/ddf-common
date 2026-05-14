@@ -17,19 +17,19 @@ Spring/JDK-level common infrastructure that everything above it builds on, but i
 ship a database, Redis, MQ, or any other concrete infrastructure — it gives those infrastructure
 modules a shared foundation.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Spring bean access from non-bean code | A `static` helper needs `RedisTemplate` | `SpringContextHolder.getBeanWithStatic(...)` with silent degradation |
-| Distributed snowflake IDs | workerId / dataCenterId must be unique per instance | `IdsUtil.getNextLongId()` + `customizer.infra.global-properties` |
-| RSA / AES / HMAC | Gateway signing, link-layer encryption, at-rest encryption | `SecureUtil` + `rsa-*`/`aes-secret`/`sign-secret` |
-| Request signatures | ASCII-sorted, nested-DTO-flattened HMAC signing | `SignatureUtil` over `BaseSign` |
-| Thread-pool governance | Graceful shutdown, leak detection, unified metrics | `ThreadBuilderHelper.buildThreadPoolTaskExecutor` (auto-registered) |
-| Tree assembly | Department / menu / region trees | `TreeConvertUtil.convert(...)` |
-| Pagination bridging | Convert between MyBatis PageHelper and Spring Data `Pageable` | `PageUtil` |
-| Bean copy | Hot path DTO ↔ entity conversion | `BeanCopierUtils` (CGLIB BeanCopier + ReflectASM constructor cache) |
-| Promise / blocking await | "Place order, then wait for the async callback, time out otherwise" | `DeferredHelper` / `CompletableFutureHelper` |
-| Environment awareness | prod/dev/test detection, skip-on-profile | `EnvironmentHelper` |
-| Local cache | High-frequency, low-cardinality reads without distributed coherence | `LocalCacheUtil` (Caffeine + Guava + Hutool `TimedCache`) |
+| Category                              | Typical Problem                                                     | What the Module Provides                                             |
+|---------------------------------------|---------------------------------------------------------------------|----------------------------------------------------------------------|
+| Spring bean access from non-bean code | A `static` helper needs `RedisTemplate`                             | `SpringContextHolder.getBeanWithStatic(...)` with silent degradation |
+| Distributed snowflake IDs             | workerId / dataCenterId must be unique per instance                 | `IdsUtil.getNextLongId()` + `customizer.infra.global-properties`     |
+| RSA / AES / HMAC                      | Gateway signing, link-layer encryption, at-rest encryption          | `SecureUtil` + `rsa-*`/`aes-secret`/`sign-secret`                    |
+| Request signatures                    | ASCII-sorted, nested-DTO-flattened HMAC signing                     | `SignatureUtil` over `BaseSign`                                      |
+| Thread-pool governance                | Graceful shutdown, leak detection, unified metrics                  | `ThreadBuilderHelper.buildThreadPoolTaskExecutor` (auto-registered)  |
+| Tree assembly                         | Department / menu / region trees                                    | `TreeConvertUtil.convert(...)`                                       |
+| Pagination bridging                   | Convert between MyBatis PageHelper and Spring Data `Pageable`       | `PageUtil`                                                           |
+| Bean copy                             | Hot path DTO ↔ entity conversion                                    | `BeanCopierUtils` (CGLIB BeanCopier + ReflectASM constructor cache)  |
+| Promise / blocking await              | "Place order, then wait for the async callback, time out otherwise" | `DeferredHelper` / `CompletableFutureHelper`                         |
+| Environment awareness                 | prod/dev/test detection, skip-on-profile                            | `EnvironmentHelper`                                                  |
+| Local cache                           | High-frequency, low-cardinality reads without distributed coherence | `LocalCacheUtil` (Caffeine + Guava + Hutool `TimedCache`)            |
 
 > ⚠️ JDBC / Druid / Mail / Actuator implementations have **already been moved out** of core into
 > dedicated starters. If you need those, depend on `ddf-common-data-mysql-starter` /
@@ -108,14 +108,14 @@ customizer:
 
 After startup `CoreAutoConfiguration` injects:
 
-| Bean | Type | Notes |
-| ----- | ----- | ----- |
-| `globalProperties` | `GlobalProperties` | Hot-reloadable global knobs |
-| `springContextHolder` | `SpringContextHolder` | Enables Hutool `SpringUtil`; provides static bean lookup |
-| `environmentHelper` | `EnvironmentHelper` | App name / port / profile helpers |
-| `threadPoolExecutorShutdownDefinition` | `ExecutorServiceGracefulShutdownDefinition` | Default: 120 s graceful shutdown |
-| `deferredHelper` | `DeferredHelper<?, ?, ?>` | jdeferred-backed "await callback" helper |
-| `completableFutureHelper` | `CompletableFutureHelper<?>` | Helpers around `CompletableFuture` |
+| Bean                                   | Type                                        | Notes                                                    |
+|----------------------------------------|---------------------------------------------|----------------------------------------------------------|
+| `globalProperties`                     | `GlobalProperties`                          | Hot-reloadable global knobs                              |
+| `springContextHolder`                  | `SpringContextHolder`                       | Enables Hutool `SpringUtil`; provides static bean lookup |
+| `environmentHelper`                    | `EnvironmentHelper`                         | App name / port / profile helpers                        |
+| `threadPoolExecutorShutdownDefinition` | `ExecutorServiceGracefulShutdownDefinition` | Default: 120 s graceful shutdown                         |
+| `deferredHelper`                       | `DeferredHelper<?, ?, ?>`                   | jdeferred-backed "await callback" helper                 |
+| `completableFutureHelper`              | `CompletableFutureHelper<?>`                | Helpers around `CompletableFuture`                       |
 
 Every bean carries `@ConditionalOnMissingBean` — override freely from your own configuration.
 
@@ -344,15 +344,15 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-api` | Upstream of core: ships `BaseSign` / `ResponseData` / `ITreeTagCollection` / `PageResult` |
-| `ddf-common-mvc` | Reuses `SpringContextHolder` + `GlobalExceptionEvent` for the global exception handler and request logging |
-| `ddf-common-authentication` | Uses `SecureUtil` / `SignatureUtil` for token issuance and signature validation |
-| `ddf-common-redis` | `ApplicationNamedKeyGenerator` resolves `spring.application.name` through `SpringContextHolder` |
-| `ddf-common-data-mysql-starter` | Reuses `BaseDomain`, `PageUtil`, `IdsUtil` and inherits thread-pool governance |
-| `ddf-common-ids-service` | Provides centralized ID dispatch; `IdsUtil` snowflake remains as local fallback |
-| `ddf-common-limit` / `ddf-common-alarm` | Pull `RedisTemplate` and other infra beans through `SpringContextHolder` |
+| Module                                  | How They Cooperate                                                                                         |
+|-----------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `ddf-common-api`                        | Upstream of core: ships `BaseSign` / `ResponseData` / `ITreeTagCollection` / `PageResult`                  |
+| `ddf-common-mvc`                        | Reuses `SpringContextHolder` + `GlobalExceptionEvent` for the global exception handler and request logging |
+| `ddf-common-authentication`             | Uses `SecureUtil` / `SignatureUtil` for token issuance and signature validation                            |
+| `ddf-common-redis`                      | `ApplicationNamedKeyGenerator` resolves `spring.application.name` through `SpringContextHolder`            |
+| `ddf-common-data-mysql-starter`         | Reuses `BaseDomain`, `PageUtil`, `IdsUtil` and inherits thread-pool governance                             |
+| `ddf-common-ids-service`                | Provides centralized ID dispatch; `IdsUtil` snowflake remains as local fallback                            |
+| `ddf-common-limit` / `ddf-common-alarm` | Pull `RedisTemplate` and other infra beans through `SpringContextHolder`                                   |
 
 ---
 
@@ -376,7 +376,8 @@ Look for `[ThreadPoolMonitor]` in the logs (every 60 s by default). To export to
 enable Micrometer integration via `ddf-common-governance-starter` — the default `executor.*` metrics
 will be picked up automatically.
 
-**Q5: Can I use these utilities outside Spring?**  
+**Q5: Can I use these utilities outside Spring?**
+
 - `SpringContextHolder.getBeanWithStatic(...)` — yes, returns `null`.
 - `IdsUtil` / `SecureUtil` / `SignatureUtil` — they depend on `GlobalProperties`; you must either
   bootstrap a Spring context (`@SpringBootTest`) or construct `GlobalProperties` manually and

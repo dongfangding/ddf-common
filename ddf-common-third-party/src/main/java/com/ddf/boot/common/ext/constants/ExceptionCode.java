@@ -14,9 +14,7 @@ public enum ExceptionCode implements BaseCallbackCode {
     /**
      * 异常状态定义
      */
-    SMS_SEND_FAILURE("sms_send_failure", "短信发送失败")
-
-    ;
+    SMS_SEND_FAILURE("sms_send_failure", "短信发送失败");
     /**
      * @param code 参数
      * @param description 描述信息
@@ -26,6 +24,7 @@ public enum ExceptionCode implements BaseCallbackCode {
 
     @Getter
     private final String description;
+
     ExceptionCode(String code, String description) {
         this.code = code;
         this.description = description;

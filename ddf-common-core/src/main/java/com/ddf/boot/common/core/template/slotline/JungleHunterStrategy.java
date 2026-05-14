@@ -25,24 +25,19 @@ public class JungleHunterStrategy implements MachineStrategy {
     @Override
     public List<List<TigerMachineApp.SymbolPool>> getPoolConfigs() {
         return List.of(
-            List.of(
-                new TigerMachineApp.SymbolPool(new int[] {10, 2, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}, this),
-                new TigerMachineApp.SymbolPool(new int[] {10, 50, 50, 0, 0, 0, 50, 200, 50, 0, 0, 10}, this)
-            ), List.of(
-                new TigerMachineApp.SymbolPool(new int[] {10, 5, 10, 10, 10, 20, 20, 20, 20, 20, 20, 20}, this),
-                new TigerMachineApp.SymbolPool(new int[] {10, 50, 50, 0, 0, 0, 200, 50, 50, 0, 20, 20}, this)
-            )
-        );
+                List.of(new TigerMachineApp.SymbolPool(new int[] {10, 2, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}, this),
+                        new TigerMachineApp.SymbolPool(new int[] {10, 50, 50, 0, 0, 0, 50, 200, 50, 0, 0, 10}, this)),
+                List.of(new TigerMachineApp.SymbolPool(new int[] {10, 5, 10, 10, 10, 20, 20, 20, 20, 20, 20, 20}, this),
+                        new TigerMachineApp.SymbolPool(new int[] {10, 50, 50, 0, 0, 0, 200, 50, 50, 0, 20, 20}, this)));
     }
 
     @Override
     public List<String> getIllegalSymbolStrings() {
-        return List.of(
-            "1,4,7,10,13", "0,3,6,9,12", "2,5,8,11,14", "0,4,8,10,12", "2,4,6,10,14", "1,5,8,11,13", "0,3,7,11,14",
-            "1,3,6,9,13", "2,5,7,9,12", "1,5,7,9,13", "1,3,7,11,13", "0,4,7,10,12", "2,4,7,10,14", "2,4,7,10,12",
-            "0,4,7,10,14"
-        );
+        return List.of("1,4,7,10,13", "0,3,6,9,12", "2,5,8,11,14", "0,4,8,10,12", "2,4,6,10,14", "1,5,8,11,13",
+                "0,3,7,11,14", "1,3,6,9,13", "2,5,7,9,12", "1,5,7,9,13", "1,3,7,11,13", "0,4,7,10,12", "2,4,7,10,14",
+                "2,4,7,10,12", "0,4,7,10,14");
     }
+
     /**
      * @param matrix 参数
      * @param r 参数

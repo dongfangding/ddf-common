@@ -96,6 +96,7 @@ public class AjCaptchaProperties {
     public boolean isHistoryDataClearEnable() {
         return historyDataClearEnable;
     }
+
     /**
      * @param historyDataClearEnable 参数
      */
@@ -117,6 +118,7 @@ public class AjCaptchaProperties {
     public int getReqGetLockLimit() {
         return reqGetLockLimit;
     }
+
     /**
      * @param reqGetLockLimit 参数
      */
@@ -127,6 +129,7 @@ public class AjCaptchaProperties {
     public int getReqGetLockSeconds() {
         return reqGetLockSeconds;
     }
+
     /**
      * @param reqGetLockSeconds 参数
      */
@@ -137,6 +140,7 @@ public class AjCaptchaProperties {
     public int getReqGetMinuteLimit() {
         return reqGetMinuteLimit;
     }
+
     /**
      * @param reqGetMinuteLimit 参数
      */
@@ -147,6 +151,7 @@ public class AjCaptchaProperties {
     public int getReqCheckMinuteLimit() {
         return reqCheckMinuteLimit;
     }
+
     /**
      * @param reqCheckMinuteLimit 参数
      */
@@ -157,6 +162,7 @@ public class AjCaptchaProperties {
     public int getReqVerifyMinuteLimit() {
         return reqVerifyMinuteLimit;
     }
+
     /**
      * @param reqVerifyMinuteLimit 参数
      */
@@ -186,6 +192,7 @@ public class AjCaptchaProperties {
     public CaptchaTypeEnum getType() {
         return type;
     }
+
     /**
      * @param type 参数
      */
@@ -196,6 +203,7 @@ public class AjCaptchaProperties {
     public String getJigsaw() {
         return jigsaw;
     }
+
     /**
      * @param jigsaw 参数
      */
@@ -206,6 +214,7 @@ public class AjCaptchaProperties {
     public String getPicClick() {
         return picClick;
     }
+
     /**
      * @param picClick 参数
      */
@@ -216,6 +225,7 @@ public class AjCaptchaProperties {
     public String getWaterMark() {
         return waterMark;
     }
+
     /**
      * @param waterMark 参数
      */
@@ -226,6 +236,7 @@ public class AjCaptchaProperties {
     public String getWaterFont() {
         return waterFont;
     }
+
     /**
      * @param waterFont 参数
      */
@@ -236,6 +247,7 @@ public class AjCaptchaProperties {
     public String getFontType() {
         return fontType;
     }
+
     /**
      * @param fontType 参数
      */
@@ -246,6 +258,7 @@ public class AjCaptchaProperties {
     public String getSlipOffset() {
         return slipOffset;
     }
+
     /**
      * @param slipOffset 参数
      */
@@ -256,6 +269,7 @@ public class AjCaptchaProperties {
     public Boolean getAesStatus() {
         return aesStatus;
     }
+
     /**
      * @param aesStatus 参数
      */
@@ -266,6 +280,7 @@ public class AjCaptchaProperties {
     public StorageType getCacheType() {
         return cacheType;
     }
+
     /**
      * @param cacheType 参数
      */
@@ -276,6 +291,7 @@ public class AjCaptchaProperties {
     public String getInterferenceOptions() {
         return interferenceOptions;
     }
+
     /**
      * @param interferenceOptions 参数
      */
@@ -286,6 +302,7 @@ public class AjCaptchaProperties {
     public String getCacheNumber() {
         return cacheNumber;
     }
+
     /**
      * @param cacheNumber 参数
      */
@@ -296,6 +313,7 @@ public class AjCaptchaProperties {
     public String getTimingClear() {
         return timingClear;
     }
+
     /**
      * @param timingClear 参数
      */
@@ -305,25 +323,13 @@ public class AjCaptchaProperties {
 
     @Override
     public String toString() {
-        return "\nAjCaptchaProperties{" +
-                "type=" + type +
-                ", jigsaw='" + jigsaw + '\'' +
-                ", picClick='" + picClick + '\'' +
-                ", waterMark='" + waterMark + '\'' +
-                ", waterFont='" + waterFont + '\'' +
-                ", fontType='" + fontType + '\'' +
-                ", slipOffset='" + slipOffset + '\'' +
-                ", aesStatus=" + aesStatus +
-                ", interferenceOptions='" + interferenceOptions + '\'' +
-                ", cacheNumber='" + cacheNumber + '\'' +
-                ", timingClear='" + timingClear + '\'' +
-                ", cacheType=" + cacheType +
-                ", reqFrequencyLimitEnable=" + reqFrequencyLimitEnable +
-                ", reqGetLockLimit=" + reqGetLockLimit +
-                ", reqGetLockSeconds=" + reqGetLockSeconds +
-                ", reqGetMinuteLimit=" + reqGetMinuteLimit +
-                ", reqCheckMinuteLimit=" + reqCheckMinuteLimit +
-                ", reqVerifyMinuteLimit=" + reqVerifyMinuteLimit +
-                '}';
+        return "\nAjCaptchaProperties{" + "type=" + type + ", jigsaw='" + jigsaw + '\'' + ", picClick='" + picClick
+                + '\'' + ", waterMark='" + waterMark + '\'' + ", waterFont='" + waterFont + '\'' + ", fontType='"
+                + fontType + '\'' + ", slipOffset='" + slipOffset + '\'' + ", aesStatus=" + aesStatus
+                + ", interferenceOptions='" + interferenceOptions + '\'' + ", cacheNumber='" + cacheNumber + '\''
+                + ", timingClear='" + timingClear + '\'' + ", cacheType=" + cacheType + ", reqFrequencyLimitEnable="
+                + reqFrequencyLimitEnable + ", reqGetLockLimit=" + reqGetLockLimit + ", reqGetLockSeconds="
+                + reqGetLockSeconds + ", reqGetMinuteLimit=" + reqGetMinuteLimit + ", reqCheckMinuteLimit="
+                + reqCheckMinuteLimit + ", reqVerifyMinuteLimit=" + reqVerifyMinuteLimit + '}';
     }
 }

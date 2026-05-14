@@ -6,11 +6,11 @@ VPS 工具模块，提供文件上传和图片处理功能。
 
 ## 核心类
 
-| 类路径 | 功能 |
-|-------|------|
+| 类路径                                                | 功能         |
+|----------------------------------------------------|------------|
 | `com.ddf.boot.common.vps.config.FastDfsProperties` | FastDFS 配置 |
-| `com.ddf.boot.common.vps.api.VpsApi` | 文件操作接口 |
-| `com.ddf.boot.common.vps.util.ImageUtil` | 图片处理工具 |
+| `com.ddf.boot.common.vps.api.VpsApi`               | 文件操作接口     |
+| `com.ddf.boot.common.vps.util.ImageUtil`           | 图片处理工具     |
 
 ## 使用说明
 

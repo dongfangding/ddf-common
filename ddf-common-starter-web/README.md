@@ -12,12 +12,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-starter-web` solves the **"quick-start lightweight web services"** problem.
 
-| Scenario | Typical Problem | What This Starter Provides |
-| --- | --- | --- |
-| Pure web gateway / BFF layer | Need request forwarding, uniform response format, global exception handling | API protocols + MVC interceptors + response wrapping |
-| Config-center / registry client | No persistent storage needed, just management endpoints | Core utilities + rate limiting protection |
-| File processing / compute microservice | Light business logic, no database dependency | Thread pools, encryption, ID generation, local cache |
-| Business with independent data layer | Data layer uses another stack (e.g. MongoDB, PostgreSQL) | Web fundamentals, data layer is your choice |
+| Scenario                               | Typical Problem                                                             | What This Starter Provides                           |
+|----------------------------------------|-----------------------------------------------------------------------------|------------------------------------------------------|
+| Pure web gateway / BFF layer           | Need request forwarding, uniform response format, global exception handling | API protocols + MVC interceptors + response wrapping |
+| Config-center / registry client        | No persistent storage needed, just management endpoints                     | Core utilities + rate limiting protection            |
+| File processing / compute microservice | Light business logic, no database dependency                                | Thread pools, encryption, ID generation, local cache |
+| Business with independent data layer   | Data layer uses another stack (e.g. MongoDB, PostgreSQL)                    | Web fundamentals, data layer is your choice          |
 
 **Not suitable for**: applications requiring JDBC / MySQL / Druid / MyBatis. Use `ddf-common-starter-default`
 or add `ddf-common-data-mysql-starter` separately.
@@ -42,15 +42,16 @@ or add `ddf-common-data-mysql-starter` separately.
 
 This starter aggregates the following modules. One dependency gives you all:
 
-| Sub-module | Core Capability | Auto-configuration |
-| --- | --- | --- |
-| `ddf-common-api` | Uniform response `ResponseData`, business exception `BusinessException`, error-code interface `BaseCallbackCode`, predefined enums | None (pure protocol, no beans) |
-| `ddf-common-core` | Hutool / Guava / Fastjson2 utilities, Spring context support, AES/MD5/SHA encryption, Snowflake IDs, local cache (Caffeine/Guava/Hutool), thread pools | `CoreAutoConfiguration` |
-| `ddf-common-mvc` | Global exception handling, auto response wrapping (`@ResponseBodyAdvice`), Jackson serialization config, user context `UserContextUtil`, login interceptor | `MvcAutoConfiguration` |
-| `ddf-common-limit` | Token-bucket rate limiting (`@RateLimit`), anti-replay (`@Repeatable`), rate-limit key generator extension | `RateLimitAutoConfiguration` |
-| `ddf-common-log4j` | Log4j2 + Disruptor async logging, excludes Spring Boot default Logback | None (dependency replacement) |
+| Sub-module         | Core Capability                                                                                                                                            | Auto-configuration             |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
+| `ddf-common-api`   | Uniform response `ResponseData`, business exception `BusinessException`, error-code interface `BaseCallbackCode`, predefined enums                         | None (pure protocol, no beans) |
+| `ddf-common-core`  | Hutool / Guava / Fastjson2 utilities, Spring context support, AES/MD5/SHA encryption, Snowflake IDs, local cache (Caffeine/Guava/Hutool), thread pools     | `CoreAutoConfiguration`        |
+| `ddf-common-mvc`   | Global exception handling, auto response wrapping (`@ResponseBodyAdvice`), Jackson serialization config, user context `UserContextUtil`, login interceptor | `MvcAutoConfiguration`         |
+| `ddf-common-limit` | Token-bucket rate limiting (`@RateLimit`), anti-replay (`@Repeatable`), rate-limit key generator extension                                                 | `RateLimitAutoConfiguration`   |
+| `ddf-common-log4j` | Log4j2 + Disruptor async logging, excludes Spring Boot default Logback                                                                                     | None (dependency replacement)  |
 
 **Not included**:
+
 - Database access (JDBC / MySQL / Druid / MyBatis)
 - Mail service (Mail / JavaMailSender)
 - Actuator governance extensions (thread-pool metrics binding, etc.)
@@ -199,19 +200,20 @@ And restore the default logging starter:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-data-mysql-starter` | Adds database capabilities; complements `starter-web` |
-| `ddf-common-governance-starter` | Adds Mail + Actuator governance |
-| `ddf-common-starter-default` | Aggregates `starter-web` + database + governance; the full bundle |
-| `ddf-common-redis` | Import separately for Redis cache / distributed lock |
-| `ddf-common-distributed-lock` | Import separately for distributed locking |
+| Module                          | How They Cooperate                                                |
+|---------------------------------|-------------------------------------------------------------------|
+| `ddf-common-data-mysql-starter` | Adds database capabilities; complements `starter-web`             |
+| `ddf-common-governance-starter` | Adds Mail + Actuator governance                                   |
+| `ddf-common-starter-default`    | Aggregates `starter-web` + database + governance; the full bundle |
+| `ddf-common-redis`              | Import separately for Redis cache / distributed lock              |
+| `ddf-common-distributed-lock`   | Import separately for distributed locking                         |
 
 ---
 
 ## 7. FAQ
 
 **Q1: Should I choose `starter-web` or `starter-default`?**
+
 - Web + utilities + rate limiting only → `starter-web`
 - Also need MySQL + Druid + Mail + Actuator → `starter-default`
 
@@ -225,6 +227,7 @@ See `ddf-common-log4j`'s `log4j2_demo.xml` for a reference configuration.
 
 **Q4: Can I exclude just one sub-module from `starter-web`?**
 Yes. For example, if you want web capabilities but not rate limiting:
+
 ```xml
 <exclusions>
     <exclusion>
@@ -233,6 +236,7 @@ Yes. For example, if you want web capabilities but not rate limiting:
     </exclusion>
 </exclusions>
 ```
+
 However, it's usually cleaner to import the underlying modules you actually need (e.g. `ddf-common-api` + `ddf-common-core` + `ddf-common-mvc`)
 rather than excluding heavily from a starter.
 

@@ -19,9 +19,8 @@ public interface UserClaimService {
      *
      * @param request 请求对象
      * @param response 响应对象
-     * @param clientHeaderMap    客户端传递的请求头
+     * @param clientHeaderMap 客户端传递的请求头
      * @param customizeHeaderMap 自定义请求头映射
-     * @return
      */
     default ResponseData<Object> beforeTokenVerify(HttpServletRequest request, HttpServletResponse response,
             Map<String, String> clientHeaderMap, Map<String, String> customizeHeaderMap) {
@@ -48,7 +47,6 @@ public interface UserClaimService {
      *
      * @param request 请求对象
      * @param userClaim 用户声明信息
-     * @return
      */
     UserClaim getStoreUserInfo(HttpServletRequest request, UserClaim userClaim);
 
@@ -61,7 +59,6 @@ public interface UserClaimService {
      * @param userClaim 用户声明信息
      * @param headerMap 请求头映射
      * @param customizeHeaderMap 自定义请求头映射
-     * @return
      */
     default ResponseData<Object> beforeDispatch(HttpServletRequest request, HttpServletResponse response,
             UserClaim userClaim, Map<String, String> headerMap, Map<String, String> customizeHeaderMap) {

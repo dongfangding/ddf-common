@@ -34,8 +34,7 @@ class RedisCommandHelperTest {
     @DisplayName("set/get 应委托给 ValueOperations")
     void shouldDelegateSetAndGetToValueOperations() {
         StringRedisTemplate redisTemplate = mock(StringRedisTemplate.class);
-        @SuppressWarnings("unchecked")
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
+        @SuppressWarnings("unchecked") ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         RedisCommandHelper helper = new RedisCommandHelper(redisTemplate);
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);

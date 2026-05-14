@@ -11,11 +11,11 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-third-party` solves the **"repeated development when integrating third-party cloud services"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| File upload to object storage | Each business module integrates OSS independently with inconsistent SDK usage | Unified `OssApi` wrapper |
-| SMS verification / notification | SMS signatures and template management scattered across businesses | Unified `SmsApi` wrapper |
-| Multi-cloud migration | Moving from Alibaba Cloud to another cloud requires wide changes | Abstracted interface with replaceable implementations |
+| Scenario                        | Typical Problem                                                               | What the Module Provides                              |
+|---------------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------|
+| File upload to object storage   | Each business module integrates OSS independently with inconsistent SDK usage | Unified `OssApi` wrapper                              |
+| SMS verification / notification | SMS signatures and template management scattered across businesses            | Unified `SmsApi` wrapper                              |
+| Multi-cloud migration           | Moving from Alibaba Cloud to another cloud requires wide changes              | Abstracted interface with replaceable implementations |
 
 ---
 
@@ -115,10 +115,10 @@ List<String> keys = files.stream()
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-core` | JSON, Map, string utilities, and other fundamentals |
-| `ddf-common-captcha` | SMS verification code sending can call `SmsApi` |
+| Module               | How They Cooperate                                  |
+|----------------------|-----------------------------------------------------|
+| `ddf-common-core`    | JSON, Map, string utilities, and other fundamentals |
+| `ddf-common-captcha` | SMS verification code sending can call `SmsApi`     |
 
 ---
 

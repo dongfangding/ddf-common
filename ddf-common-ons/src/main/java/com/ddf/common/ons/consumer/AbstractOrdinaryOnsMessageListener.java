@@ -13,8 +13,8 @@ import java.io.Serializable;
  * @author snowball
  * @since 2021/8/26 16:46
  **/
-public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable>
-        extends AbstractOnsMessageListener<D> implements MessageListener {
+public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable> extends AbstractOnsMessageListener<D>
+        implements MessageListener {
     @Override
     public Action consume(Message message, ConsumeContext consumeContext) {
         String payLoad = new String(message.getBody());
@@ -23,13 +23,13 @@ public abstract class AbstractOrdinaryOnsMessageListener<D extends Serializable>
         String topic = message.getTopic();
         try {
             D domain = JsonUtil.toBean(payLoad, getDomainClass());
-            if(LOGGER.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("类 [{}] 开始消费 MessageId [{}] Key [{}] 消息", member, messageId, message.getKey());
             }
             // 调用子类的执行业务方法
             executeBiz(domain);
-            LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] 消息", member, messageId, topic,
-                    message.getTag(), payLoad, message.getKey());
+            LOGGER.info("类 [{}] 消费完毕 MessageId [{}] Topic [{}] Tag [{}] PayLoad [{}] Key [{}] 消息", member,
+                    messageId, topic, message.getTag(), payLoad, message.getKey());
             infoMessage(message);
             return Action.CommitMessage;
         } catch (Exception e) {

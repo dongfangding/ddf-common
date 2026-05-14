@@ -8,7 +8,6 @@ import lombok.Data;
 
 /**
  * <p>限流全局参数</p >
- *
  * 暂时未提供配置类，而是通过注解上的属性来导入的
  *
  * @author dongfang.ding
@@ -34,9 +33,9 @@ public class RateLimitProperties {
      * 是否是spring-cloud环境并使用@RequestScope刷新特性。
      * 由于当前模块的依赖问题， 在这个模块中不准备依赖cloud的依赖。如果想要使用动态刷新特性，可以实现接口{@link RateLimitPropertiesCollect}来返回实时刷新值
      *
+     * @return
      * @see RateLimitPropertiesCollect
      * @see RateLimitRegistrar
-     * @return
      */
     private boolean cloudRefresh;
 
@@ -52,7 +51,6 @@ public class RateLimitProperties {
 
     /**
      * 执行参数检查
-     *
      */
     public void check() {
         if (StringUtil.isBlank(keyGenerator)) {

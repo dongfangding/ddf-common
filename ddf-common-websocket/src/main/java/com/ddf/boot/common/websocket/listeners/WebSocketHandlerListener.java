@@ -19,7 +19,6 @@ public interface WebSocketHandlerListener {
      * 连接建立事件
      *
      * @param session 会话对象
-     * @throws Exception
      */
     void afterConnectionEstablished(WebSocketSession session) throws Exception;
 
@@ -28,7 +27,6 @@ public interface WebSocketHandlerListener {
      *
      * @param session 会话对象
      * @param message 消息内容
-     * @throws Exception
      */
     void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception;
 
@@ -37,7 +35,6 @@ public interface WebSocketHandlerListener {
      *
      * @param session 会话对象
      * @param message 消息内容
-     * @throws Exception
      */
     void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception;
 
@@ -46,7 +43,6 @@ public interface WebSocketHandlerListener {
      *
      * @param session 会话对象
      * @param exception 异常对象
-     * @throws Exception
      */
     void handleTransportError(WebSocketSession session, Throwable exception) throws Exception;
 
@@ -55,7 +51,6 @@ public interface WebSocketHandlerListener {
      *
      * @param session 会话对象
      * @param status 状态参数
-     * @throws Exception
      */
     void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception;
 }

@@ -33,7 +33,6 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * <p>redis自动配置类</p >
- *
  * redisson配置文档参考https://github.com/redisson/redisson/wiki/2.-%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95
  *
  * @author dongfang.ding
@@ -58,7 +57,6 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
      * 注册redis扩展方法类
      *
      * @param stringRedisTemplate StringRedisTemplate 实例
-     * @return
      */
     @Bean
     public RedisTemplateHelper redisTemplateHelper(StringRedisTemplate stringRedisTemplate,
@@ -100,6 +98,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         template.setHashValueSerializer(new ObjectStringRedisSerializer());
         return template;
     }
+
     /**
      * @param stringRedisTemplate StringRedisTemplate 实例
      */
@@ -112,7 +111,6 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
      * 注册geo帮助类
      *
      * @param redissonClient redisson客户端参数
-     * @return
      */
     @Bean
     @ConditionalOnMissingBean
@@ -144,9 +142,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
                     .setPassword(redisProperties.getPassword());
         } else if (redisProperties.getCluster() != null) {
             String[] nodes = convert(redisProperties.getCluster().getNodes());
-            configuration.useClusterServers()
-                    .addNodeAddress(nodes)
-                    .setPassword(redisProperties.getPassword());
+            configuration.useClusterServers().addNodeAddress(nodes).setPassword(redisProperties.getPassword());
         } else {
             final SingleServerConfig singleServerConfig = configuration.useSingleServer();
             singleServerConfig.setAddress(getPrefix() + redisProperties.getHost() + ":" + redisProperties.getPort())
@@ -160,8 +156,6 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
 
     /**
      * 获取redis连接协议前缀
-     *
-     * @return
      */
     private String getPrefix() {
         String prefix = REDIS_PROTOCOL_PREFIX;
@@ -171,6 +165,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         }
         return prefix;
     }
+
     /**
      * @param nodesObject 参数
      */

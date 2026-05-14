@@ -27,4 +27,4 @@ singleServerConfig:
   # 命令重试发送时间间隔，单位：毫秒
   retryInterval: 500
   dnsMonitoringInterval: 5000
-codec: !<org.redisson.codec.JsonJacksonCodec> {}
+codec: !<org.redisson.codec.JsonJacksonCodec> { }

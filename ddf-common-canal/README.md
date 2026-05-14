@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-canal` solves the **"how to make business layers aware of MySQL data changes in real time"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Cache consistency | Database updated but cache not refreshed, causing stale reads | Listen to binlog and auto-clear cache after data changes |
-| Heterogeneous data sync | MySQL data needs to sync to ES / MongoDB | Capture change events and async-write to target storage |
-| Data audit | Need to record who changed what and when | Listen to changes and write to audit log tables |
-| Business event driving | Order status change triggers downstream flow | Transform DB changes into business events |
+| Scenario                | Typical Problem                                               | What the Module Provides                                 |
+|-------------------------|---------------------------------------------------------------|----------------------------------------------------------|
+| Cache consistency       | Database updated but cache not refreshed, causing stale reads | Listen to binlog and auto-clear cache after data changes |
+| Heterogeneous data sync | MySQL data needs to sync to ES / MongoDB                      | Capture change events and async-write to target storage  |
+| Data audit              | Need to record who changed what and when                      | Listen to changes and write to audit log tables          |
+| Business event driving  | Order status change triggers downstream flow                  | Transform DB changes into business events                |
 
 ---
 
@@ -156,11 +156,11 @@ public void handle(FlatMessage message, List<User> oldData, List<User> newData) 
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-redis` | Auto-clear Redis cache after data changes |
-| `ddf-common-es` | Sync data changes to Elasticsearch indices |
-| `ddf-common-core` | JSON deserialization, thread pools, and other fundamentals |
+| Module             | How They Cooperate                                         |
+|--------------------|------------------------------------------------------------|
+| `ddf-common-redis` | Auto-clear Redis cache after data changes                  |
+| `ddf-common-es`    | Sync data changes to Elasticsearch indices                 |
+| `ddf-common-core`  | JSON deserialization, thread pools, and other fundamentals |
 
 ---
 

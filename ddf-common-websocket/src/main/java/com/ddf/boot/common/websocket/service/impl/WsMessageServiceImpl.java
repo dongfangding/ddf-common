@@ -88,7 +88,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      * 对设备进行指令下发
      *
      * @param request 请求对象
-     * @return
      * @since 2019/08/21 11:00
      */
     @Override
@@ -111,7 +110,8 @@ public class WsMessageServiceImpl implements WsMessageService {
             boolean isAll = MessageRequest.SendMode.ALL.equals(request.getSendMode());
             String localAddress = WebUtil.getHost() + ":" + environment.getProperty("server.port");
             if (request.isRedirect() && localAddress.equals(request.getRedirectFrom())) {
-                log.warn("来自[{}]的转发数据[{}]本机不能处理！本机IP: [{}], ", request.getRedirectFrom(), request, localAddress);
+                log.warn("来自[{}]的转发数据[{}]本机不能处理！本机IP: [{}], ", request.getRedirectFrom(), request,
+                        localAddress);
                 return null;
             }
             // TODO 处理群发机器转发
@@ -155,7 +155,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request 请求对象
      * @param <Q> 请求泛型类型
-     * @return
      */
     private <Q> boolean filter(MessageRequest<Q> request) {
         if (CollUtil.isNotEmpty(wsMessageFilters)) {
@@ -175,7 +174,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      * @param request 请求对象
      * @param <T> 泛型类型
      * @param <Q> 请求泛型类型
-     * @return
      */
     private <T, Q> MessageResponse<T> validRequiredParam(MessageRequest<Q> request) {
         if (request == null || request.getCmd() == null) {
@@ -196,7 +194,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request 请求对象
      * @param authPrincipal 参数
-     * @return
      */
     private <T, Q> MessageResponse<T> tryLoadByLocalCache(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
         // TODO: 本地缓存加载逻辑待实现
@@ -208,14 +205,12 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request 请求对象
      * @param authPrincipal 认证主体对象
-     * @return
      */
     private <Q> boolean canSend(MessageRequest<Q> request, AuthPrincipal authPrincipal) {
         if (request.isCheckLastTime()) {
             // 如果需要检查上次发送时间，则必须在指定的间隔时间之后
             List<ChannelTransfer> preLogs = channelTransferService.getTodayLog(authPrincipal.getAccessKeyId(),
-                    request.getCmd(), true
-            );
+                    request.getCmd(), true);
             if (preLogs != null && !preLogs.isEmpty()) {
                 // 小于等于0，代表不限制；如果限制了的话，今日次数如果已大于参数，则不可以发送指令
                 if (request.getDailyMaxTimes() > 0 && preLogs.size() > request.getDailyMaxTimes()) {
@@ -225,9 +220,9 @@ public class WsMessageServiceImpl implements WsMessageService {
                 Date lastDate = preLogs.get(0).getCreateTime();
                 // 如果没有达到间隔时间，则不发送指令
                 if (request.getSendMinutesInterval() > 0 && DateUtils.addMinutes(lastDate,
-                        request.getSendMinutesInterval()
-                ).after(new Date())) {
-                    log.warn("该指令没有达到指定[{}]间隔时间，不允许再次发送！上次发送时间: {}", request.getSendMinutesInterval(), lastDate);
+                        request.getSendMinutesInterval()).after(new Date())) {
+                    log.warn("该指令没有达到指定[{}]间隔时间，不允许再次发送！上次发送时间: {}",
+                            request.getSendMinutesInterval(), lastDate);
                     return false;
                 }
             }
@@ -241,7 +236,6 @@ public class WsMessageServiceImpl implements WsMessageService {
      *
      * @param request 请求对象
      * @param localAddress 本地address参数
-     * @return
      */
     private <T, Q> MessageResponse<T> sendCmd(MessageRequest<Q> request, String localAddress) {
         Message<?> message;
@@ -249,8 +243,7 @@ public class WsMessageServiceImpl implements WsMessageService {
         String accessKeyId = request.getAccessKeyId();
         String authCode = request.getAuthCode();
         AuthPrincipal authPrincipal = AuthPrincipal.buildChannelPrincipal(accessKeyId, authCode,
-                request.getLoginType()
-        );
+                request.getLoginType());
         // 远程发送前本地尝试取数据
         MessageResponse<T> response = tryLoadByLocalCache(request, authPrincipal);
         if (response != null) {
@@ -283,9 +276,7 @@ public class WsMessageServiceImpl implements WsMessageService {
             String monitorJson = (String) redisTemplate.opsForHash().get(
                     CacheKeyEnum.AUTH_PRINCIPAL_SERVER_MONITOR.getTemplate(),
                     MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), request.getLoginType(),
-                            request.getAccessKeyId(), request.getAuthCode()
-                    )
-            );
+                            request.getAccessKeyId(), request.getAuthCode()));
             if (StringUtils.isBlank(monitorJson)) {
                 return MessageResponse.fastFailure("设备不存在！");
             }
@@ -304,8 +295,7 @@ public class WsMessageServiceImpl implements WsMessageService {
                 log.info("广播指令下发数据: {}", request);
                 redisTemplate.convertAndSend(WebsocketConst.REDIRECT_CMD_TOPIC, JsonUtil.asString(request));
                 return blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
-                        request.getBlockMilliSeconds()
-                );
+                        request.getBlockMilliSeconds());
             } else {
                 return null;
             }
@@ -320,10 +310,10 @@ public class WsMessageServiceImpl implements WsMessageService {
         log.info("对设备[{}]下发指令: {}", accessKeyId, messageStr);
         WebsocketSessionStorage.sendMessage(authPrincipal, message);
         MessageResponse<T> messageResponse = blockUntilDataFlush(request, message.getRequestId(), request.isAsync(),
-                request.getBlockMilliSeconds()
-        );
+                request.getBlockMilliSeconds());
         if (request.isRedirect()) {
-            log.info("本次接口请求为{}转发过来，数据处理完成，广播返回数据: {}", request.getRedirectFrom(), messageResponse);
+            log.info("本次接口请求为{}转发过来，数据处理完成，广播返回数据: {}", request.getRedirectFrom(),
+                    messageResponse);
             messageResponse.setRequestId(message.getRequestId());
             redisTemplate.convertAndSend(WebsocketConst.RETURN_MESSAGE_TOPIC, messageResponse);
         }
@@ -334,10 +324,9 @@ public class WsMessageServiceImpl implements WsMessageService {
      * 对于某些命令阻塞至数据传输回来
      *
      * @param requestId 请求id，数据回传回来之后需要根据这个来对应起来
-     * @param async     是否需要阻塞
+     * @param async 是否需要阻塞
      * @param messageRequest 参数
      * @param blockMilliSeconds 参数
-     * @return
      */
     private <T, Q> MessageResponse<T> blockUntilDataFlush(@NotNull MessageRequest<Q> messageRequest,
             @NotNull String requestId, boolean async, long blockMilliSeconds) {

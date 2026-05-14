@@ -68,14 +68,8 @@ public class ConsoleOnsDLQMessagePageQueryByGroupIdRequest implements UserReques
     public Integer pageSize = 10;
 
     public OnsDLQMessagePageQueryByGroupIdRequest toSdkRequest(String instanceId) {
-        return new OnsDLQMessagePageQueryByGroupIdRequest()
-                .setGroupId(groupId)
-                .setBeginTime(beginTime)
-                .setEndTime(endTime)
-                .setTaskId(taskId)
-                .setCurrentPage(currentPage)
-                .setPageSize(pageSize)
-                .setInstanceId(instanceId);
+        return new OnsDLQMessagePageQueryByGroupIdRequest().setGroupId(groupId).setBeginTime(beginTime).setEndTime(
+                endTime).setTaskId(taskId).setCurrentPage(currentPage).setPageSize(pageSize).setInstanceId(instanceId);
     }
 
 }

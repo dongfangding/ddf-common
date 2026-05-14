@@ -57,8 +57,8 @@ public class DefaultMailService implements MailService {
             }
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
-            log.error("mail send failed sendTo={}, cc={}, subject={}", Arrays.toString(sendTo),
-                    Arrays.toString(cc), subject, e);
+            log.error("mail send failed sendTo={}, cc={}, subject={}", Arrays.toString(sendTo), Arrays.toString(cc),
+                    subject, e);
             throw new ServerErrorException(BaseErrorCallbackCode.MAIL_SEND_FAILURE);
         }
     }

@@ -56,7 +56,6 @@ public class AopUtil {
      * 获取当前拦截的类
      *
      * @param joinPoint joinpoint参数
-     * @return
      */
     public static Class<?> getJoinPointClass(JoinPoint joinPoint) {
         return joinPoint.getSignature().getDeclaringType();
@@ -66,7 +65,6 @@ public class AopUtil {
      * 获取当前拦截的方法
      *
      * @param joinPoint joinpoint参数
-     * @return
      */
     public static MethodSignature getJoinPointMethod(JoinPoint joinPoint) {
         return (MethodSignature) joinPoint.getSignature();
@@ -127,7 +125,8 @@ public class AopUtil {
             if (Objects.nonNull(parameterNames) && parameterNames.length > 0) {
                 for (int i = 0; i < parameterNames.length; i++) {
                     Object value = joinPoint.getArgs()[i];
-                    if (value instanceof ServletRequest || value instanceof ServletResponse || value instanceof MultipartFile || value instanceof MultipartFile[]) {
+                    if (value instanceof ServletRequest || value instanceof ServletResponse
+                            || value instanceof MultipartFile || value instanceof MultipartFile[]) {
                         continue;
                     }
                     paramsMap.put(parameterNames[i], value);
@@ -144,7 +143,6 @@ public class AopUtil {
      * 获取参数中带@RequestBody的参数的对象的值
      *
      * @param joinPoint joinpoint参数
-     * @return
      */
     public static Object getRequestBodyParamObj(JoinPoint joinPoint) {
         Class<?>[] parameterClasses = ((MethodSignature) joinPoint.getSignature()).getParameterTypes();
@@ -165,7 +163,6 @@ public class AopUtil {
      * 序列化参数
      *
      * @param joinPoint joinpoint参数
-     * @return
      */
     public static String serializeParam(JoinPoint joinPoint) {
         return JsonUtil.asString(getSerializableParamMap(joinPoint));
@@ -189,7 +186,7 @@ public class AopUtil {
     /**
      * 动态通过反射修改指定注解示例里的属性的值
      *
-     * @param annotation   注解实例对象
+     * @param annotation 注解实例对象
      * @param nameValueMap 属性和值集合
      */
     @SneakyThrows

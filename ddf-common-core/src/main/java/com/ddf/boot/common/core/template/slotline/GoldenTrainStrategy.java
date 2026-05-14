@@ -27,6 +27,7 @@ public class GoldenTrainStrategy implements MachineStrategy {
         int[] w2 = {400, 50, 50, 0, 0, 0, 50, 200, 50, 0};
         return List.of(List.of(new TigerMachineApp.SymbolPool(w1, this), new TigerMachineApp.SymbolPool(w2, this)));
     }
+
     /**
      * @param matrix 参数
      * @param r 参数

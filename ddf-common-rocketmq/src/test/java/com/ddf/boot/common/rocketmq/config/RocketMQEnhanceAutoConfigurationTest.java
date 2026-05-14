@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RocketMQEnhanceAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(RocketMQEnhanceAutoConfiguration.class))
-            .withUserConfiguration(RocketMQSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(RocketMQEnhanceAutoConfiguration.class)).withUserConfiguration(
+            RocketMQSupportConfiguration.class);
 
     @Test
     void shouldRegisterRocketProducerWhenTemplateExists() {

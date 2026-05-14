@@ -6,13 +6,13 @@ S3 兼容对象存储模块，支持 MinIO、AWS S3、阿里云 OSS 等兼容实
 
 ## 核心类
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.s3.api.S3Api` | S3 操作接口 |
-| `com.ddf.boot.common.s3.service.S3Service` | S3 服务实现 |
-| `com.ddf.boot.common.s3.helper.S3Helper` | S3 操作辅助类 |
-| `com.ddf.boot.common.s3.helper.FileUploadHelper` | 文件上传辅助类 |
-| `com.ddf.boot.common.s3.config.S3Properties` | S3 配置属性 |
+| 类路径                                              | 功能       |
+|--------------------------------------------------|----------|
+| `com.ddf.boot.common.s3.api.S3Api`               | S3 操作接口  |
+| `com.ddf.boot.common.s3.service.S3Service`       | S3 服务实现  |
+| `com.ddf.boot.common.s3.helper.S3Helper`         | S3 操作辅助类 |
+| `com.ddf.boot.common.s3.helper.FileUploadHelper` | 文件上传辅助类  |
+| `com.ddf.boot.common.s3.config.S3Properties`     | S3 配置属性  |
 
 ## 配置
 

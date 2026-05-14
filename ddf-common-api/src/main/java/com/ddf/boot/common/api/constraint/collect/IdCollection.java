@@ -11,8 +11,6 @@ public interface IdCollection {
 
     /**
      * 获取id
-     *
-     * @return
      */
     String getId();
 }

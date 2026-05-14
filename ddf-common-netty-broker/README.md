@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-netty-broker` solves the **"application needs a high-performance self-built TCP long-connection channel"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Private-protocol device access | Devices use non-standard protocols; HTTP is insufficient | Custom codec that parses binary streams by protocol format |
+| Scenario                         | Typical Problem                                                          | What the Module Provides                                                           |
+|----------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| Private-protocol device access   | Devices use non-standard protocols; HTTP is insufficient                 | Custom codec that parses binary streams by protocol format                         |
 | High-concurrency message gateway | Need to maintain massive long connections; sync blocking can't handle it | Netty NIO event-driven model supports tens of thousands of connections per machine |
-| Encrypted packet transport | Public network transport needs anti-eavesdropping and tamper-proofing | SSL/TLS certificate encrypted channel |
-| Server-initiated push | Need to actively push commands to clients | Bidirectional full-duplex TCP; server can write anytime |
+| Encrypted packet transport       | Public network transport needs anti-eavesdropping and tamper-proofing    | SSL/TLS certificate encrypted channel                                              |
+| Server-initiated push            | Need to actively push commands to clients                                | Bidirectional full-duplex TCP; server can write anytime                            |
 
 > **Note**: This module is **not** in the default Maven Central release set (see `excludeArtifacts` in parent `pom.xml`). For use, build locally or configure separately.
 
@@ -163,9 +163,9 @@ tcpClient.write(request);
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-core` | Utility and JSON serialization support |
+| Module                 | How They Cooperate                                                      |
+|------------------------|-------------------------------------------------------------------------|
+| `ddf-common-core`      | Utility and JSON serialization support                                  |
 | `ddf-common-websocket` | Can be combined when both WebSocket and TCP long connections are needed |
 
 ---

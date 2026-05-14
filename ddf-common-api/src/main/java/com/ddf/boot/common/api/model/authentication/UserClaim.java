@@ -74,6 +74,7 @@ public class UserClaim implements Serializable {
      */
     @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
+
     /**
      * @param userId 参数
      * @param username 参数
@@ -88,7 +89,6 @@ public class UserClaim implements Serializable {
      * 创建mock用户
      *
      * @param userId 用户 ID
-     * @return
      */
     public static UserClaim mockUser(String userId) {
         final UserClaim claim = new UserClaim();
@@ -104,8 +104,6 @@ public class UserClaim implements Serializable {
 
     /**
      * 将用户信息生成map，用以放到jwt的payload中
-     *
-     * @return
      */
     public Map<String, Object> toMap() {
         Map<String, Object> claimMap = new HashMap<>(16);
@@ -114,10 +112,8 @@ public class UserClaim implements Serializable {
         if (fields.length > 0) {
             for (Field field : fields) {
                 try {
-                    Method method = ReflectUtils.getMethod(
-                            aClass,
-                            "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1)
-                    );
+                    Method method = ReflectUtils.getMethod(aClass,
+                            "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1));
                     if (method != null) {
                         // 如果能找到方法就设置
                         claimMap.put(field.getName(), method.invoke(this));
@@ -134,7 +130,6 @@ public class UserClaim implements Serializable {
      * 是否默认用户
      *
      * @param userClaim 用户声明信息
-     * @return
      */
     public boolean isDefaultUser(UserClaim userClaim) {
         return Objects.equals(DEFAULT_USER.getUserId(), userClaim.getUserId());

@@ -24,19 +24,19 @@ import org.springframework.lang.NonNull;
  */
 public class PreconditionUtil {
 
-	/**
-	 * Validator 实例。
-	 * Validator instances can be pooled and shared by the implementation.
-	 * 使用静态块初始化，并确保 Factory 被正确关闭或由容器管理。
-	 * 这个东西不缓存下来，并发一上来，tomcat线程会刷刷的创建然后blocked，非常非常非常影响qps
-	 */
-	private static final Validator VALIDATOR;
+    /**
+     * Validator 实例。
+     * Validator instances can be pooled and shared by the implementation.
+     * 使用静态块初始化，并确保 Factory 被正确关闭或由容器管理。
+     * 这个东西不缓存下来，并发一上来，tomcat线程会刷刷的创建然后blocked，非常非常非常影响qps
+     */
+    private static final Validator VALIDATOR;
 
-	static {
-		try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-			VALIDATOR = factory.getValidator();
-		}
-	}
+    static {
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            VALIDATOR = factory.getValidator();
+        }
+    }
 
 
     /**
@@ -107,7 +107,8 @@ public class PreconditionUtil {
      * @param callbackCode callback编码
      * @param args 方法入参数组
      */
-    public static void checkArgumentAndFormat(boolean expression, @NonNull BaseCallbackCode callbackCode, Object... args) {
+    public static void checkArgumentAndFormat(boolean expression, @NonNull BaseCallbackCode callbackCode,
+            Object... args) {
         checkArgument(expression, callbackCode.getCode(), MessageFormat.format(callbackCode.getDescription(), args));
     }
 
@@ -130,9 +131,7 @@ public class PreconditionUtil {
      * @param request 请求对象
      */
     public static <T> void requiredParamCheck(T request) {
-        PreconditionUtil.checkArgument(
-                Objects.nonNull(request), BaseErrorCallbackCode.BAD_REQUEST
-        );
+        PreconditionUtil.checkArgument(Objects.nonNull(request), BaseErrorCallbackCode.BAD_REQUEST);
         Set<ConstraintViolation<T>> constraintViolations = VALIDATOR.validate(request);
         if (constraintViolations.size() == 0) {
             return;

@@ -36,6 +36,7 @@ public class IdsApiImpl implements IdsApi {
     private final SnowflakeService snowflakeService;
 
     private final IDGen segmentIDGen;
+
     public IdsApiImpl(IdsProperties idsProperties, SnowflakeService snowflakeService, IDGen segmentIDGen) {
         this.idsProperties = idsProperties;
         this.snowflakeService = snowflakeService;
@@ -44,8 +45,6 @@ public class IdsApiImpl implements IdsApi {
 
     /**
      * snowflake获取单个id
-     *
-     * @return
      */
     @Override
     public String getSnowflakeId() {
@@ -56,7 +55,6 @@ public class IdsApiImpl implements IdsApi {
      * snowflake获取多个id
      *
      * @param number 数值
-     * @return
      */
     @Override
     public List<String> getSnowflakeIds(Integer number) {
@@ -67,7 +65,6 @@ public class IdsApiImpl implements IdsApi {
      * Segment获取单个id
      *
      * @param key 目标键
-     * @return
      */
     @Override
     public String getSegmentId(String key) {
@@ -80,7 +77,6 @@ public class IdsApiImpl implements IdsApi {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     @Override
     public List<String> getSegmentIds(String key, Integer number) {
@@ -92,13 +88,11 @@ public class IdsApiImpl implements IdsApi {
      * 获取组合ID
      *
      * @param key 目标键
-     * @return
      */
     @Override
     public IdsMultiData getMultiId(String key) {
         checkSegment();
-        return new IdsMultiData().setSequenceId(get(segmentIDGen.get(key)))
-                .setSnowflakeId(get(snowflakeService.get()));
+        return new IdsMultiData().setSequenceId(get(segmentIDGen.get(key))).setSnowflakeId(get(snowflakeService.get()));
     }
 
     /**
@@ -106,20 +100,16 @@ public class IdsApiImpl implements IdsApi {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     @Override
     public IdsMultiListData getMultiIds(String key, Integer number) {
         checkSegment();
-        return new IdsMultiListData()
-                .setSequenceIds(list(number, segmentIDGen.list(key, number)))
-                .setSnowflakeIds(list(number, snowflakeService.list(number)));
+        return new IdsMultiListData().setSequenceIds(list(number, segmentIDGen.list(key, number))).setSnowflakeIds(
+                list(number, snowflakeService.list(number)));
     }
 
     /**
      * 获取号段模式缓存信息
-     *
-     * @return
      */
     @Override
     public Map<String, SegmentBufferView> getSegmentCache() {
@@ -153,7 +143,6 @@ public class IdsApiImpl implements IdsApi {
      * 解析雪花id信息
      *
      * @param snowflakeIdStr snowflakeIDSTR参数
-     * @return
      */
     @Override
     public DecodeSnowflakeIdData decodeSnowflakeId(String snowflakeIdStr) {
@@ -165,12 +154,14 @@ public class IdsApiImpl implements IdsApi {
         data.setSequence(snowflakeId ^ (snowflakeId >> 12 << 12));
         return data;
     }
+
     /**
      * @param result 参数
      */
     private String get(Result result) {
         return result.getId();
     }
+
     /**
      * @param key 目标键
      * @param resultList 参数
@@ -181,6 +172,7 @@ public class IdsApiImpl implements IdsApi {
         }
         return resultList.getIdList();
     }
+
     /**
      * @param length 参数
      * @param resultList 参数

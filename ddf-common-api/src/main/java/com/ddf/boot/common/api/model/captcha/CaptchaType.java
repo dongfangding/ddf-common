@@ -27,7 +27,5 @@ public enum CaptchaType {
     /**
      * 图片滑动
      */
-    PIC_SLIDE
-
-    ;
+    PIC_SLIDE;
 }

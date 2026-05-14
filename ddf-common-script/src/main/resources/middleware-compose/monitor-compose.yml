@@ -7,7 +7,7 @@ services:
     image: otel/opentelemetry-collector-contrib:0.148.0
     container_name: otelcol
     restart: unless-stopped
-    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    command: [ "--config=/etc/otelcol-contrib/config.yaml" ]
     networks:
       - middleware-network
     volumes:
@@ -22,7 +22,7 @@ services:
       - jaeger
       - prometheus
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:13133/ || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:13133/ || exit 1" ]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -39,7 +39,7 @@ services:
     ports:
       - "16686:16686" # Jaeger UI
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:16686/ >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:16686/ >/dev/null || exit 1" ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -62,7 +62,7 @@ services:
     networks:
       - middleware-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9090/-/healthy || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:9090/-/healthy || exit 1" ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -89,7 +89,7 @@ services:
     networks:
       - middleware-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health | grep ok >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health | grep ok >/dev/null || exit 1" ]
       interval: 15s
       timeout: 5s
       retries: 10

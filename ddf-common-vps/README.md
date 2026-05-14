@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-vps` solves the **"file storage and media processing"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| User avatar / image upload | Files stored on local disk cannot scale horizontally | FastDFS distributed file storage |
-| Image compression / thumbnails | Original images are too large and load slowly | `ImageUtil` image compression |
-| Video transcoding / screenshots | Need FFmpeg video processing | Video processing helper tools |
-| File management | Need delete and query after upload | `VpsApi` unified operation interface |
+| Scenario                        | Typical Problem                                      | What the Module Provides             |
+|---------------------------------|------------------------------------------------------|--------------------------------------|
+| User avatar / image upload      | Files stored on local disk cannot scale horizontally | FastDFS distributed file storage     |
+| Image compression / thumbnails  | Original images are too large and load slowly        | `ImageUtil` image compression        |
+| Video transcoding / screenshots | Need FFmpeg video processing                         | Video processing helper tools        |
+| File management                 | Need delete and query after upload                   | `VpsApi` unified operation interface |
 
 ---
 
@@ -108,16 +108,17 @@ public void uploadAvatar(MultipartFile file) {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
+| Module                   | How They Cooperate                                                                |
+|--------------------------|-----------------------------------------------------------------------------------|
 | `ddf-common-third-party` | If you prefer Alibaba Cloud OSS over FastDFS, use the `OssApi` from `third-party` |
-| `ddf-common-core` | IO utilities, string processing, and other fundamentals |
+| `ddf-common-core`        | IO utilities, string processing, and other fundamentals                           |
 
 ---
 
 ## 7. FAQ
 
 **Q1: Should I choose FastDFS or OSS?**
+
 - Already have a FastDFS cluster and data volume is manageable → FastDFS (this module)
 - Need CDN acceleration, cross-region replication, serverless → Alibaba Cloud OSS (`ddf-common-third-party`)
 

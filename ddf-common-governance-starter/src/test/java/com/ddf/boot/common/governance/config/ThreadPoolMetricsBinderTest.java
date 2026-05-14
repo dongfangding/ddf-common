@@ -35,7 +35,8 @@ class ThreadPoolMetricsBinderTest {
 
             binder.afterSingletonsInstantiated();
 
-            Set<String> meterNames = registry.getMeters().stream()
+            Set<String> meterNames = registry.getMeters()
+                    .stream()
                     .filter(meter -> "bizExecutor".equals(meter.getId().getTag("bean")))
                     .map(meter -> meter.getId().getName())
                     .collect(Collectors.toSet());

@@ -10,9 +10,9 @@ import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
  * 这个是全局属性，做默认
  * </p >
  *
- * @see RateLimitAspect
  * @author dongfang.ding
  * @version 1.0
+ * @see RateLimitAspect
  * @since 2021/02/25 10:26
  */
 public interface RateLimitPropertiesCollect {
@@ -21,21 +21,16 @@ public interface RateLimitPropertiesCollect {
      * 全局key生成规则,使用实现类bean的名称
      *
      * @see RateLimitKeyGenerator
-     * @return
      */
     String getKeyGenerator();
 
     /**
      * 令牌桶最大数量
-     *
-     * @return
      */
     Integer getMax();
 
     /**
      * 令牌恢复速率，单位秒
-     *
-     * @return
      */
     Integer getRate();
 

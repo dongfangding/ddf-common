@@ -27,29 +27,23 @@ public @interface Mobile {
 
     /**
      * 错误消息
-     *
-     * @return
      */
     String message() default "手机号不合法";
 
     /**
      * 有效值, 默认0 和 1
-     *
-     * @return
      */
     String values() default "";
 
     /**
      * 即使用不到也要保留，否则会报错
-     * @return
      */
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
     /**
      * 即使用不到也要保留，否则会报错
-     * @return
      */
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
     /**
      * 手机号校验器

@@ -68,12 +68,16 @@ public class ConsoleOnsGroupListResponse implements Serializable {
      * 从SDK响应对象解析
      *
      * @param response 响应对象
-     * @return
      */
     public static List<ConsoleOnsGroupListResponse> convertFromSdk(OnsGroupListResponse response) {
-        return response.getBody().getData().getSubscribeInfoDo().stream().map(ConsoleOnsGroupListResponse::convert)
+        return response.getBody()
+                .getData()
+                .getSubscribeInfoDo()
+                .stream()
+                .map(ConsoleOnsGroupListResponse::convert)
                 .collect(Collectors.toList());
     }
+
     /**
      * @param infoDo 参数
      */

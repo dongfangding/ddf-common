@@ -11,11 +11,11 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-mongo` solves the **"quick access to common MongoDB operations"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Document-oriented storage | Need flexible schema; relational DB is not suitable | `MongoTemplate` wrapper and pagination helpers |
-| Log / event storage | High-volume semi-structured data writes | High-throughput writes via MongoDB |
-| Existing MongoDB cluster | Business needs quick integration | Auto-configuration + utilities to reduce boilerplate |
+| Scenario                  | Typical Problem                                     | What the Module Provides                             |
+|---------------------------|-----------------------------------------------------|------------------------------------------------------|
+| Document-oriented storage | Need flexible schema; relational DB is not suitable | `MongoTemplate` wrapper and pagination helpers       |
+| Log / event storage       | High-volume semi-structured data writes             | High-throughput writes via MongoDB                   |
+| Existing MongoDB cluster  | Business needs quick integration                    | Auto-configuration + utilities to reduce boilerplate |
 
 ---
 
@@ -134,9 +134,9 @@ AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "ord
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-core` | JSON utilities, date handling, and other fundamentals |
+| Module                   | How They Cooperate                                           |
+|--------------------------|--------------------------------------------------------------|
+| `ddf-common-core`        | JSON utilities, date handling, and other fundamentals        |
 | `ddf-common-starter-web` | Web controller layer receives requests and writes to MongoDB |
 
 ---

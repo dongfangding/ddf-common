@@ -11,16 +11,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  *
  * @author dongfang.ding
  * @since 2026/3/10
- */ 
+ */
 @AutoConfiguration
 @EnableConfigurationProperties(DataMysqlProperties.class)
-@ConditionalOnClass(name = {
-        "javax.sql.DataSource",
-        "com.mysql.cj.jdbc.Driver",
-        "com.alibaba.druid.pool.DruidDataSource"
-})
-@ConditionalOnProperty(prefix = "customizer.data.mysql", name = "enabled", havingValue = "true",
-        matchIfMissing = true)
+@ConditionalOnClass(
+        name = {"javax.sql.DataSource", "com.mysql.cj.jdbc.Driver", "com.alibaba.druid.pool.DruidDataSource"})
+@ConditionalOnProperty(prefix = "customizer.data.mysql", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DataMysqlAutoConfiguration {
 
     private final DataMysqlProperties properties;

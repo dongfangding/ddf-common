@@ -15,7 +15,6 @@ public enum MqttQosEnum {
      * qos = 0， 丢失风险高，最多一次，最不可靠，消息只发送一次，不管是否发送成功或者到达或者确认， 被限流也是直接丢弃。效率极高。
      * qos = 1, 最少一次， 如果发送失败， broker 会一直重传发送数据，直到 接收端收到消息， 可能会造成一条数据收到多次
      * qos = 2, 确切一次， 质量最高，能够保证接收到一定能收到数据，而且只收到一次。
-     *
      * 一般而言， 能够用轮训代替的通知业务， qos=0就够了，丢一些数据也无所谓
      * 如果是一些数据变更类的通知， 如果只是通知，然后客户端不依赖于推送的数据做业务，那么用qos = 1， 也足够了。除非客户端要用推送过去的
      * 数据，那么就只能用qos = 2了，否则可能会存在最新数据被以前消息覆盖的问题（当然一般而言，这种时序性的东西，都要依赖于客户端根据时间
@@ -23,13 +22,13 @@ public enum MqttQosEnum {
      */
     AT_MOST_ONCE(0),
     AT_LAST_ONCE(1),
-    EXACTLY_ONCE(2)
-    ;
+    EXACTLY_ONCE(2);
     /**
      * @param qos 参数
      */
     @Getter
     private final Integer qos;
+
     MqttQosEnum(Integer qos) {
         this.qos = qos;
     }

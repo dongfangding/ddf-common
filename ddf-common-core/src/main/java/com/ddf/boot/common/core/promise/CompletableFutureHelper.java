@@ -45,7 +45,6 @@ public class CompletableFutureHelper<T> {
      *
      * @param requestId 请求 ID
      * @param timeoutMilliSeconds 超时milliseconds参数
-     * @return
      */
     public CompletableFuture<T> create(String requestId, long timeoutMilliSeconds) {
         log.info("[{}]请求创建回调, ", requestId);
@@ -58,8 +57,10 @@ public class CompletableFutureHelper<T> {
             synchronized (requestId.intern()) {
                 final CompletableFuture<T> finalFuture = completableFutureMap.get(requestId);
                 if (completableFutureMap.containsKey(requestId)) {
-                    if (!finalFuture.isDone() && !finalFuture.isCancelled() && !finalFuture.isCompletedExceptionally()) {
-                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(), requestId);
+                    if (!finalFuture.isDone() && !finalFuture.isCancelled()
+                            && !finalFuture.isCompletedExceptionally()) {
+                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(),
+                                requestId);
                         finalFuture.completeExceptionally(new CallbackTimeoutException(requestId));
                     }
                     completableFutureMap.remove(requestId);
@@ -75,7 +76,6 @@ public class CompletableFutureHelper<T> {
      * 创建要给默认超时时间的CompletableFuture
      *
      * @param requestId 请求 ID
-     * @return
      */
     public CompletableFuture<T> create(String requestId) {
         return create(requestId, DEFAULT_TIMEOUT_MILLIONS);
@@ -84,7 +84,6 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 创建一个自动触发完成的CompletableFuture
-     * @return
      */
     public CompletableFuture<T> createCompletedFuture() {
         return CompletableFuture.completedFuture(null);
@@ -92,8 +91,8 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 创建一个自动触发完成的CompletableFuture
+     *
      * @param v 参数
-     * @return
      */
     public CompletableFuture<T> createCompletedFuture(T v) {
         return CompletableFuture.completedFuture(v);
@@ -101,9 +100,9 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 完成一个回调函数
+     *
      * @param requestId 请求 ID
      * @param t 异常对象
-     * @return
      */
     public boolean complete(String requestId, T t) {
         boolean complete = find(requestId).complete(t);
@@ -113,8 +112,8 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 取消任务
+     *
      * @param requestId 请求 ID
-     * @return
      */
     public boolean cancel(String requestId) {
         boolean cancel = find(requestId).cancel(true);
@@ -124,15 +123,16 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 触发回调任务异常
+     *
      * @param requestId 请求 ID
      * @param throwable 异常对象
-     * @return
      */
     public boolean completeExceptionally(String requestId, Throwable throwable) {
         boolean b = find(requestId).completeExceptionally(throwable);
         remove(requestId);
         return b;
     }
+
     /**
      * @param requestId 参数
      */
@@ -147,11 +147,13 @@ public class CompletableFutureHelper<T> {
 
     /**
      * 删除Map中的指定回调对象
+     *
      * @param requestId 请求 ID
      */
     private void remove(String requestId) {
         completableFutureMap.remove(requestId);
     }
+
     /**
      * @param args 参数
      */
@@ -166,7 +168,7 @@ public class CompletableFutureHelper<T> {
         CompletableFuture<String> completedFuture = completableFutureHelper.createCompletedFuture("sdsdds");
         for (int i = 0; i < str.length(); i++) {
             final int _i = i;
-            completedFuture = completedFuture.thenCompose((e)->{
+            completedFuture = completedFuture.thenCompose((e) -> {
                 String id = String.valueOf(_i);
                 CompletableFuture<String> stringCompletableFuture = completableFutureHelper.create(id);
                 new Thread(() -> {
@@ -179,12 +181,10 @@ public class CompletableFutureHelper<T> {
                     stringCompletableFuture.complete("dsds");
                 }).start();
                 return stringCompletableFuture;
-            }).thenCombine(completableFutureHelper.createCompletedFuture(""),(a,b)->{
+            }).thenCombine(completableFutureHelper.createCompletedFuture(""), (a, b) -> {
                 return a;
-            })     ;
+            });
         }
-
-
 
 
 

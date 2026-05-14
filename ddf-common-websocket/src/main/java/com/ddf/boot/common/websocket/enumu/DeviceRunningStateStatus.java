@@ -29,6 +29,7 @@ public enum DeviceRunningStateStatus {
      * @param status 参数
      */
     private Integer status;
+
     DeviceRunningStateStatus(Integer status) {
         this.status = status;
     }

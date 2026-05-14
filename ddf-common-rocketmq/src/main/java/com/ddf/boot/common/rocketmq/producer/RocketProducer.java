@@ -32,6 +32,7 @@ public class RocketProducer {
     /**
      * 根据系统上下文自动构建隔离后的topic
      * 构建目的地
+     *
      * @param topic 参数
      * @param tag 参数
      */
@@ -55,6 +56,7 @@ public class RocketProducer {
 
     /**
      * 异步发送MQ消息
+     *
      * @param rocketMqMessage 参数
      */
     public <T> void asyncSend(RocketMqMessage rocketMqMessage) {
@@ -76,20 +78,21 @@ public class RocketProducer {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     // 打印msgId用来以备查验,外部消息发送mq成功则任务置为成功
-                    log.info("[{}] Success sending message to TOPIC: {},TAG:{}, context: {}, msgId: {}", TAG, topic,tag, message,
-                            sendResult.getMsgId()
-                    );
+                    log.info("[{}] Success sending message to TOPIC: {},TAG:{}, context: {}, msgId: {}", TAG, topic,
+                            tag, message, sendResult.getMsgId());
                 }
+
                 /**
                  * @param e 参数
                  */
                 @Override
                 public void onException(Throwable e) {
-                    log.error("[{}] Failed to send message to MQ {},TAG:{}, msg {}, cause {}", TAG, topic, tag, message, e);
+                    log.error("[{}] Failed to send message to MQ {},TAG:{}, msg {}, cause {}", TAG, topic, tag, message,
+                            e);
                 }
             };
-            Message<MessagePayload> build = MessageBuilder.withPayload(message).setHeader(
-                    RocketMQHeaders.KEYS, message.getMessageId()).build();
+            Message<MessagePayload> build = MessageBuilder.withPayload(message).setHeader(RocketMQHeaders.KEYS,
+                    message.getMessageId()).build();
             template.asyncSend(buildDestination(topic, tag), build, callback);
         } catch (Exception e) {
             log.error("[{}] Failed to send message to MQ! TOPIC: {},TAG:{}, message: {}", TAG, topic, tag, message, e);
@@ -99,6 +102,7 @@ public class RocketProducer {
 
     /**
      * 发送同步消息
+     *
      * @param rocketMqMessage 参数
      */
     public SendResult syncSend(RocketMqMessage rocketMqMessage) {
@@ -108,81 +112,80 @@ public class RocketProducer {
         MessagePayload payload = rocketMqMessage.getPayLoad();
         Long delayTime = rocketMqMessage.getDelayTime();
         //延迟消息
-        if (delayTime != null && delayTime > 0){
+        if (delayTime != null && delayTime > 0) {
             return sendDelay(buildDestination(topic, tag), payload, delayTime);
         }
         // 注意分隔符
         return send(buildDestination(topic, tag), payload);
     }
 
-	/**
-	 * 同步消息
-	 *
-	 * @param destination 目的地
-	 * @param message 消息内容
-	 * @return
-	 * @param <T> 泛型类型
-	 */
-	private <T extends MessagePayload> SendResult send(String destination, T message) {
+    /**
+     * 同步消息
+     *
+     * @param destination 目的地
+     * @param message 消息内容
+     * @param <T> 泛型类型
+     */
+    private <T extends MessagePayload> SendResult send(String destination, T message) {
         // 设置业务键，此处根据公共的参数进行处理
         // 更多的其它基础业务处理...
-        Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
-                RocketMQHeaders.KEYS, message.getMessageId()).build();
+        Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(RocketMQHeaders.KEYS,
+                message.getMessageId()).build();
         SendResult sendResult = template.syncSend(destination, sendMessage);
         // 此处为了方便查看给日志转了json，根据选择选择日志记录方式，例如ELK采集
         log.info("[{}] [{}] 同步消息[{}]发送结果[{}]", TAG, destination, JsonUtil.toJson(message),
-                JsonUtil.toJson(sendResult)
-        );
+                JsonUtil.toJson(sendResult));
         return sendResult;
     }
 
-	/**
-	 * 延迟消息
-	 * @param destination 参数
-	 * @param message 参数
-	 * @param delayTime 参数
-	 * @return
-	 * @param <T> 泛型类型
-	 */
+    /**
+     * 延迟消息
+     *
+     * @param destination 参数
+     * @param message 参数
+     * @param delayTime 参数
+     * @param <T> 泛型类型
+     */
     private <T extends MessagePayload> SendResult sendDelay(String destination, T message, Long delayTime) {
-        Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
-                RocketMQHeaders.KEYS, message.getMessageId()).build();
+        Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(RocketMQHeaders.KEYS,
+                message.getMessageId()).build();
         SendResult sendResult = template.syncSendDelayTimeSeconds(destination, sendMessage, delayTime);
-        log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayTime,
-                JsonUtil.toJson(message), JsonUtil.toJson(sendResult)
-        );
+        log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayTime, JsonUtil.toJson(message),
+                JsonUtil.toJson(sendResult));
         return sendResult;
     }
 
-	/**
-	 * 发送延迟消息（毫秒）
-	 * @param rocketMqMessage 参数
-	 */
-	public SendResult sendDelayForMill(RocketMqMessage rocketMqMessage) {
-		rocketMqMessage.check();
-		String topic = rocketMqMessage.getTopic();
-		String tag = rocketMqMessage.getExpression();
-		MessagePayload payload = rocketMqMessage.getPayLoad();
-		Long delayTime = rocketMqMessage.getDelayTime();
-		if (Objects.isNull(delayTime) || delayTime <= 0) {
-			return null;
-		}
-		return sendDelayForMill(buildDestination(topic, tag), payload, delayTime);
-	}
+    /**
+     * 发送延迟消息（毫秒）
+     *
+     * @param rocketMqMessage 参数
+     */
+    public SendResult sendDelayForMill(RocketMqMessage rocketMqMessage) {
+        rocketMqMessage.check();
+        String topic = rocketMqMessage.getTopic();
+        String tag = rocketMqMessage.getExpression();
+        MessagePayload payload = rocketMqMessage.getPayLoad();
+        Long delayTime = rocketMqMessage.getDelayTime();
+        if (Objects.isNull(delayTime) || delayTime <= 0) {
+            return null;
+        }
+        return sendDelayForMill(buildDestination(topic, tag), payload, delayTime);
+    }
 
-	/**
-	 * 延迟消息 毫秒
-	 * @param destination 参数
-	 * @param message 参数
-	 * @param delayMilliseconds 参数
-	 **/
-	private <T extends MessagePayload> SendResult sendDelayForMill(String destination, T message, Long delayMilliseconds) {
-		Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(
-				RocketMQHeaders.KEYS, message.getMessageId()).build();
-		SendResult sendResult = template.syncSendDelayTimeMills(destination, sendMessage, delayMilliseconds);
-		log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayMilliseconds,
-				JsonUtil.toJson(message), JsonUtil.toJson(sendResult)
-		);
-		return sendResult;
-	}
+    /**
+     * 延迟消息 毫秒
+     *
+     * @param destination 参数
+     * @param message 参数
+     * @param delayMilliseconds 参数
+     **/
+    private <T extends MessagePayload> SendResult sendDelayForMill(String destination, T message,
+            Long delayMilliseconds) {
+        Message<T> sendMessage = MessageBuilder.withPayload(message).setHeader(RocketMQHeaders.KEYS,
+                message.getMessageId()).build();
+        SendResult sendResult = template.syncSendDelayTimeMills(destination, sendMessage, delayMilliseconds);
+        log.info("[{}] [{}]延迟时间 [{}s]消息[{}]发送结果[{}]", TAG, destination, delayMilliseconds,
+                JsonUtil.toJson(message), JsonUtil.toJson(sendResult));
+        return sendResult;
+    }
 }

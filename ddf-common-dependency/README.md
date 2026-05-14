@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-dependency` solves the **"dependency version fragmentation and conflicts"** problem.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Multi-module version alignment | 20+ submodules each declare their own versions; easy to miss one during upgrade | Declare once, effective globally |
-| Dependency conflicts | Module A uses Redisson 3.20, Module B uses 3.50 | BOM locks versions uniformly |
-| Business onboarding simplification | Business projects need to remember many version numbers | With BOM imported, all version numbers are omitted |
-| Tech stack upgrades | Spring Boot 3.3 → 3.5 requires editing dozens of poms | Change one property in the BOM |
+| Category                           | Typical Problem                                                                 | What the Module Provides                           |
+|------------------------------------|---------------------------------------------------------------------------------|----------------------------------------------------|
+| Multi-module version alignment     | 20+ submodules each declare their own versions; easy to miss one during upgrade | Declare once, effective globally                   |
+| Dependency conflicts               | Module A uses Redisson 3.20, Module B uses 3.50                                 | BOM locks versions uniformly                       |
+| Business onboarding simplification | Business projects need to remember many version numbers                         | With BOM imported, all version numbers are omitted |
+| Tech stack upgrades                | Spring Boot 3.3 → 3.5 requires editing dozens of poms                           | Change one property in the BOM                     |
 
 ---
 
@@ -62,22 +62,22 @@ After importing, child modules or business projects can use dependencies without
 
 All versions in the BOM are centrally managed in `<properties>`:
 
-| Property | Current version | Description |
-| ----- | ----- | ----- |
-| `spring-boot.version` | `3.5.9` | Spring Boot base version |
-| `revision` | `boot3.5-2026.1-SNAPSHOT` | ddf-common global version |
-| `java.version` | `17` | JDK version |
-| `mysql.version` | `9.1.0` | MySQL driver |
-| `druid.version` | `1.2.27` | Druid connection pool |
-| `redisson.version` | `3.52.0` | Redisson |
-| `mybatis.version` | `3.0.4` | MyBatis Spring Boot Starter |
-| `jwt.version` | `0.12.6` | JJWT |
-| `hutool.version` | `5.8.42` | Hutool |
-| `curator.version` | `5.3.0` | Curator (Zookeeper) |
-| `rocketmq.version` | `2.3.3` | RocketMQ Spring Boot Starter |
-| `fastjson2.version` | `2.0.58` | Fastjson2 |
-| `guava.version` | `33.4.8-jre` | Guava |
-| `xxl-job-version` | `3.3.0` | XXL-Job |
+| Property              | Current version           | Description                  |
+|-----------------------|---------------------------|------------------------------|
+| `spring-boot.version` | `3.5.9`                   | Spring Boot base version     |
+| `revision`            | `boot3.5-2026.1-SNAPSHOT` | ddf-common global version    |
+| `java.version`        | `17`                      | JDK version                  |
+| `mysql.version`       | `9.1.0`                   | MySQL driver                 |
+| `druid.version`       | `1.2.27`                  | Druid connection pool        |
+| `redisson.version`    | `3.52.0`                  | Redisson                     |
+| `mybatis.version`     | `3.0.4`                   | MyBatis Spring Boot Starter  |
+| `jwt.version`         | `0.12.6`                  | JJWT                         |
+| `hutool.version`      | `5.8.42`                  | Hutool                       |
+| `curator.version`     | `5.3.0`                   | Curator (Zookeeper)          |
+| `rocketmq.version`    | `2.3.3`                   | RocketMQ Spring Boot Starter |
+| `fastjson2.version`   | `2.0.58`                  | Fastjson2                    |
+| `guava.version`       | `33.4.8-jre`              | Guava                        |
+| `xxl-job-version`     | `3.3.0`                   | XXL-Job                      |
 
 ### 3.2 Dependency management scope
 
@@ -111,11 +111,13 @@ Business projects can override BOM versions in their own `pom.xml`:
 In `ddf-common-dependency/pom.xml`, perform two steps:
 
 1. Add the version in the `properties` section:
+
 ```xml
 <my-new-lib.version>1.0.0</my-new-lib.version>
 ```
 
 2. Add the dependency declaration in the `dependencyManagement` section:
+
 ```xml
 <dependency>
     <groupId>com.example</groupId>
@@ -138,17 +140,18 @@ After publication, business projects only need to change `${ddf-common.version}`
 
 ## 5. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| All `ddf-common-*` modules | Versions managed uniformly by the BOM's `${revision}` |
+| Module                     | How They Cooperate                                                                 |
+|----------------------------|------------------------------------------------------------------------------------|
+| All `ddf-common-*` modules | Versions managed uniformly by the BOM's `${revision}`                              |
 | `spring-boot-dependencies` | The BOM imports Spring Boot BOM first, then supplements custom dependencies on top |
-| Business projects | Import the BOM via `scope=import`, omitting all version numbers |
+| Business projects          | Import the BOM via `scope=import`, omitting all version numbers                    |
 
 ---
 
 ## 6. FAQ
 
-**Q1: What's the difference between BOM and parent POM?**  
+**Q1: What's the difference between BOM and parent POM?**
+
 - Parent POM (`ddf-common/pom.xml`): manages module aggregation, build plugins, and release configuration
 - BOM (`ddf-common-dependency/pom.xml`): only manages dependency versions, not build lifecycle
 - Business projects typically only import the BOM, not inherit the parent POM
@@ -156,10 +159,12 @@ After publication, business projects only need to change `${ddf-common.version}`
 **Q2: Why do some dependencies lack version numbers in the BOM?**  
 Dependencies already managed by `spring-boot-dependencies` (e.g. `spring-boot-starter-web`, `lombok`) reuse their versions directly; no duplicate declaration is needed in the BOM.
 
-**Q3: How do I view all dependencies managed by the current BOM?**  
+**Q3: How do I view all dependencies managed by the current BOM?**
+
 ```bash
 cd ddf-common-dependency && mvn dependency:tree
 ```
+
 Or check the full `dependencyManagement` list in `.flattened-pom.xml`.
 
 **Q4: Can child modules declare their own versions?**  

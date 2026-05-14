@@ -48,12 +48,8 @@ class JsonUtilTest {
     @Test
     @DisplayName("应支持 JavaTime 类型对象往返序列化")
     void shouldRoundTripJavaTimeFields() {
-        DemoPayload payload = new DemoPayload(
-                "demo",
-                LocalDate.of(2026, 4, 20),
-                LocalDateTime.of(2026, 4, 20, 11, 22, 33),
-                null
-        );
+        DemoPayload payload = new DemoPayload("demo", LocalDate.of(2026, 4, 20),
+                LocalDateTime.of(2026, 4, 20, 11, 22, 33), null);
 
         String json = JsonUtil.toJson(payload);
         DemoPayload parsed = JsonUtil.toBean(json, DemoPayload.class);

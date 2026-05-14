@@ -35,12 +35,11 @@ public class AuthenticateToken implements Serializable {
 
     /**
      * 给前端的完整的token
-     *
-     * @return
      */
     public String getToken() {
         return String.join(SPLIT, userIdToken, detailsToken);
     }
+
     /**
      * @param token token 字符串
      */

@@ -24,8 +24,7 @@ public class ApplicationNamedKeyGenerator {
     }
 
     private static class Holder {
-        private static final String APPLICATION_NAME = Optional
-                .ofNullable(SpringContextHolder.getApplicationContext())
+        private static final String APPLICATION_NAME = Optional.ofNullable(SpringContextHolder.getApplicationContext())
                 .map(ctx -> ctx.getEnvironment().getProperty("spring.application.name"))
                 .orElse("unknown");
     }
@@ -34,7 +33,6 @@ public class ApplicationNamedKeyGenerator {
      * 拼凑key
      *
      * @param keys 键集合
-     * @return
      */
     public static String genKey(@NonNull String... keys) {
         return genKey(false, keys);
@@ -45,7 +43,6 @@ public class ApplicationNamedKeyGenerator {
      *
      * @param ignoreApplicationName 是否忽略applicationName，若忽略则用'global'代替
      * @param keys 键集合
-     * @return
      */
     public static String genKey(boolean ignoreApplicationName, @NonNull String... keys) {
         String[] params = new String[keys.length + 1];
@@ -58,7 +55,6 @@ public class ApplicationNamedKeyGenerator {
      * 拼凑key
      *
      * @param keys 键集合
-     * @return
      */
     public static String genNormalKey(@NonNull String... keys) {
         return JOINER.join(keys);

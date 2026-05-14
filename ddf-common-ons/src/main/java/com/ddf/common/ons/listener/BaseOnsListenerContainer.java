@@ -124,6 +124,7 @@ public class BaseOnsListenerContainer implements OnsListenerContainer {
     public boolean isAutoStartup() {
         return true;
     }
+
     /**
      * @param callback 参数
      */

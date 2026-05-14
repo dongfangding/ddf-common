@@ -15,7 +15,6 @@ public interface IDGen {
      * 获取id, key在雪花id的实现中是无效的
      *
      * @param key 目标键
-     * @return
      */
     default Result get(String key) {
         return null;
@@ -26,7 +25,6 @@ public interface IDGen {
      *
      * @param key 目标键
      * @param number 数值
-     * @return
      */
     default ResultList list(String key, int number) {
         return null;
@@ -34,8 +32,6 @@ public interface IDGen {
 
     /**
      * 初始化方法
-     *
-     * @return
      */
     boolean init();
 }

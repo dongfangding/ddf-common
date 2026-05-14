@@ -32,37 +32,29 @@ public @interface EnableRateLimit {
      * 令牌桶的key生成规则, 主要是区分限流key的粒度问题， 如方法级别， 用户的方法级别，甚至是热点参数级别
      *
      * @see RateLimitKeyGenerator
-     * @return
      */
     String keyGenerator() default GlobalRateLimitKeyGenerator.BEAN_NAME;
 
     /**
      * 是否是spring-cloud环境并使用@RequestScope刷新特性。
      * 如果是这个，则外部提供属性类对属性进行接收和支持， 当前模块仅提供接口允许外部实现将最新值传入进来
-     *
      * 原因是由于当前模块的依赖问题， 在这个模块中不准备依赖cloud的依赖。如果想要使用动态刷新特性， 外部实现属性注入和刷新配置类，
      * 可然后实现接口{@link RateLimitPropertiesCollect}来返回实时刷新值
      *
      * @see RateLimitAspect
      * @see RateLimitPropertiesCollect
-     * @return
      */
     boolean cloudRefresh() default false;
 
     /**
      * 限流的最大令牌桶数量
      * 0 不控制
-     *
-     * @return
      */
     int max() default 0;
 
     /**
      * 令牌桶恢复速率
-     *
      * 0 不控制
-     *
-     * @return
      */
     int rate() default 0;
 }

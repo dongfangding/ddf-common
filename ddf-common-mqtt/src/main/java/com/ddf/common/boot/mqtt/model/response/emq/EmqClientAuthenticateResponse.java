@@ -6,9 +6,7 @@ import lombok.Data;
 
 /**
  * <p>emq http连接认证和ACL响应</p >
- *
  * 这个响应是给应用方自己实现返回的，因为该模块无法得知每个应用自己的认证方式以及错误消息
- *
  *
  * @author Snowball
  * @version 1.0

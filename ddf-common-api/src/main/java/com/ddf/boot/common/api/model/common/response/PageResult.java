@@ -51,11 +51,9 @@ public class PageResult<E> implements Serializable {
 
     /**
      * 是否为空分页对象
-     *
-     * @return
      */
     public boolean isEmpty() {
-//        return total == 0 || CollectionUtils.isEmpty(content);
+        //        return total == 0 || CollectionUtils.isEmpty(content);
         // 如redis等其它数据源无法处理total
         return total == 0 || CollectionUtils.isEmpty(content);
     }
@@ -63,7 +61,7 @@ public class PageResult<E> implements Serializable {
     /**
      * 构造
      *
-     * @param pageNum     页码
+     * @param pageNum 页码
      * @param pageSize 每页结果数
      */
     public PageResult(long pageNum, long pageSize) {
@@ -74,7 +72,7 @@ public class PageResult<E> implements Serializable {
     /**
      * 构造
      *
-     * @param pageNum     页码
+     * @param pageNum 页码
      * @param pageSize 每页结果数
      * @param total 总条数
      */
@@ -87,9 +85,9 @@ public class PageResult<E> implements Serializable {
     /**
      * 构造
      *
-     * @param pageNum     页码
+     * @param pageNum 页码
      * @param pageSize 每页结果数
-     * @param total    结果总数
+     * @param total 结果总数
      * @param content 内容
      */
     public PageResult(long pageNum, long pageSize, long total, List<E> content) {
@@ -98,6 +96,7 @@ public class PageResult<E> implements Serializable {
         this.totalPage = totalPage(total, pageSize);
         this.content = content;
     }
+
     /**
      * @param totalCount 参数
      * @param pageSize 参数

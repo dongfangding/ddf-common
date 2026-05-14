@@ -58,6 +58,7 @@ public class TigerMachineApp {
     }
 
     // --- 策略工厂 ---
+
     /**
      * @param mod 参数
      */
@@ -69,6 +70,7 @@ public class TigerMachineApp {
             default -> null;
         };
     }
+
     public static void main(String[] args) {
         randomTest();
     }
@@ -76,39 +78,26 @@ public class TigerMachineApp {
     public static void randomTest() {
         // 1. 根据当前模式获取策略
         MachineStrategy strategy = getStrategy(MOD_USAGE);
-		if (strategy == null) {
-			return;
-		}
+        if (strategy == null) {
+            return;
+        }
 
         // 2. 初始化资源与预处理
         final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
         List<List<SymbolPool>> poolLists = strategy.getPoolConfigs();
         int selectedIndex = threadLocalRandom.nextInt(0, poolLists.size());
 
-        SymbolPool pool = poolLists
-            .get(selectedIndex)
-            .get(0);
-        SymbolPool freePool = poolLists
-            .get(selectedIndex)
-            .get(1);
+        SymbolPool pool = poolLists.get(selectedIndex).get(0);
+        SymbolPool freePool = poolLists.get(selectedIndex).get(1);
 
         // 预处理非法符号：将 String 列表转为 Set<Set<Integer>>，大幅提升 checkResults 性能
-        PREPROCESSED_ILLEGAL_SETS = strategy
-            .getIllegalSymbolStrings()
-            .stream()
-            .map(s -> Arrays
-                .stream(s.split(","))
+        PREPROCESSED_ILLEGAL_SETS = strategy.getIllegalSymbolStrings().stream().map(s -> Arrays.stream(s.split(","))
                 .map(String::trim)
                 .map(Integer::valueOf)
-                .collect(Collectors.toCollection(HashSet::new)))
-            .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(HashSet::new))).collect(Collectors.toSet());
 
         List<BoardResultExport> totalResultList = new ArrayList<>();
-        int maxResult = LIMIT_MAP
-            .values()
-            .stream()
-            .reduce(Integer::sum)
-            .orElse(0);
+        int maxResult = LIMIT_MAP.values().stream().reduce(Integer::sum).orElse(0);
         Map<Integer, Integer> multipleIntervalMap = new HashMap<>();
         BoardResultExport lastPayBoardResult = null;
 
@@ -129,9 +118,7 @@ public class TigerMachineApp {
                     boardResult = new BoardResult(freePool.convertToSymbolMatrix(matrix), true);
 
                     if (lastPayBoardResult != null) {
-                        lastPayBoardResult
-                            .getChildren()
-                            .add(boardResult);
+                        lastPayBoardResult.getChildren().add(boardResult);
                         lastPayBoardResult.freeSpins += boardResult.getFreeSpins();
                         lastPayBoardResult.totalMultiple += boardResult.getTotalMultiple();
                         if (lastPayBoardResult.freeSpins > 100) {
@@ -159,22 +146,21 @@ public class TigerMachineApp {
     }
 
     // --- 逻辑判断部分 ---
+
     /**
      * @param export 参数
      * @param multipleIntervalMap 参数
      */
     public static boolean checkResults(BoardResultExport export, Map<Integer, Integer> multipleIntervalMap) {
         if (export.getTotalMultiple() > 10000) {
-			return false;
-		}
+            return false;
+        }
         if (export.getFreeSpins() > 0 && (double) export.getTotalMultiple() / export.getFreeSpins() < 20) {
-			return false;
-		}
+            return false;
+        }
 
         // 【包含关系判断核心】: 判断当前亮起的图标集合是否完全包含了任何一个非法组合
-        Set<Integer> currentLightIndex = export
-            .getSelf()
-            .getLightIndex();
+        Set<Integer> currentLightIndex = export.getSelf().getLightIndex();
         for (Set<Integer> illegalSet : PREPROCESSED_ILLEGAL_SETS) {
             if (currentLightIndex.containsAll(illegalSet)) {
                 System.out.println("主图案包含非法组合: " + illegalSet);
@@ -195,6 +181,7 @@ public class TigerMachineApp {
 
         return !checkCountLimit(export.getTotalMultiple(), multipleIntervalMap);
     }
+
     /**
      * @param multiple 参数
      * @param multipleIntervalMap 参数
@@ -208,6 +195,7 @@ public class TigerMachineApp {
         multipleIntervalMap.put(multipleKey, currentCount + 1);
         return false;
     }
+
     /**
      * @param multiple 参数
      */
@@ -223,6 +211,7 @@ public class TigerMachineApp {
         }
         return 1;
     }
+
     // --- 核心实体类 ---
     @Data
     @AllArgsConstructor
@@ -245,11 +234,13 @@ public class TigerMachineApp {
          */
         private final int[] weights;
         private final MachineStrategy strategy;
+
         public SymbolPool(int[] weights, MachineStrategy strategy) {
             this.weights = weights;
             this.strategy = strategy;
             strategy.initSymbols(this.symbols);
         }
+
         /**
          * @param rows 参数
          * @param cols 参数
@@ -266,20 +257,20 @@ public class TigerMachineApp {
                     int symbolId;
                     do {
                         symbolId = isFreeSpin ? randomSymbolIdExcludeWildFree() : randomSymbolId();
-                    }
-                    while ((symbolId == 3 && bonusCount >= 2) || (symbolId == 1 && c != 2));
+                    } while ((symbolId == 3 && bonusCount >= 2) || (symbolId == 1 && c != 2));
 
                     result[r][c] = symbolId;
                     // 特殊逻辑处理
                     strategy.handleSpecialMatrixLogic(result, r, c, isFreeSpin);
                     if (result[r][c] == 3) {
-						bonusCount++;
-					}
+                        bonusCount++;
+                    }
                 }
             }
             this.weights[0] = originWildWeight;
             return result;
         }
+
         /**
          * @param idMatrix 参数
          */
@@ -288,29 +279,21 @@ public class TigerMachineApp {
             for (int r = 0; r < idMatrix.length; r++) {
                 for (int c = 0; c < idMatrix[0].length; c++) {
                     int id = idMatrix[r][c];
-                    matrix[r][c] = symbols
-                        .stream()
-                        .filter(s -> s.id == id)
-                        .findFirst()
-                        .orElse(null);
+                    matrix[r][c] = symbols.stream().filter(s -> s.id == id).findFirst().orElse(null);
                 }
             }
             return matrix;
         }
 
         private int randomSymbolId() {
-            int totalWeight = Arrays
-                .stream(weights)
-                .sum();
-            int r = ThreadLocalRandom
-                .current()
-                .nextInt(totalWeight);
+            int totalWeight = Arrays.stream(weights).sum();
+            int r = ThreadLocalRandom.current().nextInt(totalWeight);
             int sum = 0;
             for (int i = 0; i < weights.length; i++) {
                 sum += weights[i];
                 if (r < sum) {
-					return i + 1;
-				}
+                    return i + 1;
+                }
             }
             return 1;
         }
@@ -322,8 +305,8 @@ public class TigerMachineApp {
                 while (true) {
                     int id = randomSymbolId();
                     if (id != 4 && id != 5 && id != 6) {
-						return id;
-					}
+                        return id;
+                    }
                 }
             } finally {
                 this.weights[0] = originWildWeight;
@@ -342,6 +325,7 @@ public class TigerMachineApp {
         private Boolean isFree;
         private Set<Integer> lightIndex = new HashSet<>();
         private List<Integer> ids = new ArrayList<>();
+
         /**
          * @param matrix 参数
          * @param isFree 参数
@@ -361,9 +345,7 @@ public class TigerMachineApp {
             for (int r = 0; r < rows; r++) {
                 Symbol s = matrix[r][0];
                 if ("Normal".equals(s.type)) {
-                    startSymbols
-                        .computeIfAbsent(s.name, k -> new ArrayList<>())
-                        .add(r);
+                    startSymbols.computeIfAbsent(s.name, k -> new ArrayList<>()).add(r);
                 }
             }
 
@@ -372,8 +354,8 @@ public class TigerMachineApp {
                     Symbol s = matrix[r][c];
                     ids.add(s.id);
                     if ("Scatter".equals(s.type)) {
-						scatterCount++;
-					}
+                        scatterCount++;
+                    }
                 }
             }
 
@@ -389,11 +371,10 @@ public class TigerMachineApp {
                         }
                     }
                     if (match) {
-						colsMatched.add(c);
-					}
-                    else {
-						break;
-					}
+                        colsMatched.add(c);
+                    } else {
+                        break;
+                    }
                 }
 
                 if (colsMatched.size() >= 3) {
@@ -409,19 +390,19 @@ public class TigerMachineApp {
                             flatIdx++;
                         }
                         if (currentLineMatch == 0) {
-							break;
-						}
+                            break;
+                        }
                         lineCount *= currentLineMatch;
                     }
 
                     Symbol first = null;
                     for (int r = 0; r < rows; r++) {
 
-						if (matrix[r][0].name.equals(name)) {
-							first = matrix[r][0];
-							break;
-						}
-					}
+                        if (matrix[r][0].name.equals(name)) {
+                            first = matrix[r][0];
+                            break;
+                        }
+                    }
 
                     int multi = switch (colsMatched.size()) {
                         case 3 -> first.threeMatchMulti;
@@ -442,16 +423,16 @@ public class TigerMachineApp {
                 for (int c = 0; c < cols; c++) {
                     for (int r = 0; r < rows; r++) {
                         if ("Scatter".equals(matrix[r][c].type)) {
-							lightIndex.add(flatIdx);
-						}
+                            lightIndex.add(flatIdx);
+                        }
                         flatIdx++;
                     }
                 }
                 if (isFree) {
                     freeSpins = 5;
                 } else {
-                    Map<Integer, Integer> s2f = Map.of(
-                        6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14, 350, 15, 500);
+                    Map<Integer, Integer> s2f = Map.of(6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14,
+                            350, 15, 500);
                     freeSpins = s2f.getOrDefault(scatterCount, 0);
                 }
             }
@@ -465,6 +446,7 @@ public class TigerMachineApp {
         private int freeSpins;
         private BoardResult self;
         private List<BoardResult> children = new ArrayList<>();
+
         /**
          * @param self 参数
          */
@@ -487,13 +469,11 @@ public class TigerMachineApp {
 
     // --- 导出逻辑 ---
     private static void exportFinalResults(List<BoardResultExport> results, String modUsage) {
-        List<BoardResultExport> filtered = results
-            .stream()
-            .filter(obj -> obj.getTotalMultiple() > 0 || (obj.getTotalMultiple() == 0 && obj
-                .getChildren()
-                .isEmpty()))
-            .sorted(Comparator.comparing(BoardResultExport::getTotalMultiple))
-            .toList();
+        List<BoardResultExport> filtered = results.stream()
+                .filter(obj -> obj.getTotalMultiple() > 0 || (obj.getTotalMultiple() == 0 && obj.getChildren()
+                        .isEmpty()))
+                .sorted(Comparator.comparing(BoardResultExport::getTotalMultiple))
+                .toList();
 
         List<Map<String, Object>> exportList = new ArrayList<>();
         for (BoardResultExport res : filtered) {
@@ -501,15 +481,8 @@ public class TigerMachineApp {
             map.put("totalMultiple", res.getTotalMultiple());
             map.put("freeSpins", res.getFreeSpins());
             map.put("self", JsonUtil.toJson(toSimple(res.getSelf())));
-            map.put(
-                "children", res
-                    .getChildren()
-                    .isEmpty() ? "" : JsonUtil.toJson(res
-                    .getChildren()
-                    .stream()
-                    .map(TigerMachineApp::toSimple)
-                    .toList())
-            );
+            map.put("children", res.getChildren().isEmpty() ? "" :
+                    JsonUtil.toJson(res.getChildren().stream().map(TigerMachineApp::toSimple).toList()));
             exportList.add(map);
         }
 
@@ -519,17 +492,18 @@ public class TigerMachineApp {
         String exportFile = desktop + getStrategy(modUsage).getExportFile();
 
         // 假定模板存在
-//        try {
-//            EasyExcel
-//                .write(exportFile)
-//                .withTemplate(desktop + "tiger_machine_template.xlsx")
-//                .sheet()
-//                .doFill(exportList);
-//        } catch (Exception e) {
-//            log.warn("Excel 导出失败（可能缺少模板）: {}", e.getMessage());
-//        }
+        //        try {
+        //            EasyExcel
+        //                .write(exportFile)
+        //                .withTemplate(desktop + "tiger_machine_template.xlsx")
+        //                .sheet()
+        //                .doFill(exportList);
+        //        } catch (Exception e) {
+        //            log.warn("Excel 导出失败（可能缺少模板）: {}", e.getMessage());
+        //        }
         System.out.println("成功生成数据量: " + filtered.size());
     }
+
     /**
      * @param r 参数
      */

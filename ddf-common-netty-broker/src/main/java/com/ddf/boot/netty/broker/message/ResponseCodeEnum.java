@@ -63,10 +63,12 @@ public enum ResponseCodeEnum {
             MAPPING_MAP.put(value.code, value);
         }
     }
+
     /**
      * @param code 参数
      */
     private final Integer code;
+
     ResponseCodeEnum(Integer code) {
         this.code = code;
     }
@@ -79,7 +81,6 @@ public enum ResponseCodeEnum {
      * 根据状态码构建枚举对象
      *
      * @param code code码
-     * @return
      */
     public ResponseCodeEnum getByCode(Integer code) {
         return MAPPING_MAP.get(code);

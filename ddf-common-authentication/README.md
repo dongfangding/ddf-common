@@ -15,14 +15,14 @@ English · [简体中文](./README.zh-CN.md)
 From mobile apps to internal admin dashboards, any web scenario that needs identity recognition
 is a fit.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Token authentication | Mobile login needs session persistence and forgery protection | `TokenUtil.createToken` / `TokenUtil.checkToken` (AES encryption + Redis cache dual verification) |
-| User context | Controllers repeatedly need the current user ID | `UserContextUtil.getUserId()` / `getUserClaim()` via ThreadLocal |
-| Request tamper protection | Open gateway must prevent request modification / replay | `AuthenticateTokenFilter` auto-verifies HMAC-SHA256 + nonce time window |
-| Single-point logout | After password change, old tokens must be invalidated globally | `TokenCache` interface: delete the Redis entry and all old tokens become invalid |
-| Whitelist endpoints | Login / register endpoints should skip auth | `AuthenticationProperties.ignores` / `openIgnores` with Ant-style path matching |
-| Custom auth logic | Business needs pre/post hooks around standard verification | `UserClaimService` / `TokenCustomizeCheckService` extension interfaces |
+| Category                  | Typical Problem                                                | What the Module Provides                                                                          |
+|---------------------------|----------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Token authentication      | Mobile login needs session persistence and forgery protection  | `TokenUtil.createToken` / `TokenUtil.checkToken` (AES encryption + Redis cache dual verification) |
+| User context              | Controllers repeatedly need the current user ID                | `UserContextUtil.getUserId()` / `getUserClaim()` via ThreadLocal                                  |
+| Request tamper protection | Open gateway must prevent request modification / replay        | `AuthenticateTokenFilter` auto-verifies HMAC-SHA256 + nonce time window                           |
+| Single-point logout       | After password change, old tokens must be invalidated globally | `TokenCache` interface: delete the Redis entry and all old tokens become invalid                  |
+| Whitelist endpoints       | Login / register endpoints should skip auth                    | `AuthenticationProperties.ignores` / `openIgnores` with Ant-style path matching                   |
+| Custom auth logic         | Business needs pre/post hooks around standard verification     | `UserClaimService` / `TokenCustomizeCheckService` extension interfaces                            |
 
 > ⚠️ This module does **not** include OAuth2 / SSO / SAML. For SSO, integrate Spring Security OAuth2
 > at the application layer.
@@ -271,12 +271,12 @@ public class WebConfig implements WebMvcConfigurer {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-api` | Uses `UserClaim`, `AuthenticateToken`, `RequestHeaderEnum`, `BaseErrorCallbackCode` |
-| `ddf-common-core` | `TokenUtil` / `SecureUtil` / `SignatureUtil` perform AES/HMAC operations; `SpringContextHolder` fetches `TokenCache` |
-| `ddf-common-mvc` | Global exception handler catches `UnauthorizedException` / `BusinessException` and wraps them into `ResponseData` |
-| `ddf-common-redis` | `TokenCacheImpl` uses `StringRedisTemplate` for distributed token storage and renewal |
+| Module             | How They Cooperate                                                                                                       |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-api`   | Uses `UserClaim`, `AuthenticateToken`, `RequestHeaderEnum`, `BaseErrorCallbackCode`                                      |
+| `ddf-common-core`  | `TokenUtil` / `SecureUtil` / `SignatureUtil` perform AES/HMAC operations; `SpringContextHolder` fetches `TokenCache`     |
+| `ddf-common-mvc`   | Global exception handler catches `UnauthorizedException` / `BusinessException` and wraps them into `ResponseData`        |
+| `ddf-common-redis` | `TokenCacheImpl` uses `StringRedisTemplate` for distributed token storage and renewal                                    |
 | `ddf-common-limit` | Rate-limit interceptor usually runs after the auth filter and uses `UserContextUtil.getUserId()` for per-user throttling |
 
 ---
@@ -293,7 +293,8 @@ Cookie, etc.) and sends it in the corresponding header on each request.
 dependency, so it lives in core for broader reuse. `AuthenticateTokenFilter` needs `HandlerInterceptor`
 and the Servlet API, so it lives in the authentication module.
 
-**Q3: How is the token refreshed after expiry? Does the user need to re-login?**  
+**Q3: How is the token refreshed after expiry? Does the user need to re-login?**
+
 - Short-lived tokens: the module does not have a built-in refresh-token mechanism; after expiry the
   client must re-login (or the business layer implements its own refresh-token flow)
 - Long-lived sessions: every valid request automatically calls `TokenCache.refreshToken`, extending
@@ -311,7 +312,8 @@ executor.execute(() -> {
 });
 ```
 
-**Q5: How do I debug a signature-verification failure?**  
+**Q5: How do I debug a signature-verification failure?**
+
 1. Confirm client and server share the same `sign-secret` (32 bytes)
 2. Confirm the `nonce` timestamp is within `time-force-check-diff-minute`
 3. Confirm the request body has not been modified by Nginx / CDN (e.g. automatic whitespace insertion)

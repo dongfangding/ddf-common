@@ -13,16 +13,12 @@ public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
 
     /**
      * 获取身份id
-     *
-     * @return
      */
     @Override
     public abstract String getIdentityId();
 
     /**
      * 获取定义的区分业务的topic前缀, 这个会被附加到通用前缀后面
-     *
-     * @return
      */
     public abstract String getBizTopicPrefix();
 
@@ -30,37 +26,28 @@ public abstract class AbstractPoint2PointTopic implements MqttTopicDefine {
      * 按照规则通过完整的topic路径反解析成对应的topic对象
      *
      * @param fullTopic full主题参数
-     * @return
      */
     @Override
     public abstract MqttTopicDefine convertTopicObj(String fullTopic);
 
     /**
      * 获取包装的BizTopicPrefix， 主要是为了自定义处理前缀问题，比如加/开头
-     *
-     * @return
      */
     public String getBoxedBizTopicPrefix() {
-        return getBizTopicPrefix().startsWith(GlobalStorage.TOPIC_SEPARATOR) ? getBizTopicPrefix() : GlobalStorage.TOPIC_SEPARATOR + getBoxedBizTopicPrefix();
+        return getBizTopicPrefix().startsWith(GlobalStorage.TOPIC_SEPARATOR) ? getBizTopicPrefix() :
+                GlobalStorage.TOPIC_SEPARATOR + getBoxedBizTopicPrefix();
     }
 
     /**
      * 获取全局通用topic前缀
-     *
-     * @return
      */
     public String getTopicPrefix() {
-        return String.join(
-                GlobalStorage.TOPIC_SEPARATOR,
-                GlobalStorage.getSystemClientIdPrefix(), GlobalStorage.POINT_TO_POINT_TOPIC_PREFIX,
-                getBoxedBizTopicPrefix()
-        );
+        return String.join(GlobalStorage.TOPIC_SEPARATOR, GlobalStorage.getSystemClientIdPrefix(),
+                GlobalStorage.POINT_TO_POINT_TOPIC_PREFIX, getBoxedBizTopicPrefix());
     }
 
     /**
      * 获取完整的topic
-     *
-     * @return
      */
     @Override
     public String getFullTopic() {

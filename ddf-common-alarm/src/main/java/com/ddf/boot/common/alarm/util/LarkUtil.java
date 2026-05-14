@@ -116,7 +116,6 @@ public class LarkUtil {
      * @param secret 签名密钥
      * @param title 标题
      * @param contentRequest 富文本内容请求对象
-     * @return
      */
     public static Map<String, Object> buildPostMsgTypeContent(String secret, String title,
             LarkContentRequest contentRequest) {
@@ -145,7 +144,6 @@ public class LarkUtil {
      * @param text 文本内容
      * @param isAtAll 是否 @ 所有人
      * @param secret 签名密钥
-     * @return
      */
     public static Map<String, Object> buildText(String secret, String text, boolean isAtAll) {
         final Long currentTimeSeconds = DateUtils.currentTimeSeconds();
@@ -163,6 +161,7 @@ public class LarkUtil {
         params.put("content", textParams);
         return params;
     }
+
     /**
      * @param secret 签名密钥
      * @param timestamp 参数

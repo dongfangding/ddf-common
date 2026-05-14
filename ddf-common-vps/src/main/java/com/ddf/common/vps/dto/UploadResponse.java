@@ -37,6 +37,7 @@ public class UploadResponse implements Serializable {
 
     /**
      * 缩略图路径， 带group name
+     *
      * @see com.github.tobato.fastdfs.domain.upload.ThumbImage#getThumbImagePath(String)
      * @see DefaultThumbImageConfig#getThumbImagePath(String)
      */
@@ -58,7 +59,6 @@ public class UploadResponse implements Serializable {
      * @param storePath store路径
      * @param thumbImage 参数
      * @param accessDomain 参数
-     * @return
      */
     public static UploadResponse fromStorePath(StorePath storePath, ThumbImage thumbImage, String accessDomain) {
         final UploadResponse response = new UploadResponse();

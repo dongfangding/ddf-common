@@ -26,9 +26,8 @@ class GovernancePropertiesTest {
         assertTrue(properties.getObservability().getThreadPool().isEnabled());
         assertFalse(properties.getObservability().getThreadPool().isScanAll());
         assertEquals("custom.thread.pool", properties.getObservability().getThreadPool().getMetricName());
-        assertEquals(List.of(
-                "*Executor", "*executor", "*Executors", "*executors", "*Pool", "*pool", "*Scheduler", "*scheduler"
-        ), properties.getObservability().getThreadPool().getIncludeBeanNamePatterns());
+        assertEquals(List.of("*Executor", "*executor", "*Executors", "*executors", "*Pool", "*pool", "*Scheduler",
+                "*scheduler"), properties.getObservability().getThreadPool().getIncludeBeanNamePatterns());
     }
 
     @Test

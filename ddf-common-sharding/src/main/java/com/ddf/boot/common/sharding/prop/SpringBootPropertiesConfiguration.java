@@ -30,8 +30,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public final class SpringBootPropertiesConfiguration {
-    
+
     private Properties props = new Properties();
-    
+
     private YamlModeConfiguration mode;
 }

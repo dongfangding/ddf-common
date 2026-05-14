@@ -40,12 +40,8 @@ public class ConsoleOnsGroupDeleteRequest implements EnvRequest, UserRequest, Se
 
     /**
      * 转换为SDK内部提供的参数对象
-     *
-     * @return
      */
     public OnsGroupDeleteRequest toSdkRequest(String instanceId) {
-        return new OnsGroupDeleteRequest()
-                .setGroupId(groupId)
-                .setInstanceId(instanceId);
+        return new OnsGroupDeleteRequest().setGroupId(groupId).setInstanceId(instanceId);
     }
 }

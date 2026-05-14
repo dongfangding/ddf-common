@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-mqtt-client` solves the **"how to quickly and standardize MQTT message publishing at the business layer"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Business system pushing device commands | Don't want to touch low-level MQTT APIs directly | Controller wrapper — HTTP call triggers publish |
-| Multi-business-line Topic management | Topic naming is chaotic and hard to maintain | `MqttTopicDefine` enumeration for centralized management |
-| Structured message bodies | Passing raw JSON strings is error-prone | `TextMessageBody` and other business message wrappers |
-| Integrate with existing web services | Already have Spring MVC endpoints, want to extend MQTT | Auto-injected `MqttClientController` exposes REST endpoints |
+| Scenario                                | Typical Problem                                        | What the Module Provides                                    |
+|-----------------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
+| Business system pushing device commands | Don't want to touch low-level MQTT APIs directly       | Controller wrapper — HTTP call triggers publish             |
+| Multi-business-line Topic management    | Topic naming is chaotic and hard to maintain           | `MqttTopicDefine` enumeration for centralized management    |
+| Structured message bodies               | Passing raw JSON strings is error-prone                | `TextMessageBody` and other business message wrappers       |
+| Integrate with existing web services    | Already have Spring MVC endpoints, want to extend MQTT | Auto-injected `MqttClientController` exposes REST endpoints |
 
 ---
 
@@ -161,11 +161,11 @@ String topic = BizMqttTopic.DEVICE_COMMAND.getTopic()
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
+| Module            | How They Cooperate                                                                             |
+|-------------------|------------------------------------------------------------------------------------------------|
 | `ddf-common-mqtt` | Underlying MQTT connection and publishing capability; this module adds business-layer wrapping |
-| `ddf-common-core` | JSON serialization and utility support |
-| `ddf-common-mvc` | REST controller exposure and unified response format |
+| `ddf-common-core` | JSON serialization and utility support                                                         |
+| `ddf-common-mvc`  | REST controller exposure and unified response format                                           |
 
 ---
 

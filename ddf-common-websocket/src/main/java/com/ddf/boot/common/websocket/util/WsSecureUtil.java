@@ -107,6 +107,7 @@ public class WsSecureUtil {
         HMac mac = new HMac(HmacAlgorithm.HmacMD5, key.getBytes(UTF_8));
         return mac.digestHex(data);
     }
+
     /**
      * @param args 参数
      */

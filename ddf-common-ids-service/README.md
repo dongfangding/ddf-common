@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-ids-service` solves the **"how to generate globally unique IDs in distributed environments"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Sharded database primary keys | Auto-increment IDs conflict after sharding | Snowflake generates globally unique, trend-increasing IDs |
-| Order number generation | Need short, ordered, non-repeating order numbers | Segment mode allocates in batches by business code |
-| High-concurrency writes | Database auto-increment becomes a bottleneck | Local cache of ID segments reduces DB access |
-| Data migration | ID conflicts after merging multiple data centers | Snowflake isolates via data-center bits |
+| Scenario                      | Typical Problem                                  | What the Module Provides                                  |
+|-------------------------------|--------------------------------------------------|-----------------------------------------------------------|
+| Sharded database primary keys | Auto-increment IDs conflict after sharding       | Snowflake generates globally unique, trend-increasing IDs |
+| Order number generation       | Need short, ordered, non-repeating order numbers | Segment mode allocates in batches by business code        |
+| High-concurrency writes       | Database auto-increment becomes a bottleneck     | Local cache of ID segments reduces DB access              |
+| Data migration                | ID conflicts after merging multiple data centers | Snowflake isolates via data-center bits                   |
 
 ---
 
@@ -92,13 +92,13 @@ String id = idsApi.getSegmentId(BizCode.ORDER);
 
 ### 5.1 Algorithm comparison
 
-| Feature | Snowflake | Segment |
-| --- | --- | --- |
-| Dependency | Zookeeper | Database |
-| Performance | Extremely high (local generation) | High (local segment cache) |
-| Ordering | Trend-increasing | Strictly increasing |
-| Suitable for | High concurrency, distributed | Medium concurrency, strict continuity needed |
-| Clock sensitivity | Sensitive (needs handling) | Not sensitive |
+| Feature           | Snowflake                         | Segment                                      |
+|-------------------|-----------------------------------|----------------------------------------------|
+| Dependency        | Zookeeper                         | Database                                     |
+| Performance       | Extremely high (local generation) | High (local segment cache)                   |
+| Ordering          | Trend-increasing                  | Strictly increasing                          |
+| Suitable for      | High concurrency, distributed     | Medium concurrency, strict continuity needed |
+| Clock sensitivity | Sensitive (needs handling)        | Not sensitive                                |
 
 ### 5.2 Snowflake structure
 
@@ -129,11 +129,11 @@ public class CustomIDAllocDao implements IDAllocDao {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-zookeeper` | Snowflake depends on ZK to allocate worker machine IDs |
-| `ddf-common-data-mysql-starter` | Segment mode depends on DB to store segments |
-| `ddf-common-core` | Time utilities, concurrency utilities, and other fundamentals |
+| Module                          | How They Cooperate                                            |
+|---------------------------------|---------------------------------------------------------------|
+| `ddf-common-zookeeper`          | Snowflake depends on ZK to allocate worker machine IDs        |
+| `ddf-common-data-mysql-starter` | Segment mode depends on DB to store segments                  |
+| `ddf-common-core`               | Time utilities, concurrency utilities, and other fundamentals |
 
 ---
 

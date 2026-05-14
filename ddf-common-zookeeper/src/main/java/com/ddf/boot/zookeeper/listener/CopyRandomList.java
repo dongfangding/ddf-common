@@ -29,17 +29,21 @@ public class CopyRandomList {
 
         @Override
         public String toString() {
-            return "Node{" + "val=" + val + ", next=" + next + ", random=" + (random == null ? "null" : random.getVal()) + '}';
+            return "Node{" + "val=" + val + ", next=" + next + ", random=" + (random == null ? "null" : random.getVal())
+                    + '}';
         }
+
         /**
          * @param o 参数
          */
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (o == null || getClass() != o.getClass())
+            }
+            if (o == null || getClass() != o.getClass()) {
                 return false;
+            }
             Node node = (Node) o;
             return Objects.equals(getId(), node.getId()) && Objects.equals(getVal(), node.getVal()) && Objects.equals(
                     getNext(), node.getNext()) && Objects.equals(getRandom(), node.getRandom());
@@ -50,6 +54,7 @@ public class CopyRandomList {
             return Objects.hash(getId(), getVal(), getNext(), getRandom());
         }
     }
+
     /**
      * @param args 参数
      */
@@ -83,6 +88,7 @@ public class CopyRandomList {
         printNode(copyNode2);
         System.out.println("===========================");
     }
+
     /**
      * @param nodeStr 参数
      */
@@ -106,6 +112,7 @@ public class CopyRandomList {
         }
         return nodeList.get(0);
     }
+
     /**
      * @param node 参数
      */
@@ -114,7 +121,9 @@ public class CopyRandomList {
             if (node == null) {
                 break;
             }
-            System.out.printf("val: %s\tnext:%s\trandom:%s", node.getVal(), node.getNext() == null ? null : node.getNext().getVal(), node.getRandom() == null ? null : node.getRandom().getVal());
+            System.out.printf("val: %s\tnext:%s\trandom:%s", node.getVal(),
+                    node.getNext() == null ? null : node.getNext().getVal(),
+                    node.getRandom() == null ? null : node.getRandom().getVal());
             System.out.println();
             Node next = node.next;
             if (next != null) {
@@ -125,6 +134,7 @@ public class CopyRandomList {
             }
         }
     }
+
     /**
      * @param node 参数
      */

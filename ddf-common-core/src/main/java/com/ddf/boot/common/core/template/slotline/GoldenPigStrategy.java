@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * 金猪
- *
  */
 public class GoldenPigStrategy implements MachineStrategy {
     @Override
@@ -33,6 +32,7 @@ public class GoldenPigStrategy implements MachineStrategy {
     public List<String> getIllegalSymbolStrings() {
         return Collections.emptyList();
     }
+
     /**
      * @param matrix 参数
      * @param r 参数

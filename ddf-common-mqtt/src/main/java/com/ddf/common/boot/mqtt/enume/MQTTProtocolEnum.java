@@ -7,13 +7,11 @@ import lombok.Getter;
 
 /**
  * <p>mqtt 协议 枚举 </p >
- *
  * MQTT Broker一般都会支持多种协议，
  * mqtt
  * mqtts
  * ws
  * wss
- *
  * 作为服务端可以将所有协议的连接地址返回给客户端，让客户端选择性连接
  * 也应该允许客户端获取执行协议的连接地址，然后进行连接交互
  *
@@ -41,23 +39,25 @@ public enum MQTTProtocolEnum {
     /**
      * websockets
      */
-    MQTT_WSS("mqtt_wss")
-    ;
+    MQTT_WSS("mqtt_wss");
 
     /**
-	 * 协议
+     * 协议
      */
-	@Getter
+    @Getter
     private final String protocol;
-	@Getter
+    @Getter
     private static final Map<String, MQTTProtocolEnum> MAPPINGS;
+
     MQTTProtocolEnum(String protocol) {
         this.protocol = protocol;
     }
 
     static {
-        MAPPINGS = Arrays.stream(MQTTProtocolEnum.values()).collect(Collectors.toMap(MQTTProtocolEnum::getProtocol, obj -> obj));
+        MAPPINGS = Arrays.stream(MQTTProtocolEnum.values()).collect(
+                Collectors.toMap(MQTTProtocolEnum::getProtocol, obj -> obj));
     }
+
     /**
      * @param protocol 参数
      */

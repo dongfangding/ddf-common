@@ -9,9 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class NettyBrokerAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(NettyBrokerAutoConfiguration.class))
-            .withPropertyValues("netty-broker.port=9999");
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(NettyBrokerAutoConfiguration.class)).withPropertyValues("netty-broker.port=9999");
 
     @Test
     void shouldRegisterBrokerProperties() {

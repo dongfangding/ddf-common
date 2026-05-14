@@ -12,13 +12,13 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-distributed-lock` solves the **"mutual exclusion in a distributed environment"** problem.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Stock deduction | High-concurrency overselling of the same product | `tryLock` non-blocking acquisition; fail fast |
-| Order idempotency | Duplicate requests creating duplicate orders | `lockWork` blocks until acquired, guaranteeing serial execution |
-| Clustered scheduled tasks | Multiple instances triggering the same job simultaneously | Watchdog renewal prevents lock expiration during long tasks |
-| Data reconciliation | Batch processing requiring long hold times | `lockWork(key, leaseTime, ...)` with explicit lease duration |
-| High-reliability locking | Reliability requirements outweigh performance | Zookeeper implementation using ephemeral sequential nodes |
+| Category                  | Typical Problem                                           | What the Module Provides                                        |
+|---------------------------|-----------------------------------------------------------|-----------------------------------------------------------------|
+| Stock deduction           | High-concurrency overselling of the same product          | `tryLock` non-blocking acquisition; fail fast                   |
+| Order idempotency         | Duplicate requests creating duplicate orders              | `lockWork` blocks until acquired, guaranteeing serial execution |
+| Clustered scheduled tasks | Multiple instances triggering the same job simultaneously | Watchdog renewal prevents lock expiration during long tasks     |
+| Data reconciliation       | Batch processing requiring long hold times                | `lockWork(key, leaseTime, ...)` with explicit lease duration    |
+| High-reliability locking  | Reliability requirements outweigh performance             | Zookeeper implementation using ephemeral sequential nodes       |
 
 ---
 
@@ -45,6 +45,7 @@ Or through the default starter:
 ```
 
 Implementation requirements:
+
 - **Redis lock**: depends on `redisson` (`RedissonClient` bean provided by `ddf-common-redis`)
 - **ZK lock**: depends on `curator-recipes`; the module initializes its own Curator client
 
@@ -203,15 +204,15 @@ the actual node path is `/distributed_lock/prod/locks/resource/1001`.
 
 ### 4.4 Implementation comparison
 
-| Feature | Redis lock (Redisson) | ZK lock (Curator) |
-| ----- | ----- | ----- |
-| Implementation | `RLock` | `InterProcessMutex` |
-| Reentrant | Yes | Yes |
-| Watchdog renewal | Yes (when leaseTime is not specified) | No |
-| Blocking mode | `lock.lock()` blocks indefinitely | `acquire()` with configurable wait time |
-| Failure release | Redis key TTL expires after app crash | Ephemeral node deleted on session disconnect |
-| Use case | High concurrency, performance sensitive | Extreme reliability requirements |
-| Key format | `:`-delimited string | Path starting with `/` |
+| Feature          | Redis lock (Redisson)                   | ZK lock (Curator)                            |
+|------------------|-----------------------------------------|----------------------------------------------|
+| Implementation   | `RLock`                                 | `InterProcessMutex`                          |
+| Reentrant        | Yes                                     | Yes                                          |
+| Watchdog renewal | Yes (when leaseTime is not specified)   | No                                           |
+| Blocking mode    | `lock.lock()` blocks indefinitely       | `acquire()` with configurable wait time      |
+| Failure release  | Redis key TTL expires after app crash   | Ephemeral node deleted on session disconnect |
+| Use case         | High concurrency, performance sensitive | Extreme reliability requirements             |
+| Key format       | `:`-delimited string                    | Path starting with `/`                       |
 
 ---
 
@@ -270,12 +271,12 @@ private DistributedLock zkLock;
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-redis` | Redis lock depends on the `RedissonClient` bean, usually provided by `ddf-common-redis` |
-| `ddf-common-zookeeper` | ZK lock depends on Curator client; if `ddf-common-zookeeper` is present, its `CuratorFramework` can be reused |
-| `ddf-common-api` | Exception taxonomy: `LockingAcquireException`, `LockingBusinessException`, `LockingReleaseException` |
-| `ddf-common-starter-default` | This module is included in the default starter; no extra dependency needed |
+| Module                       | How They Cooperate                                                                                            |
+|------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `ddf-common-redis`           | Redis lock depends on the `RedissonClient` bean, usually provided by `ddf-common-redis`                       |
+| `ddf-common-zookeeper`       | ZK lock depends on Curator client; if `ddf-common-zookeeper` is present, its `CuratorFramework` can be reused |
+| `ddf-common-api`             | Exception taxonomy: `LockingAcquireException`, `LockingBusinessException`, `LockingReleaseException`          |
+| `ddf-common-starter-default` | This module is included in the default starter; no extra dependency needed                                    |
 
 ---
 

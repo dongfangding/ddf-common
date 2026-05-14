@@ -64,16 +64,13 @@ public class TableScan {
                 // 特定写法，直接按照目前已有的数据源配置，硬编码，获取数据库连接信息
                 String url = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.url"),
-                        dataSourceProperties.getUrl()
-                );
+                        dataSourceProperties.getUrl());
                 String username = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.username"),
-                        dataSourceProperties.getUsername()
-                );
+                        dataSourceProperties.getUsername());
                 String password = StringUtils.defaultIfBlank(
                         environment.getProperty("spring.shardingsphere.datasource.master.password"),
-                        dataSourceProperties.getPassword()
-                );
+                        dataSourceProperties.getPassword());
                 if (StringUtils.isAnyBlank(url, username, password)) {
                     log.warn("分表扫描告警-未获取到数据库连接信息");
                     return;
@@ -148,8 +145,7 @@ public class TableScan {
                                     createStatement.executeUpdate(createTableSql);
                                 } catch (Exception e) {
                                     log.error("分表扫描告警-自动创建表失败, url = {}, createTableSql = {}", url,
-                                            createTableSql, e
-                                    );
+                                            createTableSql, e);
                                     errorMsg = StringUtils.defaultIfBlank(e.getMessage(), "创建失败");
                                 }
 

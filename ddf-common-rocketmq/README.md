@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-rocketmq` solves the **"native RocketMQ Spring integration is insufficient and needs an enhancement layer"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Unified message sending entry | Native `RocketMQTemplate` API is low-level; business code is repetitive | `RocketProducer` unifies sync/async/delayed sending |
-| Java 8 time type serialization | Jackson serialization of `LocalDateTime` fails on consumer deserialization | Built-in message converter compatible with Java 8 date/time types |
-| Multi-environment message isolation | Dev/test messages leak into production Topics | `EnvironmentIsolationProcessor` prefixes Topics by environment |
-| Consumer enhancement base class | Consumers repeatedly write filtering, retry, and exception handling | `EnhanceMessageHandler` base class encapsulates common logic |
+| Scenario                            | Typical Problem                                                            | What the Module Provides                                          |
+|-------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------|
+| Unified message sending entry       | Native `RocketMQTemplate` API is low-level; business code is repetitive    | `RocketProducer` unifies sync/async/delayed sending               |
+| Java 8 time type serialization      | Jackson serialization of `LocalDateTime` fails on consumer deserialization | Built-in message converter compatible with Java 8 date/time types |
+| Multi-environment message isolation | Dev/test messages leak into production Topics                              | `EnvironmentIsolationProcessor` prefixes Topics by environment    |
+| Consumer enhancement base class     | Consumers repeatedly write filtering, retry, and exception handling        | `EnhanceMessageHandler` base class encapsulates common logic      |
 
 ---
 
@@ -155,11 +155,11 @@ public class BatchConsumer extends EnhanceBatchMessageHandler<OrderEvent> {
 
 When `enabled-isolation: true` is set, the module automatically prefixes Topics with the environment:
 
-| Environment | Original Topic | Actual Topic |
-| --- | --- | --- |
-| dev | `ORDER_TOPIC` | `DEV_ORDER_TOPIC` |
-| test | `ORDER_TOPIC` | `TEST_ORDER_TOPIC` |
-| prod | `ORDER_TOPIC` | `ORDER_TOPIC` (unchanged) |
+| Environment | Original Topic | Actual Topic              |
+|-------------|----------------|---------------------------|
+| dev         | `ORDER_TOPIC`  | `DEV_ORDER_TOPIC`         |
+| test        | `ORDER_TOPIC`  | `TEST_ORDER_TOPIC`        |
+| prod        | `ORDER_TOPIC`  | `ORDER_TOPIC` (unchanged) |
 
 This prevents dev/test messages from polluting production.
 
@@ -187,11 +187,11 @@ rocketProducer.syncSendOrderly(message, orderId);
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-ons` | If migrating from ONS to self-hosted RocketMQ, consumer abstraction patterns are similar, reducing migration cost |
-| `ddf-common-core` | JSON serialization and utility support |
-| `ddf-common-authentication` | If message bodies need user context, combine with the auth module's Token mechanism |
+| Module                      | How They Cooperate                                                                                                |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-ons`            | If migrating from ONS to self-hosted RocketMQ, consumer abstraction patterns are similar, reducing migration cost |
+| `ddf-common-core`           | JSON serialization and utility support                                                                            |
+| `ddf-common-authentication` | If message bodies need user context, combine with the auth module's Token mechanism                               |
 
 ---
 

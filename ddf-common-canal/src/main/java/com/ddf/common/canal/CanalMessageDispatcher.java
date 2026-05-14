@@ -74,7 +74,6 @@ public class CanalMessageDispatcher {
      * </p>
      *
      * @param flatMessage Canal 消息对象
-     * @return
      */
     private CanalMessageHandler<?> findHandler(FlatMessage flatMessage) {
         final String tableName = flatMessage.getTable();
@@ -96,7 +95,6 @@ public class CanalMessageDispatcher {
      *
      * @param dataMap 数据映射
      * @param clazz 目标类型
-     * @return
      */
     private <T> List<T> getData(List<Map<String, String>> dataMap, Class<T> clazz) {
         if (CollectionUtils.isEmpty(dataMap)) {

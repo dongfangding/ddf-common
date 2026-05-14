@@ -36,6 +36,7 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
         // 初始化令牌桶限流, 先预热5秒钟，后续再恢复每秒令牌
         rateLimiter = RateLimiter.create(emqConnectionProperties.getPublishRateLimit(), Duration.ofSeconds(5));
     }
+
     /**
      * @param message 参数
      * @param payload 参数
@@ -43,9 +44,7 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
      */
     @Override
     public void beforePublish(MqttMessage message, MqttMessagePayload payload, InnerMqttMessageRequest request) {
-        if (request
-                .getTopic()
-                .startsWith("/")) {
+        if (request.getTopic().startsWith("/")) {
             // 因为mqtt协议自身是使用/来作为层级分隔符的，如果开头也使用/, 会增加人工上的识别成本
             throw new IllegalArgumentException("topic must not start with /");
         }
@@ -62,6 +61,7 @@ public class MqttPublishCheckerListener implements MqttPublishListener {
             throw new ServerErrorException(BaseErrorCallbackCode.REQUEST_TOO_MANY);
         }
     }
+
     /**
      * @param message 参数
      * @param payload 参数

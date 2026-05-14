@@ -34,7 +34,7 @@ class JinHuaUtilTest {
 
         for (int i = 1; i < result.size(); i++) {
             assertTrue(result.get(i - 1).getCardScore() > result.get(i).getCardScore(),
-                "第" + i + "张牌分数应小于第" + (i - 1) + "张牌（降序排列）");
+                    "第" + i + "张牌分数应小于第" + (i - 1) + "张牌（降序排列）");
         }
     }
 }

@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-ons` solves the **"business systems need to integrate with Alibaba Cloud ONS message queue"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Cloud-native message push on Alibaba Cloud | Self-hosted RocketMQ cluster ops cost is high | Use Alibaba Cloud managed ONS, zero ops |
-| Async order status processing | Order creation needs async notification to multiple downstreams | Ordinary messages + Tag filtering, parallel consumption |
-| Sequential order flow processing | Changes to the same order must be consumed in order | Ordered messages, `shardingKey` guarantees sequence |
-| Bulk data synchronization | Logs and tracking data volume is large; single-message consumption is inefficient | Batch message consumer processes multiple messages at once |
+| Scenario                                   | Typical Problem                                                                   | What the Module Provides                                   |
+|--------------------------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------|
+| Cloud-native message push on Alibaba Cloud | Self-hosted RocketMQ cluster ops cost is high                                     | Use Alibaba Cloud managed ONS, zero ops                    |
+| Async order status processing              | Order creation needs async notification to multiple downstreams                   | Ordinary messages + Tag filtering, parallel consumption    |
+| Sequential order flow processing           | Changes to the same order must be consumed in order                               | Ordered messages, `shardingKey` guarantees sequence        |
+| Bulk data synchronization                  | Logs and tracking data volume is large; single-message consumption is inefficient | Batch message consumer processes multiple messages at once |
 
 ---
 
@@ -161,12 +161,12 @@ public class LogBatchConsumer extends AbstractBatchOnsMessageListener<LogEvent> 
 
 ### 5.1 Message Type Comparison
 
-| Type | Description | Suitable For |
-| --- | --- | --- |
-| Ordinary | Unordered, parallel consumption | Most async notification scenarios |
-| Ordered | Sequence guaranteed by `shardingKey` | Order status flow, inventory deduction |
-| Scheduled/Delay | Deliver at specified time | Timeout cancellation, delayed tasks |
-| Transactional | Half-message + checkback | Distributed transaction eventual consistency |
+| Type            | Description                          | Suitable For                                 |
+|-----------------|--------------------------------------|----------------------------------------------|
+| Ordinary        | Unordered, parallel consumption      | Most async notification scenarios            |
+| Ordered         | Sequence guaranteed by `shardingKey` | Order status flow, inventory deduction       |
+| Scheduled/Delay | Deliver at specified time            | Timeout cancellation, delayed tasks          |
+| Transactional   | Half-message + checkback             | Distributed transaction eventual consistency |
 
 ### 5.2 Consumer Thread Pool Configuration
 
@@ -210,10 +210,10 @@ customizer:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-mvc` | Unified response format and global exception handling |
-| `ddf-common-core` | JSON serialization, logging, and utility support |
+| Module                | How They Cooperate                                                                         |
+|-----------------------|--------------------------------------------------------------------------------------------|
+| `ddf-common-mvc`      | Unified response format and global exception handling                                      |
+| `ddf-common-core`     | JSON serialization, logging, and utility support                                           |
 | `ddf-common-rocketmq` | If migrating to self-hosted RocketMQ later, business code switching cost is relatively low |
 
 ---

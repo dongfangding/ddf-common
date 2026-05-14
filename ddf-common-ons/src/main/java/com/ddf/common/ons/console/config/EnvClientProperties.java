@@ -71,8 +71,7 @@ public class EnvClientProperties {
             PreconditionUtil.checkArgument(
                     Objects.nonNull(accessKeyId) && Objects.nonNull(accessKeySecret) && Objects.nonNull(endpoint)
                             && Objects.nonNull(instanceId),
-                    new IllegalArgumentException("Ons SDK客户端初始化参数配置有误")
-            );
+                    new IllegalArgumentException("Ons SDK客户端初始化参数配置有误"));
         }
     }
 

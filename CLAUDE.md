@@ -65,11 +65,11 @@ CI 工作流：`.github/workflows/ci.yml`（编译 + 关键 starter smoke test�
 
 ## Starter 选择决策
 
-| 场景 | 选用 |
-| --- | --- |
-| 纯 Web / 不接 DB / 不接治理 | `ddf-common-starter-web` |
-| 常规业务（Web + MySQL + 治理） | `ddf-common-starter-default` |
-| 需自定义组合 | `starter-web` + `data-mysql-starter` + `governance-starter` 等按需 |
+| 场景                     | 选用                                                              |
+|------------------------|-----------------------------------------------------------------|
+| 纯 Web / 不接 DB / 不接治理   | `ddf-common-starter-web`                                        |
+| 常规业务（Web + MySQL + 治理） | `ddf-common-starter-default`                                    |
+| 需自定义组合                 | `starter-web` + `data-mysql-starter` + `governance-starter` 等按需 |
 
 `ddf-common-script` 与 `ddf-common-netty-broker` 默认**不在** Maven Central 发布集合中（见父 `pom.xml` 的 `excludeArtifacts`）。
 
@@ -140,13 +140,13 @@ responseData.requireSuccess();                               // 调用方强制�
 
 ### 关键工具速查
 
-| 工具 | 何时使用 |
-| --- | --- |
-| `detect_changes` | 评审改动 —— 给出风险评分 |
-| `get_review_context` | 评审需要源码片段 —— token 友好 |
-| `get_impact_radius` | 衡量改动的爆炸半径 |
-| `get_affected_flows` | 找受影响的执行路径 |
-| `query_graph` | 追 callers / callees / imports / tests / 依赖 |
-| `semantic_search_nodes` | 按名字 / 关键词找函数或类 |
-| `get_architecture_overview` | 看高层架构 |
-| `refactor_tool` | 规划重命名、找死代码 |
+| 工具                          | 何时使用                                       |
+|-----------------------------|--------------------------------------------|
+| `detect_changes`            | 评审改动 —— 给出风险评分                             |
+| `get_review_context`        | 评审需要源码片段 —— token 友好                       |
+| `get_impact_radius`         | 衡量改动的爆炸半径                                  |
+| `get_affected_flows`        | 找受影响的执行路径                                  |
+| `query_graph`               | 追 callers / callees / imports / tests / 依赖 |
+| `semantic_search_nodes`     | 按名字 / 关键词找函数或类                             |
+| `get_architecture_overview` | 看高层架构                                      |
+| `refactor_tool`             | 规划重命名、找死代码                                 |

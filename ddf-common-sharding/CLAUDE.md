@@ -6,9 +6,9 @@ ShardingSphere 集成模块，提供数据库分片功能。
 
 ## 核心类
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.sharding.config.ShardingProperties` | 分片配置 |
+| 类路径                                                        | 功能   |
+|------------------------------------------------------------|------|
+| `com.ddf.boot.common.sharding.config.ShardingProperties`   | 分片配置 |
 | `com.ddf.boot.common.sharding.algorithm.ShardingAlgorithm` | 分片算法 |
 
 ## 使用说明

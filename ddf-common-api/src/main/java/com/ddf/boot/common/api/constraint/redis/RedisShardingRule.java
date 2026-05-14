@@ -11,15 +11,11 @@ public interface RedisShardingRule<S, M> {
 
     /**
      * 获取分片字段的值在参数中的变量位置， 从0开始
-     *
-     * @return
      */
     S getShardingKeyInArgsIndex();
 
     /**
      * 获取分片的模数
-     *
-     * @return
      */
     M getShardingMod();
 
@@ -27,9 +23,8 @@ public interface RedisShardingRule<S, M> {
      * 返回sharding分片计算的结果
      *
      * @param args key的动态入参变量
-     * @return
      */
-	String getSharding(Object... args);
+    String getSharding(Object... args);
 
 
 }

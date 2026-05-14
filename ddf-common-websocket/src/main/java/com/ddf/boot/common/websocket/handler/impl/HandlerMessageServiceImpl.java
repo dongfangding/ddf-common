@@ -92,7 +92,8 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
             } catch (Exception e) {
                 log.error("客户端发送数据格式有误或验签不通过！ 数据内容：{} ", textMessage.getPayload(), e);
                 // 不接受客户端其他格式的数据
-                WebsocketSessionStorage.sendMessageAndClose(webSocketSessionWrapper, Message.echo("数据格式有误！关闭连接！"));
+                WebsocketSessionStorage.sendMessageAndClose(webSocketSessionWrapper,
+                        Message.echo("数据格式有误！关闭连接！"));
                 channelTransferService.recordResponse(authPrincipal, null, textMessage.getPayload(), null);
             }
             try {
@@ -104,18 +105,15 @@ public class HandlerMessageServiceImpl implements HandlerMessageService {
                     cmdStrategyHelper.buildDeviceCmdRunningState(authPrincipal, message, true);
                 }
                 int code = channelTransferService.recordResponse(authPrincipal, message.getRequestId(), messageStr,
-                        message
-                );
+                        message);
                 if (code == -1) {
                     WebsocketSessionStorage.sendMessage(webSocketSessionWrapper,
-                            Message.responseNotMatchRequest(message)
-                    );
+                            Message.responseNotMatchRequest(message));
                     log.warn("请求不匹配：{}", message);
                     return;
                 } else if (code == 1) {
                     WebsocketSessionStorage.sendMessage(webSocketSessionWrapper,
-                            Message.responseRepeatRequest(message)
-                    );
+                            Message.responseRepeatRequest(message));
                     log.warn("重复请求: {}", message);
                     return;
                 }

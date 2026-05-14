@@ -13,6 +13,7 @@ import com.ddf.common.boot.mqtt.model.response.MqttMessageResponse;
  */
 public class MqttPublishClient {
     private final MqttDefinition mqttDefinition;
+
     public MqttPublishClient(MqttDefinition mqttDefinition) {
         this.mqttDefinition = mqttDefinition;
     }

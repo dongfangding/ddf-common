@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * S3 兼容存储服务实现。
- *
  * <p>当前基于 MinIO SDK 适配 S3 兼容协议，保持对 MinIO、AWS S3 以及其他兼容实现的基础能力支持。</p>
  *
  * @author snowball
@@ -68,20 +67,15 @@ public class S3Service implements S3Api {
     private static MinioClient createMinioClient(S3Properties s3Properties) {
         Provider provider;
         if (StringUtils.isNotBlank(s3Properties.getSessionToken())) {
-            provider = new StaticProvider(
-                    s3Properties.getAccessKey(),
-                    s3Properties.getSecretKey(),
-                    s3Properties.getSessionToken()
-            );
+            provider = new StaticProvider(s3Properties.getAccessKey(), s3Properties.getSecretKey(),
+                    s3Properties.getSessionToken());
         } else {
             provider = new StaticProvider(s3Properties.getAccessKey(), s3Properties.getSecretKey(), null);
         }
 
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .connectTimeout(s3Properties.getConnectionTimeout(), TimeUnit.MILLISECONDS)
-                .readTimeout(s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS)
-                .writeTimeout(s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS)
-                .build();
+        OkHttpClient httpClient = new OkHttpClient.Builder().connectTimeout(s3Properties.getConnectionTimeout(),
+                TimeUnit.MILLISECONDS).readTimeout(s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS).writeTimeout(
+                s3Properties.getReadTimeout(), TimeUnit.MILLISECONDS).build();
 
         MinioClient client = MinioClient.builder()
                 .endpoint(s3Properties.getEndpoint())
@@ -110,16 +104,13 @@ public class S3Service implements S3Api {
     }
 
     @Override
-    public UploadResult upload(String bucketName, String objectKey, InputStream inputStream, String contentType, long size) {
+    public UploadResult upload(String bucketName, String objectKey, InputStream inputStream, String contentType,
+            long size) {
         try {
             ensureBucketExists(bucketName);
 
-            PutObjectArgs putObjectArgs = PutObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .stream(inputStream, size, -1)
-                    .contentType(contentType)
-                    .build();
+            PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucketName).object(objectKey).stream(
+                    inputStream, size, -1).contentType(contentType).build();
 
             ObjectWriteResponse response = minioClient.putObject(putObjectArgs);
             return UploadResult.builder()
@@ -165,10 +156,7 @@ public class S3Service implements S3Api {
     @Override
     public InputStream download(String bucketName, String objectKey) {
         try {
-            GetObjectArgs getObjectArgs = GetObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .build();
+            GetObjectArgs getObjectArgs = GetObjectArgs.builder().bucket(bucketName).object(objectKey).build();
             return minioClient.getObject(getObjectArgs);
         } catch (Exception e) {
             log.error("下载文件失败, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
@@ -184,7 +172,7 @@ public class S3Service implements S3Api {
     @Override
     public byte[] downloadAsBytes(String bucketName, String objectKey) {
         try (InputStream inputStream = download(bucketName, objectKey);
-             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[8192];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -205,10 +193,7 @@ public class S3Service implements S3Api {
     @Override
     public void delete(String bucketName, String objectKey) {
         try {
-            RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .build();
+            RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder().bucket(bucketName).object(objectKey).build();
             minioClient.removeObject(removeObjectArgs);
         } catch (Exception e) {
             log.error("删除文件失败, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
@@ -224,10 +209,7 @@ public class S3Service implements S3Api {
     @Override
     public boolean exists(String bucketName, String objectKey) {
         try {
-            StatObjectArgs statObjectArgs = StatObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .build();
+            StatObjectArgs statObjectArgs = StatObjectArgs.builder().bucket(bucketName).object(objectKey).build();
             minioClient.statObject(statObjectArgs);
             return true;
         } catch (Exception e) {
@@ -283,13 +265,11 @@ public class S3Service implements S3Api {
     }
 
     @Override
-    public PresignedUrlResult getPresignedUploadUrl(String bucketName, String objectKey, String contentType, Duration expiry) {
+    public PresignedUrlResult getPresignedUploadUrl(String bucketName, String objectKey, String contentType,
+            Duration expiry) {
         try {
-            GetPresignedObjectUrlArgs.Builder builder = GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .expiry((int) expiry.toSeconds())
-                    .method(Method.PUT);
+            GetPresignedObjectUrlArgs.Builder builder = GetPresignedObjectUrlArgs.builder().bucket(bucketName).object(
+                    objectKey).expiry((int) expiry.toSeconds()).method(Method.PUT);
             if (StringUtils.isNotBlank(contentType)) {
                 builder.extraHeaders(Map.of("Content-Type", contentType));
             }
@@ -314,18 +294,10 @@ public class S3Service implements S3Api {
     @Override
     public S3StatObject getStat(String bucketName, String objectKey) {
         try {
-            StatObjectArgs statObjectArgs = StatObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectKey)
-                    .build();
+            StatObjectArgs statObjectArgs = StatObjectArgs.builder().bucket(bucketName).object(objectKey).build();
             io.minio.StatObjectResponse response = minioClient.statObject(statObjectArgs);
-            return S3StatObject.builder()
-                    .objectKey(objectKey)
-                    .size(response.size())
-                    .etag(response.etag())
-                    .contentType(response.contentType())
-                    .lastModified(response.lastModified().toInstant().toEpochMilli())
-                    .build();
+            return S3StatObject.builder().objectKey(objectKey).size(response.size()).etag(response.etag()).contentType(
+                    response.contentType()).lastModified(response.lastModified().toInstant().toEpochMilli()).build();
         } catch (Exception e) {
             log.error("获取文件信息失败, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
             throw new RuntimeException("获取文件信息失败", e);
@@ -336,9 +308,7 @@ public class S3Service implements S3Api {
     public void makeBucket(String bucketName) {
         try {
             if (!bucketExists(bucketName)) {
-                MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder()
-                        .bucket(bucketName)
-                        .build();
+                MakeBucketArgs makeBucketArgs = MakeBucketArgs.builder().bucket(bucketName).build();
                 minioClient.makeBucket(makeBucketArgs);
                 log.info("创建 Bucket 成功: {}", bucketName);
             }
@@ -351,9 +321,7 @@ public class S3Service implements S3Api {
     @Override
     public boolean bucketExists(String bucketName) {
         try {
-            BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder()
-                    .bucket(bucketName)
-                    .build();
+            BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucketName).build();
             return minioClient.bucketExists(bucketExistsArgs);
         } catch (Exception e) {
             log.error("检查 Bucket 是否存在失败: {}", bucketName, e);
@@ -411,8 +379,7 @@ public class S3Service implements S3Api {
      */
     private String buildVirtualHostStyleUrl(String bucketName, String objectKey) {
         URI endpointUri = URI.create(s3Properties.getEndpoint());
-        StringBuilder builder = new StringBuilder()
-                .append(endpointUri.getScheme())
+        StringBuilder builder = new StringBuilder().append(endpointUri.getScheme())
                 .append("://")
                 .append(bucketName)
                 .append(".")

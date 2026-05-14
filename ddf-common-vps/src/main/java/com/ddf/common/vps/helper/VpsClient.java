@@ -56,31 +56,33 @@ public class VpsClient {
      *
      * @param filePath 文件路径
      * @param thumbImage 参数
-     * @return
      */
     @SneakyThrows
     public UploadResponse uploadFile(String filePath, ThumbImage thumbImage) {
         final File file = new File(filePath);
-        thumbImage = ObjectUtils.defaultIfNull(thumbImage, new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
+        thumbImage = ObjectUtils.defaultIfNull(thumbImage,
+                new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
         // 安全考虑， 只有这个临时目录的本地文件允许走这块代码上传
-//        PreconditionUtil.checkArgument(filePath.startsWith(vpsProperties.getFfmpegTmpPath()), "不允许上传除ffmpeg临时目录以外的文件");
+        //        PreconditionUtil.checkArgument(filePath.startsWith(vpsProperties.getFfmpegTmpPath()), "不允许上传除ffmpeg临时目录以外的文件");
         String extName = filePath.substring(filePath.lastIndexOf(".") + 1);
-        return uploadFile(new FastImageFile(Files.newInputStream(file.toPath()), file.length(), extName,
-                new HashSet<>(), thumbImage), false);
+        return uploadFile(
+                new FastImageFile(Files.newInputStream(file.toPath()), file.length(), extName, new HashSet<>(),
+                        thumbImage), false);
     }
 
     /**
      * 上传文件并生成缩略图
      *
      * @param multipartFile multipart文件参数
-     * @return
      */
     @SneakyThrows
     public UploadResponse uploadFile(MultipartFile multipartFile) {
-        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
+        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(),
+                multipartFile.getName());
         String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return uploadFile(new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName,
-                new HashSet<>(), null), false);
+        return uploadFile(
+                new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName, new HashSet<>(),
+                        null), false);
     }
 
     /**
@@ -88,21 +90,21 @@ public class VpsClient {
      *
      * @param multipartFile multipart文件参数
      * @param cutVideoThumb 如果是视频是否裁剪视频帧获取封面图，支持非常有限，仅提供思路
-     * @return
      */
     @SneakyThrows
     public UploadResponse uploadFile(MultipartFile multipartFile, boolean cutVideoThumb) {
-        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(), multipartFile.getName());
+        final String fileName = StringUtils.defaultIfBlank(multipartFile.getOriginalFilename(),
+                multipartFile.getName());
         String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return uploadFile(new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName,
-                new HashSet<>(), null), cutVideoThumb);
+        return uploadFile(
+                new FastImageFile(multipartFile.getInputStream(), multipartFile.getSize(), fileExtName, new HashSet<>(),
+                        null), cutVideoThumb);
     }
 
     /**
      * 批量上传文件
      *
      * @param multipartFiles multipartfiles参数
-     * @return
      */
     public List<UploadResponse> batchUploadFile(MultipartFile[] multipartFiles) {
         List<UploadResponse> rtnList = new ArrayList<>();
@@ -114,13 +116,11 @@ public class VpsClient {
 
     /**
      * 上传文件并生成缩略图
-     *
      * 如果是视频的话， 视频需要先上传然后调用ffmpeg进行截帧命令， 然后将生成的文件再次调用上传。
      * 因此这个方法能工作的前提必须是有一台专门的服务器用来处理文件上传请求， 然后在这台服务器上要安装ffmpeg，这样才能正常工作
      *
      * @param fastImageFile fastimage文件参数
      * @param cutVideoThumb 参数
-     * @return
      */
     public UploadResponse uploadFile(FastImageFile fastImageFile, boolean cutVideoThumb) {
         final String fileExtName = fastImageFile.getFileExtName();
@@ -131,7 +131,8 @@ public class VpsClient {
         String accessDomain = fdfsWebServer.getWebServerUrl();
         // 暂时以这个来判断是上传的图片还是视频
         if (isImage(fileExtName)) {
-            thumbImage = ObjectUtils.defaultIfNull(thumbImage, new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
+            thumbImage = ObjectUtils.defaultIfNull(thumbImage,
+                    new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
             final StorePath storePath = fastFileStorageClient.uploadImage(fastImageFile);
             return UploadResponse.fromStorePath(storePath, thumbImage, accessDomain);
         }
@@ -143,7 +144,8 @@ public class VpsClient {
             // 依赖图片在本机服务，且安装了ffmpeg
             final String basePath = vpsProperties.getFdfsBasePath();
             if (StringUtils.isNotBlank(basePath)) {
-                String localFilePath = basePath + File.separator + VpsUtil.getFDfsPhysicalStorePath(storePath.getFullPath());
+                String localFilePath = basePath + File.separator + VpsUtil.getFDfsPhysicalStorePath(
+                        storePath.getFullPath());
                 File localFile = new File(localFilePath);
                 if (localFile.exists()) {
                     storeAccessPath = localFilePath;
@@ -154,8 +156,9 @@ public class VpsClient {
                 storeAccessPath = fdfsWebServer.getWebServerUrl() + "/" + storePath.getFullPath();
             }
             final String ffmpegTmpPath = vpsProperties.getFfmpegTmpPath();
-            String coverTmpPath = VpsUtil.cutVideoCover(storeAccessPath, ffmpegTmpPath.endsWith(File.separator) ?
-                    ffmpegTmpPath : ffmpegTmpPath + File.separator + environmentHelper.getApplicationName());
+            String coverTmpPath = VpsUtil.cutVideoCover(storeAccessPath,
+                    ffmpegTmpPath.endsWith(File.separator) ? ffmpegTmpPath :
+                            ffmpegTmpPath + File.separator + environmentHelper.getApplicationName());
             // 存在截帧失败的情况，则这个封面图就没有
             response.setThumbPath(null);
             // 依赖于本地要安装ffmpeg， 否则这个文件在本地不会存在，无法上传，因此做近一步文件是否存在的判断
@@ -173,7 +176,6 @@ public class VpsClient {
      * 简单判断是否是图片
      *
      * @param fileExtName 文件EXT名称参数
-     * @return
      */
     private boolean isImage(String fileExtName) {
         for (String s : SUPPORT_IMAGE_LIST) {

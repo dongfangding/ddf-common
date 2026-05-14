@@ -104,7 +104,6 @@ public class StringExtUtil {
      * 根据当前时间生成指定长度的随机数
      *
      * @param length 长度
-     * @return
      */
     public static String randomString(int length) {
         String timeMillis = System.currentTimeMillis() + "";
@@ -128,7 +127,6 @@ public class StringExtUtil {
      * 将异常栈输出为字符串
      *
      * @param e E参数
-     * @return
      */
     public static String exceptionToStringNoLimit(Throwable e) {
         return ExceptionUtil.stacktraceToString(e, -1);
@@ -140,7 +138,6 @@ public class StringExtUtil {
      *
      * @param str STR参数
      * @param separator 分隔符
-     * @return
      */
     public static String getShortNameBySplit(String str, String separator) {
         return getShortNameBySplit(str, separator, separator);
@@ -152,7 +149,6 @@ public class StringExtUtil {
      * @param str STR参数
      * @param separator 分隔符
      * @param replaceSeparator 参数
-     * @return
      */
     public static String getShortNameBySplit(String str, String separator, String replaceSeparator) {
         final String[] charArray = str.split(separator);
@@ -173,7 +169,6 @@ public class StringExtUtil {
      * 如HelloService --> helloService
      *
      * @param name 名称
-     * @return
      */
     public static String getFirstLowerCaseName(String name) {
         return name.substring(0, 1).toLowerCase() + name.substring(1);
@@ -184,7 +179,6 @@ public class StringExtUtil {
      * 是否有效http协议
      *
      * @param url URL 地址
-     * @return
      */
     public static boolean isValidHttpScheme(String url) {
         return StringUtils.isNotBlank(url) && (url.startsWith("http://") || url.startsWith("https://"));
@@ -194,7 +188,6 @@ public class StringExtUtil {
      * 更符合语义的Boolean解析方法
      *
      * @param value 参数值
-     * @return
      */
     public static Boolean parseBoolean(String value) {
         return Objects.equals(value, "1") || "true".equalsIgnoreCase(value);

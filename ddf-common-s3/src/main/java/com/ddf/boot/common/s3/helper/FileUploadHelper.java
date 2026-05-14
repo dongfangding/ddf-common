@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件上传辅助类。
- *
  * <p>在 S3 上传流程上补充文件校验、对象 key 生成和缩略图生成能力。</p>
  *
  * @author snowball
@@ -32,16 +31,12 @@ public class FileUploadHelper {
     /**
      * 默认允许的图片扩展名。
      */
-    private static final Set<String> DEFAULT_ALLOWED_IMAGE_TYPES = Set.of(
-            "jpg", "jpeg", "png", "gif", "webp", "bmp"
-    );
+    private static final Set<String> DEFAULT_ALLOWED_IMAGE_TYPES = Set.of("jpg", "jpeg", "png", "gif", "webp", "bmp");
 
     /**
      * 默认允许的视频扩展名。
      */
-    private static final Set<String> DEFAULT_ALLOWED_VIDEO_TYPES = Set.of(
-            "mp4", "avi", "mov", "wmv", "flv", "mkv"
-    );
+    private static final Set<String> DEFAULT_ALLOWED_VIDEO_TYPES = Set.of("mp4", "avi", "mov", "wmv", "flv", "mkv");
 
     /**
      * 默认最大文件大小，10MB。
@@ -96,8 +91,8 @@ public class FileUploadHelper {
      * @param allowVideo 是否允许视频类型
      * @return 上传结果
      */
-    public UploadResult upload(String platform, String identity, MultipartFile multipartFile,
-                               boolean generateThumb, boolean allowVideo) {
+    public UploadResult upload(String platform, String identity, MultipartFile multipartFile, boolean generateThumb,
+            boolean allowVideo) {
         validateFile(multipartFile, allowVideo);
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
@@ -126,9 +121,7 @@ public class FileUploadHelper {
      * @return 上传结果列表
      */
     public List<UploadResult> batchUpload(String platform, String identity, MultipartFile[] multipartFiles) {
-        return Arrays.stream(multipartFiles)
-                .map(file -> upload(platform, identity, file))
-                .toList();
+        return Arrays.stream(multipartFiles).map(file -> upload(platform, identity, file)).toList();
     }
 
     /**
@@ -139,7 +132,8 @@ public class FileUploadHelper {
      * @return 缩略图上传结果
      * @throws IOException 处理图片失败时抛出
      */
-    private UploadResult generateAndUploadThumbnail(MultipartFile multipartFile, String originalObjectKey) throws IOException {
+    private UploadResult generateAndUploadThumbnail(MultipartFile multipartFile, String originalObjectKey)
+            throws IOException {
         String thumbObjectKey = generateThumbObjectKey(originalObjectKey);
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Thumbnails.of(multipartFile.getInputStream())
@@ -149,12 +143,7 @@ public class FileUploadHelper {
                     .toOutputStream(outputStream);
 
             byte[] thumbData = outputStream.toByteArray();
-            return s3Api.upload(
-                    thumbObjectKey,
-                    new ByteArrayInputStream(thumbData),
-                    "image/jpeg",
-                    thumbData.length
-            );
+            return s3Api.upload(thumbObjectKey, new ByteArrayInputStream(thumbData), "image/jpeg", thumbData.length);
         }
     }
 

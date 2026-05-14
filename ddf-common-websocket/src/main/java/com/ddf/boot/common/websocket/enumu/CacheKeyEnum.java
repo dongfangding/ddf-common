@@ -35,6 +35,7 @@ public enum CacheKeyEnum {
      * @param template 参数
      */
     private final String template;
+
     CacheKeyEnum(String template) {
         this.template = template;
     }

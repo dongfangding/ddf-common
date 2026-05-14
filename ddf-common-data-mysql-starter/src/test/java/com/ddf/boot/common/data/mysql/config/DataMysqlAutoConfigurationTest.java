@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DataMysqlAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(DataMysqlAutoConfiguration.class));
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(DataMysqlAutoConfiguration.class));
 
     @AfterEach
     void clearSystemProperty() {
@@ -27,15 +27,13 @@ class DataMysqlAutoConfigurationTest {
 
     @Test
     void shouldApplyConfiguredPingMethodProperty() {
-        contextRunner
-                .withPropertyValues("customizer.data.mysql.druid.usePingMethod=true")
-                .run(context -> assertThat(System.getProperty("druid.mysql.usePingMethod")).isEqualTo("true"));
+        contextRunner.withPropertyValues("customizer.data.mysql.druid.usePingMethod=true").run(
+                context -> assertThat(System.getProperty("druid.mysql.usePingMethod")).isEqualTo("true"));
     }
 
     @Test
     void shouldBackOffWhenModuleDisabled() {
-        contextRunner
-                .withPropertyValues("customizer.data.mysql.enabled=false")
-                .run(context -> assertThat(context).doesNotHaveBean(DataMysqlAutoConfiguration.class));
+        contextRunner.withPropertyValues("customizer.data.mysql.enabled=false").run(
+                context -> assertThat(context).doesNotHaveBean(DataMysqlAutoConfiguration.class));
     }
 }

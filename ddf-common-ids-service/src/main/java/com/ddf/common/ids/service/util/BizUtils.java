@@ -21,7 +21,6 @@ public class BizUtils {
      *
      * @param appId 应用 ID
      * @param tag TAG参数
-     * @return
      */
     public static String genIdBizTag(String appId, String tag) {
         return appId + "_" + tag;
@@ -32,7 +31,6 @@ public class BizUtils {
      *
      * @param length 长度
      * @param func func参数
-     * @return
      */
     public static List<Long> multiIds(Integer length, Function<Integer, Long> func) {
         List<Long> ids = Lists.newArrayList();

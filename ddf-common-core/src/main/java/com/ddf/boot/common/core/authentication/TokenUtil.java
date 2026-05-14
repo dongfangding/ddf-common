@@ -29,22 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenUtil {
 
-    private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBeanWithStatic(EnvironmentHelper.class);
+    private static final EnvironmentHelper ENVIRONMENT_HELPER = SpringContextHolder.getBeanWithStatic(
+            EnvironmentHelper.class);
     private static final TokenCache TOKEN_CACHE = SpringContextHolder.getBeanWithStatic(TokenCache.class);
 
-    private TokenUtil() {}
+    private TokenUtil() {
+    }
 
 
     /**
      * 生成token规则
      *
      * @param userClaim 用户声明信息
-     * @return
      */
     public static AuthenticateToken createToken(UserClaim userClaim) {
         final String originUserClaimStr = JsonUtil.asString(userClaim);
-//        final AuthenticateToken authenticateToken = AuthenticateToken.of(
-//                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
+        //        final AuthenticateToken authenticateToken = AuthenticateToken.of(
+        //                SecureUtil.bCryptEncoder(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
         final AuthenticateToken authenticateToken = AuthenticateToken.of(
                 SecureUtil.aesEncryptHex(userClaim.getUserId()), SecureUtil.aesEncryptHex(originUserClaimStr));
         if (Objects.nonNull(TOKEN_CACHE)) {
@@ -57,7 +58,6 @@ public class TokenUtil {
      * 从完整token中解析用户信息
      *
      * @param token token 字符串
-     * @return
      */
     public static UserClaim getUserClaim(String token) {
         UserClaim claim;
@@ -78,7 +78,6 @@ public class TokenUtil {
      * 解析token并验证token本身规则
      *
      * @param token token 字符串
-     * @return
      */
     public static AuthenticateCheckResult checkToken(String token) {
         try {
@@ -88,15 +87,18 @@ public class TokenUtil {
             String userId = userClaim.getUserId();
             if (Objects.nonNull(TOKEN_CACHE)) {
                 final String cacheToken = TOKEN_CACHE.getToken(userId);
-                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
-                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token), new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken),
+                        new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
+                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token),
+                        new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);
         } catch (Exception e) {
-            if(e instanceof UnauthorizedException){
+            if (e instanceof UnauthorizedException) {
                 throw e;
             }
-            log.error("[{}].checkToken().called with exception => token:{},e:{}","解析token失败",token, Throwables.getStackTraceAsString(e));
+            log.error("[{}].checkToken().called with exception => token:{},e:{}", "解析token失败", token,
+                    Throwables.getStackTraceAsString(e));
             throw new BusinessException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
     }
@@ -112,6 +114,7 @@ public class TokenUtil {
             TOKEN_CACHE.refreshToken(userId, token);
         }
     }
+
     /**
      * @param args 参数
      */

@@ -39,12 +39,12 @@ public class RepeatableRegistrar implements ImportBeanDefinitionRegistrar {
         if (CollectionUtil.isNotEmpty(attributes)) {
             attributes.forEach(repeatablePropertiesBuilder::addPropertyValue);
         }
-		SpringSupport.registerIfAbsent(registry, RepeatableProperties.BEAN_NAME, repeatablePropertiesBuilder);
-		SpringSupport.registerIfAbsent(registry, RepeatAspect.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, RepeatableProperties.BEAN_NAME, repeatablePropertiesBuilder);
+        SpringSupport.registerIfAbsent(registry, RepeatAspect.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(RepeatAspect.class));
-		SpringSupport.registerIfAbsent(registry, LocalRepeatableValidator.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, LocalRepeatableValidator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(LocalRepeatableValidator.class));
-		SpringSupport.registerIfAbsent(registry, RedisRepeatableValidator.BEAN_NAME,
+        SpringSupport.registerIfAbsent(registry, RedisRepeatableValidator.BEAN_NAME,
                 BeanDefinitionBuilder.genericBeanDefinition(RedisRepeatableValidator.class));
     }
 }

@@ -15,17 +15,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MqttAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(MqttAutoConfiguration.class))
-            .withPropertyValues(
-                    "customizer.infra.mqtt.enable=true",
-                    "customizer.infra.mqtt.client.username=test",
-                    "customizer.infra.mqtt.client.password=test",
-                    "customizer.infra.mqtt.client.client-id-prefix=app",
-                    "customizer.infra.mqtt.connection-urls[0].protocol=mqtt_tcp",
-                    "customizer.infra.mqtt.connection-urls[0].url=tcp://127.0.0.1:1883"
-            )
-            .withUserConfiguration(MqttSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(MqttAutoConfiguration.class)).withPropertyValues("customizer.infra.mqtt.enable=true",
+            "customizer.infra.mqtt.client.username=test", "customizer.infra.mqtt.client.password=test",
+            "customizer.infra.mqtt.client.client-id-prefix=app",
+            "customizer.infra.mqtt.connection-urls[0].protocol=mqtt_tcp",
+            "customizer.infra.mqtt.connection-urls[0].url=tcp://127.0.0.1:1883").withUserConfiguration(
+            MqttSupportConfiguration.class);
 
     @Test
     void shouldRegisterControllerAndPublishListener() {

@@ -39,13 +39,11 @@ public class AliYunSmsProperties implements InitializingBean {
     /**
      * 是否加密accessKeyId、accessKeySecret
      * 如果加密，则使用系统自带的AES算法进行解密
-     *
      */
     private boolean secretAccessKey;
 
     /**
      * access_key_id
-     *
      * 必须再RAM 访问控制中创建的用户具有对应权限
      */
     private String accessKeyId;
@@ -85,8 +83,7 @@ public class AliYunSmsProperties implements InitializingBean {
             return;
         }
         Preconditions.checkArgument(!StringUtils.isAnyBlank(this.getAccessKeyId(), this.getAccessKeySecret()),
-                "请检查sms配置属性"
-        );
+                "请检查sms配置属性");
         if (secretAccessKey) {
             this.setAccessKeyId(SecureUtil.aesDecryptStr(this.getAccessKeyId()));
             this.setAccessKeySecret(SecureUtil.aesDecryptStr(this.getAccessKeySecret()));

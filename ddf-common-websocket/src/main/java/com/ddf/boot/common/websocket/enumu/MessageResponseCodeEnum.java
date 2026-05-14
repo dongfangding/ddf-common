@@ -63,10 +63,12 @@ public enum MessageResponseCodeEnum {
             mappingMap.put(value.code, value);
         }
     }
+
     /**
      * @param code 参数
      */
     private final Integer code;
+
     MessageResponseCodeEnum(Integer code) {
         this.code = code;
     }
@@ -79,7 +81,6 @@ public enum MessageResponseCodeEnum {
      * 根据状态码构建枚举对象
      *
      * @param code 编码值
-     * @return
      */
     public MessageResponseCodeEnum getByCode(Integer code) {
         return mappingMap.get(code);

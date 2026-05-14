@@ -108,17 +108,18 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseData<?> handlerException(Exception exception, HttpServletRequest httpServletRequest,
             HttpServletResponse response) {
-		String body = WebUtil.readBody(httpServletRequest);
+        String body = WebUtil.readBody(httpServletRequest);
         final String uri = httpServletRequest.getRequestURI();
         final String queryString = httpServletRequest.getQueryString();
-		// 处理客户端传递的约定好的请求头
+        // 处理客户端传递的约定好的请求头
         final Map<String, String> clientHeaderMap = RequestHeaderEnum.resolveClientHeaders(httpServletRequest);
         final boolean shouldTriggerExceptionEvent = logException(exception, uri, queryString, clientHeaderMap, body);
         if (exception instanceof AlarmException) {
             AlarmLog.error("全局异常捕获到告警异常， 请求{}，异常堆栈: ", uri, exception);
         }
 
-        final GlobalExceptionEventPayload payload = buildPayload(exception, uri, httpServletRequest, clientHeaderMap, body);
+        final GlobalExceptionEventPayload payload = buildPayload(exception, uri, httpServletRequest, clientHeaderMap,
+                body);
 
         // 允许扩展实现类接管异常处理，可以在业务层面实现一些异常情况下的额外处理，但记得如果不接管异常处理，最后要返回null
         final ExceptionHandlerMapping exceptionHandlerMapping = exceptionHandlerMappingProvider.getIfAvailable();
@@ -148,12 +149,8 @@ public abstract class AbstractExceptionHandler {
         }
 
         final String finalMessage = MessageSourceUtil.getMessage(
-                StringUtils.defaultIfBlank(resolveResult.formatCode, exceptionCode),
-                resolveResult.formatParams,
-                formatDefaultMessage,
-                locale,
-                StringUtils.isNotBlank(exceptionCode)
-        );
+                StringUtils.defaultIfBlank(resolveResult.formatCode, exceptionCode), resolveResult.formatParams,
+                formatDefaultMessage, locale, StringUtils.isNotBlank(exceptionCode));
 
         // 根据异常资源文件格式化消息，找不到的话，使用默认异常本身的消息, 如果exceptionCode不为空，则国际化翻译文本可以缓存
         applyResponseStatus(response, exceptionCode);
@@ -165,28 +162,28 @@ public abstract class AbstractExceptionHandler {
         if (shouldTriggerExceptionEvent) {
             applicationEventPublisher.publishEvent(new GlobalExceptionEvent(this, payload));
         }
-        return ResponseData.failure(exceptionCode, finalMessage, resolveResult.subMessage, resolveResult.extra, resolveResult.formatParams);
+        return ResponseData.failure(exceptionCode, finalMessage, resolveResult.subMessage, resolveResult.extra,
+                resolveResult.formatParams);
     }
 
     /**
      * 记录异常日志。
      */
-    private boolean logException(Exception exception, String uri, String queryString, Map<String, String> clientHeaderMap, String body) {
+    private boolean logException(Exception exception, String uri, String queryString,
+            Map<String, String> clientHeaderMap, String body) {
         final List<String> ignoreLogExceptionClassName = globalProperties.getIgnoreLogExceptionClassName();
         final String exceptionClassName = exception.getClass().getName();
 
-        if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(exceptionClassName)) {
-			log.error(
-					"全局异常捕获到请求异常， url = {}, 请求参数: queryString = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
-					uri, queryString, body, clientHeaderMap, exception
-			);
+        if (CollUtil.isEmpty(ignoreLogExceptionClassName) || !ignoreLogExceptionClassName.contains(
+                exceptionClassName)) {
+            log.error(
+                    "全局异常捕获到请求异常， url = {}, 请求参数: queryString = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
+                    uri, queryString, body, clientHeaderMap, exception);
             return true;
         }
-		// 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
-		log.info(
-				"全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, , clientHeaders = {}, 异常堆栈: ",
-				uri, queryString, body, clientHeaderMap, exception
-		);
+        // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
+        log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, , clientHeaders = {}, 异常堆栈: ",
+                uri, queryString, body, clientHeaderMap, exception);
         return false;
     }
 
@@ -198,7 +195,7 @@ public abstract class AbstractExceptionHandler {
         final GlobalExceptionEventPayload payload = new GlobalExceptionEventPayload();
         payload.setUrl(uri);
         payload.setParameterMap(request.getParameterMap());
-		payload.setBody(body);
+        payload.setBody(body);
         payload.setHost(LOCAL_HOST_ADDRESS);
         payload.setApplicationName(environmentHelper.getApplicationName());
         payload.setProfile(environmentHelper.getProfileStr());
@@ -221,8 +218,8 @@ public abstract class AbstractExceptionHandler {
         final String appLanguage = request.getHeader(RequestHeaderEnum.LANGUAGE.getName());
         if (StringUtils.isNotBlank(appLanguage)) {
             try {
-//                return Locale.forLanguageTag(appLanguage);
-				return new Locale(appLanguage);
+                //                return Locale.forLanguageTag(appLanguage);
+                return new Locale(appLanguage);
             } catch (Exception e) {
                 log.warn("解析App语言失败，header app_language={}", appLanguage);
             }
@@ -286,7 +283,8 @@ public abstract class AbstractExceptionHandler {
                     return fromErrorCode(baseCallbackCode);
                 }
             }
-            return new ExceptionResolveResult(exceptionCode, formatCode, formatDefaultMessage, formatParams, subMessage, extra);
+            return new ExceptionResolveResult(exceptionCode, formatCode, formatDefaultMessage, formatParams, subMessage,
+                    extra);
         } catch (Exception e) {
             log.error("解析异常消息时失败, 原始异常消息={}", exception, e);
             return fromErrorCode(BaseErrorCallbackCode.SERVER_ERROR);
@@ -310,23 +308,12 @@ public abstract class AbstractExceptionHandler {
         // 没有定义资源文件的使用直接使用异常消息，定义了这里会根据异常状态码走i18n资源文件
         // 根据不同异常，有些基于模糊化异常内容的目的，会使用默认状态码去格式化消息
         if (baseException.isMaskErrorDetails()) {
-            return new ExceptionResolveResult(
-                    defaultCallbackCode.getCode(),
-                    defaultCallbackCode.getCode(),
-                    defaultCallbackCode.getBizMessage(),
-                    baseException.getParams(),
-                    baseException.getDescription(),
-                    baseException.getExtra()
-            );
+            return new ExceptionResolveResult(defaultCallbackCode.getCode(), defaultCallbackCode.getCode(),
+                    defaultCallbackCode.getBizMessage(), baseException.getParams(), baseException.getDescription(),
+                    baseException.getExtra());
         }
-        return new ExceptionResolveResult(
-                baseException.getCode(),
-                baseException.getCode(),
-                formatDefaultMessage,
-                baseException.getParams(),
-                baseException.getDescription(),
-                baseException.getExtra()
-        );
+        return new ExceptionResolveResult(baseException.getCode(), baseException.getCode(), formatDefaultMessage,
+                baseException.getParams(), baseException.getDescription(), baseException.getExtra());
     }
 
     /**
@@ -334,33 +321,21 @@ public abstract class AbstractExceptionHandler {
      */
     private static ExceptionResolveResult resolveBindException(BindException bindException) {
         final BindingResult result = bindException.getBindingResult();
-        final String subMessage = result.getAllErrors().stream()
-                .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.joining(";"));
-        final String formatCode = result.getAllErrors().isEmpty() ? ""
-                : result.getAllErrors().get(0).getDefaultMessage();
-        return new ExceptionResolveResult(
-                BaseErrorCallbackCode.BAD_REQUEST.getCode(),
-                formatCode,
-                BaseErrorCallbackCode.BAD_REQUEST.getBizMessage(),
-                new Object[] {},
-                subMessage,
-                null
-        );
+        final String subMessage = result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(
+                Collectors.joining(";"));
+        final String formatCode = result.getAllErrors().isEmpty() ? "" : result.getAllErrors()
+                .get(0)
+                .getDefaultMessage();
+        return new ExceptionResolveResult(BaseErrorCallbackCode.BAD_REQUEST.getCode(), formatCode,
+                BaseErrorCallbackCode.BAD_REQUEST.getBizMessage(), new Object[] {}, subMessage, null);
     }
 
     /**
      * 从错误码创建解析结果。
      */
     private static ExceptionResolveResult fromErrorCode(BaseCallbackCode code) {
-        return new ExceptionResolveResult(
-                code.getCode(),
-                code.getCode(),
-                code.getBizMessage(),
-                new Object[] {},
-                "",
-                null
-        );
+        return new ExceptionResolveResult(code.getCode(), code.getCode(), code.getBizMessage(), new Object[] {}, "",
+                null);
     }
 
     /**
@@ -374,6 +349,6 @@ public abstract class AbstractExceptionHandler {
      * @param extra 额外数据
      */
     public record ExceptionResolveResult(String exceptionCode, String formatCode, String formatDefaultMessage,
-                                         Object[] formatParams, String subMessage, Object extra) {
+            Object[] formatParams, String subMessage, Object extra) {
     }
 }

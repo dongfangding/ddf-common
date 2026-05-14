@@ -6,10 +6,10 @@ MQTT 客户端模块，提供 MQTT 协议客户端功能。
 
 ## 核心类
 
-| 类路径 | 功能 |
-|-------|------|
-| `com.ddf.boot.common.mqtt.client.config.MqttClientProperties` | 客户端配置 |
-| `com.ddf.boot.common.mqtt.client.api.MqttClientApi` | MQTT 客户端 API |
+| 类路径                                                           | 功能           |
+|---------------------------------------------------------------|--------------|
+| `com.ddf.boot.common.mqtt.client.config.MqttClientProperties` | 客户端配置        |
+| `com.ddf.boot.common.mqtt.client.api.MqttClientApi`           | MQTT 客户端 API |
 
 ## 使用说明
 

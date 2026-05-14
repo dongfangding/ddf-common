@@ -10,12 +10,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-websocket` solves the **"real-time bidirectional communication in Spring Boot"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Server-side push | Order status changes need to notify clients instantly | `WsMessageServiceImpl.sendCmd` for point-to-point push |
-| Instant messaging | Chat messages need to be broadcast to multiple users | `WsMessageServiceImpl.sendCmdAll` for full broadcast |
-| Online admin dashboard | Admin needs to see current online connection count | `WebsocketSessionStorage` for unified session management |
-| Secure handshake | WebSocket connections need token validation | `HandshakeAuth` extension point |
+| Scenario               | Typical Problem                                       | What the Module Provides                                 |
+|------------------------|-------------------------------------------------------|----------------------------------------------------------|
+| Server-side push       | Order status changes need to notify clients instantly | `WsMessageServiceImpl.sendCmd` for point-to-point push   |
+| Instant messaging      | Chat messages need to be broadcast to multiple users  | `WsMessageServiceImpl.sendCmdAll` for full broadcast     |
+| Online admin dashboard | Admin needs to see current online connection count    | `WebsocketSessionStorage` for unified session management |
+| Secure handshake       | WebSocket connections need token validation           | `HandshakeAuth` extension point                          |
 
 ---
 
@@ -171,11 +171,11 @@ public class ConnectionListener implements WebSocketHandlerListener {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-redis` | In cluster environments, use Redis Pub/Sub to broadcast messages across instances |
-| `ddf-common-authentication` | Token validation can reuse the auth module's `TokenUtil` |
-| `ddf-common-core` | JSON serialization, thread pools, and other fundamentals |
+| Module                      | How They Cooperate                                                                |
+|-----------------------------|-----------------------------------------------------------------------------------|
+| `ddf-common-redis`          | In cluster environments, use Redis Pub/Sub to broadcast messages across instances |
+| `ddf-common-authentication` | Token validation can reuse the auth module's `TokenUtil`                          |
+| `ddf-common-core`           | JSON serialization, thread pools, and other fundamentals                          |
 
 ---
 

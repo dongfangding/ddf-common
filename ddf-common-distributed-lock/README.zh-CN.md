@@ -11,13 +11,13 @@
 
 `ddf-common-distributed-lock` 解决的是 **"分布式环境下的互斥执行"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 库存扣减 | 高并发下同一商品超卖 | `tryLock` 非阻塞抢锁，失败即返回 |
-| 订单幂等 | 重复请求导致重复下单 | `lockWork` 阻塞直到获取锁，保证串行执行 |
-| 定时任务集群 | 多实例同时触发同一任务 | 看门狗续期，防止任务执行期间锁过期 |
-| 数据对账 | 需要较长持有时间的批处理 | `lockWork(key, leaseTime, ...)` 显式指定租约 |
-| 高可靠锁 | 对锁的可靠性要求高于性能 | Zookeeper 实现，利用临时顺序节点 |
+| 场景     | 典型问题         | 模块提供的能力                                |
+|--------|--------------|----------------------------------------|
+| 库存扣减   | 高并发下同一商品超卖   | `tryLock` 非阻塞抢锁，失败即返回                  |
+| 订单幂等   | 重复请求导致重复下单   | `lockWork` 阻塞直到获取锁，保证串行执行              |
+| 定时任务集群 | 多实例同时触发同一任务  | 看门狗续期，防止任务执行期间锁过期                      |
+| 数据对账   | 需要较长持有时间的批处理 | `lockWork(key, leaseTime, ...)` 显式指定租约 |
+| 高可靠锁   | 对锁的可靠性要求高于性能 | Zookeeper 实现，利用临时顺序节点                  |
 
 ---
 
@@ -44,6 +44,7 @@
 ```
 
 实现层面：
+
 - **Redis 锁**：依赖 `redisson`（由 `ddf-common-redis` 引入 `RedissonClient`）
 - **ZK 锁**：依赖 `curator-recipes`，模块自带 Curator 客户端初始化
 
@@ -202,15 +203,15 @@ ZK 锁的 `formatLockKey` 会自动拼接为：`{root}/{env}/locks{lockKey}`。
 
 ### 4.4 两种实现对比
 
-| 特性 | Redis 锁（Redisson） | ZK 锁（Curator） |
-| ----- | ----- | ----- |
-| 实现 | `RLock` | `InterProcessMutex` |
-| 可重入 | 支持 | 支持 |
-| 看门狗续期 | 支持（不指定 leaseTime 时） | 不支持 |
-| 阻塞模式 | `lock.lock()` 无限阻塞 | `acquire()` 可指定等待时间 |
-| 异常释放 | 应用崩溃后 Redis key 过期自动释放 | 会话断开临时节点自动删除 |
-| 适用场景 | 高并发、性能敏感 | 可靠性要求极高 |
-| Key 格式 | `:` 分隔的字符串 | 必须以 `/` 开头的路径 |
+| 特性     | Redis 锁（Redisson）      | ZK 锁（Curator）       |
+|--------|------------------------|---------------------|
+| 实现     | `RLock`                | `InterProcessMutex` |
+| 可重入    | 支持                     | 支持                  |
+| 看门狗续期  | 支持（不指定 leaseTime 时）    | 不支持                 |
+| 阻塞模式   | `lock.lock()` 无限阻塞     | `acquire()` 可指定等待时间 |
+| 异常释放   | 应用崩溃后 Redis key 过期自动释放 | 会话断开临时节点自动删除        |
+| 适用场景   | 高并发、性能敏感               | 可靠性要求极高             |
+| Key 格式 | `:` 分隔的字符串             | 必须以 `/` 开头的路径       |
 
 ---
 
@@ -269,12 +270,12 @@ private DistributedLock zkLock;
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-redis` | Redis 锁依赖 `RedissonClient` Bean，通常由 `ddf-common-redis` 提供 |
-| `ddf-common-zookeeper` | ZK 锁依赖 Curator 客户端；若已引入 `ddf-common-zookeeper` 可复用其 `CuratorFramework` |
-| `ddf-common-api` | 异常体系 `LockingAcquireException`、`LockingBusinessException`、`LockingReleaseException` |
-| `ddf-common-starter-default` | 默认 starter 已包含本模块，业务无需额外声明依赖 |
+| 模块                           | 协作方式                                                                                |
+|------------------------------|-------------------------------------------------------------------------------------|
+| `ddf-common-redis`           | Redis 锁依赖 `RedissonClient` Bean，通常由 `ddf-common-redis` 提供                           |
+| `ddf-common-zookeeper`       | ZK 锁依赖 Curator 客户端；若已引入 `ddf-common-zookeeper` 可复用其 `CuratorFramework`              |
+| `ddf-common-api`             | 异常体系 `LockingAcquireException`、`LockingBusinessException`、`LockingReleaseException` |
+| `ddf-common-starter-default` | 默认 starter 已包含本模块，业务无需额外声明依赖                                                        |
 
 ---
 

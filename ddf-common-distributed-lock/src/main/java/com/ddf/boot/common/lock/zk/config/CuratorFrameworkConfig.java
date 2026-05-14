@@ -35,14 +35,11 @@ public class CuratorFrameworkConfig {
     @ConditionalOnMissingBean
     public CuratorFramework curatorFramework() {
         log.info("开始初始化分布式锁zk客户端工具");
-        return CuratorFrameworkFactory.newClient(
-                distributedLockZookeeperProperties.getConnectString(),
+        return CuratorFrameworkFactory.newClient(distributedLockZookeeperProperties.getConnectString(),
                 distributedLockZookeeperProperties.getSessionTimeoutMs(),
-                distributedLockZookeeperProperties.getConnectionTimeoutMs(), new RetryNTimes(
-                        distributedLockZookeeperProperties.getRetryCount(),
-                        distributedLockZookeeperProperties.getElapsedTimeMs()
-                )
-        );
+                distributedLockZookeeperProperties.getConnectionTimeoutMs(),
+                new RetryNTimes(distributedLockZookeeperProperties.getRetryCount(),
+                        distributedLockZookeeperProperties.getElapsedTimeMs()));
     }
 
     /**

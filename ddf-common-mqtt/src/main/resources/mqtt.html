@@ -6,123 +6,189 @@
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/msgpack-lite@0.1.26/dist/msgpack.min.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; color: #333; }
-        .config-panel { background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        .input-group input { width: calc(100% - 20px); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; }
-        button { padding: 10px 20px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; }
-        #btn-connect { background-color: #007bff; color: white; }
-        #btn-connect.connected { background-color: #dc3545; }
-        #log { background: #282c34; color: #abb2bf; border: 1px solid #ddd; padding: 15px; height: 500px; overflow-y: scroll; white-space: pre-wrap; border-radius: 8px; font-family: "Consolas", "Monaco", monospace; font-size: 13px; }
-        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 5px; }
-        .status-connected { background: #28a745; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 20px;
+            color: #333;
+        }
+
+        .config-panel {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+        }
+
+        #btn-connect {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #btn-connect.connected {
+            background-color: #dc3545;
+        }
+
+        #log {
+            background: #282c34;
+            color: #abb2bf;
+            border: 1px solid #ddd;
+            padding: 15px;
+            height: 500px;
+            overflow-y: scroll;
+            white-space: pre-wrap;
+            border-radius: 8px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            margin-right: 5px;
+        }
+
+        .status-connected {
+            background: #28a745;
+        }
     </style>
 </head>
 <body>
 
-    <h2>MQTT MessagePack 调试客户端</h2>
+<h2>MQTT MessagePack 调试客户端</h2>
 
-    <div class="config-panel">
-        <div class="input-group">
-            <label>Broker 地址 (浏览器不能使用TCP, 需要使用WebSocket端口连接):</label>
-            <input type="text" id="broker-url" value="ws://10.88.1.173:28083/mqtt" placeholder="例如: ws://127.0.0.1:8083/mqtt">
-        </div>
-        <div class="input-group">
-            <label>订阅主题 (Topic):</label>
-            <input type="text" id="topic" value="test/topic" placeholder="输入要订阅的主题">
-        </div>
-        <div class="input-group">
-            <label>客户端 ID (Client ID):</label>
-            <input type="text" id="client-id" placeholder="留空则随机生成" value="system_web">
-        </div>
-        <button id="btn-connect">连接并订阅</button>
-        <span id="status-text" style="margin-left: 15px;"><span class="status-dot" id="status-dot"></span> 未连接</span>
+<div class="config-panel">
+    <div class="input-group">
+        <label>Broker 地址 (浏览器不能使用TCP, 需要使用WebSocket端口连接):</label>
+        <input type="text" id="broker-url" value="ws://10.88.1.173:28083/mqtt"
+               placeholder="例如: ws://127.0.0.1:8083/mqtt">
     </div>
+    <div class="input-group">
+        <label>订阅主题 (Topic):</label>
+        <input type="text" id="topic" value="test/topic" placeholder="输入要订阅的主题">
+    </div>
+    <div class="input-group">
+        <label>客户端 ID (Client ID):</label>
+        <input type="text" id="client-id" placeholder="留空则随机生成" value="system_web">
+    </div>
+    <button id="btn-connect">连接并订阅</button>
+    <span id="status-text" style="margin-left: 15px;"><span class="status-dot" id="status-dot"></span> 未连接</span>
+</div>
 
-    <div id="log">等待数据...</div>
+<div id="log">等待数据...</div>
 
-    <script>
-        const logElement = document.getElementById('log');
-        const btnConnect = document.getElementById('btn-connect');
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-        
-        const inputUrl = document.getElementById('broker-url');
-        const inputTopic = document.getElementById('topic');
-        const inputClientId = document.getElementById('client-id');
+<script>
+    const logElement = document.getElementById('log');
+    const btnConnect = document.getElementById('btn-connect');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
 
-        let client = null;
+    const inputUrl = document.getElementById('broker-url');
+    const inputTopic = document.getElementById('topic');
+    const inputClientId = document.getElementById('client-id');
 
-        function appendLog(type, msg, data = null) {
-            const time = new Date().toLocaleTimeString();
-            let logMsg = `[${time}] [${type}] ${msg}\n`;
-            if (data) {
-                logMsg += JSON.stringify(data, null, 2) + '\n';
-            }
-            logElement.innerText += logMsg + '------------------------------------------\n';
-            logElement.scrollTop = logElement.scrollHeight;
+    let client = null;
+
+    function appendLog(type, msg, data = null) {
+        const time = new Date().toLocaleTimeString();
+        let logMsg = `[${time}] [${type}] ${msg}\n`;
+        if (data) {
+            logMsg += JSON.stringify(data, null, 2) + '\n';
+        }
+        logElement.innerText += logMsg + '------------------------------------------\n';
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    btnConnect.onclick = () => {
+        if (client && client.connected) {
+            client.end();
+            return;
         }
 
-        btnConnect.onclick = () => {
-            if (client && client.connected) {
-                client.end();
-                return;
-            }
+        const url = inputUrl.value.trim();
+        const topic = inputTopic.value.trim();
+        const clientId = inputClientId.value.trim() || ('web_' + Math.random().toString(16).substring(2, 8));
 
-            const url = inputUrl.value.trim();
-            const topic = inputTopic.value.trim();
-            const clientId = inputClientId.value.trim() || ('web_' + Math.random().toString(16).substring(2, 8));
+        if (!url || !topic) {
+            alert('请完整填写地址和主题');
+            return;
+        }
 
-            if (!url || !topic) {
-                alert('请完整填写地址和主题');
-                return;
-            }
+        appendLog('SYSTEM', `正在尝试连接到 ${url}...`);
 
-            appendLog('SYSTEM', `正在尝试连接到 ${url}...`);
-            
-            // 按钮禁用，防止重复点击
-            btnConnect.disabled = true;
+        // 按钮禁用，防止重复点击
+        btnConnect.disabled = true;
 
-            client = mqtt.connect(url, { clientId });
+        client = mqtt.connect(url, {clientId});
 
-            client.on('connect', () => {
-                appendLog('SYSTEM', '连接成功');
-                btnConnect.innerText = '断开连接';
-                btnConnect.disabled = false;
-                btnConnect.className = 'connected';
-                statusDot.className = 'status-dot status-connected';
-                
-                client.subscribe(topic, (err) => {
-                    if (!err) {
-                        appendLog('SYSTEM', `已订阅主题: ${topic}`);
-                    }
-                });
-            });
+        client.on('connect', () => {
+            appendLog('SYSTEM', '连接成功');
+            btnConnect.innerText = '断开连接';
+            btnConnect.disabled = false;
+            btnConnect.className = 'connected';
+            statusDot.className = 'status-dot status-connected';
 
-            client.on('message', (topic, payload) => {
-                try {
-                    // 解码二进制 MessagePack
-                    const decoded = msgpack.decode(payload);
-                    appendLog('MESSAGE', `收到主题: ${topic}`, decoded);
-                } catch (e) {
-                    appendLog('ERROR', 'MessagePack 解析失败。原始十六进制:', Array.from(payload).map(b => b.toString(16).padStart(2, '0')).join(' '));
+            client.subscribe(topic, (err) => {
+                if (!err) {
+                    appendLog('SYSTEM', `已订阅主题: ${topic}`);
                 }
             });
+        });
 
-            client.on('error', (err) => {
-                appendLog('ERROR', '连接出错: ' + err.message);
-                btnConnect.disabled = false;
-            });
+        client.on('message', (topic, payload) => {
+            try {
+                // 解码二进制 MessagePack
+                const decoded = msgpack.decode(payload);
+                appendLog('MESSAGE', `收到主题: ${topic}`, decoded);
+            } catch (e) {
+                appendLog('ERROR', 'MessagePack 解析失败。原始十六进制:', Array.from(payload).map(b => b.toString(16).padStart(2, '0')).join(' '));
+            }
+        });
 
-            client.on('close', () => {
-                appendLog('SYSTEM', '连接已关闭');
-                btnConnect.innerText = '连接并订阅';
-                btnConnect.disabled = false;
-                btnConnect.className = '';
-                statusDot.className = 'status-dot';
-            });
-        };
-    </script>
+        client.on('error', (err) => {
+            appendLog('ERROR', '连接出错: ' + err.message);
+            btnConnect.disabled = false;
+        });
+
+        client.on('close', () => {
+            appendLog('SYSTEM', '连接已关闭');
+            btnConnect.innerText = '连接并订阅';
+            btnConnect.disabled = false;
+            btnConnect.className = '';
+            statusDot.className = 'status-dot';
+        });
+    };
+</script>
 </body>
 </html>

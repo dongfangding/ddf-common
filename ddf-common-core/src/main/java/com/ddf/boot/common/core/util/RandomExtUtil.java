@@ -44,6 +44,7 @@ public class RandomExtUtil {
     public static final String BASE_CHAR = "abcdefghijklmnopqrstuvwxyz";
 
     final static DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
+
     /**
      * @param maxLength 参数
      */
@@ -56,22 +57,20 @@ public class RandomExtUtil {
      *
      * @param separator 参数
      * @param maxLength 参数
-     * @return
      */
     public static String randomOrderNo(String separator, int maxLength) {
         final String format = YMD_FORMATTER.format(LocalDateTime.now());
         if (maxLength < format.length() + separator.length()) {
             throw new IllegalArgumentException("length长度不支持");
         }
-        return String.join(
-            separator, format, RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
+        return String.join(separator, format,
+                RandomUtil.randomNumbers(maxLength - format.length() - separator.length()));
     }
 
     /**
      * 百分比概率命中判定
      *
      * @param proportion 概率值
-     * @return
      */
     public static boolean hitPercent(int proportion) {
         return RandomUtil.randomInt(0, 100) < proportion;
@@ -81,7 +80,6 @@ public class RandomExtUtil {
      * 百分比概率命中判定
      *
      * @param proportion 概率值
-     * @return
      */
     public static boolean hitPercent(double proportion) {
         return RandomUtil.randomDouble(0, 100) < proportion;
@@ -91,7 +89,6 @@ public class RandomExtUtil {
      * 0~1概率判定
      *
      * @param proportion 概率值
-     * @return
      */
     public static boolean hitProbability(double proportion) {
         return RandomUtil.randomDouble(0, 1) < proportion;
@@ -101,7 +98,6 @@ public class RandomExtUtil {
      * 百分比概率命中判定， 同时返回随机到的概率值
      *
      * @param proportion 概率值
-     * @return
      */
     public static ObjectKeyValuePair<Double, Boolean> hitPercentWithProbability(double proportion) {
         final double randomDouble = RandomUtil.randomDouble(0, 100);
@@ -112,18 +108,12 @@ public class RandomExtUtil {
      * 基于权重的中奖概率判定
      *
      * @param sources 源数据列表
-     * @return
      */
     public static <T extends WeightProportion> T hitWeightProportion(List<T> sources) {
         // 先求出这批数据的总权重
-        final double totalWeight = sources
-            .stream()
-            .mapToDouble(WeightProportion::getWeightValue)
-            .sum();
+        final double totalWeight = sources.stream().mapToDouble(WeightProportion::getWeightValue).sum();
         // 先随机出一个数值
-        double randomNum = ThreadLocalRandom
-            .current()
-            .nextDouble(totalWeight);
+        double randomNum = ThreadLocalRandom.current().nextDouble(totalWeight);
         for (T source : sources) {
             if ((randomNum -= source.getWeightValue()) < 0) {
                 return source;
@@ -145,26 +135,18 @@ public class RandomExtUtil {
      *
      * @param sources 源数据列表
      * @param clazz 目标类型
-     * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByWeight(List<T> sources, Class<T> clazz) {
         // 使用一个默认实现来拷贝属性， 不影响到原对象数据
         List<T> tempList = BeanCopierUtils.copy(sources, clazz);
         List<T> rtnList = new ArrayList<>();
         // 先求出这批数据的总权重，这种情况下的数据只支持整形
-        final int totalWeight = tempList
-            .stream()
-            .mapToInt(obj -> obj
-                .getWeightValue()
-                .intValue())
-            .sum();
+        final int totalWeight = tempList.stream().mapToInt(obj -> obj.getWeightValue().intValue()).sum();
         int randomNum;
         // 将所有的数据都随机出来，总权重即是总次数
         for (int i = totalWeight; i > 0; i--) {
             // 先随机出一个数值
-            randomNum = ThreadLocalRandom
-                .current()
-                .nextInt(i);
+            randomNum = ThreadLocalRandom.current().nextInt(i);
             for (T source : tempList) {
                 if ((randomNum -= source.getWeightValue()) < 0) {
                     // 每中奖一次自己的权重就减少1次
@@ -185,16 +167,13 @@ public class RandomExtUtil {
      * @param sources 源数据列表
      * @param clazz 目标类型
      * @param <T> 泛型类型
-     * @return
      */
     public static <T extends WeightProportion> List<T> generateAllByShuffle(List<T> sources, Class<T> clazz) {
         // 使用一个默认实现来拷贝属性， 不影响到原对象数据
         List<T> tempList = BeanCopierUtils.copy(sources, clazz);
         List<T> rtnList = new ArrayList<>();
         for (T t : tempList) {
-            for (int i = 0; i < t
-                .getWeightValue()
-                .intValue(); i++) {
+            for (int i = 0; i < t.getWeightValue().intValue(); i++) {
                 rtnList.add(t);
             }
         }
@@ -207,10 +186,9 @@ public class RandomExtUtil {
      * 但是保持在控制范围内的随机
      *
      * @param totalValue 总金额
-     * @param packSize   分包数量
+     * @param packSize 分包数量
      * @param fixedValue 每个分包保底数值
-     * @param distinct   是否金额去重
-     * @return
+     * @param distinct 是否金额去重
      */
     public static int[] averagePack(int totalValue, int packSize, int fixedValue, boolean distinct) {
         // 可以用来随机的金额，保底要去除掉， 这部分不参与随机
@@ -255,9 +233,8 @@ public class RandomExtUtil {
      * 平均分包算法， 比如100块的红包，要发10份，保证每份最少8块， 不考虑重复问题
      *
      * @param totalValue 总金额
-     * @param packSize   分包数量
+     * @param packSize 分包数量
      * @param fixedValue 每个分包保底数值
-     * @return
      */
     public static int[] averagePack(int totalValue, int packSize, int fixedValue) {
         return averagePack(totalValue, packSize, fixedValue, false);
@@ -269,7 +246,6 @@ public class RandomExtUtil {
      * @param totalAmount 总金额
      * @param packSize 分包数量
      * @param fixedAmount 固定金额
-     * @return
      */
     public static int[] averageApproximatelyAbsolute(int totalAmount, int packSize, int fixedAmount) {
         int[] average = new int[10];
@@ -295,10 +271,9 @@ public class RandomExtUtil {
      * 1. 如果某一次数值用掉了也获得了机会，但是业务奖励给失败了，这里再算一次，用之前的分数就会丢失
      * 2. 如果用户的积分在不同区间给的奖励不一样，虽然次数相同，但是奖励不同，那也不行，这里只会以最后的分值来返回次数而已
      *
-     * @param afterValue  最后数值
+     * @param afterValue 最后数值
      * @param beforeValue 之前的数值
      * @param singleValue 每获得一次机会需要的数值
-     * @return
      */
     public Long calcRewardTimes(Long afterValue, Long beforeValue, Long singleValue) {
         // 每5关获得一次奖励（注意，如果真的出现这种情况，只会以最后一次排名发放奖励）
@@ -309,25 +284,19 @@ public class RandomExtUtil {
      * 根据时间戳生成小数位数值， 时间戳越小，值越大
      *
      * @param time 时间参数
-     * @return
      */
     public static BigDecimal calcPointScoreByTime(long time) {
-        final BigDecimal decimal = new BigDecimal(time * Math.pow(
-            10, Math.negateExact(String
-                .valueOf(time)
-                .length())
-        ));
+        final BigDecimal decimal = new BigDecimal(time * Math.pow(10, Math.negateExact(String.valueOf(time).length())));
         return new BigDecimal("1.0").subtract(decimal);
     }
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) {
-        final List<DefaultWeightProportion> proportions = Lists.newArrayList(
-            DefaultWeightProportion.of("1", 10d),
-            DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
-            DefaultWeightProportion.of("4", 40d)
-        );
+        final List<DefaultWeightProportion> proportions = Lists.newArrayList(DefaultWeightProportion.of("1", 10d),
+                DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
+                DefaultWeightProportion.of("4", 40d));
         int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
         WeightProportion temp;
         for (int i = 0; i < 1000; i++) {
@@ -359,6 +328,7 @@ public class RandomExtUtil {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * @param roundId 参数
      * @param startSeconds 参数
@@ -371,18 +341,19 @@ public class RandomExtUtil {
             startRound(roundId, startSeconds, isLuck, currentSeconds);
         } else {
             if (pastTime >= 15 + (isLuck.get() ? 10 : 5) + 5) {
-                System.out.printf(
-                    "%s: 结算完成, 开始下一轮, roundId = %s\n\n", new Date(currentSeconds * 1000), roundId.get());
+                System.out.printf("%s: 结算完成, 开始下一轮, roundId = %s\n\n", new Date(currentSeconds * 1000),
+                        roundId.get());
                 startRound(roundId, startSeconds, isLuck, currentSeconds);
             } else if (pastTime >= 15 + (isLuck.get() ? 10 : 5)) {
-                System.out.printf(
-                    "%s: 战斗结束，开始结算, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
+                System.out.printf("%s: 战斗结束，开始结算, roundId = %s\n", new Date(currentSeconds * 1000),
+                        roundId.get());
             } else if (pastTime >= 15) {
-                System.out.printf(
-                    "%s: 投注结束，开始战斗, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
+                System.out.printf("%s: 投注结束，开始战斗, roundId = %s\n", new Date(currentSeconds * 1000),
+                        roundId.get());
             }
         }
     }
+
     /**
      * @param roundId 参数
      * @param startSeconds 参数
@@ -390,7 +361,7 @@ public class RandomExtUtil {
      * @param currentSeconds 参数
      */
     private static void startRound(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck,
-        long currentSeconds) {
+            long currentSeconds) {
         roundId.incrementAndGet();
         startSeconds.set(currentSeconds);
         System.out.printf("%s: 开启新场次, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
@@ -402,7 +373,6 @@ public class RandomExtUtil {
      * 随机字母数字
      *
      * @param length 长度
-     * @return
      */
     public static String randomLetters(int length) {
         return RandomUtil.randomString(BASE_CHAR, length);
@@ -413,7 +383,6 @@ public class RandomExtUtil {
      *
      * @param start 起始位置
      * @param end 结束位置
-     * @return
      */
     public static Integer randomInt(int start, int end) {
         if (start == end) {
@@ -423,22 +392,20 @@ public class RandomExtUtil {
         return localRandom.nextInt(start, end);
     }
 
-	/**
-	 * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
-	 *
-	 * @param start 起始位置
-	 * @param end 结束位置
-	 * @param scale 参数
-	 * @return
-	 */
-	public static double randomDouble(double start, double end, int scale) {
-		if (start == end) {
-			return start;
-		}
-		final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
-		return BigDecimal
-				.valueOf(localRandom.nextDouble(start, end))
-				.setScale(scale, RoundingMode.HALF_DOWN)
-				.doubleValue();
-	}
+    /**
+     * 更符合项目中的随机int， 如果前后区间数值一样，直接返回当前数值，而不是报错
+     *
+     * @param start 起始位置
+     * @param end 结束位置
+     * @param scale 参数
+     */
+    public static double randomDouble(double start, double end, int scale) {
+        if (start == end) {
+            return start;
+        }
+        final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
+        return BigDecimal.valueOf(localRandom.nextDouble(start, end))
+                .setScale(scale, RoundingMode.HALF_DOWN)
+                .doubleValue();
+    }
 }

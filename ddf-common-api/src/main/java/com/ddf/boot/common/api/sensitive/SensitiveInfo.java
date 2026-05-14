@@ -18,8 +18,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface SensitiveInfo {
     /**
      * 脱敏方式
-     *
-     * @return
      */
     SensitiveTypeEnum value();
 }

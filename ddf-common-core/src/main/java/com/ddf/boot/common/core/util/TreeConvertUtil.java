@@ -28,7 +28,6 @@ public class TreeConvertUtil {
      * 构建树形结构
      *
      * @param domainList domain列表
-     * @return
      */
     public static <K, T extends ITreeTagCollection<K, T>> List<T> convert(List<T> domainList) {
         if (CollectionUtil.isEmpty(domainList)) {
@@ -91,14 +90,14 @@ public class TreeConvertUtil {
             return children;
         }
     }
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) {
         final List<Node> nodes = List.of(Node.of("1", 1L, 0L, new ArrayList<>()),
                 Node.of("1-1", 2L, 1L, new ArrayList<>()), Node.of("1-1-1", 3L, 2L, new ArrayList<>()),
-                Node.of("1-2", 4L, 1L, new ArrayList<>()), Node.of("2", 5L, null, new ArrayList<>())
-        );
+                Node.of("1-2", 4L, 1L, new ArrayList<>()), Node.of("2", 5L, null, new ArrayList<>()));
         final List<Node> nodes1 = convert(nodes);
         System.out.println(JsonUtil.toJson(nodes1));
     }

@@ -17,8 +17,6 @@ public interface RateLimitKeyGenerator {
 
     /**
      * 限流key的固定前缀
-     *
-     * @return
      */
     default String getPrefix() {
         return RATE_LIMIT_PREFIX;
@@ -30,7 +28,6 @@ public interface RateLimitKeyGenerator {
      * @param joinPoint joinpoint参数
      * @param annotation annotation参数
      * @param properties properties参数
-     * @return
      */
     String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties);
 }

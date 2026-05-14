@@ -17,8 +17,6 @@ public class AlarmThreadConfig {
 
     /**
      * 异步处理异常告警线程池
-     *
-     * @return
      */
     @Bean
     public ThreadPoolTaskExecutor globalExceptionExecutor() {

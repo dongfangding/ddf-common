@@ -13,14 +13,14 @@
 `ddf-common-authentication` 解决的是 **"谁正在访问我的接口"** 这一横切问题。
 从移动端 App 到内部管理后台，所有需要身份识别的 Web 场景都适用。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| Token 认证 | 移动端登录后需要状态保持，防止伪造 | `TokenUtil.createToken` / `TokenUtil.checkToken`（AES 加密 + Redis 缓存双校验） |
-| 用户上下文 | Controller 里频繁需要当前用户 ID | `UserContextUtil.getUserId()` / `getUserClaim()` ThreadLocal 上下文 |
-| 请求签名校验 | 开放网关防止请求被篡改 / 重放 | `AuthenticateTokenFilter` 自动验签（HMAC-SHA256 + nonce 时间窗） |
-| 单点登出 | 用户修改密码后需要踢掉旧 Token | `TokenCache` 接口：删除 Redis 中的 token 即可全局失效 |
-| 接口白名单 | 登录注册接口不需要认证 | `AuthenticationProperties.ignores` / `openIgnores` Ant 风格路径匹配 |
-| 自定义认证逻辑 | 业务需要在标准校验前后加逻辑 | `UserClaimService` / `TokenCustomizeCheckService` 扩展接口 |
+| 场景       | 典型问题                    | 模块提供的能力                                                                |
+|----------|-------------------------|------------------------------------------------------------------------|
+| Token 认证 | 移动端登录后需要状态保持，防止伪造       | `TokenUtil.createToken` / `TokenUtil.checkToken`（AES 加密 + Redis 缓存双校验） |
+| 用户上下文    | Controller 里频繁需要当前用户 ID | `UserContextUtil.getUserId()` / `getUserClaim()` ThreadLocal 上下文       |
+| 请求签名校验   | 开放网关防止请求被篡改 / 重放        | `AuthenticateTokenFilter` 自动验签（HMAC-SHA256 + nonce 时间窗）                |
+| 单点登出     | 用户修改密码后需要踢掉旧 Token      | `TokenCache` 接口：删除 Redis 中的 token 即可全局失效                               |
+| 接口白名单    | 登录注册接口不需要认证             | `AuthenticationProperties.ignores` / `openIgnores` Ant 风格路径匹配          |
+| 自定义认证逻辑  | 业务需要在标准校验前后加逻辑          | `UserClaimService` / `TokenCustomizeCheckService` 扩展接口                 |
 
 > ⚠️ 本模块不包含 OAuth2 / SSO / SAML 等重型协议。如需 SSO，请在业务层集成 Spring Security OAuth2。
 
@@ -266,13 +266,13 @@ public class WebConfig implements WebMvcConfigurer {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-api` | 使用 `UserClaim`、`AuthenticateToken`、`RequestHeaderEnum`、`BaseErrorCallbackCode` |
-| `ddf-common-core` | `TokenUtil` / `SecureUtil` / `SignatureUtil` 完成 AES/HMAC 运算；`SpringContextHolder` 获取 `TokenCache` |
-| `ddf-common-mvc` | 全局异常处理器捕获 `UnauthorizedException` / `BusinessException` 并包装为 `ResponseData` |
-| `ddf-common-redis` | `TokenCacheImpl` 基于 `StringRedisTemplate` 实现分布式 Token 存储与续期 |
-| `ddf-common-limit` | 限流拦截器通常在认证过滤器之后执行，通过 `UserContextUtil.getUserId()` 做用户级限流 |
+| 模块                 | 协作方式                                                                                              |
+|--------------------|---------------------------------------------------------------------------------------------------|
+| `ddf-common-api`   | 使用 `UserClaim`、`AuthenticateToken`、`RequestHeaderEnum`、`BaseErrorCallbackCode`                    |
+| `ddf-common-core`  | `TokenUtil` / `SecureUtil` / `SignatureUtil` 完成 AES/HMAC 运算；`SpringContextHolder` 获取 `TokenCache` |
+| `ddf-common-mvc`   | 全局异常处理器捕获 `UnauthorizedException` / `BusinessException` 并包装为 `ResponseData`                       |
+| `ddf-common-redis` | `TokenCacheImpl` 基于 `StringRedisTemplate` 实现分布式 Token 存储与续期                                       |
+| `ddf-common-limit` | 限流拦截器通常在认证过滤器之后执行，通过 `UserContextUtil.getUserId()` 做用户级限流                                         |
 
 ---
 
@@ -286,7 +286,8 @@ public class WebConfig implements WebMvcConfigurer {
 `TokenUtil` 是纯工具方法（AES 加解密 + JSON 序列化），不依赖 Spring Web，因此放在 core 供更多场景复用；
 `AuthenticateTokenFilter` 依赖 `HandlerInterceptor` 和 Servlet API，所以放在 authentication 模块。
 
-**Q3：Token 过期后如何刷新？需要重新登录吗？**  
+**Q3：Token 过期后如何刷新？需要重新登录吗？**
+
 - 短期 Token：模块不内置 refresh-token 机制，过期后客户端需重新登录（或业务自行实现 refresh-token）
 - 长期会话：每次有效请求会自动调用 `TokenCache.refreshToken`，延长 Redis 中的过期时间
 
@@ -302,7 +303,8 @@ executor.execute(() -> {
 });
 ```
 
-**Q5：sign 验签失败怎么排查？**  
+**Q5：sign 验签失败怎么排查？**
+
 1. 确认客户端和服务端的 `sign-secret` 一致（32 字节）
 2. 确认 `nonce` 时间戳在 `time-force-check-diff-minute` 范围内
 3. 确认请求体没有被 Nginx / CDN 修改（如自动添加空白字符）

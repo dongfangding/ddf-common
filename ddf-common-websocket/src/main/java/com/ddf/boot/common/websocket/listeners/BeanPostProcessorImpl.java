@@ -24,8 +24,6 @@ public class BeanPostProcessorImpl implements BeanPostProcessor {
      *
      * @param bean bean参数
      * @param beanName Bean 名称
-     * @return
-     * @throws BeansException
      */
     @Nullable
     @Override

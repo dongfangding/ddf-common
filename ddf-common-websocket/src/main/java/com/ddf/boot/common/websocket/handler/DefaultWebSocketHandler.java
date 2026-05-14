@@ -29,6 +29,7 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
 
     /**
      * 处理文本消息的事件处理器
+     *
      * @param handlerMessageService 参数
      * @param webSocketHandlerListener 参数
      */
@@ -38,11 +39,13 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
      * 为当前实现暴露监听事件， 允许额外实现逻辑
      */
     private final WebSocketHandlerListener webSocketHandlerListener;
+
     public DefaultWebSocketHandler(HandlerMessageService handlerMessageService,
             WebSocketHandlerListener webSocketHandlerListener) {
         this.handlerMessageService = handlerMessageService;
         this.webSocketHandlerListener = webSocketHandlerListener;
     }
+
     /**
      * @param session 参数
      */
@@ -50,10 +53,10 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
         log.info("[{}-{}-{}]建立连接成功.....", principal.getLoginType(), principal.getAccessKeyId(),
-                principal.getAuthCode()
-        );
+                principal.getAuthCode());
         WebsocketSessionStorage.active((AuthPrincipal) session.getPrincipal(), session);
-        WebsocketSessionStorage.sendMessage((AuthPrincipal) session.getPrincipal(), Message.echo("现在开始可以和服务器通讯了"));
+        WebsocketSessionStorage.sendMessage((AuthPrincipal) session.getPrincipal(),
+                Message.echo("现在开始可以和服务器通讯了"));
         if (webSocketHandlerListener != null) {
             webSocketHandlerListener.afterConnectionEstablished(session);
         }
@@ -64,7 +67,6 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
      *
      * @param session 会话对象
      * @param textMessage 文本消息对象
-     * @throws Exception
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
@@ -75,13 +77,13 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
             session.close();
             return;
         }
-        log.info("[{}-{}-{}]收到消息: {}]", principal.getLoginType(), principal.getAccessKeyId(), principal.getAuthCode(),
-                textMessage.getPayload()
-        );
+        log.info("[{}-{}-{}]收到消息: {}]", principal.getLoginType(), principal.getAccessKeyId(),
+                principal.getAuthCode(), textMessage.getPayload());
         if (handlerMessageService != null) {
             handlerMessageService.handlerMessage(principal, WebsocketSessionStorage.get(principal), textMessage);
         }
     }
+
     /**
      * @param session 参数
      * @param message 参数
@@ -93,6 +95,7 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
             webSocketHandlerListener.handlePongMessage(session, message);
         }
     }
+
     /**
      * @param session 参数
      * @param exception 参数
@@ -101,14 +104,14 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
         log.info("[{}-{}-{}]handleTransportError.....", principal.getLoginType(), principal.getAccessKeyId(),
-                principal.getAuthCode(), exception
-        );
+                principal.getAuthCode(), exception);
         WebsocketSessionStorage.inactive(principal, session);
         if (webSocketHandlerListener != null) {
             webSocketHandlerListener.handleTransportError(session, exception);
         }
         session.close();
     }
+
     /**
      * @param session 参数
      * @param status 参数
@@ -117,8 +120,7 @@ public class DefaultWebSocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         AuthPrincipal principal = (AuthPrincipal) session.getPrincipal();
         log.info("[{}-{}-{}]afterConnectionClosed.....CloseStatus: {}", principal.getLoginType(),
-                principal.getAccessKeyId(), principal.getAuthCode(), status
-        );
+                principal.getAccessKeyId(), principal.getAuthCode(), status);
         WebsocketSessionStorage.inactive((AuthPrincipal) session.getPrincipal(), session);
         if (webSocketHandlerListener != null) {
             webSocketHandlerListener.afterConnectionClosed(session, status);

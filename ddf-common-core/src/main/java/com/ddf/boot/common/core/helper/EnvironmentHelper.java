@@ -48,8 +48,6 @@ public class EnvironmentHelper {
 
     /**
      * 获取当前应用使用的端口号
-     *
-     * @return
      */
     public int getPort() {
         return Integer.parseInt(Objects.requireNonNull(environment.getProperty("server.port")));
@@ -57,8 +55,6 @@ public class EnvironmentHelper {
 
     /**
      * 获取当前应用名称
-     *
-     * @return
      */
     public String getApplicationName() {
         return environment.getProperty("spring.application.name");
@@ -66,8 +62,6 @@ public class EnvironmentHelper {
 
     /**
      * 是否生产环境
-     *
-     * @return
      */
     public boolean isProdProfile() {
         return checkIsExistOr(Lists.newArrayList(EnvironmentProfileEnum.PRO.getCode()));
@@ -76,8 +70,6 @@ public class EnvironmentHelper {
 
     /**
      * 是否生产环境
-     *
-     * @return
      */
     public String getProfileStr() {
         return Arrays.toString(environment.getActiveProfiles());

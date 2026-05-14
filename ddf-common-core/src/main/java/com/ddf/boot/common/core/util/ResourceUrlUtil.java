@@ -23,8 +23,7 @@ public class ResourceUrlUtil {
      * 包装成http开头的绝对路径
      *
      * @param prefix http前缀
-     * @param url    资源链接
-     * @return
+     * @param url 资源链接
      */
     public static String wrapAbsolutePath(String prefix, String url) {
         if (StringUtils.isEmpty(url) || StringUtils.isEmpty(prefix)) {
@@ -41,7 +40,6 @@ public class ResourceUrlUtil {
      *
      * @param prefix 前缀参数
      * @param url URL 地址
-     * @return
      */
     public static String wrapRelativePath(String prefix, String url) {
         if (StringUtils.isEmpty(url) || StringUtils.isEmpty(prefix)) {
@@ -57,7 +55,6 @@ public class ResourceUrlUtil {
      * 将链接内容转换成base64字符串
      *
      * @param url URL 地址
-     * @return
      */
     public static String base64(String url) {
         try {
@@ -75,7 +72,6 @@ public class ResourceUrlUtil {
      * 是否是http开头的绝对路径
      *
      * @param url URL 地址
-     * @return
      */
     private static boolean isHttpStart(String url) {
         if (StringUtils.isEmpty(url)) {

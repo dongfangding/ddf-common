@@ -45,8 +45,8 @@ public class ConsoleOnsGroupCreateRequest implements EnvRequest, UserRequest, Se
     /**
      * 指定创建的Group ID适用的协议
      */
-//    @NotNull(message = "GroupType不能为空")
-//    private GroupTypeEnum groupType = GroupTypeEnum.TCP;
+    //    @NotNull(message = "GroupType不能为空")
+    //    private GroupTypeEnum groupType = GroupTypeEnum.TCP;
 
     /**
      * 备注
@@ -58,17 +58,14 @@ public class ConsoleOnsGroupCreateRequest implements EnvRequest, UserRequest, Se
      * 转换为ONS SDK请求参数
      *
      * @param instanceId 实例ID
-     * @return
      */
     public OnsGroupCreateRequest toSdkRequest(String instanceId) {
         if (Objects.isNull(groupId) || (!groupId.startsWith("GID-") && !groupId.startsWith("GID_"))) {
             throw new IllegalArgumentException("Group ID 必须以 “GID_” 或者 “GID-” 开头。");
         }
-        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId), new IllegalArgumentException("InstanceId不能为空"));
-        return new OnsGroupCreateRequest()
-                .setInstanceId(instanceId)
-                .setGroupId(groupId)
-                .setGroupType(GroupTypeEnum.TCP.getValue())
-                .setRemark(remark);
+        PreconditionUtil.checkArgument(StringUtils.isNotBlank(instanceId),
+                new IllegalArgumentException("InstanceId不能为空"));
+        return new OnsGroupCreateRequest().setInstanceId(instanceId).setGroupId(groupId).setGroupType(
+                GroupTypeEnum.TCP.getValue()).setRemark(remark);
     }
 }

@@ -62,17 +62,17 @@ public class RedisCacheManagerConfiguration {
         // 如何测试lockingRedisCacheWriter和nonLockingRedisCacheWriter的区别???
         RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
 
-        RedisCacheConfiguration defaultCacheConfig = createConfiguration(
-                cacheProperties, applicationName, Duration.ofSeconds(60 * 60));
+        RedisCacheConfiguration defaultCacheConfig = createConfiguration(cacheProperties, applicationName,
+                Duration.ofSeconds(60 * 60));
 
-        RedisCacheManager.RedisCacheManagerBuilder redisCacheManagerBuilder = RedisCacheManager.RedisCacheManagerBuilder
-                .fromCacheWriter(cacheWriter)
-                .cacheDefaults(defaultCacheConfig)
-                .withCacheConfiguration(
-                        "anotherCacheName", createConfiguration(cacheProperties, "", Duration.ofHours(1)));
+        RedisCacheManager.RedisCacheManagerBuilder redisCacheManagerBuilder =
+                RedisCacheManager.RedisCacheManagerBuilder.fromCacheWriter(cacheWriter).cacheDefaults(
+                        defaultCacheConfig).withCacheConfiguration("anotherCacheName",
+                        createConfiguration(cacheProperties, "", Duration.ofHours(1)));
 
         return redisCacheManagerBuilder.build();
     }
+
     /**
      * @param cacheProperties 参数
      * @param applicationName 参数
@@ -84,8 +84,7 @@ public class RedisCacheManagerConfiguration {
         // Key prefix.
         String prefixKeys = ObjectUtil.defaultIfNull(redisProperties.getKeyPrefix(), applicationName + ":");
 
-        RedisCacheConfiguration config = RedisCacheConfiguration
-                .defaultCacheConfig()
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                         new GenericJackson2JsonRedisSerializer()))
                 .entryTtl(ttl)

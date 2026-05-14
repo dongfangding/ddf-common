@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-sharding` solves the **"single-database performance bottleneck requires horizontal scaling"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Massive order data | Single table exceeds 100M rows; queries and maintenance are difficult | Horizontal table sharding, hash splitting by user ID or time dimension |
-| High-concurrency writes | Single-database TPS has reached its limit | Database and table sharding distributes pressure across multiple data nodes |
-| Read-heavy, write-light business | Queries overwhelm the primary database | Read/write splitting; queries go to replicas |
-| Distributed transactions | Cross-database operations need consistency | ShardingSphere AT-mode distributed transactions |
+| Scenario                         | Typical Problem                                                       | What the Module Provides                                                    |
+|----------------------------------|-----------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| Massive order data               | Single table exceeds 100M rows; queries and maintenance are difficult | Horizontal table sharding, hash splitting by user ID or time dimension      |
+| High-concurrency writes          | Single-database TPS has reached its limit                             | Database and table sharding distributes pressure across multiple data nodes |
+| Read-heavy, write-light business | Queries overwhelm the primary database                                | Read/write splitting; queries go to replicas                                |
+| Distributed transactions         | Cross-database operations need consistency                            | ShardingSphere AT-mode distributed transactions                             |
 
 ---
 
@@ -96,12 +96,12 @@ props:
 
 ShardingSphere provides multiple built-in sharding algorithms:
 
-| Algorithm | Type | Description |
-| --- | --- | --- |
-| `MOD` | Standard | Modulo hashing, evenly distributed |
-| `HASH_MOD` | Standard | Hash then modulo, avoids sequential ID hotspot |
-| `RANGE` | Standard | Range-based sharding, suitable for time dimensions |
-| `INLINE` | Inline | Groovy expression for custom routing rules |
+| Algorithm  | Type     | Description                                        |
+|------------|----------|----------------------------------------------------|
+| `MOD`      | Standard | Modulo hashing, evenly distributed                 |
+| `HASH_MOD` | Standard | Hash then modulo, avoids sequential ID hotspot     |
+| `RANGE`    | Standard | Range-based sharding, suitable for time dimensions |
+| `INLINE`   | Inline   | Groovy expression for custom routing rules         |
 
 ### 4.2 Read/Write Splitting Example
 
@@ -190,11 +190,11 @@ rules:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
+| Module                          | How They Cooperate                                                                                  |
+|---------------------------------|-----------------------------------------------------------------------------------------------------|
 | `ddf-common-data-mysql-starter` | Provides data source and connection pool fundamentals; ShardingSphere adds routing and proxy on top |
-| `ddf-common-ids-service` | Sharded tables are recommended to use Snowflake for globally unique primary keys |
-| `ddf-common-zookeeper` | For ShardingSphere cluster mode, ZK can be used as a configuration center |
+| `ddf-common-ids-service`        | Sharded tables are recommended to use Snowflake for globally unique primary keys                    |
+| `ddf-common-zookeeper`          | For ShardingSphere cluster mode, ZK can be used as a configuration center                           |
 
 ---
 
@@ -204,6 +204,7 @@ rules:
 This module uses ShardingSphere-JDBC (client-side proxy), embedded as a jar in the application with no additional middleware deployment cost. Proxy is a standalone process, suitable for multi-language heterogeneous access.
 
 **Q2: What to watch for in Spring Boot 3.x migration?**
+
 1. Use `jakarta.sql.DataSource` instead of `javax.sql.DataSource`
 2. MySQL driver is `mysql-connector-j` instead of `mysql-connector-java`
 3. Ensure connection pool compatibility (HikariCP, Druid)

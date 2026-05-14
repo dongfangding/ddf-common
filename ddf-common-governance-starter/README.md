@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-governance-starter` solves the **"standardized operations and governance capabilities"** problem.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Alert emails | Need to send notification emails on system anomalies | `MailService` / `MailUtil` safe sending; doesn't initialize if unconfigured |
-| Thread-pool observability | Custom thread pools have no monitoring for active count or queue backlog | Auto-scan and bind Micrometer metrics to Prometheus |
-| Health checks | Spring Boot Actuator endpoints need unified exposure | Aggregates `spring-boot-starter-actuator` + `micrometer-registry-prometheus` |
-| Governance extensibility | Future audit, tracing, and alerting need a unified entry point | Governance prefix `customizer.governance.*`, pluggable capabilities |
+| Category                  | Typical Problem                                                          | What the Module Provides                                                     |
+|---------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| Alert emails              | Need to send notification emails on system anomalies                     | `MailService` / `MailUtil` safe sending; doesn't initialize if unconfigured  |
+| Thread-pool observability | Custom thread pools have no monitoring for active count or queue backlog | Auto-scan and bind Micrometer metrics to Prometheus                          |
+| Health checks             | Spring Boot Actuator endpoints need unified exposure                     | Aggregates `spring-boot-starter-actuator` + `micrometer-registry-prometheus` |
+| Governance extensibility  | Future audit, tracing, and alerting need a unified entry point           | Governance prefix `customizer.governance.*`, pluggable capabilities          |
 
 ---
 
@@ -77,13 +77,13 @@ management:
         include: health,info,metrics,prometheus
 ```
 
-| Property | Description | Default |
-| ----- | ----- | ----- |
-| `mail.enabled` | Whether to allow mail service registration | `true` |
-| `observability.enabled` | Whether to allow observability components registration | `true` |
-| `observability.thread-pool.enabled` | Whether to bind thread pool metrics | `true` |
-| `observability.thread-pool.scan-all` | Whether to scan all thread pool beans | `false` |
-| `observability.thread-pool.metric-name` | Micrometer meter name prefix | `custom.thread.pool` |
+| Property                                | Description                                            | Default              |
+|-----------------------------------------|--------------------------------------------------------|----------------------|
+| `mail.enabled`                          | Whether to allow mail service registration             | `true`               |
+| `observability.enabled`                 | Whether to allow observability components registration | `true`               |
+| `observability.thread-pool.enabled`     | Whether to bind thread pool metrics                    | `true`               |
+| `observability.thread-pool.scan-all`    | Whether to scan all thread pool beans                  | `false`              |
+| `observability.thread-pool.metric-name` | Micrometer meter name prefix                           | `custom.thread.pool` |
 
 > `mail.enabled=true` does not mean mail will definitely start. `MailService` is only registered when both `spring.mail.*` is configured and the `JavaMailSender` bean exists. Therefore this starter is **safe** to add to all projects.
 
@@ -212,12 +212,12 @@ management:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-core` | `SpringContextHolder` provides lazy Bean lookup for `MailUtil` |
-| `ddf-common-api` | Email send failures throw `ServerErrorException`, caught by the global exception handler |
-| `ddf-common-mvc` | Actuator health checks and Prometheus metrics endpoints are served by the web layer |
-| `ddf-common-starter-default` | This module is included in the default starter |
+| Module                       | How They Cooperate                                                                       |
+|------------------------------|------------------------------------------------------------------------------------------|
+| `ddf-common-core`            | `SpringContextHolder` provides lazy Bean lookup for `MailUtil`                           |
+| `ddf-common-api`             | Email send failures throw `ServerErrorException`, caught by the global exception handler |
+| `ddf-common-mvc`             | Actuator health checks and Prometheus metrics endpoints are served by the web layer      |
+| `ddf-common-starter-default` | This module is included in the default starter                                           |
 
 ---
 
@@ -229,7 +229,8 @@ No. `MailService` registration is guarded by `@ConditionalOnBean(JavaMailSender.
 **Q2: What happens if `MailUtil.sendMimeMail` is called when mail is not configured?**  
 It throws `ServerErrorException(MAIL_SEND_FAILURE)`. If your business needs to silently ignore email unavailability, catch the exception yourself or check for `MailService` existence before injecting.
 
-**Q3: Why can't I see thread-pool metrics in Prometheus?**  
+**Q3: Why can't I see thread-pool metrics in Prometheus?**
+
 1. Confirm `management.endpoints.web.exposure.include` contains `prometheus`
 2. Confirm the thread pool bean name matches `include-bean-name-patterns`
 3. Confirm the thread pool bean type is in the supported list (see section 4.2)
@@ -237,6 +238,7 @@ It throws `ServerErrorException(MAIL_SEND_FAILURE)`. If your business needs to s
 
 **Q4: Where is the email `from` address read from?**  
 From `spring.mail.properties.from`. Example:
+
 ```yaml
 spring:
   mail:

@@ -17,6 +17,7 @@ public class JinHuaUtil {
     static final String[] SUIT_LIST = PokerCardColorEnum.getColorArray();
     static final int[] CARD_ID_ARR = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
     static final String[] CARD_VALUE1_ARR = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+
     public static void main(String[] args) {
         // 使用固定牌组进行测试
         System.out.println("\n========== 固定牌组测试 ==========");
@@ -26,8 +27,7 @@ public class JinHuaUtil {
             System.out.println();
             final JinHuaCardTypeEnum resolve = JinHuaCardTypeEnum.resolve(card.getCardType());
             System.out.printf("cardType: %s, cardScore: %s%n",
-                    "%s:(%s)".formatted(resolve.getType(), resolve.getDesc()), card.getCardScore()
-            );
+                    "%s:(%s)".formatted(resolve.getType(), resolve.getDesc()), card.getCardScore());
             System.out.println("具体牌型如下: ");
             final List<PokerCard> cards = card.getCards();
             for (PokerCard pokerCard : cards) {
@@ -41,15 +41,14 @@ public class JinHuaUtil {
 
         //        fixedCard();
     }
+
     /**
      * @param count 数量
      */
     public static List<JinHuaCard> randomCard(int count) {
         //随机创建牌组
         List<JinHuaCard> fixedHandList = createCardByPlayersTotal(count);
-        fixedHandList.sort(Comparator
-                .comparing(JinHuaCard::getCardScore)
-                .reversed());
+        fixedHandList.sort(Comparator.comparing(JinHuaCard::getCardScore).reversed());
         return fixedHandList;
     }
 
@@ -197,7 +196,7 @@ public class JinHuaUtil {
     /**
      * 从洗好的牌中分发手牌
      *
-     * @param total   玩家数量
+     * @param total 玩家数量
      * @param cardArr 洗好的牌数组
      * @return 所有玩家的手牌列表
      */
@@ -225,6 +224,7 @@ public class JinHuaUtil {
     }
 
     // 是否是豹子
+
     /**
      * @param rank 参数
      */
@@ -233,6 +233,7 @@ public class JinHuaUtil {
     }
 
     // 是否是同花顺
+
     /**
      * @param suit 参数
      * @param rankValues 参数
@@ -242,6 +243,7 @@ public class JinHuaUtil {
     }
 
     // 是否是同花
+
     /**
      * @param suit 参数
      */
@@ -250,6 +252,7 @@ public class JinHuaUtil {
     }
 
     // 是否是顺子
+
     /**
      * @param rankValues 参数
      */
@@ -273,6 +276,7 @@ public class JinHuaUtil {
     }
 
     // 是否是对子
+
     /**
      * @param rank 参数
      */
@@ -283,6 +287,7 @@ public class JinHuaUtil {
 
     /**
      * 根据牌型返回对应的表情符号
+     *
      * @param handType 参数
      */
     private static String getTypeEmoji(JinHuaCardTypeEnum handType) {
@@ -384,6 +389,7 @@ public class JinHuaUtil {
 
     /**
      * 获取单个牌面的数值（2-14，其中A=14,K=13,Q=12,J=11）
+     *
      * @param rank 参数
      */
     private static int getRankValue(String rank) {
@@ -403,6 +409,7 @@ public class JinHuaUtil {
 
     /**
      * 计算顺子的价值（基于最高牌，特殊处理A-2-3）
+     *
      * @param rankValues 参数
      */
     private static int calculateStraightValue(int[] rankValues) {
@@ -426,6 +433,7 @@ public class JinHuaUtil {
      * 1300
      * 1200
      * 2500
+     *
      * @param rankValues 参数
      */
     private static int calculateHighCardValue(int[] rankValues) {
@@ -447,6 +455,7 @@ public class JinHuaUtil {
 
         return sorted[2] * 10000 + sorted[1] * 100 + sorted[0];
     }
+
     /**
      * @param suit 参数
      */

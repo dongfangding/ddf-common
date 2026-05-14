@@ -27,6 +27,7 @@ import org.redisson.config.Config;
  */
 public class GeoHelper {
     private final RedissonClient redissonClient;
+
     public GeoHelper(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
@@ -36,7 +37,6 @@ public class GeoHelper {
      *
      * @param key 目标键
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> RGeo<V> get(String key) {
         return redissonClient.getGeo(key);
@@ -45,10 +45,10 @@ public class GeoHelper {
     /**
      * 添加地址位置元素
      *
-     * @param key       目标键
+     * @param key 目标键
      * @param longitude 经度
-     * @param latitude  纬度
-     * @param value     参数值
+     * @param latitude 纬度
+     * @param value 参数值
      */
     public <V> long add(String key, double longitude, double latitude, V value) {
         final RGeo<Object> geo = get(key);
@@ -58,12 +58,11 @@ public class GeoHelper {
     /**
      * 计算两个成员之间的距离
      *
-     * @param key          目标键
-     * @param firstMember  第一个元素
+     * @param key 目标键
+     * @param firstMember 第一个元素
      * @param secondMember 第二个元素
-     * @param geoUnit      距离单位
+     * @param geoUnit 距离单位
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> Double dist(String key, V firstMember, V secondMember, GeoUnit geoUnit) {
         return get(key).dist(firstMember, secondMember, geoUnit);
@@ -72,10 +71,9 @@ public class GeoHelper {
     /**
      * 取出多个成员的定义的地理位置信息, 成员不存在，则返回的map不包含对应的key
      *
-     * @param key     目标键
+     * @param key 目标键
      * @param members 成员列表
      * @param <V> 值泛型类型
-     * @return
      */
     @SafeVarargs
     public final <V> Map<V, GeoPosition> pos(String key, V... members) {
@@ -84,12 +82,10 @@ public class GeoHelper {
     }
 
     /**
-     *
      * 返回以给定地址位置计算指定距离半径内满足的地址位置所对应的元素
      *
      * @param request 请求对象
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> List<V> radius(GeoCoordinateSearchRequest request) {
         // PreconditionUtil.requiredParamCheck(request);
@@ -108,15 +104,12 @@ public class GeoHelper {
 
     /**
      * 返回以给定地址位置计算指定距离半径内满足的地址位置所对应的元素以及元素与指定位置的距离
-     *
      * 由于重载方法太多，这里根据参数来决定调用哪个方法
-     *
      * key:   元素value
      * value: 与指定位置相距距离
      *
      * @param <V> 值泛型类型
      * @param request 请求对象
-     * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoCoordinateSearchRequest request) {
         // PreconditionUtil.requiredParamCheck(request);
@@ -124,8 +117,7 @@ public class GeoHelper {
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
                 .radius(request.getRadius(), request.getGeoUnit());
         if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder())
-                    .count(request.getCount());
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
             optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
@@ -136,13 +128,11 @@ public class GeoHelper {
 
     /**
      * 返回以给定地址位置计算指定距离半径内满足的地址位置所对应的元素以及各自的地址位置对象
-     *
      * key: 元素value
      * value: 所属地理位置对象
      *
      * @param request 请求对象
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoCoordinateSearchRequest request) {
         // PreconditionUtil.requiredParamCheck(request);
@@ -150,8 +140,7 @@ public class GeoHelper {
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
                 .radius(request.getRadius(), request.getGeoUnit());
         if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder())
-                    .count(request.getCount());
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
             optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
@@ -161,21 +150,18 @@ public class GeoHelper {
     }
 
     /**
-     *
      * 返回以给定成员计算指定距离半径内满足的地址位置所对应的元素
      *
      * @param request 请求对象
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> List<V> radius(GeoMemberSearchRequest<V> request) {
         // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
-                .radius(request.getRadius(), request.getGeoUnit());
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
+                request.getGeoUnit());
         if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder())
-                    .count(request.getCount());
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
             optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
@@ -186,24 +172,20 @@ public class GeoHelper {
 
     /**
      * 返回以给定成员计算指定距离半径内满足的地址位置所对应的元素以及元素与指定位置的距离
-     *
      * 由于重载方法太多，这里根据参数来决定调用哪个方法
-     *
      * key:   元素value
      * value: 与指定位置相距距离
      *
      * @param <V> 值泛型类型
      * @param request 请求对象
-     * @return
      */
     public <V> Map<V, Double> radiusWithDistance(GeoMemberSearchRequest<V> request) {
         // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
-                .radius(request.getRadius(), request.getGeoUnit());
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
+                request.getGeoUnit());
         if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder())
-                    .count(request.getCount());
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
             optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
@@ -214,22 +196,19 @@ public class GeoHelper {
 
     /**
      * 返回以给定成员计算指定距离半径内满足的地址位置所对应的元素以及各自的地址位置对象
-     *
      * key: 元素value
      * value: 所属地理位置对象
      *
      * @param request 请求对象
      * @param <V> 值泛型类型
-     * @return
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoMemberSearchRequest<V> request) {
         // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
-        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember())
-                .radius(request.getRadius(), request.getGeoUnit());
+        final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
+                request.getGeoUnit());
         if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder())
-                    .count(request.getCount());
+            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
         } else if (Objects.nonNull(request.getCount())) {
             optionalGeoSearch.count(request.getCount());
         } else if (Objects.nonNull(request.getGeoOrder())) {
@@ -237,14 +216,13 @@ public class GeoHelper {
         }
         return geo.searchWithPosition(optionalGeoSearch);
     }
+
     /**
      * @param args 参数
      */
     public static void main(String[] args) {
         final Config config = new Config();
-        config.useSingleServer()
-                .setAddress("redis://localhost:6379")
-                .setPassword("xxxxx");
+        config.useSingleServer().setAddress("redis://localhost:6379").setPassword("xxxxx");
         config.setCodec(new JsonJacksonCodec());
         final RedissonClient redisson = Redisson.create(config);
         final GeoHelper helper = new GeoHelper(redisson);

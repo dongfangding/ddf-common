@@ -11,12 +11,12 @@
 
 `ddf-common-rocketmq` 解决的是 **"原生 RocketMQ Spring 集成不够用，需要增强封装"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| --- | --- | --- |
-| 统一消息发送入口 | 原生 `RocketMQTemplate` API 较底层，业务代码重复 | `RocketProducer` 统一封装同步/异步/延迟发送 |
-| Java 8 时间类型序列化 | Jackson 序列化 `LocalDateTime` 等类型时消费端反序列化失败 | 内置消息转换器，兼容 Java 8 日期时间类型 |
-| 多环境消息隔离 | 开发/测试环境消息串到生产 Topic | `EnvironmentIsolationProcessor` 按环境前缀隔离 Topic |
-| 消费者增强基类 | 消费者需重复写过滤、重试、异常处理逻辑 | `EnhanceMessageHandler` 基类统一封装 |
+| 场景             | 典型问题                                      | 模块提供的能力                                       |
+|----------------|-------------------------------------------|-----------------------------------------------|
+| 统一消息发送入口       | 原生 `RocketMQTemplate` API 较底层，业务代码重复      | `RocketProducer` 统一封装同步/异步/延迟发送               |
+| Java 8 时间类型序列化 | Jackson 序列化 `LocalDateTime` 等类型时消费端反序列化失败 | 内置消息转换器，兼容 Java 8 日期时间类型                      |
+| 多环境消息隔离        | 开发/测试环境消息串到生产 Topic                       | `EnvironmentIsolationProcessor` 按环境前缀隔离 Topic |
+| 消费者增强基类        | 消费者需重复写过滤、重试、异常处理逻辑                       | `EnhanceMessageHandler` 基类统一封装                |
 
 ---
 
@@ -155,11 +155,11 @@ public class BatchConsumer extends EnhanceBatchMessageHandler<OrderEvent> {
 
 启用 `enabled-isolation: true` 后，模块会自动为 Topic 添加环境前缀：
 
-| 环境 | 原始 Topic | 实际 Topic |
-| --- | --- | --- |
-| dev | `ORDER_TOPIC` | `DEV_ORDER_TOPIC` |
+| 环境   | 原始 Topic      | 实际 Topic           |
+|------|---------------|--------------------|
+| dev  | `ORDER_TOPIC` | `DEV_ORDER_TOPIC`  |
 | test | `ORDER_TOPIC` | `TEST_ORDER_TOPIC` |
-| prod | `ORDER_TOPIC` | `ORDER_TOPIC`（不变） |
+| prod | `ORDER_TOPIC` | `ORDER_TOPIC`（不变）  |
 
 避免开发/测试消息污染生产环境。
 
@@ -187,11 +187,11 @@ rocketProducer.syncSendOrderly(message, orderId);
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
-| `ddf-common-ons` | 如从 ONS 迁移到自建 RocketMQ，消费者抽象模式类似，降低迁移成本 |
-| `ddf-common-core` | JSON 序列化、工具类支撑 |
-| `ddf-common-authentication` | 消息体中如需携带用户上下文，可结合认证模块的 Token 机制 |
+| 模块                          | 协作方式                                   |
+|-----------------------------|----------------------------------------|
+| `ddf-common-ons`            | 如从 ONS 迁移到自建 RocketMQ，消费者抽象模式类似，降低迁移成本 |
+| `ddf-common-core`           | JSON 序列化、工具类支撑                         |
+| `ddf-common-authentication` | 消息体中如需携带用户上下文，可结合认证模块的 Token 机制        |
 
 ---
 

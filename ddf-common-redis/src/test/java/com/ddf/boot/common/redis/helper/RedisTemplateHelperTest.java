@@ -54,27 +54,16 @@ class RedisTemplateHelperTest {
         RedisTemplateHelper helper = new RedisTemplateHelper(stringRedisTemplate, redissonClient);
         Date expireAt = new Date(System.currentTimeMillis() + 30_000L);
 
-        when(stringRedisTemplate.execute(
-            any(),
-            anyList(),
-            eq("1"),
-            eq(String.valueOf(expireAt.getTime() / 1000))
-        )).thenReturn("5");
+        when(stringRedisTemplate.execute(any(), anyList(), eq("1"),
+                eq(String.valueOf(expireAt.getTime() / 1000)))).thenReturn("5");
 
         Long result = helper.incrementKeyExpireAt("demo:key", expireAt);
 
         assertEquals(5L, result);
-        verify(stringRedisTemplate).execute(
-            any(),
-            anyList(),
-            eq("1"),
-            eq(String.valueOf(expireAt.getTime() / 1000))
-        );
+        verify(stringRedisTemplate).execute(any(), anyList(), eq("1"), eq(String.valueOf(expireAt.getTime() / 1000)));
 
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> helper.incrementKeyExpireAt("demo:key", new Date(System.currentTimeMillis() - 1_000L))
-        );
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> helper.incrementKeyExpireAt("demo:key", new Date(System.currentTimeMillis() - 1_000L)));
         assertEquals("过期时间不能早于当前时间", exception.getMessage());
     }
 
@@ -85,20 +74,12 @@ class RedisTemplateHelperTest {
         RedissonClient redissonClient = org.mockito.Mockito.mock(RedissonClient.class);
         RedisTemplateHelper helper = new RedisTemplateHelper(stringRedisTemplate, redissonClient);
 
-        when(stringRedisTemplate.execute(any(), anyList(), eq("1"), eq("5"), eq("30")))
-            .thenReturn("{\"limited\":true,\"currentCount\":5,\"maxCount\":5}");
+        when(stringRedisTemplate.execute(any(), anyList(), eq("1"), eq("5"), eq("30"))).thenReturn(
+                "{\"limited\":true,\"currentCount\":5,\"maxCount\":5}");
 
-        BusinessException exception = assertThrows(
-            BusinessException.class,
-            () -> helper.stringIncrWithLimitCheckException(
-                "demo:key",
-                1L,
-                5L,
-                30L,
-                () -> "never",
-                BaseErrorCallbackCode.REQUEST_TOO_MANY
-            )
-        );
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> helper.stringIncrWithLimitCheckException("demo:key", 1L, 5L, 30L, () -> "never",
+                        BaseErrorCallbackCode.REQUEST_TOO_MANY));
 
         assertEquals(BaseErrorCallbackCode.REQUEST_TOO_MANY.getCode(), exception.getCode());
     }
@@ -110,18 +91,12 @@ class RedisTemplateHelperTest {
         RedissonClient redissonClient = org.mockito.Mockito.mock(RedissonClient.class);
         RedisTemplateHelper helper = new RedisTemplateHelper(stringRedisTemplate, redissonClient);
 
-        when(stringRedisTemplate.execute(any(), anyList(), eq("1"), eq("5"), eq("30")))
-            .thenReturn("{\"limited\":false,\"currentCount\":3,\"maxCount\":5}");
+        when(stringRedisTemplate.execute(any(), anyList(), eq("1"), eq("5"), eq("30"))).thenReturn(
+                "{\"limited\":false,\"currentCount\":3,\"maxCount\":5}");
 
         Supplier<String> supplier = () -> "passed";
-        String result = helper.stringIncrWithLimitCheckException(
-            "demo:key",
-            1L,
-            5L,
-            30L,
-            supplier,
-            BaseErrorCallbackCode.REQUEST_TOO_MANY
-        );
+        String result = helper.stringIncrWithLimitCheckException("demo:key", 1L, 5L, 30L, supplier,
+                BaseErrorCallbackCode.REQUEST_TOO_MANY);
 
         assertEquals("passed", result);
     }
@@ -133,14 +108,12 @@ class RedisTemplateHelperTest {
         RedissonClient redissonClient = org.mockito.Mockito.mock(RedissonClient.class);
         RedisTemplateHelper helper = new RedisTemplateHelper(stringRedisTemplate, redissonClient);
 
-        when(stringRedisTemplate.execute(any(), anyList(), eq("10"), eq("60")))
-            .thenReturn("");
+        when(stringRedisTemplate.execute(any(), anyList(), eq("10"), eq("60"))).thenReturn("");
 
         assertEquals(0, helper.stringTtlIncrWithLimit("demo:key", 10, 60).getTtl());
         assertFalse(helper.stringTtlIncrWithLimit("demo:key", 10, 60).isFull());
 
-        when(stringRedisTemplate.execute(any(), anyList(), eq("15"), eq("60")))
-            .thenReturn("1-45");
+        when(stringRedisTemplate.execute(any(), anyList(), eq("15"), eq("60"))).thenReturn("1-45");
 
         assertTrue(helper.stringTtlIncrWithLimit("demo:key", 15, 60).isFull());
         assertEquals(45, helper.stringTtlIncrWithLimit("demo:key", 15, 60).getTtl());
@@ -157,19 +130,15 @@ class RedisTemplateHelperTest {
         addCommand.setScoreFactory(3);
         addCommand.setScore(BigDecimal.ONE);
 
-        IllegalArgumentException addException = assertThrows(
-            IllegalArgumentException.class,
-            () -> helper.zSetAddWithMaxCheckSupportBiz(addCommand)
-        );
+        IllegalArgumentException addException = assertThrows(IllegalArgumentException.class,
+                () -> helper.zSetAddWithMaxCheckSupportBiz(addCommand));
         assertEquals("scoreFactory must be a multiple of 10 or 1", addException.getMessage());
 
         ZRevRangeBizRankingQuery query = new ZRevRangeBizRankingQuery();
         query.setScoreFactory(6);
 
-        IllegalArgumentException queryException = assertThrows(
-            IllegalArgumentException.class,
-            () -> helper.zSetRevRangeBizRankingQuery(query)
-        );
+        IllegalArgumentException queryException = assertThrows(IllegalArgumentException.class,
+                () -> helper.zSetRevRangeBizRankingQuery(query));
         assertEquals("scoreFactory must be a multiple of 10 or 1", queryException.getMessage());
     }
 

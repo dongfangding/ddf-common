@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * S3 兼容存储配置属性。
- *
  * <p>当前模块基于 S3 协议抽象，支持 MinIO、AWS S3、阿里云 OSS、腾讯云 COS 等兼容实现。</p>
  *
  * @author snowball
@@ -153,10 +152,9 @@ public class S3Properties {
      * 校验 Bucket 列表配置。
      */
     private void validateBuckets() {
-        long primaryBucketCount = buckets.stream()
-                .peek(bucket -> requireNotBlank(bucket.getBucketName(), "S3 buckets 中的 bucketName 不能为空"))
-                .filter(S3BucketProperty::isPrimary)
-                .count();
+        long primaryBucketCount = buckets.stream().peek(
+                bucket -> requireNotBlank(bucket.getBucketName(), "S3 buckets 中的 bucketName 不能为空")).filter(
+                S3BucketProperty::isPrimary).count();
         if (primaryBucketCount > 1) {
             throw new IllegalStateException("S3 buckets 配置中只允许存在一个 primary=true 的 Bucket");
         }
@@ -169,10 +167,8 @@ public class S3Properties {
      * @return 主 Bucket 配置
      */
     private S3BucketProperty resolvePrimaryBucket(List<S3BucketProperty> bucketProperties) {
-        return bucketProperties.stream()
-                .filter(S3BucketProperty::isPrimary)
-                .findFirst()
-                .orElse(bucketProperties.get(0));
+        return bucketProperties.stream().filter(S3BucketProperty::isPrimary).findFirst().orElse(
+                bucketProperties.get(0));
     }
 
     /**

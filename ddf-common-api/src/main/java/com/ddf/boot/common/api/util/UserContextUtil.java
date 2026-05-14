@@ -22,8 +22,6 @@ public class UserContextUtil {
 
     /**
      * 获取当前用户信息
-     *
-     * @return
      */
     public static UserClaim getUserClaim() {
         return USER_CONTEXT.get();
@@ -109,8 +107,6 @@ public class UserContextUtil {
 
     /**
      * 获取请求上下文
-     *
-     * @return
      */
     public static RequestContext getRequestContext() {
         return REQUEST_CONTEXT.get();
@@ -126,8 +122,6 @@ public class UserContextUtil {
 
     /**
      * 获取当前app语言，默认英文
-     *
-     * @return
      */
     public static String getLanguageOrDefault() {
         String defaultLanguage = "en";

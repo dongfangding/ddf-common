@@ -17,11 +17,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MonitorProperties {
 
     private static final int DEFAULT_SESSION_TIMEOUT_MS = Integer.getInteger("curator-default-session-timeout",
-            60 * 1000
-    );
+            60 * 1000);
     private static final int DEFAULT_CONNECTION_TIMEOUT_MS = Integer.getInteger("curator-default-connection-timeout",
-            15 * 1000
-    );
+            15 * 1000);
 
     /**
      * zk服务器连接地址

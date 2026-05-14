@@ -28,8 +28,6 @@ public class OnsConsoleUtil {
 
     /**
      * 获取本机地址
-     *
-     * @return
      */
     @SneakyThrows
     public static String getLocalHost() {
@@ -44,14 +42,11 @@ public class OnsConsoleUtil {
      * @param listenerClassName listener类型名称参数
      * @param groupId 分组ID
      * @param messageModel 消息model参数
-     * @return
      */
     public static String getRetryExpression(String topic, String listenerClassName, String groupId,
             String messageModel) {
         final StringJoiner joiner = new StringJoiner("-");
-        joiner.add(topic)
-                .add(listenerClassName)
-                .add(groupId);
+        joiner.add(topic).add(listenerClassName).add(groupId);
         // 如果是广播的话，需要知道失败的那台机器, 成功的机器不需要再次处理
         if (Objects.equals(MessageModel.BROADCASTING.getModel(), messageModel)) {
             joiner.add(getLocalHost());
@@ -77,7 +72,7 @@ public class OnsConsoleUtil {
     /**
      * 动态通过反射修改指定注解示例里的属性的值
      *
-     * @param annotation   注解实例对象
+     * @param annotation 注解实例对象
      * @param nameValueMap 属性和值集合
      */
     @SneakyThrows
@@ -99,7 +94,6 @@ public class OnsConsoleUtil {
      *
      * @param str STR参数
      * @param separator 分隔符
-     * @return
      */
     public static String getShortNameBySplit(String str, String separator) {
         return getShortNameBySplit(str, separator, separator);
@@ -111,7 +105,6 @@ public class OnsConsoleUtil {
      * @param str STR参数
      * @param separator 分隔符
      * @param replaceSeparator 参数
-     * @return
      */
     public static String getShortNameBySplit(String str, String separator, String replaceSeparator) {
         final String[] charArray = str.split(separator);

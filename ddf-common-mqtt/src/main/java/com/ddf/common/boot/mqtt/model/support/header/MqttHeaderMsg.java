@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 /**
  * <p>mqtt 请求头， 实际发送到报文中的， 可能会附加一些额外的字段</p >
  *
- *
  * @author Snowball
  * @version 1.0
  * @since 2022/03/19 11:29
@@ -19,6 +18,7 @@ public class MqttHeaderMsg extends MqttBaseHeader implements Serializable {
 
     /**
      * 消息质量，请参考mqtt协议qos的设计含义
+     *
      * @see MqttQosEnum
      */
     private Integer qos;

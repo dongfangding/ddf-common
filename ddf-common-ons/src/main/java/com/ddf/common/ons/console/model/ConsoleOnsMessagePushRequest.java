@@ -11,7 +11,6 @@ import lombok.experimental.Accessors;
 
 /**
  * 向指定的消费者推送消息， 与原生请求不同的是这里不需要调用方指定ClientId和InstanceId属性， 会在方法里自动包装获取
- *
  */
 @Data
 @Accessors(chain = true)
@@ -48,11 +47,9 @@ public class ConsoleOnsMessagePushRequest implements UserRequest, Serializable {
      *
      * @param clientId 客户端ID
      * @param instanceId 实例ID
-     * @return
      */
     public OnsMessagePushRequest toSdkRequest(String clientId, String instanceId) {
-        return new OnsMessagePushRequest()
-                .setGroupId(groupId)
+        return new OnsMessagePushRequest().setGroupId(groupId)
                 .setMsgId(msgId)
                 .setTopic(topic)
                 .setInstanceId(instanceId)

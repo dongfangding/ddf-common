@@ -11,12 +11,12 @@
 
 `ddf-common-data-mysql-starter` 解决的是 **"数据层依赖标准化"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 新项目启动 | 每次都要手写 jdbc/mysql/druid 三件套依赖 | 一个 starter 引入全部数据层基础组件 |
-| 技术栈统一 | 团队各项目 Druid / MySQL 驱动版本不一致 | 版本在 `ddf-common-dependency` BOM 中集中管理 |
-| Druid 兼容性 | Spring Boot 3.x 下 Druid 的 `usePingMethod` 引发连接检测异常 | 自动设置 `druid.mysql.usePingMethod=false` |
-| MyBatis 集成 | 需要额外引入 MyBatis Spring Boot Starter | 已作为传递依赖引入，开箱即用 |
+| 场景         | 典型问题                                               | 模块提供的能力                                |
+|------------|----------------------------------------------------|----------------------------------------|
+| 新项目启动      | 每次都要手写 jdbc/mysql/druid 三件套依赖                      | 一个 starter 引入全部数据层基础组件                 |
+| 技术栈统一      | 团队各项目 Druid / MySQL 驱动版本不一致                        | 版本在 `ddf-common-dependency` BOM 中集中管理  |
+| Druid 兼容性  | Spring Boot 3.x 下 Druid 的 `usePingMethod` 引发连接检测异常 | 自动设置 `druid.mysql.usePingMethod=false` |
+| MyBatis 集成 | 需要额外引入 MyBatis Spring Boot Starter                 | 已作为传递依赖引入，开箱即用                         |
 
 > ⚠️ 本模块**不包含** ORM 映射、代码生成或分库分表能力。如需分片，请额外引入 `ddf-common-sharding`。
 
@@ -80,9 +80,9 @@ customizer:
         use-ping-method: false         # 对应 druid.mysql.usePingMethod，默认 false
 ```
 
-| 属性 | 说明 | 默认值 |
-| ----- | ----- | ----- |
-| `enabled` | 是否启用本 starter 的数据层增强 | `true` |
+| 属性                      | 说明                          | 默认值     |
+|-------------------------|-----------------------------|---------|
+| `enabled`               | 是否启用本 starter 的数据层增强        | `true`  |
 | `druid.use-ping-method` | Druid 连接检测是否使用 `mysql_ping` | `false` |
 
 > `use-ping-method: false` 的缘由：某些 MySQL 服务端配置下，`mysql_ping` 会导致连接状态检测异常，改为 SQL 探测（`SELECT 1`）兼容性更好。
@@ -202,13 +202,13 @@ public class DataSourceConfig {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-dependency` | 版本在 BOM 中统一声明，子模块引用不写版本号 |
-| `ddf-common-core` | `BaseDomain` 实体基类、`PageUtil` 分页工具与 MyBatis 配合使用 |
-| `ddf-common-sharding` | 分库分表场景下叠加 ShardingSphere 配置 |
-| `ddf-common-starter-default` | 默认 starter 已包含本模块 |
-| `ddf-common-governance-starter` | 若开启 Actuator，Druid 监控数据可被聚合暴露 |
+| 模块                              | 协作方式                                            |
+|---------------------------------|-------------------------------------------------|
+| `ddf-common-dependency`         | 版本在 BOM 中统一声明，子模块引用不写版本号                        |
+| `ddf-common-core`               | `BaseDomain` 实体基类、`PageUtil` 分页工具与 MyBatis 配合使用 |
+| `ddf-common-sharding`           | 分库分表场景下叠加 ShardingSphere 配置                     |
+| `ddf-common-starter-default`    | 默认 starter 已包含本模块                               |
+| `ddf-common-governance-starter` | 若开启 Actuator，Druid 监控数据可被聚合暴露                   |
 
 ---
 
@@ -226,14 +226,17 @@ Druid 将使用 MySQL 原生的 `mysql_ping` 进行连接存活检测。某些�
 **Q4：为什么引入了 MyBatis 但不需要写 `@MapperScan`？**  
 `mybatis-spring-boot-starter` 会自动扫描 `@Mapper` 接口，默认扫描范围为启动类所在包及其子包。如果 Mapper 位于外部 jar，需在启动类显式配置 `@MapperScan`。
 
-**Q5：如何关闭本 starter 的所有增强？**  
+**Q5：如何关闭本 starter 的所有增强？**
+
 ```yaml
 customizer:
   data:
     mysql:
       enabled: false
 ```
+
 或排除自动配置类：
+
 ```yaml
 spring:
   autoconfigure:

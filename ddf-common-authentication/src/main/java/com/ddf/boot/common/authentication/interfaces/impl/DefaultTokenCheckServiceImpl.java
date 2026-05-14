@@ -36,17 +36,18 @@ public class DefaultTokenCheckServiceImpl implements TokenCustomizeCheckService 
      *
      * @param request 请求对象
      * @param authenticateCheckResult 认证校验结果
-     * @return
      */
     @Override
     public UserClaim customizeCheck(HttpServletRequest request, AuthenticateCheckResult authenticateCheckResult) {
         final UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
-        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim), BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
-        PreconditionUtil.checkArgument(!StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
+        PreconditionUtil.checkArgument(Objects.nonNull(tokenUserClaim),
+                BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
+        PreconditionUtil.checkArgument(
+                !StringUtils.isAnyBlank(tokenUserClaim.getUsername(), tokenUserClaim.getCredit()),
                 BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
         // credit校验
-        final String credit = StringUtils.defaultIfBlank(request.getHeader(authenticationProperties.getCreditHeaderName()),
-                request.getHeader("User-Agent"));
+        final String credit = StringUtils.defaultIfBlank(
+                request.getHeader(authenticationProperties.getCreditHeaderName()), request.getHeader("User-Agent"));
         if (Objects.nonNull(tokenUserClaim.getCredit()) && !Objects.equals(tokenUserClaim.getCredit(), credit)) {
             log.error("当前请求credit和token不匹配， 当前: {}, token: {}", credit, tokenUserClaim.getCredit());
             throw new UnauthorizedException(BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);

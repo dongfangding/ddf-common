@@ -30,7 +30,7 @@ public abstract class OnsProducer {
     static {
         ORDER_PRODUCER = SpringContextHolder.getBean("orderProducer", OrderProducerBean.class);
         PRODUCER = SpringContextHolder.getBean("producer", ProducerBean.class);
-        ONS_PROPERTIES= SpringContextHolder.getBean(OnsProperties.class);
+        ONS_PROPERTIES = SpringContextHolder.getBean(OnsProperties.class);
     }
 
     /**
@@ -58,15 +58,14 @@ public abstract class OnsProducer {
             // 同步发送消息，只要不抛异常就是成功。
             SendResult sendResult = ORDER_PRODUCER.send(message, shadingKey);
             if (null != sendResult) {
-                LOGGER.info("同步发送Topic:{}, Tag:{}, PayLoad:{}, Key:{}, ShadingKey:{}, DelayTime:{}顺序消息成功，MessageId:{}",
-                        topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId()
-                );
+                LOGGER.info(
+                        "同步发送Topic:{}, Tag:{}, PayLoad:{}, Key:{}, ShadingKey:{}, DelayTime:{}顺序消息成功，MessageId:{}",
+                        topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:", topic, tag,
-                    payLoad, bizId, shadingKey, delayTime, e
-            );
+            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:",
+                    topic, tag, payLoad, bizId, shadingKey, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 orderSend(topic, tag, payLoad, bizId, shadingKey, delayTime);
@@ -77,12 +76,12 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ顺序消息
      *
-     * @param topic      主题
-     * @param tag        标签
-     * @param payLoad    消息体
-     * @param bizId      业务 ID
+     * @param topic 主题
+     * @param tag 标签
+     * @param payLoad 消息体
+     * @param bizId 业务 ID
      * @param shadingKey 分区顺序消息中区分不同分区的关键字段，Sharding Key 与普通消息的 key 是完全不同的概念。
-     *                   全局顺序消息，该字段可以设置为任意非空字符串。
+     * 全局顺序消息，该字段可以设置为任意非空字符串。
      * @see OnsProducer#orderSend(OnsMessage)
      */
     @Deprecated
@@ -93,13 +92,13 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ顺序消息
      *
-     * @param topic      主题
-     * @param tag        标签
-     * @param payLoad    消息体
-     * @param bizId      业务 ID
+     * @param topic 主题
+     * @param tag 标签
+     * @param payLoad 消息体
+     * @param bizId 业务 ID
      * @param shadingKey 分区顺序消息中区分不同分区的关键字段，Sharding Key 与普通消息的 key 是完全不同的概念。
-     *                   全局顺序消息，该字段可以设置为任意非空字符串。
-     * @param delayTime  发送延时消息的延时时间，单位毫秒
+     * 全局顺序消息，该字段可以设置为任意非空字符串。
+     * @param delayTime 发送延时消息的延时时间，单位毫秒
      * @see OnsProducer#orderSend(OnsMessage)
      */
     @Deprecated
@@ -116,15 +115,14 @@ public abstract class OnsProducer {
             // 同步发送消息，只要不抛异常就是成功。
             SendResult sendResult = ORDER_PRODUCER.send(message, shadingKey);
             if (null != sendResult) {
-                LOGGER.info("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息成功，MessageId:{}",
-                        topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId()
-                );
+                LOGGER.info(
+                        "同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息成功，MessageId:{}",
+                        topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:", topic, tag,
-                    payLoad, bizId, shadingKey, delayTime, e
-            );
+            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:",
+                    topic, tag, payLoad, bizId, shadingKey, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 orderSend(topic, tag, payLoad, bizId, shadingKey, delayTime);
@@ -145,7 +143,7 @@ public abstract class OnsProducer {
         String bizId = onsMessage.getWrapperBizId();
         Long delayTime = onsMessage.getDelayTime();
 
-        
+
         Message message = new Message(topic, tag, payLoad.getBytes());
         message.setKey(bizId);
         if (Objects.nonNull(delayTime) && delayTime > 0) {
@@ -157,15 +155,13 @@ public abstract class OnsProducer {
             // 同步发送消息，只要不抛异常就是成功。
             SendResult sendResult = PRODUCER.send(message);
             if (null != sendResult) {
-                LOGGER.info("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag, payLoad,
-                        bizId, delayTime, sendResult.getMessageId()
-                );
+                LOGGER.info("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
+                        payLoad, bizId, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,
-                    delayTime, e
-            );
+            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
+                    bizId, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 send(topic, tag, payLoad, bizId, delayTime);
@@ -176,10 +172,10 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ消息
      *
-     * @param topic   主题
-     * @param tag     标签
+     * @param topic 主题
+     * @param tag 标签
      * @param payLoad 消息体
-     * @param bizId   业务 ID
+     * @param bizId 业务 ID
      * @see OnsProducer#send(OnsMessage)
      */
     @Deprecated
@@ -190,10 +186,10 @@ public abstract class OnsProducer {
     /**
      * 同步发送MQ消息
      *
-     * @param topic     主题
-     * @param tag       标签
-     * @param payLoad   消息体
-     * @param bizId     业务 ID
+     * @param topic 主题
+     * @param tag 标签
+     * @param payLoad 消息体
+     * @param bizId 业务 ID
      * @param delayTime 发送延时消息的延时时间，单位毫秒
      * @see OnsProducer#send(OnsMessage)
      */
@@ -210,16 +206,14 @@ public abstract class OnsProducer {
             // 同步发送消息，只要不抛异常就是成功。
             SendResult sendResult = PRODUCER.send(message);
             if (null != sendResult) {
-                LOGGER.info("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag, payLoad,
-                        bizId, delayTime, sendResult.getMessageId()
-                );
+                LOGGER.info("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
+                        payLoad, bizId, delayTime, sendResult.getMessageId());
                 //removeRetryTimes(bizId);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,
-                    delayTime, e
-            );
+            LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
+                    bizId, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 send(topic, tag, payLoad, bizId, delayTime);
@@ -240,7 +234,7 @@ public abstract class OnsProducer {
         String bizId = onsMessage.getBizId();
         Long delayTime = onsMessage.getDelayTime();
 
-        
+
         Message message = new Message(topic, tag, payLoad.getBytes());
         message.setKey(bizId);
         if (Objects.nonNull(delayTime) && delayTime > 0) {
@@ -256,20 +250,18 @@ public abstract class OnsProducer {
                  */
                 @Override
                 public void onSuccess(final SendResult sendResult) {
-                    LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
-                            payLoad, bizId, delayTime, sendResult.getMessageId()
-                    );
+                    LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic,
+                            tag, payLoad, bizId, delayTime, sendResult.getMessageId());
                 }
+
                 /**
                  * @param context 参数
                  */
                 @Override
                 public void onException(OnExceptionContext context) {
-                    String errorMessage = context.getException()
-                            .getMessage();
-                    LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}", topic,
-                            tag, payLoad, bizId, delayTime, errorMessage, context.getMessageId()
-                    );
+                    String errorMessage = context.getException().getMessage();
+                    LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}",
+                            topic, tag, payLoad, bizId, delayTime, errorMessage, context.getMessageId());
                     if (isRetryable(bizId)) {
                         incrementRetryTimes(bizId);
                         sendAsync(topic, tag, payLoad, bizId, delayTime);
@@ -278,9 +270,8 @@ public abstract class OnsProducer {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,
-                    delayTime, e
-            );
+            LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
+                    bizId, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 sendAsync(topic, tag, payLoad, bizId, delayTime);
@@ -291,10 +282,10 @@ public abstract class OnsProducer {
     /**
      * 异步发送MQ消息
      *
-     * @param topic   主题
-     * @param tag     标签
+     * @param topic 主题
+     * @param tag 标签
      * @param payLoad 消息体
-     * @param bizId   业务 ID
+     * @param bizId 业务 ID
      * @see OnsProducer#sendAsync(OnsMessage)
      */
     @Deprecated
@@ -305,10 +296,10 @@ public abstract class OnsProducer {
     /**
      * 异步发送MQ消息
      *
-     * @param topic     主题
-     * @param tag       标签
-     * @param payLoad   消息体
-     * @param bizId     业务 ID
+     * @param topic 主题
+     * @param tag 标签
+     * @param payLoad 消息体
+     * @param bizId 业务 ID
      * @param delayTime 发送延时消息的延时时间，单位毫秒
      * @see OnsProducer#sendAsync(OnsMessage)
      */
@@ -329,19 +320,18 @@ public abstract class OnsProducer {
                  */
                 @Override
                 public void onSuccess(final SendResult sendResult) {
-                    LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic, tag,
-                            payLoad, bizId, delayTime, sendResult.getMessageId()
-                    );
+                    LOGGER.info("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息成功，MessageId:{}", topic,
+                            tag, payLoad, bizId, delayTime, sendResult.getMessageId());
                 }
+
                 /**
                  * @param context 参数
                  */
                 @Override
                 public void onException(OnExceptionContext context) {
-                    LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}", topic,
-                            tag, payLoad, bizId, delayTime, context.getException()
-                                    .getMessage(), context.getMessageId()
-                    );
+                    LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}",
+                            topic, tag, payLoad, bizId, delayTime, context.getException().getMessage(),
+                            context.getMessageId());
                     if (isRetryable(bizId)) {
                         incrementRetryTimes(bizId);
                         sendAsync(topic, tag, payLoad, bizId, delayTime);
@@ -350,9 +340,8 @@ public abstract class OnsProducer {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad, bizId,
-                    delayTime, e
-            );
+            LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
+                    bizId, delayTime, e);
             if (isRetryable(bizId)) {
                 incrementRetryTimes(bizId);
                 sendAsync(topic, tag, payLoad, bizId, delayTime);
@@ -364,31 +353,29 @@ public abstract class OnsProducer {
      * 增加重试次数
      *
      * @param bizId 业务 ID
-     * @return
      */
     public static long incrementRetryTimes(String bizId) {
         return 0;
-//        String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
-//        OnsRedisService onsRedisService = SpringContextHolder.getBean(OnsRedisService.BEAN_NAME, OnsRedisService.class);
-//        Long value = onsRedisService.incrAndExpire(key, 360);
-//        return value.longValue();
+        //        String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
+        //        OnsRedisService onsRedisService = SpringContextHolder.getBean(OnsRedisService.BEAN_NAME, OnsRedisService.class);
+        //        Long value = onsRedisService.incrAndExpire(key, 360);
+        //        return value.longValue();
     }
 
     /**
      * 是否可以重试
      *
      * @param bizId 业务 ID
-     * @return
      */
     public static boolean isRetryable(String bizId) {
-//        if (ONS_PROPERTIES.getProducer().isRetryEnabled()) {
-//            String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
-//            OnsRedisService onsRedisService = SpringContextHolder.getBean(
-//                    OnsRedisService.BEAN_NAME, OnsRedisService.class);
-//            Object value = onsRedisService.get(key);
-//            long produceRetryTimes = Objects.nonNull(value) ? Long.parseLong(value.toString()) : 0L;
-//            return produceRetryTimes < ONS_PROPERTIES.getProducer().getRetryTimes();
-//        }
+        //        if (ONS_PROPERTIES.getProducer().isRetryEnabled()) {
+        //            String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
+        //            OnsRedisService onsRedisService = SpringContextHolder.getBean(
+        //                    OnsRedisService.BEAN_NAME, OnsRedisService.class);
+        //            Object value = onsRedisService.get(key);
+        //            long produceRetryTimes = Objects.nonNull(value) ? Long.parseLong(value.toString()) : 0L;
+        //            return produceRetryTimes < ONS_PROPERTIES.getProducer().getRetryTimes();
+        //        }
         return false;
     }
 
@@ -398,9 +385,9 @@ public abstract class OnsProducer {
      * @param bizId 业务 ID
      */
     public static void removeRetryTimes(String bizId) {
-//        String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
-//        OnsRedisService onsRedisService = SpringContextHolder.getBean(OnsRedisService.BEAN_NAME, OnsRedisService.class);
-//        onsRedisService.delete(key);
+        //        String key = PRODUCE_RETRY_TIMES_PREFIX + bizId;
+        //        OnsRedisService onsRedisService = SpringContextHolder.getBean(OnsRedisService.BEAN_NAME, OnsRedisService.class);
+        //        onsRedisService.delete(key);
     }
 
 }

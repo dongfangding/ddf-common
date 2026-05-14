@@ -22,9 +22,8 @@ class VerifyCodeUtilTest {
     @DisplayName("generateVerifyCode 应按长度和字符源生成验证码")
     void shouldGenerateVerifyCodeWithExpectedLengthAndCharset() {
         String code = VerifyCodeUtil.generateVerifyCode(6);
-        Set<Character> allowed = VerifyCodeUtil.VERIFY_CODES.chars()
-            .mapToObj(ch -> (char) ch)
-            .collect(Collectors.toSet());
+        Set<Character> allowed = VerifyCodeUtil.VERIFY_CODES.chars().mapToObj(ch -> (char) ch).collect(
+                Collectors.toSet());
 
         assertEquals(6, code.length());
         assertTrue(code.chars().allMatch(ch -> allowed.contains((char) ch)));
@@ -34,9 +33,8 @@ class VerifyCodeUtilTest {
     @DisplayName("自定义字符源为空时应回退默认字符集")
     void shouldFallbackToDefaultSourcesWhenCustomSourceIsBlank() {
         String code = VerifyCodeUtil.generateVerifyCode(4, "");
-        Set<Character> allowed = VerifyCodeUtil.VERIFY_CODES.chars()
-            .mapToObj(ch -> (char) ch)
-            .collect(Collectors.toSet());
+        Set<Character> allowed = VerifyCodeUtil.VERIFY_CODES.chars().mapToObj(ch -> (char) ch).collect(
+                Collectors.toSet());
 
         assertEquals(4, code.length());
         assertTrue(code.chars().allMatch(ch -> allowed.contains((char) ch)));

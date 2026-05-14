@@ -26,7 +26,7 @@ import java.util.Set;
 public class FileRestore {
     public static void main(String[] args) {
         String baseTargetDirectory = "I:/整理/乐多";
-		computerReadAndMoveFileToMonth(new String[] {"I:/未整理/乐多"}, baseTargetDirectory);
+        computerReadAndMoveFileToMonth(new String[] {"I:/未整理/乐多"}, baseTargetDirectory);
     }
 
     /**
@@ -156,10 +156,10 @@ public class FileRestore {
                         String sourceFolderName = folder.getName();
 
                         // 截取一级目录、二级目录、三级目录
-                        String firstLevelDir = sourceFolderName.substring(
-                                0, Math.min(sourceFolderName.length(), 6)); // 前6位作为一级目录
-                        String secondLevelDir = sourceFolderName.substring(
-                                0, Math.min(sourceFolderName.length(), 8)); // 前8位作为二级目录
+                        String firstLevelDir = sourceFolderName.substring(0,
+                                Math.min(sourceFolderName.length(), 6)); // 前6位作为一级目录
+                        String secondLevelDir = sourceFolderName.substring(0,
+                                Math.min(sourceFolderName.length(), 8)); // 前8位作为二级目录
 
                         // 构建目标路径
                         Path targetPath = Path.of(targetDirector, firstLevelDir, secondLevelDir, sourceFolderName);
@@ -176,7 +176,7 @@ public class FileRestore {
                         Files.move(sourcePath, targetPath);
 
                         // 删除空源文件夹
-//                        Files.delete(sourcePath);
+                        //                        Files.delete(sourcePath);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -185,6 +185,7 @@ public class FileRestore {
             System.out.println("All folders moved successfully.");
         }
     }
+
     /**
      * @param directories 参数
      * @param backupDeleteDirector 参数
@@ -231,9 +232,6 @@ public class FileRestore {
      * 获取文件md5
      *
      * @param file 文件参数
-     * @return
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
      */
     public static String getMD5(File file) {
         try {
@@ -263,10 +261,9 @@ public class FileRestore {
      * 判断文件是否是图片文件的方法
      *
      * @param file 文件参数
-     * @return
      */
     private static boolean isImageFile(File file) {
-        String[] imageExtensions = new String[] { "jpg", "jpeg", "png", "gif", "bmp" };
+        String[] imageExtensions = new String[] {"jpg", "jpeg", "png", "gif", "bmp"};
         String fileName = file.getName().toLowerCase();
         for (String extension : imageExtensions) {
             if (fileName.endsWith("." + extension)) {
@@ -278,6 +275,7 @@ public class FileRestore {
 
     /**
      * 递归遍历目录并删除图片文件
+     *
      * @param directory directory参数
      */
     private static void deleteImageFilesRecursively(File directory) {

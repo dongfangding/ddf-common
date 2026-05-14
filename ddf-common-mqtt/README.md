@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-mqtt` solves the **"application publishing messages to an MQTT broker"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
+| Scenario                    | Typical Problem                                           | What the Module Provides                        |
+|-----------------------------|-----------------------------------------------------------|-------------------------------------------------|
 | IoT device command dispatch | Need to push control commands to large numbers of devices | Async publishing with QoS 1 guaranteed delivery |
-| Real-time status reporting | Sensor data needs high-throughput push | QoS 0 async send for best performance |
-| Message push gateway | Need to connect to various MQTT brokers | Unified client wrapper, connect with config |
-| Secure transport | Public network transport needs anti-eavesdropping | SSL/TLS encrypted connections |
+| Real-time status reporting  | Sensor data needs high-throughput push                    | QoS 0 async send for best performance           |
+| Message push gateway        | Need to connect to various MQTT brokers                   | Unified client wrapper, connect with config     |
+| Secure transport            | Public network transport needs anti-eavesdropping         | SSL/TLS encrypted connections                   |
 
 ---
 
@@ -90,11 +90,11 @@ mqttClient.publish(
 
 ### 4.3 QoS levels
 
-| Level | Name | Description | Suitable For |
-| --- | --- | --- | --- |
-| 0 | `AT_MOST_ONCE` | At most once, no delivery guarantee | Logs, status updates |
-| 1 | `AT_LAST_ONCE` | At least once, possible duplicates | Command dispatch, notifications |
-| 2 | `EXACTLY_ONCE` | Exactly once, no duplicates | Financial transactions |
+| Level | Name           | Description                         | Suitable For                    |
+|-------|----------------|-------------------------------------|---------------------------------|
+| 0     | `AT_MOST_ONCE` | At most once, no delivery guarantee | Logs, status updates            |
+| 1     | `AT_LAST_ONCE` | At least once, possible duplicates  | Command dispatch, notifications |
+| 2     | `EXACTLY_ONCE` | Exactly once, no duplicates         | Financial transactions          |
 
 ---
 
@@ -129,10 +129,10 @@ customizer:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
+| Module                   | How They Cooperate                                                                                                    |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | `ddf-common-mqtt-client` | Higher-level business wrapper on top of this module, providing closer-to-business Topic and message body abstractions |
-| `ddf-common-core` | JSON serialization, thread pools, and other fundamentals |
+| `ddf-common-core`        | JSON serialization, thread pools, and other fundamentals                                                              |
 
 ---
 

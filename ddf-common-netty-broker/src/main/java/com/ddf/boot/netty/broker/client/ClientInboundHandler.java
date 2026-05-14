@@ -16,6 +16,7 @@ public class ClientInboundHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) {
         log.debug("连接到服务器成功>>>>>>>>>>>>>");
     }
+
     /**
      * @param ctx 参数
      */
@@ -23,6 +24,7 @@ public class ClientInboundHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         log.debug("与服务器连接断开>>>>>>>>>>>>>");
     }
+
     /**
      * @param ctx 参数
      * @param msg 参数
@@ -31,6 +33,7 @@ public class ClientInboundHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         log.debug("读取到服务器的发送信息>>>>>>>>>>>>>: {}", msg.toString());
     }
+
     /**
      * @param ctx 参数
      * @param cause 参数

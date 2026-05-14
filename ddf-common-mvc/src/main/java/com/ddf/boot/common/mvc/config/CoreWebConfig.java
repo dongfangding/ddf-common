@@ -53,8 +53,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
 
     /**
      * 注册解析器
-     *
-     * @return
      */
     @Bean
     public QueryParamArgumentResolver queryParamArgumentResolver() {
@@ -114,11 +112,7 @@ public class CoreWebConfig implements WebMvcConfigurer {
     /**
      * 处理全局跨域
      * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-cors-filter
-     *
-     *
      * 使用Spring-Cloud-Gateway的时候不允许多重跨域，网关层已经处理了，这里直接去掉
-     *
-     * @return
      */
     @Bean
     public CorsFilter corsRegistration() {
@@ -160,8 +154,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
 
     /**
      * 默认线程池
-     *
-     * @return
      */
     @Bean
     @Primary
@@ -171,8 +163,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
 
     /**
      * 定时任务调度线程池
-     *
-     * @return
      */
     @Bean
     @Primary
@@ -201,8 +191,6 @@ public class CoreWebConfig implements WebMvcConfigurer {
      * if (Objects.nonNull(contentCachingRequestWrapper)) {
      * body = new String(contentCachingRequestWrapper.getContentAsByteArray());
      * }
-     *
-     * @return
      */
     @Bean
     public FilterRegistrationBean<CachingRequestBodyFilter> filterRegistration() {

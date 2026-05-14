@@ -29,7 +29,6 @@ public class SignatureUtil {
      *
      * @param data 待处理数据
      * @param <T> 泛型类型
-     * @return
      */
     public static <T> String asciiSortToQueryStringOnlyBasicType(T data) {
         return generateSignString(data, false);
@@ -40,7 +39,6 @@ public class SignatureUtil {
      *
      * @param data 待处理数据
      * @param <T> 泛型类型
-     * @return
      */
     public static <T> String asciiSortToQueryStringFlatten(T data) {
         return generateSignString(data, true);
@@ -49,7 +47,7 @@ public class SignatureUtil {
     /**
      * 统一的签名字符串生成逻辑
      *
-     * @param data    待处理数据
+     * @param data 待处理数据
      * @param flatten 是否需要平铺嵌套对象
      * @return 排序后的查询字符串
      */
@@ -76,10 +74,7 @@ public class SignatureUtil {
             if (!paramBuffer.isEmpty()) {
                 paramBuffer.append("&");
             }
-            paramBuffer
-                    .append(entry.getKey())
-                    .append("=")
-                    .append(entry.getValue());
+            paramBuffer.append(entry.getKey()).append("=").append(entry.getValue());
         }
         return paramBuffer.toString();
     }
@@ -88,9 +83,9 @@ public class SignatureUtil {
      * 核心递归逻辑：负责参数的过滤、平铺与收集
      *
      * @param currentMap 当前层级的 Map
-     * @param prefix     前缀路径 (用于平铺)
-     * @param result     结果容器
-     * @param flatten    是否平铺
+     * @param prefix 前缀路径 (用于平铺)
+     * @param result 结果容器
+     * @param flatten 是否平铺
      */
     private static void collectParams(Map<String, Object> currentMap, String prefix, Map<String, Object> result,
             boolean flatten) {
@@ -135,13 +130,10 @@ public class SignatureUtil {
      * map转查询串
      *
      * @param dataMap 数据映射
-     * @return
      */
     public static String mapToQueryString(Map<String, Object> dataMap) {
         // 1. 参数名按照ASCII码表升序排序
-        String[] keys = dataMap
-                .keySet()
-                .toArray(new String[0]);
+        String[] keys = dataMap.keySet().toArray(new String[0]);
         Arrays.sort(keys);
 
         // 2. 按照排序拼接参数名与参数值
@@ -151,18 +143,13 @@ public class SignatureUtil {
             obj = dataMap.get(key);
             // 排除参数为空的和以及签名字段
             if (ObjectUtils.isEmpty(obj)) {
-                paramBuffer
-                        .append(key)
-                        .append("=");
+                paramBuffer.append(key).append("=");
                 continue;
             }
             if (!paramBuffer.isEmpty()) {
                 paramBuffer.append("&");
             }
-            paramBuffer
-                    .append(key)
-                    .append("=")
-                    .append(obj);
+            paramBuffer.append(key).append("=").append(obj);
         }
         return paramBuffer.toString();
     }
@@ -172,8 +159,7 @@ public class SignatureUtil {
      * 生成自己系统的签名信息规则
      *
      * @param secretKey 产品私钥
-     * @param data      待处理数据
-     * @return
+     * @param data 待处理数据
      */
     public static <T> String genSelfSignature(String secretKey, T data) {
         return genSelfSignature(secretKey, data, false);
@@ -190,9 +176,8 @@ public class SignatureUtil {
      * 5. sign参数不建议放在data中， 如果放的话， 这个方法需要识别出这个字段的值是哪个， 否则无法剔除这个字段的影响，目前固定为sign
      *
      * @param secretKey 产品私钥
-     * @param data      待处理数据
-     * @param flatten   是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
-     * @return
+     * @param data 待处理数据
+     * @param flatten 是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
      */
     public static <T> String genSelfSignature(String secretKey, T data, boolean flatten) {
         final String queryString = generateSignString(data, flatten);
@@ -204,9 +189,8 @@ public class SignatureUtil {
      * 验证签名
      *
      * @param data 待处理数据
-     * @param keySecret           秘钥
+     * @param keySecret 秘钥
      * @param nonceTimeoutSeconds 重放校验时间， 单位秒
-     * @return
      */
     public static <T extends BaseSign> boolean verifySelfSignature(T data, String keySecret, long nonceTimeoutSeconds) {
         // 时间戳参数超过一定间隔，视作重放
@@ -225,7 +209,6 @@ public class SignatureUtil {
      * @param sign 签名参数
      * @param keySecret 键密钥参数
      * @param <T> 泛型类型
-     * @return
      */
     public static <T> boolean verifySelfSignature(T data, String sign, String keySecret) {
         return verifySelfSignature(data, sign, keySecret, false);
@@ -244,20 +227,16 @@ public class SignatureUtil {
      * 所以如果是post + json面临的问题就是最上面说的那种复杂情况，要保证json的字段有一定顺序（当然放入可以没有，但是加签一定要保证顺序）
      * 因为json传参的时候有一个形参来接收整个json字符串。那么加签的时候其实就是对这个形参=json字符串进行加签，而不是对json字符串里面的字符再排序再加钱。
      * 这里的json已经是一个参数的具体value了，是一个字符串
-     *
-     *
      * 针对这种有几种解决方案
      * 1. 强制对json的key进行ascii排序
      * 2. 跳过处理复杂结构
      * 3. 将复杂的嵌套结构全部平铺到第一层级
-     *
      * 这个方法就是给出了后面两种解决方案， 第一种方案，太过随机，不建议使用
      *
      * @param keySecret 秘钥
      * @param sign 签名参数
-     * @param data      待处理数据
-     * @param flatten   是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
-     * @return
+     * @param data 待处理数据
+     * @param flatten 是否平铺, 如果为false的话，则跳过复杂嵌套对象的处理，只处理基本类型
      */
     public static <T> boolean verifySelfSignature(T data, String sign, String keySecret, boolean flatten) {
         if (StringUtils.isEmpty(sign)) {
@@ -277,7 +256,6 @@ public class SignatureUtil {
      * 是否基本类型或基本对象
      *
      * @param obj 对象实例
-     * @return
      */
     private static boolean isBasicType(Object obj) {
         return obj instanceof String || obj instanceof Number || obj instanceof Boolean || obj instanceof Character;
@@ -288,12 +266,12 @@ public class SignatureUtil {
      * 对键值对参数进行升序url编码后进行sha1
      *
      * @param params 格式化参数列表
-     * @return
      */
     public static String sha1(Map<String, Object> params) {
         final String s = asciiSortToQueryStringOnlyBasicType(params);
         return SecureUtil.sha1(s);
     }
+
     /**
      * @param args 参数
      */

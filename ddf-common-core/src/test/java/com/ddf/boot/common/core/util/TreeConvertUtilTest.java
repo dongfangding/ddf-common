@@ -25,13 +25,11 @@ class TreeConvertUtilTest {
     @Test
     @DisplayName("应按父子关系构建树结构")
     void shouldConvertFlatNodesToTree() {
-        List<TreeConvertUtil.Node> nodes = List.of(
-            TreeConvertUtil.Node.of("root-1", 1L, 0L, new ArrayList<>()),
-            TreeConvertUtil.Node.of("child-1-1", 2L, 1L, new ArrayList<>()),
-            TreeConvertUtil.Node.of("child-1-2", 3L, 1L, new ArrayList<>()),
-            TreeConvertUtil.Node.of("grandchild-1-1-1", 4L, 2L, new ArrayList<>()),
-            TreeConvertUtil.Node.of("root-2", 5L, null, new ArrayList<>())
-        );
+        List<TreeConvertUtil.Node> nodes = List.of(TreeConvertUtil.Node.of("root-1", 1L, 0L, new ArrayList<>()),
+                TreeConvertUtil.Node.of("child-1-1", 2L, 1L, new ArrayList<>()),
+                TreeConvertUtil.Node.of("child-1-2", 3L, 1L, new ArrayList<>()),
+                TreeConvertUtil.Node.of("grandchild-1-1-1", 4L, 2L, new ArrayList<>()),
+                TreeConvertUtil.Node.of("root-2", 5L, null, new ArrayList<>()));
 
         List<TreeConvertUtil.Node> tree = TreeConvertUtil.convert(nodes);
 
@@ -47,9 +45,7 @@ class TreeConvertUtilTest {
     @Test
     @DisplayName("父节点缺失的孤儿节点不应进入根结果")
     void shouldIgnoreOrphanNodeFromRootResult() {
-        List<TreeConvertUtil.Node> nodes = List.of(
-            TreeConvertUtil.Node.of("orphan", 10L, 99L, new ArrayList<>())
-        );
+        List<TreeConvertUtil.Node> nodes = List.of(TreeConvertUtil.Node.of("orphan", 10L, 99L, new ArrayList<>()));
 
         List<TreeConvertUtil.Node> tree = TreeConvertUtil.convert(nodes);
 

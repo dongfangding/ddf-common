@@ -8,28 +8,28 @@ package com.ddf.boot.common.mvc.permissionscan;
  * @since 2025/04/29 11:11
  */
 public enum PermissionMenuType {
-	/**
-	 * 目录
-	 */
-	CATELOG,
-	/**
-	 * 菜单
-	 */
+    /**
+     * 目录
+     */
+    CATELOG,
+    /**
+     * 菜单
+     */
     MENU,
-	/**
-	 * 按钮
-	 */
+    /**
+     * 按钮
+     */
     BUTTON,
 
-	/**
-	 * 内嵌
-	 */
-	EMBEDDED,
+    /**
+     * 内嵌
+     */
+    EMBEDDED,
 
-	/**
-	 * 外链
-	 */
-	LINK,
+    /**
+     * 外链
+     */
+    LINK,
 
-	;
+    ;
 }

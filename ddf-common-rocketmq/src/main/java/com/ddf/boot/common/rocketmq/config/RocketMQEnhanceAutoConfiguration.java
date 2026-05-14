@@ -25,7 +25,7 @@ public class RocketMQEnhanceAutoConfiguration {
      */
     @Bean
     public RocketProducer rocketMQEnhanceTemplate(RocketMQTemplate rocketMQTemplate,
-            RocketEnhanceProperties rocketEnhanceProperties){
+            RocketEnhanceProperties rocketEnhanceProperties) {
         return new RocketProducer(rocketMQTemplate, rocketEnhanceProperties);
     }
 
@@ -34,12 +34,13 @@ public class RocketMQEnhanceAutoConfiguration {
      */
     @Bean
     @Primary
-    public RocketMQMessageConverter enhanceRocketMQMessageConverter(){
+    public RocketMQMessageConverter enhanceRocketMQMessageConverter() {
         RocketMQMessageConverter converter = new RocketMQMessageConverter();
-        CompositeMessageConverter compositeMessageConverter = (CompositeMessageConverter) converter.getMessageConverter();
+        CompositeMessageConverter compositeMessageConverter =
+                (CompositeMessageConverter) converter.getMessageConverter();
         List<MessageConverter> messageConverterList = compositeMessageConverter.getConverters();
         for (MessageConverter messageConverter : messageConverterList) {
-            if(messageConverter instanceof MappingJackson2MessageConverter jackson2MessageConverter){
+            if (messageConverter instanceof MappingJackson2MessageConverter jackson2MessageConverter) {
                 ObjectMapper objectMapper = jackson2MessageConverter.getObjectMapper();
                 objectMapper.registerModules(new JavaTimeModule());
             }
@@ -50,11 +51,12 @@ public class RocketMQEnhanceAutoConfiguration {
 
     /**
      * 环境隔离配置
+     *
      * @param rocketEnhanceProperties 参数
      */
     @Bean
-    @ConditionalOnProperty(name="rocketmq.enhance.enabledIsolation", havingValue="true")
-    public EnvironmentIsolationProcessor environmentSetup(RocketEnhanceProperties rocketEnhanceProperties){
+    @ConditionalOnProperty(name = "rocketmq.enhance.enabledIsolation", havingValue = "true")
+    public EnvironmentIsolationProcessor environmentSetup(RocketEnhanceProperties rocketEnhanceProperties) {
         return new EnvironmentIsolationProcessor(rocketEnhanceProperties);
     }
 

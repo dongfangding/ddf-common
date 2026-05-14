@@ -17,7 +17,6 @@ public class ObjectUtil {
      *
      * @param object 对象
      * @param supplier 供应参数
-     * @return
      * @param <T> 泛型类型
      * @param <R> 返回值泛型类型
      */
@@ -34,7 +33,6 @@ public class ObjectUtil {
      * @param object 对象
      * @param supplier 供应参数
      * @param defaultValue 参数
-     * @return
      * @param <T> 泛型类型
      * @param <R> 返回值泛型类型
      */

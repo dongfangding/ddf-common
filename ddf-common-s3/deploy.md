@@ -43,12 +43,12 @@ docker-compose logs -f minio
 
 ### 环境变量
 
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| MINIO_ROOT_USER | Root 用户名 | admin |
-| MINIO_ROOT_PASSWORD | Root 密码 | ChangeMe@2024! |
-| MINIO_REGION | 区域名称 | cn-bj1 |
-| MINIO_NODE_NAME | 节点名称 | local |
+| 变量                  | 说明       | 默认值            |
+|---------------------|----------|----------------|
+| MINIO_ROOT_USER     | Root 用户名 | admin          |
+| MINIO_ROOT_PASSWORD | Root 密码  | ChangeMe@2024! |
+| MINIO_REGION        | 区域名称     | cn-bj1         |
+| MINIO_NODE_NAME     | 节点名称     | local          |
 
 ### 生产环境建议配置
 
@@ -197,11 +197,11 @@ networks:
 
 ## 资源规划建议
 
-| 业务规模 | CPU | 内存 | 磁盘 |
-|---------|-----|------|------|
-| 小型项目 | 2核 | 4GB | 500GB SSD |
-| 中型项目 | 4核 | 8GB | 1TB SSD |
-| 大型项目 | 8核 | 16GB | 4TB SSD |
+| 业务规模 | CPU | 内存   | 磁盘        |
+|------|-----|------|-----------|
+| 小型项目 | 2核  | 4GB  | 500GB SSD |
+| 中型项目 | 4核  | 8GB  | 1TB SSD   |
+| 大型项目 | 8核  | 16GB | 4TB SSD   |
 
 ## 注意事项
 

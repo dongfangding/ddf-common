@@ -132,9 +132,8 @@ public class PageUtilTest {
     @DisplayName("测试 convertFromSpringData - 从Spring Data转换")
     public void testConvertFromSpringData() {
         List<String> content = Arrays.asList("a", "b", "c");
-        org.springframework.data.domain.Page<String> springPage =
-                new org.springframework.data.domain.PageImpl<>(content,
-                        org.springframework.data.domain.PageRequest.of(1, 10), 50);
+        org.springframework.data.domain.Page<String> springPage = new org.springframework.data.domain.PageImpl<>(
+                content, org.springframework.data.domain.PageRequest.of(1, 10), 50);
 
         PageResult<String> result = PageUtil.convertFromSpringData(springPage);
 
@@ -148,11 +147,8 @@ public class PageUtilTest {
     @Test
     @DisplayName("测试 convertFromSpringData - 空分页")
     public void testConvertFromSpringData_Empty() {
-        org.springframework.data.domain.Page<String> springPage =
-                new org.springframework.data.domain.PageImpl<>(
-                        Collections.emptyList(),
-                        org.springframework.data.domain.PageRequest.of(0, 10),
-                        0);
+        org.springframework.data.domain.Page<String> springPage = new org.springframework.data.domain.PageImpl<>(
+                Collections.emptyList(), org.springframework.data.domain.PageRequest.of(0, 10), 0);
 
         PageResult<String> result = PageUtil.convertFromSpringData(springPage);
 

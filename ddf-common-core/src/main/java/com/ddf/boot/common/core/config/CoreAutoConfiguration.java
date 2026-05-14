@@ -26,8 +26,6 @@ public class CoreAutoConfiguration {
 
     /**
      * 线程池优雅关闭注册类
-     *
-     * @return
      */
     @Bean
     @ConditionalOnMissingBean

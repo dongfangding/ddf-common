@@ -15,7 +15,6 @@ import org.springframework.util.Assert;
 /**
  * Bean拷贝工具类
  * 暂不支持同属性名原始类型与包装类型的拷贝
- *
  * 这个是有缓存的，第一次会与其它使用反射实现的速度差不多，但后面就非常快了，和mapstruct类似的字节码技术的速度就几乎持平了
  *
  * @author SteveGuo
@@ -30,9 +29,8 @@ public class BeanCopierUtils {
      * 单个Bean拷贝
      *
      * @param sourceInstance 源实例
-     * @param targetClass    目标类
-     * @param <T>            目标类型
-     * @return
+     * @param targetClass 目标类
+     * @param <T> 目标类型
      */
     public static <T> T copy(Object sourceInstance, Class<T> targetClass) {
         return copy(sourceInstance, targetClass, null);
@@ -42,10 +40,9 @@ public class BeanCopierUtils {
      * 单个Bean拷贝
      *
      * @param sourceInstance 源实例
-     * @param targetClass    目标类
-     * @param <T>            目标类型
-     * @param converter      同名称不同类型的转换器
-     * @return
+     * @param targetClass 目标类
+     * @param <T> 目标类型
+     * @param converter 同名称不同类型的转换器
      */
     public static <T> T copy(Object sourceInstance, Class<T> targetClass, Converter converter) {
         if (Objects.isNull(sourceInstance)) {
@@ -57,8 +54,7 @@ public class BeanCopierUtils {
         try {
             target = targetClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(
-                    "Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
+            throw new RuntimeException("Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
         }
         copy(sourceInstance, target, converter);
         return target;
@@ -68,9 +64,8 @@ public class BeanCopierUtils {
      * Bean列表拷贝
      *
      * @param sourceInstanceList 源实例列表
-     * @param targetClass        目标类
-     * @param <T>                目标类型
-     * @return
+     * @param targetClass 目标类
+     * @param <T> 目标类型
      */
     public static <T> List<T> copy(List<?> sourceInstanceList, Class<T> targetClass) {
         return copy(sourceInstanceList, targetClass, null, true);
@@ -80,10 +75,9 @@ public class BeanCopierUtils {
      * Bean列表拷贝
      *
      * @param sourceInstanceList 源实例列表
-     * @param targetClass        目标类
-     * @param <T>                目标类型
-     * @param needSort           是否需要排序，如果为false，则会采用并行流拷贝，不能保持原来的排序，如果为true，采用串行流拷贝，保持原来的排序
-     * @return
+     * @param targetClass 目标类
+     * @param <T> 目标类型
+     * @param needSort 是否需要排序，如果为false，则会采用并行流拷贝，不能保持原来的排序，如果为true，采用串行流拷贝，保持原来的排序
      */
     public static <T> List<T> copy(List<?> sourceInstanceList, Class<T> targetClass, boolean needSort) {
         return copy(sourceInstanceList, targetClass, null, needSort);
@@ -93,11 +87,10 @@ public class BeanCopierUtils {
      * Bean列表拷贝
      *
      * @param sourceInstanceList 源实例列表
-     * @param targetClass        目标类
-     * @param <T>                目标类型
-     * @param converter          同名称不同类型的转换器
-     * @param needSort           是否需要排序，如果为false，则会采用并行流拷贝，不能保持原来的排序，如果为true，采用串行流拷贝，保持原来的排序
-     * @return
+     * @param targetClass 目标类
+     * @param <T> 目标类型
+     * @param converter 同名称不同类型的转换器
+     * @param needSort 是否需要排序，如果为false，则会采用并行流拷贝，不能保持原来的排序，如果为true，采用串行流拷贝，保持原来的排序
      */
     public static <T> List<T> copy(List<?> sourceInstanceList, Class<T> targetClass, Converter converter,
             boolean needSort) {
@@ -123,6 +116,7 @@ public class BeanCopierUtils {
             return target;
         }).collect(Collectors.toList());
     }
+
     /**
      * @param source 参数
      * @param target 参数
@@ -130,6 +124,7 @@ public class BeanCopierUtils {
     public static void copy(Object source, Object target) {
         copy(source, target, null);
     }
+
     /**
      * @param source 参数
      * @param target 参数
@@ -140,6 +135,7 @@ public class BeanCopierUtils {
         BeanCopier copier = getBeanCopier(source.getClass(), target.getClass(), useConverter);
         copier.copy(source, target, converter);
     }
+
     /**
      * @param sourceClass 参数
      * @param targetClass 参数
@@ -156,6 +152,7 @@ public class BeanCopierUtils {
         }
         return copier;
     }
+
     /**
      * @param class1 参数
      * @param class2 参数
@@ -163,6 +160,7 @@ public class BeanCopierUtils {
     private static String generateKey(Class<?> class1, Class<?> class2) {
         return class1.toString() + class2.toString();
     }
+
     /**
      * @param targetClass 参数
      */
@@ -176,8 +174,7 @@ public class BeanCopierUtils {
             constructorAccess.newInstance();
             CONSTRUCTOR_ACCESS_CACHE.put(targetClass.toString(), constructorAccess);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
+            throw new RuntimeException("Create new instance of %s failed: %s".formatted(targetClass, e.getMessage()));
         }
         return constructorAccess;
     }

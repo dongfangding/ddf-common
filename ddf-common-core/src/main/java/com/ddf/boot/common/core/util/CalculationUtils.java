@@ -21,15 +21,15 @@ public class CalculationUtils {
     /**
      * 根据起始值和过去的时间，计算当前所处的位置数值
      *
-     * @param startValue    起始数值
+     * @param startValue 起始数值
      * @param elapsedMillis 已过去的时间（毫秒）
-     * @param unitStep      基础单位步长
-     * @param segments      定义的阶梯区间列表
+     * @param unitStep 基础单位步长
+     * @param segments 定义的阶梯区间列表
      * @param defaultFactor 超出所有区间后的默认系数
      * @return 当前达到的数值
      */
     public static BigDecimal calculateCurrentValue(BigDecimal startValue, long elapsedMillis, BigDecimal unitStep,
-        List<RangeSegment> segments, BigDecimal defaultFactor) {
+            List<RangeSegment> segments, BigDecimal defaultFactor) {
         if (elapsedMillis <= 0) {
             return startValue;
         }
@@ -46,17 +46,13 @@ public class CalculationUtils {
 
             // 校验：区间连贯性检查
             if (currentPos.compareTo(segment.getLowerBound()) < 0) {
-                throw new IllegalArgumentException(String.format(
-                    "区间不连贯！当前进度: %s, 缺失区间的下限: %s", currentPos.toPlainString(), segment
-                        .getLowerBound()
-                        .toPlainString()
-                ));
+                throw new IllegalArgumentException(
+                        String.format("区间不连贯！当前进度: %s, 缺失区间的下限: %s", currentPos.toPlainString(),
+                                segment.getLowerBound().toPlainString()));
             }
 
             // 计算当前位置到本区间上限的距离
-            BigDecimal distanceInSegment = segment
-                .getUpperBound()
-                .subtract(currentPos);
+            BigDecimal distanceInSegment = segment.getUpperBound().subtract(currentPos);
             // 计算本区间内的速度：单位步长 * 系数
             BigDecimal speed = unitStep.multiply(segment.getFactor());
 
@@ -86,6 +82,7 @@ public class CalculationUtils {
 
     /**
      * 分段累加计算时长
+     *
      * @param startValue 参数
      * @param targetValue 参数
      * @param unitStep 参数
@@ -93,7 +90,7 @@ public class CalculationUtils {
      * @param defaultFactor 参数
      */
     public static long calculateSegmentedDuration(BigDecimal startValue, BigDecimal targetValue, BigDecimal unitStep,
-        List<RangeSegment> segments, BigDecimal defaultFactor) {
+            List<RangeSegment> segments, BigDecimal defaultFactor) {
         if (targetValue.compareTo(startValue) <= 0) {
             return 0L;
         }
@@ -103,16 +100,12 @@ public class CalculationUtils {
 
         for (RangeSegment segment : segments) {
             if (currentPos.compareTo(segment.getLowerBound()) < 0) {
-                throw new IllegalArgumentException(String.format(
-                    "区间不连贯！当前进度: %s, 缺失区间的下限: %s", currentPos.toPlainString(), segment
-                        .getLowerBound()
-                        .toPlainString()
-                ));
+                throw new IllegalArgumentException(
+                        String.format("区间不连贯！当前进度: %s, 缺失区间的下限: %s", currentPos.toPlainString(),
+                                segment.getLowerBound().toPlainString()));
             }
 
-            if (segment
-                .getLowerBound()
-                .compareTo(segment.getUpperBound()) >= 0) {
+            if (segment.getLowerBound().compareTo(segment.getUpperBound()) >= 0) {
                 throw new IllegalArgumentException("区间配置错误：下限必须小于上限");
             }
 
@@ -139,8 +132,6 @@ public class CalculationUtils {
             totalTimeExact = totalTimeExact.add(remainingDistance.divide(finalSpeed, CALC_SCALE, RoundingMode.HALF_UP));
         }
 
-        return totalTimeExact
-            .setScale(0, RoundingMode.HALF_UP)
-            .longValue();
+        return totalTimeExact.setScale(0, RoundingMode.HALF_UP).longValue();
     }
 }

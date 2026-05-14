@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 /**
  * 允许在执行一个@ResponseBody 或一个ResponseEntity控制器方法之后但在使用一个主体写入正文之前自定义响应HttpMessageConverter。
  * 如果不想要自己的返回值生效，可以在控制器类上使用@Controller代替@RestController或者{@link CommonResponseBodyAdviceProperties}
- *
  * 这里提供逻辑，但没有将该类加入到容器中，就是为了让其他服务直接集成该类，然后再添加自己的@RestControllerAdvice(basePackages = {""})
  *
  * @author dongfang.ding
@@ -26,14 +25,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    private static final Class[] ANNOTATIONS = {
-            RequestMapping.class, GetMapping.class, PostMapping.class, DeleteMapping.class, PutMapping.class
-    };
+    private static final Class[] ANNOTATIONS =
+            {RequestMapping.class, GetMapping.class, PostMapping.class, DeleteMapping.class, PutMapping.class};
 
     /**
      * @param returnType return类型
      * @param converterType converter类型
-     * @return
      */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -44,6 +41,7 @@ public class AbstractCommonResponseBodyAdvice implements ResponseBodyAdvice<Obje
         return Arrays.stream(ANNOTATIONS).anyMatch(
                 annotation -> annotation.isAnnotation() && element.isAnnotationPresent(annotation));
     }
+
     /**
      * @param body 参数
      * @param returnType 参数

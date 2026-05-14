@@ -15,20 +15,18 @@ public class DefaultWeightProportion implements WeightProportion {
 
     private Double weightValue;
 
-	/**
-	 * 当前记录的奖励值， 虽然通过getKey能找到原始记录，然后能找到记录上绑定的所有元数据，但某些情况下不关心多余的元数据，只关心中奖的数值，
-	 * 那就可以使用这个
-	 */
-	private Double rewardValue;
-	public static DefaultWeightProportion of(String key, Double weightValue) {
-		return DefaultWeightProportion.builder()
-				.key(key)
-				.weightValue(weightValue)
-				.build();
-	}
+    /**
+     * 当前记录的奖励值， 虽然通过getKey能找到原始记录，然后能找到记录上绑定的所有元数据，但某些情况下不关心多余的元数据，只关心中奖的数值，
+     * 那就可以使用这个
+     */
+    private Double rewardValue;
+
+    public static DefaultWeightProportion of(String key, Double weightValue) {
+        return DefaultWeightProportion.builder().key(key).weightValue(weightValue).build();
+    }
 
 
-	@Override
+    @Override
     public String getKey() {
         return key;
     }

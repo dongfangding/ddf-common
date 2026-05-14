@@ -12,12 +12,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-xxl-executor` solves the **"in distributed environments, scheduled tasks need centralized scheduling to avoid single-point execution"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Timed data cleanup | Single-node Quartz tasks duplicate execution in clusters | XXL-JOB central scheduling assigns tasks to only one executor |
-| Batch order processing | Task volume is large; single-machine execution takes too long | Sharding broadcast strategy; multiple machines process different data shards in parallel |
-| Timed report generation | Task failures are invisible and cannot be retried | Admin console visual monitoring, failure alerts, manual retry |
-| Elastic scaling | Need temporary execution nodes during business peaks | New nodes auto-register to the scheduling center and immediately participate in task distribution |
+| Scenario                | Typical Problem                                               | What the Module Provides                                                                          |
+|-------------------------|---------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Timed data cleanup      | Single-node Quartz tasks duplicate execution in clusters      | XXL-JOB central scheduling assigns tasks to only one executor                                     |
+| Batch order processing  | Task volume is large; single-machine execution takes too long | Sharding broadcast strategy; multiple machines process different data shards in parallel          |
+| Timed report generation | Task failures are invisible and cannot be retried             | Admin console visual monitoring, failure alerts, manual retry                                     |
+| Elastic scaling         | Need temporary execution nodes during business peaks          | New nodes auto-register to the scheduling center and immediately participate in task distribution |
 
 ---
 
@@ -133,15 +133,15 @@ public ReturnT<String> paramTask(String param) {
 
 Select execution strategy for tasks in the Admin console:
 
-| Strategy | Description | Suitable For |
-| --- | --- | --- |
-| `FIRST` | Fixed first executor | Test environments |
-| `ROUND` | Round-robin | Load balancing |
-| `RANDOM` | Random | Simple distribution |
-| `CONSISTENT_HASH` | Consistent hash | Same parameter always routes to same node |
-| `FAILOVER` | Failover | High availability requirements |
-| `BUSYOVER` | Busy transfer | Avoid busy nodes |
-| `SHARDING_BROADCAST` | Sharding broadcast | Large data parallel processing |
+| Strategy             | Description          | Suitable For                              |
+|----------------------|----------------------|-------------------------------------------|
+| `FIRST`              | Fixed first executor | Test environments                         |
+| `ROUND`              | Round-robin          | Load balancing                            |
+| `RANDOM`             | Random               | Simple distribution                       |
+| `CONSISTENT_HASH`    | Consistent hash      | Same parameter always routes to same node |
+| `FAILOVER`           | Failover             | High availability requirements            |
+| `BUSYOVER`           | Busy transfer        | Avoid busy nodes                          |
+| `SHARDING_BROADCAST` | Sharding broadcast   | Large data parallel processing            |
 
 ### 5.2 Executor Port Planning
 
@@ -186,11 +186,11 @@ public ReturnT<String> idempotentTask(String param) {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-redis` | Combine with Redis distributed lock for task idempotency |
-| `ddf-common-core` | Utility, logging, and exception handling support |
-| `ddf-common-data-mysql-starter` | Task data persistence to MySQL |
+| Module                          | How They Cooperate                                       |
+|---------------------------------|----------------------------------------------------------|
+| `ddf-common-redis`              | Combine with Redis distributed lock for task idempotency |
+| `ddf-common-core`               | Utility, logging, and exception handling support         |
+| `ddf-common-data-mysql-starter` | Task data persistence to MySQL                           |
 
 ---
 

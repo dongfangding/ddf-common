@@ -12,13 +12,13 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-limit` answers the cross-cutting question **"how do I govern API traffic and form safety?"**
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| API anti-scraping | Login / SMS endpoints bombarded by high-frequency calls | `@RateLimit` token-bucket limiting with global / per-user / custom dimensions |
-| Multi-level limiting | Same endpoint needs both total-traffic and per-user caps | `@MultiRateLimit` stacks multiple rules as layered gates |
-| Conditional limiting | Limiting should trigger only for specific parameter values | `@RateLimit(condition = "#type == 'GUEST'")` SpEL expression |
-| Repeat-submission protection | Double-click creates duplicate orders | `@Repeatable` request-parameter fingerprint deduplication |
-| Load-test toggle | Global limiting rules skew load-test results | `@EnableRateLimit` / `@EnableRepeatable` global on/off switch |
+| Category                     | Typical Problem                                            | What the Module Provides                                                      |
+|------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------|
+| API anti-scraping            | Login / SMS endpoints bombarded by high-frequency calls    | `@RateLimit` token-bucket limiting with global / per-user / custom dimensions |
+| Multi-level limiting         | Same endpoint needs both total-traffic and per-user caps   | `@MultiRateLimit` stacks multiple rules as layered gates                      |
+| Conditional limiting         | Limiting should trigger only for specific parameter values | `@RateLimit(condition = "#type == 'GUEST'")` SpEL expression                  |
+| Repeat-submission protection | Double-click creates duplicate orders                      | `@Repeatable` request-parameter fingerprint deduplication                     |
+| Load-test toggle             | Global limiting rules skew load-test results               | `@EnableRateLimit` / `@EnableRepeatable` global on/off switch                 |
 
 > ⚠️ The default repeat-submit implementation (`LocalRepeatableValidator`) is **local-cache based** and does
 > not support distributed clusters. For multi-instance deployments, implement `RepeatableValidator` with Redis.
@@ -61,12 +61,12 @@ public class Application {
 
 `@EnableRateLimit` attributes (global defaults):
 
-| Attribute | Description | Default |
-| ----- | ----- | ----- |
-| `max` | Token bucket capacity; `0` means unlimited | `0` |
-| `rate` | Token refill rate (tokens/second); `0` means unlimited | `0` |
-| `keyGenerator` | Rate-limit key generator bean name | `globalRateLimitKeyGenerator` |
-| `cloudRefresh` | Enable dynamic refresh (requires `RateLimitPropertiesCollect` impl) | `false` |
+| Attribute      | Description                                                         | Default                       |
+|----------------|---------------------------------------------------------------------|-------------------------------|
+| `max`          | Token bucket capacity; `0` means unlimited                          | `0`                           |
+| `rate`         | Token refill rate (tokens/second); `0` means unlimited              | `0`                           |
+| `keyGenerator` | Rate-limit key generator bean name                                  | `globalRateLimitKeyGenerator` |
+| `cloudRefresh` | Enable dynamic refresh (requires `RateLimitPropertiesCollect` impl) | `false`                       |
 
 ### 3.2 Enable repeat-submission protection
 
@@ -80,10 +80,10 @@ public class Application {
 
 `@EnableRepeatable` attributes:
 
-| Attribute | Description | Default |
-| ----- | ----- | ----- |
-| `interval` | Interval for treating requests as duplicates (milliseconds) | `1000` |
-| `globalValidator` | Global validator bean name | `localRepeatableValidator` |
+| Attribute         | Description                                                 | Default                    |
+|-------------------|-------------------------------------------------------------|----------------------------|
+| `interval`        | Interval for treating requests as duplicates (milliseconds) | `1000`                     |
+| `globalValidator` | Global validator bean name                                  | `localRepeatableValidator` |
 
 > The two annotations are independent; enable either or both as needed.
 
@@ -174,11 +174,11 @@ public class OrderController {
 
 `@Repeatable` attributes:
 
-| Attribute | Description | Default |
-| ----- | ----- | ----- |
-| `interval` | Interval in ms; `0` means inherit from `@EnableRepeatable` | `0` |
-| `validator` | Validator bean name; empty string means inherit global | `""` |
-| `throwError` | Whether to throw exception on duplicate; `false` silently passes through | `true` |
+| Attribute    | Description                                                              | Default |
+|--------------|--------------------------------------------------------------------------|---------|
+| `interval`   | Interval in ms; `0` means inherit from `@EnableRepeatable`               | `0`     |
+| `validator`  | Validator bean name; empty string means inherit global                   | `""`    |
+| `throwError` | Whether to throw exception on duplicate; `false` silently passes through | `true`  |
 
 > `throwError = false` use case: when the original request response may be slower than the duplicate,
 > the frontend could receive an error and render a failure page. Setting `false` lets the duplicate
@@ -188,10 +188,10 @@ public class OrderController {
 
 Two built-in generators control the limiting dimension:
 
-| Generator | Bean name | Dimension | Use case |
-| ----- | ----- | ----- | ----- |
-| Global method-level | `globalRateLimitKeyGenerator` | Class name + Method name | Total interface traffic control |
-| Identity-level | `identityRateLimitKeyGenerator` | userId / imei + Class + Method | Per-user frequency control |
+| Generator           | Bean name                       | Dimension                      | Use case                        |
+|---------------------|---------------------------------|--------------------------------|---------------------------------|
+| Global method-level | `globalRateLimitKeyGenerator`   | Class name + Method name       | Total interface traffic control |
+| Identity-level      | `identityRateLimitKeyGenerator` | userId / imei + Class + Method | Per-user frequency control      |
 
 Custom key generator:
 
@@ -311,13 +311,13 @@ public class ApiController {
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-authentication` | `IdentityRateLimitKeyGenerator` reads `UserContextUtil.getUserId()` / `getImei()` for identity keys |
-| `ddf-common-redis` | Token-bucket algorithm via `RedisTemplateHelper.tokenBucketRateLimitAcquire`; key prefix via `ApplicationNamedKeyGenerator` |
-| `ddf-common-mvc` | Limit / repeat exceptions caught by the global exception handler and wrapped into `ResponseData` |
-| `ddf-common-api` | `LimitExceptionCode.RATE_LIMIT` and `LimitExceptionCode.REPEAT_SUBMIT` implement `BaseCallbackCode` |
-| `ddf-common-starter-web` | This module is a core capability of that starter |
+| Module                      | How They Cooperate                                                                                                          |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-authentication` | `IdentityRateLimitKeyGenerator` reads `UserContextUtil.getUserId()` / `getImei()` for identity keys                         |
+| `ddf-common-redis`          | Token-bucket algorithm via `RedisTemplateHelper.tokenBucketRateLimitAcquire`; key prefix via `ApplicationNamedKeyGenerator` |
+| `ddf-common-mvc`            | Limit / repeat exceptions caught by the global exception handler and wrapped into `ResponseData`                            |
+| `ddf-common-api`            | `LimitExceptionCode.RATE_LIMIT` and `LimitExceptionCode.REPEAT_SUBMIT` implement `BaseCallbackCode`                         |
+| `ddf-common-starter-web`    | This module is a core capability of that starter                                                                            |
 
 ---
 

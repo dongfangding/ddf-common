@@ -13,16 +13,16 @@
 `ddf-common-redis` 不是一层简单封装，它是 ddf-common 中 **承担"分布式状态"职责** 的基础设施模块。
 当你的项目出现下列任一诉求，就应该引入它：
 
-| 场景类别 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 缓存/读多写少 | 想要统一 JSON 序列化、避免每个 key 自己写 prefix | `redisTemplate` / `stringRedisTemplate` 默认序列化器 + `ApplicationNamedKeyGenerator` |
-| 并发限流 | 接口防刷、登录验证码限频、活动限速 | `RedisTemplateHelper#sliderWindowAccess` / `tokenBucketRateLimitAcquire` / `leakyBucketRateLimitAcquire` |
-| 计数器 | 用户每日发文数、订单批次计数，需要"自增 + TTL + 上限校验" 原子完成 | `incrementKeyExpire` / `hashIncreaseCheck` / `stringIncrWithLimit` 等 30+ Lua 脚本 |
-| 业务榜单 | 周榜/月榜，要求分数相同时按时间先后排序 | `zSetAddWithMaxCheckSupportBiz` / `zSetRevRangeBizRankingQuery` |
-| 防穿透 | 大量空查询击穿到数据库 | `RedisBloomFilter` 基于 Redisson 实现的分布式布隆过滤器 |
-| 多 Redis 数据源 | 主业务库 + 风控库 + 缓存库分离 | `customizer.infra.redis.extra-multi` 一份配置即可拉起多套 `RedissonClient` / `RedisTemplate` |
-| 地理位置 | 附近的人、附近门店 | `GeoHelper` 基于 Redisson `RGeo` |
-| 发布订阅 | 跨实例广播配置变更、踢人下线 | `RedisTopic` 基于 Redisson `RTopic` |
+| 场景类别        | 典型问题                                    | 模块提供的能力                                                                                                  |
+|-------------|-----------------------------------------|----------------------------------------------------------------------------------------------------------|
+| 缓存/读多写少     | 想要统一 JSON 序列化、避免每个 key 自己写 prefix       | `redisTemplate` / `stringRedisTemplate` 默认序列化器 + `ApplicationNamedKeyGenerator`                          |
+| 并发限流        | 接口防刷、登录验证码限频、活动限速                       | `RedisTemplateHelper#sliderWindowAccess` / `tokenBucketRateLimitAcquire` / `leakyBucketRateLimitAcquire` |
+| 计数器         | 用户每日发文数、订单批次计数，需要"自增 + TTL + 上限校验" 原子完成 | `incrementKeyExpire` / `hashIncreaseCheck` / `stringIncrWithLimit` 等 30+ Lua 脚本                          |
+| 业务榜单        | 周榜/月榜，要求分数相同时按时间先后排序                    | `zSetAddWithMaxCheckSupportBiz` / `zSetRevRangeBizRankingQuery`                                          |
+| 防穿透         | 大量空查询击穿到数据库                             | `RedisBloomFilter` 基于 Redisson 实现的分布式布隆过滤器                                                               |
+| 多 Redis 数据源 | 主业务库 + 风控库 + 缓存库分离                      | `customizer.infra.redis.extra-multi` 一份配置即可拉起多套 `RedissonClient` / `RedisTemplate`                       |
+| 地理位置        | 附近的人、附近门店                               | `GeoHelper` 基于 Redisson `RGeo`                                                                           |
+| 发布订阅        | 跨实例广播配置变更、踢人下线                          | `RedisTopic` 基于 Redisson `RTopic`                                                                        |
 
 > ⚠️ 本模块不包含 Spring Cache 注解（`@Cacheable`），如果只需要方法级缓存，
 > 请自行启用 Spring Boot 原生 `spring-boot-starter-cache`。
@@ -97,14 +97,14 @@ spring:
 
 启动后默认得到下列 Bean，可直接 `@Resource` / `@Autowired` 使用：
 
-| Bean 名 | 类型 | 说明 |
-| ----- | ----- | ----- |
-| `redisTemplate` | `RedisTemplate<Object, Object>` | 通用模板，值使用 `GenericJackson2JsonRedisSerializer` |
-| `stringRedisTemplate` | `StringRedisTemplate` | 模块默认采用 `ObjectStringRedisSerializer`，自动处理对象 ↔ String |
-| `redisTemplateHelper` | `RedisTemplateHelper` | Lua 脚本 + Redisson 复合能力封装 |
-| `redisCommandHelper` | `RedisCommandHelper` | Redis 标准命令包装器，约 1980 行覆盖所有数据结构 |
-| `geoHelper` | `GeoHelper` | 基于 Redisson `RGeo` 的地理位置工具 |
-| `redissonClient` | `RedissonClient` | 由 Redisson Starter 注入，本模块通过 `RedissonAutoConfigurationCustomizer` 注入 Codec 与连接信息 |
+| Bean 名                | 类型                              | 说明                                                                               |
+|-----------------------|---------------------------------|----------------------------------------------------------------------------------|
+| `redisTemplate`       | `RedisTemplate<Object, Object>` | 通用模板，值使用 `GenericJackson2JsonRedisSerializer`                                    |
+| `stringRedisTemplate` | `StringRedisTemplate`           | 模块默认采用 `ObjectStringRedisSerializer`，自动处理对象 ↔ String                             |
+| `redisTemplateHelper` | `RedisTemplateHelper`           | Lua 脚本 + Redisson 复合能力封装                                                         |
+| `redisCommandHelper`  | `RedisCommandHelper`            | Redis 标准命令包装器，约 1980 行覆盖所有数据结构                                                   |
+| `geoHelper`           | `GeoHelper`                     | 基于 Redisson `RGeo` 的地理位置工具                                                       |
+| `redissonClient`      | `RedissonClient`                | 由 Redisson Starter 注入，本模块通过 `RedissonAutoConfigurationCustomizer` 注入 Codec 与连接信息 |
 
 ---
 
@@ -431,26 +431,26 @@ spring:
 
 参考 `RedisLuaScript` 接口，把脚本放到 `classpath:lua/xxx.lua`，再以 `RedisScript.of(...)` 声明常量；然后通过 `stringRedisTemplate.execute(script, keys, args)` 调用即可。模块内已提供 30+ 个脚本：
 
-| 分类 | 脚本常量 |
-| ----- | ----- |
-| 限流 | `TOKEN_BUCKET_RATE_LIMIT`、`SLIDER_WINDOW_COUNT` |
-| 计数 | `STRING_KEY_INCREMENT_EXPIRE`、`STRING_KEY_INCREMENT_EXPIRE_AT`、`STRING_INCREMENT_CHECK`、`STRING_TTL_INCR_WITH_LIMIT` |
-| Hash | `HASH_INCREMENT_CHECK`、`HASH_DECREMENT_CHECK`、`HASH_BATCH_INCREMENT_CHECK`、`MULTIPLE_HASH_BATCH_INCREMENT_CHECK`、`HASH_INCREMENT_PERSIST_LIMIT_VALUE`、`HASH_INCREASE_ROUNDING_REDUCE`、`HASH_INCR_WITH_FIRST_SET_TTL`、`HASH_INCR_FLOAT_ROUND_DECIMAL`、`HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO`、`HASH_VALUE_UPDATE_SELECTIVE` |
-| 安全删除 | `HASH_DELETE_WITH_CHECK_VALUE`、`STRING_DELETE_WITH_CHECK_VALUE` |
-| ZSet 业务榜单 | `ZSET_INCR_WITH_TIME`、`ZSET_ZADD_WITH_MAX_CHECK`、`ZSET_ZADD_WITH_TIME_MAX_CHECK`、`ZSET_AROUND_ELEMENT_RANK`、`ZSET_REV_RANGE_BIZ_RANKING_QUERY`、`ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY`、`ZSET_DELETE_WITH_MAX_SCORE_CHECK`、`ZSET_RANGEBYSCORE_ZREM` |
-| 其他 | `MAX_CAPACITY_HISTORY_CONTAINER`、`MAX_ELEMENT_DICT` |
+| 分类        | 脚本常量                                                                                                                                                                                                                                                                                                                          |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 限流        | `TOKEN_BUCKET_RATE_LIMIT`、`SLIDER_WINDOW_COUNT`                                                                                                                                                                                                                                                                               |
+| 计数        | `STRING_KEY_INCREMENT_EXPIRE`、`STRING_KEY_INCREMENT_EXPIRE_AT`、`STRING_INCREMENT_CHECK`、`STRING_TTL_INCR_WITH_LIMIT`                                                                                                                                                                                                          |
+| Hash      | `HASH_INCREMENT_CHECK`、`HASH_DECREMENT_CHECK`、`HASH_BATCH_INCREMENT_CHECK`、`MULTIPLE_HASH_BATCH_INCREMENT_CHECK`、`HASH_INCREMENT_PERSIST_LIMIT_VALUE`、`HASH_INCREASE_ROUNDING_REDUCE`、`HASH_INCR_WITH_FIRST_SET_TTL`、`HASH_INCR_FLOAT_ROUND_DECIMAL`、`HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO`、`HASH_VALUE_UPDATE_SELECTIVE` |
+| 安全删除      | `HASH_DELETE_WITH_CHECK_VALUE`、`STRING_DELETE_WITH_CHECK_VALUE`                                                                                                                                                                                                                                                               |
+| ZSet 业务榜单 | `ZSET_INCR_WITH_TIME`、`ZSET_ZADD_WITH_MAX_CHECK`、`ZSET_ZADD_WITH_TIME_MAX_CHECK`、`ZSET_AROUND_ELEMENT_RANK`、`ZSET_REV_RANGE_BIZ_RANKING_QUERY`、`ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY`、`ZSET_DELETE_WITH_MAX_SCORE_CHECK`、`ZSET_RANGEBYSCORE_ZREM`                                                                    |
+| 其他        | `MAX_CAPACITY_HISTORY_CONTAINER`、`MAX_ELEMENT_DICT`                                                                                                                                                                                                                                                                           |
 
 ---
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-core` | 提供 `RedisKeyConstraint` 接口、`BusinessException`、`SpringContextHolder`（`ApplicationNamedKeyGenerator` 通过它获取 `spring.application.name`） |
-| `ddf-common-limit` | 注解式限流（`@RateLimit`）底层调用 `RedisTemplateHelper.sliderWindowAccess` |
-| `ddf-common-alarm` | 报警去重 / 抑制窗口使用 `AlarmRedisKeyEnum` + `hashIncreaseCheck` 实现 |
-| `ddf-common-authentication` | Token / 验证码存储；登录失败次数累计建议使用 `stringIncrWithLimitCheckException` |
-| `ddf-common-mq` | 跨实例事件广播可走 `RedisTopic` 而非引入完整 MQ |
+| 模块                          | 协作方式                                                                                                                                 |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-core`           | 提供 `RedisKeyConstraint` 接口、`BusinessException`、`SpringContextHolder`（`ApplicationNamedKeyGenerator` 通过它获取 `spring.application.name`） |
+| `ddf-common-limit`          | 注解式限流（`@RateLimit`）底层调用 `RedisTemplateHelper.sliderWindowAccess`                                                                     |
+| `ddf-common-alarm`          | 报警去重 / 抑制窗口使用 `AlarmRedisKeyEnum` + `hashIncreaseCheck` 实现                                                                           |
+| `ddf-common-authentication` | Token / 验证码存储；登录失败次数累计建议使用 `stringIncrWithLimitCheckException`                                                                       |
+| `ddf-common-mq`             | 跨实例事件广播可走 `RedisTopic` 而非引入完整 MQ                                                                                                     |
 
 ---
 

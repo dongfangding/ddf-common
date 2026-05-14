@@ -88,14 +88,15 @@ public class SysMenuFunction implements ITreeTagCollection<String, SysMenuFuncti
      * code全局唯一
      *
      * @param o O参数
-     * @return
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         SysMenuFunction function = (SysMenuFunction) o;
         return Objects.equals(getCode(), function.getCode());
     }

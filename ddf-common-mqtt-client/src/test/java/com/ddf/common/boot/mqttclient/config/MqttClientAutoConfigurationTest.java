@@ -14,9 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MqttClientAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(MqttClientAutoConfiguration.class))
-            .withUserConfiguration(MqttClientSupportConfiguration.class);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(MqttClientAutoConfiguration.class)).withUserConfiguration(
+            MqttClientSupportConfiguration.class);
 
     @Test
     void shouldRegisterControllerWhenPublishClientExists() {

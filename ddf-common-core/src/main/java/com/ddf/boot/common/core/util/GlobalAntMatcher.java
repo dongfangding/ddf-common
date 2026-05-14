@@ -40,8 +40,6 @@ public enum GlobalAntMatcher {
 
     /**
      * 将实例返回
-     *
-     * @return
      */
     public static AntPathMatcher getAntPathMatcher() {
         return antPathMatcher;
@@ -53,7 +51,6 @@ public enum GlobalAntMatcher {
      *
      * @param pattern 匹配表达式
      * @param path 路径
-     * @return
      */
     public static boolean match(String pattern, String path) {
         return antPathMatcher.match(pattern, path);
@@ -64,7 +61,6 @@ public enum GlobalAntMatcher {
      *
      * @param patterns patterns参数
      * @param path 路径
-     * @return
      */
     public static boolean match(List<String> patterns, String path) {
         if (CollUtil.isEmpty(patterns)) {

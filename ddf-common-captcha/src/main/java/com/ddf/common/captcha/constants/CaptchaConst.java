@@ -10,14 +10,12 @@ package com.ddf.common.captcha.constants;
 public class CaptchaConst {
 
     /**
-     *
      * 默认的图形验证码实现器
      */
     public static final String KAPTCHA_DEFAULT = "defaultKaptcha";
 
     /**
      * 默认的基于数字计算的验证码实现其
-     *
      */
     public static final String KAPTCHA_MATH = "mathKaptcha";
 }

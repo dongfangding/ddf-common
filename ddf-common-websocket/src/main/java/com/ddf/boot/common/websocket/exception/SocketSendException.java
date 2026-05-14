@@ -12,6 +12,7 @@ public class SocketSendException extends ServerErrorException {
     public SocketSendException(String message) {
         super(message);
     }
+
     /**
      * @param e 参数
      */

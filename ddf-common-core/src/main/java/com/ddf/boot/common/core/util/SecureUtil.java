@@ -67,6 +67,7 @@ public class SecureUtil {
     /**
      * 安全初始化RSA密钥
      * 如果配置缺失，抛出异常而非使用硬编码密钥
+     *
      * @param privateKey 参数
      * @param publicKey 参数
      * @param configName 参数
@@ -87,11 +88,7 @@ public class SecureUtil {
             throw new SecureException("AES secret 未配置，请通过 global.aes-secret 配置 AES 密钥，"
                     + "建议使用32位随机字符串并通过配置中心管理");
         }
-        return new SymmetricCrypto(
-                SymmetricAlgorithm.AES, GLOBAL_PROPERTIES
-                .getAesSecret()
-                .getBytes(UTF_8)
-        );
+        return new SymmetricCrypto(SymmetricAlgorithm.AES, GLOBAL_PROPERTIES.getAesSecret().getBytes(UTF_8));
     }
 
     static {
@@ -190,7 +187,6 @@ public class SecureUtil {
      * 使用系统配置的AES加密成十六进制
      *
      * @param str STR参数
-     * @return
      */
     public static String aesEncryptHex(String str) {
         return getAES().encryptHex(str, StandardCharsets.UTF_8);
@@ -200,7 +196,6 @@ public class SecureUtil {
      * 使用系统配置的AES解密解密Hex（16进制）或Base64表示的字符串，默认UTF-8编码
      *
      * @param str STR参数
-     * @return
      */
     public static String aesDecryptStr(String str) {
         return getAES().decryptStr(str);
@@ -211,7 +206,6 @@ public class SecureUtil {
      *
      * @param str STR参数
      * @param secret 签名密钥
-     * @return
      */
     public static String aesEncryptHexWithKey(String str, String secret) {
         SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
@@ -227,7 +221,6 @@ public class SecureUtil {
      *
      * @param str STR参数
      * @param secret 签名密钥
-     * @return
      */
     public static String aesDecryptStrWithKey(String str, String secret) {
         SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
@@ -242,7 +235,6 @@ public class SecureUtil {
      * 随机散列函数摘要
      *
      * @param originStr originSTR参数
-     * @return
      */
     public static String bCryptEncoder(String originStr) {
         return B_CRYPT_PASSWORD_ENCODER.encode(originStr);
@@ -253,7 +245,6 @@ public class SecureUtil {
      *
      * @param originStr originSTR参数
      * @param encodeStr encodeSTR参数
-     * @return
      */
     public static boolean bCryptMatch(String originStr, String encodeStr) {
         return B_CRYPT_PASSWORD_ENCODER.matches(originStr, encodeStr);
@@ -268,6 +259,7 @@ public class SecureUtil {
     public static String md5Hex(final String data) {
         return DigestUtils.md5Hex(data);
     }
+
     /**
      * @param args 参数
      */

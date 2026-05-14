@@ -22,6 +22,7 @@ public class DataMysqlProperties {
 
     private final Druid druid = new Druid();
 
+
     @Getter
     @Setter
     public static class Druid {

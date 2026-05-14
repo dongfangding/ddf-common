@@ -132,8 +132,7 @@ public class BCryptPasswordEncoderTest {
     @Test
     @DisplayName("测试 upgradeEncoding - 无效格式")
     public void testUpgradeEncodingInvalidFormat() {
-        assertThrows(IllegalArgumentException.class,
-                () -> encoder.upgradeEncoding("invalidHash"),
+        assertThrows(IllegalArgumentException.class, () -> encoder.upgradeEncoding("invalidHash"),
                 "无效格式应抛出异常");
     }
 
@@ -178,8 +177,8 @@ public class BCryptPasswordEncoderTest {
     @DisplayName("测试使用SecureRandom的编码器")
     public void testEncoderWithSecureRandom() {
         SecureRandom secureRandom = new SecureRandom();
-        BCryptPasswordEncoder encoderWithRandom = new BCryptPasswordEncoder(
-                BCryptPasswordEncoder.BCryptVersion.$2A, 10, secureRandom);
+        BCryptPasswordEncoder encoderWithRandom = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10,
+                secureRandom);
 
         String encoded1 = encoderWithRandom.encode("password");
         String encoded2 = encoderWithRandom.encode("password");
@@ -192,12 +191,8 @@ public class BCryptPasswordEncoderTest {
     @Test
     @DisplayName("测试密码强度足够")
     public void testPasswordStrengthSufficient() {
-        String[] testPasswords = {
-                "simple",
-                "Password123",
-                "VeryLongPasswordThatIsMuchMoreThan16Characters!@#",
-                "中文字符密码"
-        };
+        String[] testPasswords =
+                {"simple", "Password123", "VeryLongPasswordThatIsMuchMoreThan16Characters!@#", "中文字符密码"};
 
         for (String password : testPasswords) {
             String encoded = encoder.encode(password);

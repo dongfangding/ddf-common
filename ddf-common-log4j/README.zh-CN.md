@@ -11,12 +11,12 @@
 
 `ddf-common-log4j` 解决的是 **"高性能、结构化日志输出"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 高并发日志 | 同步日志阻塞业务线程，吞吐量下降 | `disruptor` + `AsyncLogger` 全异步打印，零锁竞争 |
-| 日志分级存储 | INFO / WARN / ERROR 混在一个文件，排查困难 | `ThresholdFilter` 按级别分流到独立文件 |
-| 链路追踪 | 日志中缺少用户标识和 Trace ID | 支持 `%X{user_id}`、`%X{trace_id}` 等 MDC 变量输出 |
-| 日志回滚 | 日志文件无限增长，磁盘被打满 | `TimeBasedTriggeringPolicy` 按天滚动，保留 30 天 |
+| 场景     | 典型问题                            | 模块提供的能力                                    |
+|--------|---------------------------------|--------------------------------------------|
+| 高并发日志  | 同步日志阻塞业务线程，吞吐量下降                | `disruptor` + `AsyncLogger` 全异步打印，零锁竞争     |
+| 日志分级存储 | INFO / WARN / ERROR 混在一个文件，排查困难 | `ThresholdFilter` 按级别分流到独立文件               |
+| 链路追踪   | 日志中缺少用户标识和 Trace ID             | 支持 `%X{user_id}`、`%X{trace_id}` 等 MDC 变量输出 |
+| 日志回滚   | 日志文件无限增长，磁盘被打满                  | `TimeBasedTriggeringPolicy` 按天滚动，保留 30 天   |
 
 ---
 
@@ -126,11 +126,11 @@ logging:
 
 通过 `ThresholdFilter` 将不同级别日志分流：
 
-| Appender | 过滤级别 | 用途 |
-| ----- | ----- | ----- |
-| `INFO_FILE` | `INFO`+ | 全量日志，保留 30 天 |
-| `WARN_FILE` | `WARN`+ | 告警日志，快速定位问题 |
-| `ERROR_FILE` | `ERROR`+ | 错误日志，对接告警系统 |
+| Appender     | 过滤级别     | 用途           |
+|--------------|----------|--------------|
+| `INFO_FILE`  | `INFO`+  | 全量日志，保留 30 天 |
+| `WARN_FILE`  | `WARN`+  | 告警日志，快速定位问题  |
+| `ERROR_FILE` | `ERROR`+ | 错误日志，对接告警系统  |
 
 ### 4.3 MDC 变量
 
@@ -157,6 +157,7 @@ try {
 ```
 
 输出示例：
+
 ```
 [2024-01-15 10:23:45.123] [http-nio-8080-exec-1] INFO [1001#abc123] OrderService - Processing order 12345
 ```
@@ -215,23 +216,25 @@ curl -X POST "http://localhost:8080/actuator/loggers/com.ddf.boot.common" \
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-mvc` | `UserContextUtil` 中的用户 ID 可通过 MDC 自动注入日志上下文 |
-| `ddf-common-governance-starter` | Actuator 暴露 `/actuator/loggers` 端点，支持动态调整日志级别 |
+| 模块                                                      | 协作方式                                                             |
+|---------------------------------------------------------|------------------------------------------------------------------|
+| `ddf-common-mvc`                                        | `UserContextUtil` 中的用户 ID 可通过 MDC 自动注入日志上下文                      |
+| `ddf-common-governance-starter`                         | Actuator 暴露 `/actuator/loggers` 端点，支持动态调整日志级别                    |
 | `ddf-common-starter-web` / `ddf-common-starter-default` | 默认使用 Logback；若需要 Log4j2，需排除 `spring-boot-starter-logging` 并引入本模块 |
 
 ---
 
 ## 7. FAQ
 
-**Q1：引入后日志完全不输出怎么办？**  
+**Q1：引入后日志完全不输出怎么办？**
+
 1. 确认 `log4j2.xml` 放在 `src/main/resources` 目录下
 2. 确认已排除 `spring-boot-starter-logging`（Logback）
 3. 检查 `Configuration status="warn"` 是否有配置解析错误输出到控制台
 
 **Q2：异步日志丢失了部分日志怎么办？**  
 应用关闭时若 `RingBuffer` 中仍有未刷盘的事件，可能丢失。生产环境建议：
+
 - 增加 `shutdownTimeout`（AsyncAppender 属性）
 - 在 Spring 的 `ContextClosedEvent` 中休眠几百毫秒再退出
 

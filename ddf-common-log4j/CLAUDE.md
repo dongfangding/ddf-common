@@ -6,9 +6,9 @@ Log4j2 日志配置模块，提供异步日志和日志级别隔离功能。
 
 ## 核心配置
 
-| 配置项 | 说明 |
-|-------|------|
-| `log4j2.xml` | 日志配置文件 |
+| 配置项           | 说明      |
+|---------------|---------|
+| `log4j2.xml`  | 日志配置文件  |
 | `AsyncLogger` | 异步日志记录器 |
 
 ## 使用说明
@@ -29,6 +29,7 @@ Log4j2 日志配置模块，提供异步日志和日志级别隔离功能。
 ### 异步配置
 
 在启动脚本中添加：
+
 ```shell
 -Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
 ```

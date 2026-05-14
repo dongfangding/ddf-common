@@ -18,7 +18,6 @@ class VpsUtilTest {
     void shouldExtractFastDfsPhysicalStorePath() {
         assertEquals("/00/00/ag8Kh2GnPTWASVlZAM7twHqR7-Y487.mp4",
                 VpsUtil.getFDfsPhysicalStorePath("group1/M00/00/00/ag8Kh2GnPTWASVlZAM7twHqR7-Y487.mp4"));
-        assertEquals("/02/99/demo.png",
-                VpsUtil.getFDfsPhysicalStorePath("group12/M03/02/99/demo.png"));
+        assertEquals("/02/99/demo.png", VpsUtil.getFDfsPhysicalStorePath("group12/M03/02/99/demo.png"));
     }
 }

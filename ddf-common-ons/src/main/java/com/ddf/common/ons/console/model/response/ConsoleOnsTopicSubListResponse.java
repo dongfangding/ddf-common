@@ -48,16 +48,16 @@ public class ConsoleOnsTopicSubListResponse implements Serializable {
      * 从SDK转换
      */
     public static List<ConsoleOnsTopicSubListResponse> convertFromSdk(OnsTopicSubDetailResponse response) {
-        return response.getBody().getData().getSubscriptionDataList().getSubscriptionDataList().stream()
-                .map(ConsoleOnsTopicSubListResponse::convert).collect(Collectors.toList());
+        return response.getBody().getData().getSubscriptionDataList().getSubscriptionDataList().stream().map(
+                ConsoleOnsTopicSubListResponse::convert).collect(Collectors.toList());
     }
+
     /**
      * @param info 参数
      */
     public static ConsoleOnsTopicSubListResponse convert(
             OnsTopicSubDetailResponseBody.OnsTopicSubDetailResponseBodyDataSubscriptionDataListSubscriptionDataList info) {
-        return new ConsoleOnsTopicSubListResponse()
-                .setGroupId(info.getGroupId())
+        return new ConsoleOnsTopicSubListResponse().setGroupId(info.getGroupId())
                 .setMessageModel(info.getMessageModel())
                 .setMessageModelName(MessageModel.getDescByModel(info.getMessageModel()))
                 .setExpression(info.getSubString());

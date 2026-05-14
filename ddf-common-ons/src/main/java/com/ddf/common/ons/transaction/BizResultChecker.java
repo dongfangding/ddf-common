@@ -13,14 +13,13 @@ public interface BizResultChecker extends SmartInitializingSingleton {
 
     /**
      * 是否成功
+     *
      * @param message 消息内容
-     * @return
      */
     boolean isSuccess(Message message);
 
     /**
      * 业务实现的路由选择, 必须保证不能重复， 这里会作为user_properties的key放入到消息中
-     * @return
      */
     String getRouteKey();
 

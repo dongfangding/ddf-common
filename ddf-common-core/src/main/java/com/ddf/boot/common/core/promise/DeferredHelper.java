@@ -12,7 +12,6 @@ import org.jdeferred2.Promise;
 import org.jdeferred2.impl.DeferredObject;
 
 /**
- *
  * @since 2020/4/9 0009 13:31
  */
 @Slf4j
@@ -36,7 +35,6 @@ public class DeferredHelper<D, F, P> {
      * 获取Deferred对象
      *
      * @param requestId 请求 ID
-     * @return
      */
     public Deferred<D, Throwable, P> getDeferred(String requestId) {
         return deferredMap.get(requestId);
@@ -51,7 +49,6 @@ public class DeferredHelper<D, F, P> {
      *
      * @param requestId 请求 ID
      * @param timeoutMilliSeconds 超时milliseconds参数
-     * @return
      */
     public Promise<D, Throwable, P> createPromise(String requestId, long timeoutMilliSeconds) {
         log.info("[{}]请求创建回调, ", requestId);
@@ -65,7 +62,8 @@ public class DeferredHelper<D, F, P> {
                 final Deferred<D, Throwable, P> finalDm = deferredMap.get(requestId);
                 if (deferredMap.containsKey(requestId)) {
                     if (finalDm.isPending()) {
-                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(), requestId);
+                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(),
+                                requestId);
                         finalDm.reject(new CallbackTimeoutException(requestId));
                     }
                     deferredMap.remove(requestId);
@@ -81,7 +79,6 @@ public class DeferredHelper<D, F, P> {
      * 创建promise
      *
      * @param requestId 请求 ID
-     * @return
      */
     public Promise<D, Throwable, P> createPromise(String requestId) {
         return createPromise(requestId, DEFAULT_TIMEOUT_MILLIONS);
@@ -90,7 +87,6 @@ public class DeferredHelper<D, F, P> {
     /**
      * @param result 结果参数
      * @param id 标识值
-     * @return
      */
     public boolean resolve(String id, D result) {
         Deferred<D, Throwable, P> deferredAndRemove = getDeferredAndRemove(id);
@@ -104,7 +100,6 @@ public class DeferredHelper<D, F, P> {
     /**
      * @param id 标识值
      * @param exception 异常对象
-     * @return
      */
     public boolean reject(String id, Throwable exception) {
         Deferred<D, Throwable, P> deferredAndRemove = getDeferredAndRemove(id);
@@ -117,7 +112,6 @@ public class DeferredHelper<D, F, P> {
 
     /**
      * @param result 结果参数
-     * @return
      */
     public Promise<D, Throwable, P> resolve(D result) {
         Deferred<D, Throwable, P> deferred = new DeferredObject<>();
@@ -127,7 +121,6 @@ public class DeferredHelper<D, F, P> {
 
     /**
      * @param exception 异常对象
-     * @return
      */
     public Promise<D, Throwable, P> reject(Throwable exception) {
         Deferred<D, Throwable, P> deferred = new DeferredObject<>();
@@ -140,7 +133,6 @@ public class DeferredHelper<D, F, P> {
      * @param state state参数
      * @param result 结果参数
      * @param exception 异常对象
-     * @return
      */
     public Promise<D, Throwable, P> pipeAlways(Promise.State state, D result, Throwable exception) {
         if (state == Promise.State.RESOLVED) {
@@ -152,7 +144,6 @@ public class DeferredHelper<D, F, P> {
 
     /**
      * @param id 标识值
-     * @return
      */
     private Deferred<D, Throwable, P> getDeferredAndRemove(String id) {
         final Deferred<D, Throwable, P> finalDm = deferredMap.get(id);

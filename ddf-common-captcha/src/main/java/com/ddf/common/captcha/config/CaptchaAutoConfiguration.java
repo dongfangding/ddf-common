@@ -69,8 +69,7 @@ public class CaptchaAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheAdapter cacheAdapter(StringRedisTemplate stringRedisTemplate,
-            RedisTemplateHelper redisTemplateHelper) {
+    public CacheAdapter cacheAdapter(StringRedisTemplate stringRedisTemplate, RedisTemplateHelper redisTemplateHelper) {
         return new CacheAdapter(stringRedisTemplate, redisTemplateHelper);
     }
 
@@ -86,9 +85,10 @@ public class CaptchaAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
-            @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
-            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
-        return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService, cacheAdapter);
+            @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha, CaptchaService captchaService,
+            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
+        return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService,
+                cacheAdapter);
     }
 
     /**

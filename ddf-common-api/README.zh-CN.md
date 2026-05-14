@@ -13,16 +13,16 @@
 `ddf-common-api` 是四层架构中**最底层**的模块。当你需要在多个服务之间共享一组不依赖 Spring 容器的
 纯 Java 契约时，应该把它放到 `pom.xml` 的第一行。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 跨服务统一响应格式 | 各服务返回 JSON 结构不一致，网关聚合困难 | `ResponseData<T>` 统一响应体 |
-| 跨服务统一异常语义 | A 服务抛 `USER_NOT_FOUND`，B 服务抛 `用户不存在`，网关无法映射 | `BaseCallbackCode` + `BaseErrorCallbackCode` 枚举 |
-| 分页协议 | MyBatis、JPA、Mongo 各自返回不同分页结构 | `PageRequest` 接口 + `PageResult<T>` 实体 |
-| 接口防篡改 | 开放网关需要验签，请求 DTO 需携带签名字段 | `BaseSign` 签名接口（`sign` + `nonceTimestamp`） |
-| Redis Key 治理 | 各模块 key 格式混乱、拼接出错 | `RedisKeyConstraint` 模板约束 + 分片规则 |
-| 树形结构 | 部门/菜单/地区列表需递归组装 | `ITreeTagCollection<K, T>` 树节点约束 |
-| 序列化兼容 | 前后端对 `LocalDateTime` / `Duration` 序列化行为不一致 | Jackson 定制模块（JSR-310 + MsgPack） |
-| 敏感数据脱敏 | 日志打印时不小心输出手机号 / 身份证号 | `@SensitiveField` + 脱敏序列化器 |
+| 场景           | 典型问题                                        | 模块提供的能力                                         |
+|--------------|---------------------------------------------|-------------------------------------------------|
+| 跨服务统一响应格式    | 各服务返回 JSON 结构不一致，网关聚合困难                     | `ResponseData<T>` 统一响应体                         |
+| 跨服务统一异常语义    | A 服务抛 `USER_NOT_FOUND`，B 服务抛 `用户不存在`，网关无法映射 | `BaseCallbackCode` + `BaseErrorCallbackCode` 枚举 |
+| 分页协议         | MyBatis、JPA、Mongo 各自返回不同分页结构                | `PageRequest` 接口 + `PageResult<T>` 实体           |
+| 接口防篡改        | 开放网关需要验签，请求 DTO 需携带签名字段                     | `BaseSign` 签名接口（`sign` + `nonceTimestamp`）      |
+| Redis Key 治理 | 各模块 key 格式混乱、拼接出错                           | `RedisKeyConstraint` 模板约束 + 分片规则                |
+| 树形结构         | 部门/菜单/地区列表需递归组装                             | `ITreeTagCollection<K, T>` 树节点约束                |
+| 序列化兼容        | 前后端对 `LocalDateTime` / `Duration` 序列化行为不一致  | Jackson 定制模块（JSR-310 + MsgPack）                 |
+| 敏感数据脱敏       | 日志打印时不小心输出手机号 / 身份证号                        | `@SensitiveField` + 脱敏序列化器                      |
 
 > ⚠️ 本模块**不包含**任何 Spring Bean、自动配置、数据库访问或 Redis 操作。需要基础设施时，
 > 请向上依赖 `ddf-common-core` 或具体 starter。
@@ -107,17 +107,17 @@ public enum OrderErrorCode implements BaseCallbackCode {
 
 #### 3.2.2 预定义错误码：`BaseErrorCallbackCode`
 
-| 枚举 | code | 说明 |
-| ----- | ----- | ----- |
-| `COMPLETE` | `200` | 请求成功 |
-| `BAD_REQUEST` | `BAD_REQUEST` | 错误请求（默认模糊化） |
-| `UNAUTHORIZED` | `401` | 未认证 |
-| `ACCESS_FORBIDDEN` | `403` | 权限不足 |
-| `SERVER_ERROR` | `SERVER_ERROR` | 服务端异常（默认模糊化） |
-| `BIZ_EXCEPTION` | `BIZ_EXCEPTION` | 通用业务异常 |
-| `ENTRY_NOT_EXISTS` | `ENTRY_NOT_EXISTS` | 数据不存在（用户提示：操作资源不存在） |
-| `DUPLICATE_KEY` | `DUPLICATE_KEY` | 唯一约束冲突（用户提示：已存在相同记录） |
-| `SIGN_ERROR` | `SIGN_ERROR` | 签名校验失败 |
+| 枚举                 | code               | 说明                   |
+|--------------------|--------------------|----------------------|
+| `COMPLETE`         | `200`              | 请求成功                 |
+| `BAD_REQUEST`      | `BAD_REQUEST`      | 错误请求（默认模糊化）          |
+| `UNAUTHORIZED`     | `401`              | 未认证                  |
+| `ACCESS_FORBIDDEN` | `403`              | 权限不足                 |
+| `SERVER_ERROR`     | `SERVER_ERROR`     | 服务端异常（默认模糊化）         |
+| `BIZ_EXCEPTION`    | `BIZ_EXCEPTION`    | 通用业务异常               |
+| `ENTRY_NOT_EXISTS` | `ENTRY_NOT_EXISTS` | 数据不存在（用户提示：操作资源不存在）  |
+| `DUPLICATE_KEY`    | `DUPLICATE_KEY`    | 唯一约束冲突（用户提示：已存在相同记录） |
+| `SIGN_ERROR`       | `SIGN_ERROR`       | 签名校验失败               |
 
 #### 3.2.3 抛出异常
 
@@ -137,13 +137,13 @@ throw new ServerErrorException(BaseErrorCallbackCode.SERVER_ERROR);
 
 异常语义：
 
-| 异常类 | 默认错误码 | `isMaskErrorDetails()` | 使用场景 |
-| ----- | ----- | ----- | ----- |
-| `BusinessException` | `BIZ_EXCEPTION` | false | 业务规则校验失败，消息直接展示给用户 |
-| `BadRequestException` | `BAD_REQUEST` | true | 参数非法，生产环境只返回模糊提示 |
-| `UnauthorizedException` | `UNAUTHORIZED` | false | Token 失效 / 登录过期 |
-| `AccessDeniedException` | `ACCESS_FORBIDDEN` | false | 已登录但无权访问 |
-| `ServerErrorException` | `SERVER_ERROR` | true | 系统内部错误，必须隐藏详情 |
+| 异常类                     | 默认错误码              | `isMaskErrorDetails()` | 使用场景               |
+|-------------------------|--------------------|------------------------|--------------------|
+| `BusinessException`     | `BIZ_EXCEPTION`    | false                  | 业务规则校验失败，消息直接展示给用户 |
+| `BadRequestException`   | `BAD_REQUEST`      | true                   | 参数非法，生产环境只返回模糊提示   |
+| `UnauthorizedException` | `UNAUTHORIZED`     | false                  | Token 失效 / 登录过期    |
+| `AccessDeniedException` | `ACCESS_FORBIDDEN` | false                  | 已登录但无权访问           |
+| `ServerErrorException`  | `SERVER_ERROR`     | true                   | 系统内部错误，必须隐藏详情      |
 
 ### 3.3 分页模型
 
@@ -197,6 +197,7 @@ public enum UserRedisKeyEnum implements RedisKeyConstraint {
 ```
 
 `RedisKeyConstraint` 强制约定：
+
 - `template` 使用 `%s` 占位符
 - `getKey(Object...)` 自动校验参数个数与占位符匹配，不匹配时抛 `ServerErrorException`
 - `getShardingKey` 支持按分片规则追加后缀（如 `"_shard_0"`），用于多 Redis 实例路由
@@ -286,14 +287,14 @@ public class UserIdModSharding implements RedisShardingRule<Long, String> {
 
 ## 5. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-core` | 上游依赖；`ResponseData`、`BaseException`、`BaseSign`、`RedisKeyConstraint`、`ITreeTagCollection` 的默认实现与工具类 |
-| `ddf-common-mvc` | 全局异常处理器把 `BaseException` 映射为 `ResponseData`；`@JsonIgnoreProfile`  Jackson 模块在此注册 |
-| `ddf-common-redis` | 所有 Redis Key 枚举必须实现 `RedisKeyConstraint`；`ApplicationNamedKeyGenerator` 读取 `spring.application.name` |
-| `ddf-common-authentication` | 鉴权异常使用 `UnauthorizedException` / `AccessDeniedException` |
-| `ddf-common-limit` | 限流拦截器返回 `ResponseData.failure(...)` |
-| `ddf-common-data-mysql-starter` | `BaseDomain` 实体基类（在 core 中）配合 `PageRequest` / `PageResult` 完成分页链路 |
+| 模块                              | 协作方式                                                                                                 |
+|---------------------------------|------------------------------------------------------------------------------------------------------|
+| `ddf-common-core`               | 上游依赖；`ResponseData`、`BaseException`、`BaseSign`、`RedisKeyConstraint`、`ITreeTagCollection` 的默认实现与工具类   |
+| `ddf-common-mvc`                | 全局异常处理器把 `BaseException` 映射为 `ResponseData`；`@JsonIgnoreProfile`  Jackson 模块在此注册                     |
+| `ddf-common-redis`              | 所有 Redis Key 枚举必须实现 `RedisKeyConstraint`；`ApplicationNamedKeyGenerator` 读取 `spring.application.name` |
+| `ddf-common-authentication`     | 鉴权异常使用 `UnauthorizedException` / `AccessDeniedException`                                             |
+| `ddf-common-limit`              | 限流拦截器返回 `ResponseData.failure(...)`                                                                  |
+| `ddf-common-data-mysql-starter` | `BaseDomain` 实体基类（在 core 中）配合 `PageRequest` / `PageResult` 完成分页链路                                    |
 
 ---
 
@@ -303,7 +304,8 @@ public class UserIdModSharding implements RedisShardingRule<Long, String> {
 `BaseDomain` 引入了 `spring-data-commons` 的 `@CreatedDate` / `@LastModifiedDate`，对纯协议模块来说过重。
 因此它放在 `ddf-common-core` 中，而 `api` 只保留不依赖 Spring Data 的 `PageRequest` / `PageResult`。
 
-**Q2：`BaseCallbackCode` 的 `bizMessage` 与 `description` 有什么区别？**  
+**Q2：`BaseCallbackCode` 的 `bizMessage` 与 `description` 有什么区别？**
+
 - `description`：开发/联调时使用，可包含技术细节、占位符原始模板
 - `bizMessage`：最终给用户看的（toast / alert）。生产环境当 `isMaskErrorDetails() = true` 时，
   系统用 `bizMessage` 替换 `description`，防止堆栈和敏感信息泄露
@@ -316,7 +318,8 @@ public class UserIdModSharding implements RedisShardingRule<Long, String> {
 可以。唯一强依赖 Spring 的部分是 `spring-boot-starter-validation`（用于 DTO 上的 `@NotNull` 等注解），
 如果你不需要校验，可以排除该依赖，仅使用 `ResponseData`、`BaseCallbackCode`、`PageResult` 等纯 POJO。
 
-**Q5：错误码的 code 字符串有什么命名规范？**  
+**Q5：错误码的 code 字符串有什么命名规范？**
+
 - 使用大写下划线格式：`ORDER_NOT_FOUND`、`INVENTORY_SHORTAGE`
 - 全局唯一（跨服务也不应重复），方便日志检索和网关统一映射
 - 不要在运行时拼接 code 字符串，所有 code 必须是枚举常量

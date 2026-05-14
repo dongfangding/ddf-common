@@ -11,14 +11,15 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-starter-default` solves the **"one-stop foundational capabilities for business applications"** problem.
 
-| Scenario | Typical Problem | What This Starter Provides |
-| --- | --- | --- |
-| Conventional monolith / microservice | Repeating web, DB, and governance imports for every new project | One dependency, everything ready |
-| CRUD backend service | Needs uniform response format + database + email alerts | Full out-of-the-box foundation |
-| Rapid prototyping | Don't want to spend time on dependency configuration | Import and go, focus on business logic |
-| Small-to-medium teams | Limited manpower to maintain foundational components | Unified versions, behaviors, and upgrades |
+| Scenario                             | Typical Problem                                                 | What This Starter Provides                |
+|--------------------------------------|-----------------------------------------------------------------|-------------------------------------------|
+| Conventional monolith / microservice | Repeating web, DB, and governance imports for every new project | One dependency, everything ready          |
+| CRUD backend service                 | Needs uniform response format + database + email alerts         | Full out-of-the-box foundation            |
+| Rapid prototyping                    | Don't want to spend time on dependency configuration            | Import and go, focus on business logic    |
+| Small-to-medium teams                | Limited manpower to maintain foundational components            | Unified versions, behaviors, and upgrades |
 
 **Not suitable for**:
+
 - Pure web gateway / database-less services → use `ddf-common-starter-web`
 - Non-MySQL databases (PostgreSQL, Oracle, MongoDB, etc.) → use `ddf-common-starter-web` + custom data layer
 - Web + DB only, no Mail / Actuator needed → use `ddf-common-starter-web` + `ddf-common-data-mysql-starter`
@@ -45,28 +46,28 @@ This starter aggregates three lower-level starters:
 
 ### 3.1 `ddf-common-starter-web` (Web foundation)
 
-| Sub-module | Core Capability |
-| --- | --- |
-| `ddf-common-api` | Uniform response `ResponseData`, business exception `BusinessException`, error-code system |
-| `ddf-common-core` | Utilities (Hutool/Guava/Fastjson2), encryption, Snowflake IDs, local cache, thread pools |
-| `ddf-common-mvc` | Global exception handling, auto response wrapping, Jackson config, user context `UserContextUtil` |
-| `ddf-common-limit` | Token-bucket rate limiting `@RateLimit`, anti-replay `@Repeatable` |
-| `ddf-common-log4j` | Log4j2 + Disruptor async logging (Logback excluded) |
+| Sub-module         | Core Capability                                                                                   |
+|--------------------|---------------------------------------------------------------------------------------------------|
+| `ddf-common-api`   | Uniform response `ResponseData`, business exception `BusinessException`, error-code system        |
+| `ddf-common-core`  | Utilities (Hutool/Guava/Fastjson2), encryption, Snowflake IDs, local cache, thread pools          |
+| `ddf-common-mvc`   | Global exception handling, auto response wrapping, Jackson config, user context `UserContextUtil` |
+| `ddf-common-limit` | Token-bucket rate limiting `@RateLimit`, anti-replay `@Repeatable`                                |
+| `ddf-common-log4j` | Log4j2 + Disruptor async logging (Logback excluded)                                               |
 
 ### 3.2 `ddf-common-data-mysql-starter` (Data access)
 
-| Capability | Description |
-| --- | --- |
-| JDBC + MySQL driver | `spring-boot-starter-jdbc` + `mysql-connector-j` |
+| Capability            | Description                                                               |
+|-----------------------|---------------------------------------------------------------------------|
+| JDBC + MySQL driver   | `spring-boot-starter-jdbc` + `mysql-connector-j`                          |
 | Druid connection pool | `druid-spring-boot-3-starter`, includes `usePingMethod` compatibility fix |
-| MyBatis | `mybatis-spring-boot-starter` |
+| MyBatis               | `mybatis-spring-boot-starter`                                             |
 
 ### 3.3 `ddf-common-governance-starter` (Governance)
 
-| Capability | Description |
-| --- | --- |
-| Mail service | `MailService` / `DefaultMailService` / `MailUtil`, conditionally registered (requires `spring.mail.*` config) |
-| Thread-pool metrics | `ThreadPoolMetricsBinder` auto-scans thread-pool beans and binds to Micrometer |
+| Capability          | Description                                                                                                   |
+|---------------------|---------------------------------------------------------------------------------------------------------------|
+| Mail service        | `MailService` / `DefaultMailService` / `MailUtil`, conditionally registered (requires `spring.mail.*` config) |
+| Thread-pool metrics | `ThreadPoolMetricsBinder` auto-scans thread-pool beans and binds to Micrometer                                |
 
 ---
 
@@ -242,25 +243,27 @@ customizer:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-starter-web` | The web foundation layer inside `starter-default` |
-| `ddf-common-data-mysql-starter` | The data layer inside `starter-default` |
-| `ddf-common-governance-starter` | The governance layer inside `starter-default` |
-| `ddf-common-redis` | Can be layered on top for Redis cache and distributed lock primitives |
-| `ddf-common-distributed-lock` | Can be layered on top for Redisson / Zookeeper distributed locks |
-| `ddf-common-authentication` | Can be layered on top for AES token authentication enhancement |
+| Module                          | How They Cooperate                                                    |
+|---------------------------------|-----------------------------------------------------------------------|
+| `ddf-common-starter-web`        | The web foundation layer inside `starter-default`                     |
+| `ddf-common-data-mysql-starter` | The data layer inside `starter-default`                               |
+| `ddf-common-governance-starter` | The governance layer inside `starter-default`                         |
+| `ddf-common-redis`              | Can be layered on top for Redis cache and distributed lock primitives |
+| `ddf-common-distributed-lock`   | Can be layered on top for Redisson / Zookeeper distributed locks      |
+| `ddf-common-authentication`     | Can be layered on top for AES token authentication enhancement        |
 
 ---
 
 ## 7. FAQ
 
 **Q1: What's the difference between `starter-default` and `starter-web`?**
+
 - `starter-web` = Web fundamentals (API + Core + MVC + Limit + Log4j2)
 - `starter-default` = `starter-web` + MySQL data layer + governance (Mail + Actuator thread-pool metrics)
 
 **Q2: I don't want Druid; how do I switch to HikariCP?**
 `ddf-common-data-mysql-starter` imports Druid by default. To use HikariCP:
+
 1. Exclude `druid-spring-boot-3-starter`
 2. Configure `spring.datasource.type=com.zaxxer.hikari.HikariDataSource` in `application.yml`
 
@@ -272,9 +275,11 @@ Other capabilities are completely unaffected.
 You can, but it's not recommended because `starter-default` already includes `starter-web`. The duplicate import only adds redundant resolution and won't cause conflicts.
 
 **Q5: How do I see exactly which dependencies this starter pulls in?**
+
 ```bash
 cd ddf-common-starter-default && mvn dependency:tree
 ```
+
 Or inspect the dependency tree in your IDE's Maven panel.
 
 ---

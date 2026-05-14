@@ -25,12 +25,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
  *
  * @author snowball
  * @version 1.0
- * @since 2020/08/31 19:00
  * @see MultiArgumentResolver
+ * @since 2020/08/31 19:00
  */
 @Slf4j
-public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgumentResolver, ApplicationContextAware,
-        SmartInitializingSingleton {
+public class MultiArgumentResolverMethodProcessor
+        implements HandlerMethodArgumentResolver, ApplicationContextAware, SmartInitializingSingleton {
 
     private ApplicationContext applicationContext;
 
@@ -48,14 +48,16 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
     /**
      * 支持的content_type
      */
-    private static final ImmutableList<String> SUPPORT_CONTENT_TYPE_LIST = ImmutableList.of(CONTENT_TYPE_JSON, CONTENT_TYPE_FORM_URLENCODED);
+    private static final ImmutableList<String> SUPPORT_CONTENT_TYPE_LIST = ImmutableList.of(CONTENT_TYPE_JSON,
+            CONTENT_TYPE_FORM_URLENCODED);
 
     /**
      * 参考这个写法， 同一个类型的参数解析后缓存对应的参数解析器，不过这里的key改为了Content-Type
+     *
      * @see HandlerMethodArgumentResolverComposite#argumentResolverCache
      */
-    private final Map<String, HandlerMethodArgumentResolver> argumentResolverCache =
-            new ConcurrentHashMap<>(8);
+    private final Map<String, HandlerMethodArgumentResolver> argumentResolverCache = new ConcurrentHashMap<>(8);
+
     /**
      * @param parameter 参数
      */
@@ -66,13 +68,15 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
 
     /**
      * 解析参数
+     *
      * @param parameter 参数
      * @param mavContainer 参数
      * @param webRequest 参数
      * @param binderFactory 参数
      */
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String contentType = webRequest.getHeader("Content-Type");
         isSupport(contentType);
         List<HandlerMethodArgumentResolver> argumentResolvers = requestMappingHandlerAdapter.getArgumentResolvers();
@@ -84,19 +88,22 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
             if (isJson(contentType) && argumentResolver instanceof RequestResponseBodyMethodProcessor) {
                 argumentResolverCache.put(contentType, argumentResolver);
                 return argumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
-            } else if (isFormUrlEncoded(contentType) && argumentResolver instanceof ServletModelAttributeMethodProcessor) {
+            } else if (isFormUrlEncoded(contentType)
+                    && argumentResolver instanceof ServletModelAttributeMethodProcessor) {
                 argumentResolverCache.put(contentType, argumentResolver);
                 return argumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
             }
         }
         return null;
     }
+
     /**
      * @param contentType 参数
      */
     private boolean isJson(String contentType) {
         return contentType.contains(CONTENT_TYPE_JSON);
     }
+
     /**
      * @param contentType 参数
      */
@@ -106,9 +113,8 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
 
     /**
      * 判断当前参数解析器是否支持解析当前的Content-Type
+     *
      * @param contentType content类型
-     * @return
-     * @throws HttpMediaTypeNotSupportedException
      */
     private boolean isSupport(String contentType) throws HttpMediaTypeNotSupportedException {
         if (contentType == null) {
@@ -126,6 +132,7 @@ public class MultiArgumentResolverMethodProcessor implements HandlerMethodArgume
         }
         return true;
     }
+
     /**
      * @param applicationContext 参数
      */

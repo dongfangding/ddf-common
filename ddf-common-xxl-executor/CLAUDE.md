@@ -67,28 +67,28 @@ public class DemoTask {
 
 ### 3. 任务参数
 
-| 方法 | 说明 |
-|------|------|
-| `XxlJobHelper.getJobParam()` | 获取任务参数 |
-| `XxlJobHelper.handleFail(String msg)` | 标记任务失败 |
-| `XxlJobHelper.handleSuccess(String msg)` | 标记任务成功 |
-| `XxlJobHelper.log(String msg)` | 记录日志 |
+| 方法                                                               | 说明     |
+|------------------------------------------------------------------|--------|
+| `XxlJobHelper.getJobParam()`                                     | 获取任务参数 |
+| `XxlJobHelper.handleFail(String msg)`                            | 标记任务失败 |
+| `XxlJobHelper.handleSuccess(String msg)`                         | 标记任务成功 |
+| `XxlJobHelper.log(String msg)`                                   | 记录日志   |
 | `XxlJobHelper.setRouteStrategy(ExecutorRouteStrategyEnum.ROUND)` | 设置路由策略 |
 
 ## 路由策略
 
-| 策略 | 说明 |
-|------|------|
-| `FIRST` | 第一个 |
-| `LAST` | 最后一个 |
-| `ROUND` | 轮询 |
-| `RANDOM` | 随机 |
-| `CONSISTENT_HASH` | 一致性 Hash |
-| `LEAST_FREQUENTLY_USED` | 最不经常使用 |
-| `LEAST_RECENTLY_USED` | 最近最久未使用 |
-| `FAILOVER` | 故障转移 |
-| `BUSYOVER` | 忙碌转移 |
-| `SHARDING_BROADCAST` | 分片广播 |
+| 策略                      | 说明       |
+|-------------------------|----------|
+| `FIRST`                 | 第一个      |
+| `LAST`                  | 最后一个     |
+| `ROUND`                 | 轮询       |
+| `RANDOM`                | 随机       |
+| `CONSISTENT_HASH`       | 一致性 Hash |
+| `LEAST_FREQUENTLY_USED` | 最不经常使用   |
+| `LEAST_RECENTLY_USED`   | 最近最久未使用  |
+| `FAILOVER`              | 故障转移     |
+| `BUSYOVER`              | 忙碌转移     |
+| `SHARDING_BROADCAST`    | 分片广播     |
 
 ## 注意事项
 

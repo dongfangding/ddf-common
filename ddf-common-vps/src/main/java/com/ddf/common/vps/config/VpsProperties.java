@@ -23,7 +23,6 @@ public class VpsProperties {
      * fdfs的storage.conf配置的存储目录,这个是为了在这个目录下找到文件真实存储路径的前缀
      * 这个只能处理fastdfs的文件和服务器在同一个服务器的问题， 所以只是一个优先级，如果本机存在，则不需要使用在线视频截取
      * ，所以也可以不配置
-     *
      * 如果未配置store_path[n]， 从0开始，如store_path[0]， 则使用base_path
      */
     private String fdfsBasePath;

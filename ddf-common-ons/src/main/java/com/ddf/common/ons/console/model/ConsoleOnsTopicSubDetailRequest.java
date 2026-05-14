@@ -13,7 +13,7 @@ import lombok.Data;
  * @since 2021/05/25 13:51
  */
 @Data
-public class ConsoleOnsTopicSubDetailRequest implements UserRequest{
+public class ConsoleOnsTopicSubDetailRequest implements UserRequest {
 
     /**
      * 获取当前用户
@@ -22,6 +22,7 @@ public class ConsoleOnsTopicSubDetailRequest implements UserRequest{
 
     /**
      * 环境key
+     *
      * @see EnvClientProperties#getClients()
      */
     @NotBlank(message = "环境key不能为空")
@@ -38,12 +39,9 @@ public class ConsoleOnsTopicSubDetailRequest implements UserRequest{
      * 转换为SDK请求参数
      *
      * @param instanceId 实例ID
-     * @return
      */
     public OnsTopicSubDetailRequest toSdkRequest(String instanceId) {
-        return new OnsTopicSubDetailRequest()
-                .setTopic(getTopicId())
-                .setInstanceId(instanceId);
+        return new OnsTopicSubDetailRequest().setTopic(getTopicId()).setInstanceId(instanceId);
     }
 
 

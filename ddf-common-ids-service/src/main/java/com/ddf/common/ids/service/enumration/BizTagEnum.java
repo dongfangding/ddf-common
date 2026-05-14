@@ -40,7 +40,6 @@ public enum BizTagEnum {
      * 获取枚举描述
      *
      * @param type 类型
-     * @return
      */
     public static String value(String type) {
         for (BizTagEnum status : values()) {
@@ -55,7 +54,6 @@ public enum BizTagEnum {
      * 获取枚举实例
      *
      * @param type 类型
-     * @return
      */
     public static BizTagEnum valueOfType(String type) {
         for (BizTagEnum status : values()) {

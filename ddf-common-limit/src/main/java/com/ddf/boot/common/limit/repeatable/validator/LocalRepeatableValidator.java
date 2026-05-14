@@ -35,14 +35,15 @@ public class LocalRepeatableValidator implements RepeatableValidator {
     /**
      * 执行表单放重校验逻辑
      *
-     * @param joinPoint  织入点
+     * @param joinPoint 织入点
      * @param repeatable 注解
      * @param currentUid 参数
      * @param repeatableProperties 参数
      * @return 是否通过校验
      */
     @Override
-    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid, RepeatableProperties repeatableProperties) {
+    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid,
+            RepeatableProperties repeatableProperties) {
         // 获取定义的间隔时间
         final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
         final long currentTimeMillis = System.currentTimeMillis();
@@ -72,11 +73,9 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      *
      * @param joinPoint 参数
      * @param currentUid 参数
-     * @return
      */
     private String getRequestMapKey(JoinPoint joinPoint, String currentUid) {
-        return StrUtil.join(":", currentUid,
-                AopUtil.getJoinPointClass(joinPoint).getName(),
+        return StrUtil.join(":", currentUid, AopUtil.getJoinPointClass(joinPoint).getName(),
                 AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 
@@ -84,7 +83,6 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      * 获取缓存的value对象
      *
      * @param jointPoint 参数
-     * @return
      */
     private RequestValue getRequestMapValue(JoinPoint jointPoint) {
         final RequestValue requestValue = new RequestValue();

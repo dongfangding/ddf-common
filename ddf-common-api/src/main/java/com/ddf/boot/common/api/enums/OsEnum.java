@@ -32,15 +32,12 @@ public enum OsEnum {
      */
     PC,
 
-    H5
-
-    ;
+    H5;
 
     /**
      * 解析枚举值
      *
      * @param value 参数值
-     * @return
      */
     public static OsEnum resolve(String value) {
         if (StringUtils.isBlank(value)) {

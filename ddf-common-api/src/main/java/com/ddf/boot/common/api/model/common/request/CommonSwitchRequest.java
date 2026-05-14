@@ -24,7 +24,6 @@ public class CommonSwitchRequest {
      * 通用开关标识 0 关 1 开
      * 如0 未激活  1 已激活
      * 如0 禁用 1 启用
-     *
      */
     @NotNull(message = "开关标识不能为空")
     private Integer switchFlag;

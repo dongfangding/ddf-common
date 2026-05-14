@@ -24,28 +24,21 @@ public @interface RateLimit {
      * 令牌桶的key生成规则, 主要是区分限流key的粒度问题， 如方法级别， 用户的方法级别，甚至是热点参数级别
      *
      * @see RateLimitKeyGenerator
-     * @return
      */
     String keyGenerator() default "";
 
     /**
      * 条件表达式， 更可能的场景是该接口不限流，但是满足某些特定参数或者场景之后触发限流, 仅支持Spel表达式
-     *
-     * @return
      */
     String condition() default "";
 
     /**
      * 限流的最大令牌桶数量
-     *
-     * @return
      */
     int max() default 0;
 
     /**
      * 令牌桶恢复速率,单位秒
-     *
-     * @return
      */
     int rate() default 0;
 }

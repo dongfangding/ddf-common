@@ -33,8 +33,6 @@ public class HashIncrementCheckResponse implements Serializable {
 
     /**
      * 本次自增是否超过限定值
-     *
-     * @return
      */
     public boolean isLimit() {
         return result > actualResult;

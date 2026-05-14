@@ -24,8 +24,6 @@ public class MqttException extends BaseException {
 
     /**
      * 当前异常默认响应状态码
-     *
-     * @return
      */
     @Override
     public BaseCallbackCode defaultCallback() {

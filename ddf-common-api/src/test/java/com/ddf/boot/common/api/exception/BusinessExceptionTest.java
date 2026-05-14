@@ -75,10 +75,7 @@ class BusinessExceptionTest {
         @Test
         @DisplayName("构造 - BaseCallbackCode, Object... params")
         void constructorWithCallbackCodeAndParams_ShouldFormatMessage() {
-            BusinessException exception = new BusinessException(
-                    BaseErrorCallbackCode.TEST_FILL_EXCEPTION,
-                    "测试参数"
-            );
+            BusinessException exception = new BusinessException(BaseErrorCallbackCode.TEST_FILL_EXCEPTION, "测试参数");
 
             assertThat(exception.getCode()).isEqualTo(BaseErrorCallbackCode.TEST_FILL_EXCEPTION.getCode());
             assertThat(exception.getDescription()).isEqualTo("带占位符的异常演示[测试参数]");
@@ -89,11 +86,8 @@ class BusinessExceptionTest {
         @DisplayName("构造 - Object extra, BaseCallbackCode, Object... params")
         void constructorWithExtraCallbackCodeAndParams_ShouldSetExtraAndFormatMessage() {
             String extra = "extra info";
-            BusinessException exception = new BusinessException(
-                    extra,
-                    BaseErrorCallbackCode.TEST_FILL_EXCEPTION,
-                    "测试参数"
-            );
+            BusinessException exception = new BusinessException(extra, BaseErrorCallbackCode.TEST_FILL_EXCEPTION,
+                    "测试参数");
 
             assertThat(exception.getCode()).isEqualTo(BaseErrorCallbackCode.TEST_FILL_EXCEPTION.getCode());
             assertThat(exception.getDescription()).isEqualTo("带占位符的异常演示[测试参数]");
@@ -101,6 +95,7 @@ class BusinessExceptionTest {
             assertThat(exception.getParams()).containsExactly("测试参数");
         }
     }
+
 
     @Nested
     @DisplayName("默认回调测试")
@@ -122,6 +117,7 @@ class BusinessExceptionTest {
             assertThat(exception.isMaskErrorDetails()).isFalse();
         }
     }
+
 
     @Nested
     @DisplayName("异常抛出测试")
@@ -159,6 +155,7 @@ class BusinessExceptionTest {
         }
     }
 
+
     @Nested
     @DisplayName("多语言占位符测试")
     class PlaceholderTests {
@@ -166,11 +163,7 @@ class BusinessExceptionTest {
         @Test
         @DisplayName("单个占位符替换")
         void singlePlaceholder_ShouldReplaceCorrectly() {
-            BusinessException exception = new BusinessException(
-                    "CODE",
-                    "错误信息: {0}",
-                    "测试值"
-            );
+            BusinessException exception = new BusinessException("CODE", "错误信息: {0}", "测试值");
 
             assertThat(exception.getDescription()).isEqualTo("错误信息: 测试值");
         }
@@ -178,11 +171,7 @@ class BusinessExceptionTest {
         @Test
         @DisplayName("多个占位符替换")
         void multiplePlaceholders_ShouldReplaceCorrectly() {
-            BusinessException exception = new BusinessException(
-                    "CODE",
-                    "用户{0}的{1}无效",
-                    "张三", "手机号"
-            );
+            BusinessException exception = new BusinessException("CODE", "用户{0}的{1}无效", "张三", "手机号");
 
             assertThat(exception.getDescription()).isEqualTo("用户张三的手机号无效");
         }
@@ -190,11 +179,8 @@ class BusinessExceptionTest {
         @Test
         @DisplayName("连续占位符")
         void consecutivePlaceholders_ShouldReplaceCorrectly() {
-            BusinessException exception = new BusinessException(
-                    "CODE",
-                    "错误代码{0}：第{1}行，第{2}列",
-                    "ERR001", "10", "5"
-            );
+            BusinessException exception = new BusinessException("CODE", "错误代码{0}：第{1}行，第{2}列", "ERR001", "10",
+                    "5");
 
             assertThat(exception.getDescription()).isEqualTo("错误代码ERR001：第10行，第5列");
         }
@@ -202,11 +188,7 @@ class BusinessExceptionTest {
         @Test
         @DisplayName("带特殊字符的占位符")
         void placeholdersWithSpecialChars_ShouldReplaceCorrectly() {
-            BusinessException exception = new BusinessException(
-                    "CODE",
-                    "金额{0}超出限制{1}",
-                    "100.50", "99.99"
-            );
+            BusinessException exception = new BusinessException("CODE", "金额{0}超出限制{1}", "100.50", "99.99");
 
             assertThat(exception.getDescription()).isEqualTo("金额100.50超出限制99.99");
         }

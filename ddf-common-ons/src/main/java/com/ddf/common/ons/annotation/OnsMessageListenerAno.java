@@ -56,7 +56,6 @@ public @interface OnsMessageListenerAno {
 
     /**
      * BatchConsumer每次批量消费的最大消息数量, 默认值为1, 允许自定义范围为[1, 32], 实际消费数量可能小于该值
-     * @return
      */
     int consumeMessageBatchMaxSize() default 1;
 

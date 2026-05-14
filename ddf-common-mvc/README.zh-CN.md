@@ -13,16 +13,16 @@
 `ddf-common-mvc` 定位是 **Web 层的"胶水与治理"**：所有控制器共用的横切能力都放在这里，
 业务代码只需专注写接口逻辑。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| ----- | ----- | ----- |
-| 全局异常处理 | 每个 Controller 手写 try-catch，格式不统一 | `AbstractExceptionHandler` 自动捕获并映射为 `ResponseData` |
-| 响应体统一包装 | 有的接口返回原始对象，有的手动包 `ResponseData` | `AbstractCommonResponseBodyAdvice` 自动包装 |
-| 请求体多次读取 | 签名验签需要先读 body，后续框架再读一次会报错 | `CachingRequestBodyFilter` 缓存请求体到 `ContentCachingRequestWrapper` |
-| 访问日志 + 慢接口 | 需要记录每个接口的入参、出参、耗时，超时告警 | `@EnableLogAspect` 开启 AOP 日志与慢接口回调 |
-| 权限菜单扫描 | 需要自动收集所有 controller 的权限注解生成菜单 | `PermissionMenuScanner` 扫描 `@PermissionMenu` |
-| 接口签名防篡改 | 开放网关对接需要验签 | `RequestSignAccessFilterChain` 基于 `BaseSign` 自动验签 |
-| 自定义参数解析 | 同一个参数需要支持多种 content-type 解析 | `MultiArgumentResolver` / `QueryParamArgumentResolver` |
-| 国际化异常消息 | 异常消息需要按客户端语言返回 | `AbstractExceptionHandler` 根据 `app_language` header 解析 Locale |
+| 场景         | 典型问题                             | 模块提供的能力                                                          |
+|------------|----------------------------------|------------------------------------------------------------------|
+| 全局异常处理     | 每个 Controller 手写 try-catch，格式不统一 | `AbstractExceptionHandler` 自动捕获并映射为 `ResponseData`               |
+| 响应体统一包装    | 有的接口返回原始对象，有的手动包 `ResponseData`  | `AbstractCommonResponseBodyAdvice` 自动包装                          |
+| 请求体多次读取    | 签名验签需要先读 body，后续框架再读一次会报错        | `CachingRequestBodyFilter` 缓存请求体到 `ContentCachingRequestWrapper` |
+| 访问日志 + 慢接口 | 需要记录每个接口的入参、出参、耗时，超时告警           | `@EnableLogAspect` 开启 AOP 日志与慢接口回调                               |
+| 权限菜单扫描     | 需要自动收集所有 controller 的权限注解生成菜单    | `PermissionMenuScanner` 扫描 `@PermissionMenu`                     |
+| 接口签名防篡改    | 开放网关对接需要验签                       | `RequestSignAccessFilterChain` 基于 `BaseSign` 自动验签                |
+| 自定义参数解析    | 同一个参数需要支持多种 content-type 解析      | `MultiArgumentResolver` / `QueryParamArgumentResolver`           |
+| 国际化异常消息    | 异常消息需要按客户端语言返回                   | `AbstractExceptionHandler` 根据 `app_language` header 解析 Locale    |
 
 > ⚠️ 数据库连接池、Druid 等基础设施已迁出到 `ddf-common-data-mysql-starter`。
 
@@ -88,13 +88,13 @@ throw new ServerErrorException("系统错误");
 
 异常处理行为：
 
-| 异常类型 | HTTP status | 是否模糊化 | 说明 |
-| ----- | ----- | ----- | ----- |
-| `BusinessException` | 200 | 否 | 直接返回 `description` |
-| `BadRequestException` | 200 | 是 | 返回 `bizMessage`（默认"错误请求"） |
-| `ServerErrorException` | 200 | 是 | 返回 `bizMessage`（默认"请求失败，请联系客服人员~"） |
-| `BindException` | 200 | 否 | 拼接所有字段校验错误 |
-| `DuplicateKeyException` | 200 | 否 | 映射为 `DUPLICATE_KEY` |
+| 异常类型                    | HTTP status | 是否模糊化 | 说明                                 |
+|-------------------------|-------------|-------|------------------------------------|
+| `BusinessException`     | 200         | 否     | 直接返回 `description`                 |
+| `BadRequestException`   | 200         | 是     | 返回 `bizMessage`（默认"错误请求"）          |
+| `ServerErrorException`  | 200         | 是     | 返回 `bizMessage`（默认"请求失败，请联系客服人员~"） |
+| `BindException`         | 200         | 否     | 拼接所有字段校验错误                         |
+| `DuplicateKeyException` | 200         | 否     | 映射为 `DUPLICATE_KEY`                |
 
 > 开启 `customizer.infra.global-properties.exception-code-to-response-status: true` 时，
 > 部分异常码会被同步写入 HTTP response.status。
@@ -156,6 +156,7 @@ public class LogConfig {
 ```
 
 功能：
+
 - 自动打印 Controller 方法的入参、出参、执行耗时
 - 异常时打印入参和异常信息
 - 超过 `slowTime` 触发 `SlowEventAction` 回调，可用于对接告警系统
@@ -207,6 +208,7 @@ public class GatewayRequest implements BaseSign {
 ```
 
 `RequestSignAccessFilterChain` 会：
+
 1. 提取 `sign` 和 `nonceTimestamp`
 2. 重新计算 HMAC-SHA256 签名
 3. 比对失败时抛 `BusinessException(SIGN_ERROR)`
@@ -293,14 +295,14 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| ----- | ----- |
-| `ddf-common-api` | 异常体系 (`BaseException` / `ResponseData`)、签名接口 (`BaseSign`)、请求头枚举 (`RequestHeaderEnum`) |
-| `ddf-common-core` | 复用 `GlobalProperties` (异常码映射 status、忽略日志异常类名)、`EnvironmentHelper`、`SpringContextHolder` |
-| `ddf-common-authentication` | 鉴权异常 (`UnauthorizedException` / `AccessDeniedException`) 被全局异常处理器统一包装 |
-| `ddf-common-redis` | 签名验签使用的 `sign-secret` 通过 `GlobalProperties` 读取 |
-| `ddf-common-limit` | 限流拦截器抛出的异常被全局异常处理器捕获并包装 |
-| `ddf-common-starter-web` | 本模块是 starter 的 Web 层核心 |
+| 模块                          | 协作方式                                                                                    |
+|-----------------------------|-----------------------------------------------------------------------------------------|
+| `ddf-common-api`            | 异常体系 (`BaseException` / `ResponseData`)、签名接口 (`BaseSign`)、请求头枚举 (`RequestHeaderEnum`)   |
+| `ddf-common-core`           | 复用 `GlobalProperties` (异常码映射 status、忽略日志异常类名)、`EnvironmentHelper`、`SpringContextHolder` |
+| `ddf-common-authentication` | 鉴权异常 (`UnauthorizedException` / `AccessDeniedException`) 被全局异常处理器统一包装                   |
+| `ddf-common-redis`          | 签名验签使用的 `sign-secret` 通过 `GlobalProperties` 读取                                          |
+| `ddf-common-limit`          | 限流拦截器抛出的异常被全局异常处理器捕获并包装                                                                 |
+| `ddf-common-starter-web`    | 本模块是 starter 的 Web 层核心                                                                  |
 
 ---
 
@@ -311,7 +313,8 @@ public void onGlobalException(GlobalExceptionEvent event) {
 如果已经是 `ResponseData` 则直接透传，不会套娃。如果出现了套娃，请检查是否自定义了
 `ResponseBodyAdvice` 并且优先级高于默认实现。
 
-**Q2：`@WrapperIgnore` 和 `ignoreReturnType` 有什么区别？**  
+**Q2：`@WrapperIgnore` 和 `ignoreReturnType` 有什么区别？**
+
 - `@WrapperIgnore`：注解在方法上，粒度细，即开即用
 - `ignoreReturnType`：配置在 YAML 中，按返回类型的全类名排除，适合排除第三方框架的返回值
 

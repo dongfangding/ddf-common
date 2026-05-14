@@ -44,10 +44,8 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
     ILLEGAL_TOKEN("ILLEGAL_TOKEN", "非法Token"),
 
     MAIL_SEND_FAILURE("MAIL_SEND_FAILURE", "邮件发送失败"),
-    SERIALIZE_PARAM_ERROR(
-            "JSON_SERIALIZER_FILED",
-            "序列化参数失败， 请检查是否有入参对象无法序列化[com.nvwa.boot.common.core.util.AopUtil.getSerializableParamMap]"
-    ),
+    SERIALIZE_PARAM_ERROR("JSON_SERIALIZER_FILED",
+            "序列化参数失败， 请检查是否有入参对象无法序列化[com.nvwa.boot.common.core.util.AopUtil.getSerializableParamMap]"),
 
     JSON_SERIALIZER_FILED("JSON_SERIALIZER_FILED", "Json序列化失败"),
     JSON_DESERIALIZER_FILED("JSON_DESERIALIZER_FILED", "Json反序列化失败"),
@@ -106,6 +104,7 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
 
     /**
      * 异常消息
+     *
      * @param description 描述信息
      */
     @Getter
@@ -116,16 +115,19 @@ public enum BaseErrorCallbackCode implements BaseCallbackCode {
      */
     @Getter
     private final String bizMessage;
+
     BaseErrorCallbackCode(String description) {
         this.code = null;
         this.description = description;
         this.bizMessage = description;
     }
+
     BaseErrorCallbackCode(String code, String description) {
         this.code = code;
         this.description = description;
         this.bizMessage = description;
     }
+
     BaseErrorCallbackCode(String code, String description, String bizMessage) {
         this.code = code;
         this.description = description;

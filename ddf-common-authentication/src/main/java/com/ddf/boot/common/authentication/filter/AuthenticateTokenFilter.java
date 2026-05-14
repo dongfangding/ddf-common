@@ -68,8 +68,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param request 请求对象
      * @param response 响应对象
      * @param handler 当前处理器对象
-     * @return
-     * @throws Exception
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -142,8 +140,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // 校验签名
         checkSign(request);
         // 分发服务前
-        final ResponseData<Object> responseData = userClaimService.beforeDispatch(
-                request, response, userClaim, allHeaderMap, customizeHeaderMap);
+        final ResponseData<Object> responseData = userClaimService.beforeDispatch(request, response, userClaim,
+                allHeaderMap, customizeHeaderMap);
         if (!responseData.isSuccess()) {
             WebUtil.writerJson(response, JsonUtil.toJson(responseData));
             return false;
@@ -152,6 +150,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         buildContext(request, userClaim, clientIp, token);
         return true;
     }
+
     /**
      * @param request 请求对象
      */
@@ -171,6 +170,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             resolveQueryParamsSignData(request);
         }
     }
+
     /**
      * @param request 请求对象
      * @param userClaim 用户声明信息
@@ -181,10 +181,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // 解析请求头
         resolveRequestContext(request, userClaim, clientIp, token);
         MDC.put(AuthenticateConstant.MDC_USER_ID, UserContextUtil.getUserId());
-        MDC.put(
-                AuthenticateConstant.MDC_TRACE_ID,
-                request.getHeader(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName())
-        );
+        MDC.put(AuthenticateConstant.MDC_TRACE_ID,
+                request.getHeader(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName()));
         MDC.put(AuthenticateConstant.MDC_CLIENT_IP, UserContextUtil.getClientIpFromGateway());
         MDC.put(AuthenticateConstant.MDC_IMEI, UserContextUtil.getImei());
     }
@@ -208,11 +206,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param request 请求对象
      */
     private void resolveQueryParamsSignData(HttpServletRequest request) {
-        final Map<String, Object> data = request
-                .getParameterMap()
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, val -> val.getValue()[0]));
+        final Map<String, Object> data = request.getParameterMap().entrySet().stream().collect(
+                Collectors.toMap(Map.Entry::getKey, val -> val.getValue()[0]));
         validSign(request, data);
     }
 
@@ -221,7 +216,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      *
      * @param data 待处理数据
      * @param request 请求对象
-     * @return
      */
     private void validSign(HttpServletRequest request, Map<String, Object> data) {
         // 把请求头中的nonce也加入到加签规则字段中
@@ -240,7 +234,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * 生成traceId
      *
      * @param userId 用户 ID
-     * @return
      */
     private String generateTraceId(String userId) {
         return String.join("-", userId, IdsUtil.getNextStrId());
@@ -253,7 +246,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param response 响应对象
      * @param handler 当前处理器对象
      * @param ex 异常对象
-     * @throws Exception
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
@@ -266,7 +258,6 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      *
      * @param request 请求对象
      * @param tokenHeader 请求头中的 token 值
-     * @return
      */
     private UserClaim checkAndParseAuthInfo(HttpServletRequest request, String tokenHeader) {
         String tokenPrefix = authenticateProperties.getTokenPrefix();
@@ -300,27 +291,22 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      * @param request 请求对象
      * @param userClaim 用户声明信息
      * @param clientIp 客户端 IP
-     * @return
      */
     private Map<String, String> resolveServerHeaders(HttpServletRequest request, UserClaim userClaim, String clientIp) {
         Map<String, String> serverHeaderMap = new HashMap<>();
         // 处理服务端内部的请求头
         serverHeaderMap.put(RequestHeaderEnum.CLIENT_IP_FROM_GATEWAY.getName(), clientIp);
-        serverHeaderMap.put(
-                RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName(),
-                Objects.nonNull(userClaim) ? userClaim.getUserId() : request.getHeader(RequestHeaderEnum.IMEI.getName())
-        );
-        serverHeaderMap.put(
-                RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName(),
-                RequestHeaderEnum.IS_GATEWAY_DISPATCH.getDefaultValue()
-        );
-        serverHeaderMap.put(
-                RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
-                        Objects.nonNull(userClaim) ? userClaim.getUserId() :
-                                request.getHeader(RequestHeaderEnum.IMEI.getName()))
-        );
+        serverHeaderMap.put(RequestHeaderEnum.USER_ID_FROM_GATEWAY.getName(),
+                Objects.nonNull(userClaim) ? userClaim.getUserId() :
+                        request.getHeader(RequestHeaderEnum.IMEI.getName()));
+        serverHeaderMap.put(RequestHeaderEnum.IS_GATEWAY_DISPATCH.getName(),
+                RequestHeaderEnum.IS_GATEWAY_DISPATCH.getDefaultValue());
+        serverHeaderMap.put(RequestHeaderEnum.TRACE_ID_FROM_GATEWAY.getName(), generateTraceId(
+                Objects.nonNull(userClaim) ? userClaim.getUserId() :
+                        request.getHeader(RequestHeaderEnum.IMEI.getName())));
         return serverHeaderMap;
     }
+
     /**
      * @param request 请求对象
      * @param userClaim 用户声明信息
@@ -329,9 +315,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      */
     private void resolveRequestContext(HttpServletRequest request, UserClaim userClaim, String clientIp, String token) {
         // TODO 可以预留一个集合属性，允许外部配置自定义的请求头，这里去解析自定义的请求头，才能保证这个模块作为基础模块被引用
-        UserContextUtil.setRequestContext(RequestContext
-                .builder()
-						.token(token)
+        UserContextUtil.setRequestContext(RequestContext.builder()
+                .token(token)
                 .userClaim(userClaim)
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))

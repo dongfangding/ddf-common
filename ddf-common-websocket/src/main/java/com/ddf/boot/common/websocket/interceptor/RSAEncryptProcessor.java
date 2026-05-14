@@ -17,7 +17,6 @@ public class RSAEncryptProcessor implements EncryptProcessor {
      * 如果客户端加密了的话
      *
      * @param token token 字符串
-     * @return
      */
     @Override
     public String decryptHandshakeToken(String token) {
@@ -28,7 +27,6 @@ public class RSAEncryptProcessor implements EncryptProcessor {
      * 加密要发送的消息对象
      *
      * @param message 消息内容
-     * @return
      */
     @Override
     public <T> String encryptMessage(Message<T> message) {

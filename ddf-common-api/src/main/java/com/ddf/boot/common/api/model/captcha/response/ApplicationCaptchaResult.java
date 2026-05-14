@@ -9,7 +9,7 @@ import lombok.Data;
  *
  * @author snowball
  * @version 1.0
-     * @since 2021/03/02 16:`19`
+ * @since 2021/03/02 16:`19`
  */
 @Data
 public class ApplicationCaptchaResult implements Serializable {
@@ -47,6 +47,7 @@ public class ApplicationCaptchaResult implements Serializable {
      * 图片编码base64的前缀，如`data:image/jpeg;base64,` + 真实的base64图片编码为一个完整版的格式，可以还原成图片
      */
     private String prefix = "data:image/jpeg;base64,";
+
     public static ApplicationCaptchaResult fromCaptchaResult(CaptchaResult result) {
         final ApplicationCaptchaResult applicationCaptchaResult = new ApplicationCaptchaResult();
         applicationCaptchaResult.setWidth(result.getWidth());

@@ -50,8 +50,8 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
      *
      * @param message 待处理消息
      */
-    protected void handleMaxRetriesExceeded(MessagePayload message){
-        log.error("消息Id:{},达到最大重试次数，消费失败，请执行后续处理",message.getMessageId());
+    protected void handleMaxRetriesExceeded(MessagePayload message) {
+        log.error("消息Id:{},达到最大重试次数，消费失败，请执行后续处理", message.getMessageId());
     }
 
 
@@ -98,6 +98,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
     protected Long getDelaySeconds() {
         return DELAY_LEVEL;
     }
+
     /**
      * @param payload 参数
      */
@@ -125,6 +126,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
 
     /**
      * 使用模板模式构建消息消费框架，可自由扩展或删减
+     *
      * @param message 参数
      */
     public void dispatchMessage(MessagePayload<T> message) {
@@ -145,9 +147,10 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             T data = message.getData();
             handleMessage(data);
             long costTime = System.currentTimeMillis() - now;
-            log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG,message.getMessageId(),messageJson, costTime);
+            log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG, message.getMessageId(), messageJson,
+                    costTime);
         } catch (Exception e) {
-            log.info("[{}] 消息id:{}消费异常,e:{}",TAG, message.getMessageId(), e);
+            log.info("[{}] 消息id:{}消费异常,e:{}", TAG, message.getMessageId(), e);
             // 是捕获异常还是抛出，由子类决定
             if (throwException()) {
                 // 抛出异常，由DefaultMessageListenerConcurrently类处理
@@ -188,11 +191,12 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             delayRocketMqMessage.setDelayTime(getDelaySeconds());
             sendResult = rocketProducer.syncSend(delayRocketMqMessage);
         } catch (Exception ex) {
-            log.error("[{}] 消息id:{},发送重试消息异常,e:{}",TAG, message.getMessageId(), ex);
+            log.error("[{}] 消息id:{},发送重试消息异常,e:{}", TAG, message.getMessageId(), ex);
         }
         // 发送失败的处理就是不进行ACK，由RocketMQ重试
         if (Objects.isNull(sendResult) || sendResult.getSendStatus() != SendStatus.SEND_OK) {
-            log.error("[{}] 消息id:{},发送重试消息异常,sendStatus:{}",TAG, message.getMessageId(), sendResult.getSendStatus());
+            log.error("[{}] 消息id:{},发送重试消息异常,sendStatus:{}", TAG, message.getMessageId(),
+                    sendResult.getSendStatus());
         }
 
     }

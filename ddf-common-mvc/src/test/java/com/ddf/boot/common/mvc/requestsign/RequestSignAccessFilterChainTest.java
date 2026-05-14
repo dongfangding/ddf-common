@@ -49,14 +49,11 @@ class RequestSignAccessFilterChainTest {
         globalProperties.setSignSecret("abcdefghijklmnopqrstuvwxyz123456");
         RequestSignAccessFilterChain chain = new RequestSignAccessFilterChain(globalProperties);
         ProceedingJoinPoint joinPoint = buildJoinPoint(
-            DemoController.class.getDeclaredMethod("signed", SignedPayload.class),
-            new SignedPayload(null, null, "demo")
-        );
+                DemoController.class.getDeclaredMethod("signed", SignedPayload.class),
+                new SignedPayload(null, null, "demo"));
 
-        BusinessException exception = assertThrows(
-            BusinessException.class,
-            () -> chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature())
-        );
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature()));
 
         assertEquals(BaseErrorCallbackCode.SIGN_ERROR.getCode(), exception.getCode());
     }
@@ -69,14 +66,10 @@ class RequestSignAccessFilterChainTest {
         RequestSignAccessFilterChain chain = new RequestSignAccessFilterChain(globalProperties);
         SignedPayload payload = new SignedPayload("fake-sign", System.currentTimeMillis() - 10_000L, "demo");
         ProceedingJoinPoint joinPoint = buildJoinPoint(
-            DemoController.class.getDeclaredMethod("signedWithNonce", SignedPayload.class),
-            payload
-        );
+                DemoController.class.getDeclaredMethod("signedWithNonce", SignedPayload.class), payload);
 
-        BusinessException exception = assertThrows(
-            BusinessException.class,
-            () -> chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature())
-        );
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature()));
 
         assertEquals(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR.getCode(), exception.getCode());
     }
@@ -91,9 +84,7 @@ class RequestSignAccessFilterChainTest {
         SignedPayload payload = new SignedPayload(null, null, "demo");
         payload.setSign(SignatureUtil.genSelfSignature(secret, payload));
         ProceedingJoinPoint joinPoint = buildJoinPoint(
-            DemoController.class.getDeclaredMethod("signed", SignedPayload.class),
-            payload
-        );
+                DemoController.class.getDeclaredMethod("signed", SignedPayload.class), payload);
 
         assertTrue(chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature()));
     }
@@ -109,11 +100,8 @@ class RequestSignAccessFilterChainTest {
         signSource.put("name", "codex");
         String sign = SignatureUtil.genSelfSignature(secret, signSource);
         ProceedingJoinPoint joinPoint = buildJoinPoint(
-            DemoController.class.getDeclaredMethod("signedPlain", String.class, String.class),
-            new String[] {"sign", "name"},
-            sign,
-            "codex"
-        );
+                DemoController.class.getDeclaredMethod("signedPlain", String.class, String.class),
+                new String[] {"sign", "name"}, sign, "codex");
 
         assertTrue(chain.filter(joinPoint, DemoController.class, (MethodSignature) joinPoint.getSignature()));
     }
@@ -149,6 +137,7 @@ class RequestSignAccessFilterChainTest {
         public void signedPlain(String sign, String name) {
         }
     }
+
 
     static class SignedPayload implements BaseSign {
 

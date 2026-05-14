@@ -17,7 +17,6 @@ public class GlobalRateLimitKeyGenerator implements RateLimitKeyGenerator {
 
     /**
      * 该类bean_name
-     *
      */
     public static final String BEAN_NAME = "globalRateLimitKeyGenerator";
 
@@ -27,12 +26,10 @@ public class GlobalRateLimitKeyGenerator implements RateLimitKeyGenerator {
      * @param joinPoint joinpoint参数
      * @param annotation annotation参数
      * @param properties properties参数
-     * @return
      */
     @Override
     public String generateKey(JoinPoint joinPoint, RateLimit annotation, RateLimitProperties properties) {
-        return ApplicationNamedKeyGenerator.genKey(getPrefix(),
-                AopUtil.getJoinPointClass(joinPoint).getName(),
+        return ApplicationNamedKeyGenerator.genKey(getPrefix(), AopUtil.getJoinPointClass(joinPoint).getName(),
                 AopUtil.getJoinPointMethod(joinPoint).getName());
     }
 }

@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 
 /**
  * S3 操作辅助类.
- *
  * <p>提供常用操作封装，简化文件上传下载流程.</p>
  *
  * @author snowball
@@ -21,6 +20,7 @@ public class S3Helper {
 
     private final S3Api s3Api;
     private final S3Properties s3Properties;
+
     public S3Helper(S3Api s3Api, S3Properties s3Properties) {
         this.s3Api = s3Api;
         this.s3Properties = s3Properties;
@@ -42,6 +42,7 @@ public class S3Helper {
 
     /**
      * 上传文件（使用默认 Bucket，自动生成路径）.
+     *
      * @param platform 参数
      * @param identity 参数
      * @param filename 参数
@@ -49,14 +50,15 @@ public class S3Helper {
      * @param contentType 参数
      * @param size 参数
      */
-    public UploadResult upload(String platform, String identity, String filename,
-                               InputStream inputStream, String contentType, long size) {
+    public UploadResult upload(String platform, String identity, String filename, InputStream inputStream,
+            String contentType, long size) {
         String objectKey = generateObjectKey(platform, identity, filename);
         return s3Api.upload(objectKey, inputStream, contentType, size);
     }
 
     /**
      * 上传文件（使用默认 Bucket，自动生成路径）.
+     *
      * @param platform 参数
      * @param identity 参数
      * @param file 参数
@@ -68,6 +70,7 @@ public class S3Helper {
 
     /**
      * 上传文件（使用默认 Bucket，自动生成路径）.
+     *
      * @param platform 参数
      * @param identity 参数
      * @param data 待处理数据
@@ -81,6 +84,7 @@ public class S3Helper {
 
     /**
      * 上传文件（指定 Bucket）.
+     *
      * @param bucketName 参数
      * @param platform 参数
      * @param identity 参数
@@ -90,13 +94,14 @@ public class S3Helper {
      * @param size 参数
      */
     public UploadResult upload(String bucketName, String platform, String identity, String filename,
-                               InputStream inputStream, String contentType, long size) {
+            InputStream inputStream, String contentType, long size) {
         String objectKey = generateObjectKey(platform, identity, filename);
         return s3Api.upload(bucketName, objectKey, inputStream, contentType, size);
     }
 
     /**
      * 获取文件访问 URL.
+     *
      * @param objectKey 参数
      */
     public String getObjectUrl(String objectKey) {
@@ -105,6 +110,7 @@ public class S3Helper {
 
     /**
      * 临时上传文件，使用完成后自动删除.
+     *
      * @param platform 参数
      * @param identity 参数
      * @param filename 参数
@@ -113,9 +119,8 @@ public class S3Helper {
      * @param size 参数
      * @param consumer 参数
      */
-    public void uploadAndOperate(String platform, String identity, String filename,
-                                  InputStream inputStream, String contentType, long size,
-                                  Consumer<String> consumer) {
+    public void uploadAndOperate(String platform, String identity, String filename, InputStream inputStream,
+            String contentType, long size, Consumer<String> consumer) {
         String uploadedObjectKey = null;
         try {
             UploadResult result = upload(platform, identity, filename, inputStream, contentType, size);
@@ -130,6 +135,7 @@ public class S3Helper {
 
     /**
      * 生成对象 Key（路径）.
+     *
      * @param platform 参数
      * @param identity 参数
      * @param filename 参数
@@ -141,6 +147,7 @@ public class S3Helper {
         String extension = getFileExtension(filename);
         return String.format("%s/%s/%s/%s%s", platform, format, identity, uuid, extension);
     }
+
     /**
      * @param filename 参数
      */
@@ -150,6 +157,7 @@ public class S3Helper {
         }
         return filename.substring(filename.lastIndexOf("."));
     }
+
     /**
      * @param filename 参数
      */

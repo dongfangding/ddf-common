@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Import;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(StaticProperties.class)
-@Import({EnvironmentContext.class, SensitiveInfoSerialize.class, UrlReplaceHelper.class,
-        UrlReplaceSerialize.class, UrlReplaceDeserialize.class})
+@Import({EnvironmentContext.class, SensitiveInfoSerialize.class, UrlReplaceHelper.class, UrlReplaceSerialize.class,
+        UrlReplaceDeserialize.class})
 public class ApiAutoConfiguration {
 
 }

@@ -29,7 +29,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * ONS监听器容器配置， 根据{@link OnsMessageListenerAno} 构建出监听容器类
- * 
+ *
  * @author snowball
  * @since 2021/8/26 14:24
  **/
@@ -48,9 +48,11 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
      * @param onsProperties 参数
      */
     private final OnsProperties onsProperties;
+
     public OnsListenerContainerConfiguration(Environment environment, OnsProperties onsProperties) {
         this.onsProperties = onsProperties;
     }
+
     /**
      * @param applicationContext 参数
      */
@@ -62,10 +64,13 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, Object> beans = this.applicationContext.getBeansWithAnnotation(OnsMessageListenerAno.class)
-                .entrySet().stream().filter(entry -> !ScopedProxyUtils.isScopedTarget(entry.getKey()))
+                .entrySet()
+                .stream()
+                .filter(entry -> !ScopedProxyUtils.isScopedTarget(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         beans.forEach(this::registerListenerContainer);
     }
+
     /**
      * @param beanName Bean 名称
      * @param bean 参数
@@ -77,16 +82,17 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
             throw new IllegalStateException(clazz + " is not instance of " + OnsMessageListener.class.getName());
         }
 
-        if (MessageListener.class.isAssignableFrom(bean.getClass()) && BatchMessageListener.class.isAssignableFrom(bean.getClass())
-                && MessageOrderListener.class.isAssignableFrom(bean.getClass())) {
-            throw new IllegalStateException(clazz + " cannot be both instance of " + MessageListener.class.getName()
-                    + " or " + BatchMessageListener.class.getName() + " or " + MessageOrderListener.class.getName());
+        if (MessageListener.class.isAssignableFrom(bean.getClass()) && BatchMessageListener.class.isAssignableFrom(
+                bean.getClass()) && MessageOrderListener.class.isAssignableFrom(bean.getClass())) {
+            throw new IllegalStateException(
+                    clazz + " cannot be both instance of " + MessageListener.class.getName() + " or "
+                            + BatchMessageListener.class.getName() + " or " + MessageOrderListener.class.getName());
         }
 
-        if (!MessageListener.class.isAssignableFrom(bean.getClass()) && !BatchMessageListener.class.isAssignableFrom(bean.getClass())
-                && !MessageOrderListener.class.isAssignableFrom(bean.getClass())) {
-            throw new IllegalStateException(clazz + " is not instance of " + MessageListener.class.getName()
-                    + " or " + BatchMessageListener.class.getName() + " or " + MessageOrderListener.class.getName());
+        if (!MessageListener.class.isAssignableFrom(bean.getClass()) && !BatchMessageListener.class.isAssignableFrom(
+                bean.getClass()) && !MessageOrderListener.class.isAssignableFrom(bean.getClass())) {
+            throw new IllegalStateException(clazz + " is not instance of " + MessageListener.class.getName() + " or "
+                    + BatchMessageListener.class.getName() + " or " + MessageOrderListener.class.getName());
         }
 
         OnsMessageListenerAno annotation = clazz.getAnnotation(OnsMessageListenerAno.class);
@@ -110,13 +116,14 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
         }
         LOGGER.info("Register the Listener:[{}] to the Container:[{}]", beanName, containerBeanName);
     }
+
     /**
      * @param annotation 参数
      * @param bean 参数
      * @param beanName Bean 名称
      */
-    private BaseOnsListenerContainer createOnsListenerContainer(OnsMessageListenerAno annotation,
-                                                                   Object bean, String beanName) {
+    private BaseOnsListenerContainer createOnsListenerContainer(OnsMessageListenerAno annotation, Object bean,
+            String beanName) {
         BaseOnsListenerContainer container = new BaseOnsListenerContainer();
         container.setOnsMessageListener((OnsMessageListener) bean);
         container.setAnnotation(annotation);
@@ -138,7 +145,8 @@ public class OnsListenerContainerConfiguration implements ApplicationContextAwar
             container.setMessageOrderListener((MessageOrderListener) bean);
             container.setConsumeMode(ConsumeMode.ORDERLY);
         } else {
-            throw new BeanDefinitionValidationException("the Class modifier by Annotation @OnsMessageListener must implements interface MessageListener or BatchMessageListener or MessageOrderListener ");
+            throw new BeanDefinitionValidationException(
+                    "the Class modifier by Annotation @OnsMessageListener must implements interface MessageListener or BatchMessageListener or MessageOrderListener ");
         }
         container.setName(beanName);
 

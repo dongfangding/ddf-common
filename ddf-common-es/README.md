@@ -11,11 +11,11 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-es` solves the **"unified Elasticsearch client dependency management"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Multi-module ES usage | Each business module imports its own ES client with different versions | Unified version and configuration entry |
-| Full-text search | Need to develop based on Spring Data Elasticsearch | Auto-configuration and client wrapper |
-| Log / metrics storage | Business data needs to be written to ES indices | `EsClient` simplifies index and document operations |
+| Scenario              | Typical Problem                                                        | What the Module Provides                            |
+|-----------------------|------------------------------------------------------------------------|-----------------------------------------------------|
+| Multi-module ES usage | Each business module imports its own ES client with different versions | Unified version and configuration entry             |
+| Full-text search      | Need to develop based on Spring Data Elasticsearch                     | Auto-configuration and client wrapper               |
+| Log / metrics storage | Business data needs to be written to ES indices                        | `EsClient` simplifies index and document operations |
 
 ---
 
@@ -123,10 +123,10 @@ spring:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| Business modules | Build business-level indexing, querying, and aggregation logic on top of this module |
-| `ddf-common-core` | JSON serialization, date formatting, and other utility support |
+| Module            | How They Cooperate                                                                   |
+|-------------------|--------------------------------------------------------------------------------------|
+| Business modules  | Build business-level indexing, querying, and aggregation logic on top of this module |
+| `ddf-common-core` | JSON serialization, date formatting, and other utility support                       |
 
 ---
 

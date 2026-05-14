@@ -87,6 +87,7 @@ class ResponseDataTest {
         }
     }
 
+
     @Nested
     @DisplayName("failure 方法测试")
     class FailureMethodTests {
@@ -150,7 +151,7 @@ class ResponseDataTest {
             String message = "错误信息";
             String subMessage = "详细错误信息";
             Object extra = "extra";
-            Object[] formatParams = new Object[]{"param1", "param2"};
+            Object[] formatParams = new Object[] {"param1", "param2"};
             ResponseData<Object> response = ResponseData.failure(code, message, subMessage, extra, formatParams);
 
             assertThat(response.getCode()).isEqualTo(code);
@@ -161,6 +162,7 @@ class ResponseDataTest {
             assertThat(response.isSuccess()).isFalse();
         }
     }
+
 
     @Nested
     @DisplayName("isSuccess 方法测试")
@@ -188,6 +190,7 @@ class ResponseDataTest {
         }
     }
 
+
     @Nested
     @DisplayName("requiredSuccess 方法测试")
     class RequiredSuccessMethodTests {
@@ -208,23 +211,21 @@ class ResponseDataTest {
         void failureResponse_ShouldThrowBusinessException() {
             ResponseData<String> response = ResponseData.failure(BaseErrorCallbackCode.PARAM_ERROR);
 
-            assertThatThrownBy(response::requiredSuccess)
-                    .isInstanceOf(BusinessException.class)
-                    .hasMessageContaining(BaseErrorCallbackCode.PARAM_ERROR.getDescription());
+            assertThatThrownBy(response::requiredSuccess).isInstanceOf(BusinessException.class).hasMessageContaining(
+                    BaseErrorCallbackCode.PARAM_ERROR.getDescription());
         }
 
         @Test
         @DisplayName("requiredSuccess - 失败响应带格式化参数抛出异常")
         void failureResponseWithFormatParams_ShouldThrowBusinessException() {
-            Object[] formatParams = new Object[]{"testParam"};
-            ResponseData<String> response = ResponseData.failure(
-                    "CODE", "错误信息{0}", "详细错误信息", null, formatParams
-            );
+            Object[] formatParams = new Object[] {"testParam"};
+            ResponseData<String> response = ResponseData.failure("CODE", "错误信息{0}", "详细错误信息", null,
+                    formatParams);
 
-            assertThatThrownBy(response::requiredSuccess)
-                    .isInstanceOf(BusinessException.class);
+            assertThatThrownBy(response::requiredSuccess).isInstanceOf(BusinessException.class);
         }
     }
+
 
     @Nested
     @DisplayName("failureDefault 方法测试")
@@ -264,6 +265,7 @@ class ResponseDataTest {
         }
     }
 
+
     @Nested
     @DisplayName("构造方法测试")
     class ConstructorTests {
@@ -271,9 +273,8 @@ class ResponseDataTest {
         @Test
         @DisplayName("全参数构造 - 4参数")
         void constructorWithFourParams_ShouldCreateResponse() {
-            ResponseData<String> response = new ResponseData<>(
-                    "code", "message", "subMessage", System.currentTimeMillis(), "data"
-            );
+            ResponseData<String> response = new ResponseData<>("code", "message", "subMessage",
+                    System.currentTimeMillis(), "data");
 
             assertThat(response.getCode()).isEqualTo("code");
             assertThat(response.getMessage()).isEqualTo("message");
@@ -284,9 +285,8 @@ class ResponseDataTest {
         @Test
         @DisplayName("全参数构造 - 6参数带extra")
         void constructorWithSixParams_ShouldCreateResponse() {
-            ResponseData<String> response = new ResponseData<>(
-                    "code", "message", "subMessage", System.currentTimeMillis(), "data", "extra"
-            );
+            ResponseData<String> response = new ResponseData<>("code", "message", "subMessage",
+                    System.currentTimeMillis(), "data", "extra");
 
             assertThat(response.getCode()).isEqualTo("code");
             assertThat(response.getMessage()).isEqualTo("message");
@@ -297,10 +297,9 @@ class ResponseDataTest {
         @Test
         @DisplayName("全参数构造 - 7参数带formatParams")
         void constructorWithSevenParams_ShouldCreateResponse() {
-            Object[] formatParams = new Object[]{"param1", "param2"};
-            ResponseData<String> response = new ResponseData<>(
-                    "code", "message", "subMessage", System.currentTimeMillis(), "data", "extra", formatParams
-            );
+            Object[] formatParams = new Object[] {"param1", "param2"};
+            ResponseData<String> response = new ResponseData<>("code", "message", "subMessage",
+                    System.currentTimeMillis(), "data", "extra", formatParams);
 
             assertThat(response.getCode()).isEqualTo("code");
             assertThat(response.getData()).isEqualTo("data");
@@ -308,6 +307,7 @@ class ResponseDataTest {
             assertThat(response.getFormatParams()).isEqualTo(formatParams);
         }
     }
+
 
     @Nested
     @DisplayName("泛型类型测试")

@@ -7,7 +7,7 @@ if (ttl == -2) then
         return '0-0'
     end
     redis.call('SETEX', KEYS[1], step, '0')
-    return '0-'..step
+    return '0-' .. step
 end
 
 local newTtl = ttl + step
@@ -15,8 +15,8 @@ if (newTtl > maxValue) then
     newTtl = maxValue
     -- 如果到达最大值， 更改值为1， 暂时就当预留一个标志，根据value的0和1进行一下业务上场景的是和否的判定
     redis.call('SETEX', KEYS[1], newTtl, '1')
-    return '1-'..newTtl
+    return '1-' .. newTtl
 end
 
 redis.call('EXPIRE', KEYS[1], newTtl)
-return redis.call('GET', KEYS[1])..'-'..newTtl
+return redis.call('GET', KEYS[1]) .. '-' .. newTtl

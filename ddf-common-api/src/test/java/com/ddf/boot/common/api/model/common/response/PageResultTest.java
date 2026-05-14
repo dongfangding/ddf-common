@@ -75,6 +75,7 @@ class PageResultTest {
         }
     }
 
+
     @Nested
     @DisplayName("totalPage 静态方法测试")
     class TotalPageMethodTests {
@@ -122,6 +123,7 @@ class PageResultTest {
         }
     }
 
+
     @Nested
     @DisplayName("isEmpty 方法测试")
     class IsEmptyMethodTests {
@@ -148,6 +150,7 @@ class PageResultTest {
             assertThat(result.isEmpty()).isFalse();
         }
     }
+
 
     @Nested
     @DisplayName("分页边界测试")
@@ -190,6 +193,7 @@ class PageResultTest {
             assertThat(result.getContent()).hasSize(1);
         }
     }
+
 
     @Nested
     @DisplayName("泛型类型测试")

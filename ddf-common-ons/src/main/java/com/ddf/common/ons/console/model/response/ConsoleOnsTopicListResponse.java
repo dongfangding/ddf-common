@@ -72,11 +72,16 @@ public class ConsoleOnsTopicListResponse implements Serializable {
      * 实例id
      */
     public String instanceId;
+
     public static List<ConsoleOnsTopicListResponse> convertFromSdk(OnsTopicListResponse sdkResponse) {
         return sdkResponse.getBody()
                 .getData()
-                .getPublishInfoDo().stream().map(ConsoleOnsTopicListResponse::convert).collect(Collectors.toList());
+                .getPublishInfoDo()
+                .stream()
+                .map(ConsoleOnsTopicListResponse::convert)
+                .collect(Collectors.toList());
     }
+
     /**
      * @param infoDo 参数
      */

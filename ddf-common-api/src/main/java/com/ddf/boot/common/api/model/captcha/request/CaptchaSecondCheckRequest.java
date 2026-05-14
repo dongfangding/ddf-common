@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CaptchaSecondCheckRequest {
 
-	/**
-	 * 获取验证码接口返回的唯一标识
-	 */
-	@NotBlank(message = "uuid不能为空")
-	private String uuid;
+    /**
+     * 获取验证码接口返回的唯一标识
+     */
+    @NotBlank(message = "uuid不能为空")
+    private String uuid;
 
 
-	/**
-	 * 二次校验参数值，由前端控件生成
-	 */
-	@NotBlank(message = "captchaVerification不能为空")
-	private String captchaVerification;
+    /**
+     * 二次校验参数值，由前端控件生成
+     */
+    @NotBlank(message = "captchaVerification不能为空")
+    private String captchaVerification;
 }

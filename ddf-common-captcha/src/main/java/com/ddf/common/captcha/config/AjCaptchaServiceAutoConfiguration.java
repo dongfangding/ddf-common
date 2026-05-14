@@ -38,7 +38,6 @@ public class AjCaptchaServiceAutoConfiguration {
      * 注入默认bean以支持想要的默认验证码类型
      *
      * @param prop 配置属性
-     * @return
      */
     @Bean
     @Primary
@@ -51,19 +50,18 @@ public class AjCaptchaServiceAutoConfiguration {
      * 另一个非默认的验证码类型也注册上去，因验证码类型已固定，目前没有采用动态注册
      *
      * @param prop 配置属性
-     * @return
      */
     @Bean
     public CaptchaService otherCaptchaService(AjCaptchaProperties prop) {
-        CaptchaTypeEnum otherType = Objects.equals(CaptchaTypeEnum.CLICKWORD, prop.getType())
-                ? CaptchaTypeEnum.BLOCKPUZZLE : CaptchaTypeEnum.CLICKWORD;
+        CaptchaTypeEnum otherType = Objects.equals(CaptchaTypeEnum.CLICKWORD, prop.getType()) ?
+                CaptchaTypeEnum.BLOCKPUZZLE : CaptchaTypeEnum.CLICKWORD;
         return createCaptchaService(prop, otherType);
     }
 
     private CaptchaService createCaptchaService(AjCaptchaProperties prop, CaptchaTypeEnum overrideType) {
         Properties config = buildProperties(prop);
-        if ((StringUtils.isNotBlank(prop.getJigsaw()) && prop.getJigsaw().startsWith("classpath:"))
-                || (StringUtils.isNotBlank(prop.getPicClick()) && prop.getPicClick().startsWith("classpath:"))) {
+        if ((StringUtils.isNotBlank(prop.getJigsaw()) && prop.getJigsaw().startsWith("classpath:")) || (
+                StringUtils.isNotBlank(prop.getPicClick()) && prop.getPicClick().startsWith("classpath:"))) {
             config.put("captcha.init.original", "true");
             if (baseMapInitialized.compareAndSet(false, true)) {
                 initializeBaseMap(prop.getJigsaw(), prop.getPicClick());
@@ -74,6 +72,7 @@ public class AjCaptchaServiceAutoConfiguration {
         }
         return CaptchaServiceFactory.getInstance(config);
     }
+
     /**
      * @param prop 配置属性
      */
@@ -101,13 +100,16 @@ public class AjCaptchaServiceAutoConfiguration {
         config.put("captcha.req.verify.minute.limit", prop.getReqVerifyMinuteLimit() + "");
         return config;
     }
+
     /**
      * @param jigsaw 参数
      * @param picClick 参数
      */
     private static void initializeBaseMap(String jigsaw, String picClick) {
-        ImageUtils.cacheBootImage(getResourcesImagesFile(jigsaw + "/original/*.png"), getResourcesImagesFile(jigsaw + "/slidingBlock/*.png"), getResourcesImagesFile(picClick + "/*.png"));
+        ImageUtils.cacheBootImage(getResourcesImagesFile(jigsaw + "/original/*.png"),
+                getResourcesImagesFile(jigsaw + "/slidingBlock/*.png"), getResourcesImagesFile(picClick + "/*.png"));
     }
+
     /**
      * @param path 参数
      */

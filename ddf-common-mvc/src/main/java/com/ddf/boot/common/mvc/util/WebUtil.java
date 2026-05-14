@@ -22,6 +22,7 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * Web层辅助工具类
+ *
  * @author snowball
  */
 @Slf4j
@@ -33,21 +34,21 @@ public class WebUtil {
      * 获取当前ServletRequestAttributes
      */
     public static ServletRequestAttributes getCurServletRequestAttributes() {
-		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
-		if (attributes instanceof ServletRequestAttributes servletRequestAttributes) {
-			return servletRequestAttributes;
-		}
-		return null;
+        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (attributes instanceof ServletRequestAttributes servletRequestAttributes) {
+            return servletRequestAttributes;
+        }
+        return null;
     }
 
     /**
      * 获取当前HttpServletRequest
      */
     public static HttpServletRequest getCurRequest() {
-		final ServletRequestAttributes attributes = getCurServletRequestAttributes();
-		if (Objects.isNull(attributes)) {
-			return null;
-		}
+        final ServletRequestAttributes attributes = getCurServletRequestAttributes();
+        if (Objects.isNull(attributes)) {
+            return null;
+        }
         return attributes.getRequest();
     }
 
@@ -55,11 +56,11 @@ public class WebUtil {
      * 获取当前HttpServletResponse
      */
     public static HttpServletResponse getCurResponse() {
-		final ServletRequestAttributes attributes = getCurServletRequestAttributes();
-		if (Objects.isNull(attributes)) {
-			return null;
-		}
-		return attributes.getResponse();
+        final ServletRequestAttributes attributes = getCurServletRequestAttributes();
+        if (Objects.isNull(attributes)) {
+            return null;
+        }
+        return attributes.getResponse();
     }
 
 
@@ -68,9 +69,9 @@ public class WebUtil {
      */
     public static String getHost() {
         HttpServletRequest request = getCurRequest();
-		if (Objects.isNull(request)) {
-			return "";
-		}
+        if (Objects.isNull(request)) {
+            return "";
+        }
         String ip = request.getHeader("X-Forwarded-For");
         if (ip != null && !ip.isEmpty() && !UNKNOWN.equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个ip值，第一个ip才是真实ip
@@ -141,9 +142,9 @@ public class WebUtil {
      * @param response 响应对象
      * @param filename 文件名
      * @param content 内容
-     * @throws IOException
      */
-    public static void writeAttachment(HttpServletResponse response, String filename, byte[] content) throws IOException {
+    public static void writeAttachment(HttpServletResponse response, String filename, byte[] content)
+            throws IOException {
         // 设置 header 和 contentType
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -155,7 +156,6 @@ public class WebUtil {
      * 获取User-Agent
      *
      * @param request 请求对象
-     * @return
      */
     public static String getUserAgent(HttpServletRequest request) {
         return StringUtils.defaultIfBlank(request.getHeader("User-Agent"), "");
@@ -163,37 +163,33 @@ public class WebUtil {
 
     /**
      * 获取User-Agent
-     *
-     * @return
      */
     public static String getUserAgent() {
-		return getCurrentRequestHeaderIfPresent("User-Agent");
+        return getCurrentRequestHeaderIfPresent("User-Agent");
     }
 
-	/**
-	 * 安全获取请求头
-	 *
-	 * @param headerName 请求头名称
-	 * @return
-	 */
-	public static String getCurrentRequestHeaderIfPresent(String headerName) {
-		HttpServletRequest request = getCurRequest();
-		if (Objects.isNull(request)) {
-			return "";
-		}
-		return StringUtils.defaultIfBlank(request.getHeader(headerName), "");
-	}
+    /**
+     * 安全获取请求头
+     *
+     * @param headerName 请求头名称
+     */
+    public static String getCurrentRequestHeaderIfPresent(String headerName) {
+        HttpServletRequest request = getCurRequest();
+        if (Objects.isNull(request)) {
+            return "";
+        }
+        return StringUtils.defaultIfBlank(request.getHeader(headerName), "");
+    }
 
 
     /**
      * 读取body, 配合{@link CachingRequestBodyFilter}
      *
      * @param httpServletRequest 请求参数
-     * @return
      */
     public static String readBody(HttpServletRequest httpServletRequest) {
-        ContentCachingRequestWrapper wrapper =
-                WebUtils.getNativeRequest(httpServletRequest, ContentCachingRequestWrapper.class);
+        ContentCachingRequestWrapper wrapper = WebUtils.getNativeRequest(httpServletRequest,
+                ContentCachingRequestWrapper.class);
         if (wrapper == null) {
             return "";
         }
@@ -201,9 +197,7 @@ public class WebUtil {
         if (buf.length == 0) {
             return "";
         }
-        String encoding = Optional
-                .ofNullable(wrapper.getCharacterEncoding())
-                .orElse(StandardCharsets.UTF_8.name());
+        String encoding = Optional.ofNullable(wrapper.getCharacterEncoding()).orElse(StandardCharsets.UTF_8.name());
         return new String(buf, Charset.forName(encoding));
     }
 

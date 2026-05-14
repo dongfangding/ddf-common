@@ -60,14 +60,10 @@ class AbstractCommonResponseBodyAdviceTest {
         Method method = DemoController.class.getDeclaredMethod("getUser");
         MethodParameter methodParameter = new MethodParameter(method, -1);
 
-        ResponseData<Object> responseData = advice.beforeBodyWrite(
-            "payload",
-            methodParameter,
-            MediaType.APPLICATION_JSON,
-            StringHttpMessageConverter.class,
-            new ServletServerHttpRequest(new MockHttpServletRequest("GET", "/demo/user")),
-            new ServletServerHttpResponse(new MockHttpServletResponse())
-        );
+        ResponseData<Object> responseData = advice.beforeBodyWrite("payload", methodParameter,
+                MediaType.APPLICATION_JSON, StringHttpMessageConverter.class,
+                new ServletServerHttpRequest(new MockHttpServletRequest("GET", "/demo/user")),
+                new ServletServerHttpResponse(new MockHttpServletResponse()));
 
         assertTrue(responseData.isSuccess());
         assertTrue("payload".equals(responseData.getData()));

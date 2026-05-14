@@ -26,8 +26,6 @@ public interface OnsMessageListener<D extends Serializable> {
 
     /**
      * 解析泛型领域类
-     *
-     * @return
      */
     default Class<D> parseDomainClass() {
         Type genericSuperclass = getClass().getGenericSuperclass();
@@ -37,16 +35,12 @@ public interface OnsMessageListener<D extends Serializable> {
 
     /**
      * 获取领域对象类
-     *
-     * @return
      */
     Class<D> getDomainClass();
 
     /**
      * 获取保证幂等性的成员
      * 必须保证同一个Topic下的唯一
-     *
-     * @return
      */
     default String getMember() {
         return this.getClass().getCanonicalName();
@@ -54,12 +48,9 @@ public interface OnsMessageListener<D extends Serializable> {
 
     /**
      * 获取消息监听器注解
-     *
-     * @return
      */
     default OnsMessageListenerAno getAnnotation() {
-        return this.getClass()
-                .getAnnotation(OnsMessageListenerAno.class);
+        return this.getClass().getAnnotation(OnsMessageListenerAno.class);
     }
 
     /**
@@ -67,7 +58,6 @@ public interface OnsMessageListener<D extends Serializable> {
      *
      * @param message 消息内容
      * @param domain domain参数
-     * @return
      * @since 1.3.0
      */
     boolean isBizSuccess(Message message, D domain);

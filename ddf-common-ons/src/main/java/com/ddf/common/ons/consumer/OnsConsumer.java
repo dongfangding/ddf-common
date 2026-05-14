@@ -10,27 +10,22 @@ public interface OnsConsumer {
 
     /**
      * 获取并发消费者数量
-     *
-     * @return
      */
     String getConsumeThreadNums();
 
     /**
      * 获取GroupId
-     * @return
      */
     String getGroupId();
 
     /**
      * 获取TOPIC
-     * @return
      */
     String getTopic();
 
     /**
      * 获取消息路由表达式
-     * @return
      */
     String getExpression();
-    
+
 }

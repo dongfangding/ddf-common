@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 /**
- *
  * ONS消息对象
  *
  * @author snowball
@@ -55,14 +54,14 @@ public class OnsMessage implements Serializable {
      */
     private Long delayTime;
 
-    public void check(){
+    public void check() {
         Assert.hasLength(getTopic(), "Topic不能为空");
         Assert.hasLength(getExpression(), "Expression不能为空");
         Assert.hasLength(getPayLoad(), "PayLoad不能为空");
         Assert.hasLength(getBizId(), "BizId不能为空");
     }
 
-    public void checkOrder(){
+    public void checkOrder() {
         check();
         Assert.hasLength(getShadingKey(), "ShadingKey不能为空");
     }
@@ -75,7 +74,6 @@ public class OnsMessage implements Serializable {
         if (getBizId().contains(WRAPPER_BIZ_ID_SEPARATOR)) {
             return getBizId();
         }
-        return OnsConsoleUtil.getShortNameBySplit(getExpression(), "_", "")
-                + WRAPPER_BIZ_ID_SEPARATOR + getBizId();
+        return OnsConsoleUtil.getShortNameBySplit(getExpression(), "_", "") + WRAPPER_BIZ_ID_SEPARATOR + getBizId();
     }
 }

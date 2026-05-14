@@ -41,12 +41,8 @@ public class ConsoleOnsTopicDeleteRequest implements EnvRequest, UserRequest, Se
 
     /**
      * 转换为SDK内部提供的参数对象
-     *
-     * @return
      */
     public OnsTopicDeleteRequest toSdkRequest(String instanceId) {
-        return new OnsTopicDeleteRequest()
-                .setTopic(topic)
-                .setInstanceId(instanceId);
+        return new OnsTopicDeleteRequest().setTopic(topic).setInstanceId(instanceId);
     }
 }

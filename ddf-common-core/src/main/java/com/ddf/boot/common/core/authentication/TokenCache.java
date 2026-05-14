@@ -26,7 +26,6 @@ public interface TokenCache {
      * 从缓存中取出用户的token
      *
      * @param userId 用户 ID
-     * @return
      */
     String getToken(String userId);
 

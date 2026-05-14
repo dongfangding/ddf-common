@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-zookeeper` solves the **"distributed coordination and state synchronization"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Configuration center | Config changes require restarting every instance | ZK node watching for hot config reloads |
-| Service registry/discovery | Microservice up/down events are not auto-detected | Ephemeral node registration with automatic deregistration |
-| Distributed coordination | Leader election, counters, queues needed | Curator Recipes (LeaderLatch, DistributedAtomicLong, etc.) |
-| Distributed lock primitive | Need strongly consistent locks | ZK-based `InterProcessMutex` |
+| Scenario                   | Typical Problem                                   | What the Module Provides                                   |
+|----------------------------|---------------------------------------------------|------------------------------------------------------------|
+| Configuration center       | Config changes require restarting every instance  | ZK node watching for hot config reloads                    |
+| Service registry/discovery | Microservice up/down events are not auto-detected | Ephemeral node registration with automatic deregistration  |
+| Distributed coordination   | Leader election, counters, queues needed          | Curator Recipes (LeaderLatch, DistributedAtomicLong, etc.) |
+| Distributed lock primitive | Need strongly consistent locks                    | ZK-based `InterProcessMutex`                               |
 
 ---
 
@@ -158,11 +158,11 @@ Recommended ZK data layout:
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
+| Module                        | How They Cooperate                                                                                         |
+|-------------------------------|------------------------------------------------------------------------------------------------------------|
 | `ddf-common-distributed-lock` | Higher-level wrapper for ZK distributed locks; business code should prefer the `DistributedLock` interface |
-| `ddf-common-ids-service` | Distributed IDs may use ZK as a segment allocator coordinator |
-| `ddf-common-core` | JSON serialization, string utilities, and other fundamentals |
+| `ddf-common-ids-service`      | Distributed IDs may use ZK as a segment allocator coordinator                                              |
+| `ddf-common-core`             | JSON serialization, string utilities, and other fundamentals                                               |
 
 ---
 

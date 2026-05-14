@@ -31,6 +31,7 @@ public class CmdAction implements CmdStrategy {
 
     public CmdAction() {
     }
+
     /**
      * @param cmdEnum 参数
      */
@@ -75,21 +76,17 @@ public class CmdAction implements CmdStrategy {
             log.error("指令码处理失败", e);
             e.printStackTrace();
             Message<String> errorMessage = Message.responseReceived(message, e.getMessage(),
-                    MessageResponse.SERVER_CODE_ERROR
-            );
+                    MessageResponse.SERVER_CODE_ERROR);
             channelTransferService.updateToComplete(message, false, ExceptionUtil.stacktraceToString(e),
-                    JsonUtil.asString(message), JsonUtil.asString(errorMessage)
-            );
+                    JsonUtil.asString(message), JsonUtil.asString(errorMessage));
             WebsocketSessionStorage.putDefaultResponse(message,
-                    MessageResponse.failure(message.getRequestId(), e.getMessage())
-            );
+                    MessageResponse.failure(message.getRequestId(), e.getMessage()));
             WebsocketSessionStorage.sendMessage(authPrincipal, errorMessage);
         }
         if (isSuccess) {
             // 如果没有给指令调用方设置响应数据，这里给一个默认值
             WebsocketSessionStorage.putDefaultResponse(message,
-                    MessageResponse.success(message.getRequestId(), message.getBody())
-            );
+                    MessageResponse.success(message.getRequestId(), message.getBody()));
             // 脑瓜疼，后面再理这个记录逻辑
             String response = JsonUtil.asString(responseMessage);
             String messageStr = JsonUtil.asString(message);
@@ -100,8 +97,7 @@ public class CmdAction implements CmdStrategy {
             String logResponse = Message.Type.REQUEST.equals(message.getType()) ? textMessageStr : messageStr;
             channelTransferService.updateToComplete(message, true, null, logResponse, textMessageStr);
             log.info("响应[{}-{}-{}]数据: {}", authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                    authPrincipal.getAuthCode(), textMessageStr
-            );
+                    authPrincipal.getAuthCode(), textMessageStr);
             // 日志记录了一个请求的完整链，服务端发出的某些请求客户端会给予响应，服务端拿到响应后会去做做一些业务处理，
             // 服务端有没有收到这个数据，客户端并不知道，日志了记录了服务端收到数据之后会给予响应，但是在最后发送的时候
             // 这里做了一个判断，没有把这个响应返回给客户端。仁者见仁吧

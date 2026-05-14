@@ -42,10 +42,10 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人， 并且@所有人, 并且限制发送次数，主要是为了避免前期就把每月额度用完了，后面直接哑火。所有每天定量，只影响当天。
      *
-     * @param secret      签名密钥
+     * @param secret 签名密钥
      * @param accessToken URL 中的 accessToken
-     * @param title       标题
-     * @param content     内容
+     * @param title 标题
+     * @param content 内容
      */
     public static void sendMarkdownMsgToAllWithLimit(String secret, String accessToken, String title, String content) {
         if (!ObjectUtils.allNotNull(DING_TALK_PROPERTIES, REDIS_TEMPLATE_HELPER)) {
@@ -56,8 +56,7 @@ public class DingTalkUtil {
         final AccessLimitResponse response = REDIS_TEMPLATE_HELPER.stringIncrWithLimit(
                 AlarmRedisKeyEnum.DING_TALK_DAILY_LIMIT.getKey(yearMonthDay), 1L,
                 (long) DING_TALK_PROPERTIES.getDailyLimit(),
-                AlarmRedisKeyEnum.DING_TALK_DAILY_LIMIT.getTtl().toSeconds()
-        );
+                AlarmRedisKeyEnum.DING_TALK_DAILY_LIMIT.getTtl().toSeconds());
         if (response.isLimited()) {
             throw new BusinessException("钉钉机器人发送消息失败， 今日发送次数已达到上限");
         }
@@ -68,10 +67,10 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人， 并且@所有人
      *
-     * @param secret      签名密钥
+     * @param secret 签名密钥
      * @param accessToken URL 中的 accessToken
-     * @param title       标题
-     * @param content     内容
+     * @param title 标题
+     * @param content 内容
      */
     public static void sendMarkdownMsgToAll(String secret, String accessToken, String title, String content) {
         sendMarkdownMsg(secret, accessToken, title, content, true, new ArrayList<>());
@@ -81,12 +80,12 @@ public class DingTalkUtil {
     /**
      * 使用钉钉发送markdown机器人
      *
-     * @param secret      签名密钥
+     * @param secret 签名密钥
      * @param accessToken URL 中的 accessToken
-     * @param title       标题
-     * @param content     内容
-     * @param isAtAll     是否 @ 所有人
-     * @param atUserIds   @ 用户 ID 列表
+     * @param title 标题
+     * @param content 内容
+     * @param isAtAll 是否 @ 所有人
+     * @param atUserIds @ 用户 ID 列表
      */
     public static void sendMarkdownMsg(String secret, String accessToken, String title, String content, boolean isAtAll,
             List<String> atUserIds) {
@@ -98,15 +97,14 @@ public class DingTalkUtil {
             byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
             String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)), "UTF-8");
             // sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
-            String url = "https://oapi.dingtalk.com/robot/send?sign=%s&timestamp=%s&access_token=%s".formatted(
-                    sign, timestamp, accessToken
-            );
+            String url = "https://oapi.dingtalk.com/robot/send?sign=%s&timestamp=%s&access_token=%s".formatted(sign,
+                    timestamp, accessToken);
             DingTalkClient client = new DefaultDingTalkClient(url);
             OapiRobotSendRequest req = buildMarkdownRequest(title, content, isAtAll, atUserIds);
             OapiRobotSendResponse rsp = client.execute(req);
             if (!rsp.isSuccess()) {
-                log.error("钉钉机器人消息发送失败，errcode={}, errmsg={}, body={}",
-                        rsp.getErrcode(), rsp.getErrmsg(), rsp.getBody());
+                log.error("钉钉机器人消息发送失败，errcode={}, errmsg={}, body={}", rsp.getErrcode(), rsp.getErrmsg(),
+                        rsp.getBody());
             }
         } catch (Exception e) {
             log.error("钉钉机器人发送消息失败", e);
@@ -120,7 +118,6 @@ public class DingTalkUtil {
      * @param content 内容
      * @param isAtAll 是否 @ 所有人
      * @param atUserIds @ 用户 ID 列表
-     * @return
      */
     public static OapiRobotSendRequest buildMarkdownRequest(String title, String content, boolean isAtAll,
             List<String> atUserIds) {

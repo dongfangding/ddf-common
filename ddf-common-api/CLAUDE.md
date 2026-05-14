@@ -78,14 +78,14 @@ public enum MyErrorCode implements BaseCallbackCode {
 
 ## 预定义错误码
 
-| 错误码 | 说明 |
-|--------|------|
-| `COMPLETE` | 请求成功 |
-| `BAD_REQUEST` | 错误请求（会模糊异常详情） |
-| `UNAUTHORIZED` | 未认证 |
-| `ACCESS_FORBIDDEN` | 权限拒绝 |
-| `SERVER_ERROR` | 服务端异常（会模糊异常详情） |
-| `BIZ_EXCEPTION` | 业务异常 |
+| 错误码                | 说明             |
+|--------------------|----------------|
+| `COMPLETE`         | 请求成功           |
+| `BAD_REQUEST`      | 错误请求（会模糊异常详情）  |
+| `UNAUTHORIZED`     | 未认证            |
+| `ACCESS_FORBIDDEN` | 权限拒绝           |
+| `SERVER_ERROR`     | 服务端异常（会模糊异常详情） |
+| `BIZ_EXCEPTION`    | 业务异常           |
 
 ## 响应格式
 

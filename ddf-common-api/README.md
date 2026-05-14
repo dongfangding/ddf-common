@@ -16,16 +16,16 @@ English · [简体中文](./README.zh-CN.md)
 pure Java contracts that are shared across services without pulling in Spring infrastructure,
 this is the first line of your `pom.xml`.
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Unified cross-service response format | Each service returns a different JSON shape; gateway aggregation is painful | `ResponseData<T>` unified envelope |
-| Unified cross-service exception semantics | Service A throws `USER_NOT_FOUND`, service B throws `用户不存在` — gateway can't map | `BaseCallbackCode` + `BaseErrorCallbackCode` enums |
-| Pagination protocol | MyBatis, JPA, Mongo each return different pagination structures | `PageRequest` interface + `PageResult<T>` |
-| Tamper-proof requests | Open gateway needs request signing; DTOs must carry signature fields | `BaseSign` interface (`sign` + `nonceTimestamp`) |
-| Redis key governance | Keys are ad-hoc, formats are inconsistent, concatenation is error-prone | `RedisKeyConstraint` template contract + sharding rules |
-| Tree structures | Department / menu / region lists need recursive assembly | `ITreeTagCollection<K, T>` tree-node contract |
-| Serialization compatibility | `LocalDateTime` / `Duration` behavior differs between frontend and backend | Jackson customizations (JSR-310 + MsgPack) |
-| Sensitive data masking | Logs accidentally print mobile numbers / ID card numbers | `@SensitiveField` + masking serializer |
+| Category                                  | Typical Problem                                                                 | What the Module Provides                                |
+|-------------------------------------------|---------------------------------------------------------------------------------|---------------------------------------------------------|
+| Unified cross-service response format     | Each service returns a different JSON shape; gateway aggregation is painful     | `ResponseData<T>` unified envelope                      |
+| Unified cross-service exception semantics | Service A throws `USER_NOT_FOUND`, service B throws `用户不存在` — gateway can't map | `BaseCallbackCode` + `BaseErrorCallbackCode` enums      |
+| Pagination protocol                       | MyBatis, JPA, Mongo each return different pagination structures                 | `PageRequest` interface + `PageResult<T>`               |
+| Tamper-proof requests                     | Open gateway needs request signing; DTOs must carry signature fields            | `BaseSign` interface (`sign` + `nonceTimestamp`)        |
+| Redis key governance                      | Keys are ad-hoc, formats are inconsistent, concatenation is error-prone         | `RedisKeyConstraint` template contract + sharding rules |
+| Tree structures                           | Department / menu / region lists need recursive assembly                        | `ITreeTagCollection<K, T>` tree-node contract           |
+| Serialization compatibility               | `LocalDateTime` / `Duration` behavior differs between frontend and backend      | Jackson customizations (JSR-310 + MsgPack)              |
+| Sensitive data masking                    | Logs accidentally print mobile numbers / ID card numbers                        | `@SensitiveField` + masking serializer                  |
 
 > ⚠️ This module **contains no** Spring beans, auto-configuration, database access, or Redis
 > operations. For infrastructure, depend on `ddf-common-core` or a concrete starter.
@@ -112,17 +112,17 @@ Every error code must provide `code` and `description`, and may optionally provi
 
 #### 3.2.2 Predefined error codes: `BaseErrorCallbackCode`
 
-| Enum | code | Notes |
-| ----- | ----- | ----- |
-| `COMPLETE` | `200` | Request succeeded |
-| `BAD_REQUEST` | `BAD_REQUEST` | Bad request (details masked by default) |
-| `UNAUTHORIZED` | `401` | Not authenticated |
-| `ACCESS_FORBIDDEN` | `403` | Insufficient permission |
-| `SERVER_ERROR` | `SERVER_ERROR` | Server error (details masked by default) |
-| `BIZ_EXCEPTION` | `BIZ_EXCEPTION` | Generic business exception |
-| `ENTRY_NOT_EXISTS` | `ENTRY_NOT_EXISTS` | Data not found (user hint: resource does not exist) |
-| `DUPLICATE_KEY` | `DUPLICATE_KEY` | Unique constraint violation (user hint: record already exists) |
-| `SIGN_ERROR` | `SIGN_ERROR` | Signature verification failed |
+| Enum               | code               | Notes                                                          |
+|--------------------|--------------------|----------------------------------------------------------------|
+| `COMPLETE`         | `200`              | Request succeeded                                              |
+| `BAD_REQUEST`      | `BAD_REQUEST`      | Bad request (details masked by default)                        |
+| `UNAUTHORIZED`     | `401`              | Not authenticated                                              |
+| `ACCESS_FORBIDDEN` | `403`              | Insufficient permission                                        |
+| `SERVER_ERROR`     | `SERVER_ERROR`     | Server error (details masked by default)                       |
+| `BIZ_EXCEPTION`    | `BIZ_EXCEPTION`    | Generic business exception                                     |
+| `ENTRY_NOT_EXISTS` | `ENTRY_NOT_EXISTS` | Data not found (user hint: resource does not exist)            |
+| `DUPLICATE_KEY`    | `DUPLICATE_KEY`    | Unique constraint violation (user hint: record already exists) |
+| `SIGN_ERROR`       | `SIGN_ERROR`       | Signature verification failed                                  |
 
 #### 3.2.3 Throwing exceptions
 
@@ -142,13 +142,13 @@ throw new ServerErrorException(BaseErrorCallbackCode.SERVER_ERROR);
 
 Exception semantics:
 
-| Exception class | Default callback | `isMaskErrorDetails()` | When to use |
-| ----- | ----- | ----- | ----- |
-| `BusinessException` | `BIZ_EXCEPTION` | false | Business-rule violation; message shown to user directly |
-| `BadRequestException` | `BAD_REQUEST` | true | Invalid params; production returns a vague hint |
-| `UnauthorizedException` | `UNAUTHORIZED` | false | Token expired / login required |
-| `AccessDeniedException` | `ACCESS_FORBIDDEN` | false | Logged in but not authorized |
-| `ServerErrorException` | `SERVER_ERROR` | true | Internal system error; details must be hidden |
+| Exception class         | Default callback   | `isMaskErrorDetails()` | When to use                                             |
+|-------------------------|--------------------|------------------------|---------------------------------------------------------|
+| `BusinessException`     | `BIZ_EXCEPTION`    | false                  | Business-rule violation; message shown to user directly |
+| `BadRequestException`   | `BAD_REQUEST`      | true                   | Invalid params; production returns a vague hint         |
+| `UnauthorizedException` | `UNAUTHORIZED`     | false                  | Token expired / login required                          |
+| `AccessDeniedException` | `ACCESS_FORBIDDEN` | false                  | Logged in but not authorized                            |
+| `ServerErrorException`  | `SERVER_ERROR`     | true                   | Internal system error; details must be hidden           |
 
 ### 3.3 Pagination model
 
@@ -203,6 +203,7 @@ public enum UserRedisKeyEnum implements RedisKeyConstraint {
 ```
 
 `RedisKeyConstraint` enforces:
+
 - `template` uses `%s` placeholders
 - `getKey(Object...)` auto-validates that argument count matches placeholder count; mismatch throws `ServerErrorException`
 - `getShardingKey` appends a shard suffix (e.g. `"_shard_0"`) for multi-Redis-instance routing
@@ -293,14 +294,14 @@ public class UserIdModSharding implements RedisShardingRule<Long, String> {
 
 ## 5. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-core` | Upstream dependency; provides default implementations and utilities for `ResponseData`, `BaseException`, `BaseSign`, `RedisKeyConstraint`, `ITreeTagCollection` |
-| `ddf-common-mvc` | Global exception handler maps `BaseException` → `ResponseData`; registers the `@JsonIgnoreProfile` Jackson module |
-| `ddf-common-redis` | All Redis key enums must implement `RedisKeyConstraint`; `ApplicationNamedKeyGenerator` reads `spring.application.name` |
-| `ddf-common-authentication` | Auth exceptions use `UnauthorizedException` / `AccessDeniedException` |
-| `ddf-common-limit` | Rate-limit interceptor returns `ResponseData.failure(...)` |
-| `ddf-common-data-mysql-starter` | `BaseDomain` entity base (in core) works with `PageRequest` / `PageResult` to complete the pagination chain |
+| Module                          | How They Cooperate                                                                                                                                              |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-core`               | Upstream dependency; provides default implementations and utilities for `ResponseData`, `BaseException`, `BaseSign`, `RedisKeyConstraint`, `ITreeTagCollection` |
+| `ddf-common-mvc`                | Global exception handler maps `BaseException` → `ResponseData`; registers the `@JsonIgnoreProfile` Jackson module                                               |
+| `ddf-common-redis`              | All Redis key enums must implement `RedisKeyConstraint`; `ApplicationNamedKeyGenerator` reads `spring.application.name`                                         |
+| `ddf-common-authentication`     | Auth exceptions use `UnauthorizedException` / `AccessDeniedException`                                                                                           |
+| `ddf-common-limit`              | Rate-limit interceptor returns `ResponseData.failure(...)`                                                                                                      |
+| `ddf-common-data-mysql-starter` | `BaseDomain` entity base (in core) works with `PageRequest` / `PageResult` to complete the pagination chain                                                     |
 
 ---
 
@@ -311,7 +312,8 @@ public class UserIdModSharding implements RedisShardingRule<Long, String> {
 heavy for a pure protocol module. It lives in `ddf-common-core` instead, while `api` keeps
 `PageRequest` / `PageResult` which do not depend on Spring Data.
 
-**Q2: What's the difference between `bizMessage` and `description` in `BaseCallbackCode`?**  
+**Q2: What's the difference between `bizMessage` and `description` in `BaseCallbackCode`?**
+
 - `description`: Used during development and debugging; may contain technical details and raw placeholder templates
 - `bizMessage`: The final text shown to end users (toast / alert). When `isMaskErrorDetails() = true`
   in production, the system replaces `description` with `bizMessage` to prevent leaking stack traces
@@ -326,7 +328,8 @@ Yes. The only Spring-tight coupling is `spring-boot-starter-validation` (for `@N
 If you don't need validation, you can exclude that dependency and still use `ResponseData`,
 `BaseCallbackCode`, `PageResult`, and other pure POJOs.
 
-**Q5: Is there a naming convention for error-code strings?**  
+**Q5: Is there a naming convention for error-code strings?**
+
 - Use UPPER_SNAKE_CASE: `ORDER_NOT_FOUND`, `INVENTORY_SHORTAGE`
 - Keep them globally unique (even across services) for easy log grepping and gateway mapping
 - Never construct code strings at runtime; all codes must be enum constants

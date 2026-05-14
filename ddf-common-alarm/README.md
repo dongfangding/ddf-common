@@ -11,12 +11,12 @@ English · [简体中文](./README.zh-CN.md)
 
 `ddf-common-alarm` solves the **"how to promptly notify ops/developers of system exceptions and critical events"** problem.
 
-| Scenario | Typical Problem | What the Module Provides |
-| --- | --- | --- |
-| Production exception alerts | Exceptions go unnoticed and incidents escalate | Automatic exception capture and push to DingTalk / Lark |
-| Scheduled job monitoring | Failed cron jobs trigger no notifications | Alert on abnormal scan results |
-| Business-critical events | Order backlogs, low inventory need immediate attention | Business code proactively calls the alarm API |
-| Multi-channel coverage | Teams use different IM tools, alerts are scattered | Unified interface with configurable channels |
+| Scenario                    | Typical Problem                                        | What the Module Provides                                |
+|-----------------------------|--------------------------------------------------------|---------------------------------------------------------|
+| Production exception alerts | Exceptions go unnoticed and incidents escalate         | Automatic exception capture and push to DingTalk / Lark |
+| Scheduled job monitoring    | Failed cron jobs trigger no notifications              | Alert on abnormal scan results                          |
+| Business-critical events    | Order backlogs, low inventory need immediate attention | Business code proactively calls the alarm API           |
+| Multi-channel coverage      | Teams use different IM tools, alerts are scattered     | Unified interface with configurable channels            |
 
 ---
 
@@ -124,11 +124,11 @@ Frequency control is Redis-based and remains effective across distributed deploy
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| --- | --- |
-| `ddf-common-redis` | Alert frequency control relies on Redis cache |
-| `ddf-common-governance-starter` | Mail can serve as a fallback alert channel |
-| `ddf-common-core` | Exception summarization, JSON serialization, and other fundamentals |
+| Module                          | How They Cooperate                                                  |
+|---------------------------------|---------------------------------------------------------------------|
+| `ddf-common-redis`              | Alert frequency control relies on Redis cache                       |
+| `ddf-common-governance-starter` | Mail can serve as a fallback alert channel                          |
+| `ddf-common-core`               | Exception summarization, JSON serialization, and other fundamentals |
 
 ---
 
@@ -141,6 +141,7 @@ Only uncaught runtime exceptions. It is recommended to judge whether an alert is
 Redis. The key is generated from the exception class name + method signature hash, sharing the same control window across distributed instances.
 
 **Q3: How do I configure a DingTalk robot?**
+
 1. Add a custom robot in a DingTalk group
 2. Copy the Webhook URL and signature key
 3. Fill them into `ddf.alarm.ding-talk.webhook` and `ddf.alarm.ding-talk.secret`

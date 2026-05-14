@@ -40,18 +40,12 @@ class S3HelperTest {
         S3Properties properties = createProperties();
         S3Helper helper = new S3Helper(s3Api, properties);
         UploadResult uploadResult = UploadResult.builder().objectKey("actual/object-key.png").build();
-        when(s3Api.upload(Mockito.anyString(), Mockito.any(), Mockito.anyString(), Mockito.anyLong()))
-                .thenReturn(uploadResult);
+        when(s3Api.upload(Mockito.anyString(), Mockito.any(), Mockito.anyString(), Mockito.anyLong())).thenReturn(
+                uploadResult);
 
-        helper.uploadAndOperate(
-                "platform",
-                "identity",
-                "avatar.png",
-                new ByteArrayInputStream("demo".getBytes(StandardCharsets.UTF_8)),
-                "image/png",
-                4L,
-                objectKey -> assertEquals("actual/object-key.png", objectKey)
-        );
+        helper.uploadAndOperate("platform", "identity", "avatar.png",
+                new ByteArrayInputStream("demo".getBytes(StandardCharsets.UTF_8)), "image/png", 4L,
+                objectKey -> assertEquals("actual/object-key.png", objectKey));
 
         verify(s3Api).delete("actual/object-key.png");
     }

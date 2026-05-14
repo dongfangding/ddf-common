@@ -14,16 +14,16 @@ English · [简体中文](./README.zh-CN.md)
 `ddf-common-redis` is **the** module responsible for distributed state in the ddf-common stack.
 Reach for it when any of the following applies:
 
-| Category | Typical Problem | What the Module Provides |
-| ----- | ----- | ----- |
-| Cache / read-heavy | Unified JSON serialization, no manual key prefixing | `redisTemplate` / `stringRedisTemplate` defaults + `ApplicationNamedKeyGenerator` |
-| Rate limiting | Endpoint anti-abuse, SMS frequency, campaign throttling | `RedisTemplateHelper#sliderWindowAccess` / `tokenBucketRateLimitAcquire` / `leakyBucketRateLimitAcquire` |
-| Counters | "Increment + TTL + ceiling check" needs to be atomic | `incrementKeyExpire` / `hashIncreaseCheck` / `stringIncrWithLimit` and 30+ companion Lua scripts |
-| Business leaderboards | Weekly/monthly rankings where ties must order by submit time | `zSetAddWithMaxCheckSupportBiz` / `zSetRevRangeBizRankingQuery` |
-| Penetration defense | Mass empty queries hit the DB | `RedisBloomFilter` distributed bloom filter (Redisson-backed) |
-| Multi Redis datasources | Separate main / risk / cache instances | `customizer.infra.redis.extra-multi` spins up multiple `RedissonClient` / `RedisTemplate` from one block |
-| Geo queries | "People nearby", "stores nearby" | `GeoHelper` over Redisson `RGeo` |
-| Pub/Sub | Cross-instance config broadcasts, force-logout | `RedisTopic` over Redisson `RTopic` |
+| Category                | Typical Problem                                              | What the Module Provides                                                                                 |
+|-------------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Cache / read-heavy      | Unified JSON serialization, no manual key prefixing          | `redisTemplate` / `stringRedisTemplate` defaults + `ApplicationNamedKeyGenerator`                        |
+| Rate limiting           | Endpoint anti-abuse, SMS frequency, campaign throttling      | `RedisTemplateHelper#sliderWindowAccess` / `tokenBucketRateLimitAcquire` / `leakyBucketRateLimitAcquire` |
+| Counters                | "Increment + TTL + ceiling check" needs to be atomic         | `incrementKeyExpire` / `hashIncreaseCheck` / `stringIncrWithLimit` and 30+ companion Lua scripts         |
+| Business leaderboards   | Weekly/monthly rankings where ties must order by submit time | `zSetAddWithMaxCheckSupportBiz` / `zSetRevRangeBizRankingQuery`                                          |
+| Penetration defense     | Mass empty queries hit the DB                                | `RedisBloomFilter` distributed bloom filter (Redisson-backed)                                            |
+| Multi Redis datasources | Separate main / risk / cache instances                       | `customizer.infra.redis.extra-multi` spins up multiple `RedissonClient` / `RedisTemplate` from one block |
+| Geo queries             | "People nearby", "stores nearby"                             | `GeoHelper` over Redisson `RGeo`                                                                         |
+| Pub/Sub                 | Cross-instance config broadcasts, force-logout               | `RedisTopic` over Redisson `RTopic`                                                                      |
 
 > ⚠️ This module does **not** wire up Spring Cache annotations (`@Cacheable`). For method-level caching,
 > enable the built-in `spring-boot-starter-cache` yourself.
@@ -100,14 +100,14 @@ the same connection metadata into Redisson.
 
 After startup, the following beans are available for injection out of the box:
 
-| Bean | Type | Notes |
-| ----- | ----- | ----- |
-| `redisTemplate` | `RedisTemplate<Object, Object>` | Values use `GenericJackson2JsonRedisSerializer` |
-| `stringRedisTemplate` | `StringRedisTemplate` | Uses the module's custom `ObjectStringRedisSerializer` (object ↔ String) |
-| `redisTemplateHelper` | `RedisTemplateHelper` | High-level facade combining Lua scripts and Redisson primitives |
-| `redisCommandHelper` | `RedisCommandHelper` | ~1980 lines of standard command wrappers covering every data structure |
-| `geoHelper` | `GeoHelper` | Redisson `RGeo` helper |
-| `redissonClient` | `RedissonClient` | Provided by Redisson starter; this module injects Codec + connection info via `RedissonAutoConfigurationCustomizer` |
+| Bean                  | Type                            | Notes                                                                                                               |
+|-----------------------|---------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `redisTemplate`       | `RedisTemplate<Object, Object>` | Values use `GenericJackson2JsonRedisSerializer`                                                                     |
+| `stringRedisTemplate` | `StringRedisTemplate`           | Uses the module's custom `ObjectStringRedisSerializer` (object ↔ String)                                            |
+| `redisTemplateHelper` | `RedisTemplateHelper`           | High-level facade combining Lua scripts and Redisson primitives                                                     |
+| `redisCommandHelper`  | `RedisCommandHelper`            | ~1980 lines of standard command wrappers covering every data structure                                              |
+| `geoHelper`           | `GeoHelper`                     | Redisson `RGeo` helper                                                                                              |
+| `redissonClient`      | `RedissonClient`                | Provided by Redisson starter; this module injects Codec + connection info via `RedissonAutoConfigurationCustomizer` |
 
 ---
 
@@ -444,26 +444,26 @@ Mirror the pattern in `RedisLuaScript`: drop the script under `classpath:lua/xxx
 `RedisScript.of(...)` constant, then invoke it via `stringRedisTemplate.execute(script, keys, args)`.
 The module ships 30+ scripts already:
 
-| Category | Script Constants |
-| ----- | ----- |
-| Rate limiting | `TOKEN_BUCKET_RATE_LIMIT`, `SLIDER_WINDOW_COUNT` |
-| Counters | `STRING_KEY_INCREMENT_EXPIRE`, `STRING_KEY_INCREMENT_EXPIRE_AT`, `STRING_INCREMENT_CHECK`, `STRING_TTL_INCR_WITH_LIMIT` |
-| Hash | `HASH_INCREMENT_CHECK`, `HASH_DECREMENT_CHECK`, `HASH_BATCH_INCREMENT_CHECK`, `MULTIPLE_HASH_BATCH_INCREMENT_CHECK`, `HASH_INCREMENT_PERSIST_LIMIT_VALUE`, `HASH_INCREASE_ROUNDING_REDUCE`, `HASH_INCR_WITH_FIRST_SET_TTL`, `HASH_INCR_FLOAT_ROUND_DECIMAL`, `HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO`, `HASH_VALUE_UPDATE_SELECTIVE` |
-| Safe delete | `HASH_DELETE_WITH_CHECK_VALUE`, `STRING_DELETE_WITH_CHECK_VALUE` |
-| ZSet leaderboards | `ZSET_INCR_WITH_TIME`, `ZSET_ZADD_WITH_MAX_CHECK`, `ZSET_ZADD_WITH_TIME_MAX_CHECK`, `ZSET_AROUND_ELEMENT_RANK`, `ZSET_REV_RANGE_BIZ_RANKING_QUERY`, `ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY`, `ZSET_DELETE_WITH_MAX_SCORE_CHECK`, `ZSET_RANGEBYSCORE_ZREM` |
-| Misc | `MAX_CAPACITY_HISTORY_CONTAINER`, `MAX_ELEMENT_DICT` |
+| Category          | Script Constants                                                                                                                                                                                                                                                                                                                       |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Rate limiting     | `TOKEN_BUCKET_RATE_LIMIT`, `SLIDER_WINDOW_COUNT`                                                                                                                                                                                                                                                                                       |
+| Counters          | `STRING_KEY_INCREMENT_EXPIRE`, `STRING_KEY_INCREMENT_EXPIRE_AT`, `STRING_INCREMENT_CHECK`, `STRING_TTL_INCR_WITH_LIMIT`                                                                                                                                                                                                                |
+| Hash              | `HASH_INCREMENT_CHECK`, `HASH_DECREMENT_CHECK`, `HASH_BATCH_INCREMENT_CHECK`, `MULTIPLE_HASH_BATCH_INCREMENT_CHECK`, `HASH_INCREMENT_PERSIST_LIMIT_VALUE`, `HASH_INCREASE_ROUNDING_REDUCE`, `HASH_INCR_WITH_FIRST_SET_TTL`, `HASH_INCR_FLOAT_ROUND_DECIMAL`, `HASH_DECREASE_UNTIL_FIRST_LESS_THAN_ZERO`, `HASH_VALUE_UPDATE_SELECTIVE` |
+| Safe delete       | `HASH_DELETE_WITH_CHECK_VALUE`, `STRING_DELETE_WITH_CHECK_VALUE`                                                                                                                                                                                                                                                                       |
+| ZSet leaderboards | `ZSET_INCR_WITH_TIME`, `ZSET_ZADD_WITH_MAX_CHECK`, `ZSET_ZADD_WITH_TIME_MAX_CHECK`, `ZSET_AROUND_ELEMENT_RANK`, `ZSET_REV_RANGE_BIZ_RANKING_QUERY`, `ZSET_REV_RANGE_USER_BIZ_RANKING_ELEMENT_QUERY`, `ZSET_DELETE_WITH_MAX_SCORE_CHECK`, `ZSET_RANGEBYSCORE_ZREM`                                                                      |
+| Misc              | `MAX_CAPACITY_HISTORY_CONTAINER`, `MAX_ELEMENT_DICT`                                                                                                                                                                                                                                                                                   |
 
 ---
 
 ## 6. Interplay with Other Modules
 
-| Module | How They Cooperate |
-| ----- | ----- |
-| `ddf-common-core` | Supplies `RedisKeyConstraint`, `BusinessException`, `SpringContextHolder` (used by `ApplicationNamedKeyGenerator` to read `spring.application.name`) |
-| `ddf-common-limit` | Annotation-based rate limiting (`@RateLimit`) delegates to `RedisTemplateHelper.sliderWindowAccess` |
-| `ddf-common-alarm` | Alarm dedup / suppression windows rely on `AlarmRedisKeyEnum` + `hashIncreaseCheck` |
-| `ddf-common-authentication` | Token / captcha storage; login-failure counters typically use `stringIncrWithLimitCheckException` |
-| `ddf-common-mq` | Cross-instance broadcasts can ride on `RedisTopic` instead of pulling in a full message broker |
+| Module                      | How They Cooperate                                                                                                                                   |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ddf-common-core`           | Supplies `RedisKeyConstraint`, `BusinessException`, `SpringContextHolder` (used by `ApplicationNamedKeyGenerator` to read `spring.application.name`) |
+| `ddf-common-limit`          | Annotation-based rate limiting (`@RateLimit`) delegates to `RedisTemplateHelper.sliderWindowAccess`                                                  |
+| `ddf-common-alarm`          | Alarm dedup / suppression windows rely on `AlarmRedisKeyEnum` + `hashIncreaseCheck`                                                                  |
+| `ddf-common-authentication` | Token / captcha storage; login-failure counters typically use `stringIncrWithLimitCheckException`                                                    |
+| `ddf-common-mq`             | Cross-instance broadcasts can ride on `RedisTopic` instead of pulling in a full message broker                                                       |
 
 ---
 

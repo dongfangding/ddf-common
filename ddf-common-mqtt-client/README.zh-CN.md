@@ -11,12 +11,12 @@
 
 `ddf-common-mqtt-client` 解决的是 **"业务层如何快速、标准化地使用 MQTT 发布消息"** 问题。
 
-| 场景 | 典型问题 | 模块提供的能力 |
-| --- | --- | --- |
-| 业务系统推送设备指令 | 不想直接操作底层 MQTT API | 控制器封装，HTTP 调用即发布 |
-| 多业务线 Topic 管理 | Topic 命名混乱、难以维护 | `MqttTopicDefine` 枚举化定义 |
-| 消息体结构化 | 直接传 JSON 字符串易出错 | `TextMessageBody` 等业务消息体封装 |
-| 与现有 Web 服务集成 | 已有 Spring MVC 接口，想扩展 MQTT 能力 | 自动注入 `MqttClientController` 暴露 REST 端点 |
+| 场景            | 典型问题                         | 模块提供的能力                                |
+|---------------|------------------------------|----------------------------------------|
+| 业务系统推送设备指令    | 不想直接操作底层 MQTT API            | 控制器封装，HTTP 调用即发布                       |
+| 多业务线 Topic 管理 | Topic 命名混乱、难以维护              | `MqttTopicDefine` 枚举化定义                |
+| 消息体结构化        | 直接传 JSON 字符串易出错              | `TextMessageBody` 等业务消息体封装             |
+| 与现有 Web 服务集成  | 已有 Spring MVC 接口，想扩展 MQTT 能力 | 自动注入 `MqttClientController` 暴露 REST 端点 |
 
 ---
 
@@ -161,11 +161,11 @@ String topic = BizMqttTopic.DEVICE_COMMAND.getTopic()
 
 ## 6. 与其他模块协作
 
-| 模块 | 协作方式 |
-| --- | --- |
+| 模块                | 协作方式                         |
+|-------------------|------------------------------|
 | `ddf-common-mqtt` | 底层 MQTT 连接与发布能力，本模块在其之上做业务封装 |
-| `ddf-common-core` | JSON 序列化、工具类支撑 |
-| `ddf-common-mvc` | REST 控制器暴露与统一响应格式 |
+| `ddf-common-core` | JSON 序列化、工具类支撑               |
+| `ddf-common-mvc`  | REST 控制器暴露与统一响应格式            |
 
 ---
 

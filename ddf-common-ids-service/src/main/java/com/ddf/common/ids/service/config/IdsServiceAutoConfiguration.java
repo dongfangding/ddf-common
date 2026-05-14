@@ -41,7 +41,6 @@ public class IdsServiceAutoConfiguration {
      * 将数据源注入到查询Dao中，支持外部重新注册Bean
      *
      * @param dataSource 数据source参数
-     * @return
      */
     @Bean
     @ConditionalOnMissingBean
@@ -54,7 +53,6 @@ public class IdsServiceAutoConfiguration {
      * 号段模式id实现类
      *
      * @param idAllocDao 参数
-     * @return
      */
     @Bean
     @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "segmentEnable", havingValue = "true")
@@ -67,7 +65,6 @@ public class IdsServiceAutoConfiguration {
      *
      * @param segmentIDGen 参数
      * @param snowflakeService 参数
-     * @return
      */
     @Bean
     public IdsApi idsApi(Optional<IDGen> segmentIDGen, Optional<SnowflakeService> snowflakeService) {
@@ -76,22 +73,20 @@ public class IdsServiceAutoConfiguration {
 
     /**
      * 雪花id实现类
-     *
-     * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable", havingValue = "true")
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable",
+            havingValue = "true")
     public IDGen snowflakeIDGen() {
         return new SnowflakeIDGenImpl(idsProperties);
     }
 
     /**
      * 包装的雪花id组件类
-     *
-     * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable", havingValue = "true")
+    @ConditionalOnProperty(prefix = IdsProperties.IDS_PROPERTIES_PREFIX, value = "snowflakeEnable",
+            havingValue = "true")
     public SnowflakeService snowflakeService() {
         return new SnowflakeService(snowflakeIDGen());
     }
