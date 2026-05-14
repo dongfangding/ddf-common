@@ -1,14 +1,31 @@
 root = true
 
-[*.{groovy,java,kt,xml}]
-indent_style = tab
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
 indent_size = 4
+tab_width = 4
 continuation_indent_size = 8
+max_line_length = 120
+trim_trailing_whitespace = true
 
-[*.yml]
-indent_style = space
-indent_size = 2
+# markdown 不裁切
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
 
-[*.yaml]
-indent_style = space
+# yaml
+[*.{yml,yaml}]
 indent_size = 2
+tab_width = 2
+
+# shell
+[*.{sh,bash,zsh}]
+indent_size = 2
+tab_width = 2
+
+# XML 类文件
+[*.{xml,xsd,xslt,wsdl,pom}]
+max_line_length = 150
