@@ -79,6 +79,8 @@ node_modules
 
 ### claude code /cursor ,避免层级过深，忽略一些团队的规范定义
 .claude/settings.local.json
+# 用来存放一些本地的cluade全局规则，比如可以放一些构建指令，因为每个人的盘符文件不一样
+CLAUDE.local.md
 .codex/settings-snowball-local.xml
 .m2-local/
 # Added by code-review-graph
