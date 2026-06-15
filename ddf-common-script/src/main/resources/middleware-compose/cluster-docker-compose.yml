@@ -2,11 +2,21 @@ networks:
   middleware-network:
     external: true  # 使用已创建的外部网络
 
+# YAML 锚点：抽取所有服务共用的配置以减少重复
+# restart: unless-stopped —— 区别于 always，docker daemon 重启时不会主动拉起
+# 被人为 stop 的容器，宿主机维护后状态可控。
+x-defaults: &defaults
+  restart: unless-stopped
+  networks:
+    - middleware-network
+
+x-localtime: &localtime "/etc/localtime:/etc/localtime:ro"
+
 services:
   mysql:
+    <<: *defaults
     image: mysql:8.0.32
     container_name: mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # 显式指定时区，防止 Java 应用读取时间不一致
@@ -16,149 +26,165 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./mysql/data:/var/lib/mysql
       - ./mysql/logs:/var/log/mysql
       # 挂载到conf.d下，避免文件权限导致配置不生效
       - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     command:
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     healthcheck:
       # 优化：避免在进程列表中泄露密码，利用内置 ping 命令
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 10s
       retries: 10
-    networks:
-      - middleware-network
 
   redis:
+    <<: *defaults
     image: redis:6.0.17
     container_name: redis
-    restart: always
     command: [ "redis-server", "/data/redis.conf" ]
     ports:
       - "6379:6379"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./redis:/data
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
 
   zookeeper:
+    <<: *defaults
     image: zookeeper:3.6.4
     container_name: zookeeper
-    restart: always
     ports:
       - "2181:2181"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./zookeeper/conf:/conf
       - ./zookeeper/data:/data
       - ./zookeeper/datalog:/datalog
     healthcheck:
-      test: [ "CMD-SHELL", "zkServer.sh status || exit 1" ]
+      # 走 4lw `ruok`，比 zkServer.sh status 少一次 JVM 启动；
+      # 依赖 zoo.cfg 里把 ruok 加入 4lw.commands.whitelist。
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/2181 && printf 'ruok' >&3 && read -n 4 -t 3 reply <&3 && [ \"$$reply\" = imok ]" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
+      start_period: 10s
+
   mongo:
+    <<: *defaults
     # 虚拟机器需要在设置 → 系统 → 处理器 → 勾选 "启用 VT-x/AMD-V"
     image: mongo:6.0.4
     container_name: mongo
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./mongo/configdb:/data/configdb
+      - *localtime
+      # mongod.conf 仍放在宿主机 ./mongo/configdb/ 目录下（保持兼容旧布局），
+      # 但以单文件挂载到容器约定路径 /etc/mongod.conf，避免误把整个目录挂在
+      # mongo 自身的 /data/configdb (config server 数据目录) 上造成语义混淆。
+      - ./mongo/configdb/mongod.conf:/etc/mongod.conf:ro
       - ./mongo/db:/data/db
-    command: [ "mongod", "--config", "/data/configdb/mongod.conf" ]
+    command: [ "mongod", "--config", "/etc/mongod.conf" ]
     healthcheck:
       test: [ "CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\"" ]
       interval: 15s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
 
   elasticsearch:
+    <<: *defaults
     image: elasticsearch:7.17.9
     container_name: es
-    restart: always
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      # 打开 X-Pack Security，禁止匿名访问；elastic 用户密码由 .env 注入
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    # 默认仅绑定回环地址，禁止公网直连；如需对外暴露请改回 "9200:9200" / "9300:9300"
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9300:9300"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       # 启动可能会报错，java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes
       # 手动执行下权限，es镜像内部以elasticsearch用户， uid通常为1000运行，所以可以在宿主机执行，给挂载目录权限。sudo chown -R 1000:1000 ./elasticsearch/data
       - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/logs:/usr/share/elasticsearch/logs
-      - ./elasticsearch/config:/usr/share/elasticsearch/config
-    networks:
-      - middleware-network
+      # 只挂载自定义的配置文件，避免覆盖镜像内的 keystore / 默认 jvm.options 等
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/config/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health | grep -E '\"status\":\"(green|yellow)\"' >/dev/null || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
+  # RocketMQ
   rocketmq-namesrv:
-    image: rocketmqinc/rocketmq-namesrv:4.5.0-alpine
+    <<: *defaults
+    image: apache/rocketmq:5.3.2
     container_name: rocketmq-namesrv
-    restart: always
     ports:
       - "9876:9876"
     environment:
-      MAX_HEAP_SIZE: 512M
+      - JAVA_OPT_EXT=-Xms512m -Xmx512m
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./rocketmq/namesrv/logs:/root/logs
-      - ./rocketmq/namesrv/store:/root/store
+      - *localtime
+      - ./rocketmq/namesrv/logs:/home/rocketmq/rocketmq-5.3.2/logs
+      - ./rocketmq/namesrv/store:/home/rocketmq/rocketmq-5.3.2/store
+    command: sh mqnamesrv
     healthcheck:
-      test: [ "CMD-SHELL", "nc -z localhost 9876" ]
+      test: [ "CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/9876' || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
+      start_period: 10s
 
   rocketmq-broker:
-    image: rocketmqinc/rocketmq-broker:4.5.0-alpine
+    <<: *defaults
+    image: apache/rocketmq:5.3.2
     container_name: rocketmq-broker
-    restart: always
     depends_on:
       rocketmq-namesrv:
         condition: service_healthy
-    environment:
-      MAX_HEAP_SIZE: 512M
-      NAMESRV_ADDR: rocketmq-namesrv:9876
     ports:
       - "10909:10909"
       - "10911:10911"
       - "10912:10912"
+    environment:
+      - NAMESRV_ADDR=rocketmq-namesrv:9876
+      - JAVA_OPT_EXT=-Xms512m -Xmx512m
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./rocketmq/broker/logs:/root/logs
-      - ./rocketmq/broker/store:/root/store
-      - ./rocketmq/broker/conf:/root/rocketmq-4.5.0/conf
-    command: [ "sh", "mqbroker", "-c", "/root/rocketmq-4.5.0/conf/broker.conf" ]
-    networks:
-      - middleware-network
+      - *localtime
+      - ./rocketmq/broker/logs:/home/rocketmq/rocketmq-5.3.2/logs
+      - ./rocketmq/broker/store:/home/rocketmq/rocketmq-5.3.2/store
+      - ./rocketmq/broker/conf:/home/rocketmq/rocketmq-5.3.2/conf
+    command: sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/rocketmq-5.3.2/conf/broker.conf
+    healthcheck:
+      test: [ "CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/10911' || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   rocketmq-console:
-    image: styletang/rocketmq-console-ng
+    <<: *defaults
+    image: apacherocketmq/rocketmq-dashboard:2.1.0
     container_name: rocketmq-console
-    restart: always
+    # 使用 condition: service_healthy 而不是简单 depends_on，避免 namesrv 还没就绪时 console 启动后看不到节点
     depends_on:
       rocketmq-namesrv:
         condition: service_healthy
@@ -166,13 +192,11 @@ services:
       - "8804:8080"
     environment:
       JAVA_OPTS: "-Xms256M -Xmx512M -Dlogging.level.root=info -Drocketmq.namesrv.addr=rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
-    networks:
-      - middleware-network
 
   xxl-job-admin:
+    <<: *defaults
     image: xuxueli/xxl-job-admin:2.3.1
     container_name: xxl-job-admin
-    restart: always
     ports:
       - "8808:8080"
     volumes:
@@ -183,17 +207,15 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    networks:
-      - middleware-network
 
   emqx1:
+    <<: *defaults
     # 企业版需要license授权， 生产环境只能单机使用
     # image: emqx/emqx-enterprise:5.10.0
     # 可使用5.9版本以前的开源版本，还不是BSL协议，然后自己搭建集群
     image: emqx:5.8.8
     user: "1000:1000"
     container_name: emqx1
-    restart: always
     ports:
       - "11883:1883"
       - "18083:8083"
@@ -201,14 +223,17 @@ services:
       - "18883:8883"
       - "19083:18083"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./emqx1/data:/opt/emqx/data
       - ./emqx1/log:/opt/emqx/log
     environment:
-      - "EMQX_NODE_NAME=emqx@node1.emqx.com"
+      # 节点名直接用 compose 服务名 emqx1 / emqx2，省掉假域名 + alias 的迂回。
+      # ⚠️ 升级注意：旧版本节点名为 emqx@node{N}.emqx.com，切到新名前必须清空
+      # ./emqx1/data 与 ./emqx2/data，否则 mnesia 数据库不识别新节点身份。
+      - "EMQX_NODE_NAME=emqx@emqx1"
       - "EMQX_ADMIN_PASSWORD=${EMQX_PASS}"
       - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.com, emqx@node2.emqx.com]"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@emqx1, emqx@emqx2]"
       # 设置 Cookie 必须一致才能组成集群
       - "EMQX_NODE__COOKIE=emqx_cluster_secret_cookie"
     healthcheck:
@@ -216,18 +241,15 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-    networks:
-      middleware-network:
-        aliases:
-          - node1.emqx.com
+
   emqx2:
+    <<: *defaults
     # 企业版需要license授权， 生产环境只能单机使用
     # image: emqx/emqx-enterprise:5.10.0
     # 可使用5.9版本以前的开源版本，还不是BSL协议，然后自己搭建集群
     image: emqx:5.8.8
     user: "1000:1000"
     container_name: emqx2
-    restart: always
     ports:
       - "21883:1883"
       - "28083:8083"
@@ -235,14 +257,14 @@ services:
       - "28883:8883"
       - "29083:18083"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./emqx2/data:/opt/emqx/data
       - ./emqx2/log:/opt/emqx/log
     environment:
-      - "EMQX_NODE_NAME=emqx@node2.emqx.com"
+      - "EMQX_NODE_NAME=emqx@emqx2"
       - "EMQX_ADMIN_PASSWORD=${EMQX_PASS}"
       - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.com, emqx@node2.emqx.com]"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@emqx1, emqx@emqx2]"
       # 设置 Cookie 必须一致才能组成集群
       - "EMQX_NODE__COOKIE=emqx_cluster_secret_cookie"
     healthcheck:
@@ -250,8 +272,3 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-    networks:
-      middleware-network:
-        aliases:
-          - node2.emqx.com
-

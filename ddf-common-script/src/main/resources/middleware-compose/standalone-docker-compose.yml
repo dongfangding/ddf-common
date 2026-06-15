@@ -2,11 +2,23 @@ networks:
   middleware-network:
     external: true  # 使用已创建的外部网络
 
+# YAML 锚点：抽取所有服务共用的配置以减少重复
+# - x-defaults: 重启策略 + 网络归属，使用 `<<: *defaults` 合并到 service
+#   `restart: unless-stopped` 区别于 always：docker daemon 启动时不主动拉起被 stop 的容器，
+#   宿主机维护后不会出现"全栈自动恢复但有人故意停掉的服务被一起拉起来"的尴尬场面。
+# - x-localtime: 共用的时区挂载，单文件 scalar 锚点
+x-defaults: &defaults
+  restart: unless-stopped
+  networks:
+    - middleware-network
+
+x-localtime: &localtime "/etc/localtime:/etc/localtime:ro"
+
 services:
   mysql:
+    <<: *defaults
     image: mysql:8.0.32
     container_name: mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # 显式指定时区，防止 Java 应用读取时间不一致
@@ -16,7 +28,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./mysql/data:/var/lib/mysql
       - ./mysql/logs:/var/log/mysql
       # - ./mysql:/var/lib/mysql
@@ -33,93 +45,138 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
   redis:
+    <<: *defaults
     image: redis:6.0.17
     container_name: redis
-    restart: always
     command: [ "redis-server", "/data/redis.conf" ]
     ports:
       - "6379:6379"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./redis:/data
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        # 配合 redis.conf 中 maxmemory 2GB，给一定 buffer
+        limits:
+          cpus: '1'
+          memory: 2560M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
 
   zookeeper:
+    <<: *defaults
     image: zookeeper:3.6.4
     container_name: zookeeper
-    restart: always
     ports:
       - "2181:2181"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./zookeeper/conf:/conf
       - ./zookeeper/data:/data
       - ./zookeeper/datalog:/datalog
     healthcheck:
-      test: [ "CMD-SHELL", "zkServer.sh status || exit 1" ]
+      # 走 4lw `ruok` —— 不需要 JVM 启动开销，比 `zkServer.sh status` 快一个数量级。
+      # 前提：zoo.cfg 已经把 ruok 加进 4lw.commands.whitelist。
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/2181 && printf 'ruok' >&3 && read -n 4 -t 3 reply <&3 && [ \"$$reply\" = imok ]" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
   mongo:
+    <<: *defaults
     # 虚拟机器需要在设置 → 系统 → 处理器 → 勾选 "启用 VT-x/AMD-V", 不然只能使用低版本
     # image: mongo:6.0.4
     image: mongo:4.4
     container_name: mongo
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./mongo/configdb:/data/configdb
+      - *localtime
+      # mongod.conf 仍放在宿主机 ./mongo/configdb/ 目录下（保持兼容旧布局），
+      # 但以单文件挂载到容器约定路径 /etc/mongod.conf，避免误把整个目录挂在
+      # mongo 自身的 /data/configdb (config server 数据目录) 上造成语义混淆。
+      - ./mongo/configdb/mongod.conf:/etc/mongod.conf:ro
       - ./mongo/db:/data/db
-    command: [ "mongod", "--config", "/data/configdb/mongod.conf" ]
+    command: [ "mongod", "--config", "/etc/mongod.conf" ]
     healthcheck:
       test: [ "CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\"" ]
       interval: 15s
       timeout: 5s
       retries: 5
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   elasticsearch:
+    <<: *defaults
     image: elasticsearch:7.17.9
     container_name: es
-    restart: always
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      # 打开 X-Pack Security，禁止匿名访问；elastic 用户密码由 .env 注入
+      # 首次开启已有数据集群前，建议手动 bootstrap (docker exec -it es ./bin/elasticsearch-setup-passwords interactive)
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    # 默认仅绑定回环地址，禁止公网直连；如需对外暴露请改回 "9200:9200" / "9300:9300"
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9300:9300"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       # 启动可能会报错，java.nio.file.AccessDeniedException: /usr/share/elasticsearch/data/nodes
       # 手动执行下权限，es镜像内部以elasticsearch用户， uid通常为1000运行，所以可以在宿主机执行，给挂载目录权限。sudo chown -R 1000:1000 ./elasticsearch/data
       - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/logs:/usr/share/elasticsearch/logs
-      - ./elasticsearch/config:/usr/share/elasticsearch/config
-    networks:
-      - middleware-network
+      # 只挂载自定义的配置文件，避免覆盖镜像内的 keystore / 默认 jvm.options 等
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/config/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health | grep -E '\"status\":\"(green|yellow)\"' >/dev/null || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1536M
+        reservations:
+          memory: 768M
 
   rocketmq-namesrv:
+    <<: *defaults
     image: apache/rocketmq:5.3.2
     container_name: rocketmq-namesrv
-    restart: always
     ports:
       - "9876:9876"
     environment:
@@ -134,13 +191,16 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   rocketmq-broker:
+    <<: *defaults
     image: apache/rocketmq:5.3.2
     container_name: rocketmq-broker
-    restart: always
     depends_on:
       rocketmq-namesrv:
         condition: service_healthy
@@ -163,13 +223,16 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   rocketmq-proxy:
+    <<: *defaults
     image: apache/rocketmq:5.3.2
     container_name: rocketmq-proxy
-    restart: always
     depends_on:
       rocketmq-namesrv:
         condition: service_healthy
@@ -189,27 +252,35 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
 
   rocketmq-dashboard:
+    <<: *defaults
     image: apacherocketmq/rocketmq-dashboard:2.1.0
     container_name: rocketmq-dashboard
-    restart: always
     ports:
       - "8803:8082"
     environment:
       - JAVA_OPTS=-Xmx256m -Xms128m
       - ROCKETMQ_CONFIG_NAMESRVADDR=rocketmq-namesrv:9876
+    # 使用 condition: service_healthy 而不是简单 depends_on，避免 namesrv 还没就绪时 dashboard 启动后看不到节点
     depends_on:
-      - rocketmq-namesrv
-    networks:
-      - middleware-network
+      rocketmq-namesrv:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   xxl-job-admin:
+    <<: *defaults
     image: xuxueli/xxl-job-admin:3.3.0
     container_name: xxl-job-admin
-    restart: always
     ports:
       - "8802:8080"
     volumes:
@@ -220,17 +291,20 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    networks:
-      - middleware-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
 
   emqx:
+    <<: *defaults
     # 企业版需要license授权， 生产环境只能单机使用
     # image: emqx/emqx-enterprise:5.10.0
     # 可使用5.9版本以前的开源版本，还不是BSL协议，然后自己搭建集群
     image: emqx:5.8.8
     user: "1000:1000"
     container_name: emqx
-    restart: always
     ports:
       - "11883:1883"
       - "18083:8083"
@@ -238,23 +312,28 @@ services:
       - "18883:8883"
       - "19083:18083"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./emqx/data:/opt/emqx/data
       - ./emqx/log:/opt/emqx/log
     environment:
-      - "EMQX_NODE_NAME=emqx@node1.emqx.com"
+      # 单机模式下用服务名做节点名即可，省掉之前需要"宿主名 → 别名"的迂回；
+      # ⚠️ 升级注意：节点名变化会让旧的 mnesia 数据无法识别，
+      # 首次切到新节点名前需要清空 ./emqx/data，详见 desc.md §7。
+      - "EMQX_NODE_NAME=emqx@emqx"
       - "EMQX_ADMIN_PASSWORD=${EMQX_PASS}"
     healthcheck:
       test: [ "CMD", "/opt/emqx/bin/emqx", "ctl", "status" ]
       interval: 5s
       timeout: 10s
       retries: 5
-    networks:
-      middleware-network:
-        aliases:
-          - node1.emqx.com
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1536M
 
   nacos:
+    <<: *defaults
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos-standalone-mysql
     env_file:
@@ -268,26 +347,34 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: always
-    networks:
-      - middleware-network
+    healthcheck:
+      # Nacos v3 暴露 /nacos/v1/console/health/readiness；同时兼容 actuator 路径
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:8848/nacos/v1/console/health/readiness >/dev/null || curl -fsS http://localhost:8848/nacos/actuator/health >/dev/null || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
   nginx:
+    <<: *defaults
     image: nginx:1.27-alpine
     container_name: nginx
-    restart: unless-stopped
     ports:
       - "8080:80"
       - "8443:443"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - *localtime
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/snippets:/etc/nginx/snippets:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./nginx/log:/var/log/nginx
       - ./nginx/html:/usr/share/nginx/html:ro
-    networks:
-      - middleware-network
     healthcheck:
       # 这里的 /health 记得在 nginx 配置里加上，否则会一直显示 unhealthy
       test: [ "CMD-SHELL", "wget -q -O - http://127.0.0.1/manager/health || exit 1" ]
@@ -299,3 +386,8 @@ services:
       nofile:
         soft: 200000
         hard: 200000
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M

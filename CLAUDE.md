@@ -116,9 +116,9 @@ responseData.requireSuccess();                               // 调用方强制�
 ## 注意事项
 
 1. **Jakarta EE**：Spring Boot 3.x 使用 `jakarta.*`，不是 `javax.*`。
-2. **不可直接运行**：业务示例参考 `examples/minimal-web-service/` 与外部仓库 `spring-boot-quick`。
+2. **不可直接运行**：业务示例参考 `examples/minimal-web-service/`，完整示例见外部仓库 `spring-boot-quick`。
 3. **测试默认跳过**：日常 `-DskipTests` 加速构建，但 PR 前应执行受影响模块的测试。
-4. **发布治理**：发布前阅读 `docs/releasing-to-maven-central.zh-CN.md`、`docs/versioning-and-release-policy.zh-CN.md`、`docs/public-module-policy.zh-CN.md`。
+4. **发布治理**：发布前必读 `docs/` 目录下的版本与发布文档（`releasing-to-maven-central.zh-CN.md`、`versioning-and-release-policy.zh-CN.md` 等）。
 
 ## 模块级文档
 

@@ -2,15 +2,24 @@ networks:
   middleware-network:
     external: true  # 使用已创建的外部网络
 
+# YAML 锚点：抽取所有服务共用的配置以减少重复
+# 监控栈与业务中间件解耦，重启策略使用 unless-stopped，
+# 避免 docker daemon 重启时 (例如宿主机维护) 反复拉起 (与 always 的语义差异)
+x-defaults: &defaults
+  restart: unless-stopped
+  networks:
+    - middleware-network
+
+x-localtime: &localtime "/etc/localtime:/etc/localtime:ro"
+
 services:
   otelcol:
+    <<: *defaults
     image: otel/opentelemetry-collector-contrib:0.148.0
     container_name: otelcol
-    restart: unless-stopped
     command: [ "--config=/etc/otelcol-contrib/config.yaml" ]
-    networks:
-      - middleware-network
     volumes:
+      - *localtime
       - ./monitor/otelcol/otelcol-config.yaml:/etc/otelcol-contrib/config.yaml:ro
       - otelcol_data:/var/lib/otelcol/file_storage
     ports:
@@ -18,9 +27,12 @@ services:
       - "4318:4318"   # OTLP HTTP
       - "13133:13133" # health check
       - "8888:8888"   # collector internal metrics
+    # 改成 condition: service_healthy，避免 jaeger / prometheus 还没就绪时 collector 已经开始转发
     depends_on:
-      - jaeger
-      - prometheus
+      jaeger:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:13133/ || exit 1" ]
       interval: 10s
@@ -31,11 +43,9 @@ services:
     cpus: 1.5
 
   jaeger:
+    <<: *defaults
     image: jaegertracing/jaeger:2.16.0
     container_name: jaeger
-    restart: unless-stopped
-    networks:
-      - middleware-network
     ports:
       - "16686:16686" # Jaeger UI
     healthcheck:
@@ -46,21 +56,20 @@ services:
       start_period: 20s
 
   prometheus:
+    <<: *defaults
     image: prom/prometheus:v3.2.1
     container_name: prometheus
-    restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.enable-otlp-receiver
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=15d
     volumes:
+      - *localtime
       - ./monitor/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
-    networks:
-      - middleware-network
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:9090/-/healthy || exit 1" ]
       interval: 15s
@@ -69,9 +78,9 @@ services:
       start_period: 20s
 
   grafana:
+    <<: *defaults
     image: grafana/grafana:11.2.0
     container_name: grafana
-    restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
@@ -79,15 +88,16 @@ services:
       GF_SERVER_DOMAIN: monitor.example.com
       GF_SERVER_ROOT_URL: https://monitor.example.com/
     volumes:
+      - *localtime
       - grafana_data:/var/lib/grafana
       - ./monitor/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
     ports:
       - "3000:3000"
     depends_on:
-      - prometheus
-      - jaeger
-    networks:
-      - middleware-network
+      prometheus:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health | grep ok >/dev/null || exit 1" ]
       interval: 15s
@@ -95,10 +105,16 @@ services:
       retries: 10
       start_period: 30s
 
+  # ⚠️ 安全提示：node_exporter 通过 `/:/host:ro,rslave` 以只读方式映射宿主机根目录，
+  # 容器内可读到宿主机上所有文件的元数据 (含 /etc/shadow 大小、/root 目录结构等)。
+  # 生产环境建议：
+  #   1) 通过 --collector.disable-defaults 仅启用必要 collector，缩小读取面；
+  #   2) 或仅挂载 /proc /sys /run 等指标采集所需子目录，避免整盘暴露；
+  #   3) 或干脆将 node_exporter 部署到宿主机上以 systemd 运行，不进入容器网络。
   node_exporter:
+    <<: *defaults
     image: prom/node-exporter:v1.8.2
     container_name: node_exporter
-    restart: unless-stopped
     command:
       - --path.rootfs=/host
     pid: host
@@ -106,12 +122,10 @@ services:
       - /:/host:ro,rslave
     ports:
       - "127.0.0.1:9100:9100"
-    networks:
-      - middleware-network
 
 # nginx使用中间件里的nginx, 只是多配置一个监听，见nginx/conf.d/monitor.conf
 
 volumes:
   otelcol_data:
   prometheus_data:
-  grafana_data:ls
+  grafana_data:
