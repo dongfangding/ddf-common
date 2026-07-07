@@ -61,10 +61,16 @@ public class DedupService {
         int lastDot = keptName.lastIndexOf('.');
         String nameWithoutExt = lastDot > 0 ? keptName.substring(0, lastDot) : keptName;
 
-        Path targetDir = resolveUniqueDir(outputDir, "重复自_" + nameWithoutExt);
+        Path targetDir = resolveUniqueDir(outputDir, nameWithoutExt + "_重复");
         Files.createDirectories(targetDir);
 
         int moved = 0;
+
+        Path keptSrc = result.kept();
+        Path keptDest = resolveUniqueFile(outputDir, keptName);
+        Files.move(keptSrc, keptDest);
+        moved++;
+
         for (Path dup : result.duplicates()) {
             try {
                 Path dest = resolveUniqueFile(targetDir, dup.getFileName().toString());
