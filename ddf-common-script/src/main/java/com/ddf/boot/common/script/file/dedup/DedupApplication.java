@@ -45,6 +45,22 @@ public class DedupApplication extends Application {
     private Path scanDir;
     private Path outputDir;
 
+
+    /**
+     * cd /mnt/d/IdeaWorkspaces/ddf-common && mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
+     *
+     *   如果需要在 IDE 里直接运行，在 IntelliJ IDEA 的 Run Configuration 里添加 VM options：
+     *
+     *   --module-path /mnt/d/maven_repository/org/openjfx/javafx-controls/17.0.14/javafx-controls-17.0.14-linux.jar:/mnt/d/maven_repository/org/openjfx/javafx-graphics/17.0.14/javafx-graphics-17.0.14-linux.jar:/mnt/d/maven_repository/org/openj
+     *   fx/javafx-base/17.0.14/javafx-base-17.0.14-linux.jar
+     *   --add-modules javafx.controls
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) {
         stage.setTitle("文件去重工具");
@@ -251,9 +267,5 @@ public class DedupApplication extends Application {
                 fileListBox.getChildren().add(rb);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
