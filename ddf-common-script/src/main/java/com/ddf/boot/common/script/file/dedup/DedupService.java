@@ -57,10 +57,9 @@ public class DedupService {
     }
 
     public int moveDuplicates(DedupResult result, Path outputDir) throws IOException {
-        String baseName = result.fileName();
-        int lastDot = baseName.lastIndexOf('.');
-        String nameWithoutExt = lastDot > 0 ? baseName.substring(0, lastDot) : baseName;
-        String ext = lastDot > 0 ? baseName.substring(lastDot) : "";
+        String keptName = result.kept().getFileName().toString();
+        int lastDot = keptName.lastIndexOf('.');
+        String nameWithoutExt = lastDot > 0 ? keptName.substring(0, lastDot) : keptName;
 
         Path targetDir = resolveUniqueDir(outputDir, "重复自_" + nameWithoutExt);
         Files.createDirectories(targetDir);

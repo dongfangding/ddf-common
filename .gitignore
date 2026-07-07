@@ -1,86 +1,46 @@
-# Compiled class file
-*.class
-*.classpath
-*.factorypath
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
+target/
 !.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# IDE Files #
-*.iml
+### IntelliJ IDEA ###
 .idea
-.idea/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
 .project
 .settings
-target
-.DS_Store
-.qoder
-.cursor
-.vscode
-
-#Seata test data file
-sessionStore/
-
-# temp ignore
-*.cache
-*.diff
-*.patch
-*.tmp
-
-# Maven ignore
-.flattened-pom.xml
-
-.attach_pid*
-.gradle
-.metadata
-.recommenders
 .springBeans
-/code
-MANIFEST.MF
-_site/
-activemq-data
-bin
-build
-!/**/src/**/bin
-!/**/src/**/build
-build.log
-dependency-reduced-pom.xml
-dump.rdb
-interpolated*.xml
-lib/
-manifest.yml
-out
-overridedb.*
-secrets.yml
-.gradletasknamecache
 .sts4-cache
-.git-hooks/
-node_modules
-/.kotlin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+/user-core/src/test/java/
+/user-core/src/test/java/
+
 
 ### claude code /cursor ,避免层级过深，忽略一些团队的规范定义
 .claude/settings.local.json
-# 用来存放一些本地的cluade全局规则，比如可以放一些构建指令，因为每个人的盘符文件不一样
-CLAUDE.local.md
+# Added by code-review-graph
+.code-review-graph/
 .codex/settings-snowball-local.xml
 .m2-local/
 # Added by code-review-graph

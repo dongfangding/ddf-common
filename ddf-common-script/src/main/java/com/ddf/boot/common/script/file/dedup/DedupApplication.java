@@ -12,17 +12,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -172,13 +174,12 @@ public class DedupApplication extends Application {
     private class DedupResultCell extends ListCell<DedupResult> {
         private final VBox container = new VBox(4);
         private final Label header = new Label();
-        private final Label paths = new Label();
+        private final VBox fileListBox = new VBox(3);
         private final Button moveBtn = new Button("整理此组");
+        private final ToggleGroup toggleGroup = new ToggleGroup();
 
         DedupResultCell() {
             header.setFont(Font.font(null, FontWeight.BOLD, 13));
-            paths.setFont(Font.font(null, 12));
-            paths.setTextFill(Color.GRAY);
             moveBtn.setOnAction(e -> {
                 DedupResult item = getItem();
                 if (item != null) {
@@ -195,7 +196,7 @@ public class DedupApplication extends Application {
                     }).start();
                 }
             });
-            container.getChildren().addAll(header, paths, moveBtn);
+            container.getChildren().addAll(header, fileListBox, moveBtn);
             container.setPadding(new Insets(6));
         }
 
@@ -205,15 +206,49 @@ public class DedupApplication extends Application {
             if (empty || item == null) {
                 setGraphic(null);
             } else {
-                String keptStr = item.kept().toString();
-                StringBuilder sb = new StringBuilder();
-                sb.append(keptStr).append("  ← 保留\n");
-                for (Path d : item.duplicates()) {
-                    sb.append(d.toString()).append("  ← 重复\n");
-                }
                 header.setText(String.format("%s (%d个文件)", item.fileName(), item.files().size()));
-                paths.setText(sb.toString().trim());
+                buildFileRadios(item);
                 setGraphic(container);
+            }
+        }
+
+        private void updateDisplay(DedupResult item) {
+            buildFileRadios(item);
+        }
+
+        private void buildFileRadios(DedupResult item) {
+            fileListBox.getChildren().clear();
+            toggleGroup.getToggles().clear();
+            for (int i = 0; i < item.files().size(); i++) {
+                Path file = item.files().get(i);
+                String label = file.toString();
+                if (i == item.getKeptIndex()) {
+                    label += "  ← 保留";
+                } else {
+                    label += "  ← 重复";
+                }
+                RadioButton rb = new RadioButton(label);
+                rb.setToggleGroup(toggleGroup);
+                rb.setFont(Font.font(null, 12));
+                rb.setSelected(i == item.getKeptIndex());
+                int idx = i;
+                rb.setOnAction(e -> {
+                    if (rb.isSelected()) {
+                        item.setKeptIndex(idx);
+                        updateDisplay(item);
+                    }
+                });
+                Path openFile = file;
+                rb.setOnMouseClicked(e -> {
+                    if (e.getClickCount() == 2) {
+                        try {
+                            Desktop.getDesktop().open(openFile.toFile());
+                        } catch (IOException ex) {
+                            showAlert("无法打开文件: " + ex.getMessage());
+                        }
+                    }
+                });
+                fileListBox.getChildren().add(rb);
             }
         }
     }
