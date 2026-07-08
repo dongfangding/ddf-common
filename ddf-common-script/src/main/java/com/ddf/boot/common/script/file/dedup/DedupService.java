@@ -12,10 +12,17 @@ import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DedupService {
+
+    private static final Pattern BRACKETS = Pattern.compile("[()\\[\\]{}（）【】｛｝]");
+
+    public static boolean hasBrackets(String name) {
+        return BRACKETS.matcher(name).find();
+    }
 
     public List<DedupResult> scan(Path scanDir) throws IOException {
         List<Path> allFiles;
@@ -48,10 +55,16 @@ public class DedupService {
 
         return hashGroups.entrySet().stream()
                 .filter(e -> e.getValue().size() > 1)
-                .map(e -> new DedupResult(
-                        e.getValue().get(0).getFileName().toString(),
-                        e.getKey(),
-                        e.getValue()))
+                .map(e -> {
+                    List<Path> sorted = e.getValue().stream()
+                            .sorted(Comparator.comparing(
+                                    (Path p) -> hasBrackets(p.getFileName().toString())))
+                            .collect(Collectors.toList());
+                    return new DedupResult(
+                            sorted.get(0).getFileName().toString(),
+                            e.getKey(),
+                            sorted);
+                })
                 .sorted(Comparator.comparing(DedupResult::fileName))
                 .collect(Collectors.toList());
     }

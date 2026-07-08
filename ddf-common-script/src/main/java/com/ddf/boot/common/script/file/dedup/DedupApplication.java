@@ -15,6 +15,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -27,6 +29,7 @@ import javafx.stage.Stage;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -41,22 +44,14 @@ public class DedupApplication extends Application {
     private final ListView<DedupResult> resultList = new ListView<>();
     private final ObservableList<DedupResult> results = FXCollections.observableArrayList();
 
+    private final ImageView previewImage = new ImageView();
+    private final Label previewInfo = new Label();
+    private final Label previewPath = new Label();
+
     private final DedupService service = new DedupService();
     private Path scanDir;
     private Path outputDir;
 
-
-    /**
-     * cd /mnt/d/IdeaWorkspaces/ddf-common && mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
-     *
-     *   如果需要在 IDE 里直接运行，在 IntelliJ IDEA 的 Run Configuration 里添加 VM options：
-     *
-     *   --module-path /mnt/d/maven_repository/org/openjfx/javafx-controls/17.0.14/javafx-controls-17.0.14-linux.jar:/mnt/d/maven_repository/org/openjfx/javafx-graphics/17.0.14/javafx-graphics-17.0.14-linux.jar:/mnt/d/maven_repository/org/openj
-     *   fx/javafx-base/17.0.14/javafx-base-17.0.14-linux.jar
-     *   --add-modules javafx.controls
-     *
-     * @param args
-     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -67,15 +62,18 @@ public class DedupApplication extends Application {
 
         VBox topSection = buildTopSection();
         resultList.setItems(results);
-        resultList.setCellFactory(lv -> new DedupResultCell());
+        resultList.setCellFactory(lv -> new DedupResultCell(this::showPreview));
         VBox.setVgrow(resultList, Priority.ALWAYS);
+
+        VBox previewPanel = buildPreviewPanel();
 
         BorderPane root = new BorderPane();
         root.setTop(topSection);
         root.setCenter(resultList);
+        root.setRight(previewPanel);
         root.setBottom(buildBottomBar());
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1050, 600);
         stage.setScene(scene);
         stage.show();
     }
@@ -92,6 +90,68 @@ public class DedupApplication extends Application {
         VBox box = new VBox(8, scanRow, outputRow, actionRow);
         box.setPadding(new Insets(12));
         return box;
+    }
+
+    private VBox buildPreviewPanel() {
+        previewImage.setFitWidth(230);
+        previewImage.setPreserveRatio(true);
+        previewImage.setVisible(false);
+        previewInfo.setFont(Font.font(null, 12));
+        previewInfo.setWrapText(true);
+        previewPath.setFont(Font.font(null, 11));
+        previewPath.setWrapText(true);
+        previewPath.setStyle("-fx-text-fill: gray;");
+
+        Label title = new Label("预览");
+        title.setFont(Font.font(null, FontWeight.BOLD, 13));
+
+        VBox panel = new VBox(8, title, previewImage, previewInfo, previewPath);
+        panel.setPadding(new Insets(12));
+        panel.setPrefWidth(260);
+        return panel;
+    }
+
+    private void showPreview(Path file) {
+        previewImage.setVisible(false);
+        previewImage.setImage(null);
+        previewPath.setText(file.toString());
+
+        String name = file.getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        String ext = dot > 0 ? name.substring(dot + 1).toLowerCase() : "";
+        boolean isImage = ext.matches("jpg|jpeg|png|gif|bmp|webp");
+
+        try {
+            long bytes = Files.size(file);
+            String sizeStr;
+            if (bytes < 1024 * 1024) {
+                sizeStr = String.format("%.1f KB", bytes / 1024.0);
+            } else if (bytes < 1024 * 1024 * 1024) {
+                sizeStr = String.format("%.1f MB", bytes / (1024.0 * 1024));
+            } else {
+                sizeStr = String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+            }
+            StringBuilder info = new StringBuilder();
+            info.append("大小: ").append(sizeStr).append("\n");
+            info.append("类型: ").append(ext.isEmpty() ? "未知" : ext.toUpperCase()).append("\n");
+            if (DedupService.hasBrackets(file.getFileName().toString())) {
+                info.append("⚠ 文件名含括号");
+            } else {
+                info.append("✓ 文件名无括号");
+            }
+            previewInfo.setText(info.toString());
+
+            if (isImage) {
+                try {
+                    Image img = new Image(file.toUri().toString(), 230, 0, true, true);
+                    previewImage.setImage(img);
+                    previewImage.setVisible(true);
+                } catch (Exception ignored) {
+                }
+            }
+        } catch (IOException ignored) {
+            previewInfo.setText("无法读取文件信息");
+        }
     }
 
     private Button createBrowseButton(TextField target) {
@@ -194,7 +254,10 @@ public class DedupApplication extends Application {
         private final Button moveBtn = new Button("整理此组");
         private final ToggleGroup toggleGroup = new ToggleGroup();
 
-        DedupResultCell() {
+        private final java.util.function.Consumer<Path> onFileSelected;
+
+        DedupResultCell(java.util.function.Consumer<Path> onFileSelected) {
+            this.onFileSelected = onFileSelected;
             header.setFont(Font.font(null, FontWeight.BOLD, 13));
             moveBtn.setOnAction(e -> {
                 DedupResult item = getItem();
@@ -262,6 +325,8 @@ public class DedupApplication extends Application {
                         } catch (IOException ex) {
                             showAlert("无法打开文件: " + ex.getMessage());
                         }
+                    } else {
+                        onFileSelected.accept(openFile);
                     }
                 });
                 fileListBox.getChildren().add(rb);
