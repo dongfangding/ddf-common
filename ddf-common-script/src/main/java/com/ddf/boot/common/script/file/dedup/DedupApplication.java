@@ -30,8 +30,45 @@ public class DedupApplication extends Application {
     private final Map<String, VBox> panels = new LinkedHashMap<>();
     private final StackPane contentArea = new StackPane();
 
+
+    /**
+     *
+     * # 开发运行（WSL/Linux）
+     *   cd /mnt/d/IdeaWorkspaces/ddf-common && mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
+     * <p>
+     *   # CLI 模式
+     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileRestore <month|video|compress> <源目录> <输出目录>
+     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileNamePrefixReplacer <文件夹> <匹配前缀> <新前缀>
+     * <p>
+     *   打包 Windows exe
+     * <p>
+     *   在 Windows 上执行：
+     *   # 1. 打 uber jar（包含所有依赖）
+     *   cd d:/IdeaWorkspaces/ddf-common
+     *   mvn clean package -pl ddf-common-script -DskipTests
+     * <p>
+     *   # 2. 生成 exe（需 JDK 17+，自带 jpackage）
+     *   jpackage --input ddf-common-script/target/ddf-common-script-dist --main-jar ddf-common-script.jar --main-class com.ddf.boot.common.script.file.dedup.Launcher --name DupTool --type app-image --dest out
+     * <p>
+     *   生成的 out/文件工具箱.exe 双击即用，无需装 Java
+     *
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        launch(args);
+        try {
+            launch(args);
+        } catch (Throwable t) {
+            try {
+                java.nio.file.Path logFile = java.nio.file.Path.of("").toAbsolutePath().resolve("DupTool_error.log");
+                java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(logFile.toFile()));
+                t.printStackTrace(pw);
+                pw.flush();
+                pw.close();
+            } catch (Exception ignored) {
+            }
+            throw t;
+        }
     }
 
     @Override
