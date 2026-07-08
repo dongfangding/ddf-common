@@ -1,5 +1,6 @@
 package com.ddf.boot.common.script.file;
 
+import com.ddf.boot.common.script.file.dedup.SafeMoveService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -73,7 +74,7 @@ public class FileRestore {
                                 Files.createDirectories(notVidPath);
                             }
                             Path targetPath = notVidPath.resolve(file.getFileName());
-                            com.ddf.boot.common.script.file.dedup.SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                            SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         } else {
                             String month = fileName.substring(3, 9);
@@ -88,7 +89,7 @@ public class FileRestore {
 
                             // 移动文件到目标日期目录
                             Path targetPath = monthDir.resolve(file.getFileName());
-                            com.ddf.boot.common.script.file.dedup.SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                            SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         }
                         return FileVisitResult.CONTINUE;
@@ -128,6 +129,10 @@ public class FileRestore {
                             return FileVisitResult.CONTINUE;
                         }
                         final String[] split = fileName.split("_");
+                        if (split.length < 5) {
+                            System.err.println("WARN: 无法解析文件名格式: " + fileName);
+                            return FileVisitResult.CONTINUE;
+                        }
                         String dateStr = split[4];
                         String month = dateStr.substring(0, 6);
                         String day = dateStr.substring(0, 8);
@@ -146,7 +151,7 @@ public class FileRestore {
 
                         // 移动文件到目标日期目录
                         Path targetPathFile = targetPath.resolve(file.getFileName());
-                        Files.move(file, targetPathFile, StandardCopyOption.REPLACE_EXISTING);
+                        SafeMoveService.move(file, targetPathFile, StandardCopyOption.REPLACE_EXISTING);
                         System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         return FileVisitResult.CONTINUE;
                     }
@@ -181,10 +186,12 @@ public class FileRestore {
                         String sourceFolderName = folder.getName();
 
                         // 截取一级目录、二级目录、三级目录
-                        String firstLevelDir = sourceFolderName.substring(0,
-                                Math.min(sourceFolderName.length(), 6));
-                        String secondLevelDir = sourceFolderName.substring(0,
-                                Math.min(sourceFolderName.length(), 8));
+                        if (sourceFolderName.length() < 8) {
+                            System.err.println("WARN: 文件夹名过短无法解析: " + sourceFolderName);
+                            continue;
+                        }
+                        String firstLevelDir = sourceFolderName.substring(0, 6);
+                        String secondLevelDir = sourceFolderName.substring(0, 8);
 
                         int year = Integer.parseInt(firstLevelDir.substring(0, 4));
                         int mon = Integer.parseInt(firstLevelDir.substring(4, 6));
@@ -204,7 +211,7 @@ public class FileRestore {
 
                         // 移动文件夹
                         Path sourcePath = folder.toPath();
-                        com.ddf.boot.common.script.file.dedup.SafeMoveService.move(sourcePath, targetPath);
+                        SafeMoveService.move(sourcePath, targetPath);
 
                         // 删除空源文件夹
                         //                        Files.delete(sourcePath);
@@ -244,7 +251,7 @@ public class FileRestore {
                         }
 
                         Path targetPath = deleteDir.resolve(realFile.getName());
-                        com.ddf.boot.common.script.file.dedup.SafeMoveService.move(realFile.toPath(), targetPath);
+                        SafeMoveService.move(realFile.toPath(), targetPath);
                         return FileVisitResult.CONTINUE;
                     }
                 });

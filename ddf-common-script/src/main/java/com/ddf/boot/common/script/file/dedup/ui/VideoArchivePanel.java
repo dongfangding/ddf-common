@@ -11,7 +11,6 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
-import java.nio.file.Path;
 
 public class VideoArchivePanel extends VBox {
 
@@ -71,9 +70,6 @@ public class VideoArchivePanel extends VBox {
             showAlert("请先选择源目录和输出目录");
             return;
         }
-        Path srcDir = Path.of(srcText);
-        Path outDir = Path.of(outText);
-
         startButton.setDisable(true);
         progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
         statusLabel.setText("归档中...");
