@@ -1,6 +1,5 @@
 package com.ddf.boot.common.script.file.dedup.ui;
 
-import com.ddf.boot.common.script.file.dedup.SafeMoveService;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,10 +11,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 
 public class PhotoArchivePanel extends VBox {
 
@@ -83,37 +79,15 @@ public class PhotoArchivePanel extends VBox {
         statusLabel.setText("归档中...");
 
         new Thread(() -> {
-            Path notVidDir = outDir.resolve("not_vid");
             try {
-                Files.walkFileTree(srcDir, new java.nio.file.SimpleFileVisitor<>() {
-                    @Override
-                    public java.nio.file.FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        String fileName = file.getFileName().toString();
-                        if (!fileName.startsWith("VID")) {
-                            Files.createDirectories(notVidDir);
-                            Path dest = notVidDir.resolve(fileName);
-                            SafeMoveService.move(file, dest);
-                        } else {
-                            String month;
-                            if (fileName.startsWith("VID_")) {
-                                month = fileName.substring(4, 10);
-                            } else {
-                                month = fileName.substring(3, 9);
-                            }
-                            Path monthDir = outDir.resolve(month);
-                            Files.createDirectories(monthDir);
-                            Path dest = monthDir.resolve(fileName);
-                            SafeMoveService.move(file, dest);
-                        }
-                        return java.nio.file.FileVisitResult.CONTINUE;
-                    }
-                });
+                com.ddf.boot.common.script.file.FileRestore.computerReadAndMoveFileToMonth(
+                        new String[]{srcText}, outText);
                 Platform.runLater(() -> {
                     statusLabel.setText("归档完成");
                     progressBar.setProgress(1);
                     startButton.setDisable(false);
                 });
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Platform.runLater(() -> {
                     showAlert("归档失败: " + ex.getMessage());
                     startButton.setDisable(false);

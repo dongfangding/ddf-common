@@ -1,6 +1,5 @@
 package com.ddf.boot.common.script.file.dedup.ui;
 
-import com.ddf.boot.common.script.file.dedup.SafeMoveService;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,12 +11,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class FolderCompressPanel extends VBox {
-
-    private static final String[] IMAGE_EXT = {"jpg", "jpeg", "png", "gif", "bmp"};
 
     private final TextField sourceDirField = new TextField();
     private final TextField outputDirField = new TextField();
@@ -75,35 +70,14 @@ public class FolderCompressPanel extends VBox {
             showAlert("请先选择源目录和输出目录");
             return;
         }
-        File srcDir = new File(srcText);
-        Path outDir = Path.of(outText);
-
         startButton.setDisable(true);
         progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
         statusLabel.setText("压缩中...");
 
         new Thread(() -> {
             try {
-                File[] folders = srcDir.listFiles(File::isDirectory);
-                if (folders != null) {
-                    for (File folder : folders) {
-                        String name = folder.getName();
-                        String month = name.substring(0, Math.min(name.length(), 6));
-                        String day = name.substring(0, Math.min(name.length(), 8));
-
-                        int year = Integer.parseInt(month.substring(0, 4));
-                        int mon = Integer.parseInt(month.substring(4, 6));
-                        if (year < 2000 || mon < 1 || mon > 12) {
-                            System.err.println("FATAL: 日期解析异常, folderName=" + name);
-                            System.exit(1);
-                        }
-
-                        Path targetPath = outDir.resolve(month).resolve(day).resolve(name);
-                        Files.createDirectories(targetPath.getParent());
-                        deleteImageFilesRecursively(folder);
-                        SafeMoveService.move(folder.toPath(), targetPath);
-                    }
-                }
+                com.ddf.boot.common.script.file.FileRestore.packageMonitorVideo(
+                        new String[]{srcText}, outText);
                 Platform.runLater(() -> {
                     statusLabel.setText("压缩完成");
                     progressBar.setProgress(1);
@@ -118,28 +92,5 @@ public class FolderCompressPanel extends VBox {
                 });
             }
         }).start();
-    }
-
-    private void deleteImageFilesRecursively(File dir) {
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteImageFilesRecursively(file);
-                } else if (isImageFile(file)) {
-                    file.delete();
-                }
-            }
-        }
-    }
-
-    private boolean isImageFile(File file) {
-        String name = file.getName().toLowerCase();
-        for (String ext : IMAGE_EXT) {
-            if (name.endsWith("." + ext)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

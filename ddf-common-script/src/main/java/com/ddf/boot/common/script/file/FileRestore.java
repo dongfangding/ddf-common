@@ -24,9 +24,27 @@ import java.util.Set;
  * @since 2024/07/09 10:54
  */
 public class FileRestore {
+    /**
+     * @param args [0]功能标识 [1]源目录(逗号分隔多个) [2]输出目录
+     *             功能标识: month(按月份归档), video(监控视频归档), compress(目录压缩)
+     */
     public static void main(String[] args) {
-        String baseTargetDirectory = "I:/整理/乐多";
-        computerReadAndMoveFileToMonth(new String[] {"I:/未整理/乐多"}, baseTargetDirectory);
+        if (args.length < 3) {
+            System.err.println("用法: java FileRestore <month|video|compress> <源目录(多个用逗号分隔)> <输出目录>");
+            System.exit(1);
+        }
+        String mode = args[0];
+        String[] srcDirs = args[1].split(",");
+        String outDir = args[2];
+        switch (mode) {
+            case "month" -> computerReadAndMoveFileToMonth(srcDirs, outDir);
+            case "video" -> packageMonitorVideo2(srcDirs, outDir);
+            case "compress" -> packageMonitorVideo(srcDirs, outDir);
+            default -> {
+                System.err.println("未知功能: " + mode + ", 可选: month/video/compress");
+                System.exit(1);
+            }
+        }
     }
 
     /**
@@ -55,7 +73,7 @@ public class FileRestore {
                                 Files.createDirectories(notVidPath);
                             }
                             Path targetPath = notVidPath.resolve(file.getFileName());
-                            Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                            com.ddf.boot.common.script.file.dedup.SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         } else {
                             String month = fileName.substring(3, 9);
@@ -70,7 +88,7 @@ public class FileRestore {
 
                             // 移动文件到目标日期目录
                             Path targetPath = monthDir.resolve(file.getFileName());
-                            Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                            com.ddf.boot.common.script.file.dedup.SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                             System.out.println("Moved " + file.getFileName() + " to " + targetPath);
                         }
                         return FileVisitResult.CONTINUE;
@@ -113,6 +131,13 @@ public class FileRestore {
                         String dateStr = split[4];
                         String month = dateStr.substring(0, 6);
                         String day = dateStr.substring(0, 8);
+
+                        int year = Integer.parseInt(month.substring(0, 4));
+                        int mon = Integer.parseInt(month.substring(4, 6));
+                        if (year < 2000 || mon < 1 || mon > 12) {
+                            System.err.println("FATAL: 日期解析异常, 文件名=" + fileName + " dateStr=" + dateStr);
+                            System.exit(1);
+                        }
                         // 创建层级目录
                         Path targetPath = Path.of(baseTargetDirectory, month, day);
                         if (!Files.exists(targetPath)) {
@@ -157,11 +182,17 @@ public class FileRestore {
 
                         // 截取一级目录、二级目录、三级目录
                         String firstLevelDir = sourceFolderName.substring(0,
-                                Math.min(sourceFolderName.length(), 6)); // 前6位作为一级目录
+                                Math.min(sourceFolderName.length(), 6));
                         String secondLevelDir = sourceFolderName.substring(0,
-                                Math.min(sourceFolderName.length(), 8)); // 前8位作为二级目录
+                                Math.min(sourceFolderName.length(), 8));
 
-                        // 构建目标路径
+                        int year = Integer.parseInt(firstLevelDir.substring(0, 4));
+                        int mon = Integer.parseInt(firstLevelDir.substring(4, 6));
+                        if (year < 2000 || mon < 1 || mon > 12) {
+                            System.err.println("FATAL: 日期解析异常, folderName=" + sourceFolderName);
+                            System.exit(1);
+                        }
+
                         Path targetPath = Path.of(targetDirector, firstLevelDir, secondLevelDir, sourceFolderName);
 
                         // 创建目标路径的父目录（如果不存在）
@@ -173,7 +204,7 @@ public class FileRestore {
 
                         // 移动文件夹
                         Path sourcePath = folder.toPath();
-                        Files.move(sourcePath, targetPath);
+                        com.ddf.boot.common.script.file.dedup.SafeMoveService.move(sourcePath, targetPath);
 
                         // 删除空源文件夹
                         //                        Files.delete(sourcePath);
@@ -213,7 +244,7 @@ public class FileRestore {
                         }
 
                         Path targetPath = deleteDir.resolve(realFile.getName());
-                        Files.move(realFile.toPath(), targetPath);
+                        com.ddf.boot.common.script.file.dedup.SafeMoveService.move(realFile.toPath(), targetPath);
                         return FileVisitResult.CONTINUE;
                     }
                 });

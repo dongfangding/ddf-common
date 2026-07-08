@@ -137,11 +137,13 @@ public class FileNamePrefixReplacer {
     }
 
     /**
-     * @param args 参数
+     * @param args [0]文件夹路径 [1]匹配前缀 [2]新前缀
      */
     public static void main(String[] args) {
-        replaceFileNamePrefix(
-                "D:\\IdeaWorkspaces\\seaway\\game\\game-core\\src\\main\\java\\com\\kewta\\biz\\game\\core\\domain\\jinhua",
-                "TigerLoong", "JinHua");
+        if (args.length < 3) {
+            System.err.println("用法: java FileNamePrefixReplacer <文件夹路径> <匹配前缀> <新前缀>");
+            System.exit(1);
+        }
+        replaceFileNamePrefix(args[0], args[1], args[2]);
     }
 }

@@ -1,6 +1,5 @@
 package com.ddf.boot.common.script.file.dedup.ui;
 
-import com.ddf.boot.common.script.file.dedup.SafeMoveService;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,12 +11,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 public class VideoArchivePanel extends VBox {
 
@@ -86,37 +80,14 @@ public class VideoArchivePanel extends VBox {
 
         new Thread(() -> {
             try {
-                Files.walkFileTree(srcDir, new SimpleFileVisitor<>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        String fileName = file.getFileName().toString();
-                        if (!fileName.startsWith("video")) {
-                            return FileVisitResult.CONTINUE;
-                        }
-                        String[] split = fileName.split("_");
-                        String dateStr = split[4];
-                        String month = dateStr.substring(0, 6);
-                        String day = dateStr.substring(0, 8);
-
-                        int year = Integer.parseInt(month.substring(0, 4));
-                        int mon = Integer.parseInt(month.substring(4, 6));
-                        if (year < 2000 || mon < 1 || mon > 12) {
-                            System.err.println("FATAL: 日期解析异常, 文件名=" + fileName + " dateStr=" + dateStr);
-                            System.exit(1);
-                        }
-
-                        Path targetPath = outDir.resolve(month).resolve(day);
-                        Files.createDirectories(targetPath);
-                        SafeMoveService.move(file, targetPath.resolve(fileName));
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                com.ddf.boot.common.script.file.FileRestore.packageMonitorVideo2(
+                        new String[]{srcText}, outText);
                 Platform.runLater(() -> {
                     statusLabel.setText("归档完成");
                     progressBar.setProgress(1);
                     startButton.setDisable(false);
                 });
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Platform.runLater(() -> {
                     showAlert("归档失败: " + ex.getMessage());
                     startButton.setDisable(false);
