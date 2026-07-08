@@ -188,12 +188,16 @@ public class DedupApplication extends Application {
         scanButton.setDisable(true);
         processAllButton.setDisable(true);
         results.clear();
-        progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-        statusLabel.setText("扫描中...");
+        progressBar.setProgress(0);
+        statusLabel.setText("扫描中... 0%");
 
         new Thread(() -> {
             try {
-                List<DedupResult> found = service.scan(scanDir);
+                List<DedupResult> found = service.scan(scanDir,
+                        p -> Platform.runLater(() -> {
+                            progressBar.setProgress(p);
+                            statusLabel.setText(String.format("扫描中... %.0f%%", p * 100));
+                        }));
                 Platform.runLater(() -> {
                     results.setAll(found);
                     int totalDups = found.stream().mapToInt(r -> r.duplicates().size()).sum();

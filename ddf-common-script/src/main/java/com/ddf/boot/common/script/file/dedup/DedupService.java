@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,7 +25,7 @@ public class DedupService {
         return BRACKETS.matcher(name).find();
     }
 
-    public List<DedupResult> scan(Path scanDir) throws IOException {
+    public List<DedupResult> scan(Path scanDir, Consumer<Double> onProgress) throws IOException {
         List<Path> allFiles;
         try (Stream<Path> stream = Files.walk(scanDir)) {
             allFiles = stream
@@ -39,6 +40,7 @@ public class DedupService {
         int total = allFiles.size();
         int processed = 0;
 
+        onProgress.accept(0.0);
         for (Path file : allFiles) {
             try {
                 String hash = computeHash(file, md, buffer);
@@ -47,11 +49,8 @@ public class DedupService {
                 System.err.println("跳过无法读取的文件: " + file);
             }
             processed++;
-            if (processed % 100 == 0 || processed == total) {
-                System.out.printf("\r扫描进度: %d/%d", processed, total);
-            }
+            onProgress.accept((double) processed / total);
         }
-        System.out.println();
 
         return hashGroups.entrySet().stream()
                 .filter(e -> e.getValue().size() > 1)
