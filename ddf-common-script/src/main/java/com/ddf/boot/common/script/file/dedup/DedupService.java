@@ -80,13 +80,13 @@ public class DedupService {
 
         Path keptSrc = result.kept();
         Path keptDest = resolveUniqueFile(outputDir, keptName);
-        Files.move(keptSrc, keptDest);
+        SafeMoveService.move(keptSrc, keptDest);
         moved++;
 
         for (Path dup : result.duplicates()) {
             try {
                 Path dest = resolveUniqueFile(targetDir, dup.getFileName().toString());
-                Files.move(dup, dest);
+                SafeMoveService.move(dup, dest);
                 moved++;
             } catch (IOException e) {
                 System.err.println("移动失败: " + dup + " -> " + e.getMessage());
