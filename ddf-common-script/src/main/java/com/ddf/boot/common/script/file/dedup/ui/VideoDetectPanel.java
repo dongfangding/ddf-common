@@ -96,22 +96,31 @@ public class VideoDetectPanel extends VBox {
         statusLabel.setText("扫描中... 0/" + total);
 
         new Thread(() -> {
-            for (int i = 0; i < subDirs.size(); i++) {
-                Path subDir = subDirs.get(i);
-                if (hasVideoFile(subDir)) {
-                    Platform.runLater(() -> results.add(subDir));
+            try {
+                for (int i = 0; i < subDirs.size(); i++) {
+                    Path subDir = subDirs.get(i);
+                    if (hasVideoFile(subDir)) {
+                        Platform.runLater(() -> results.add(subDir));
+                    }
+                    final int idx = i + 1;
+                    Platform.runLater(() -> {
+                        progressBar.setProgress((double) idx / total);
+                        statusLabel.setText(String.format("扫描中... %d/%d", idx, total));
+                    });
                 }
-                final int idx = i + 1;
                 Platform.runLater(() -> {
-                    progressBar.setProgress((double) idx / total);
-                    statusLabel.setText(String.format("扫描中... %d/%d", idx, total));
+                    statusLabel.setText(String.format("完成 - 找到 %d 个含视频目录", results.size()));
+                    progressBar.setProgress(1);
+                    scanButton.setDisable(false);
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    showAlert("扫描失败: " + ex.getMessage());
+                    scanButton.setDisable(false);
+                    progressBar.setProgress(0);
+                    statusLabel.setText("扫描失败");
                 });
             }
-            Platform.runLater(() -> {
-                statusLabel.setText(String.format("完成 - 找到 %d 个含视频目录", results.size()));
-                progressBar.setProgress(1);
-                scanButton.setDisable(false);
-            });
         }).start();
     }
 
