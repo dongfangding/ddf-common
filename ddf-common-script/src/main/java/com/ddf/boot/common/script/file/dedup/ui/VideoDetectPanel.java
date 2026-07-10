@@ -23,7 +23,7 @@ import java.util.Set;
 public class VideoDetectPanel extends VBox {
 
     private static final Set<String> VIDEO_EXTENSIONS = Set.of(
-            "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "m4v", "ts", "rmvb", "3gp"
+            "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "m4v", "rmvb", "3gp"
     );
 
     private final TextField rootDirField = new TextField();
