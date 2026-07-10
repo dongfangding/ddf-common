@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class VideoDetectPanel extends VBox {
@@ -82,33 +82,35 @@ public class VideoDetectPanel extends VBox {
             return;
         }
         Path root = Path.of(rootText);
-        File[] children = root.toFile().listFiles(File::isDirectory);
-        if (children == null || children.length == 0) {
-            showAlert("该目录下没有子目录");
+        if (!Files.isDirectory(root)) {
+            showAlert("所选路径不是有效目录");
             return;
         }
-        java.util.List<Path> subDirs = Arrays.stream(children).map(File::toPath).toList();
 
         scanButton.setDisable(true);
         results.clear();
-        progressBar.setProgress(0);
-        int total = subDirs.size();
-        statusLabel.setText("扫描中... 0/" + total);
+        progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+        statusLabel.setText("扫描中...");
 
         new Thread(() -> {
             try {
-                for (int i = 0; i < subDirs.size(); i++) {
-                    Path subDir = subDirs.get(i);
-                    if (hasVideoFile(subDir)) {
-                        Platform.runLater(() -> results.add(subDir));
+                LinkedHashSet<Path> dirs = new LinkedHashSet<>();
+                Files.walkFileTree(root, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                        if (isVideoFile(file)) {
+                            dirs.add(file.getParent());
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                    final int idx = i + 1;
-                    Platform.runLater(() -> {
-                        progressBar.setProgress((double) idx / total);
-                        statusLabel.setText(String.format("扫描中... %d/%d", idx, total));
-                    });
-                }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
                 Platform.runLater(() -> {
+                    results.addAll(dirs.stream().sorted().toList());
                     statusLabel.setText(String.format("完成 - 找到 %d 个含视频目录", results.size()));
                     progressBar.setProgress(1);
                     scanButton.setDisable(false);
@@ -122,25 +124,6 @@ public class VideoDetectPanel extends VBox {
                 });
             }
         }).start();
-    }
-
-    private static boolean hasVideoFile(Path dir) {
-        try {
-            boolean[] found = {false};
-            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (isVideoFile(file)) {
-                        found[0] = true;
-                        return FileVisitResult.TERMINATE;
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            return found[0];
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     private static boolean isVideoFile(Path file) {
