@@ -4,6 +4,7 @@ import com.ddf.boot.common.script.file.dedup.ui.DedupPanel;
 import com.ddf.boot.common.script.file.dedup.ui.FolderCompressPanel;
 import com.ddf.boot.common.script.file.dedup.ui.PhotoArchivePanel;
 import com.ddf.boot.common.script.file.dedup.ui.VideoArchivePanel;
+import com.ddf.boot.common.script.file.dedup.ui.VideoDetectPanel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -24,7 +25,8 @@ public class DedupApplication extends Application {
             "文件去重",
             "按拍摄时间归档",
             "监控视频文件归档",
-            "监控录像目录压缩"
+            "监控录像目录压缩",
+            "视频目录检测"
     };
 
     private final Map<String, VBox> panels = new LinkedHashMap<>();
@@ -79,6 +81,7 @@ public class DedupApplication extends Application {
         panels.put(FUNCTION_NAMES[1], new PhotoArchivePanel());
         panels.put(FUNCTION_NAMES[2], new VideoArchivePanel());
         panels.put(FUNCTION_NAMES[3], new FolderCompressPanel());
+        panels.put(FUNCTION_NAMES[4], new VideoDetectPanel());
 
         ListView<String> navList = new ListView<>();
         navList.getItems().addAll(FUNCTION_NAMES);
