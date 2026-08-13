@@ -34,28 +34,23 @@ public class DedupApplication extends Application {
 
 
     /**
+     * 开发运行（WSL/Linux）:
+     *   mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
      *
-     * # 开发运行（WSL/Linux）
-     *   cd /mnt/d/IdeaWorkspaces/ddf-common && mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
-     * <p>
-     *   # CLI 模式
-     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileRestore <month|video|compress> <源目录> <输出目录>
-     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileNamePrefixReplacer <文件夹> <匹配前缀> <新前缀>
-     * <p>
-     *   打包 Windows exe
-     * <p>
-     *   在 Windows 上执行：
-     *   # 1. 打 uber jar（包含所有依赖）
-     *   cd d:/IdeaWorkspaces/ddf-common
-     *   mvn clean package -pl ddf-common-script -DskipTests
-     * <p>
-     *   # 2. 生成 exe（需 JDK 17+，自带 jpackage）
+     *  打包成可执行文件，注意在wsl下则生成bin，windows下生成.exe，要在对应平台下执行
+     *   # 1. Maven 打包（产出 ddf-common-script-dist/ 目录）
+     *   mvn clean package -pl ddf-common-script -DskipTests -Dmaven.repo.local=D:/maven_repository
+     *   # 2. jpackage 生成 .exe
      *   jpackage --input ddf-common-script/target/ddf-common-script-dist --main-jar ddf-common-script.jar --main-class com.ddf.boot.common.script.file.dedup.Launcher --name DupTool --type app-image --dest out
-     * <p>
-     *   生成的 out/文件工具箱.exe 双击即用，无需装 Java
+     *   生成的 out/DupTool-1.0.exe 双击安装，安装后即可运行
      *
+     *   # jpackage 可选参数:
+     *   #   --type msi         生成 .msi 安装包
+     *   #   --type app-image   生成免安装目录（含 .exe 启动器）
+     *   #   --win-console      显示控制台窗口（调试用，去掉则不显示黑窗口）
      *
-     * @param args
+     * CLI 模式（不启动 GUI）:
+     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileRestore month <源目录> <输出目录>
      */
     public static void main(String[] args) {
         try {

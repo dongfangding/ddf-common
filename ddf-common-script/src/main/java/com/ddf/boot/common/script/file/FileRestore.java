@@ -13,7 +13,11 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +42,10 @@ public class FileRestore {
         String[] srcDirs = args[1].split(",");
         String outDir = args[2];
         switch (mode) {
-            case "month" -> computerReadAndMoveFileToMonth(srcDirs, outDir);
+            case "month" -> {
+                ArchiveResult result = computerReadAndMoveFileToMonth(srcDirs, outDir);
+                System.out.println(result.toReport());
+            }
             case "video" -> packageMonitorVideo2(srcDirs, outDir);
             case "compress" -> packageMonitorVideo(srcDirs, outDir);
             default -> {
@@ -48,50 +55,91 @@ public class FileRestore {
         }
     }
 
+    private static final DateTimeFormatter MONTH_FMT = DateTimeFormatter.ofPattern("yyyyMM")
+            .withZone(ZoneId.systemDefault());
+
     /**
-     * 适用于原手机文件，直接读取文件的创建时间，将文件按创建时间的月份进行归档整理
+     * 按拍摄时间将文件归档到月份目录。
+     * <p>支持的文件名格式（从文件名解析日期）：</p>
+     * <ul>
+     *   <li>VID20250101... — 从文件名第4-9位解析月份</li>
+     *   <li>VID_20250101... — 从文件名第5-10位解析月份</li>
+     *   <li>PRO_VID_20250101_120000_00_001.mp4 — 从文件名第9-14位解析月份</li>
+     *   <li>VID_20250101_120000_00_001.mp4 — 从文件名第5-10位解析月份</li>
+     *   <li>VID_20250101_120000.mp4 — 从文件名第5-10位解析月份</li>
+     *   <li>VID20250101120000.mp4 — 从文件名第4-9位解析月份</li>
+     *   <li>DJI_* — 读取文件实际创建时间，按创建月份归档</li>
+     *   <li>lv_0_YYYYMMDDHHMMSS.mp4 / TG-2024-05-02-142222410.mp4 — 归入"剪辑"子目录</li>
+     *   <li>share_1cd17aed...mp4 — 归入"网络分享"子目录</li>
+     *   <li>图片文件（jpg/jpeg/png/gif/bmp） — 归入"图片"子目录</li>
+     * </ul>
+     * <p>无法识别的文件归入 not_vid 目录。</p>
      *
-     * @param directories directories参数
-     * @param baseTargetDirectory basetargetdirectory参数
+     * @param directories 源目录
+     * @param baseTargetDirectory 输出目录
+     * @return 归档结果统计
      */
-    public static void computerReadAndMoveFileToMonth(String[] directories, String baseTargetDirectory) {
+    public static ArchiveResult computerReadAndMoveFileToMonth(String[] directories, String baseTargetDirectory) {
+        ArchiveResult result = new ArchiveResult();
+        result.sourceDirs = directories;
+        result.targetDir = baseTargetDirectory;
         String notVidVideoPath = baseTargetDirectory + "/not_vid";
+        Path targetRoot = Path.of(baseTargetDirectory).toAbsolutePath().normalize();
         for (String directory : directories) {
             try {
                 Files.walkFileTree(Path.of(directory), new SimpleFileVisitor<>() {
-                    /**
-                     * @param file 参数
-                     * @param attrs 参数
-                     */
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        // 输出目录可能落在源目录内部，跳过其子树避免重跑时自处理已归档文件
+                        if (dir.toAbsolutePath().normalize().equals(targetRoot)) {
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        // 获取文件创建时间
                         String fileName = file.getFileName().toString();
-                        if (!fileName.startsWith("VID")) {
-                            // 如果文件名不是以"VID"开头，移动到not_vid目录
-                            Path notVidPath = Path.of(notVidVideoPath);
-                            if (!Files.exists(notVidPath)) {
-                                Files.createDirectories(notVidPath);
-                            }
-                            Path targetPath = notVidPath.resolve(file.getFileName());
-                            SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                            System.out.println("Moved " + file.getFileName() + " to " + targetPath);
-                        } else {
-                            String month = fileName.substring(3, 9);
-                            if (fileName.startsWith("VID_")) {
-                                month = fileName.substring(4, 10);
-                            }
-                            // 创建月目录
-                            Path monthDir = Path.of(baseTargetDirectory, month);
-                            if (!Files.exists(monthDir)) {
-                                Files.createDirectories(monthDir);
-                            }
 
-                            // 移动文件到目标日期目录
-                            Path targetPath = monthDir.resolve(file.getFileName());
-                            SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                            System.out.println("Moved " + file.getFileName() + " to " + targetPath);
+                        Path targetDir;
+                        if (isImageByExtension(fileName)) {
+                            targetDir = Path.of(baseTargetDirectory, "图片");
+                            result.imageFiles++;
+                        } else if (fileName.startsWith("lv_") || fileName.startsWith("TG-")) {
+                            targetDir = Path.of(baseTargetDirectory, "剪辑");
+                            result.clipFiles++;
+                        } else if (fileName.startsWith("share_")) {
+                            targetDir = Path.of(baseTargetDirectory, "网络分享");
+                            result.shareFiles++;
+                        } else if (fileName.startsWith("DJI_")) {
+                            String month = MONTH_FMT.format(attrs.creationTime().toInstant());
+                            targetDir = Path.of(baseTargetDirectory, month);
+                            result.matchedMonths.add(month);
+                            result.matchedFiles++;
+                        } else {
+                            String dateStr = extractDateString(fileName);
+                            if (dateStr == null) {
+                                targetDir = Path.of(notVidVideoPath);
+                                result.unmatchedFiles++;
+                            } else if (!isValidReasonableDate(dateStr)) {
+                                result.invalidDateFiles++;
+                                result.invalidDateNames.add(file.toString());
+                                System.err.println("INVALID DATE: " + file + " 解析日期=" + dateStr);
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                String month = dateStr.substring(0, 6);
+                                targetDir = Path.of(baseTargetDirectory, month);
+                                result.matchedMonths.add(month);
+                                result.matchedFiles++;
+                            }
                         }
+                        if (!Files.exists(targetDir)) {
+                            Files.createDirectories(targetDir);
+                        }
+                        Path targetPath = targetDir.resolve(file.getFileName());
+                        SafeMoveService.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Moved " + file.getFileName() + " to " + targetPath);
+                        result.totalFiles++;
                         return FileVisitResult.CONTINUE;
                     }
                 });
@@ -99,6 +147,116 @@ public class FileRestore {
                 e.printStackTrace();
             }
         }
+        if (!result.invalidDateNames.isEmpty()) {
+            Path invalidManifest = Path.of(baseTargetDirectory, "日期不合理文件.txt");
+            try {
+                Files.createDirectories(invalidManifest.getParent());
+                Files.write(invalidManifest, result.invalidDateNames);
+                System.err.println("已记录 " + result.invalidDateNames.size() + " 个日期不合理文件到: " + invalidManifest);
+            } catch (IOException e) {
+                System.err.println("WARN: 写入日期不合理文件清单失败: " + e.getMessage());
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 归档结果统计。
+     */
+    public static class ArchiveResult {
+        String[] sourceDirs;
+        String targetDir;
+        int totalFiles;
+        int matchedFiles;
+        int unmatchedFiles;
+        int clipFiles;
+        int shareFiles;
+        int imageFiles;
+        int invalidDateFiles;
+        final java.util.LinkedHashSet<String> matchedMonths = new java.util.LinkedHashSet<>();
+        final java.util.List<String> invalidDateNames = new java.util.ArrayList<>();
+
+        public int getTotalFiles() { return totalFiles; }
+        public int getMatchedFiles() { return matchedFiles; }
+        public int getUnmatchedFiles() { return unmatchedFiles; }
+        public int getClipFiles() { return clipFiles; }
+        public int getShareFiles() { return shareFiles; }
+        public int getImageFiles() { return imageFiles; }
+        public int getInvalidDateFiles() { return invalidDateFiles; }
+
+        public String toReport() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("共迁移 ").append(totalFiles).append(" 个文件\n");
+            sb.append("按月份匹配: ").append(matchedFiles).append(" 个");
+            if (!matchedMonths.isEmpty()) {
+                sb.append("，涉及月份: ").append(String.join("、", matchedMonths));
+            }
+            sb.append("\n");
+            if (imageFiles > 0) {
+                sb.append("图片文件: ").append(imageFiles).append(" 个，归入 图片 目录\n");
+            }
+            if (clipFiles > 0) {
+                sb.append("剪辑文件: ").append(clipFiles).append(" 个，归入 剪辑 目录\n");
+            }
+            if (shareFiles > 0) {
+                sb.append("网络分享: ").append(shareFiles).append(" 个，归入 网络分享 目录\n");
+            }
+            sb.append("匹配失败: ").append(unmatchedFiles).append(" 个，归入 not_vid 目录\n");
+            sb.append("日期不合理: ").append(invalidDateFiles).append(" 个，未处理");
+            if (invalidDateFiles > 0) {
+                sb.append("，清单见 日期不合理文件.txt");
+            }
+            sb.append("\n");
+            sb.append("输出目录: ").append(targetDir);
+            return sb.toString();
+        }
+    }
+
+    /**
+     * 从文件名提取 8 位日期串（yyyyMMdd），无法识别格式返回 null。
+     * <ul>
+     * <li>PRO_VID_YYYYMMDD_... → 取第9-16位</li>
+     * <li>VID_YYYYMMDD...      → 取第5-12位</li>
+     * <li>VIDYYYYMMDD...       → 取第4-11位</li>
+     * </ul>
+     */
+    private static String extractDateString(String fileName) {
+        String candidate = null;
+        if (fileName.startsWith("PRO_VID_") && fileName.length() >= 16) {
+            candidate = fileName.substring(8, 16);
+        } else if (fileName.startsWith("VID_") && fileName.length() >= 12) {
+            candidate = fileName.substring(4, 12);
+        } else if (fileName.startsWith("VID") && fileName.length() >= 11) {
+            candidate = fileName.substring(3, 11);
+        }
+        if (candidate == null || !candidate.chars().allMatch(Character::isDigit)) {
+            return null;
+        }
+        return candidate;
+    }
+
+    /**
+     * 校验日期是否合法且合理：完整日历校验（闰年、大小月）+ 年份范围 [2000, 当前年份]。
+     */
+    private static boolean isValidReasonableDate(String dateStr) {
+        if (dateStr == null || dateStr.length() != 8) {
+            return false;
+        }
+        try {
+            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.BASIC_ISO_DATE);
+            int year = date.getYear();
+            return year >= 2000 && year <= Year.now().getValue();
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    private static final java.util.Set<String> IMAGE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif", "bmp");
+
+    private static boolean isImageByExtension(String fileName) {
+        int dot = fileName.lastIndexOf('.');
+        if (dot < 0) return false;
+        return IMAGE_EXTENSIONS.contains(fileName.substring(dot + 1).toLowerCase());
     }
 
 
