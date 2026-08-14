@@ -1,10 +1,14 @@
 package com.ddf.boot.common.alarm.config;
 
+import com.ddf.boot.common.alarm.channel.AlarmChannel;
+import com.ddf.boot.common.alarm.channel.DingTalkAlarmChannel;
+import com.ddf.boot.common.alarm.channel.LarkAlarmChannel;
 import com.ddf.boot.common.alarm.notify.CodeExceptionNotify;
 import com.ddf.boot.common.alarm.notify.TableNotifyImpl;
 import com.ddf.boot.common.alarm.rule.tablescan.TableNotify;
 import com.ddf.boot.common.alarm.rule.tablescan.TableScan;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -29,11 +33,20 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AlarmAutoConfiguration {
 
     @Bean
+    public AlarmChannel dingTalkAlarmChannel(DingTalkProperties dingTalkProperties,
+            EnvironmentHelper environmentHelper) {
+        return new DingTalkAlarmChannel(dingTalkProperties, environmentHelper.getApplicationName());
+    }
+
+    @Bean
+    public AlarmChannel larkAlarmChannel(LarkProperties larkProperties, EnvironmentHelper environmentHelper) {
+        return new LarkAlarmChannel(larkProperties, environmentHelper.getApplicationName());
+    }
+
+    @Bean
     public CodeExceptionNotify codeExceptionNotify(ThreadPoolTaskExecutor globalExceptionExecutor,
-            DingTalkProperties dingTalkProperties, ExceptionAlarmProperties exceptionAlarmProperties,
-            LarkProperties larkProperties, EnvironmentHelper environmentHelper) {
-        return new CodeExceptionNotify(globalExceptionExecutor, dingTalkProperties, exceptionAlarmProperties,
-                larkProperties, environmentHelper);
+            ExceptionAlarmProperties exceptionAlarmProperties, List<AlarmChannel> alarmChannels) {
+        return new CodeExceptionNotify(globalExceptionExecutor, exceptionAlarmProperties, alarmChannels);
     }
 
     @Bean
