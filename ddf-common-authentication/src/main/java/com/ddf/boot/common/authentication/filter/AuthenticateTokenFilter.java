@@ -17,7 +17,8 @@ import com.ddf.boot.common.authentication.config.AuthenticationProperties;
 import com.ddf.boot.common.authentication.consts.AuthenticateConstant;
 import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
-import com.ddf.boot.common.core.authentication.TokenUtil;
+import com.ddf.boot.common.core.authentication.TokenGenerator;
+import com.ddf.boot.common.core.event.LoginFailureEvent;
 import com.ddf.boot.common.core.util.GlobalAntMatcher;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.SignatureUtil;
@@ -37,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -61,6 +63,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     private final UserClaimService userClaimService;
     private final TokenCustomizeCheckService tokenCustomizeCheckService;
     private final AuthenticationProperties authenticateProperties;
+    private final TokenGenerator tokenGenerator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 前置校验
@@ -107,13 +111,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         UserClaim userClaim = null;
         // 内部接口白名单
         if (!GlobalAntMatcher.match(ignores, url)) {
-            try {
-                userClaim = checkAndParseAuthInfo(request, token);
-            } catch (BaseException e) {
-                throw new BusinessException(e.getBaseCallbackCode());
-            } catch (Exception e) {
-                throw new ServerErrorException(BaseErrorCallbackCode.SERVER_ERROR);
-            }
+            userClaim = checkAndParseAuthInfo(request, token);
             if (Objects.isNull(userClaim)) {
                 throw new BusinessException(BaseErrorCallbackCode.USER_INFO_EXPIRED_OR_NOT_EXIST);
             }
@@ -269,10 +267,18 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
             token = tokenHeader.split(tokenPrefix)[1];
         }
 
-        AuthenticateCheckResult authenticateCheckResult = TokenUtil.checkToken(token);
-        UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
-        // 额外业务token校验规则
-        return tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
+        try {
+            AuthenticateCheckResult authenticateCheckResult = tokenGenerator.checkToken(token);
+            UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
+            return tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
+        } catch (BaseException e) {
+            applicationEventPublisher.publishEvent(
+                    new LoginFailureEvent(this, token, e.getBaseCallbackCode().getCode()));
+            throw new BusinessException(e.getBaseCallbackCode());
+        } catch (Exception e) {
+            applicationEventPublisher.publishEvent(new LoginFailureEvent(this, token, "SERVER_ERROR"));
+            throw new ServerErrorException(BaseErrorCallbackCode.SERVER_ERROR);
+        }
     }
 
     /**

@@ -8,20 +8,26 @@ import com.ddf.boot.common.api.model.authentication.AuthenticateToken;
 import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.constant.CoreExceptionCode;
+import com.ddf.boot.common.core.event.LoginSuccessEvent;
+import com.ddf.boot.common.core.event.TokenRefreshEvent;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
 import com.google.common.base.Throwables;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Slf4j
 public class DefaultTokenGenerator implements TokenGenerator {
 
     private final ObjectProvider<TokenCache> tokenCacheProvider;
+    private final ObjectProvider<ApplicationEventPublisher> eventPublisherProvider;
 
-    public DefaultTokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider) {
+    public DefaultTokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider,
+            ObjectProvider<ApplicationEventPublisher> eventPublisherProvider) {
         this.tokenCacheProvider = tokenCacheProvider;
+        this.eventPublisherProvider = eventPublisherProvider;
     }
 
     @Override
@@ -32,6 +38,10 @@ public class DefaultTokenGenerator implements TokenGenerator {
         final TokenCache tokenCache = tokenCacheProvider.getIfAvailable();
         if (Objects.nonNull(tokenCache)) {
             tokenCache.setToken(userClaim, authenticateToken);
+        }
+        ApplicationEventPublisher publisher = eventPublisherProvider.getIfAvailable();
+        if (Objects.nonNull(publisher)) {
+            publisher.publishEvent(new LoginSuccessEvent(this, userClaim));
         }
         return authenticateToken;
     }
@@ -83,6 +93,10 @@ public class DefaultTokenGenerator implements TokenGenerator {
         final TokenCache tokenCache = tokenCacheProvider.getIfAvailable();
         if (Objects.nonNull(tokenCache)) {
             tokenCache.refreshToken(userId, token);
+        }
+        ApplicationEventPublisher publisher = eventPublisherProvider.getIfAvailable();
+        if (Objects.nonNull(publisher)) {
+            publisher.publishEvent(new TokenRefreshEvent(this, userId));
         }
     }
 }
