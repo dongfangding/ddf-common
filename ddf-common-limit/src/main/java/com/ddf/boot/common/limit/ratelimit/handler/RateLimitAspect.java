@@ -13,7 +13,6 @@ import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
 import com.ddf.boot.common.limit.ratelimit.extra.RateLimitPropertiesCollect;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
 import com.ddf.boot.common.mvc.util.AopUtil;
-import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,7 +47,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 @RequiredArgsConstructor
 public class RateLimitAspect {
 
-    private final RedisTemplateHelper redisTemplateHelper;
     private final RateLimitProperties rateLimitProperties;
     private final ObjectProvider<RateLimitPropertiesCollect> rateLimitPropertiesCollect;
     private final Map<String, RateLimitKeyGenerator> keyGeneratorMap;
