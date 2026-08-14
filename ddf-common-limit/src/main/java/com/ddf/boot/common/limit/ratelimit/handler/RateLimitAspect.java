@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.util.UserContextUtil;
 import com.ddf.boot.common.limit.exception.LimitExceptionCode;
+import com.ddf.boot.common.limit.ratelimit.algorithm.RateLimitAlgorithm;
+import com.ddf.boot.common.limit.ratelimit.algorithm.TokenBucketRateLimitAlgorithm;
 import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimitIgnore;
@@ -50,6 +52,7 @@ public class RateLimitAspect {
     private final RateLimitProperties rateLimitProperties;
     private final ObjectProvider<RateLimitPropertiesCollect> rateLimitPropertiesCollect;
     private final Map<String, RateLimitKeyGenerator> keyGeneratorMap;
+    private final Map<String, RateLimitAlgorithm> algorithmMap;
 
     public static final String BEAN_NAME = "rateLimitAspect";
 
@@ -144,10 +147,17 @@ public class RateLimitAspect {
 
             // 生成限流的key
             String key = keyGeneratorMap.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
-            if (!redisTemplateHelper.tokenBucketRateLimitAcquire(key, max, rate)) {
+
+            // 解析限流算法，默认令牌桶
+            String algorithm = StringUtils.isBlank(annotation.algorithm())
+                    ? TokenBucketRateLimitAlgorithm.ALGORITHM : annotation.algorithm();
+            if (!algorithmMap.containsKey(algorithm)) {
+                throw new NoSuchBeanDefinitionException("限流算法组件[%s]不存在".formatted(algorithm));
+            }
+            if (!algorithmMap.get(algorithm).tryAcquire(key, max, rate)) {
                 log.error(
-                        "接口【{}-{}-{}】超过限流组件{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>",
-                        identityNo, currentClass.getName(), currentMethod.getName(), keyGenerator, key,
+                        "接口【{}-{}-{}】超过限流算法{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>",
+                        identityNo, currentClass.getName(), currentMethod.getName(), algorithm, key,
                         AopUtil.serializeParam(joinPoint));
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }

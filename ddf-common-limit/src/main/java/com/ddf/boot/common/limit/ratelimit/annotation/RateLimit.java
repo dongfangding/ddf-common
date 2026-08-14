@@ -1,5 +1,6 @@
 package com.ddf.boot.common.limit.ratelimit.annotation;
 
+import com.ddf.boot.common.limit.ratelimit.algorithm.RateLimitAlgorithm;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -41,4 +42,11 @@ public @interface RateLimit {
      * 令牌桶恢复速率,单位秒
      */
     int rate() default 0;
+
+    /**
+     * 限流算法 bean name，默认令牌桶
+     *
+     * @see RateLimitAlgorithm
+     */
+    String algorithm() default "";
 }
