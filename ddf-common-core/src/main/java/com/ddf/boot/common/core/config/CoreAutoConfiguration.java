@@ -13,7 +13,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -58,8 +57,7 @@ public class CoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TokenGenerator.class)
-    public TokenGenerator tokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider,
-            ObjectProvider<ApplicationEventPublisher> eventPublisherProvider) {
-        return new DefaultTokenGenerator(tokenCacheProvider, eventPublisherProvider);
+    public TokenGenerator tokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider) {
+        return new DefaultTokenGenerator(tokenCacheProvider);
     }
 }

@@ -14,18 +14,14 @@ import com.google.common.base.Throwables;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.ApplicationEventPublisher;
 
 @Slf4j
 public class DefaultTokenGenerator implements TokenGenerator {
 
     private final ObjectProvider<TokenCache> tokenCacheProvider;
-    private final ObjectProvider<ApplicationEventPublisher> eventPublisherProvider;
 
-    public DefaultTokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider,
-            ObjectProvider<ApplicationEventPublisher> eventPublisherProvider) {
+    public DefaultTokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider) {
         this.tokenCacheProvider = tokenCacheProvider;
-        this.eventPublisherProvider = eventPublisherProvider;
     }
 
     @Override
