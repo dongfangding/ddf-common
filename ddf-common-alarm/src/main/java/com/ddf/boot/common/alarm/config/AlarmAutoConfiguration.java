@@ -1,8 +1,10 @@
 package com.ddf.boot.common.alarm.config;
 
 import com.ddf.boot.common.alarm.channel.AlarmChannel;
+import com.ddf.boot.common.alarm.channel.AlarmFrequencyControl;
 import com.ddf.boot.common.alarm.channel.DingTalkAlarmChannel;
 import com.ddf.boot.common.alarm.channel.LarkAlarmChannel;
+import com.ddf.boot.common.alarm.channel.RedisAlarmFrequencyControl;
 import com.ddf.boot.common.alarm.notify.CodeExceptionNotify;
 import com.ddf.boot.common.alarm.notify.TableNotifyImpl;
 import com.ddf.boot.common.alarm.rule.tablescan.TableNotify;
@@ -11,13 +13,16 @@ import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -45,8 +50,16 @@ public class AlarmAutoConfiguration {
 
     @Bean
     public CodeExceptionNotify codeExceptionNotify(ThreadPoolTaskExecutor globalExceptionExecutor,
-            ExceptionAlarmProperties exceptionAlarmProperties, List<AlarmChannel> alarmChannels) {
-        return new CodeExceptionNotify(globalExceptionExecutor, exceptionAlarmProperties, alarmChannels);
+            ExceptionAlarmProperties exceptionAlarmProperties, List<AlarmChannel> alarmChannels,
+            ObjectProvider<AlarmFrequencyControl> alarmFrequencyControlProvider) {
+        return new CodeExceptionNotify(globalExceptionExecutor, exceptionAlarmProperties, alarmChannels,
+                alarmFrequencyControlProvider);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AlarmFrequencyControl.class)
+    public AlarmFrequencyControl alarmFrequencyControl(StringRedisTemplate stringRedisTemplate) {
+        return new RedisAlarmFrequencyControl(stringRedisTemplate);
     }
 
     @Bean

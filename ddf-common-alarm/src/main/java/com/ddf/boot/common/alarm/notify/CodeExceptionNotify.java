@@ -2,6 +2,7 @@ package com.ddf.boot.common.alarm.notify;
 
 import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.alarm.channel.AlarmChannel;
+import com.ddf.boot.common.alarm.channel.AlarmFrequencyControl;
 import com.ddf.boot.common.alarm.config.ExceptionAlarmProperties;
 import com.ddf.boot.common.api.util.DateUtils;
 import com.ddf.boot.common.api.util.JsonUtil;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -29,6 +31,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     private final ThreadPoolTaskExecutor globalExceptionExecutor;
     private final ExceptionAlarmProperties exceptionAlarmProperties;
     private final List<AlarmChannel> alarmChannels;
+    private final ObjectProvider<AlarmFrequencyControl> alarmFrequencyControlProvider;
 
     @Override
     public void onApplicationEvent(GlobalExceptionEvent event) {
@@ -47,6 +50,10 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
                         payload.getErrorMessage())) {
                     return;
                 }
+            }
+            AlarmFrequencyControl frequencyControl = alarmFrequencyControlProvider.getIfAvailable();
+            if (Objects.nonNull(frequencyControl) && !frequencyControl.tryAcquire(payload.getErrorCode())) {
+                return;
             }
             String content = buildContent(payload);
             for (AlarmChannel channel : alarmChannels) {
