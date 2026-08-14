@@ -7,6 +7,7 @@ import com.ddf.boot.common.authentication.interfaces.TokenCustomizeCheckService;
 import com.ddf.boot.common.authentication.interfaces.UserClaimService;
 import com.ddf.boot.common.authentication.interfaces.impl.DefaultTokenCheckServiceImpl;
 import com.ddf.boot.common.core.authentication.TokenCache;
+import com.ddf.boot.common.core.config.CoreAutoConfiguration;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthenticationAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
-            AutoConfigurations.of(AuthenticationAutoConfiguration.class)).withUserConfiguration(
+            AutoConfigurations.of(AuthenticationAutoConfiguration.class, CoreAutoConfiguration.class)).withUserConfiguration(
             AuthenticationTestConfiguration.class);
 
     @Test
