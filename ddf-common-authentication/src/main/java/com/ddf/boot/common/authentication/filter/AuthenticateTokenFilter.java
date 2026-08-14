@@ -259,17 +259,16 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
      */
     private UserClaim checkAndParseAuthInfo(HttpServletRequest request, String tokenHeader) {
         String tokenPrefix = authenticateProperties.getTokenPrefix();
-        if (StringUtils.isBlank(tokenHeader)) {
-            throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
-        }
         String token = tokenHeader;
-        if (StringUtils.isNotBlank(tokenPrefix) && tokenHeader.contains(tokenPrefix)) {
+        if (StringUtils.isNotBlank(tokenPrefix) && StringUtils.isNotBlank(tokenHeader) && tokenHeader.contains(tokenPrefix)) {
             token = tokenHeader.split(tokenPrefix)[1];
         }
 
         try {
+            if (StringUtils.isBlank(tokenHeader)) {
+                throw new UnauthorizedException(BaseErrorCallbackCode.ILLEGAL_TOKEN);
+            }
             AuthenticateCheckResult authenticateCheckResult = tokenGenerator.checkToken(token);
-            UserClaim tokenUserClaim = authenticateCheckResult.getUserClaim();
             return tokenCustomizeCheckService.customizeCheck(request, authenticateCheckResult);
         } catch (BaseException e) {
             applicationEventPublisher.publishEvent(
