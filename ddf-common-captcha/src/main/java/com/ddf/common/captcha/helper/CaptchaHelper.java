@@ -16,6 +16,7 @@ import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
+import com.ddf.common.captcha.producer.CaptchaProducer;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
@@ -25,6 +26,7 @@ import com.google.common.base.Objects;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import org.springframework.util.FastByteArrayOutputStream;
 
@@ -49,19 +51,23 @@ public class CaptchaHelper {
 
     private final CacheAdapter cacheAdapter;
 
+    private final Map<CaptchaType, CaptchaProducer> captchaProducerMap;
+
     /**
      * 校验成功响应码，与 anji-captcha 三方库保持一致。
      */
     private static final String CAPTCHA_SUCCESS_CODE = "0000";
 
     public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
-            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
+            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
+            Map<CaptchaType, CaptchaProducer> captchaProducerMap) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
         this.captchaService = captchaService;
         this.captchaCacheService = captchaCacheService;
         this.cacheAdapter = cacheAdapter;
+        this.captchaProducerMap = captchaProducerMap;
     }
 
     /**
@@ -71,6 +77,11 @@ public class CaptchaHelper {
      * @return 验证码结果
      */
     public CaptchaResult generate(CaptchaRequest captchaRequest) {
+        CaptchaProducer producer = captchaProducerMap.get(captchaRequest.getCaptchaType());
+        if (producer != null) {
+            return producer.generate();
+        }
+        // 回退到原有 switch 逻辑（MATH/CLICK_WORDS/PIC_SLIDE 暂未抽取）
         switch (captchaRequest.getCaptchaType()) {
             case TEXT:
                 return generateText();

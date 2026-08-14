@@ -2,10 +2,14 @@ package com.ddf.common.captcha.config;
 
 import com.anji.captcha.service.CaptchaCacheService;
 import com.anji.captcha.service.CaptchaService;
+import com.ddf.boot.common.api.model.captcha.CaptchaType;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import com.ddf.common.captcha.constants.CaptchaConst;
 import com.ddf.common.captcha.helper.CaptchaHelper;
+import com.ddf.common.captcha.producer.CaptchaProducer;
+import com.ddf.common.captcha.producer.CaptchaProducerConfiguration;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
+import com.ddf.common.captcha.producer.TextCaptchaProducer;
 import com.ddf.common.captcha.properties.CaptchaProperties;
 import com.ddf.common.captcha.properties.KaptchaProperties;
 import com.ddf.common.captcha.repository.CacheAdapter;
@@ -13,12 +17,14 @@ import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.impl.NoNoise;
 import com.google.code.kaptcha.util.Config;
+import java.util.Map;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_IMPL;
@@ -32,6 +38,7 @@ import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_IMPL;
  */
 @Configuration
 @EnableConfigurationProperties(CaptchaProperties.class)
+@Import(CaptchaProducerConfiguration.class)
 public class CaptchaAutoConfiguration {
 
     private final CaptchaProperties properties;
@@ -74,21 +81,38 @@ public class CaptchaAutoConfiguration {
     }
 
     /**
+     * 文本验证码生成策略
+     *
+     * @param defaultKaptcha 默认验证码实例
+     * @param captchaProperties 验证码配置
+     * @param captchaCacheService 验证码缓存服务实例
+     * @return 文本验证码生成策略实例
+     */
+    @Bean
+    public CaptchaProducer textCaptchaProducer(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
+            CaptchaProperties captchaProperties, CaptchaCacheService captchaCacheService) {
+        return new TextCaptchaProducer(defaultKaptcha, captchaProperties, captchaCacheService);
+    }
+
+    /**
      * 验证码实现帮助类
      *
      * @param defaultKaptcha 默认验证码实例
      * @param mathKaptcha 数学验证码实例
      * @param captchaService 验证码服务实例
      * @param captchaCacheService 验证码缓存服务实例
+     * @param cacheAdapter 缓存适配器实例
+     * @param captchaProducerMap 验证码类型分发 Map
      * @return 帮助类实例
      */
     @Bean
     @ConditionalOnMissingBean
     public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
             @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha, CaptchaService captchaService,
-            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter) {
+            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
+            Map<CaptchaType, CaptchaProducer> captchaProducerMap) {
         return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService,
-                cacheAdapter);
+                cacheAdapter, captchaProducerMap);
     }
 
     /**
