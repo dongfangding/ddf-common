@@ -16,6 +16,7 @@ import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
+import com.ddf.common.captcha.event.CaptchaVerifyEvent;
 import com.ddf.common.captcha.producer.CaptchaProducer;
 import com.ddf.common.captcha.producer.MathKaptchaTextCreator;
 import com.ddf.common.captcha.properties.CaptchaProperties;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.FastByteArrayOutputStream;
 
 /**
@@ -53,6 +55,8 @@ public class CaptchaHelper {
 
     private final Map<CaptchaType, CaptchaProducer> captchaProducerMap;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     /**
      * 校验成功响应码，与 anji-captcha 三方库保持一致。
      */
@@ -60,7 +64,7 @@ public class CaptchaHelper {
 
     public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
             CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
-            Map<CaptchaType, CaptchaProducer> captchaProducerMap) {
+            Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
         this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
@@ -68,6 +72,7 @@ public class CaptchaHelper {
         this.captchaCacheService = captchaCacheService;
         this.cacheAdapter = cacheAdapter;
         this.captchaProducerMap = captchaProducerMap;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -172,25 +177,31 @@ public class CaptchaHelper {
      * @return 校验结果包装对象
      */
     public CaptchaCheckResult check(CaptchaCheckRequest request) {
-        final CaptchaType captchaType = request.getCaptchaType();
-        if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
-            final CaptchaVO vo = new CaptchaVO();
-            vo.setToken(request.getUuid());
-            vo.setPointJson(request.getVerifyCode());
-            if (CaptchaType.CLICK_WORDS.equals(captchaType)) {
-                vo.setCaptchaType(CaptchaTypeEnum.CLICKWORD.getCodeValue());
-            } else {
-                vo.setCaptchaType(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue());
+        try {
+            final CaptchaType captchaType = request.getCaptchaType();
+            if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
+                final CaptchaVO vo = new CaptchaVO();
+                vo.setToken(request.getUuid());
+                vo.setPointJson(request.getVerifyCode());
+                if (CaptchaType.CLICK_WORDS.equals(captchaType)) {
+                    vo.setCaptchaType(CaptchaTypeEnum.CLICKWORD.getCodeValue());
+                } else {
+                    vo.setCaptchaType(CaptchaTypeEnum.BLOCKPUZZLE.getCodeValue());
+                }
+                final ResponseModel checkResult = captchaService.check(vo);
+                if (!CAPTCHA_SUCCESS_CODE.equals(checkResult.getRepCode())) {
+                    throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(),
+                            checkResult.getRepMsg());
+                }
             }
-            final ResponseModel checkResult = captchaService.check(vo);
-            if (!CAPTCHA_SUCCESS_CODE.equals(checkResult.getRepCode())) {
-                throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(),
-                        checkResult.getRepMsg());
-            }
+            final String captchaVerification = IdsUtil.getUniqueId();
+            cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
+            applicationEventPublisher.publishEvent(new CaptchaVerifyEvent(this, request.getUuid(), true));
+            return CaptchaCheckResult.builder().uuid(request.getUuid()).captchaVerification(captchaVerification).build();
+        } catch (BusinessException e) {
+            applicationEventPublisher.publishEvent(new CaptchaVerifyEvent(this, request.getUuid(), false));
+            throw e;
         }
-        final String captchaVerification = IdsUtil.getUniqueId();
-        cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
-        return CaptchaCheckResult.builder().uuid(request.getUuid()).captchaVerification(captchaVerification).build();
     }
 
     /**

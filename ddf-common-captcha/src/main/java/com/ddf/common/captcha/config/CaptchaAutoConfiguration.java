@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -110,9 +111,9 @@ public class CaptchaAutoConfiguration {
     public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
             @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha, CaptchaService captchaService,
             CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
-            Map<CaptchaType, CaptchaProducer> captchaProducerMap) {
+            Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
         return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService,
-                cacheAdapter, captchaProducerMap);
+                cacheAdapter, captchaProducerMap, applicationEventPublisher);
     }
 
     /**
