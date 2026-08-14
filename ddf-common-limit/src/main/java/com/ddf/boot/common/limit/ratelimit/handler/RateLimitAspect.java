@@ -10,6 +10,7 @@ import com.ddf.boot.common.limit.ratelimit.annotation.MultiRateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimit;
 import com.ddf.boot.common.limit.ratelimit.annotation.RateLimitIgnore;
 import com.ddf.boot.common.limit.ratelimit.config.RateLimitProperties;
+import com.ddf.boot.common.limit.ratelimit.event.RateLimitTriggeredEvent;
 import com.ddf.boot.common.limit.ratelimit.extra.RateLimitPropertiesCollect;
 import com.ddf.boot.common.limit.ratelimit.keygenerator.RateLimitKeyGenerator;
 import com.ddf.boot.common.mvc.util.AopUtil;
@@ -29,6 +30,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -51,6 +53,7 @@ public class RateLimitAspect {
     private final ObjectProvider<RateLimitPropertiesCollect> rateLimitPropertiesCollect;
     private final Map<String, RateLimitKeyGenerator> keyGeneratorMap;
     private final Map<String, RateLimitAlgorithm> algorithmMap;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public static final String BEAN_NAME = "rateLimitAspect";
 
@@ -157,6 +160,7 @@ public class RateLimitAspect {
                         "接口【{}-{}-{}】超过限流算法{}预定流量，过滤请求， 完整key规则为: {}, 对应参数{}, 记录日志>>>>>>>",
                         identityNo, currentClass.getName(), currentMethod.getName(), algorithm, key,
                         AopUtil.serializeParam(joinPoint));
+                applicationEventPublisher.publishEvent(new RateLimitTriggeredEvent(this, key, algorithm));
                 throw new BusinessException(LimitExceptionCode.RATE_LIMIT);
             }
         }
