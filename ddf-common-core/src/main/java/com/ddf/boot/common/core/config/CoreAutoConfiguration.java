@@ -1,14 +1,19 @@
 package com.ddf.boot.common.core.config;
 
+import com.ddf.boot.common.core.authentication.DefaultTokenGenerator;
+import com.ddf.boot.common.core.authentication.TokenCache;
+import com.ddf.boot.common.core.authentication.TokenGenerator;
 import com.ddf.boot.common.core.gracefulshutdown.ExecutorServiceGracefulShutdownDefinition;
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.promise.CompletableFutureHelper;
 import com.ddf.boot.common.core.promise.DeferredHelper;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -49,5 +54,12 @@ public class CoreAutoConfiguration {
     @ConditionalOnMissingBean
     public CompletableFutureHelper<?> completableFutureHelper() {
         return new CompletableFutureHelper<>();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(TokenGenerator.class)
+    public TokenGenerator tokenGenerator(ObjectProvider<TokenCache> tokenCacheProvider,
+            ObjectProvider<ApplicationEventPublisher> eventPublisherProvider) {
+        return new DefaultTokenGenerator(tokenCacheProvider, eventPublisherProvider);
     }
 }
