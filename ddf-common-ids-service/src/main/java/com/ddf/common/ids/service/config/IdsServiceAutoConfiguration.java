@@ -4,12 +4,14 @@ import com.ddf.common.ids.service.api.IdsApi;
 import com.ddf.common.ids.service.api.impl.IdsApiImpl;
 import com.ddf.common.ids.service.config.properties.IdsProperties;
 import com.ddf.common.ids.service.service.IDGen;
+import com.ddf.common.ids.service.service.IdGenRegistry;
 import com.ddf.common.ids.service.service.SnowflakeService;
 import com.ddf.common.ids.service.service.impl.segment.SegmentIDGenImpl;
 import com.ddf.common.ids.service.service.impl.segment.dao.IDAllocDao;
 import com.ddf.common.ids.service.service.impl.segment.dao.impl.IDAllocDaoImpl;
 import com.ddf.common.ids.service.service.impl.snowflake.SnowflakeIDGenImpl;
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -61,14 +63,24 @@ public class IdsServiceAutoConfiguration {
     }
 
     /**
-     * 对外统一暴露的ids服务接口
+     * ID 生成策略注册表，收集所有 IDGen 实现 Bean
      *
-     * @param segmentIDGen 参数
-     * @param snowflakeService 参数
+     * @param idGens 参数
      */
     @Bean
-    public IdsApi idsApi(Optional<IDGen> segmentIDGen, Optional<SnowflakeService> snowflakeService) {
-        return new IdsApiImpl(idsProperties, snowflakeService.orElse(null), segmentIDGen.orElse(null));
+    public IdGenRegistry idGenRegistry(List<IDGen> idGens) {
+        return new IdGenRegistry(idGens);
+    }
+
+    /**
+     * 对外统一暴露的ids服务接口
+     *
+     * @param snowflakeService 参数
+     * @param idGenRegistry 参数
+     */
+    @Bean
+    public IdsApi idsApi(Optional<SnowflakeService> snowflakeService, IdGenRegistry idGenRegistry) {
+        return new IdsApiImpl(idsProperties, snowflakeService.orElse(null), idGenRegistry);
     }
 
     /**

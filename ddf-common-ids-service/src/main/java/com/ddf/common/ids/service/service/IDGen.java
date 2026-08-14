@@ -34,4 +34,12 @@ public interface IDGen {
      * 初始化方法
      */
     boolean init();
+
+    /**
+     * 是否基于业务 key 生成 ID（号段/Leaf 等 key-based 实现为 true；雪花等 keyless 实现为 false）。
+     * IdGenRegistry 只收集 key-based 实现用于按 key 分发。
+     */
+    default boolean supportsKey() {
+        return true;
+    }
 }

@@ -40,6 +40,11 @@ public class SnowflakeIDGenImpl implements IDGen {
     }
 
     @Override
+    public boolean supportsKey() {
+        return false;
+    }
+
+    @Override
     public boolean init() {
         final String zkAddress = idsProperties.getZkAddress();
         final Integer port = idsProperties.getPort();

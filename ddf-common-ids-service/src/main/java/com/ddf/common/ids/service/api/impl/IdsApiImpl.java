@@ -12,7 +12,7 @@ import com.ddf.common.ids.service.model.common.IdsMultiListData;
 import com.ddf.common.ids.service.model.common.Result;
 import com.ddf.common.ids.service.model.common.ResultList;
 import com.ddf.common.ids.service.model.common.SegmentBufferView;
-import com.ddf.common.ids.service.service.IDGen;
+import com.ddf.common.ids.service.service.IdGenRegistry;
 import com.ddf.common.ids.service.service.SnowflakeService;
 import com.ddf.common.ids.service.service.impl.segment.SegmentIDGenImpl;
 import com.ddf.common.ids.service.service.impl.segment.model.LeafAlloc;
@@ -35,12 +35,12 @@ public class IdsApiImpl implements IdsApi {
 
     private final SnowflakeService snowflakeService;
 
-    private final IDGen segmentIDGen;
+    private final IdGenRegistry idGenRegistry;
 
-    public IdsApiImpl(IdsProperties idsProperties, SnowflakeService snowflakeService, IDGen segmentIDGen) {
+    public IdsApiImpl(IdsProperties idsProperties, SnowflakeService snowflakeService, IdGenRegistry idGenRegistry) {
         this.idsProperties = idsProperties;
         this.snowflakeService = snowflakeService;
-        this.segmentIDGen = segmentIDGen;
+        this.idGenRegistry = idGenRegistry;
     }
 
     /**
@@ -69,7 +69,7 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public String getSegmentId(String key) {
         checkSegment();
-        return get(segmentIDGen.get(key));
+        return get(idGenRegistry.get(key));
     }
 
     /**
@@ -81,7 +81,7 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public List<String> getSegmentIds(String key, Integer number) {
         checkSegment();
-        return list(key, segmentIDGen.list(key, number));
+        return list(key, idGenRegistry.list(key, number));
     }
 
     /**
@@ -92,7 +92,7 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public IdsMultiData getMultiId(String key) {
         checkSegment();
-        return new IdsMultiData().setSequenceId(get(segmentIDGen.get(key))).setSnowflakeId(get(snowflakeService.get()));
+        return new IdsMultiData().setSequenceId(get(idGenRegistry.get(key))).setSnowflakeId(get(snowflakeService.get()));
     }
 
     /**
@@ -104,7 +104,7 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public IdsMultiListData getMultiIds(String key, Integer number) {
         checkSegment();
-        return new IdsMultiListData().setSequenceIds(list(number, segmentIDGen.list(key, number))).setSnowflakeIds(
+        return new IdsMultiListData().setSequenceIds(list(number, idGenRegistry.list(key, number))).setSnowflakeIds(
                 list(number, snowflakeService.list(number)));
     }
 
@@ -114,8 +114,12 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public Map<String, SegmentBufferView> getSegmentCache() {
         checkSegment();
+        SegmentIDGenImpl segment = idGenRegistry.find(SegmentIDGenImpl.class);
+        if (segment == null) {
+            throw new IllegalStateException("号段模式 IDGen 未注册");
+        }
         Map<String, SegmentBufferView> data = new HashMap<>(32);
-        Map<String, SegmentBuffer> cache = ((SegmentIDGenImpl) segmentIDGen).getCache();
+        Map<String, SegmentBuffer> cache = segment.getCache();
         for (Map.Entry<String, SegmentBuffer> entry : cache.entrySet()) {
             SegmentBufferView sv = new SegmentBufferView();
             SegmentBuffer buffer = entry.getValue();
@@ -136,7 +140,11 @@ public class IdsApiImpl implements IdsApi {
 
     @Override
     public List<LeafAlloc> getDb() {
-        return ((SegmentIDGenImpl) segmentIDGen).getAllLeafAllocs();
+        SegmentIDGenImpl segment = idGenRegistry.find(SegmentIDGenImpl.class);
+        if (segment == null) {
+            throw new IllegalStateException("号段模式 IDGen 未注册");
+        }
+        return segment.getAllLeafAllocs();
     }
 
     /**
@@ -185,7 +193,7 @@ public class IdsApiImpl implements IdsApi {
     }
 
     private void checkSegment() {
-        PreconditionUtil.checkArgument(Objects.nonNull(segmentIDGen), IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
+        PreconditionUtil.checkArgument(Objects.nonNull(idGenRegistry), IdsErrorCodeEnum.SEGMENT_IS_DISABLED);
     }
 
 }
