@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.alarm.channel.AlarmChannel;
 import com.ddf.boot.common.alarm.config.ExceptionAlarmProperties;
 import com.ddf.boot.common.api.util.DateUtils;
+import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.event.GlobalExceptionEvent;
 import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
 import java.util.List;
@@ -61,6 +62,7 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     }
 
     private String buildContent(GlobalExceptionEventPayload payload) {
+        final String parameterMapJson = JsonUtil.toJson(payload.getParameterMap());
         StringBuilder sbl = new StringBuilder();
         sbl.append("# 服务信息: \n");
         sbl.append("## 应用名称与环境: \n").append(">").append(payload.getApplicationName()).append("[").append(
@@ -68,8 +70,16 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
         sbl.append("## 发生时间: \n").append(">").append(DateUtils.standardFormatMillis(payload.getTimestamps()))
                 .append(" \n");
         sbl.append("## 主机: \n").append(">").append(payload.getHost()).append(" \n");
+        sbl.append("# 设备信息: \n");
+        sbl.append("## 是否网关转发: \n").append(">").append(payload.getIsGatewayDispatch()).append(" \n");
+        sbl.append("## imei: \n").append(">").append(payload.getImei()).append(" \n");
+        sbl.append("## uid: \n").append(">").append(payload.getUid()).append(" \n");
+        sbl.append("## os: \n").append(">").append(payload.getOs()).append(" \n");
         sbl.append("# 接口信息: \n");
         sbl.append("## url: \n").append(">").append(payload.getUrl()).append(" \n");
+        sbl.append("## 查询参数: \n").append(">").append(parameterMapJson).append(" \n");
+        sbl.append("## 请求体: \n").append(">").append(payload.getBody()).append(" \n");
+        sbl.append("## 请求头: \n").append(">").append(payload.getClientHeaderMap()).append(" \n");
         sbl.append("# 异常详情: \n").append(">").append(payload.getErrorMessage()).append(" \n");
         return sbl.toString();
     }

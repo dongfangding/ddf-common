@@ -37,7 +37,7 @@ public class LarkAlarmChannel implements AlarmChannel {
     public void send(String title, String content) {
         LarkProperties.Properties p = properties.getCodeProperties(applicationName);
         LarkContentRequest request = new LarkContentRequest();
-        request.setContent(List.of(List.of(LarkTag.buildText(content))));
+        request.setContent(List.of(List.of(LarkTag.buildText(content)), List.of(LarkTag.buildAtAll())));
         LarkUtil.sendPostMsgType(p.getWebhookUrl(), p.getSecret(), title, request);
     }
 }
