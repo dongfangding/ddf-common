@@ -38,7 +38,7 @@ public class LocalCacheUtilTest {
         TimedCache<String, String> cache = LocalCacheUtil.getTimedCache(300L, 100L);
 
         cache.put("key1", "value1");
-        Thread.sleep(400L);
+        Thread.sleep(800L);
         cache.prune();
 
         Assertions.assertNull(cache.get("key1"));

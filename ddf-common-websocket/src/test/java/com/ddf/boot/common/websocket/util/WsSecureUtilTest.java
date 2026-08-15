@@ -3,6 +3,8 @@ package com.ddf.boot.common.websocket.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import cn.hutool.crypto.asymmetric.RSA;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +15,11 @@ import org.junit.jupiter.api.Test;
  * @since 2026/04/20
  */
 class WsSecureUtilTest {
+
+    @BeforeAll
+    static void initRsa() {
+        WsSecureUtil.setRsaForTest(new RSA());
+    }
 
     @Test
     @DisplayName("应支持公钥加密私钥解密")
