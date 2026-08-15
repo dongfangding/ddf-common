@@ -14,7 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
  */
 @Data
 @RefreshScope
-@ConfigurationProperties(prefix = "customs.alarm.exception")
+@ConfigurationProperties(prefix = "customizer.infra.alarm.exception")
 public class ExceptionAlarmProperties {
 
     /**

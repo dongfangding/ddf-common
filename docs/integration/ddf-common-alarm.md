@@ -49,22 +49,24 @@ customizer:
           enabled: false
         mapping-exception: {}           # 自定义映射机器人配置
 
-# Lark 渠道（LarkProperties，前缀是 customs.alarm.lark）
-customs:
-  alarm:
-    lark:
-      code-exception:
-        enabled: true
-        webhook-url: "https://open.larksuite.com/open-apis/bot/v2/hook/xxx"
-        secret: "xxx"
+# Lark 渠道（LarkProperties，前缀是 customizer.infra.alarm.lark）
+customizer:
+  infra:
+    alarm:
+      lark:
+        code-exception:
+          enabled: true
+          webhook-url: "https://open.larksuite.com/open-apis/bot/v2/hook/xxx"
+          secret: "xxx"
 
-# 异常告警开关（ExceptionAlarmProperties）
-customs:
-  alarm:
-    exception:
-      enabled: true                     # 是否开启异常告警
-      ignore-code-or-message-list: []   # 忽略告警的错误码 / 消息
-      ignore-url-list: []               # 忽略告警的接口
+# 异常告警开关（ExceptionAlarmProperties，前缀是 customizer.infra.alarm.exception）
+customizer:
+  infra:
+    alarm:
+      exception:
+        enabled: true                     # 是否开启异常告警
+        ignore-code-or-message-list: []   # 忽略告警的错误码 / 消息
+        ignore-url-list: []               # 忽略告警的接口
 ```
 
 ### 发送告警
@@ -130,7 +132,7 @@ public class MyAlarmFrequencyControl implements AlarmFrequencyControl {
 
 ## 注意事项
 
-1. **前缀不统一**：钉钉是 `customizer.infra.alarm.dingtalk`，Lark 是 `customs.alarm.lark`，异常告警开关是 `customs.alarm.exception`。
+1. **配置前缀**：统一为 `customizer.infra.alarm.*`（钉钉 `customizer.infra.alarm.dingtalk`、Lark `customizer.infra.alarm.lark`、异常告警开关 `customizer.infra.alarm.exception`）。
 2. **频率控制**：默认同一错误码 5 分钟内只告警一次（`AlarmFrequencyControl` 通过 `ObjectProvider` 注入，未提供时跳过频控）。
 3. **渠道启用**：`AlarmChannel.isEnabled()` 返回 `false` 的渠道会被 `CodeExceptionNotify` 跳过。
 4. **异常来源**：异常自动告警依赖 core 发布的 `GlobalExceptionEvent`，需上层接入统一异常处理后才会有事件。

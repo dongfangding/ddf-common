@@ -18,7 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
  */
 @Data
 @RefreshScope
-@ConfigurationProperties(prefix = "customs.alarm.lark")
+@ConfigurationProperties(prefix = "customizer.infra.alarm.lark")
 public class LarkProperties {
 
     /**

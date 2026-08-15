@@ -104,6 +104,6 @@ public class MyAlarmFrequencyControl implements AlarmFrequencyControl {
 
 ## 注意事项
 
-1. **渠道配置**：钉钉前缀 `customizer.infra.alarm.dingtalk`，Lark 前缀 `customs.alarm.lark`，异常告警开关前缀 `customs.alarm.exception`
+1. **渠道配置**：统一前缀 `customizer.infra.alarm.*`（钉钉 `customizer.infra.alarm.dingtalk`、Lark `customizer.infra.alarm.lark`、异常告警开关 `customizer.infra.alarm.exception`）
 2. **频率控制**：默认同一错误码 5 分钟内只告警一次，避免告警风暴
 3. **渠道启用**：`AlarmChannel.isEnabled()` 返回 false 时该渠道会被跳过
