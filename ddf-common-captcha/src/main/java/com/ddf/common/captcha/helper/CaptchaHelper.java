@@ -41,8 +41,6 @@ import org.springframework.util.FastByteArrayOutputStream;
  */
 public class CaptchaHelper {
 
-    private final DefaultKaptcha defaultKaptcha;
-
     private final DefaultKaptcha mathKaptcha;
 
     private final CaptchaProperties captchaProperties;
@@ -62,10 +60,9 @@ public class CaptchaHelper {
      */
     private static final String CAPTCHA_SUCCESS_CODE = "0000";
 
-    public CaptchaHelper(DefaultKaptcha defaultKaptcha, DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
+    public CaptchaHelper(DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
             CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
             Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
-        this.defaultKaptcha = defaultKaptcha;
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
         this.captchaService = captchaService;
@@ -88,8 +85,6 @@ public class CaptchaHelper {
         }
         // 回退到原有 switch 逻辑（MATH/CLICK_WORDS/PIC_SLIDE 暂未抽取）
         switch (captchaRequest.getCaptchaType()) {
-            case TEXT:
-                return generateText();
             case MATH:
                 return generateMath();
             case CLICK_WORDS:
@@ -99,17 +94,6 @@ public class CaptchaHelper {
             default:
                 return generateMath();
         }
-    }
-
-    /**
-     * 生成图形验证码。
-     *
-     * @return 验证码结果
-     */
-    public CaptchaResult generateText() {
-        final String text = defaultKaptcha.createText();
-        final BufferedImage image = defaultKaptcha.createImage(text);
-        return buildCaptchaResult(text, image, text);
     }
 
     /**

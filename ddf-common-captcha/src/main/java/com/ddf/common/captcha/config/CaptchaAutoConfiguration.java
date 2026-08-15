@@ -98,7 +98,6 @@ public class CaptchaAutoConfiguration {
     /**
      * 验证码实现帮助类
      *
-     * @param defaultKaptcha 默认验证码实例
      * @param mathKaptcha 数学验证码实例
      * @param captchaService 验证码服务实例
      * @param captchaCacheService 验证码缓存服务实例
@@ -108,11 +107,10 @@ public class CaptchaAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_DEFAULT) DefaultKaptcha defaultKaptcha,
-            @Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha, CaptchaService captchaService,
-            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
+    public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
+            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
             Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
-        return new CaptchaHelper(defaultKaptcha, mathKaptcha, properties, captchaService, captchaCacheService,
+        return new CaptchaHelper(mathKaptcha, properties, captchaService, captchaCacheService,
                 cacheAdapter, captchaProducerMap, applicationEventPublisher);
     }
 
