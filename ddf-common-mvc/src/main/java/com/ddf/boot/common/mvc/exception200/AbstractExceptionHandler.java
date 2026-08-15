@@ -20,6 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -72,6 +74,11 @@ public abstract class AbstractExceptionHandler {
      * 默认布尔值。
      */
     private static final String DEFAULT_BOOLEAN = "false";
+
+    /**
+     * 异常日志中 body 的最大打印长度，超过则截断，避免完整打印敏感请求体。
+     */
+    private static final int MAX_BODY_LOG_LENGTH = 200;
 
     /**
      * 缓存本地主机地址，避免每次都进行 DNS 查询。
@@ -178,13 +185,51 @@ public abstract class AbstractExceptionHandler {
                 exceptionClassName)) {
             log.error(
                     "全局异常捕获到请求异常， url = {}, 请求参数: queryString = {}, body = {}, clientHeaders = {}, 异常堆栈: ",
-                    uri, queryString, body, clientHeaderMap, exception);
+                    uri, queryString, maskBody(body), maskHeaders(clientHeaderMap), exception);
             return true;
         }
         // 业务异常， 打印info日志，可以追溯查看，也不会污染error文件
         log.info("全局异常捕获到请求异常， url = {}, 请求参数: params = {}, body = {}, , clientHeaders = {}, 异常堆栈: ",
-                uri, queryString, body, clientHeaderMap, exception);
+                uri, queryString, maskBody(body), maskHeaders(clientHeaderMap), exception);
         return false;
+    }
+
+    /**
+     * 对请求体脱敏，避免把密码/token 等敏感信息完整打印进日志；超过长度只打印截断片段。
+     */
+    private String maskBody(String body) {
+        if (StringUtils.isBlank(body)) {
+            return "";
+        }
+        if (body.length() <= MAX_BODY_LOG_LENGTH) {
+            return body;
+        }
+        return body.substring(0, MAX_BODY_LOG_LENGTH) + "...(截断, 原长度=" + body.length() + ")";
+    }
+
+    /**
+     * 对请求头脱敏，只保留请求头名称，值统一掩码，避免 Authorization/token 等凭证泄露。
+     */
+    private Map<String, String> maskHeaders(Map<String, String> headers) {
+        if (CollUtil.isEmpty(headers)) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> masked = new LinkedHashMap<>(headers.size());
+        headers.forEach((k, v) -> masked.put(k, maskValue(v)));
+        return masked;
+    }
+
+    /**
+     * 对单个值掩码：长度过短直接打星，否则保留首尾各两位。
+     */
+    private String maskValue(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        if (value.length() <= 4) {
+            return "***";
+        }
+        return value.substring(0, 2) + "***" + value.substring(value.length() - 2);
     }
 
     /**

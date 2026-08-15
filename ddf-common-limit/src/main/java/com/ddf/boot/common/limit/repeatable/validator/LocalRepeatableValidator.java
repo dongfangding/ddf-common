@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 
 /**
@@ -42,14 +43,17 @@ public class LocalRepeatableValidator implements RepeatableValidator {
      * @return 是否通过校验
      */
     @Override
-    public boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid,
+    public synchronized boolean check(JoinPoint joinPoint, Repeatable repeatable, String currentUid,
             RepeatableProperties repeatableProperties) {
         // 获取定义的间隔时间
         final long interval = repeatable.interval() == 0 ? repeatableProperties.getInterval() : repeatable.interval();
         final long currentTimeMillis = System.currentTimeMillis();
 
+        // 匿名且无设备号时身份标识为空，使用固定值兜底，避免 NPE
+        final String uid = StringUtils.defaultIfBlank(currentUid, "anonymous");
+
         // 获取缓存key
-        final String key = getRequestMapKey(joinPoint, currentUid);
+        final String key = getRequestMapKey(joinPoint, uid);
         // 获取当前请求value对象
         final RequestValue currentValue = getRequestMapValue(joinPoint);
         final RequestValue cacheValue = requestMap.get(key);

@@ -73,7 +73,12 @@ public class RedisDistributedLock implements DistributedLock {
         } finally {
             // 确保只由持有锁的线程释放锁，防止锁超时后被误释放
             if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
+                try {
+                    lock.unlock();
+                } catch (Exception e) {
+                    // 释放锁失败（如租约已过期）不应覆盖业务结果
+                    log.warn("redisson-释放锁失败, lockKey = {}", lockKey, e);
+                }
             }
         }
     }
@@ -109,7 +114,12 @@ public class RedisDistributedLock implements DistributedLock {
             return successHandler.handle();
         } finally {
             if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
+                try {
+                    lock.unlock();
+                } catch (Exception e) {
+                    // 释放锁失败（如租约已过期）不应覆盖业务结果
+                    log.warn("redisson-释放锁失败, lockKey = {}", lockKey, e);
+                }
             }
         }
     }
@@ -138,7 +148,12 @@ public class RedisDistributedLock implements DistributedLock {
             return successHandler.handle();
         } finally {
             if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
+                try {
+                    lock.unlock();
+                } catch (Exception e) {
+                    // 释放锁失败（如租约已过期）不应覆盖业务结果
+                    log.warn("redisson-释放锁失败, lockKey = {}", lockKey, e);
+                }
             }
         }
     }

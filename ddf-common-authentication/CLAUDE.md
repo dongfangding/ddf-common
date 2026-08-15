@@ -34,12 +34,11 @@ public class Application {
 customizer:
   infra:
     authentication:
-      secret: "your-256-bit-secret-key"      # Token 加密密钥（必须配置）
         expired-minute: 60                      # Token 过期时间（分钟）
         token-header-name: "ACCESS-TOKEN"       # Token 请求头名称
         token-prefix: ""                        # Token 前缀
         sign-secret: "your-sign-secret"         # 签名密钥（必须配置）
-        sign-enabled: false                     # 是否开启签名验证
+        sign-enabled: true                      # 是否开启签名验证（默认开启）
         ignores:                                # 忽略认证的路径
           - /api/public/**
 ```
@@ -160,6 +159,6 @@ public void onLoginSuccess(LoginSuccessEvent event) {
 ## 注意事项
 
 1. **签名密钥**：生产环境必须配置复杂的 `sign-secret`，禁止使用默认值
-2. **Token 加密**：使用 AES 加密 Token 内容，必须配置 `secret`
+2. **Token 加密**：使用 AES 加密 Token 内容，密钥来自 `GlobalProperties.aesSecret`（core 模块），需在 `customizer.infra.global-properties` 下配置
 3. **并发安全**：`UserContextUtil` 使用 `ThreadLocal`，确保请求处理完成后清理
 4. **跨线程**：子线程无法继承父线程的 `ThreadLocal`，如需传递请手动处理

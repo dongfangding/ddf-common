@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 基于zookeeper实现的分布式锁$
@@ -30,9 +29,6 @@ public class ZookeeperDistributedLock implements DistributedLock {
         this.distributedLockZookeeperProperties = distributedLockZookeeperProperties;
     }
 
-    @Value("${spring.profiles.active:local}")
-    private String env;
-
     /**
      * 尝试获取锁并执行业务, 与其它不同的是，这个加锁失败，不提供失败回调也不会抛出异常
      *
@@ -51,6 +47,10 @@ public class ZookeeperDistributedLock implements DistributedLock {
         boolean acquired = false;
         try {
             acquired = lock.acquire(waitTime, timeUnit);
+        } catch (InterruptedException e) {
+            // 恢复中断状态，供上层调用方感知线程中断
+            Thread.currentThread().interrupt();
+            log.warn("zk-获取锁时线程被中断, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
         } catch (Exception e) {
             log.error("zk-尝试获取锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(),
                     lockKey, timeUnit.toMillis(waitTime));
@@ -94,6 +94,10 @@ public class ZookeeperDistributedLock implements DistributedLock {
         boolean locked = false;
         try {
             locked = lock.acquire(waitTime, timeUnit);
+        } catch (InterruptedException e) {
+            // 恢复中断状态，供上层调用方感知线程中断
+            Thread.currentThread().interrupt();
+            log.warn("zk-获取锁时线程被中断, thread = {}, lockKey = {}", Thread.currentThread().getName(), lockKey);
         } catch (Exception e) {
             log.error("zk-加锁失败, thread = {}, lockKey = {}, time = {}ms", Thread.currentThread().getName(), lockKey,
                     timeUnit.toMillis(waitTime), e);
@@ -142,6 +146,7 @@ public class ZookeeperDistributedLock implements DistributedLock {
         if (StringUtils.isBlank(lockKey) || !lockKey.startsWith("/")) {
             throw new IllegalStateException(" lockKey error, lockKey must start with /, lockKey=" + lockKey);
         }
-        return distributedLockZookeeperProperties.getRoot() + "/" + env + "/locks" + lockKey;
+        return distributedLockZookeeperProperties.getRoot() + "/" + distributedLockZookeeperProperties.getEnv()
+                + "/locks" + lockKey;
     }
 }

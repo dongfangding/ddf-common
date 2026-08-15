@@ -1,7 +1,6 @@
 package com.ddf.boot.common.authentication.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ddf.boot.common.api.model.common.request.RequestHeaderEnum;
@@ -27,8 +26,7 @@ class AuthenticationPropertiesTest {
         assertEquals(RequestHeaderEnum.IMEI.getName(), properties.getCreditHeaderName());
         assertTrue(properties.getIgnores().isEmpty());
         assertTrue(properties.getOpenIgnores().isEmpty());
-        assertFalse(properties.isSignEnabled());
-        assertFalse(properties.isMockSignEnabled());
+        assertTrue(properties.isSignEnabled());
         assertEquals(10, properties.getTimeForceCheckDiffMinute());
     }
 }

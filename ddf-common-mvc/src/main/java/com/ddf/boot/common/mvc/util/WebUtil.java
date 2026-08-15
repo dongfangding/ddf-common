@@ -31,6 +31,21 @@ public class WebUtil {
     public static final String UNKNOWN = "unknown";
 
     /**
+     * 是否信任代理转发头（X-Forwarded-For / X-Real-IP 等）。
+     * <p>
+     * 默认关闭：客户端可伪造这些头，无条件信任会被用于伪造 IP 绕过限流/风控。
+     * 只有当应用确认部署在可信代理之后（且代理会覆盖这些头）时，才应开启。
+     */
+    private static volatile boolean trustProxyHeaders = false;
+
+    /**
+     * 设置是否信任代理转发头，应由接入方在确认部署拓扑后显式开启。
+     */
+    public static void setTrustProxyHeaders(boolean trust) {
+        trustProxyHeaders = trust;
+    }
+
+    /**
      * 获取当前ServletRequestAttributes
      */
     public static ServletRequestAttributes getCurServletRequestAttributes() {
@@ -65,39 +80,47 @@ public class WebUtil {
 
 
     /**
-     * 获取客户端IP
+     * 获取客户端IP。
+     * <p>
+     * 默认优先返回 {@code RemoteAddr}（socket 对端地址，客户端无法直接伪造）。
+     * 仅当通过 {@link #setTrustProxyHeaders(boolean)} 显式开启信任代理头时，才读取
+     * {@code X-Forwarded-For} 等可被伪造的转发头，避免伪造 IP 绕过限流/风控。
      */
     public static String getHost() {
         HttpServletRequest request = getCurRequest();
         if (Objects.isNull(request)) {
             return "";
         }
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !UNKNOWN.equalsIgnoreCase(ip)) {
-            // 多次反向代理后会有多个ip值，第一个ip才是真实ip
-            if (ip.contains(GlobalConstants.COMMA)) {
-                ip = ip.split(",")[0];
+        if (trustProxyHeaders) {
+            String forwardedIp = resolveFromForwardHeaders(request);
+            if (StringUtils.isNotBlank(forwardedIp) && !UNKNOWN.equalsIgnoreCase(forwardedIp)) {
+                return forwardedIp;
             }
         }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
+        return StringUtils.defaultIfBlank(request.getRemoteAddr(), "");
+    }
+
+    /**
+     * 依次从各类代理转发头中解析客户端 IP（仅在开启信任代理头时使用）。
+     */
+    private static String resolveFromForwardHeaders(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (StringUtils.isNotBlank(ip) && !UNKNOWN.equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个ip值，第一个ip才是真实ip
+            if (ip.contains(GlobalConstants.COMMA)) {
+                ip = ip.split(",")[0].trim();
+            }
+            return ip;
         }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+        String[] headers = {"X-Real-IP", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP",
+                "HTTP_X_FORWARDED_FOR"};
+        for (String header : headers) {
+            ip = request.getHeader(header);
+            if (StringUtils.isNotBlank(ip) && !UNKNOWN.equalsIgnoreCase(ip)) {
+                return ip;
+            }
         }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
+        return "";
     }
 
 

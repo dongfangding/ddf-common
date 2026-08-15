@@ -93,18 +93,31 @@ public class RequestSignAccessFilterChain implements AccessFilterChain {
                 throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
             if (Objects.isNull(timestamp)) {
-                timestamp = Long.parseLong((String) paramMap.get(BaseSign.SELF_TIMESTAMP_FIELD));
+                timestamp = parseTimestamp((String) paramMap.get(BaseSign.SELF_TIMESTAMP_FIELD));
             }
-            // 时间戳参数超过一定间隔，视作重放
-            if (timestamp < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(
-                    requestSign.nonceIntervalSeconds())) {
+            // 时间戳参数超过一定间隔（下界/上界），视作重放
+            final long intervalMillis = TimeUnit.SECONDS.toMillis(requestSign.nonceIntervalSeconds());
+            final long now = System.currentTimeMillis();
+            if (timestamp < now - intervalMillis || timestamp > now + intervalMillis) {
                 throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
             }
         }
-        result = SignatureUtil.verifySelfSignature(data, sign, keySecret);
+        // 强制平铺复杂嵌套对象（flatten=true），避免 flatten=false 时复杂对象被静默跳过导致签名字符串退化为空串
+        result = SignatureUtil.verifySelfSignature(data, sign, keySecret, true);
         if (!result) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
         return result;
+    }
+
+    /**
+     * 安全解析重放时间戳，格式非法按时间戳异常处理，避免 {@code Long.parseLong} 抛未捕获异常。
+     */
+    private Long parseTimestamp(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
+        }
     }
 }

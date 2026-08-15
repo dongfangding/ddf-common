@@ -24,6 +24,8 @@ public class ApplicationNamedKeyGenerator {
     }
 
     private static class Holder {
+        // 注意：未配置 spring.application.name 时统一回退为 "unknown"，多应用共享同一 Redis 时会导致 key 前缀冲突。
+        // 接入方应显式配置 spring.application.name 以保证 key 隔离。
         private static final String APPLICATION_NAME = Optional.ofNullable(SpringContextHolder.getApplicationContext())
                 .map(ctx -> ctx.getEnvironment().getProperty("spring.application.name"))
                 .orElse("unknown");

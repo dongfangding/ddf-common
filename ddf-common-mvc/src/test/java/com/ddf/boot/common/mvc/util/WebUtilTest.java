@@ -24,6 +24,7 @@ class WebUtilTest {
 
     @AfterEach
     void tearDown() {
+        WebUtil.setTrustProxyHeaders(false);
         RequestContextHolder.resetRequestAttributes();
     }
 
@@ -39,19 +40,32 @@ class WebUtilTest {
     }
 
     @Test
-    @DisplayName("应优先从 X-Forwarded-For 提取首个真实 IP")
-    void shouldResolveHostFromForwardedHeader() {
+    @DisplayName("默认不信任 X-Forwarded-For，应优先返回 RemoteAddr")
+    void shouldPreferRemoteAddrOverForwardedHeaderByDefault() {
         MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("9.9.9.9");
         request.addHeader("X-Forwarded-For", "1.1.1.1, 2.2.2.2");
         request.addHeader("User-Agent", "JUnit-Agent");
         MockHttpServletResponse response = new MockHttpServletResponse();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
 
-        assertEquals("1.1.1.1", WebUtil.getHost());
+        assertEquals("9.9.9.9", WebUtil.getHost());
         assertEquals("JUnit-Agent", WebUtil.getUserAgent());
         assertEquals("JUnit-Agent", WebUtil.getCurrentRequestHeaderIfPresent("User-Agent"));
         assertEquals(request, WebUtil.getCurRequest());
         assertEquals(response, WebUtil.getCurResponse());
+    }
+
+    @Test
+    @DisplayName("显式开启信任代理头后应从 X-Forwarded-For 提取首个真实 IP")
+    void shouldResolveHostFromForwardedHeaderWhenTrusted() {
+        WebUtil.setTrustProxyHeaders(true);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("X-Forwarded-For", "1.1.1.1, 2.2.2.2");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
+
+        assertEquals("1.1.1.1", WebUtil.getHost());
     }
 
     @Test

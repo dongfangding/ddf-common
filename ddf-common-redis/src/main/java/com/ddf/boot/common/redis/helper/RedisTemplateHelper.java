@@ -174,9 +174,18 @@ public class RedisTemplateHelper {
      * @param request 请求对象
      */
     public boolean tokenBucketRateLimitAcquire(RateLimitRequest request) {
+        final Integer max = request.getMax();
+        final Integer rate = request.getRate();
+        // max/rate 为空或非正数会导致 Lua 脚本执行出错，提前校验给出明确错误
+        if (Objects.isNull(max) || max <= 0) {
+            throw new IllegalArgumentException("令牌桶最大数量参数异常, max = " + max);
+        }
+        if (Objects.isNull(rate) || rate <= 0) {
+            throw new IllegalArgumentException("令牌桶恢复速率参数异常, rate = " + rate);
+        }
         final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
-                Collections.singletonList(request.getKey()), String.valueOf(request.getMax()),
-                String.valueOf(request.getRate()), String.valueOf(System.currentTimeMillis())));
+                Collections.singletonList(request.getKey()), String.valueOf(max),
+                String.valueOf(rate), String.valueOf(System.currentTimeMillis())));
         return Objects.equals("1", result);
     }
 
@@ -640,6 +649,10 @@ public class RedisTemplateHelper {
             return response;
         }
         final String[] split = execute.split("-");
+        if (split.length < 2) {
+            log.error("stringTtlIncrWithLimit 脚本返回格式异常, key = {}, result = {}", key, execute);
+            return response;
+        }
         response.setFull(Objects.equals("1", split[0]));
         response.setTtl(Integer.parseInt(split[1]));
         return response;

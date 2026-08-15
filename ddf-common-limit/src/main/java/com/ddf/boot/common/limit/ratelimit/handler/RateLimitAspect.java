@@ -134,9 +134,9 @@ public class RateLimitAspect {
                 return;
             }
 
-            // 获取令牌恢复速率
-            Integer rate = annotation.rate() == rateLimitProperties.getRate() ? rateLimitProperties.getRate() :
-                    annotation.rate();
+            // 获取令牌恢复速率：注解未显式设置(0)时回退到全局配置；先做 int 比较避免对全局配置拆箱导致 NPE
+            final int annotationRate = annotation.rate();
+            Integer rate = annotationRate == 0 ? rateLimitProperties.getRate() : annotationRate;
             if (Objects.equals(RateLimitProperties.NOT_CONTROL, rate)) {
                 return;
             }

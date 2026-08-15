@@ -1,6 +1,5 @@
 package com.ddf.boot.common.redis.helper;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -122,6 +121,9 @@ public class RedisCommandHelper {
 
     /**
      * 查找匹配的key
+     *
+     * <p>注意：底层为 Redis {@code KEYS} 命令，会阻塞 Redis 线程，生产环境大数据量下禁止使用，
+     * 请改用 {@code scan} 系列命令。
      *
      * @param pattern 匹配表达式
      */
@@ -1581,12 +1583,19 @@ public class RedisCommandHelper {
             return null;
         });
         for (int i = 0; i < keys.size(); i++) {
+            Map<String, String> valueMap = new HashMap<>();
             Object o = objects.get(i);
-            if (Objects.isNull(o)) {
-                allMap.put(keys.get(i), Maps.newHashMap());
-            } else {
-                allMap.put(keys.get(i), (Map<String, String>) o);
+            // raw connection 返回的是 Map<byte[], byte[]>，需手动反序列化为 String，不能直接强转 Map<String, String>
+            if (o instanceof Map) {
+                @SuppressWarnings("unchecked") Map<byte[], byte[]> rawMap = (Map<byte[], byte[]>) o;
+                for (Map.Entry<byte[], byte[]> entry : rawMap.entrySet()) {
+                    String field = redisTemplate.getStringSerializer().deserialize(entry.getKey());
+                    if (field != null) {
+                        valueMap.put(field, redisTemplate.getStringSerializer().deserialize(entry.getValue()));
+                    }
+                }
             }
+            allMap.put(keys.get(i), valueMap);
         }
         return allMap;
     }

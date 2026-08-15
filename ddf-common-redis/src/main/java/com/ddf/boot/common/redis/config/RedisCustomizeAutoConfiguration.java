@@ -6,6 +6,11 @@ import com.ddf.boot.common.redis.helper.GeoHelper;
 import com.ddf.boot.common.redis.helper.RedisCommandHelper;
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
 import com.ddf.boot.common.redis.serializer.ObjectStringRedisSerializer;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +78,34 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
-        template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(buildSafeObjectMapper());
+        template.setDefaultSerializer(jsonSerializer);
         template.setStringSerializer(new StringRedisSerializer());
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(jsonSerializer);
+        template.setHashKeySerializer(jsonSerializer);
+        template.setHashValueSerializer(jsonSerializer);
         return template;
+    }
+
+    /**
+     * 构建一个使用多态类型白名单的 ObjectMapper，避免默认 typing 开启时攻击者通过构造恶意
+     * {@code @class} 元数据触发任意类实例化（反序列化 RCE）。
+     * <p>
+     * 仅放行 JDK 安全基础类型与框架自身类型，业务自定义 DTO 需按需扩展白名单。
+     */
+    private static ObjectMapper buildSafeObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        BasicPolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("java.lang.")
+                .allowIfSubType("java.util.")
+                .allowIfSubType("java.time.")
+                .allowIfSubType("java.math.")
+                .allowIfSubType("com.ddf.boot.")
+                .build();
+        mapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        return mapper;
     }
 
     /**
@@ -129,7 +155,7 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
         if (StrUtil.isNotBlank(redissonCustomizeProperties.getCodec())) {
             configuration.setCodec((Codec) Class.forName(redissonCustomizeProperties.getCodec()).newInstance());
         } else {
-            configuration.setCodec(new JsonJacksonCodec());
+            configuration.setCodec(new JsonJacksonCodec(buildSafeObjectMapper()));
         }
         // 因为原生redisson外部文件配置方式不支持环境变量注入，这里提供一种解决方案，如果不在外部配置文件中配置基础连接信息的话，就到
         // 原生的org.springframework.boot.autoconfigure.data.redis.RedisProperties对象里去拿连接信息

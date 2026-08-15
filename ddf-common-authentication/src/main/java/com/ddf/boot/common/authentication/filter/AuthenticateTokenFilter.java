@@ -126,9 +126,10 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         // 预留认证通过后置接口
         userClaimService.afterTokenVerifySuccess(request, userClaim, allHeaderMap, customizeHeaderMap);
 
-        // 重放简单校验
-        final long nonce = Long.parseLong(
-                StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0"));
+        // 重放校验：仅保留客户端时间戳 ± 允许误差范围（下界/上界）的校验。
+        // 服务端 nonce 去重（记录已消费的 nonce）需要引入 Redis 等共享存储，为避免模块对存储的强依赖，暂未实现；
+        // 时间戳上界+签名已能阻止大部分重放，若需更强防护可在此接入服务端 nonce 缓存。
+        final long nonce = parseNonce(request.getHeader(RequestHeaderEnum.NONCE.getName()));
         final long currentTimeMillis = System.currentTimeMillis();
         final Integer timeForceCheckDiffMinute = authenticateProperties.getTimeForceCheckDiffMinute();
         if (nonce < currentTimeMillis - TimeUnit.MINUTES.toMillis(timeForceCheckDiffMinute)
@@ -222,8 +223,7 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         if (!authenticateProperties.isSignEnabled()) {
             return;
         }
-        if (!(authenticateProperties.isMockSignEnabled() && Objects.equals(authenticateProperties.getMockSign(), sign))
-                && !SignatureUtil.verifySelfSignature(data, sign, authenticateProperties.getSignSecret(), true)) {
+        if (!SignatureUtil.verifySelfSignature(data, sign, authenticateProperties.getSignSecret(), true)) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_ERROR);
         }
     }
@@ -260,8 +260,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     private UserClaim checkAndParseAuthInfo(HttpServletRequest request, String tokenHeader) {
         String tokenPrefix = authenticateProperties.getTokenPrefix();
         String token = tokenHeader;
-        if (StringUtils.isNotBlank(tokenPrefix) && StringUtils.isNotBlank(tokenHeader) && tokenHeader.contains(tokenPrefix)) {
-            token = tokenHeader.split(tokenPrefix)[1];
+        if (StringUtils.isNotBlank(tokenPrefix) && StringUtils.isNotBlank(tokenHeader) && tokenHeader.startsWith(tokenPrefix)) {
+            token = tokenHeader.substring(tokenPrefix.length());
         }
 
         try {
@@ -326,10 +326,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
                 .sign(request.getHeader(RequestHeaderEnum.SIGN.getName()))
                 .os(OsEnum.resolve(request.getHeader(RequestHeaderEnum.OS.getName())))
                 .imei(request.getHeader(RequestHeaderEnum.IMEI.getName()))
-                .nonce(Long.parseLong(
-                        StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.NONCE.getName()), "0")))
-                .versionCode(Integer.parseInt(
-                        StringUtils.defaultIfBlank(request.getHeader(RequestHeaderEnum.VERSION_CODE.getName()), "0")))
+                .nonce(parseNonce(request.getHeader(RequestHeaderEnum.NONCE.getName())))
+                .versionCode(parseVersionCode(request.getHeader(RequestHeaderEnum.VERSION_CODE.getName())))
                 .version(request.getHeader(RequestHeaderEnum.VERSION.getName()))
                 .language(request.getHeader(RequestHeaderEnum.LANGUAGE.getName()))
                 .timeZone(request.getHeader(RequestHeaderEnum.TIME_ZONE.getName()))
@@ -351,6 +349,28 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
         MDC.remove(AuthenticateConstant.MDC_TRACE_ID);
         MDC.remove(AuthenticateConstant.MDC_CLIENT_IP);
         MDC.remove(AuthenticateConstant.MDC_IMEI);
+    }
+
+    /**
+     * 安全解析 nonce 时间戳，缺失时按 0 处理，格式非法按非法请求处理。
+     */
+    private static long parseNonce(String nonceValue) {
+        try {
+            return Long.parseLong(StringUtils.defaultIfBlank(nonceValue, "0"));
+        } catch (NumberFormatException e) {
+            throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_REQUEST);
+        }
+    }
+
+    /**
+     * 安全解析 versionCode，缺失时按 0 处理，格式非法按非法请求处理。
+     */
+    private static int parseVersionCode(String versionCode) {
+        try {
+            return Integer.parseInt(StringUtils.defaultIfBlank(versionCode, "0"));
+        } catch (NumberFormatException e) {
+            throw new BusinessException(BaseErrorCallbackCode.ILLEGAL_REQUEST);
+        }
     }
 
 }

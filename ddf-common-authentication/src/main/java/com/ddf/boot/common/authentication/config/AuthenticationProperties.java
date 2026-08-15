@@ -27,11 +27,6 @@ public class AuthenticationProperties {
     private boolean autoRegisterFilter = true;
 
     /**
-     * 加密算法秘钥
-     */
-    private String secret;
-
-    /**
      * token header name, 控制客户端通过哪个header传token
      */
     private String tokenHeaderName = "ACCESS-TOKEN";
@@ -70,20 +65,9 @@ public class AuthenticationProperties {
     private String signSecret;
 
     /**
-     * 加签验证是否开启
+     * 加签验证是否开启，默认开启，避免误关闭导致签名校验被绕过
      */
-    private boolean signEnabled = false;
-
-
-    /**
-     * 是否开启万能sign
-     */
-    private boolean mockSignEnabled;
-
-    /**
-     * 万能sign， 某些情况下使用
-     */
-    private String mockSign;
+    private boolean signEnabled = true;
 
 
     /**

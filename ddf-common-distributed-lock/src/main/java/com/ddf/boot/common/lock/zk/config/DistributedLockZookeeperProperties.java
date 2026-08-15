@@ -24,6 +24,13 @@ public class DistributedLockZookeeperProperties {
     private String root = "/distributed_lock";
 
     /**
+     * 环境标识，用于区分不同环境的锁路径。
+     * <p>
+     * 之前直接复用 {@code spring.profiles.active}，多 profile 时该值含逗号导致锁路径非法，改为显式配置。
+     */
+    private String env = "local";
+
+    /**
      * zookeeper的连接地址
      */
     private String connectString = "127.0.0.1:2181";
