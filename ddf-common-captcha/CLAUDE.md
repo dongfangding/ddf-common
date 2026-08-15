@@ -21,15 +21,16 @@
 ### 1. 配置
 
 ```yaml
-ddf:
-  captcha:
-    cache-type: REDIS                    # 缓存类型：REDIS / LOCAL
-    key-expired-seconds: 300             # 验证码过期时间（秒）
-    kaptcha:
-      width: 100                         # 宽度
-      height: 40                         # 高度
-    aj-captcha:
-      type: BLOCKPUZZLE                  # 滑动类型：BLOCKPUZZLE / CLICKWORD
+customizer:
+  infra:
+    captcha:
+      cache-type: REDIS                    # 缓存类型：REDIS / LOCAL
+      key-expired-seconds: 300             # 验证码过期时间（秒）
+      kaptcha:
+        width: 100                         # 宽度
+        height: 40                         # 高度
+      aj-captcha:
+        type: BLOCKPUZZLE                  # 滑动类型：BLOCKPUZZLE / CLICKWORD
 ```
 
 ### 2. 生成验证码

@@ -33,19 +33,18 @@ public class Application {
 ### 2. 接口限流
 
 ```java
-// 基础限流：每分钟最多 100 次
-@RateLimit(max = 100, rate = 1, rateInterval = 60)
+// 基础限流
+@RateLimit(max = 100, rate = 1)
 @GetMapping("/api/test")
 public ResponseData<String> test() {
     return ResponseData.success("OK");
 }
 
-// 滑动窗口限流
+// 按 IP 限流
 @RateLimit(
-    max = 50,                    // 最大请求数
-    rate = 10,                   // 填充速率
-    rateInterval = 1,            // 速率计算窗口（秒）
-    keyGenerator = IpRateLimitKeyGenerator.class  // 按 IP 限流
+    max = 50,                             // 最大请求数
+    rate = 10,                            // 填充速率
+    keyGenerator = "ipRateLimitKeyGenerator"  // 按 IP 限流（bean name）
 )
 @GetMapping("/api/sensitive")
 public ResponseData<String> sensitive() {
@@ -53,7 +52,7 @@ public ResponseData<String> sensitive() {
 }
 
 // 忽略限流（白名单）
-@RateLimit(ignore = true)
+@RateLimitIgnore
 @GetMapping("/api/public")
 public ResponseData<String> publicApi() {
     return ResponseData.success("OK");
@@ -149,18 +148,12 @@ public void onRateLimit(RateLimitTriggeredEvent event) {
 
 ## 配置说明
 
-```yaml
-ddf:
-  rate-limit:
-    enabled: true                          # 是否启用
-    global-key-prefix: "ddf:rate:"         # 全局限流 key 前缀
-    default-max: 100                       # 默认最大请求数
-    default-rate-interval-seconds: 60      # 默认时间窗口
-```
+限流参数通过 `@RateLimit` 注解的属性配置（`max`/`rate`/`keyGenerator`/`algorithm`/`condition`），
+无独立的 YAML 配置前缀。`keyGenerator`、`algorithm` 的取值是策略 Bean 的 bean name（字符串）。
 
 ## 注意事项
 
 1. **Redis Key**：使用 `ApplicationNamedKeyGenerator` 生成，带应用名前缀
-2. **时间单位**：`interval` 和 `rateInterval` 默认单位为秒
-3. **白名单**：通过 `@RateLimit(ignore = true)` 或 `@RepeatableIgnore` 跳过限制
+2. **时间单位**：`rate` 单位为秒
+3. **白名单**：通过 `@RateLimitIgnore` 或 `@RepeatableIgnore` 跳过限制
 4. **分布式**：基于 Redis 实现，支持分布式环境

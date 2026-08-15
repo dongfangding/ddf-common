@@ -33,9 +33,8 @@ public class Application {
 ```yaml
 customizer:
   infra:
-    ext:
-      authentication:
-        secret: "your-256-bit-secret-key"      # Token 加密密钥（必须配置）
+    authentication:
+      secret: "your-256-bit-secret-key"      # Token 加密密钥（必须配置）
         expired-minute: 60                      # Token 过期时间（分钟）
         token-header-name: "ACCESS-TOKEN"       # Token 请求头名称
         token-prefix: ""                        # Token 前缀

@@ -26,12 +26,14 @@
 ### 1. 全局配置
 
 ```yaml
-global:
-  snowflake-worker-id: 1           # 雪花算法 workerId
-  snowflake-data-center-id: 1      # 雪花算法 dataCenterId
-  rsa-private-key: "..."           # RSA 私钥（必须配置）
-  rsa-public-key: "..."            # RSA 公钥（必须配置）
-  aes-secret: "32位随机密钥"         # AES 密钥（必须配置）
+customizer:
+  infra:
+    global-properties:
+      snowflake-worker-id: 1           # 雪花算法 workerId
+      snowflake-data-center-id: 1      # 雪花算法 dataCenterId
+      rsa-private-key: "..."           # RSA 私钥（必须配置）
+      rsa-public-key: "..."            # RSA 公钥（必须配置）
+      aes-secret: "32位随机密钥"         # AES 密钥（必须配置）
 ```
 
 ### 2. 线程池构建
