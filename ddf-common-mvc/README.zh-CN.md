@@ -1,6 +1,6 @@
 # ddf-common-mvc
 
-> Spring MVC 核心支撑模块：全局异常统一处理、响应体自动包装、请求体缓存、
+> Spring MVC 核心支撑模块：全局异常统一处理、请求体缓存、
 > 访问日志与慢接口检测、权限菜单扫描、接口签名校验、自定义参数解析器等。
 > 它是 `ddf-common-starter-web` 的核心组成部分，**业务工程一般通过 starter 间接引入**。
 
@@ -16,7 +16,6 @@
 | 场景         | 典型问题                             | 模块提供的能力                                                          |
 |------------|----------------------------------|------------------------------------------------------------------|
 | 全局异常处理     | 每个 Controller 手写 try-catch，格式不统一 | `AbstractExceptionHandler` 自动捕获并映射为 `ResponseData`               |
-| 响应体统一包装    | 有的接口返回原始对象，有的手动包 `ResponseData`  | `AbstractCommonResponseBodyAdvice` 自动包装                          |
 | 请求体多次读取    | 签名验签需要先读 body，后续框架再读一次会报错        | `CachingRequestBodyFilter` 缓存请求体到 `ContentCachingRequestWrapper` |
 | 访问日志 + 慢接口 | 需要记录每个接口的入参、出参、耗时，超时告警           | `@EnableLogAspect` 开启 AOP 日志与慢接口回调                               |
 | 权限菜单扫描     | 需要自动收集所有 controller 的权限注解生成菜单    | `PermissionMenuScanner` 扫描 `@PermissionMenu`                     |
@@ -56,16 +55,7 @@
 
 ## 3. 最小化配置
 
-模块无强制配置。可选配置项：
-
-```yaml
-customizer:
-  infra:
-    # 统一响应包装排除列表
-    response-body-advice:
-      ignoreReturnType:
-        - com.example.SomeSpecialType   # 该类型的返回值不会被包装成 ResponseData
-```
+模块无强制配置。
 
 ---
 
@@ -99,41 +89,7 @@ throw new ServerErrorException("系统错误");
 > 开启 `customizer.infra.global-properties.exception-code-to-response-status: true` 时，
 > 部分异常码会被同步写入 HTTP response.status。
 
-### 4.2 响应体自动包装
-
-`AbstractCommonResponseBodyAdvice`（`ResponseBodyAdvice`）会自动把 Controller 的返回值包成 `ResponseData`：
-
-```java
-@RestController
-public class UserController {
-    @GetMapping("/user/{id}")
-    public UserVO getUser(@PathVariable Long id) {
-        return userService.get(id);   // 实际输出: ResponseData.success(userVO)
-    }
-}
-```
-
-跳过包装的方法：
-
-```java
-@WrapperIgnore
-@GetMapping("/health")
-public String health() {
-    return "ok";   // 直接输出 "ok"
-}
-```
-
-也可通过配置排除特定返回类型：
-
-```yaml
-customizer:
-  infra:
-    response-body-advice:
-      ignoreReturnType:
-        - org.springframework.core.io.Resource
-```
-
-### 4.3 请求体缓存过滤器
+### 4.2 请求体缓存过滤器
 
 `CachingRequestBodyFilter`（`@Order(Ordered.HIGHEST_PRECEDENCE)`）在过滤器链最前端把 `HttpServletRequest`
 包装为 `ContentCachingRequestWrapper`，后续任意代码都能安全重复读取 body：
@@ -144,7 +100,7 @@ String body = new String(request.getInputStream().readAllBytes(), StandardCharse
 // 后续 Spring 的 @RequestBody 依然能正常解析
 ```
 
-### 4.4 访问日志与慢接口检测
+### 4.3 访问日志与慢接口检测
 
 在任意 `@Configuration` 上添加 `@EnableLogAspect`：
 
@@ -177,7 +133,7 @@ public class SlowEventAlarm implements SlowEventAction {
 @EnableLogAspect(slowTime = 2000, ignore = {"com.example.BatchController"})
 ```
 
-### 4.5 权限菜单扫描
+### 4.4 权限菜单扫描
 
 在 Controller 方法上标注 `@PermissionMenu`：
 
@@ -194,7 +150,7 @@ public class UserController {
 
 启动时 `PermissionMenuScanner` 会自动扫描并收集所有权限定义，业务可订阅扫描结果生成 RBAC 菜单树。
 
-### 4.6 接口签名校验
+### 4.5 接口签名校验
 
 请求 DTO 实现 `BaseSign`（来自 `ddf-common-api`），并在 filter 链中注册 `RequestSignAccessFilterChain`：
 
@@ -214,7 +170,7 @@ public class GatewayRequest implements BaseSign {
 3. 比对失败时抛 `BusinessException(SIGN_ERROR)`
 4. 检查时间戳是否过期（默认 5 分钟）
 
-### 4.7 自定义参数解析器
+### 4.6 自定义参数解析器
 
 `MultiArgumentResolver` 支持同一个参数按多种 content-type 解析：
 
@@ -227,7 +183,7 @@ public ResponseData<Void> upload(@MultiArgument FileUploadRequest request) {
 
 `QueryParamArgumentResolver` 支持把 query string 中的复杂对象按属性名自动绑定。
 
-### 4.8 国际化异常消息
+### 4.7 国际化异常消息
 
 `AbstractExceptionHandler` 会根据请求头 `app_language` 解析 Locale，然后从 `MessageSource`
 查找对应语言的消息。如果找不到，回退到英文默认消息。
@@ -269,18 +225,7 @@ public class MyExceptionHandlerMapping implements ExceptionHandlerMapping {
 }
 ```
 
-### 5.2 自定义响应包装逻辑
-
-继承 `AbstractCommonResponseBodyAdvice`，添加自己的包过滤规则：
-
-```java
-@RestControllerAdvice(basePackages = "com.example.controller")
-public class CustomResponseBodyAdvice extends AbstractCommonResponseBodyAdvice {
-    // 自动继承 beforeBodyWrite 的 ResponseData.success(body) 逻辑
-}
-```
-
-### 5.3 监听全局异常事件
+### 5.2 监听全局异常事件
 
 ```java
 @EventListener
@@ -308,46 +253,24 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 7. FAQ
 
-**Q1：为什么返回值已经是 `ResponseData` 了，还会被再次包装？**  
-`AbstractCommonResponseBodyAdvice` 的 `beforeBodyWrite` 里会判断 body 类型；
-如果已经是 `ResponseData` 则直接透传，不会套娃。如果出现了套娃，请检查是否自定义了
-`ResponseBodyAdvice` 并且优先级高于默认实现。
-
-**Q2：`@WrapperIgnore` 和 `ignoreReturnType` 有什么区别？**
-
-- `@WrapperIgnore`：注解在方法上，粒度细，即开即用
-- `ignoreReturnType`：配置在 YAML 中，按返回类型的全类名排除，适合排除第三方框架的返回值
-
-**Q3：慢接口回调 `SlowEventAction` 是同步还是异步？**  
+**Q1：慢接口回调 `SlowEventAction` 是同步还是异步？**  
 同步执行（在 AOP 的 `afterReturning` 中）。如果回调逻辑较重（如发告警邮件），
 请在实现内部自己丢到线程池异步处理。
 
-**Q4：`CachingRequestBodyFilter` 会不会导致内存溢出？**  
+**Q2：`CachingRequestBodyFilter` 会不会导致内存溢出？**  
 它基于 Spring 的 `ContentCachingRequestWrapper`，默认缓存到 `byte[]` 中。
 超大文件上传场景（如几百 MB）建议走 `/multipart` 专用接口并排除该 filter，
 或在 Nginx 层直接拦截大文件请求。
 
-**Q5：异常堆栈在生产环境被隐藏了，如何排查？**  
+**Q3：异常堆栈在生产环境被隐藏了，如何排查？**  
 日志文件（`error` 级别）中仍然保留了完整堆栈和请求参数（受 `ignoreLogExceptionClassName` 控制）。
 `ResponseData.subMessage` 只是前端展示层面的隐藏。
-
-**Q6：如何关闭响应体自动包装？**  
-在业务工程的 `@Configuration` 中声明一个更高优先级的 `ResponseBodyAdvice` 返回原始 body，
-或排除 `MvcAutoConfiguration`：
-
-```yaml
-spring:
-  autoconfigure:
-    exclude:
-      - com.ddf.boot.common.mvc.config.MvcAutoConfiguration
-```
 
 ---
 
 ## 8. 参考
 
 - 源码：`exception200/AbstractExceptionHandler.java`、`exception200/CommonExceptionAdvice.java`
-- 源码：`controllerwrapper/AbstractCommonResponseBodyAdvice.java`
 - 源码：`filter/CachingRequestBodyFilter.java`
 - 源码：`logaccess/AccessLogAspect.java`、`logaccess/EnableLogAspect.java`
 - 源码：`permissionscan/PermissionMenuScanner.java`

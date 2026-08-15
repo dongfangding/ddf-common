@@ -1,7 +1,7 @@
 # ddf-common-mvc
 
-> Spring MVC core support module: unified global exception handling, automatic response-body wrapping,
-> request-body caching, access logging and slow-endpoint detection, permission-menu scanning,
+> Spring MVC core support module: unified global exception handling, request-body caching,
+> access logging and slow-endpoint detection, permission-menu scanning,
 > request-signature verification, custom argument resolvers, and more.
 > It is the web-layer heart of `ddf-common-starter-web`; **application services normally pull it in
 > transitively through the starter**.
@@ -18,7 +18,6 @@ shared by controllers live here, so business code can focus purely on endpoint l
 | Category                        | Typical Problem                                                                        | What the Module Provides                                              |
 |---------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | Global exception handling       | Hand-written try-catch in every controller, inconsistent formats                       | `AbstractExceptionHandler` auto-captures and maps to `ResponseData`   |
-| Unified response wrapping       | Some endpoints return raw objects, others manually wrap `ResponseData`                 | `AbstractCommonResponseBodyAdvice` auto-wraps                         |
 | Multiple request-body reads     | Signature verification needs to read the body first, then the framework reads it again | `CachingRequestBodyFilter` wraps with `ContentCachingRequestWrapper`  |
 | Access logging + slow endpoints | Need to log every endpoint's params, result, and elapsed time; alert on timeout        | `@EnableLogAspect` enables AOP logging and slow-event callbacks       |
 | Permission-menu scanning        | Need to auto-collect all `@PermissionMenu` annotations to build an RBAC menu tree      | `PermissionMenuScanner` scans `@PermissionMenu` on controllers        |
@@ -59,16 +58,7 @@ Add database support when needed:
 
 ## 3. Minimum Configuration
 
-No mandatory configuration. Optional settings:
-
-```yaml
-customizer:
-  infra:
-    # Exclude specific return types from unified response wrapping
-    response-body-advice:
-      ignoreReturnType:
-        - com.example.SomeSpecialType
-```
+No mandatory configuration.
 
 ---
 
@@ -102,42 +92,7 @@ Exception handling behavior:
 > When `customizer.infra.global-properties.exception-code-to-response-status: true`, some exception
 > codes are also mirrored to the HTTP response.status.
 
-### 4.2 Automatic response-body wrapping
-
-`AbstractCommonResponseBodyAdvice` (`ResponseBodyAdvice`) automatically wraps controller return
-values into `ResponseData`:
-
-```java
-@RestController
-public class UserController {
-    @GetMapping("/user/{id}")
-    public UserVO getUser(@PathVariable Long id) {
-        return userService.get(id);   // Actual output: ResponseData.success(userVO)
-    }
-}
-```
-
-Skip wrapping on a method:
-
-```java
-@WrapperIgnore
-@GetMapping("/health")
-public String health() {
-    return "ok";   // Raw output: "ok"
-}
-```
-
-Or exclude by return type via configuration:
-
-```yaml
-customizer:
-  infra:
-    response-body-advice:
-      ignoreReturnType:
-        - org.springframework.core.io.Resource
-```
-
-### 4.3 Request-body caching filter
+### 4.2 Request-body caching filter
 
 `CachingRequestBodyFilter` (`@Order(Ordered.HIGHEST_PRECEDENCE)`) wraps `HttpServletRequest` with
 `ContentCachingRequestWrapper` at the very front of the filter chain, so any downstream code can
@@ -149,7 +104,7 @@ String body = new String(request.getInputStream().readAllBytes(), StandardCharse
 // Spring's @RequestBody still works normally afterwards
 ```
 
-### 4.4 Access logging and slow-endpoint detection
+### 4.3 Access logging and slow-endpoint detection
 
 Add `@EnableLogAspect` on any `@Configuration`:
 
@@ -183,7 +138,7 @@ Ignore specific classes or methods:
 @EnableLogAspect(slowTime = 2000, ignore = {"com.example.BatchController"})
 ```
 
-### 4.5 Permission-menu scanning
+### 4.4 Permission-menu scanning
 
 Annotate controller methods with `@PermissionMenu`:
 
@@ -201,7 +156,7 @@ public class UserController {
 At startup `PermissionMenuScanner` auto-collects all permission definitions; your business code can
 subscribe to the scan result to generate an RBAC menu tree.
 
-### 4.6 Request-signature verification
+### 4.5 Request-signature verification
 
 The request DTO implements `BaseSign` (from `ddf-common-api`), and `RequestSignAccessFilterChain`
 is registered in the filter chain:
@@ -222,7 +177,7 @@ public class GatewayRequest implements BaseSign {
 3. Throw `BusinessException(SIGN_ERROR)` on mismatch
 4. Check whether the timestamp has expired (default: 5 minutes)
 
-### 4.7 Custom argument resolvers
+### 4.6 Custom argument resolvers
 
 `MultiArgumentResolver` allows the same parameter to be parsed from multiple content types:
 
@@ -236,7 +191,7 @@ public ResponseData<Void> upload(@MultiArgument FileUploadRequest request) {
 `QueryParamArgumentResolver` supports binding complex objects from query-string parameters by
 property name.
 
-### 4.8 i18n exception messages
+### 4.7 i18n exception messages
 
 `AbstractExceptionHandler` resolves Locale from the `app_language` request header and looks up the
 corresponding message from `MessageSource`. Falls back to English if no translation is found.
@@ -278,18 +233,7 @@ public class MyExceptionHandlerMapping implements ExceptionHandlerMapping {
 }
 ```
 
-### 5.2 Custom response-wrapping logic
-
-Extend `AbstractCommonResponseBodyAdvice` with your own package filter:
-
-```java
-@RestControllerAdvice(basePackages = "com.example.controller")
-public class CustomResponseBodyAdvice extends AbstractCommonResponseBodyAdvice {
-    // Inherits beforeBodyWrite logic: ResponseData.success(body)
-}
-```
-
-### 5.3 Subscribe to global exception events
+### 5.2 Subscribe to global exception events
 
 ```java
 @EventListener
@@ -317,47 +261,24 @@ public void onGlobalException(GlobalExceptionEvent event) {
 
 ## 7. FAQ
 
-**Q1: My return value is already `ResponseData`, why isn't it wrapped again?**  
-`AbstractCommonResponseBodyAdvice#beforeBodyWrite` checks the body type; if it is already a
-`ResponseData`, it is passed through as-is. If you see double wrapping, check whether a custom
-`ResponseBodyAdvice` is running with higher precedence than the default one.
-
-**Q2: What's the difference between `@WrapperIgnore` and `ignoreReturnType`?**
-
-- `@WrapperIgnore`: Method-level annotation, fine-grained, use on-the-fly
-- `ignoreReturnType`: YAML configuration, excludes by fully-qualified return-type class name,
-  useful for third-party framework return types
-
-**Q3: Is `SlowEventAction` invoked synchronously or asynchronously?**  
+**Q1: Is `SlowEventAction` invoked synchronously or asynchronously?**  
 Synchronously (inside the AOP `afterReturning` advice). If your callback is heavy (e.g. sending
 alert emails), dispatch it to a thread pool inside your implementation.
 
-**Q4: Can `CachingRequestBodyFilter` cause an OOM?**  
+**Q2: Can `CachingRequestBodyFilter` cause an OOM?**  
 It is based on Spring's `ContentCachingRequestWrapper`, which caches into a `byte[]` in memory.
 For very large file uploads (hundreds of MB), use a dedicated `/multipart` endpoint and exclude
 the filter, or intercept large uploads at the Nginx layer.
 
-**Q5: Stack traces are hidden in production — how do I debug?**  
+**Q3: Stack traces are hidden in production — how do I debug?**  
 Log files (at `error` level) still retain the full stack trace and request parameters (subject to
 `ignoreLogExceptionClassName`). `ResponseData.subMessage` is hidden only at the frontend level.
-
-**Q6: How do I disable automatic response wrapping entirely?**  
-Declare a higher-precedence `ResponseBodyAdvice` in your own project that returns the raw body, or
-exclude `MvcAutoConfiguration`:
-
-```yaml
-spring:
-  autoconfigure:
-    exclude:
-      - com.ddf.boot.common.mvc.config.MvcAutoConfiguration
-```
 
 ---
 
 ## 8. References
 
 - Source: `exception200/AbstractExceptionHandler.java`, `exception200/CommonExceptionAdvice.java`
-- Source: `controllerwrapper/AbstractCommonResponseBodyAdvice.java`
 - Source: `filter/CachingRequestBodyFilter.java`
 - Source: `logaccess/AccessLogAspect.java`, `logaccess/EnableLogAspect.java`
 - Source: `permissionscan/PermissionMenuScanner.java`
