@@ -158,7 +158,7 @@ public class BaseOnsListenerContainer implements OnsListenerContainer {
     @Override
     public String toString() {
         return "DefaultOnsListenerContainer{" + "name='" + name + '\'' + ", accessKey='" + accessKey + '\''
-                + ", secretKey='" + secretKey + '\'' + ", nameServerAddr='" + nameServerAddr + '\'' + ", consumeMode="
+                + ", secretKey='***'" + ", nameServerAddr='" + nameServerAddr + '\'' + ", consumeMode="
                 + consumeMode + ", groupId='" + groupId + '\'' + ", topic='" + topic + '\'' + ", expressionType="
                 + expressionType + ", expression='" + expression + '\'' + ", messageModel=" + messageModel
                 + ", consumeThreadNums=" + consumeThreadNums + ", consumeTimeout=" + consumeTimeout

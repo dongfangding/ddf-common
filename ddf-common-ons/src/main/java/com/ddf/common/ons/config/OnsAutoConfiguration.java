@@ -3,7 +3,6 @@ package com.ddf.common.ons.config;
 import com.aliyun.openservices.ons.api.bean.OrderProducerBean;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.ddf.common.ons.console.config.OnsClientConfiguration;
-import com.ddf.common.ons.controller.OnsConsoleController;
 import com.ddf.common.ons.properties.OnsProperties;
 import com.ddf.common.ons.transaction.LocalTransactionCheckerImpl;
 import com.ddf.common.ons.transaction.LocalTransactionExecutorImpl;
@@ -36,11 +35,6 @@ public class OnsAutoConfiguration {
         OrderProducerBean orderProducerBean = new OrderProducerBean();
         orderProducerBean.setProperties(onsProperties.getOnsProperties());
         return orderProducerBean;
-    }
-
-    @Bean
-    public OnsConsoleController onsConsoleController() {
-        return new OnsConsoleController();
     }
 
     @Bean(name = "localTransactionExecutor")

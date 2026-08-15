@@ -223,16 +223,4 @@ public class OssHelper {
         return JSONUtil.toJsonStr(aliOssPolicy);
     }
 
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        final OSS stsOss = new OSSClientBuilder().build("oss-cn-hangzhou.aliyuncs.com", "STS.NTXKVzNyBFa1HFFYC21t9awAb",
-                "965xDoLYyGZeY5WdRUfRzFDk8w37JuA9i4HJuUL8b1QJ",
-                "CAIS5AJ1q6Ft5B2yfSjIr5ftAOzOo6Zj8aPaSmD3vUNnPfsVjrLqgDz2IH1NfXNgAe0ev/Q2mWlZ6Psdlq1oSpZDHaZ87G7HqMY5yxioRqackWPcj9Vd+jTMewW6Dxr8w7X8AYHQR8/cffGAck3NkjQJr5LxaTSlWS7jU/iOkoU1QdkLeQO6YDFaZrJRPRAwkNIGEnHTOP2xUHjtmXGCLEdhti12i2509d6noKum5wHZkUfxx8IMuo31OeLEVcR3O4plWNrH4I5Mf6HagilL8EoIpuUkgKVc8DaCutCDDhxN7g6adOHT9MZoKAI+P+9gQ/Qc66Gl0qck/eaIztuslR8WY70KDHiAG4vwn8fNFb34botkebr1N3jHkPL3b8Ov6l16OS1Hb1MUJIN6cEUdU0J8FmvoTYa8403PbwuZTKyI7bo7y5IdzS+zoIPTfQjXHu3IgX9FY85iMhwyXBkNxnx1r3Wbm4exGRqAAa069nX+8Odb6DsF3dyfeylI8yklBMFqaOzE/BqjTJ0ziOOP6uD078pcFLeS5bazr3cwrIGK7DNIrH1Vf+wnxMXeXTyxm1I+T17pyAsEwSIuNu2MSXocV8twtV7umeqws9dJnAMCe1d7/ztJERbDMGsUHrW6WCrNsUYqqeeGpv5d");
-
-        stsOss.putObject("dapai-live-test", "console/1/2020/11/24/b31736a36477477c87dae69055ddfddb.svga",
-                new File("C:\\Users\\Administrator\\Pictures\\sharding\\rocket.svga"));
-
-    }
 }

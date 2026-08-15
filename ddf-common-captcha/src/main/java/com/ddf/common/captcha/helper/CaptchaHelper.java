@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.FastByteArrayOutputStream;
 
@@ -177,6 +178,14 @@ public class CaptchaHelper {
                     throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING.getCode(),
                             checkResult.getRepMsg());
                 }
+            } else {
+                // TEXT/MATH：从缓存取出答案比对，比对后删除防重放
+                final String cachedAnswer = captchaCacheService.get(request.getUuid());
+                if (StringUtils.isBlank(cachedAnswer)
+                        || !cachedAnswer.equalsIgnoreCase(request.getVerifyCode())) {
+                    throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
+                }
+                captchaCacheService.delete(request.getUuid());
             }
             final String captchaVerification = IdsUtil.getUniqueId();
             cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
