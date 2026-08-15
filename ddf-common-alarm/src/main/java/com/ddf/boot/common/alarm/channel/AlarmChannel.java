@@ -1,5 +1,7 @@
 package com.ddf.boot.common.alarm.channel;
 
+import com.ddf.boot.common.alarm.model.AlarmMessage;
+
 /**
  * 告警渠道策略接口，接入方注册自定义渠道 Bean 即可被聚合分发。
  *
@@ -19,7 +21,7 @@ public interface AlarmChannel {
     boolean isEnabled();
 
     /**
-     * 发送告警（标题 + 内容），各渠道自行渲染
+     * 发送结构化告警消息，各渠道按自身能力渲染（钉钉渲染为 markdown，Lark 渲染为富文本卡片）
      */
-    void send(String title, String content);
+    void send(AlarmMessage message);
 }

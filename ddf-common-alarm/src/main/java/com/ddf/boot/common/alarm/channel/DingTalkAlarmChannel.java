@@ -1,6 +1,7 @@
 package com.ddf.boot.common.alarm.channel;
 
 import com.ddf.boot.common.alarm.config.DingTalkProperties;
+import com.ddf.boot.common.alarm.model.AlarmMessage;
 import com.ddf.boot.common.alarm.util.DingTalkUtil;
 
 /**
@@ -31,8 +32,9 @@ public class DingTalkAlarmChannel implements AlarmChannel {
     }
 
     @Override
-    public void send(String title, String content) {
+    public void send(AlarmMessage message) {
         DingTalkProperties.Properties p = properties.getCodeProperties(applicationName);
-        DingTalkUtil.sendMarkdownMsgToAllWithLimit(p.getSecret(), p.getAccessToken(), title, content);
+        String markdown = String.join("\n", message.getLines());
+        DingTalkUtil.sendMarkdownMsgToAllWithLimit(p.getSecret(), p.getAccessToken(), message.getTitle(), markdown);
     }
 }

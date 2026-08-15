@@ -4,10 +4,12 @@ import cn.hutool.core.collection.CollUtil;
 import com.ddf.boot.common.alarm.channel.AlarmChannel;
 import com.ddf.boot.common.alarm.channel.AlarmFrequencyControl;
 import com.ddf.boot.common.alarm.config.ExceptionAlarmProperties;
+import com.ddf.boot.common.alarm.model.AlarmMessage;
 import com.ddf.boot.common.api.util.DateUtils;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.event.GlobalExceptionEvent;
 import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -55,11 +57,11 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
             if (Objects.nonNull(frequencyControl) && !frequencyControl.tryAcquire(payload.getErrorCode())) {
                 return;
             }
-            String content = buildContent(payload);
+            AlarmMessage message = buildMessage(payload);
             for (AlarmChannel channel : alarmChannels) {
                 if (channel.isEnabled()) {
                     try {
-                        channel.send("代码异常告警", content);
+                        channel.send(message);
                     } catch (Exception e) {
                         log.error("发送告警失败, channel={}", channel.getChannelType(), e);
                     }
@@ -68,26 +70,25 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
         });
     }
 
-    private String buildContent(GlobalExceptionEventPayload payload) {
+    private AlarmMessage buildMessage(GlobalExceptionEventPayload payload) {
         final String parameterMapJson = JsonUtil.toJson(payload.getParameterMap());
-        StringBuilder sbl = new StringBuilder();
-        sbl.append("# 服务信息: \n");
-        sbl.append("## 应用名称与环境: \n").append(">").append(payload.getApplicationName()).append("[").append(
-                payload.getProfile()).append("] \n");
-        sbl.append("## 发生时间: \n").append(">").append(DateUtils.standardFormatMillis(payload.getTimestamps()))
-                .append(" \n");
-        sbl.append("## 主机: \n").append(">").append(payload.getHost()).append(" \n");
-        sbl.append("# 设备信息: \n");
-        sbl.append("## 是否网关转发: \n").append(">").append(payload.getIsGatewayDispatch()).append(" \n");
-        sbl.append("## imei: \n").append(">").append(payload.getImei()).append(" \n");
-        sbl.append("## uid: \n").append(">").append(payload.getUid()).append(" \n");
-        sbl.append("## os: \n").append(">").append(payload.getOs()).append(" \n");
-        sbl.append("# 接口信息: \n");
-        sbl.append("## url: \n").append(">").append(payload.getUrl()).append(" \n");
-        sbl.append("## 查询参数: \n").append(">").append(parameterMapJson).append(" \n");
-        sbl.append("## 请求体: \n").append(">").append(payload.getBody()).append(" \n");
-        sbl.append("## 请求头: \n").append(">").append(payload.getClientHeaderMap()).append(" \n");
-        sbl.append("# 异常详情: \n").append(">").append(payload.getErrorMessage()).append(" \n");
-        return sbl.toString();
+        List<String> lines = new ArrayList<>();
+        lines.add("【服务信息】");
+        lines.add("应用名称与环境: " + payload.getApplicationName() + "[" + payload.getProfile() + "]");
+        lines.add("发生时间: " + DateUtils.standardFormatMillis(payload.getTimestamps()));
+        lines.add("主机: " + payload.getHost());
+        lines.add("【设备信息】");
+        lines.add("是否网关转发: " + payload.getIsGatewayDispatch());
+        lines.add("imei: " + payload.getImei());
+        lines.add("uid: " + payload.getUid());
+        lines.add("os: " + payload.getOs());
+        lines.add("【接口信息】");
+        lines.add("url: " + payload.getUrl());
+        lines.add("查询参数: " + parameterMapJson);
+        lines.add("请求体: " + payload.getBody());
+        lines.add("请求头: " + payload.getClientHeaderMap());
+        lines.add("【异常详情】");
+        lines.add(String.valueOf(payload.getErrorMessage()));
+        return new AlarmMessage("代码异常告警", lines);
     }
 }
