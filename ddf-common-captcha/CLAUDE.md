@@ -10,6 +10,9 @@
 |---------------------------------------------------------------------|--------|
 | `com.ddf.common.captcha.helper.CaptchaHelper`                       | 验证码工具类 |
 | `com.ddf.common.captcha.properties.CaptchaProperties`               | 配置属性   |
+| `com.ddf.common.captcha.producer.CaptchaProducer`                   | 验证码生成策略接口 |
+| `com.ddf.common.captcha.producer.TextCaptchaProducer`               | 图形字符验证码实现   |
+| `com.ddf.common.captcha.event.CaptchaVerifyEvent`                   | 验证码校验事件   |
 | `com.ddf.boot.common.api.model.captcha.request.CaptchaRequest`      | 验证码请求  |
 | `com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest` | 校验请求   |
 
@@ -113,6 +116,43 @@ boolean valid = captchaHelper.check(
 | `MATH`        | 数学表达式验证码 |
 | `PIC_SLIDE`   | 滑动滑块验证码  |
 | `CLICK_WORDS` | 点选文字验证码  |
+
+## 扩展点
+
+### 自定义验证码类型
+
+接入方实现 `CaptchaProducer` 接口并注册 Bean，即可扩展验证码生成（按 `CaptchaType` 分发到 `Map<CaptchaType, CaptchaProducer>`）。内置 `TextCaptchaProducer` 是 `CaptchaType.TEXT` 的默认实现：
+
+```java
+@Component
+public class CustomCaptchaProducer implements CaptchaProducer {
+
+    @Override
+    public CaptchaType getCaptchaType() {
+        // 返回本生产者支持的验证码类型
+        return CaptchaType.MATH;
+    }
+
+    @Override
+    public CaptchaResult generate() {
+        // 生成验证码并写入缓存，返回 CaptchaResult
+        return new CaptchaResult();
+    }
+}
+```
+
+### 校验事件
+
+验证码校验成功/失败时发布 `CaptchaVerifyEvent`（uuid + success），接入方用 `@EventListener` 订阅：
+
+```java
+@EventListener
+public void onCaptchaVerify(CaptchaVerifyEvent event) {
+    String uuid = event.getUuid();
+    boolean success = event.isSuccess();
+    // 记录校验日志或风控处理
+}
+```
 
 ## 注意事项
 

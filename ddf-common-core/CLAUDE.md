@@ -14,6 +14,12 @@
 | `com.ddf.boot.common.core.util.IdsUtil`               | ID 生成工具               |
 | `com.ddf.boot.common.core.helper.ThreadBuilderHelper` | 线程池构建器                |
 | `com.ddf.boot.common.core.helper.SpringContextHolder` | Spring 上下文持有者         |
+| `com.ddf.boot.common.core.authentication.TokenGenerator` | Token 生成/校验策略接口 |
+| `com.ddf.boot.common.core.authentication.DefaultTokenGenerator` | 默认 Token 生成实现 |
+| `com.ddf.boot.common.core.authentication.TokenUtil` | Token 工具类（已弃用） |
+| `com.ddf.boot.common.core.event.LoginSuccessEvent` | 登录成功事件 |
+| `com.ddf.boot.common.core.event.TokenRefreshEvent` | token 刷新事件 |
+| `com.ddf.boot.common.core.event.LoginFailureEvent` | 登录失败事件 |
 
 ## 使用说明
 
@@ -72,6 +78,56 @@ long id = IdsUtil.getNextId();
 
 // 获取字符串格式 ID
 String idStr = IdsUtil.getNextStrId();
+```
+
+## 认证扩展点
+
+### TokenGenerator
+
+默认注册 `DefaultTokenGenerator`（AES 加密 + 可选 TokenCache），接入方注入自定义 `TokenGenerator` Bean 即可替换（`@ConditionalOnMissingBean(TokenGenerator.class)`）：
+
+```java
+@Component
+public class MyTokenGenerator implements TokenGenerator {
+
+    @Override
+    public AuthenticateToken createToken(UserClaim userClaim) {
+        // 生成 token
+    }
+
+    @Override
+    public UserClaim getUserClaim(String token) {
+        // 解析 token
+    }
+
+    @Override
+    public AuthenticateCheckResult checkToken(String token) {
+        // 校验 token
+    }
+
+    @Override
+    public void refreshToken(String userId, String token) {
+        // 刷新 token
+    }
+}
+```
+
+> `TokenUtil` 已 `@Deprecated`，内部委托给 `TokenGenerator`，新代码请注入 `TokenGenerator` 使用。
+
+### 认证事件
+
+| 事件类（`com.ddf.boot.common.core.event` 包） | 触发时机        | 关键字段              |
+|-------------------------------------|-------------|-------------------|
+| `LoginSuccessEvent`                 | 登录成功/生成 token | `userClaim`       |
+| `TokenRefreshEvent`                 | token 刷新     | `userId`          |
+| `LoginFailureEvent`                 | 认证失败        | `token`、`errorCode` |
+
+```java
+@EventListener
+public void onLoginSuccess(LoginSuccessEvent event) {
+    UserClaim userClaim = event.getUserClaim();
+    // 记录登录日志等
+}
 ```
 
 ## 注意事项

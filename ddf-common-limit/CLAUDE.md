@@ -12,6 +12,9 @@
 | `com.ddf.boot.common.limit.repeatable.handler.RepeatAspect`   | 防重复提交切面 |
 | `com.ddf.boot.common.limit.ratelimit.annotation.RateLimit`    | 限流注解    |
 | `com.ddf.boot.common.limit.repeatable.annotation.Repeatable`  | 防重复提交注解 |
+| `com.ddf.boot.common.limit.ratelimit.algorithm.RateLimitAlgorithm` | 限流算法策略接口 |
+| `com.ddf.boot.common.limit.ratelimit.algorithm.TokenBucketRateLimitAlgorithm` | 默认令牌桶算法 |
+| `com.ddf.boot.common.limit.ratelimit.event.RateLimitTriggeredEvent` | 限流触发事件 |
 
 ## 使用说明
 
@@ -101,6 +104,48 @@ public class CustomRateLimitKeyGenerator implements RateLimitKeyGenerator {
 | 滑动窗口 | 基于时间窗口的计数 | 平滑限流 |
 | 令牌桶  | 固定速率生成令牌  | 突发流量 |
 | 漏桶   | 以固定速率处理请求 | 平滑处理 |
+
+### 5. 自定义限流算法
+
+默认使用 `TokenBucketRateLimitAlgorithm`（bean name `tokenBucket`）。接入方实现 `RateLimitAlgorithm` 并注册 Bean，通过 `@RateLimit` 的 `algorithm()` 字段指定：
+
+```java
+@RateLimit(max = 100, rate = 10, algorithm = "myAlgorithm")
+@GetMapping("/api/test")
+public ResponseData<String> test() {
+    return ResponseData.success("OK");
+}
+```
+
+```java
+@Component("myAlgorithm")
+public class MyRateLimitAlgorithm implements RateLimitAlgorithm {
+
+    @Override
+    public String getAlgorithm() {
+        return "myAlgorithm";
+    }
+
+    @Override
+    public boolean tryAcquire(String key, int max, int rate) {
+        // 自定义限流逻辑，返回 false 表示被限流
+        return true;
+    }
+}
+```
+
+### 6. 限流触发事件
+
+限流触发时发布 `RateLimitTriggeredEvent`（key + algorithm），接入方用 `@EventListener` 订阅做告警/降级：
+
+```java
+@EventListener
+public void onRateLimit(RateLimitTriggeredEvent event) {
+    String key = event.getKey();
+    String algorithm = event.getAlgorithm();
+    // 告警或降级处理
+}
+```
 
 ## 配置说明
 
