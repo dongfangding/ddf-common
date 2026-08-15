@@ -339,16 +339,25 @@ public class TigerMachineApp {
         private void calculate() {
             int rows = matrix.length;
             int cols = matrix[0].length;
-            Map<String, List<Integer>> startSymbols = new HashMap<>();
-            int scatterCount = 0;
+            Map<String, List<Integer>> startSymbols = collectStartSymbols(rows);
+            int scatterCount = collectIdsAndScatterCount(rows, cols);
+            calculateLineResults(rows, cols, startSymbols);
+            calculateScatterFreeSpins(rows, cols, scatterCount);
+        }
 
+        private Map<String, List<Integer>> collectStartSymbols(int rows) {
+            Map<String, List<Integer>> startSymbols = new HashMap<>();
             for (int r = 0; r < rows; r++) {
                 Symbol s = matrix[r][0];
                 if ("Normal".equals(s.type)) {
                     startSymbols.computeIfAbsent(s.name, k -> new ArrayList<>()).add(r);
                 }
             }
+            return startSymbols;
+        }
 
+        private int collectIdsAndScatterCount(int rows, int cols) {
+            int scatterCount = 0;
             for (int c = 0; c < cols; c++) {
                 for (int r = 0; r < rows; r++) {
                     Symbol s = matrix[r][c];
@@ -358,83 +367,101 @@ public class TigerMachineApp {
                     }
                 }
             }
+            return scatterCount;
+        }
 
-            // 连线逻辑
+        private void calculateLineResults(int rows, int cols, Map<String, List<Integer>> startSymbols) {
             for (String name : startSymbols.keySet()) {
-                List<Integer> colsMatched = new ArrayList<>(List.of(0));
-                for (int c = 1; c < cols; c++) {
-                    boolean match = false;
-                    for (int r = 0; r < rows; r++) {
-                        if (matrix[r][c].name.equals(name) || "Wild".equals(matrix[r][c].type)) {
-                            match = true;
-                            break;
-                        }
-                    }
-                    if (match) {
-                        colsMatched.add(c);
-                    } else {
+                List<Integer> colsMatched = findMatchedColumns(rows, cols, name);
+                if (colsMatched.size() < 3) {
+                    continue;
+                }
+                int lineCount = calculateLineCountAndLight(rows, cols, name);
+                Symbol first = findFirstSymbol(rows, name);
+                int multi = resolveMultiplier(colsMatched.size(), first);
+                if (multi > 0) {
+                    totalMultiple += multi * lineCount;
+                    totalLines += lineCount;
+                }
+            }
+        }
+
+        private List<Integer> findMatchedColumns(int rows, int cols, String name) {
+            List<Integer> colsMatched = new ArrayList<>(List.of(0));
+            for (int c = 1; c < cols; c++) {
+                boolean match = false;
+                for (int r = 0; r < rows; r++) {
+                    if (matrix[r][c].name.equals(name) || "Wild".equals(matrix[r][c].type)) {
+                        match = true;
                         break;
                     }
                 }
-
-                if (colsMatched.size() >= 3) {
-                    int lineCount = 1;
-                    int flatIdx = 0;
-                    for (int c = 0; c < cols; c++) {
-                        int currentLineMatch = 0;
-                        for (int r = 0; r < rows; r++) {
-                            if (matrix[r][c].name.equals(name) || "Wild".equals(matrix[r][c].type)) {
-                                currentLineMatch++;
-                                lightIndex.add(flatIdx);
-                            }
-                            flatIdx++;
-                        }
-                        if (currentLineMatch == 0) {
-                            break;
-                        }
-                        lineCount *= currentLineMatch;
-                    }
-
-                    Symbol first = null;
-                    for (int r = 0; r < rows; r++) {
-
-                        if (matrix[r][0].name.equals(name)) {
-                            first = matrix[r][0];
-                            break;
-                        }
-                    }
-
-                    int multi = switch (colsMatched.size()) {
-                        case 3 -> first.threeMatchMulti;
-                        case 4 -> first.fourMatchMulti;
-                        case 5 -> first.fiveMatchMulti;
-                        default -> 0;
-                    };
-                    if (multi > 0) {
-                        totalMultiple += multi * lineCount;
-                        totalLines += lineCount;
-                    }
+                if (match) {
+                    colsMatched.add(c);
+                } else {
+                    break;
                 }
             }
+            return colsMatched;
+        }
 
-            // Scatter 逻辑
-            if (scatterCount >= 6) {
-                int flatIdx = 0;
-                for (int c = 0; c < cols; c++) {
-                    for (int r = 0; r < rows; r++) {
-                        if ("Scatter".equals(matrix[r][c].type)) {
-                            lightIndex.add(flatIdx);
-                        }
-                        flatIdx++;
+        private int calculateLineCountAndLight(int rows, int cols, String name) {
+            int lineCount = 1;
+            int flatIdx = 0;
+            for (int c = 0; c < cols; c++) {
+                int currentLineMatch = 0;
+                for (int r = 0; r < rows; r++) {
+                    if (matrix[r][c].name.equals(name) || "Wild".equals(matrix[r][c].type)) {
+                        currentLineMatch++;
+                        lightIndex.add(flatIdx);
                     }
+                    flatIdx++;
                 }
-                if (isFree) {
-                    freeSpins = 5;
-                } else {
-                    Map<Integer, Integer> s2f = Map.of(6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14,
-                            350, 15, 500);
-                    freeSpins = s2f.getOrDefault(scatterCount, 0);
+                if (currentLineMatch == 0) {
+                    break;
                 }
+                lineCount *= currentLineMatch;
+            }
+            return lineCount;
+        }
+
+        private Symbol findFirstSymbol(int rows, String name) {
+            for (int r = 0; r < rows; r++) {
+                if (matrix[r][0].name.equals(name)) {
+                    return matrix[r][0];
+                }
+            }
+            return null;
+        }
+
+        private int resolveMultiplier(int matchedColumnCount, Symbol first) {
+            return switch (matchedColumnCount) {
+                case 3 -> first.threeMatchMulti;
+                case 4 -> first.fourMatchMulti;
+                case 5 -> first.fiveMatchMulti;
+                default -> 0;
+            };
+        }
+
+        private void calculateScatterFreeSpins(int rows, int cols, int scatterCount) {
+            if (scatterCount < 6) {
+                return;
+            }
+            int flatIdx = 0;
+            for (int c = 0; c < cols; c++) {
+                for (int r = 0; r < rows; r++) {
+                    if ("Scatter".equals(matrix[r][c].type)) {
+                        lightIndex.add(flatIdx);
+                    }
+                    flatIdx++;
+                }
+            }
+            if (isFree) {
+                freeSpins = 5;
+            } else {
+                Map<Integer, Integer> s2f = Map.of(6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14,
+                        350, 15, 500);
+                freeSpins = s2f.getOrDefault(scatterCount, 0);
             }
         }
     }

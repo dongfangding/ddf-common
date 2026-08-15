@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -179,51 +178,5 @@ public class ComparatorUtil {
         return Arrays.stream(originStr.split(","))
                 .filter(s -> !finalToRemove.contains(URLUtil.url(s).getPath()))
                 .collect(Collectors.joining(","));
-    }
-
-
-
-    public static void test() {
-
-        System.out.println(compareWithWeakReplaceLast("a,b,c,d", "d,b,c,a"));
-
-
-        System.out.println(compareWithWeakReplaceLast("A,B", "B"));
-        System.out.println(compareWithWeakReplaceLast("1,2,3,4", "5"));
-
-        // 测试用例 1：完全空字符串
-        System.out.println(compareWithWeakReplaceLast("", ""));
-
-        // 测试用例 2：一个字符串为空
-        System.out.println(compareWithWeakReplaceLast("", "d,b,e,f"));
-
-        // 测试用例 3：完全相同的字符串
-        System.out.println(compareWithWeakReplaceLast("a,b,c", "a,b,c"));
-
-        // 测试用例 4：完全不相同的字符串
-        System.out.println(compareWithWeakReplaceLast("a,b,c", "d,e,f"));
-
-        // 测试用例 5：部分相同的字符串
-        System.out.println(compareWithWeakReplaceLast("a,b,c", "a,x,c,q"));
-
-        // 测试用例 6：新增、替换、删除混合情况
-        System.out.println(compareWithWeakReplaceLast("a,b,c,q,x,y,z", "d,b,e,f,z"));
-
-
-        System.out.println("\n=== 测试 replaceElements 方法 ===");
-        String originStr = "a,b,c,d";
-        String replacedString = replaceSplitValueIfMatch(originStr, "b", "z");
-        System.out.println("替换后数组: " + replacedString);
-
-        System.out.println("\n=== 测试 deleteElements 方法 ===");
-        String deletedString = removeSplitValueIfMatch(originStr, "b");
-        System.out.println("删除后数组: " + deletedString);
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        test();
     }
 }

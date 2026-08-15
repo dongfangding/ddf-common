@@ -6,7 +6,6 @@ import com.ddf.boot.common.redis.request.GeoMemberSearchRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.redisson.Redisson;
 import org.redisson.api.GeoEntry;
 import org.redisson.api.GeoOrder;
 import org.redisson.api.GeoPosition;
@@ -15,8 +14,6 @@ import org.redisson.api.RGeo;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.geo.GeoSearchArgs;
 import org.redisson.api.geo.OptionalGeoSearch;
-import org.redisson.codec.JsonJacksonCodec;
-import org.redisson.config.Config;
 
 /**
  * <p>基于地理空间的的帮助类</p >
@@ -88,17 +85,10 @@ public class GeoHelper {
      * @param <V> 值泛型类型
      */
     public <V> List<V> radius(GeoCoordinateSearchRequest request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
                 .radius(request.getRadius(), request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.search(optionalGeoSearch);
     }
 
@@ -112,17 +102,10 @@ public class GeoHelper {
      * @param request 请求对象
      */
     public <V> Map<V, Double> radiusWithDistance(GeoCoordinateSearchRequest request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
                 .radius(request.getRadius(), request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.searchWithDistance(optionalGeoSearch);
     }
 
@@ -135,17 +118,10 @@ public class GeoHelper {
      * @param <V> 值泛型类型
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoCoordinateSearchRequest request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getLongitude(), request.getLatitude())
                 .radius(request.getRadius(), request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.searchWithPosition(optionalGeoSearch);
     }
 
@@ -156,17 +132,10 @@ public class GeoHelper {
      * @param <V> 值泛型类型
      */
     public <V> List<V> radius(GeoMemberSearchRequest<V> request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
                 request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.search(optionalGeoSearch);
     }
 
@@ -180,17 +149,10 @@ public class GeoHelper {
      * @param request 请求对象
      */
     public <V> Map<V, Double> radiusWithDistance(GeoMemberSearchRequest<V> request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
                 request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.searchWithDistance(optionalGeoSearch);
     }
 
@@ -203,65 +165,27 @@ public class GeoHelper {
      * @param <V> 值泛型类型
      */
     public <V> Map<V, GeoPosition> radiusWithPosition(GeoMemberSearchRequest<V> request) {
-        // PreconditionUtil.requiredParamCheck(request);
         final RGeo<V> geo = get(request.getKey());
         final OptionalGeoSearch optionalGeoSearch = GeoSearchArgs.from(request.getMember()).radius(request.getRadius(),
                 request.getGeoUnit());
-        if (ObjectUtil.isAllNotEmpty(request.getCount(), request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder()).count(request.getCount());
-        } else if (Objects.nonNull(request.getCount())) {
-            optionalGeoSearch.count(request.getCount());
-        } else if (Objects.nonNull(request.getGeoOrder())) {
-            optionalGeoSearch.order(request.getGeoOrder());
-        }
+        applyCountAndOrder(optionalGeoSearch, request.getCount(), request.getGeoOrder());
         return geo.searchWithPosition(optionalGeoSearch);
     }
 
     /**
-     * @param args 参数
+     * 将可选的数量和排序条件应用到地理查询中
+     *
+     * @param search 地理查询对象
+     * @param count 查询数量
+     * @param order 排序方式
      */
-    public static void main(String[] args) {
-        final Config config = new Config();
-        config.useSingleServer().setAddress("redis://localhost:6379").setPassword("xxxxx");
-        config.setCodec(new JsonJacksonCodec());
-        final RedissonClient redisson = Redisson.create(config);
-        final GeoHelper helper = new GeoHelper(redisson);
-
-
-        final RGeo<String> geo = helper.get("geo:test");
-        String key = "geo:test";
-        helper.add(key, 13.361389, 38.115556, "Palermo");
-        helper.add(key, 15.087269, 37.502669, "Catalina");
-        helper.add(key, 14.087269, 37.502669, "ZhangSan");
-        helper.add(key, 15.087169, 38.502669, "LiSi");
-        helper.add(key, 18.087269, 37.502669, "WangEr");
-        helper.add(key, 25.087269, 39.502669, "MaZi");
-
-        final Double dist = helper.dist(key, "Palermo", "MaZi", GeoUnit.KILOMETERS);
-        System.out.printf("相距距离: %s %s%n", dist, GeoUnit.KILOMETERS.name());
-
-        final GeoCoordinateSearchRequest build = GeoCoordinateSearchRequest.builder()
-                .key(key)
-                .longitude(14.361389)
-                .latitude(37.502669)
-                .radius(150d)
-                .geoUnit(GeoUnit.KILOMETERS)
-                .geoOrder(GeoOrder.ASC)
-                .count(5)
-                .build();
-
-        final List<String> radius = helper.radius(build);
-        System.out.println("radius = " + radius);
-
-
-        final Map<String, Double> map = helper.radiusWithDistance(build);
-        System.out.println("map = " + map);
-
-        final Map<String, GeoPosition> map1 = helper.radiusWithPosition(build);
-        System.out.println("map1 = " + map1);
-
+    private void applyCountAndOrder(OptionalGeoSearch search, Integer count, GeoOrder order) {
+        if (ObjectUtil.isAllNotEmpty(count, order)) {
+            search.order(order).count(count);
+        } else if (Objects.nonNull(count)) {
+            search.count(count);
+        } else if (Objects.nonNull(order)) {
+            search.order(order);
+        }
     }
-
-
-
 }

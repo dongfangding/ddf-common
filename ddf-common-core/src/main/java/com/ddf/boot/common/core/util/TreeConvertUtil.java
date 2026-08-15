@@ -2,7 +2,6 @@ package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.ddf.boot.common.api.constraint.collect.ITreeTagCollection;
-import com.ddf.boot.common.api.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -89,16 +88,5 @@ public class TreeConvertUtil {
         public List<Node> getChildren() {
             return children;
         }
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        final List<Node> nodes = List.of(Node.of("1", 1L, 0L, new ArrayList<>()),
-                Node.of("1-1", 2L, 1L, new ArrayList<>()), Node.of("1-1-1", 3L, 2L, new ArrayList<>()),
-                Node.of("1-2", 4L, 1L, new ArrayList<>()), Node.of("2", 5L, null, new ArrayList<>()));
-        final List<Node> nodes1 = convert(nodes);
-        System.out.println(JsonUtil.toJson(nodes1));
     }
 }

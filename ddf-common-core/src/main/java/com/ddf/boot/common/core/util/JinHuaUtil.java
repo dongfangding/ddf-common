@@ -18,30 +18,6 @@ public class JinHuaUtil {
     static final int[] CARD_ID_ARR = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
     static final String[] CARD_VALUE1_ARR = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
-    public static void main(String[] args) {
-        // 使用固定牌组进行测试
-        System.out.println("\n========== 固定牌组测试 ==========");
-
-        final List<JinHuaCard> fixedHandList = randomCard(15);
-        for (JinHuaCard card : fixedHandList) {
-            System.out.println();
-            final JinHuaCardTypeEnum resolve = JinHuaCardTypeEnum.resolve(card.getCardType());
-            System.out.printf("cardType: %s, cardScore: %s%n",
-                    "%s:(%s)".formatted(resolve.getType(), resolve.getDesc()), card.getCardScore());
-            System.out.println("具体牌型如下: ");
-            final List<PokerCard> cards = card.getCards();
-            for (PokerCard pokerCard : cards) {
-                System.out.println(
-                        "  " + getSuitSymbol(pokerCard.getCardColor()) + " " + pokerCard.getCardValue() + " " + " | "
-                                + pokerCard.getCardColor() + " " + pokerCard.getOriginCardId() + " "
-                                + pokerCard.getCardId());
-            }
-            System.out.println();
-        }
-
-        //        fixedCard();
-    }
-
     /**
      * @param count 数量
      */
@@ -50,98 +26,6 @@ public class JinHuaUtil {
         List<JinHuaCard> fixedHandList = createCardByPlayersTotal(count);
         fixedHandList.sort(Comparator.comparing(JinHuaCard::getCardScore).reversed());
         return fixedHandList;
-    }
-
-    /**
-     * 创建固定的牌组用于测试
-     *
-     * @return 固定的手牌列表
-     */
-    private static List<List<Integer>> createFixedHandList() {
-        List<List<Integer>> handList = new ArrayList<>();
-
-        // 玩家1：同花顺 - Q, K, A of spades (基本上最大的同花顺)
-        List<Integer> hand1 = new ArrayList<>();
-        hand1.add(getCardId("Q", "spades"));
-        hand1.add(getCardId("K", "spades"));
-        hand1.add(getCardId("A", "spades"));
-
-        // 玩家2：豹子 - 三个K (基本上第二大的牌)
-        List<Integer> hand2 = new ArrayList<>();
-        hand2.add(getCardId("K", "spades"));
-        hand2.add(getCardId("K", "hearts"));
-        hand2.add(getCardId("K", "clubs"));
-
-        // 玩家3：同花 - 3, 8, J of hearts
-        List<Integer> hand3 = new ArrayList<>();
-        hand3.add(getCardId("3", "hearts"));
-        hand3.add(getCardId("8", "hearts"));
-        hand3.add(getCardId("J", "hearts"));
-
-        // 玩家4：顺子 - 6, 7, 8 of mixed suits
-        List<Integer> hand4 = new ArrayList<>();
-        hand4.add(getCardId("6", "spades"));
-        hand4.add(getCardId("7", "hearts"));
-        hand4.add(getCardId("8", "clubs"));
-
-        // 玩家5：对子 - A pair + 9
-        List<Integer> hand5 = new ArrayList<>();
-        hand5.add(getCardId("A", "hearts"));
-        hand5.add(getCardId("A", "diamonds"));
-        hand5.add(getCardId("9", "clubs"));
-
-        // 玩家6：高牌 - A, 10, 8 of mixed suits
-        List<Integer> hand6 = new ArrayList<>();
-        hand6.add(getCardId("A", "clubs"));
-        hand6.add(getCardId("2", "diamonds"));
-        hand6.add(getCardId("4", "spades"));
-        // 玩家6：高牌 - A, 10, 8 of mixed suits
-        List<Integer> hand7 = new ArrayList<>();
-        hand7.add(getCardId("K", "clubs"));
-        hand7.add(getCardId("Q", "diamonds"));
-        hand7.add(getCardId("10", "spades"));
-
-        // 将所有玩家的手牌添加到列表中
-        handList.add(hand1);
-        handList.add(hand2);
-        handList.add(hand3);
-        handList.add(hand4);
-        handList.add(hand5);
-        handList.add(hand6);
-        handList.add(hand7);
-
-        return handList;
-    }
-
-    /**
-     * 根据牌面和花色获取牌ID
-     *
-     * @param rank 牌面 ("2"-"10", "J", "Q", "K", "A")
-     * @param suit 花色 ("spades", "hearts", "clubs", "diamonds")
-     * @return 牌ID (1-52)
-     */
-    private static int getCardId(String rank, String suit) {
-        int suitIndex = -1;
-        for (int i = 0; i < SUIT_LIST.length; i++) {
-            if (SUIT_LIST[i].equals(suit)) {
-                suitIndex = i;
-                break;
-            }
-        }
-
-        int rankIndex = -1;
-        for (int i = 0; i < CARD_VALUE1_ARR.length; i++) {
-            if (CARD_VALUE1_ARR[i].equals(rank)) {
-                rankIndex = i;
-                break;
-            }
-        }
-
-        if (suitIndex == -1 || rankIndex == -1) {
-            throw new IllegalArgumentException("Invalid card: " + rank + " of " + suit);
-        }
-
-        return suitIndex * 13 + rankIndex + 1;
     }
 
     /**
@@ -219,7 +103,6 @@ public class JinHuaUtil {
             }
             handList.add(hand);
         }
-        System.out.println("所有玩家手牌: " + handList);
         return handList;
     }
 
@@ -284,23 +167,6 @@ public class JinHuaUtil {
         return rank[0].equals(rank[1]) || rank[0].equals(rank[2]) || rank[1].equals(rank[2]);
     }
 
-
-    /**
-     * 根据牌型返回对应的表情符号
-     *
-     * @param handType 参数
-     */
-    private static String getTypeEmoji(JinHuaCardTypeEnum handType) {
-        return switch (handType) {
-            case TYPE_THREE_OF_A_KIND -> "🏆"; // 豹子
-            case TYPE_STRAIGHT_FLUSH -> "👑"; // 同花顺
-            case TYPE_FLUSH -> "🌸"; // 同花
-            case TYPE_STRAIGHT -> "📈"; // 顺子
-            case TYPE_PAIR -> "👯"; // 对子
-            case TYPE_HIGH_CARD -> "🃏"; // 高牌
-            default -> "";
-        };
-    }
 
     /**
      * 评估单个玩家手牌的得分
@@ -454,24 +320,6 @@ public class JinHuaUtil {
         // 最后的牌型就是，zzzyyyxxx
 
         return sorted[2] * 10000 + sorted[1] * 100 + sorted[0];
-    }
-
-    /**
-     * @param suit 参数
-     */
-    private static String getSuitSymbol(String suit) {
-        switch (suit) {
-            case "SPADES":
-                return "♠";
-            case "HEARTS":
-                return "♥";
-            case "CLUBS":
-                return "♣";
-            case "DIAMONDS":
-                return "♦";
-            default:
-                return "";
-        }
     }
 
 }
