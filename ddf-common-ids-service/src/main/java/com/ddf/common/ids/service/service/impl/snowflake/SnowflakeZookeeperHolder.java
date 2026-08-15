@@ -6,11 +6,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +53,6 @@ public class SnowflakeZookeeperHolder {
 
     public boolean init() {
         try {
-            System.setProperty("zookeeper.clientCnxnSocketNIO.pingIntervalMs", "5000");
-            System.setProperty("zookeeper.clientCnxnSocket", "org.apache.zookeeper.ClientCnxnSocketNetty");
             CuratorFramework curator = createWithOptions(connectionString, new ExponentialBackoffRetry(1000, 3), 10000,
                     30000);
             curator.start();
@@ -108,16 +104,8 @@ public class SnowflakeZookeeperHolder {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Start node ERROR {}", e);
-            try {
-                Properties properties = new Properties();
-                properties.load(new FileInputStream(new File(PROP_PATH.replace("{port}", port + ""))));
-                workerID = Integer.valueOf(properties.getProperty("workerID"));
-                LOGGER.warn("START FAILED ,use local node file properties workerID-{}", workerID);
-            } catch (Exception e1) {
-                LOGGER.error("Read file error ", e1);
-                return false;
-            }
+            LOGGER.error("Start node ERROR", e);
+            return false;
         }
         return true;
     }

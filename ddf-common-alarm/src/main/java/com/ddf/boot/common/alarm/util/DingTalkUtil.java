@@ -31,14 +31,6 @@ import org.apache.commons.lang3.ObjectUtils;
 @Slf4j
 public class DingTalkUtil {
 
-    private static final DingTalkProperties DING_TALK_PROPERTIES;
-    private static final RedisTemplateHelper REDIS_TEMPLATE_HELPER;
-
-    static {
-        DING_TALK_PROPERTIES = SpringContextHolder.getBeanWithStatic(DingTalkProperties.class);
-        REDIS_TEMPLATE_HELPER = SpringContextHolder.getBean(RedisTemplateHelper.class);
-    }
-
     /**
      * 使用钉钉发送markdown机器人， 并且@所有人, 并且限制发送次数，主要是为了避免前期就把每月额度用完了，后面直接哑火。所有每天定量，只影响当天。
      *
@@ -48,14 +40,16 @@ public class DingTalkUtil {
      * @param content 内容
      */
     public static void sendMarkdownMsgToAllWithLimit(String secret, String accessToken, String title, String content) {
-        if (!ObjectUtils.allNotNull(DING_TALK_PROPERTIES, REDIS_TEMPLATE_HELPER)) {
+        final DingTalkProperties dingTalkProperties = SpringContextHolder.getBeanWithStatic(DingTalkProperties.class);
+        final RedisTemplateHelper redisTemplateHelper = SpringContextHolder.getBeanWithStatic(RedisTemplateHelper.class);
+        if (!ObjectUtils.allNotNull(dingTalkProperties, redisTemplateHelper)) {
             log.error("钉钉机器人发送消息失败， 钉钉配置或redis配置未初始化");
             return;
         }
         final String yearMonthDay = String.valueOf(DateUtils.currentYearMonthDay());
-        final AccessLimitResponse response = REDIS_TEMPLATE_HELPER.stringIncrWithLimit(
+        final AccessLimitResponse response = redisTemplateHelper.stringIncrWithLimit(
                 AlarmRedisKeyEnum.DING_TALK_DAILY_LIMIT.getKey(yearMonthDay), 1L,
-                (long) DING_TALK_PROPERTIES.getDailyLimit(),
+                (long) dingTalkProperties.getDailyLimit(),
                 AlarmRedisKeyEnum.DING_TALK_DAILY_LIMIT.getTtl().toSeconds());
         if (response.isLimited()) {
             throw new BusinessException("钉钉机器人发送消息失败， 今日发送次数已达到上限");

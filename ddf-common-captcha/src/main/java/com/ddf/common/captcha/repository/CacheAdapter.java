@@ -1,6 +1,7 @@
 package com.ddf.common.captcha.repository;
 
 import com.ddf.boot.common.redis.helper.RedisTemplateHelper;
+import com.ddf.common.captcha.properties.CaptchaProperties;
 import java.time.Duration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -24,9 +25,13 @@ public class CacheAdapter {
 
     private final RedisTemplateHelper redisTemplateHelper;
 
-    public CacheAdapter(StringRedisTemplate stringRedisTemplate, RedisTemplateHelper redisTemplateHelper) {
+    private final CaptchaProperties captchaProperties;
+
+    public CacheAdapter(StringRedisTemplate stringRedisTemplate, RedisTemplateHelper redisTemplateHelper,
+            CaptchaProperties captchaProperties) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.redisTemplateHelper = redisTemplateHelper;
+        this.captchaProperties = captchaProperties;
     }
 
     /**
@@ -37,7 +42,7 @@ public class CacheAdapter {
      */
     public void setCaptchaVerification(String uuid, String captchaVerification) {
         stringRedisTemplate.opsForValue().set(String.format("%s:%s:verification", CAPTCHA_KEY_PREFIX, uuid),
-                captchaVerification, Duration.ofMinutes(5));
+                captchaVerification, Duration.ofSeconds(captchaProperties.getKeyExpiredSeconds()));
     }
 
     /**

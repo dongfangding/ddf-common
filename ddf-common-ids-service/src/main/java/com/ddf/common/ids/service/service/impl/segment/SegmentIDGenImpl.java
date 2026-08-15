@@ -65,7 +65,11 @@ public class SegmentIDGenImpl implements IDGen {
      * 一个Segment维持时间为15分钟
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
-    private ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+    /**
+     * 段更新线程池最大线程数，避免无界线程创建耗尽资源
+     */
+    private static final int MAX_UPDATE_THREADS = 10;
+    private ExecutorService service = new ThreadPoolExecutor(5, MAX_UPDATE_THREADS, 60L, TimeUnit.SECONDS,
             new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
     private volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();

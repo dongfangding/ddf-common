@@ -77,8 +77,9 @@ public class CaptchaAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheAdapter cacheAdapter(StringRedisTemplate stringRedisTemplate, RedisTemplateHelper redisTemplateHelper) {
-        return new CacheAdapter(stringRedisTemplate, redisTemplateHelper);
+    public CacheAdapter cacheAdapter(StringRedisTemplate stringRedisTemplate, RedisTemplateHelper redisTemplateHelper,
+            CaptchaProperties captchaProperties) {
+        return new CacheAdapter(stringRedisTemplate, redisTemplateHelper, captchaProperties);
     }
 
     /**

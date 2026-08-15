@@ -6,7 +6,6 @@ import com.ddf.boot.common.alarm.channel.AlarmFrequencyControl;
 import com.ddf.boot.common.alarm.config.ExceptionAlarmProperties;
 import com.ddf.boot.common.alarm.model.AlarmMessage;
 import com.ddf.boot.common.api.util.DateUtils;
-import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.event.GlobalExceptionEvent;
 import com.ddf.boot.common.core.event.GlobalExceptionEventPayload;
 import java.util.ArrayList;
@@ -71,7 +70,6 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
     }
 
     private AlarmMessage buildMessage(GlobalExceptionEventPayload payload) {
-        final String parameterMapJson = JsonUtil.toJson(payload.getParameterMap());
         List<String> lines = new ArrayList<>();
         lines.add("【服务信息】");
         lines.add("应用名称与环境: " + payload.getApplicationName() + "[" + payload.getProfile() + "]");
@@ -84,9 +82,6 @@ public class CodeExceptionNotify implements ApplicationListener<GlobalExceptionE
         lines.add("os: " + payload.getOs());
         lines.add("【接口信息】");
         lines.add("url: " + payload.getUrl());
-        lines.add("查询参数: " + parameterMapJson);
-        lines.add("请求体: " + payload.getBody());
-        lines.add("请求头: " + payload.getClientHeaderMap());
         lines.add("【异常详情】");
         lines.add(String.valueOf(payload.getErrorMessage()));
         return new AlarmMessage("代码异常告警", lines);

@@ -46,6 +46,9 @@ public class ThreadPoolMetricsBinder implements SmartInitializingSingleton {
             if (!shouldBind(beanName, properties)) {
                 continue;
             }
+            if (!applicationContext.isSingleton(beanName)) {
+                continue;
+            }
             Object bean = applicationContext.getBean(beanName);
             ExecutorService executorService = resolveExecutorService(bean);
             if (executorService == null) {

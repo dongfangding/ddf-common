@@ -23,8 +23,15 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
             return null;
         }
         final Integer suffix = value.getValue();
+        if (suffix == null) {
+            return null;
+        }
         final String first = collection.stream().findFirst().get();
-        final String baseTableName = first.substring(0, first.lastIndexOf("_"));
+        final int splitIndex = first.lastIndexOf("_");
+        if (splitIndex < 0) {
+            return null;
+        }
+        final String baseTableName = first.substring(0, splitIndex);
         return baseTableName + "_" + suffix;
     }
 
@@ -39,9 +46,16 @@ public class SuffixFieldShardingAlgorithm implements StandardShardingAlgorithm<I
         }
 
         final String first = collection.iterator().next();
-        final String baseTableName = first.substring(0, first.lastIndexOf("_"));
+        final int splitIndex = first.lastIndexOf("_");
+        if (splitIndex < 0) {
+            return Collections.emptyList();
+        }
+        final String baseTableName = first.substring(0, splitIndex);
 
         final Integer suffix = value.getValueRange().lowerEndpoint();
+        if (suffix == null) {
+            return Collections.emptyList();
+        }
 
         String targetTable = baseTableName + "_" + suffix;
 

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -69,6 +70,7 @@ public class AlarmAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "customizer.infra.alarm.tablescan", name = "enabled", havingValue = "true")
     public TableScan tableScan(Environment environment, Optional<DataSourceProperties> dataSourceProperties,
             Optional<TableNotify> tableNotify, Optional<DataSource> dataSource) {
         return new TableScan(environment, dataSourceProperties, tableNotify, dataSource);

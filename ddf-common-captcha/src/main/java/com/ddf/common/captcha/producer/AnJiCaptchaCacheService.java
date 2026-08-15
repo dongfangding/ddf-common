@@ -15,13 +15,6 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
 
     private final RedisCommandHelper redisCommandHelper;
 
-    /**
-     * 保留空构造，兼容 SPI；但运行时不建议使用该实例。
-     */
-    public AnJiCaptchaCacheService() {
-        this.redisCommandHelper = null;
-    }
-
     public AnJiCaptchaCacheService(RedisCommandHelper redisCommandHelper) {
         this.redisCommandHelper = redisCommandHelper;
     }

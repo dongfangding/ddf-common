@@ -38,6 +38,9 @@ public class LarkAlarmChannel implements AlarmChannel {
     @Override
     public void send(AlarmMessage message) {
         LarkProperties.Properties p = properties.getCodeProperties(applicationName);
+        if (p == null || !p.isEnabled() || p.getSecret() == null || p.getWebhookUrl() == null) {
+            return;
+        }
         List<List<LarkTag>> content = new ArrayList<>();
         for (String line : message.getLines()) {
             content.add(List.of(LarkTag.buildText(line)));

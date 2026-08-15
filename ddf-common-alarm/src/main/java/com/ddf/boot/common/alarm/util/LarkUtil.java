@@ -1,11 +1,9 @@
 package com.ddf.boot.common.alarm.util;
 
-import com.ddf.boot.common.alarm.config.LarkProperties;
 import com.ddf.boot.common.alarm.model.LarkContentRequest;
 import com.ddf.boot.common.api.exception.ServerErrorException;
 import com.ddf.boot.common.api.util.DateUtils;
 import com.ddf.boot.common.api.util.JsonUtil;
-import com.ddf.boot.common.core.helper.SpringContextHolder;
 import com.ddf.boot.common.core.util.HttpClientUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -32,12 +30,6 @@ public class LarkUtil {
      * 飞书 @所有人的标签。
      */
     private static final String LARK_AT_ALL_TAG = "<at user_id=\"all\">所有人</at>";
-
-    private static final LarkProperties LARK_PROPERTIES;
-
-    static {
-        LARK_PROPERTIES = SpringContextHolder.getBeanWithStatic(LarkProperties.class);
-    }
 
 
     /**

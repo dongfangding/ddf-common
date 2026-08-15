@@ -2,6 +2,8 @@ package com.ddf.boot.mongo.config;
 
 import com.ddf.boot.mongo.helper.MongoTemplateHelper;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -15,9 +17,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 2020/09/21 19:16
  */
 @AutoConfiguration
+@ConditionalOnClass(MongoTemplate.class)
 public class MongoAutoConfiguration {
 
     @Bean
+    @ConditionalOnBean(MongoTemplate.class)
     public MongoTemplateHelper mongoTemplateHelper(MongoTemplate mongoTemplate) {
         return new MongoTemplateHelper(mongoTemplate);
     }

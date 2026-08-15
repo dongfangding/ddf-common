@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -36,10 +37,10 @@ public class DefaultMailService implements MailService {
         try {
             final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             helper.setSubject(subject);
-            helper.setText(content, true);
+            helper.setText(StringEscapeUtils.escapeHtml4(content), true);
             helper.setTo(sendTo);
             if (cc != null && cc.length > 0) {
-                helper.setBcc(cc);
+                helper.setCc(cc);
             }
             final String from = mailProperties.getProperties().get("from");
             if (StringUtils.hasText(from)) {

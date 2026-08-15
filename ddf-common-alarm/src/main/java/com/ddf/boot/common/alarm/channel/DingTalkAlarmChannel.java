@@ -34,6 +34,9 @@ public class DingTalkAlarmChannel implements AlarmChannel {
     @Override
     public void send(AlarmMessage message) {
         DingTalkProperties.Properties p = properties.getCodeProperties(applicationName);
+        if (p == null || !p.isEnabled() || p.getSecret() == null) {
+            return;
+        }
         String markdown = String.join("\n", message.getLines());
         DingTalkUtil.sendMarkdownMsgToAllWithLimit(p.getSecret(), p.getAccessToken(), message.getTitle(), markdown);
     }

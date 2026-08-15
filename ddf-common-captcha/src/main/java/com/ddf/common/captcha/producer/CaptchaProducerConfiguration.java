@@ -15,6 +15,6 @@ public class CaptchaProducerConfiguration {
 
     @Bean
     public Map<CaptchaType, CaptchaProducer> captchaProducerMap(List<CaptchaProducer> producers) {
-        return producers.stream().collect(Collectors.toMap(CaptchaProducer::getCaptchaType, p -> p));
+        return producers.stream().collect(Collectors.toMap(CaptchaProducer::getCaptchaType, p -> p, (a, b) -> a));
     }
 }

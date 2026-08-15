@@ -8,6 +8,7 @@ import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.zookeeper.listener.NodeEventListener;
 import com.ddf.boot.zookeeper.monitor.properties.MonitorNode;
 import com.ddf.boot.zookeeper.monitor.properties.MonitorProperties;
+import jakarta.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +26,6 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.retry.RetryNTimes;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
@@ -79,6 +79,17 @@ public class MonitorRegistryConfig implements InitializingBean {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         this.client = CuratorFrameworkFactory.newClient(monitorProperties.getConnectAddress(),
                 monitorProperties.getSessionTimeoutMs(), monitorProperties.getConnectionTimeoutMs(), retryPolicy);
+        this.client.start();
+    }
+
+    /**
+     * 关闭客户端连接，释放资源。
+     */
+    @PreDestroy
+    public void close() {
+        if (client != null) {
+            client.close();
+        }
     }
 
     /**
@@ -119,19 +130,6 @@ public class MonitorRegistryConfig implements InitializingBean {
         }
         return monitor.getMonitorPath().concat("/").concat(monitor.getMonitorHost());
     }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) throws Exception {
-        final CuratorFramework framework = CuratorFrameworkFactory.newClient("www.snowball.fans:2181", 4000, 40000,
-                new RetryNTimes(3, 2000));
-        framework.start();
-        framework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/persistent_demo");
-
-        framework.create().withTtl(5000).withMode(CreateMode.PERSISTENT_SEQUENTIAL_WITH_TTL).forPath("/ttl_demo");
-    }
-
 
     /**
      * 监听节点事件
