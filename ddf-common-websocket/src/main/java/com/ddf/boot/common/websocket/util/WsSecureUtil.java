@@ -96,7 +96,7 @@ public class WsSecureUtil {
      * @since 2019/11/29 12:06
      **/
     public static String signWithHMac(String data, String key) {
-        HMac mac = new HMac(HmacAlgorithm.HmacMD5, key.getBytes(UTF_8));
+        HMac mac = new HMac(HmacAlgorithm.HmacSHA256, key.getBytes(UTF_8));
         return mac.digestHex(data);
     }
 

@@ -25,6 +25,16 @@ public class BrokerProperties {
     private boolean ssl;
 
     /**
+     * SSL 服务端证书（JKS）路径，启用 ssl 时必须配置真实证书，禁止使用内置默认证书
+     */
+    private String serverJksPath;
+
+    /**
+     * SSL 服务端证书密码，启用 ssl 时必须配置
+     */
+    private String serverJksPassword;
+
+    /**
      * @see ChannelOption#SO_SNDBUF
      */
     private Integer soSndBuf = 1048576;

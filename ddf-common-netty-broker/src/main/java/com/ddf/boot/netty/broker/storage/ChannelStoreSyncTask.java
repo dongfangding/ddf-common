@@ -15,6 +15,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 连接信息同步任务类
@@ -22,6 +23,7 @@ import java.util.concurrent.Executors;
  * @author dongfang.ding
  * @since 2019/7/8 10:12
  */
+@Slf4j
 public class ChannelStoreSyncTask implements Runnable {
     private ExecutorService executorService;
 
@@ -53,7 +55,7 @@ public class ChannelStoreSyncTask implements Runnable {
                         if (queue.peek() != null) {
                             fileName = k.replace(":", "_") + "_接收内容.txt";
                             RandomAccessFile file = new RandomAccessFile(
-                                    System.getProperty("user.dir") + "/src/main/resources/" + fileName, "rw");
+                                    System.getProperty("java.io.tmpdir") + File.separator + fileName, "rw");
                             ObjectMapper objectMapper = new ObjectMapper();
                             while (queue.peek() != null) {
                                 RequestContent content = queue.poll();
@@ -68,14 +70,14 @@ public class ChannelStoreSyncTask implements Runnable {
                             return;
                         }
                         fileName = k.replace(":", "_") + "_连接状态.txt";
-                        File file2 = new File(System.getProperty("user.dir") + "/src/main/resources/" + fileName);
+                        File file2 = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);
                         BufferedWriter bw = new BufferedWriter(
                                 new OutputStreamWriter(new FileOutputStream(file2), Charset.forName("utf-8")));
                         if (!file2.exists()) {
                             try {
                                 file2.createNewFile();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                log.error("创建连接状态文件失败", e);
                             }
                         }
                         bw.write("客户端地址: " + k);
@@ -92,7 +94,7 @@ public class ChannelStoreSyncTask implements Runnable {
                         bw.flush();
                         bw.close();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("连接信息同步失败", e);
                     }
                 });
             }

@@ -53,6 +53,13 @@ public class FileUploadHelper {
      */
     private static final int DEFAULT_THUMBNAIL_HEIGHT = 200;
 
+    /**
+     * 允许透传存储的安全 Content-Type 白名单，拒绝 HTML / 可执行 / SVG 等可导致存储型 XSS 的类型。
+     */
+    private static final Set<String> SAFE_CONTENT_TYPES = Set.of("image/jpeg", "image/png", "image/gif",
+            "image/webp", "image/bmp", "video/mp4", "video/x-msvideo", "video/quicktime", "video/x-ms-wmv",
+            "video/x-flv", "video/x-matroska", "application/pdf", "application/octet-stream");
+
     private final S3Api s3Api;
     private final S3Properties s3Properties;
 
@@ -241,12 +248,18 @@ public class FileUploadHelper {
 
     /**
      * 解析上传 Content-Type。
+     * <p>客户端可控的 Content-Type 可能被设置为 text/html 等危险类型，导致存储型 XSS，
+     * 这里仅允许白名单内的安全类型，其余一律回退为 application/octet-stream。</p>
      *
      * @param multipartFile 上传文件
      * @return Content-Type
      */
     private String resolveContentType(MultipartFile multipartFile) {
-        return StringUtils.defaultIfBlank(multipartFile.getContentType(), "application/octet-stream");
+        String contentType = multipartFile.getContentType();
+        if (StringUtils.isBlank(contentType) || !SAFE_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+            return "application/octet-stream";
+        }
+        return contentType;
     }
 
     /**

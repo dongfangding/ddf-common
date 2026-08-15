@@ -1,17 +1,10 @@
 package com.ddf.common.ons.console.util;
 
 import com.ddf.common.ons.enume.MessageModel;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import lombok.SneakyThrows;
-import org.springframework.util.CollectionUtils;
 
 /**
  * <p>相关工具类</p >
@@ -52,41 +45,6 @@ public class OnsConsoleUtil {
             joiner.add(getLocalHost());
         }
         return joiner.toString();
-    }
-
-    /**
-     * 动态通过反射修改指定注解实例里的属性的值， 这个是如果只有一个属性要修改时提供的简便方法
-     *
-     * @param annotation annotation参数
-     * @param name 名称
-     * @param value 参数值
-     */
-    @SneakyThrows
-    public static void modifyAnnotationValue(Annotation annotation, String name, Object value) {
-        Map<String, Object> valueMap = new HashMap<>(2);
-        valueMap.put(name, value);
-        modifyAnnotationValue(annotation, valueMap);
-    }
-
-
-    /**
-     * 动态通过反射修改指定注解示例里的属性的值
-     *
-     * @param annotation 注解实例对象
-     * @param nameValueMap 属性和值集合
-     */
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    public static void modifyAnnotationValue(Annotation annotation, Map<String, Object> nameValueMap) {
-        if (CollectionUtils.isEmpty(nameValueMap)) {
-            return;
-        }
-        final InvocationHandler handler = Proxy.getInvocationHandler(annotation);
-        // memberValues是注解代理类存储属性的固定属性值， 是个LinkedHashMap
-        Field hField = handler.getClass().getDeclaredField("memberValues");
-        hField.setAccessible(true);
-        Map memberValues = (Map) hField.get(handler);
-        nameValueMap.forEach(memberValues::put);
     }
 
     /**

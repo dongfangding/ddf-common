@@ -15,14 +15,10 @@ import com.ddf.common.boot.mqtt.model.response.emq.EmqClientAuthenticateResponse
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import com.ddf.common.boot.mqtt.util.EmqHttpResponseUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
-import org.eclipse.paho.mqttv5.common.MqttException;
-import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,23 +41,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmqController {
 
     private final EmqConnectionProperties emqConnectionProperties;
-    private final MqttAsyncClient mqttAsyncClient;
     private final MqttPublishClient mqttPublishClient;
     private final ObjectProvider<EmqClientAuthenticate> emqClientAuthenticateProvider;
-
-    /**
-     * 演示发送消息，非正式使用
-     *
-     * @param message 消息内容
-     */
-    @GetMapping("send")
-    public ResponseData<String> send(String message) throws MqttException {
-        final MqttMessage mqttMessage = new MqttMessage();
-        mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
-        mqttAsyncClient.publish("test", mqttMessage);
-        return ResponseData.success("true");
-    }
-
 
     /**
      * 原始发布消息，忽略处理一些规则，使用String接受参数，否则无法反序列化，定制化的接口在这个上层包装再处理
@@ -103,36 +84,31 @@ public class EmqController {
             final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
             final String username = client.getUsername();
             final String password = client.getPassword();
-            final String clientId = client.getClientIdPrefix();
+            final String clientIdPrefix = client.getClientIdPrefix();
 
-            // 服务端用户
-            if (request.getClientId().startsWith(clientId)) {
-                if (StringUtils.isAllBlank(username, password)) {
-                    EmqHttpResponseUtil.success(response, "服务端未配置用户名和密码无需校验，服务端连接认证通过");
-                    return;
-                }
-                // 匹配用户名和密码
-                if (Objects.equals(username, request.getUsername()) && Objects.equals(password,
-                        request.getPassword())) {
-                    EmqHttpResponseUtil.success(response, "服务端连接认证通过");
-                } else {
-                    EmqHttpResponseUtil.error(response, "用户名和密码不匹配，服务端连接认证失败");
-                }
+            // 服务端用户认证：clientId 前缀、用户名、密码都必须配置且全部匹配，禁止仅凭可伪造的 clientId 前缀或空凭证放行
+            if (StringUtils.isNotBlank(clientIdPrefix) && StringUtils.isNotBlank(username)
+                    && StringUtils.isNotBlank(password) && request.getClientId() != null
+                    && request.getClientId().startsWith(clientIdPrefix)
+                    && Objects.equals(username, request.getUsername())
+                    && Objects.equals(password, request.getPassword())) {
+                EmqHttpResponseUtil.success(response, "服务端连接认证通过");
+                return;
+            }
+
+            // 客户端用户， 让使用该模块的功能完成自己的用户认证， 这块的代码应该写在应用层，而不是这个模块内部，因为如果是模块内部那就是自己依赖自己，
+            // 本身服务没起来的前提所有客户端都无法连接， 所以这个代码应该是一个独立的认证中心，比如写在用户模块，然后接口暴露在网关层，然后将网关层接口
+            // 配置到emq的认证http地址中，这里只是提供写法，小项目单体项目可以直接集成，分布式不合适。
+            final EmqClientAuthenticate emqClientAuthenticate = emqClientAuthenticateProvider.getIfAvailable();
+            if (emqClientAuthenticate == null) {
+                EmqHttpResponseUtil.error(response, "未定义客户端认证规则，不允许连接");
+                return;
+            }
+            final EmqClientAuthenticateResponse authenticate = emqClientAuthenticate.authenticate(request);
+            if (authenticate.isResult()) {
+                EmqHttpResponseUtil.success(response, "客户端连接认证通过");
             } else {
-                // 客户端用户， 让使用该模块的功能完成自己的用户认证， 这块的代码应该写在应用层，而不是这个模块内部，因为如果是模块内部那就是自己依赖自己，
-                // 本身服务没起来的前提所有客户端都无法连接， 所以这个代码应该是一个独立的认证中心，比如写在用户模块，然后接口暴露在网关层，然后将网关层接口
-                // 配置到emq的认证http地址中，这里只是提供写法，小项目单体项目可以直接集成，分布式不合适。
-                final EmqClientAuthenticate emqClientAuthenticate = emqClientAuthenticateProvider.getIfAvailable();
-                if (emqClientAuthenticate == null) {
-                    EmqHttpResponseUtil.error(response, "未定义客户端认证规则，不允许连接");
-                    return;
-                }
-                final EmqClientAuthenticateResponse authenticate = emqClientAuthenticate.authenticate(request);
-                if (authenticate.isResult()) {
-                    EmqHttpResponseUtil.success(response, "客户端连接认证通过");
-                } else {
-                    EmqHttpResponseUtil.error(response, "客户端连接认证不通过，原因: " + authenticate.getMsg());
-                }
+                EmqHttpResponseUtil.error(response, "客户端连接认证不通过，原因: " + authenticate.getMsg());
             }
         } catch (Exception e) {
             log.error("mqtt连接认证失败", e);
@@ -151,12 +127,16 @@ public class EmqController {
     @PostMapping("acl/superuser")
     public void superuser(@RequestBody EmqAuthenticateRequest request, HttpServletResponse response) {
         final EmqConnectionProperties.ClientConfig client = emqConnectionProperties.getClient();
+        final String clientIdPrefix = client.getClientIdPrefix();
         final String reqClientId = request.getClientId();
-        if (reqClientId.startsWith(client.getClientIdPrefix())) {
-            EmqHttpResponseUtil.success(response, "超级用户ACL认证通过");
+        // 前缀或请求 clientId 为空时拒绝；superuser 认证不能仅凭可伪造的 clientId 前缀，需同时校验用户名（EMQ 的 super 请求不携带密码）
+        if (StringUtils.isBlank(clientIdPrefix) || StringUtils.isBlank(reqClientId)
+                || !reqClientId.startsWith(clientIdPrefix)
+                || !Objects.equals(client.getUsername(), request.getUsername())) {
+            EmqHttpResponseUtil.error(response, "超级用户ACL未认证通过");
             return;
         }
-        EmqHttpResponseUtil.error(response, "超级用户ACL未认证通过");
+        EmqHttpResponseUtil.success(response, "超级用户ACL认证通过");
     }
 
     /**

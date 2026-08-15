@@ -1,6 +1,7 @@
 package com.ddf.common.vps.helper;
 
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
+import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.github.tobato.fastdfs.FdfsClientConstants;
 import com.github.tobato.fastdfs.domain.conn.FdfsWebServer;
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
@@ -62,8 +63,9 @@ public class VpsClient {
         final File file = new File(filePath);
         thumbImage = ObjectUtils.defaultIfNull(thumbImage,
                 new ThumbImage(thumbImageConfig.getWidth(), thumbImageConfig.getHeight()));
-        // 安全考虑， 只有这个临时目录的本地文件允许走这块代码上传
-        //        PreconditionUtil.checkArgument(filePath.startsWith(vpsProperties.getFfmpegTmpPath()), "不允许上传除ffmpeg临时目录以外的文件");
+        // 安全考虑， 只有这个临时目录的本地文件允许走这块代码上传，防止路径遍历上传任意文件
+        PreconditionUtil.checkArgument(filePath.startsWith(vpsProperties.getFfmpegTmpPath()),
+                "不允许上传除ffmpeg临时目录以外的文件");
         String extName = filePath.substring(filePath.lastIndexOf(".") + 1);
         return uploadFile(
                 new FastImageFile(Files.newInputStream(file.toPath()), file.length(), extName, new HashSet<>(),

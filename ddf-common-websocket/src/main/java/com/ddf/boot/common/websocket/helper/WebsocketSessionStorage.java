@@ -200,11 +200,11 @@ public class WebsocketSessionStorage {
                 }
             }
             if (isOverride) {
-                // 删除节点
+                // 删除节点（delete 只需 key + hashKey，不应把序列化值当作第二个 hashKey 传入）
                 REDIS_TEMPLATE.opsForHash().delete(key,
                         MessageFormat.format(CacheKeyEnum.AUTH_PRINCIPAL_MONITOR.getTemplate(), serverHost, port,
                                 authPrincipal.getLoginType(), authPrincipal.getAccessKeyId(),
-                                authPrincipal.getAuthCode()), JsonUtil.asString(webSocketSessionWrapper));
+                                authPrincipal.getAuthCode()));
                 return true;
             }
         }
@@ -312,6 +312,8 @@ public class WebsocketSessionStorage {
         while (REQUEST_CONNECT_RESPONSE_MAP.get(requestId) == MessageResponse.none()) {
             try {
                 if (System.currentTimeMillis() - initTime > blockMilliSeconds) {
+                    // 超时未取到响应时清理占位，避免占位对象内存泄漏
+                    REQUEST_CONNECT_RESPONSE_MAP.remove(requestId);
                     return MessageResponse.delay(requestId);
                 }
                 Thread.sleep(50);

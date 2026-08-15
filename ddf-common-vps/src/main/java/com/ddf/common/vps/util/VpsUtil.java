@@ -1,7 +1,6 @@
 package com.ddf.common.vps.util;
 
 import java.io.File;
-import java.text.MessageFormat;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -63,20 +62,38 @@ public class VpsUtil {
      * @return 截取后文件本地路径
      */
     public static String cutVideoCover(String filePath, String beforeCutSecond, String tmpPath) {
+        // 仅允许本地文件路径，禁止远程 URL（防止 ffmpeg 被用于 SSRF），使用参数数组避免 shell 命令注入
+        if (isIllegalFilePath(filePath)) {
+            log.error("非法的文件路径，拒绝执行视频截图: {}", filePath);
+            return null;
+        }
         tmpPath = tmpPath.endsWith(File.separator) ? tmpPath : tmpPath + File.separator;
         String finalFilePath = tmpPath + filePath.replaceAll("//*", "_") + "_" + System.currentTimeMillis() + ".jpg";
-        String command = MessageFormat.format(FFMPEG_SCREENSHOT_COMMAND, filePath, beforeCutSecond, finalFilePath);
         try {
-            log.info("视频截图命令， command = {}", command);
-            ProcessBuilder builder = new ProcessBuilder("sh", "-c", command);
+            log.info("视频截图命令， filePath = {}, beforeCutSecond = {}, finalFilePath = {}", filePath,
+                    beforeCutSecond, finalFilePath);
+            ProcessBuilder builder = new ProcessBuilder("ffmpeg", "-i", filePath, "-y", "-f", "image2", "-ss",
+                    beforeCutSecond, "-vframes", "1", finalFilePath);
             final Process start = builder.start();
             start.waitFor();
         } catch (Exception e) {
             // 如果失败的话，会损失数据，暂时不处理
-            log.error("视频截图失败， command = {}", command, e);
+            log.error("视频截图失败， filePath = {}", filePath, e);
             return null;
         }
         return finalFilePath;
+    }
+
+    /**
+     * 校验文件路径是否合法：仅允许本地文件路径，拒绝远程 URL（SSRF 向量）和空路径
+     */
+    private static boolean isIllegalFilePath(String filePath) {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            return true;
+        }
+        String lower = filePath.toLowerCase();
+        return lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("ftp://")
+                || lower.startsWith("file://");
     }
 
 

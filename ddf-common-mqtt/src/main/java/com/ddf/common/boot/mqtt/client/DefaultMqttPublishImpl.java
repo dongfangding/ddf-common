@@ -170,9 +170,11 @@ public class DefaultMqttPublishImpl implements MqttDefinition {
             return ResponseData.failure("mqtt_error", mqttException.getMessage());
         }
         // 预留的发送成功处理监听
-        listenerMap.forEach((beanName, bean) -> {
-            bean.afterPublish(message, payload);
-        });
+        if (CollUtil.isNotEmpty(listenerMap)) {
+            listenerMap.forEach((beanName, bean) -> {
+                bean.afterPublish(message, payload);
+            });
+        }
         return ResponseData.success(messageResponse);
     }
 }

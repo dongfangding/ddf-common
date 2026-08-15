@@ -150,7 +150,7 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             log.info("[{}] 消息id:{}消费成功,messageData:{},耗时[{}ms]", TAG, message.getMessageId(), messageJson,
                     costTime);
         } catch (Exception e) {
-            log.info("[{}] 消息id:{}消费异常,e:{}", TAG, message.getMessageId(), e);
+            log.error("[{}] 消息id:{}消费异常", TAG, message.getMessageId(), e);
             // 是捕获异常还是抛出，由子类决定
             if (throwException()) {
                 // 抛出异常，由DefaultMessageListenerConcurrently类处理
@@ -159,6 +159,9 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             // 此时如果不开启重试机制，则默认ACK了
             if (isRetry()) {
                 handleRetry(message);
+            } else {
+                // 不抛异常且不重试时，异常被吞并默认 ACK，会导致消息静默丢失，显式记录错误以便监控告警
+                log.error("[{}] 消息id:{}消费异常且未开启重试，消息将被默认ACK，存在丢失风险", TAG, message.getMessageId());
             }
         }
     }
@@ -194,8 +197,10 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
             log.error("[{}] 消息id:{},发送重试消息异常,e:{}", TAG, message.getMessageId(), ex);
         }
         // 发送失败的处理就是不进行ACK，由RocketMQ重试
-        if (Objects.isNull(sendResult) || sendResult.getSendStatus() != SendStatus.SEND_OK) {
-            log.error("[{}] 消息id:{},发送重试消息异常,sendStatus:{}", TAG, message.getMessageId(),
+        if (Objects.isNull(sendResult)) {
+            log.error("[{}] 消息id:{},发送重试消息失败，sendResult为空", TAG, message.getMessageId());
+        } else if (sendResult.getSendStatus() != SendStatus.SEND_OK) {
+            log.error("[{}] 消息id:{},发送重试消息失败,sendStatus:{}", TAG, message.getMessageId(),
                     sendResult.getSendStatus());
         }
 

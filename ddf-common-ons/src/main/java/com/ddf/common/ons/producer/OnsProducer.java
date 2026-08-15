@@ -63,13 +63,9 @@ public abstract class OnsProducer {
                         topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:",
                     topic, tag, payLoad, bizId, shadingKey, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                orderSend(topic, tag, payLoad, bizId, shadingKey, delayTime);
-            }
+            throw new RuntimeException("同步发送顺序消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 
@@ -120,13 +116,9 @@ public abstract class OnsProducer {
                         topic, tag, payLoad, bizId, shadingKey, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},ShadingKey:{},DelayTime:{}顺序消息失败:",
                     topic, tag, payLoad, bizId, shadingKey, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                orderSend(topic, tag, payLoad, bizId, shadingKey, delayTime);
-            }
+            throw new RuntimeException("同步发送顺序消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 
@@ -159,13 +151,9 @@ public abstract class OnsProducer {
                         payLoad, bizId, delayTime, sendResult.getMessageId());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
                     bizId, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                send(topic, tag, payLoad, bizId, delayTime);
-            }
+            throw new RuntimeException("同步发送消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 
@@ -211,13 +199,9 @@ public abstract class OnsProducer {
                 //removeRetryTimes(bizId);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("同步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
                     bizId, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                send(topic, tag, payLoad, bizId, delayTime);
-            }
+            throw new RuntimeException("同步发送消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 
@@ -262,20 +246,13 @@ public abstract class OnsProducer {
                     String errorMessage = context.getException().getMessage();
                     LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}",
                             topic, tag, payLoad, bizId, delayTime, errorMessage, context.getMessageId());
-                    if (isRetryable(bizId)) {
-                        incrementRetryTimes(bizId);
-                        sendAsync(topic, tag, payLoad, bizId, delayTime);
-                    }
+                    // 异步发送失败仅记录日志，由调用方或 MQ 自身重试机制兜底
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
                     bizId, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                sendAsync(topic, tag, payLoad, bizId, delayTime);
-            }
+            throw new RuntimeException("异步发送消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 
@@ -332,20 +309,13 @@ public abstract class OnsProducer {
                     LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:{}，MessageId:{}",
                             topic, tag, payLoad, bizId, delayTime, context.getException().getMessage(),
                             context.getMessageId());
-                    if (isRetryable(bizId)) {
-                        incrementRetryTimes(bizId);
-                        sendAsync(topic, tag, payLoad, bizId, delayTime);
-                    }
+                    // 异步发送失败仅记录日志，由调用方或 MQ 自身重试机制兜底
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER_ERROR.error("异步发送Topic:{},Tag:{},PayLoad:{},Key:{},DelayTime:{}消息失败:", topic, tag, payLoad,
                     bizId, delayTime, e);
-            if (isRetryable(bizId)) {
-                incrementRetryTimes(bizId);
-                sendAsync(topic, tag, payLoad, bizId, delayTime);
-            }
+            throw new RuntimeException("异步发送消息失败, topic=" + topic + ", tag=" + tag, e);
         }
     }
 

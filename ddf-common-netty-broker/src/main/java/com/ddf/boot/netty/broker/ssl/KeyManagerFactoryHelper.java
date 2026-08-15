@@ -74,22 +74,6 @@ public class KeyManagerFactoryHelper {
     }
 
     /**
-     * 创建默认的服务端SslContext
-     */
-    public static SslContext defaultServerContext() throws Exception {
-        return createServerContext(System.getProperty("user.dir") + "/src/main/resources/cer/server.jks",
-                "server_123456");
-    }
-
-    /**
-     * 创建默认的客户端SslContext
-     */
-    public static SslContext defaultClientContext() throws Exception {
-        return createClientContext(System.getProperty("user.dir") + "/src/main/resources/cer/client.jks",
-                "client_123456");
-    }
-
-    /**
      * 生成服务端SslContext
      *
      * @param caPath 证书路径

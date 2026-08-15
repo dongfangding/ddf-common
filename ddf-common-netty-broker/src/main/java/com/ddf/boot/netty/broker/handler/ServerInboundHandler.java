@@ -51,6 +51,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
     public void channelInactive(ChannelHandlerContext ctx) {
         log.debug("客户端[{}]掉线>>>>>", ctx.channel().remoteAddress());
         channels.remove(ctx.channel());
+        channelStore.remove(ctx.channel().remoteAddress().toString());
         ChannelInfo.inactive(ctx.channel());
     }
 
@@ -77,6 +78,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
         log.error("连接出现异常>>>>>", cause);
         log.debug("客户端[{}]出现异常，关闭连接>>>>>>", ctx.channel());
         channels.remove(ctx.channel());
+        channelStore.remove(ctx.channel().remoteAddress().toString());
         ChannelInfo.inactive(ctx.channel());
         ctx.close();
     }
@@ -93,7 +95,6 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<RequestCon
         // 可能永远也不会出现这种情况
         if (channelInfo == null) {
             channelInfo = ChannelInfo.active(channel);
-            channelInfo.getQueue().add(requestContent);
             ServerInboundHandler.channelStore.put(key, channelInfo);
         }
         channelInfo.getQueue().add(requestContent);

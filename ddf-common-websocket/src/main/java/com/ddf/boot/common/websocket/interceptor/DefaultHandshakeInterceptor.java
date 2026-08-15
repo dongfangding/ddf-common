@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -73,10 +72,6 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
             Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest req = (ServletServerHttpRequest) request;
         HttpServletRequest servletRequest = req.getServletRequest();
-        Principal principal = req.getPrincipal();
-        if (principal != null) {
-            return true;
-        }
 
         if (CollUtil.isEmpty(handshakeAuthList)) {
             response.getBody().write("没有实现的握手处理器".getBytes(StandardCharsets.UTF_8));
@@ -87,12 +82,14 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
 
         AuthPrincipal authPrincipal = null;
 
-        // fixme 如何在head中传递？？ 先Url编解码是为了防止客户端并不希望对token参数本身进行加密， 而json默认是无法传输过来的，所以要url编码，写在最
-        // 外层可以让代码更简单一些
-        String token = URLDecoder.decode(servletRequest.getParameter(WebsocketConst.TOKEN_PARAMETER), "utf-8");
         HandshakeParam handshakeParam = null;
-        if (StringUtils.isNotBlank(token)) {
-            try {
+        String token = null;
+        try {
+            // fixme 如何在head中传递？？ 先Url编解码是为了防止客户端并不希望对token参数本身进行加密， 而json默认是无法传输过来的，所以要url编码，写在最
+            // 外层可以让代码更简单一些
+            String tokenParam = servletRequest.getParameter(WebsocketConst.TOKEN_PARAMETER);
+            token = StringUtils.isBlank(tokenParam) ? null : URLDecoder.decode(tokenParam, "utf-8");
+            if (StringUtils.isNotBlank(token)) {
                 if (webSocketProperties.isHandshakeTokenSecret()) {
                     EncryptProcessor encryptProcessor = ENCRYPT_PROCESSORS.get(webSocketProperties.getSecretBeanName());
                     if (encryptProcessor == null) {
@@ -104,12 +101,12 @@ public class DefaultHandshakeInterceptor implements HandshakeInterceptor {
                 if (!validArgument(handshakeParam, response)) {
                     return false;
                 }
-            } catch (Exception e) {
-                log.error("认证参数反序列化失败！参数为: [{}]", token, e);
-                response.getBody().write("认证参数反序列化失败".getBytes(StandardCharsets.UTF_8));
-                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return false;
             }
+        } catch (Exception e) {
+            log.error("认证参数反序列化失败！参数为: [{}]", token, e);
+            response.getBody().write("认证参数反序列化失败".getBytes(StandardCharsets.UTF_8));
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+            return false;
         }
 
         // 调用身份认证接口

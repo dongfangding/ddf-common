@@ -77,6 +77,11 @@ public class CanalMessageDispatcher {
      */
     private CanalMessageHandler<?> findHandler(FlatMessage flatMessage) {
         final String tableName = flatMessage.getTable();
+        // 表名可能为 null（例如 heartbeat/transaction 消息），ConcurrentHashMap 不允许 null 键，需先判空
+        if (tableName == null) {
+            log.warn("canal消息表名为空，跳过处理");
+            return null;
+        }
         if (!tableNameHandlerMapping.containsKey(tableName)) {
             // 使用传统 for 循环，确保找到匹配后正确返回
             for (Map.Entry<String, CanalMessageHandler<?>> entry : beanNameHandlerMapping.entrySet()) {

@@ -197,10 +197,29 @@ public class OssHelper {
      * @param identity identity参数
      */
     private static String getPath(String platform, String identity) {
+        // 校验用户可控的路径段，防止 /、* 等字符拼入 STS 策略资源导致越权
+        validatePathSegment(platform, "platform");
+        validatePathSegment(identity, "identity");
         String formatTime = "yyyy/MM/dd";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(formatTime);
         String format = LocalDateTime.now().format(dtf);
         return MessageFormat.format("{0}/{1}/{2}/{3}", platform, format, identity, IdUtil.simpleUUID());
+    }
+
+    /**
+     * 校验路径段：不允许为空，且不允许包含可导致 STS 策略资源越权或路径穿越的字符
+     *
+     * @param value 待校验值
+     * @param name 字段名
+     */
+    private static void validatePathSegment(String value, String name) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalArgumentException(name + " 不能为空");
+        }
+        if (value.contains("/") || value.contains("*") || value.contains("?") || value.contains("\\")
+                || value.contains("..")) {
+            throw new IllegalArgumentException(name + " 包含非法字符");
+        }
     }
 
     /**

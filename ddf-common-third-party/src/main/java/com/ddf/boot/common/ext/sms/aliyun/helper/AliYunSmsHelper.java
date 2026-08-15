@@ -94,7 +94,9 @@ public class AliYunSmsHelper {
         if (response.getData() != null) {
             final String message = JSONUtil.parse(response.getData()).getByPath("Message", String.class);
             if (!"OK".equals(message)) {
-                throw new BusinessException(message);
+                log.error("发送短信失败， mobile = {}, message = {}, response = {}", aliYunSmsRequest.getPhoneNumbers(),
+                        message, response.getData());
+                throw new BusinessException(ExceptionCode.SMS_SEND_FAILURE);
             }
         }
         return SmsSendResponse.builder().templateParam(templateParam).randomCode(templateParamObj.getCode()).build();

@@ -44,7 +44,7 @@ class WsSecureUtilTest {
         String sign1 = WsSecureUtil.signWithHMac("payload", "secret");
         String sign2 = WsSecureUtil.signWithHMac("payload", "secret");
 
-        assertEquals("4f967408b96fb0e40180074062022698", sign1);
+        assertEquals("b82fcb791acec57859b989b430a826488ce2e479fdf92326bd0a2e8375a42ba4", sign1);
         assertEquals(sign1, sign2);
     }
 }

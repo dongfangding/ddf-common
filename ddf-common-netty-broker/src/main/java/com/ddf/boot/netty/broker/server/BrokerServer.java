@@ -22,6 +22,10 @@ import lombok.extern.slf4j.Slf4j;
  * 1. 所有线程池必须在 close() 方法中优雅关闭
  * 2. 使用 shutdown() 而非 shutdownNow() 允许正在执行的任务完成
  * </p>
+ * <p>
+ * 安全说明：本 TCP 服务端当前未内置任何客户端认证/授权机制，任何能建立连接的客户端都可发送消息。
+ * 生产环境必须将其部署在可信内网，或在 ServerInboundHandler 中接入自定义认证（如首包握手校验令牌、IP 白名单等）。
+ * </p>
  *
  * @author dongfang.ding
  * @since 2020/9/20 0020 21:30
@@ -64,8 +68,9 @@ public class BrokerServer {
                 .childOption(ChannelOption.SO_SNDBUF, brokerProperties.getSoSndBuf());
         try {
             if (brokerProperties.isSsl()) {
-                serverBootstrap.childHandler(
-                        new ServerChannelInit(brokerProperties, KeyManagerFactoryHelper.defaultServerContext()));
+                serverBootstrap.childHandler(new ServerChannelInit(brokerProperties,
+                        KeyManagerFactoryHelper.createServerContext(brokerProperties.getServerJksPath(),
+                                brokerProperties.getServerJksPassword())));
             } else {
                 serverBootstrap.childHandler(new ServerChannelInit(brokerProperties));
             }

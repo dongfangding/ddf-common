@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -101,7 +102,10 @@ public class MqttAutoConfiguration implements DisposableBean, ApplicationContext
         // 客户端连接配置
         MqttConnectionOptions connOpts = new MqttConnectionOptions();
         connOpts.setUserName(clientConfig.getUsername());
-        connOpts.setPassword(clientConfig.getPassword().getBytes(StandardCharsets.UTF_8));
+        // 密码未配置时不能调用 getBytes，否则 NPE
+        if (StringUtils.isNotBlank(clientConfig.getPassword())) {
+            connOpts.setPassword(clientConfig.getPassword().getBytes(StandardCharsets.UTF_8));
+        }
         connOpts.setKeepAliveInterval(60);
         connOpts.setConnectionTimeout(30);
         // 最大重连延迟10秒

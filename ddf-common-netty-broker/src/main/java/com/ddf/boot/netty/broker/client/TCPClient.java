@@ -1,7 +1,6 @@
 package com.ddf.boot.netty.broker.client;
 
 import com.ddf.boot.netty.broker.message.RequestContent;
-import com.ddf.boot.netty.broker.ssl.KeyManagerFactoryHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.bootstrap.Bootstrap;
@@ -10,6 +9,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.ssl.SslContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -53,13 +53,13 @@ public class TCPClient {
     private volatile Channel channel;
     private ExecutorService executorService;
     private NioEventLoopGroup worker;
-    private boolean startSsl;
+    private SslContext sslContext;
 
-    public TCPClient(String host, int port, ExecutorService executorService, boolean startSsl) {
+    public TCPClient(String host, int port, ExecutorService executorService, SslContext sslContext) {
         this.host = host;
         this.port = port;
         this.executorService = executorService;
-        this.startSsl = startSsl;
+        this.sslContext = sslContext;
     }
 
     public void connect() {
@@ -70,14 +70,10 @@ public class TCPClient {
                     ChannelOption.TCP_NODELAY, true).option(ChannelOption.SO_REUSEADDR, true).option(
                     ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
             bootstrap.remoteAddress(host, port);
-            try {
-                if (startSsl) {
-                    bootstrap.handler(new ClientChannelInit(KeyManagerFactoryHelper.defaultClientContext()));
-                } else {
-                    bootstrap.handler(new ClientChannelInit());
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            if (sslContext != null) {
+                bootstrap.handler(new ClientChannelInit(sslContext));
+            } else {
+                bootstrap.handler(new ClientChannelInit());
             }
 
             ChannelFuture future;
@@ -165,7 +161,7 @@ public class TCPClient {
         ExecutorService executorService = Executors.newCachedThreadPool();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        TCPClient client = new TCPClient("localhost", 8888, executorService, false);
+        TCPClient client = new TCPClient("localhost", 8888, executorService, null);
         client.connect();
 
         while (true) {

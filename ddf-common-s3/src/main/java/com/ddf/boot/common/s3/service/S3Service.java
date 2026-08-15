@@ -23,10 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
@@ -213,6 +217,7 @@ public class S3Service implements S3Api {
             minioClient.statObject(statObjectArgs);
             return true;
         } catch (Exception e) {
+            log.warn("判断对象是否存在时发生异常，按不存在处理, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
             return false;
         }
     }
@@ -244,7 +249,7 @@ public class S3Service implements S3Api {
             GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
                     .bucket(bucketName)
                     .object(objectKey)
-                    .expiry((int) expiry.toSeconds())
+                    .expiry(toExpirySeconds(expiry))
                     .method(Method.GET)
                     .build();
             String url = minioClient.getPresignedObjectUrl(args);
@@ -269,7 +274,7 @@ public class S3Service implements S3Api {
             Duration expiry) {
         try {
             GetPresignedObjectUrlArgs.Builder builder = GetPresignedObjectUrlArgs.builder().bucket(bucketName).object(
-                    objectKey).expiry((int) expiry.toSeconds()).method(Method.PUT);
+                    objectKey).expiry(toExpirySeconds(expiry)).method(Method.PUT);
             if (StringUtils.isNotBlank(contentType)) {
                 builder.extraHeaders(Map.of("Content-Type", contentType));
             }
@@ -402,7 +407,7 @@ public class S3Service implements S3Api {
     }
 
     /**
-     * 统一处理 URL 路径拼接。
+     * 统一处理 URL 路径拼接，并对路径分段做 URL 编码，避免特殊字符破坏 URL 结构。
      *
      * @param baseUrl 基础地址
      * @param path 路径
@@ -411,6 +416,38 @@ public class S3Service implements S3Api {
     private String appendPath(String baseUrl, String path) {
         String normalizedBaseUrl = StringUtils.removeEnd(baseUrl, "/");
         String normalizedPath = StringUtils.removeStart(path, "/");
-        return normalizedBaseUrl + "/" + normalizedPath;
+        return normalizedBaseUrl + "/" + encodePathSegments(normalizedPath);
+    }
+
+    /**
+     * 对 URL 路径按段进行 URL 编码，保留路径分隔符，避免空格、非 ASCII 等特殊字符破坏 URL。
+     *
+     * @param path 路径
+     * @return 编码后的路径
+     */
+    private String encodePathSegments(String path) {
+        if (StringUtils.isBlank(path)) {
+            return "";
+        }
+        return Arrays.stream(path.split("/"))
+                .map(segment -> URLEncoder.encode(segment, StandardCharsets.UTF_8).replace("+", "%20"))
+                .collect(Collectors.joining("/"));
+    }
+
+    /**
+     * 将 Duration 转换为 MinIO SDK 需要的秒数，防止 long 转 int 溢出，并保证最小值为 1 秒。
+     *
+     * @param expiry 过期时长
+     * @return 秒数
+     */
+    private int toExpirySeconds(Duration expiry) {
+        long seconds = expiry.toSeconds();
+        if (seconds > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        if (seconds < 1) {
+            return 1;
+        }
+        return (int) seconds;
     }
 }
