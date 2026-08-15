@@ -12,6 +12,8 @@ import com.ddf.boot.common.core.event.LoginSuccessEvent;
 import com.ddf.boot.common.core.event.TokenRefreshEvent;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -73,7 +75,8 @@ public class DefaultTokenGenerator implements TokenGenerator {
                 final String cacheToken = tokenCache.getToken(userId);
                 PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken),
                         new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
-                PreconditionUtil.checkArgument(Objects.equals(cacheToken, token),
+                PreconditionUtil.checkArgument(MessageDigest.isEqual(
+                                cacheToken.getBytes(StandardCharsets.UTF_8), token.getBytes(StandardCharsets.UTF_8)),
                         new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);
