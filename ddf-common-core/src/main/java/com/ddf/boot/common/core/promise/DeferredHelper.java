@@ -27,8 +27,9 @@ public class DeferredHelper<D, F, P> {
      */
     public static final long DEFAULT_TIMEOUT_MILLIONS = 60000 * 5;
 
-    ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-            ThreadFactoryBuilder.create().setNamePrefix("deferred-helper-pool-").build());
+    private static final ScheduledThreadPoolExecutor TIMEOUT_SCHEDULER = new ScheduledThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(),
+            ThreadFactoryBuilder.create().setNamePrefix("deferred-helper-pool-").setDaemon(true).build());
 
 
     /**
@@ -56,20 +57,15 @@ public class DeferredHelper<D, F, P> {
         // fixme 加入创建对象的时候请求对象已经有戴回调了怎么处理？
         deferredMap.put(requestId, deferred);
         final long timeout = timeoutMilliSeconds > 0 ? timeoutMilliSeconds : DEFAULT_TIMEOUT_MILLIONS;
-        schedule.schedule(() -> {
-            // 应该只要锁这个请求id的字符串对象即可，没必要锁整个对象
-            synchronized (requestId.intern()) {
-                final Deferred<D, Throwable, P> finalDm = deferredMap.get(requestId);
-                if (deferredMap.containsKey(requestId)) {
-                    if (finalDm.isPending()) {
-                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(),
-                                requestId);
-                        finalDm.reject(new CallbackTimeoutException(requestId));
-                    }
-                    deferredMap.remove(requestId);
+        TIMEOUT_SCHEDULER.schedule(() -> {
+            // 使用 compute 原子地检查并移除，避免 requestId.intern() 污染字符串常量池
+            deferredMap.compute(requestId, (key, target) -> {
+                if (target != null && target.isPending()) {
+                    log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(), key);
+                    target.reject(new CallbackTimeoutException(key));
                 }
-
-            }
+                return null;
+            });
         }, timeout, TimeUnit.MILLISECONDS);
         log.info("[{}]请求返回promise, ", requestId);
         return deferred.promise();

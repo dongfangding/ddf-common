@@ -1,11 +1,8 @@
 package com.ddf.boot.common.core.util;
 
 import cn.hutool.core.util.RandomUtil;
-import com.ddf.boot.common.api.model.common.dto.DefaultWeightProportion;
 import com.ddf.boot.common.api.model.common.dto.ObjectKeyValuePair;
 import com.ddf.boot.common.api.model.common.dto.WeightProportion;
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -13,17 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <p>随机工具类</p >
@@ -289,85 +279,6 @@ public class RandomExtUtil {
         final BigDecimal decimal = new BigDecimal(time * Math.pow(10, Math.negateExact(String.valueOf(time).length())));
         return new BigDecimal("1.0").subtract(decimal);
     }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        final List<DefaultWeightProportion> proportions = Lists.newArrayList(DefaultWeightProportion.of("1", 10d),
-                DefaultWeightProportion.of("2", 20d), DefaultWeightProportion.of("3", 30d),
-                DefaultWeightProportion.of("4", 40d));
-        int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
-        WeightProportion temp;
-        for (int i = 0; i < 1000; i++) {
-            temp = hitWeightProportion(proportions);
-            if (Objects.equal("1", temp.getKey())) {
-                count1++;
-            } else if (Objects.equal("2", temp.getKey())) {
-                count2++;
-            } else if (Objects.equal("3", temp.getKey())) {
-                count3++;
-            } else if (Objects.equal("4", temp.getKey())) {
-                count4++;
-            }
-        }
-        System.out.println("count1 = " + count1);
-        System.out.println("count2 = " + count2);
-        System.out.println("count3 = " + count3);
-        System.out.println("count4 = " + count4);
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicLong roundId = new AtomicLong(0);
-        final AtomicLong startSeconds = new AtomicLong(0);
-        final AtomicBoolean isLuck = new AtomicBoolean(false);
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> round(roundId, startSeconds, isLuck), 5, 5, TimeUnit.SECONDS);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * @param roundId 参数
-     * @param startSeconds 参数
-     * @param isLuck 参数
-     */
-    private static void round(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck) {
-        final long currentSeconds = System.currentTimeMillis() / 1000;
-        long pastTime = currentSeconds - startSeconds.get();
-        if (roundId.get() == 0) {
-            startRound(roundId, startSeconds, isLuck, currentSeconds);
-        } else {
-            if (pastTime >= 15 + (isLuck.get() ? 10 : 5) + 5) {
-                System.out.printf("%s: 结算完成, 开始下一轮, roundId = %s\n\n", new Date(currentSeconds * 1000),
-                        roundId.get());
-                startRound(roundId, startSeconds, isLuck, currentSeconds);
-            } else if (pastTime >= 15 + (isLuck.get() ? 10 : 5)) {
-                System.out.printf("%s: 战斗结束，开始结算, roundId = %s\n", new Date(currentSeconds * 1000),
-                        roundId.get());
-            } else if (pastTime >= 15) {
-                System.out.printf("%s: 投注结束，开始战斗, roundId = %s\n", new Date(currentSeconds * 1000),
-                        roundId.get());
-            }
-        }
-    }
-
-    /**
-     * @param roundId 参数
-     * @param startSeconds 参数
-     * @param isLuck 参数
-     * @param currentSeconds 参数
-     */
-    private static void startRound(AtomicLong roundId, AtomicLong startSeconds, AtomicBoolean isLuck,
-            long currentSeconds) {
-        roundId.incrementAndGet();
-        startSeconds.set(currentSeconds);
-        System.out.printf("%s: 开启新场次, roundId = %s\n", new Date(currentSeconds * 1000), roundId.get());
-        isLuck.set(RandomUtil.randomInt(10) % 2 == 0);
-    }
-
 
     /**
      * 随机字母数字

@@ -1,20 +1,21 @@
 package com.ddf.boot.common.core.util;
 
+import cn.hutool.core.util.HexUtil;
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import cn.hutool.crypto.symmetric.AES;
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.core.encode.BCryptPasswordEncoder;
 import com.ddf.boot.common.core.exception.SecureException;
 import com.ddf.boot.common.core.helper.SpringContextHolder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,16 +49,24 @@ public class SecureUtil {
         GLOBAL_PROPERTIES = props;
     }
 
-    private static final RSA PRIVATE_RSA;
+    private static volatile RSA PRIVATE_RSA;
 
-    private static final RSA PUBLIC_RSA;
-
-    private static volatile SymmetricCrypto AES;
+    private static volatile RSA PUBLIC_RSA;
 
     /**
-     * 动态的AES对象缓存
+     * AES IV 长度（字节），AES 块大小固定为 16 字节
      */
-    private static final Map<String, SymmetricCrypto> DYNAMIC_AES_CACHE = new ConcurrentHashMap<>();
+    private static final int AES_IV_LENGTH = 16;
+
+    /**
+     * AES 密钥 - 延迟初始化，在首次使用时检查配置
+     */
+    private static volatile byte[] AES_KEY;
+
+    /**
+     * 用于生成随机 IV 的安全随机源
+     */
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * 密码随机散列工具类
@@ -83,16 +92,19 @@ public class SecureUtil {
      * 安全获取AES密钥
      * 如果配置缺失，抛出异常而非使用默认密钥
      */
-    private static SymmetricCrypto initAes() {
+    private static byte[] initAesKey() {
         if (GLOBAL_PROPERTIES == null || StringUtils.isBlank(GLOBAL_PROPERTIES.getAesSecret())) {
             throw new SecureException("AES secret 未配置，请通过 global.aes-secret 配置 AES 密钥，"
                     + "建议使用32位随机字符串并通过配置中心管理");
         }
-        return new SymmetricCrypto(SymmetricAlgorithm.AES, GLOBAL_PROPERTIES.getAesSecret().getBytes(UTF_8));
+        return GLOBAL_PROPERTIES.getAesSecret().getBytes(UTF_8);
     }
 
-    static {
-        // 从配置获取密钥，配置缺失时抛出异常
+    /**
+     * 懒加载并缓存 RSA 密钥对，避免类加载时因 RSA 未配置导致无关方法（md5/bCrypt/HMac）也抛
+     * {@link ExceptionInInitializerError}。
+     */
+    private static void initRsaKeyPair() {
         String configuredPrivateKey = null;
         String configuredPublicKey = null;
 
@@ -105,22 +117,42 @@ public class SecureUtil {
         RSA rsaKeyPair = initRsa(configuredPrivateKey, configuredPublicKey, "RSA密钥对");
         PRIVATE_RSA = rsaKeyPair;
         PUBLIC_RSA = rsaKeyPair;
-        // AES 密钥 - 延迟初始化，在首次使用时检查配置
-        AES = null;
     }
 
-    /**
-     * 获取AES实例（线程安全，双重检查锁定）
-     */
-    public static SymmetricCrypto getAES() {
-        if (AES == null) {
+    private static RSA getPrivateRsa() {
+        if (PRIVATE_RSA == null) {
             synchronized (SecureUtil.class) {
-                if (AES == null) {
-                    AES = initAes();
+                if (PRIVATE_RSA == null) {
+                    initRsaKeyPair();
                 }
             }
         }
-        return AES;
+        return PRIVATE_RSA;
+    }
+
+    private static RSA getPublicRsa() {
+        if (PUBLIC_RSA == null) {
+            synchronized (SecureUtil.class) {
+                if (PUBLIC_RSA == null) {
+                    initRsaKeyPair();
+                }
+            }
+        }
+        return PUBLIC_RSA;
+    }
+
+    /**
+     * 获取AES密钥（线程安全，双重检查锁定）
+     */
+    private static byte[] getAesKey() {
+        if (AES_KEY == null) {
+            synchronized (SecureUtil.class) {
+                if (AES_KEY == null) {
+                    AES_KEY = initAesKey();
+                }
+            }
+        }
+        return AES_KEY;
     }
 
     /**
@@ -131,7 +163,7 @@ public class SecureUtil {
      * @since 2019/11/29 12:02
      **/
     public static String rsaPrivateEncryptHex(String data) {
-        return PRIVATE_RSA.encryptHex(data, UTF_8, KeyType.PrivateKey);
+        return getPrivateRsa().encryptHex(data, UTF_8, KeyType.PrivateKey);
     }
 
 
@@ -143,7 +175,7 @@ public class SecureUtil {
      * @since 2019/11/29 0029 12:03
      **/
     public static String rsaPrivateDecryptStr(String data) {
-        return PRIVATE_RSA.decryptStr(data, KeyType.PrivateKey, UTF_8);
+        return getPrivateRsa().decryptStr(data, KeyType.PrivateKey, UTF_8);
     }
 
 
@@ -155,7 +187,7 @@ public class SecureUtil {
      * @since 2019/11/29 12:02
      **/
     public static String rsaPublicEncryptHex(String data) {
-        return PUBLIC_RSA.encryptHex(data, UTF_8, KeyType.PublicKey);
+        return getPublicRsa().encryptHex(data, UTF_8, KeyType.PublicKey);
     }
 
 
@@ -167,7 +199,7 @@ public class SecureUtil {
      * @since 2019/11/29 12:03
      **/
     public static String rsaPublicDecryptStr(String data) {
-        return PUBLIC_RSA.decryptStr(data, KeyType.PublicKey, UTF_8);
+        return getPublicRsa().decryptStr(data, KeyType.PublicKey, UTF_8);
     }
 
     /**
@@ -184,51 +216,74 @@ public class SecureUtil {
     }
 
     /**
-     * 使用系统配置的AES加密成十六进制
+     * 使用系统配置的AES加密成十六进制（CBC 模式 + 随机 IV，IV 前缀进密文）
      *
      * @param str STR参数
      */
     public static String aesEncryptHex(String str) {
-        return getAES().encryptHex(str, StandardCharsets.UTF_8);
+        return aesCbcEncryptHex(getAesKey(), str);
     }
 
     /**
-     * 使用系统配置的AES解密解密Hex（16进制）或Base64表示的字符串，默认UTF-8编码
+     * 使用系统配置的AES解密十六进制密文（CBC 模式，从密文中分离前缀 IV）
      *
      * @param str STR参数
      */
     public static String aesDecryptStr(String str) {
-        return getAES().decryptStr(str);
+        return aesCbcDecryptStr(getAesKey(), str);
     }
 
     /**
-     * 使用指定秘钥的AES加密成十六进制
+     * 使用指定秘钥的AES加密成十六进制（CBC 模式 + 随机 IV，IV 前缀进密文）
      *
      * @param str STR参数
      * @param secret 签名密钥
      */
     public static String aesEncryptHexWithKey(String str, String secret) {
-        SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
-        if (Objects.isNull(aes)) {
-            aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secret.getBytes(UTF_8));
-            DYNAMIC_AES_CACHE.put(secret, aes);
-        }
-        return aes.encryptHex(str, StandardCharsets.UTF_8);
+        return aesCbcEncryptHex(secret.getBytes(UTF_8), str);
     }
 
     /**
-     * 使用指定秘钥的AES解密加密后的十六进制数据
+     * 使用指定秘钥的AES解密加密后的十六进制数据（CBC 模式，从密文中分离前缀 IV）
      *
      * @param str STR参数
      * @param secret 签名密钥
      */
     public static String aesDecryptStrWithKey(String str, String secret) {
-        SymmetricCrypto aes = DYNAMIC_AES_CACHE.get(secret);
-        if (Objects.isNull(aes)) {
-            aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secret.getBytes(UTF_8));
-            DYNAMIC_AES_CACHE.put(secret, aes);
+        return aesCbcDecryptStr(secret.getBytes(UTF_8), str);
+    }
+
+    /**
+     * AES-CBC 加密，随机 IV 前缀进密文，避免 ECB 模式的可预测性。
+     *
+     * @param key AES 密钥
+     * @param str 明文
+     * @return IV + 密文的十六进制拼接
+     */
+    private static String aesCbcEncryptHex(byte[] key, String str) {
+        byte[] iv = new byte[AES_IV_LENGTH];
+        SECURE_RANDOM.nextBytes(iv);
+        AES aes = new AES(Mode.CBC, Padding.PKCS5Padding, key, iv);
+        byte[] cipher = aes.encrypt(str, UTF_8);
+        return HexUtil.encodeHexStr(iv) + HexUtil.encodeHexStr(cipher);
+    }
+
+    /**
+     * AES-CBC 解密，从 hex 密文中分离前缀 IV。
+     *
+     * @param key AES 密钥
+     * @param str IV + 密文的十六进制拼接
+     * @return 明文
+     */
+    private static String aesCbcDecryptStr(byte[] key, String str) {
+        byte[] data = HexUtil.decodeHex(str);
+        if (data.length <= AES_IV_LENGTH) {
+            throw new SecureException("AES 密文非法");
         }
-        return aes.decryptStr(str);
+        byte[] iv = Arrays.copyOfRange(data, 0, AES_IV_LENGTH);
+        byte[] cipher = Arrays.copyOfRange(data, AES_IV_LENGTH, data.length);
+        AES aes = new AES(Mode.CBC, Padding.PKCS5Padding, key, iv);
+        return aes.decryptStr(cipher, UTF_8);
     }
 
     /**
@@ -258,12 +313,5 @@ public class SecureUtil {
      */
     public static String md5Hex(final String data) {
         return DigestUtils.md5Hex(data);
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-
     }
 }

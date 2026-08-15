@@ -99,7 +99,10 @@ public class UserClaim implements Serializable {
     }
 
     public static UserClaim getDefaultUser() {
-        return DEFAULT_USER;
+        return UserClaim.builder()
+                .userId(DEFAULT_USER.getUserId())
+                .username(DEFAULT_USER.getUsername())
+                .build();
     }
 
     /**

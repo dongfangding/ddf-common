@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 import javax.imageio.ImageIO;
@@ -46,7 +47,7 @@ public class VerifyCodeUtil {
             sources = VERIFY_CODES;
         }
         int codesLen = sources.length();
-        Random rand = new Random(System.currentTimeMillis());
+        Random rand = new SecureRandom();
         StringBuilder verifyCode = new StringBuilder(verifySize);
         for (int i = 0; i < verifySize; i++) {
             verifyCode.append(sources.charAt(rand.nextInt(codesLen - 1)));

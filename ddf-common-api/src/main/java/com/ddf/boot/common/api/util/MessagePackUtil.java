@@ -1,12 +1,9 @@
 package com.ddf.boot.common.api.util;
 
-import com.ddf.boot.common.api.model.authentication.UserClaim;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
 import java.util.HexFormat;
-import java.util.Map;
 import lombok.SneakyThrows;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
@@ -58,34 +55,6 @@ public class MessagePackUtil {
     @SneakyThrows
     public static <T> T readHexValue(String content, Class<T> valueType) {
         return OBJECT_MAPPER.readValue(hexToBinary(content), valueType);
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        final UserClaim claim = new UserClaim();
-        claim.setUserId("123");
-        claim.setUsername("snowball");
-        claim.setCredit("1000");
-        claim.setRemarks("测试用户");
-        claim.setDetail("测试用户详情");
-        claim.setProperties(Map.of("key1", "value1", "key2", "value2"));
-        // 1. 获取 JSON 字节
-        byte[] jsonBytes = JsonUtil.toJson(claim).getBytes(StandardCharsets.UTF_8);
-        // 2. 获取 MsgPack 字节
-        byte[] msgPackBytes = writeValueAsBytes(claim);
-        final String hex = writeValueAsHex(claim);
-        System.out.println(hex);
-
-        System.out.println("JSON 实际大小: " + jsonBytes.length + " bytes");
-        System.out.println("MsgPack 实际大小: " + msgPackBytes.length + " bytes");
-        System.out.println("压缩率: " + (double) msgPackBytes.length / jsonBytes.length * 100 + "%");
-
-        UserClaim userClaim = readValue(msgPackBytes, UserClaim.class);
-
-        System.out.println(readHexValue(hex, UserClaim.class));
-        System.out.println(userClaim);
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -60,12 +59,18 @@ public class ThreadBuilderHelper {
      * 返回通过该帮助类添加的线程池
      */
     public static List<ExecutorService> getPools() {
-        POOLS.addAll(THREAD_POOL_TASK_EXECUTOR.stream().map(ThreadPoolTaskExecutor::getThreadPoolExecutor).toList());
-        return POOLS;
+        List<ExecutorService> result = new ArrayList<>(POOLS);
+        THREAD_POOL_TASK_EXECUTOR.forEach(executor -> result.add(executor.getThreadPoolExecutor()));
+        return result;
     }
 
     static {
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        ScheduledThreadPoolExecutor monitorExecutor = new ScheduledThreadPoolExecutor(1, runnable -> {
+            Thread thread = new Thread(runnable, "thread-pool-monitor");
+            thread.setDaemon(true);
+            return thread;
+        });
+        monitorExecutor.scheduleAtFixedRate(() -> {
             if (!PRINT_RUNNING_STATE_EXECUTOR.isEmpty()) {
                 log.info("线程池-运行状态监控打印开始");
                 PRINT_RUNNING_STATE_EXECUTOR.forEach(executor -> {

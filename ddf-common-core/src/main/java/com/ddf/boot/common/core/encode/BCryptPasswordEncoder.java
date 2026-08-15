@@ -174,18 +174,4 @@ public class BCryptPasswordEncoder {
             return this.version;
         }
     }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String str = "123456";
-        String str1 = encoder.encode(str);
-        System.out.println("str1 = " + str1);
-        String str2 = encoder.encode(str);
-        System.out.println("str2 = " + str2);
-        System.out.println("encoder.matches(str, str1) = " + encoder.matches(str, str1));
-        System.out.println("encoder.matches(str, str2) = " + encoder.matches(str, str2));
-    }
 }

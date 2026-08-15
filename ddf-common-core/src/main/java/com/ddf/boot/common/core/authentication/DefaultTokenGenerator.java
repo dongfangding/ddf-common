@@ -12,7 +12,6 @@ import com.ddf.boot.common.core.event.LoginSuccessEvent;
 import com.ddf.boot.common.core.event.TokenRefreshEvent;
 import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.boot.common.core.util.SecureUtil;
-import com.google.common.base.Throwables;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -82,8 +81,7 @@ public class DefaultTokenGenerator implements TokenGenerator {
             if (e instanceof UnauthorizedException) {
                 throw e;
             }
-            log.error("[{}].checkToken().called with exception => token:{},e:{}", "解析token失败", token,
-                    Throwables.getStackTraceAsString(e));
+            log.error("[{}].checkToken().called with exception => e:{}", "解析token失败", e.toString());
             throw new BusinessException(CoreExceptionCode.ILLEGAL_TOKEN);
         }
     }

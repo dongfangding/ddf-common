@@ -1,14 +1,10 @@
 package com.ddf.boot.common.core.promise;
 
 import cn.hutool.core.thread.ThreadFactoryBuilder;
-import cn.hutool.core.util.RandomUtil;
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +30,11 @@ public class CompletableFutureHelper<T> {
     public static final long DEFAULT_TIMEOUT_MILLIONS = 60000 * 5;
 
     /**
-     * 用来处理超时移除CompletableFuture对象的定时线程池
+     * 用来处理超时移除CompletableFuture对象的定时线程池（共享、daemon）
      */
-    ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-            ThreadFactoryBuilder.create().setNamePrefix("completable-helper-pool-").build());
+    private static final ScheduledThreadPoolExecutor TIMEOUT_SCHEDULER = new ScheduledThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(),
+            ThreadFactoryBuilder.create().setNamePrefix("completable-helper-pool-").setDaemon(true).build());
 
 
     /**
@@ -52,21 +49,16 @@ public class CompletableFutureHelper<T> {
         // fixme 加入创建对象的时候请求对象已经有戴回调了怎么处理？
         completableFutureMap.put(requestId, completableFuture);
         final long timeout = timeoutMilliSeconds > 0 ? timeoutMilliSeconds : DEFAULT_TIMEOUT_MILLIONS;
-        schedule.schedule(() -> {
-            // 应该只要锁这个请求id的字符串对象即可，没必要锁整个对象
-            synchronized (requestId.intern()) {
-                final CompletableFuture<T> finalFuture = completableFutureMap.get(requestId);
-                if (completableFutureMap.containsKey(requestId)) {
-                    if (!finalFuture.isDone() && !finalFuture.isCancelled()
-                            && !finalFuture.isCompletedExceptionally()) {
-                        log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(),
-                                requestId);
-                        finalFuture.completeExceptionally(new CallbackTimeoutException(requestId));
-                    }
-                    completableFutureMap.remove(requestId);
+        TIMEOUT_SCHEDULER.schedule(() -> {
+            // 使用 compute 原子地检查并移除，避免 requestId.intern() 污染字符串常量池
+            completableFutureMap.compute(requestId, (key, future) -> {
+                if (future != null && !future.isDone() && !future.isCancelled()
+                        && !future.isCompletedExceptionally()) {
+                    log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(), key);
+                    future.completeExceptionally(new CallbackTimeoutException(key));
                 }
-
-            }
+                return null;
+            });
         }, timeout, TimeUnit.MILLISECONDS);
         log.info("[{}]请求返回promise, ", requestId);
         return completableFuture;
@@ -152,135 +144,5 @@ public class CompletableFutureHelper<T> {
      */
     private void remove(String requestId) {
         completableFutureMap.remove(requestId);
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        List<String> list = new ArrayList<>(2);
-        list.add("hello");
-        list.add("world");
-
-        String str = "hello";
-        CompletableFutureHelper<String> completableFutureHelper = new CompletableFutureHelper<>();
-
-        CompletableFuture<String> completedFuture = completableFutureHelper.createCompletedFuture("sdsdds");
-        for (int i = 0; i < str.length(); i++) {
-            final int _i = i;
-            completedFuture = completedFuture.thenCompose((e) -> {
-                String id = String.valueOf(_i);
-                CompletableFuture<String> stringCompletableFuture = completableFutureHelper.create(id);
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(RandomUtil.randomInt(5000));
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                    System.out.println(str.charAt(_i));
-                    stringCompletableFuture.complete("dsds");
-                }).start();
-                return stringCompletableFuture;
-            }).thenCombine(completableFutureHelper.createCompletedFuture(""), (a, b) -> {
-                return a;
-            });
-        }
-
-
-
-        completableFutureHelper.createCompletedFuture(str).thenApply((r) -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return CompletableFuture.completedFuture(r).thenApply((s) -> {
-                if (s.length() > 0) {
-                    System.out.println(s.charAt(0));
-                    return s.substring(1);
-                }
-                return s;
-            });
-        }).thenApply((r) -> {
-            try {
-                Thread.sleep(8000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                return CompletableFuture.completedFuture(r.get()).thenApply((s) -> {
-                    if (str.length() > 0) {
-                        System.out.println(s.charAt(0));
-                        return s.substring(1);
-                    }
-                    return s;
-                });
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).thenApply((r) -> {
-            try {
-                Thread.sleep(6000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                return CompletableFuture.completedFuture(r.get()).thenApply((s) -> {
-                    if (str.length() > 0) {
-                        System.out.println(s.charAt(0));
-                        return s.substring(1);
-                    }
-                    return s;
-                });
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).thenApply((r) -> {
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                return CompletableFuture.completedFuture(r.get()).thenApply((s) -> {
-                    if (str.length() > 0) {
-                        System.out.println(s.charAt(0));
-                        return s.substring(1);
-                    }
-                    return s;
-                });
-            } catch (InterruptedException e) {
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).thenApply((r) -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                return CompletableFuture.completedFuture(r.get()).thenApply((s) -> {
-                    if (str.length() > 0) {
-                        System.out.println(s.charAt(0));
-                        return s.substring(1);
-                    }
-                    return s;
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
     }
 }

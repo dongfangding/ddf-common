@@ -8,6 +8,7 @@ import com.ddf.boot.common.api.exception.BusinessException;
 import com.ddf.boot.common.api.model.common.request.BaseSign;
 import com.ddf.boot.common.api.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -193,10 +194,12 @@ public class SignatureUtil {
      * @param nonceTimeoutSeconds 重放校验时间， 单位秒
      */
     public static <T extends BaseSign> boolean verifySelfSignature(T data, String keySecret, long nonceTimeoutSeconds) {
-        // 时间戳参数超过一定间隔，视作重放
+        // 时间戳参数超过一定间隔（下界/上界），视作重放
+        long now = System.currentTimeMillis();
+        long timeoutMillis = TimeUnit.SECONDS.toMillis(nonceTimeoutSeconds);
         if (Objects.isNull(data.getNonceTimestamp())
-                || data.getNonceTimestamp() < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(
-                nonceTimeoutSeconds)) {
+                || data.getNonceTimestamp() < now - timeoutMillis
+                || data.getNonceTimestamp() > now + timeoutMillis) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }
         return verifySelfSignature(data, keySecret, data.getSign());
@@ -249,7 +252,9 @@ public class SignatureUtil {
             String str = JsonUtil.asString(data);
             map = JsonUtil.toBean(str, Map.class);
         }
-        return Objects.equals(genSelfSignature(keySecret, map, flatten), sign);
+        String expected = genSelfSignature(keySecret, map, flatten);
+        // 使用时序安全的比较，避免 HMAC 比较侧信道
+        return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8), sign.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -270,35 +275,5 @@ public class SignatureUtil {
     public static String sha1(Map<String, Object> params) {
         final String s = asciiSortToQueryStringOnlyBasicType(params);
         return SecureUtil.sha1(s);
-    }
-
-    /**
-     * @param args 参数
-     */
-    public static void main(String[] args) {
-        // f8d2ef16c48c87a1a00b9920c57f168213cae6da12686736737a528ab6b7d3fc
-        String str =
-                "{\"nonZeroNumber\":119,\"zeroNumber\":0,\"nullObj\":null,\"string\":\"有效字符\",\"emptyString\":\"\",\"simpleList\":[\"index0\",\"index1\"],\"complexList\":[{\"key1\":\"0.key1_value\",\"key2\":\"0.key2_value\"},{\"key1\":\"1.key1_value\",\"key2\":\"1.key2_value\"}],\"map\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"booleanValue\":false}";
-        final Map bean = JsonUtil.toBean(str, Map.class);
-        boolean flatten = true;
-        String secret = "abcdefghijklmnopqrstuvw987654321";
-        bean.put("nonce", "1692697533554");
-        final String sign = genSelfSignature(secret, bean, flatten);
-        System.out.println("sign = " + sign);
-        System.out.println();
-        final boolean verified = verifySelfSignature(bean, sign, secret, flatten);
-        System.out.println("verified = " + verified);
-
-        //        Map<String, Object> map = new HashMap<>();
-        //        map.put("name", "张三");
-        //        map.put("age", 18);
-        //        map.put("height", 1.8);
-        //        map.put("weight", 70);
-        //        map.put("isMarried", true);
-        //        map.put("nonceTimestamp", System.currentTimeMillis());
-        //        final String sign = genSelfSignature("1234567890", map);
-        //        map.put("sign", sign);
-        //        System.out.println("sign = " + sign);
-        //        System.out.println(verifySelfSignature(map, sign, "1234567890"));
     }
 }

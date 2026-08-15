@@ -104,8 +104,8 @@ public class ResponseData<T> {
      * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data) {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, null,
-                null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_MESSAGE, SUCCESS_MESSAGE, System.currentTimeMillis(), data,
+                null, null);
     }
 
     /**
@@ -117,7 +117,7 @@ public class ResponseData<T> {
      * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data, String desc) {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, desc, System.currentTimeMillis(), data, null, null);
+        return new ResponseData<>(SUCCESS_CODE, desc, desc, System.currentTimeMillis(), data, null, null);
     }
 
     /**
@@ -129,8 +129,8 @@ public class ResponseData<T> {
      * @return 响应数据
      */
     public static <T> ResponseData<T> success(T data, Object extra) {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), data, extra,
-                null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_MESSAGE, SUCCESS_MESSAGE, System.currentTimeMillis(), data,
+                extra, null);
     }
 
     /**
@@ -139,8 +139,8 @@ public class ResponseData<T> {
      * @return 空响应数据
      */
     public static ResponseData<Void> empty() {
-        return new ResponseData<>(SUCCESS_CODE, SUCCESS_CODE, SUCCESS_MESSAGE, System.currentTimeMillis(), null, null,
-                null);
+        return new ResponseData<>(SUCCESS_CODE, SUCCESS_MESSAGE, SUCCESS_MESSAGE, System.currentTimeMillis(), null,
+                null, null);
     }
 
     /**

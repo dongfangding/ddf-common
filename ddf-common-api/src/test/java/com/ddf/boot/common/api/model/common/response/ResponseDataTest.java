@@ -30,7 +30,7 @@ class ResponseDataTest {
             ResponseData<String> response = ResponseData.success(testData);
 
             assertThat(response.getCode()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
-            assertThat(response.getMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
+            assertThat(response.getMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getDescription());
             assertThat(response.getSubMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getDescription());
             assertThat(response.getData()).isEqualTo(testData);
             assertThat(response.getTimestamp()).isPositive();
@@ -45,7 +45,7 @@ class ResponseDataTest {
             ResponseData<String> response = ResponseData.success(testData, customDesc);
 
             assertThat(response.getCode()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
-            assertThat(response.getMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
+            assertThat(response.getMessage()).isEqualTo(customDesc);
             assertThat(response.getSubMessage()).isEqualTo(customDesc);
             assertThat(response.getData()).isEqualTo(testData);
             assertThat(response.isSuccess()).isTrue();
@@ -70,7 +70,7 @@ class ResponseDataTest {
             ResponseData<Void> response = ResponseData.empty();
 
             assertThat(response.getCode()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
-            assertThat(response.getMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getCode());
+            assertThat(response.getMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getDescription());
             assertThat(response.getSubMessage()).isEqualTo(BaseErrorCallbackCode.COMPLETE.getDescription());
             assertThat(response.getData()).isNull();
             assertThat(response.isSuccess()).isTrue();

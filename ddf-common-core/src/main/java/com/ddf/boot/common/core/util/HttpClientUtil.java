@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 import lombok.Data;
@@ -183,7 +184,13 @@ public class HttpClientUtil {
      * 定时打印连接池信息
      */
     private static void printState() {
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        ThreadFactory daemonThreadFactory = runnable -> {
+            Thread thread = new Thread(runnable, "http-client-pool-monitor");
+            thread.setDaemon(true);
+            return thread;
+        };
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, daemonThreadFactory);
+        executor.scheduleAtFixedRate(() -> {
             final PoolingHttpClientConnectionManager cm = HttpClientUtil.CM;
             final Set<HttpRoute> routes = cm.getRoutes();
             for (HttpRoute route : routes) {
