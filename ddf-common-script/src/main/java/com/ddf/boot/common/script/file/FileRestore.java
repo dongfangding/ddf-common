@@ -68,6 +68,8 @@ public class FileRestore {
      *   <li>VID_20250101_120000_00_001.mp4 — 从文件名第5-10位解析月份</li>
      *   <li>VID_20250101_120000.mp4 — 从文件名第5-10位解析月份</li>
      *   <li>VID20250101120000.mp4 — 从文件名第4-9位解析月份</li>
+     *   <li>yyyyMMddHHmmss_xxxxxx.MP4（如 20240824165007_000205.MP4）— 从第1-8位解析月份</li>
+     *   <li>Record_yyyy-MM-dd-HH-mm-ss.mp4（如 Record_2024-08-28-19-08-36.mp4）— 归入对应月份下的"录屏"子目录</li>
      *   <li>DJI_* — 读取文件实际创建时间，按创建月份归档</li>
      *   <li>lv_0_YYYYMMDDHHMMSS.mp4 / TG-2024-05-02-142222410.mp4 — 归入"剪辑"子目录</li>
      *   <li>share_1cd17aed...mp4 — 归入"网络分享"子目录</li>
@@ -111,6 +113,35 @@ public class FileRestore {
                         } else if (fileName.startsWith("share_")) {
                             targetDir = Path.of(baseTargetDirectory, "网络分享");
                             result.shareFiles++;
+                        } else if (fileName.startsWith("Record_")) {
+                            String dateStr = extractRecordDateString(fileName);
+                            if (dateStr == null) {
+                                targetDir = Path.of(notVidVideoPath);
+                                result.unmatchedFiles++;
+                            } else if (!isValidReasonableDate(dateStr)) {
+                                result.invalidDateFiles++;
+                                result.invalidDateNames.add(file.toString());
+                                System.err.println("INVALID DATE: " + file + " 解析日期=" + dateStr);
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                String month = dateStr.substring(0, 6);
+                                targetDir = Path.of(baseTargetDirectory, month, "录屏");
+                                result.recordFiles++;
+                                result.matchedMonths.add(month);
+                                result.matchedFiles++;
+                            }
+                        } else if (startsWithLeadingTimestamp(fileName)) {
+                            String dateStr = fileName.substring(0, 8);
+                            if (!isValidReasonableDate(dateStr)) {
+                                result.invalidDateFiles++;
+                                result.invalidDateNames.add(file.toString());
+                                System.err.println("INVALID DATE: " + file + " 解析日期=" + dateStr);
+                                return FileVisitResult.CONTINUE;
+                            }
+                            String month = dateStr.substring(0, 6);
+                            targetDir = Path.of(baseTargetDirectory, month);
+                            result.matchedMonths.add(month);
+                            result.matchedFiles++;
                         } else if (fileName.startsWith("DJI_")) {
                             String month = MONTH_FMT.format(attrs.creationTime().toInstant());
                             targetDir = Path.of(baseTargetDirectory, month);
@@ -171,6 +202,7 @@ public class FileRestore {
         int unmatchedFiles;
         int clipFiles;
         int shareFiles;
+        int recordFiles;
         int imageFiles;
         int invalidDateFiles;
         final java.util.LinkedHashSet<String> matchedMonths = new java.util.LinkedHashSet<>();
@@ -181,6 +213,7 @@ public class FileRestore {
         public int getUnmatchedFiles() { return unmatchedFiles; }
         public int getClipFiles() { return clipFiles; }
         public int getShareFiles() { return shareFiles; }
+        public int getRecordFiles() { return recordFiles; }
         public int getImageFiles() { return imageFiles; }
         public int getInvalidDateFiles() { return invalidDateFiles; }
 
@@ -200,6 +233,9 @@ public class FileRestore {
             }
             if (shareFiles > 0) {
                 sb.append("网络分享: ").append(shareFiles).append(" 个，归入 网络分享 目录\n");
+            }
+            if (recordFiles > 0) {
+                sb.append("录屏文件: ").append(recordFiles).append(" 个，归入 月份/录屏 目录\n");
             }
             sb.append("匹配失败: ").append(unmatchedFiles).append(" 个，归入 not_vid 目录\n");
             sb.append("日期不合理: ").append(invalidDateFiles).append(" 个，未处理");
@@ -233,6 +269,36 @@ public class FileRestore {
             return null;
         }
         return candidate;
+    }
+
+    /**
+     * 从 Record_yyyy-MM-dd-HH-mm-ss.<ext> 格式的文件名提取 8 位日期串（yyyyMMdd）。
+     * 例如 Record_2024-08-28-19-08-36.mp4 → "20240828"。无法识别返回 null。
+     */
+    private static String extractRecordDateString(String fileName) {
+        if (!fileName.startsWith("Record_") || fileName.length() < 17) {
+            return null;
+        }
+        String datePart = fileName.substring(7, 17);
+        if (datePart.charAt(4) != '-' || datePart.charAt(7) != '-') {
+            return null;
+        }
+        String digits = datePart.substring(0, 4) + datePart.substring(5, 7) + datePart.substring(8, 10);
+        if (!digits.chars().allMatch(Character::isDigit)) {
+            return null;
+        }
+        return digits;
+    }
+
+    /**
+     * 判断文件名是否以 14 位数字开头（形如 yyyyMMddHHmmss_xxxxxx.MP4）。
+     * 例如 20240824165007_000205.MP4。
+     */
+    private static boolean startsWithLeadingTimestamp(String fileName) {
+        if (fileName.length() < 14) {
+            return false;
+        }
+        return fileName.substring(0, 14).chars().allMatch(Character::isDigit);
     }
 
     /**

@@ -14,17 +14,19 @@
 
 ## 构建与测试命令约定
 
-所有命令在仓库根目录 `/mnt/d/IdeaWorkspaces/ddf-common` 执行。
+所有命令在仓库根目录 `/mnt/d/IdeaWorkspaces/ddf-common` 执行。**必须带非默认 Maven settings**（其 `localRepository` 指向 `/mnt/d/maven_repository`）：
 
 ```bash
+MVN="mvn -s /mnt/d/develop_tools/apache-maven-3.9.9/conf/settings-snowball-wsl.xml"
+
 # 编译单模块（不跑测试）
-mvn -q -pl <module> -am compile
+$MVN -q -pl <module> -am compile -DskipTests
 
 # 跑单模块测试
-mvn -q -pl <module> -am test
+$MVN -q -pl <module> -am test
 
 # 跑单个测试类
-mvn -q -pl <module> -am test -Dtest=<TestClass>
+$MVN -q -pl <module> -am test -Dtest=<TestClass>
 ```
 
 模块名：`ddf-common-mvc`、`ddf-common-core`、`ddf-common-authentication`、`ddf-common-alarm`、`ddf-common-limit`、`ddf-common-captcha`、`ddf-common-ids-service`。
