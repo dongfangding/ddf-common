@@ -13,6 +13,7 @@
 ### Task 1: 创建 VideoDetectPanel
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/VideoDetectPanel.java`
 
 - [ ] **Step 1: 编写 VideoDetectPanel.java**
@@ -214,6 +215,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat: add VideoDetectPanel fo
 ### Task 2: 注册面板到 DedupApplication
 
 **Files:**
+
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupApplication.java`
 
 - [ ] **Step 1: 在 DedupApplication 中注册 VideoDetectPanel**

@@ -2,10 +2,10 @@ package com.ddf.boot.common.lock.zk.impl;
 
 import com.ddf.boot.common.lock.DistributedLock;
 import com.ddf.boot.common.lock.zk.config.DistributedLockZookeeperProperties;
-import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 

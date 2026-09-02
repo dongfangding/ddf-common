@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 认证生命周期事件发布测试。
- *
  * <p>验证 {@link DefaultTokenGenerator} 在 createToken / refreshToken 时分别发布
  * {@link LoginSuccessEvent} / {@link TokenRefreshEvent}。</p>
  */
@@ -36,13 +35,12 @@ class TokenGeneratorEventTest {
         RSA_PUBLIC_KEY = rsa.getPublicKeyBase64();
     }
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(CoreAutoConfiguration.class))
-            .withUserConfiguration(EventListenerTestConfiguration.class)
-            .withPropertyValues(
-                    "customizer.infra.global-properties.aes-secret=" + AES_SECRET,
-                    "customizer.infra.global-properties.rsa-private-key=" + RSA_PRIVATE_KEY,
-                    "customizer.infra.global-properties.rsa-public-key=" + RSA_PUBLIC_KEY);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(CoreAutoConfiguration.class)).withUserConfiguration(
+            EventListenerTestConfiguration.class).withPropertyValues(
+            "customizer.infra.global-properties.aes-secret=" + AES_SECRET,
+            "customizer.infra.global-properties.rsa-private-key=" + RSA_PRIVATE_KEY,
+            "customizer.infra.global-properties.rsa-public-key=" + RSA_PUBLIC_KEY);
 
     @AfterEach
     void cleanSpringUtil() {

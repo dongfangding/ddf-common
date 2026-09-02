@@ -1,12 +1,5 @@
 package com.ddf.boot.common.mvc.permissionscan;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * PermissionMenuScanner 测试
@@ -163,8 +163,8 @@ class PermissionMenuScannerTest {
         assertThat(reportMenu.getCode()).isEqualTo("report");
         assertThat(reportMenu.getType()).isEqualTo(PermissionMenuType.MENU);
         assertThat(reportMenu.getChildren()).hasSize(2);
-        assertThat(reportMenu.getChildren()).extracting(SysMenuFunction::getCode)
-                .containsExactlyInAnyOrder("export", "import");
+        assertThat(reportMenu.getChildren()).extracting(SysMenuFunction::getCode).containsExactlyInAnyOrder("export",
+                "import");
     }
 
     @Controller
@@ -181,24 +181,29 @@ class PermissionMenuScannerTest {
         }
     }
 
+
     @Controller
     static class PlainController {
     }
+
 
     @Controller
     @PermissionMenu(name = "重复菜单", code = "dup-code")
     static class DupControllerOne {
     }
 
+
     @Controller
     @PermissionMenu(name = "重复菜单", code = "dup-code")
     static class DupControllerTwo {
     }
 
+
     @RestController
     @PermissionMenu(name = "REST菜单", code = "rest-menu")
     static class DemoRestController {
     }
+
 
     @Controller
     @PermissionMenu(name = "仅菜单", code = "menu-only")
@@ -207,6 +212,7 @@ class PermissionMenuScannerTest {
         public void noAnnotation() {
         }
     }
+
 
     @Controller
     @PermissionMenu(name = "")

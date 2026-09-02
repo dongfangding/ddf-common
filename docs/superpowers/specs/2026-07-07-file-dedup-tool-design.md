@@ -17,13 +17,13 @@
 
 ## 技术栈
 
-| 项 | 内容 |
-|----|------|
-| 语言 | Java 17 |
-| GUI | JavaFX (javafx-controls 17.0.14) |
-| 构建 | Maven |
-| 模块 | ddf-common-script |
-| 包 | com.ddf.boot.common.script.file.dedup |
+| 项   | 内容                                    |
+|-----|---------------------------------------|
+| 语言  | Java 17                               |
+| GUI | JavaFX (javafx-controls 17.0.14)      |
+| 构建  | Maven                                 |
+| 模块  | ddf-common-script                     |
+| 包   | com.ddf.boot.common.script.file.dedup |
 
 ## 代码结构
 

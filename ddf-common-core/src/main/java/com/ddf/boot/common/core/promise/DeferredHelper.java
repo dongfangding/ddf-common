@@ -28,8 +28,8 @@ public class DeferredHelper<D, F, P> {
     public static final long DEFAULT_TIMEOUT_MILLIONS = 60000 * 5;
 
     private static final ScheduledThreadPoolExecutor TIMEOUT_SCHEDULER = new ScheduledThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(),
-            ThreadFactoryBuilder.create().setNamePrefix("deferred-helper-pool-").setDaemon(true).build());
+            Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder.create().setNamePrefix(
+            "deferred-helper-pool-").setDaemon(true).build());
 
 
     /**

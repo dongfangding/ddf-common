@@ -8,7 +8,6 @@ import com.ddf.common.boot.mqtt.model.support.header.ServerClientInfo;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
-import org.eclipse.paho.mqttv5.common.MqttMessage;
 
 /**
  * <p>发送的mqtt的实际消息对象， 该对象通过发送消息请求对象构建,舍弃了一些无必要参数，同时增加了一些自己作为服务端代码的一些参数</p >
@@ -65,7 +64,7 @@ public class MqttMessagePayload implements Serializable {
 
     /**
      * 消息body
-     * 注意这个值来源于{@link com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest#getBody()}
+     * 注意这个值来源于 {@code InnerMqttMessageRequest#getBody()}
      * 这里的T舍弃了限定符， 是为了避免对象序列化之后，由于多态无法反序列化问题。
      * 如果要支持，会把这一块搞发非常复杂，目前应该没有必要
      */

@@ -5,9 +5,13 @@ package com.ddf.boot.common.limit.ratelimit.algorithm;
  */
 public interface RateLimitAlgorithm {
 
-    /** 算法标识，与 @RateLimit 注解的 algorithm 字段对应（也是 bean name） */
+    /**
+     * 算法标识，与 @RateLimit 注解的 algorithm 字段对应（也是 bean name）
+     */
     String getAlgorithm();
 
-    /** 尝试获取许可，返回 false 表示被限流 */
+    /**
+     * 尝试获取许可，返回 false 表示被限流
+     */
     boolean tryAcquire(String key, int max, int rate);
 }

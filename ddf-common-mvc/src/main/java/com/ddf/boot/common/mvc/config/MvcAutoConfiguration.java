@@ -1,14 +1,13 @@
 package com.ddf.boot.common.mvc.config;
 
 import com.ddf.boot.common.core.config.GlobalProperties;
+import com.ddf.boot.common.mvc.exception200.CommonExceptionAdvice;
+import com.ddf.boot.common.mvc.permissionscan.PermissionMenuScanner;
+import com.ddf.boot.common.mvc.requestsign.RequestSignAccessFilterChain;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
-import com.ddf.boot.common.mvc.exception200.CommonExceptionAdvice;
-import com.ddf.boot.common.mvc.permissionscan.PermissionMenuScanner;
-import com.ddf.boot.common.mvc.requestsign.RequestSignAccessFilterChain;
 
 /**
  * 核心模块的自动注入

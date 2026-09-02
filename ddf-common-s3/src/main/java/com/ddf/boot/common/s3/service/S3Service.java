@@ -217,7 +217,8 @@ public class S3Service implements S3Api {
             minioClient.statObject(statObjectArgs);
             return true;
         } catch (Exception e) {
-            log.warn("判断对象是否存在时发生异常，按不存在处理, bucketName: {}, objectKey: {}", bucketName, objectKey, e);
+            log.warn("判断对象是否存在时发生异常，按不存在处理, bucketName: {}, objectKey: {}", bucketName, objectKey,
+                    e);
             return false;
         }
     }
@@ -429,9 +430,9 @@ public class S3Service implements S3Api {
         if (StringUtils.isBlank(path)) {
             return "";
         }
-        return Arrays.stream(path.split("/"))
-                .map(segment -> URLEncoder.encode(segment, StandardCharsets.UTF_8).replace("+", "%20"))
-                .collect(Collectors.joining("/"));
+        return Arrays.stream(path.split("/")).map(
+                segment -> URLEncoder.encode(segment, StandardCharsets.UTF_8).replace("+", "%20")).collect(
+                Collectors.joining("/"));
     }
 
     /**

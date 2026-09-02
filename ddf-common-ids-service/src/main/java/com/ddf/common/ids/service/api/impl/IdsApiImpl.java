@@ -92,7 +92,8 @@ public class IdsApiImpl implements IdsApi {
     @Override
     public IdsMultiData getMultiId(String key) {
         checkSegment();
-        return new IdsMultiData().setSequenceId(get(idGenRegistry.get(key))).setSnowflakeId(get(snowflakeService.get()));
+        return new IdsMultiData().setSequenceId(get(idGenRegistry.get(key))).setSnowflakeId(
+                get(snowflakeService.get()));
     }
 
     /**

@@ -6,15 +6,15 @@
 
 ## 核心类
 
-| 类路径                                                           | 功能      |
-|---------------------------------------------------------------|---------|
-| `com.ddf.boot.common.limit.ratelimit.handler.RateLimitAspect` | 限流切面    |
-| `com.ddf.boot.common.limit.repeatable.handler.RepeatAspect`   | 防重复提交切面 |
-| `com.ddf.boot.common.limit.ratelimit.annotation.RateLimit`    | 限流注解    |
-| `com.ddf.boot.common.limit.repeatable.annotation.Repeatable`  | 防重复提交注解 |
-| `com.ddf.boot.common.limit.ratelimit.algorithm.RateLimitAlgorithm` | 限流算法策略接口 |
-| `com.ddf.boot.common.limit.ratelimit.algorithm.TokenBucketRateLimitAlgorithm` | 默认令牌桶算法 |
-| `com.ddf.boot.common.limit.ratelimit.event.RateLimitTriggeredEvent` | 限流触发事件 |
+| 类路径                                                                           | 功能       |
+|-------------------------------------------------------------------------------|----------|
+| `com.ddf.boot.common.limit.ratelimit.handler.RateLimitAspect`                 | 限流切面     |
+| `com.ddf.boot.common.limit.repeatable.handler.RepeatAspect`                   | 防重复提交切面  |
+| `com.ddf.boot.common.limit.ratelimit.annotation.RateLimit`                    | 限流注解     |
+| `com.ddf.boot.common.limit.repeatable.annotation.Repeatable`                  | 防重复提交注解  |
+| `com.ddf.boot.common.limit.ratelimit.algorithm.RateLimitAlgorithm`            | 限流算法策略接口 |
+| `com.ddf.boot.common.limit.ratelimit.algorithm.TokenBucketRateLimitAlgorithm` | 默认令牌桶算法  |
+| `com.ddf.boot.common.limit.ratelimit.event.RateLimitTriggeredEvent`           | 限流触发事件   |
 
 ## 使用说明
 

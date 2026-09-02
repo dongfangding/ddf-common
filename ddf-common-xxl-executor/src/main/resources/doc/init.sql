@@ -100,7 +100,7 @@ CREATE TABLE `xxl_job_log`
     PRIMARY KEY (`id`),
     KEY `I_trigger_time` (`trigger_time`),
     KEY `I_handle_code` (`handle_code`),
-    KEY `I_jobid_jobgroup` (`job_id`,`job_group`),
+    KEY `I_jobid_jobgroup` (`job_id`, `job_group`),
     KEY `I_job_id` (`job_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -131,11 +131,11 @@ CREATE TABLE `xxl_job_lock`
 
 CREATE TABLE `xxl_job_user`
 (
-    `id`         int(11)     NOT NULL AUTO_INCREMENT,
-    `username`   varchar(50) NOT NULL COMMENT '账号',
+    `id`         int(11)      NOT NULL AUTO_INCREMENT,
+    `username`   varchar(50)  NOT NULL COMMENT '账号',
     `password`   varchar(100) NOT NULL COMMENT '密码加密信息',
     `token`      varchar(100) DEFAULT NULL COMMENT '登录token',
-    `role`       tinyint(4)  NOT NULL COMMENT '角色：0-普通用户、1-管理员',
+    `role`       tinyint(4)   NOT NULL COMMENT '角色：0-普通用户、1-管理员',
     `permission` varchar(255) DEFAULT NULL COMMENT '权限：执行器ID列表，多个逗号分割',
     PRIMARY KEY (`id`),
     UNIQUE KEY `i_username` (`username`) USING BTREE

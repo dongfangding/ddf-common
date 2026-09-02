@@ -13,6 +13,7 @@
 ### Task 1: 添加 JavaFX 依赖和 Maven 插件
 
 **Files:**
+
 - Modify: `ddf-common-script/pom.xml`
 
 - [ ] **Step 1: 在 pom.xml 添加 JavaFX 依赖和 javafx-maven-plugin**
@@ -118,6 +119,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "chore(ddf-common-script): add
 ### Task 2: 创建 DedupResult 数据模型
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupResult.java`
 
 - [ ] **Step 1: 创建 DedupResult record**
@@ -159,6 +161,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat(dedup): add DedupResult 
 ### Task 3: 创建 DedupService 扫描和整理逻辑
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupService.java`
 
 - [ ] **Step 1: 创建 DedupService**
@@ -314,6 +317,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat(dedup): add DedupService
 ### Task 4: 创建 DedupApplication JavaFX 界面
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupApplication.java`
 
 - [ ] **Step 1: 创建 DedupApplication 主窗口**

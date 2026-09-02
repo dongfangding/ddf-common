@@ -14,14 +14,14 @@
 
 ## 2. 扩展点分类标尺
 
-| # | 类别 | Spring Boot 机制 | 典型适用 |
-|---|------|-----------------|---------|
-| 1 | 配置扩展 | `@ConfigurationProperties`（前缀 `customizer.<scope>.<feature>`） | 开关、阈值、超时、地址、默认值 |
-| 2 | Bean 覆盖 | `@ConditionalOnMissingBean` 声明的默认 Bean，接入方注册同名 Bean 替换 | 整实现替换 |
-| 3 | 策略/SPI 接口 | 接口抽象 + 默认实现 + 多实现聚合（`ObjectProvider<T>`/`List<T>`，可选 `META-INF/services`） | 算法可变、多策略并存、按类型分发 |
-| 4 | 事件扩展 | `ApplicationEventPublisher` 发布 + `@EventListener`/`@TransactionalEventListener` 订阅 | 生命周期钩子、业务节点副作用（审计/通知/回调） |
-| 5 | 模板方法钩子 | 抽象基类 protected 可覆写方法 | 流程固定但局部步骤可变 |
-| 6 | 拦截器/后处理器 | `HandlerInterceptor`、`BeanPostProcessor`、`WebMvcConfigurer`、`ApplicationRunner` 等框架回调 | 请求拦截、Bean 初始化后处理、启动回调 |
+| # | 类别        | Spring Boot 机制                                                                        | 典型适用                     |
+|---|-----------|---------------------------------------------------------------------------------------|--------------------------|
+| 1 | 配置扩展      | `@ConfigurationProperties`（前缀 `customizer.<scope>.<feature>`）                         | 开关、阈值、超时、地址、默认值          |
+| 2 | Bean 覆盖   | `@ConditionalOnMissingBean` 声明的默认 Bean，接入方注册同名 Bean 替换                                | 整实现替换                    |
+| 3 | 策略/SPI 接口 | 接口抽象 + 默认实现 + 多实现聚合（`ObjectProvider<T>`/`List<T>`，可选 `META-INF/services`）             | 算法可变、多策略并存、按类型分发         |
+| 4 | 事件扩展      | `ApplicationEventPublisher` 发布 + `@EventListener`/`@TransactionalEventListener` 订阅    | 生命周期钩子、业务节点副作用（审计/通知/回调） |
+| 5 | 模板方法钩子    | 抽象基类 protected 可覆写方法                                                                  | 流程固定但局部步骤可变              |
+| 6 | 拦截器/后处理器  | `HandlerInterceptor`、`BeanPostProcessor`、`WebMvcConfigurer`、`ApplicationRunner` 等框架回调 | 请求拦截、Bean 初始化后处理、启动回调    |
 
 **优先级**：P0 阻塞接入 / P1 应补 / P2 可选。
 
@@ -33,19 +33,19 @@
 
 ### 3.2 保留并处理的模块
 
-| 模块 | 改动要点 | 优先级 |
-|------|---------|--------|
-| `ddf-common-core` | 雪花 workerId 分配策略、线程池指标（SecureUtil 忽略） | P2 |
-| `ddf-common-mvc` | 删除 ResponseBodyAdvice 相关逻辑 | — |
-| `ddf-common-authentication` | 认证生命周期事件、Token 生成策略接口化 | P1 |
-| `ddf-common-alarm` | 告警渠道 SPI、频率控制 | P1 |
-| `ddf-common-limit` | 限流算法 SPI、限流触发事件 | P1 |
-| `ddf-common-captcha` | 验证码类型分发 SPI、校验事件 | P1 |
-| `ddf-common-ids-service` | ID 生成策略注册 | P1 |
-| `ddf-common-distributed-lock` | 锁生命周期事件、默认实现选择 | P2 |
-| `ddf-common-governance-starter` | 邮件模板策略 | P2 |
-| `ddf-common-zookeeper` | 节点变更事件 | P2 |
-| `ddf-common-s3` | 上传/下载钩子 | P2 |
+| 模块                              | 改动要点                                  | 优先级 |
+|---------------------------------|---------------------------------------|-----|
+| `ddf-common-core`               | 雪花 workerId 分配策略、线程池指标（SecureUtil 忽略） | P2  |
+| `ddf-common-mvc`                | 删除 ResponseBodyAdvice 相关逻辑            | —   |
+| `ddf-common-authentication`     | 认证生命周期事件、Token 生成策略接口化                | P1  |
+| `ddf-common-alarm`              | 告警渠道 SPI、频率控制                         | P1  |
+| `ddf-common-limit`              | 限流算法 SPI、限流触发事件                       | P1  |
+| `ddf-common-captcha`            | 验证码类型分发 SPI、校验事件                      | P1  |
+| `ddf-common-ids-service`        | ID 生成策略注册                             | P1  |
+| `ddf-common-distributed-lock`   | 锁生命周期事件、默认实现选择                        | P2  |
+| `ddf-common-governance-starter` | 邮件模板策略                                | P2  |
+| `ddf-common-zookeeper`          | 节点变更事件                                | P2  |
+| `ddf-common-s3`                 | 上传/下载钩子                               | P2  |
 
 `ddf-common-dependency`、`ddf-common-starter-web`、`ddf-common-starter-default`、`ddf-common-log4j` 无需扩展点改动（纯 BOM / 聚合 / 配置资源）。
 
@@ -57,16 +57,16 @@
 
 - **忽略**：`SecureUtil` 密钥来源抽象（原 P1 建议撤销）。
 - **保留（P2）**：
-  - **雪花 workerId 分配策略**（第 3 类）：`IdsUtil` 的 workerId/dataCenterId 来自静态配置，多实例易冲突。抽象 `WorkerIdAssigner` 接口，默认读配置，接入方注册自定义实现（ZK/DB 分配）。
-  - **线程池统一指标注册**（第 6 类）：`ThreadBuilderHelper` 创建的池缺少统一的命名/指标注册钩子。
+    - **雪花 workerId 分配策略**（第 3 类）：`IdsUtil` 的 workerId/dataCenterId 来自静态配置，多实例易冲突。抽象 `WorkerIdAssigner` 接口，默认读配置，接入方注册自定义实现（ZK/DB 分配）。
+    - **线程池统一指标注册**（第 6 类）：`ThreadBuilderHelper` 创建的池缺少统一的命名/指标注册钩子。
 - **说明**：`TokenUtil`（`com.ddf.boot.common.core.authentication.TokenUtil`，静态 `createToken`/`checkToken`/`refreshToken`）的 Token 生成策略接口化，见 §4.3 authentication。
 
 ### 4.2 `ddf-common-mvc`
 
 - **删除**：`ResponseBodyAdvice` 相关逻辑 —— `controllerwrapper` 包（`CommonResponseBodyAdviceDemo`、`CommonResponseBodyAdviceProperties`、`AbstractCommonResponseBodyAdvice`）、`MvcAutoConfiguration` 中对应注册、`customizer.infra.response-body-advice` 配置前缀。
 - **已具备，无需补**：
-  - 国际化：`MessageSourceUtil` + `AbstractExceptionHandler`（exception200 包）。
-  - 异常体系：`AbstractExceptionHandler` + `ExceptionHandlerMapping` + `CommonExceptionAdvice`，接入方继承 `AbstractExceptionHandler` 即可扩展。
+    - 国际化：`MessageSourceUtil` + `AbstractExceptionHandler`（exception200 包）。
+    - 异常体系：`AbstractExceptionHandler` + `ExceptionHandlerMapping` + `CommonExceptionAdvice`，接入方继承 `AbstractExceptionHandler` 即可扩展。
 
 ### 4.3 `ddf-common-authentication`
 
@@ -119,22 +119,22 @@
 
 ### 5.1 P1 清单（应补，接入方常见适配诉求）
 
-| 模块 | 改动 | 类别 |
-|------|------|------|
-| authentication | 认证生命周期事件（登录/登出/刷新） | 4 |
-| authentication | Token 生成策略接口 + 默认实现 | 3 |
-| alarm | 告警渠道 SPI（`AlarmChannel`） | 3 |
-| alarm | 告警频率控制/降级 | 3/1 |
-| limit | 限流算法 SPI（`RateLimitAlgorithm`） | 3 |
-| limit | 限流触发事件 | 4 |
-| captcha | 验证码类型分发 SPI | 3 |
-| captcha | 校验成功/失败事件 | 4 |
-| ids-service | ID 生成策略注册（按业务码分发） | 3 |
+| 模块             | 改动                             | 类别  |
+|----------------|--------------------------------|-----|
+| authentication | 认证生命周期事件（登录/登出/刷新）             | 4   |
+| authentication | Token 生成策略接口 + 默认实现            | 3   |
+| alarm          | 告警渠道 SPI（`AlarmChannel`）       | 3   |
+| alarm          | 告警频率控制/降级                      | 3/1 |
+| limit          | 限流算法 SPI（`RateLimitAlgorithm`） | 3   |
+| limit          | 限流触发事件                         | 4   |
+| captcha        | 验证码类型分发 SPI                    | 3   |
+| captcha        | 校验成功/失败事件                      | 4   |
+| ids-service    | ID 生成策略注册（按业务码分发）              | 3   |
 
 ### 5.2 删除项
 
-| 模块 | 改动 |
-|------|------|
+| 模块  | 改动                                                                                   |
+|-----|--------------------------------------------------------------------------------------|
 | mvc | 删除 `ResponseBodyAdvice` 相关逻辑（`controllerwrapper` 包 + 注册 + `response-body-advice` 前缀） |
 
 ### 5.3 P2 清单（可选）

@@ -70,8 +70,8 @@ public class VpsUtil {
         tmpPath = tmpPath.endsWith(File.separator) ? tmpPath : tmpPath + File.separator;
         String finalFilePath = tmpPath + filePath.replaceAll("//*", "_") + "_" + System.currentTimeMillis() + ".jpg";
         try {
-            log.info("视频截图命令， filePath = {}, beforeCutSecond = {}, finalFilePath = {}", filePath,
-                    beforeCutSecond, finalFilePath);
+            log.info("视频截图命令， filePath = {}, beforeCutSecond = {}, finalFilePath = {}", filePath, beforeCutSecond,
+                    finalFilePath);
             ProcessBuilder builder = new ProcessBuilder("ffmpeg", "-i", filePath, "-y", "-f", "image2", "-ss",
                     beforeCutSecond, "-vframes", "1", finalFilePath);
             final Process start = builder.start();

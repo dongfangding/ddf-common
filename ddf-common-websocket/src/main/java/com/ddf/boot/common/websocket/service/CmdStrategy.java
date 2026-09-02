@@ -33,8 +33,7 @@ public interface CmdStrategy {
      * @param webSocketSessionWrapper WebSocket 会话包装对象
      * @param authPrincipal 认证主体对象
      * @param message 消息内容
-     * @author dongfang.ding
-     * @since 2019/10/26 15:17
+     * @param <T> 泛型类型
      */
     <T> Message<T> responseCmd(WebSocketSessionWrapper webSocketSessionWrapper, AuthPrincipal authPrincipal,
             Message<T> message);

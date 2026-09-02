@@ -150,8 +150,8 @@ public class RateLimitAspect {
             String key = keyGeneratorMap.get(keyGenerator).generateKey(joinPoint, annotation, rateLimitProperties);
 
             // 解析限流算法，默认令牌桶
-            String algorithm = StringUtils.isBlank(annotation.algorithm())
-                    ? TokenBucketRateLimitAlgorithm.ALGORITHM : annotation.algorithm();
+            String algorithm = StringUtils.isBlank(annotation.algorithm()) ? TokenBucketRateLimitAlgorithm.ALGORITHM :
+                    annotation.algorithm();
             if (!algorithmMap.containsKey(algorithm)) {
                 throw new NoSuchBeanDefinitionException("限流算法组件[%s]不存在".formatted(algorithm));
             }

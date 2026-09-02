@@ -11,7 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +120,6 @@ public class RedisCommandHelper {
 
     /**
      * 查找匹配的key
-     *
      * <p>注意：底层为 Redis {@code KEYS} 命令，会阻塞 Redis 线程，生产环境大数据量下禁止使用，
      * 请改用 {@code scan} 系列命令。
      *

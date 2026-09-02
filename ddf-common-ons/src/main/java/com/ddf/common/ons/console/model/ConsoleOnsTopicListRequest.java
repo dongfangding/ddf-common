@@ -1,7 +1,6 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsTopicListRequest;
-import com.ddf.common.ons.console.config.EnvClientProperties;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
@@ -25,9 +24,7 @@ public class ConsoleOnsTopicListRequest implements UserRequest, Serializable {
     private String currentUser;
 
     /**
-     * 环境key
-     *
-     * @see com.ddf.common.ons.console.config.EnvClientProperties#getClients()
+     * 环境key，对应 {@code EnvClientProperties#getClients()} 中的 key
      */
     private String env;
 

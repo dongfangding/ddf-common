@@ -5,6 +5,8 @@ import com.ddf.boot.common.script.file.dedup.ui.FolderCompressPanel;
 import com.ddf.boot.common.script.file.dedup.ui.PhotoArchivePanel;
 import com.ddf.boot.common.script.file.dedup.ui.VideoArchivePanel;
 import com.ddf.boot.common.script.file.dedup.ui.VideoDetectPanel;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -16,18 +18,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class DedupApplication extends Application {
 
-    private static final String[] FUNCTION_NAMES = {
-            "文件去重",
-            "按拍摄时间归档",
-            "监控视频文件归档",
-            "监控录像目录压缩",
-            "视频目录检测"
-    };
+    private static final String[] FUNCTION_NAMES =
+            {"文件去重", "按拍摄时间归档", "监控视频文件归档", "监控录像目录压缩", "视频目录检测"};
 
     private final Map<String, VBox> panels = new LinkedHashMap<>();
     private final StackPane contentArea = new StackPane();
@@ -35,22 +29,19 @@ public class DedupApplication extends Application {
 
     /**
      * 开发运行（WSL/Linux）:
-     *   mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
-     *
-     *  打包成可执行文件，注意在wsl下则生成bin，windows下生成.exe，要在对应平台下执行
-     *   # 1. Maven 打包（产出 ddf-common-script-dist/ 目录）
-     *   mvn clean package -pl ddf-common-script -DskipTests -Dmaven.repo.local=D:/maven_repository
-     *   # 2. jpackage 生成 .exe
-     *   jpackage --input ddf-common-script/target/ddf-common-script-dist --main-jar ddf-common-script.jar --main-class com.ddf.boot.common.script.file.dedup.Launcher --name DupTool --type app-image --dest out
-     *   生成的 out/DupTool-1.0.exe 双击安装，安装后即可运行
-     *
-     *   # jpackage 可选参数:
-     *   #   --type msi         生成 .msi 安装包
-     *   #   --type app-image   生成免安装目录（含 .exe 启动器）
-     *   #   --win-console      显示控制台窗口（调试用，去掉则不显示黑窗口）
-     *
+     * mvn javafx:run -pl ddf-common-script -Dmaven.repo.local=/mnt/d/maven_repository
+     * 打包成可执行文件，注意在wsl下则生成bin，windows下生成.exe，要在对应平台下执行
+     * # 1. Maven 打包（产出 ddf-common-script-dist/ 目录）
+     * mvn clean package -pl ddf-common-script -DskipTests -Dmaven.repo.local=D:/maven_repository
+     * # 2. jpackage 生成 .exe
+     * jpackage --input ddf-common-script/target/ddf-common-script-dist --main-jar ddf-common-script.jar --main-class com.ddf.boot.common.script.file.dedup.Launcher --name DupTool --type app-image --dest out
+     * 生成的 out/DupTool-1.0.exe 双击安装，安装后即可运行
+     * # jpackage 可选参数:
+     * #   --type msi         生成 .msi 安装包
+     * #   --type app-image   生成免安装目录（含 .exe 启动器）
+     * #   --win-console      显示控制台窗口（调试用，去掉则不显示黑窗口）
      * CLI 模式（不启动 GUI）:
-     *   java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileRestore month <源目录> <输出目录>
+     * java -cp ddf-common-script/target/classes com.ddf.boot.common.script.file.FileRestore month <源目录> <输出目录>
      */
     public static void main(String[] args) {
         try {

@@ -64,7 +64,9 @@
                     <execution>
                         <id>copy-deps</id>
                         <phase>package</phase>
-                        <goals><goal>copy-dependencies</goal></goals>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
@@ -79,7 +81,9 @@
                     <execution>
                         <id>make-dist</id>
                         <phase>package</phase>
-                        <goals><goal>single</goal></goals>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                         <configuration>
                             <finalName>${project.artifactId}-dist</finalName>
                             <appendAssemblyId>false</appendAssemblyId>

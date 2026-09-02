@@ -9,12 +9,12 @@
 
 ## 整合的功能
 
-| 功能 | 名称 | 来源 | 说明 |
-|------|------|------|------|
-| 1 | 文件去重 | 已实现的 DedupTool | SHA-256 扫描重复文件，可选保留，其余移入子文件夹 |
-| 2 | 按拍摄时间归档 | FileRestore.computerReadAndMoveFileToMonth | 读取创建时间，按月份归档 |
-| 3 | 监控视频文件归档 | FileRestore.packageMonitorVideo2 | 解析文件名日期，按 月/日 归档 |
-| 4 | 监控录像目录压缩 | FileRestore.packageMonitorVideo | 缩减目录层级，月/日 重构 |
+| 功能 | 名称       | 来源                                         | 说明                           |
+|----|----------|--------------------------------------------|------------------------------|
+| 1  | 文件去重     | 已实现的 DedupTool                             | SHA-256 扫描重复文件，可选保留，其余移入子文件夹 |
+| 2  | 按拍摄时间归档  | FileRestore.computerReadAndMoveFileToMonth | 读取创建时间，按月份归档                 |
+| 3  | 监控视频文件归档 | FileRestore.packageMonitorVideo2           | 解析文件名日期，按 月/日 归档             |
+| 4  | 监控录像目录压缩 | FileRestore.packageMonitorVideo            | 缩减目录层级，月/日 重构                |
 
 ## 安全移动机制 (CRITICAL)
 

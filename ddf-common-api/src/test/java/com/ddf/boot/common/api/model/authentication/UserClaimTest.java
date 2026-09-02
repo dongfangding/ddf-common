@@ -1,9 +1,9 @@
 package com.ddf.boot.common.api.model.authentication;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 class UserClaimTest {
 

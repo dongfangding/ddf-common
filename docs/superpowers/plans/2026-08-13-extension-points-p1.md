@@ -38,6 +38,7 @@ $MVN -q -pl <module> -am test -Dtest=<TestClass>
 ## Task 1.1: 删除 controllerwrapper 包及自动配置引用
 
 **Files:**
+
 - Delete: `ddf-common-mvc/src/main/java/com/ddf/boot/common/mvc/controllerwrapper/AbstractCommonResponseBodyAdvice.java`
 - Delete: `ddf-common-mvc/src/main/java/com/ddf/boot/common/mvc/controllerwrapper/CommonResponseBodyAdviceDemo.java`
 - Delete: `ddf-common-mvc/src/main/java/com/ddf/boot/common/mvc/controllerwrapper/CommonResponseBodyAdviceProperties.java`
@@ -47,14 +48,17 @@ $MVN -q -pl <module> -am test -Dtest=<TestClass>
 - [ ] **Step 1: 确认无外部引用**
 
 Run:
+
 ```bash
 grep -rn "WrapperIgnore\|AbstractCommonResponseBodyAdvice\|CommonResponseBodyAdviceProperties\|CommonResponseBodyAdviceDemo" ddf-common-*/src --include=*.java
 ```
+
 Expected: 只有 `controllerwrapper` 包内部与 `MvcAutoConfiguration` 命中；若其它模块引用了 `WrapperIgnore`，需先记录并在删除后同步处理。
 
 - [ ] **Step 2: 删除 4 个文件**
 
 Run:
+
 ```bash
 rm ddf-common-mvc/src/main/java/com/ddf/boot/common/mvc/controllerwrapper/AbstractCommonResponseBodyAdvice.java \
    ddf-common-mvc/src/main/java/com/ddf/boot/common/mvc/controllerwrapper/CommonResponseBodyAdviceDemo.java \
@@ -120,6 +124,7 @@ git commit -m "refactor: remove ResponseBodyAdvice controller wrapper"
 ## Task 2.1: 定义 TokenGenerator 接口与默认实现
 
 **Files:**
+
 - Create: `ddf-common-core/src/main/java/com/ddf/boot/common/core/authentication/TokenGenerator.java`
 - Create: `ddf-common-core/src/main/java/com/ddf/boot/common/core/authentication/DefaultTokenGenerator.java`
 - Modify: `ddf-common-core/src/main/java/com/ddf/boot/common/core/config/CoreAutoConfiguration.java`
@@ -388,6 +393,7 @@ git commit -m "feat: extract TokenGenerator strategy with DefaultTokenGenerator"
 ## Task 2.2: 认证生命周期事件
 
 **Files:**
+
 - Create: `ddf-common-core/src/main/java/com/ddf/boot/common/core/event/LoginSuccessEvent.java`
 - Create: `ddf-common-core/src/main/java/com/ddf/boot/common/core/event/TokenRefreshEvent.java`
 - Create: `ddf-common-core/src/main/java/com/ddf/boot/common/core/event/LoginFailureEvent.java`
@@ -609,6 +615,7 @@ git commit -m "feat: publish authentication lifecycle events"
 ## Task 2.3: 认证 smoke 测试
 
 **Files:**
+
 - Create: `ddf-common-authentication/src/test/java/com/ddf/boot/common/authentication/AuthenticationAutoConfigurationTest.java`
 
 - [ ] **Step 1: 写容器 smoke 测试**
@@ -655,6 +662,7 @@ git commit -m "test: verify TokenGenerator default bean registration"
 ## Task 3.1: 定义 AlarmChannel 接口与默认渠道实现
 
 **Files:**
+
 - Create: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/channel/AlarmChannel.java`
 - Create: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/channel/DingTalkAlarmChannel.java`
 - Create: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/channel/LarkAlarmChannel.java`
@@ -868,6 +876,7 @@ git commit -m "feat: extract AlarmChannel SPI for pluggable alarm channels"
 ## Task 3.2: 告警频率控制
 
 **Files:**
+
 - Create: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/channel/AlarmFrequencyControl.java`
 - Create: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/channel/RedisAlarmFrequencyControl.java`
 - Modify: `ddf-common-alarm/src/main/java/com/ddf/boot/common/alarm/config/AlarmAutoConfiguration.java`
@@ -952,6 +961,7 @@ git commit -m "feat: add alarm frequency control strategy"
 ## Task 4.1: 定义 RateLimitAlgorithm 接口
 
 **Files:**
+
 - Create: `ddf-common-limit/src/main/java/com/ddf/boot/common/limit/ratelimit/algorithm/RateLimitAlgorithm.java`
 - Create: `ddf-common-limit/src/main/java/com/ddf/boot/common/limit/ratelimit/algorithm/TokenBucketRateLimitAlgorithm.java`
 - Modify: `ddf-common-limit/src/main/java/com/ddf/boot/common/limit/ratelimit/annotation/RateLimit.java`
@@ -1097,6 +1107,7 @@ git commit -m "feat: extract RateLimitAlgorithm SPI"
 ## Task 4.2: 限流触发事件
 
 **Files:**
+
 - Create: `ddf-common-limit/src/main/java/com/ddf/boot/common/limit/ratelimit/event/RateLimitTriggeredEvent.java`
 - Modify: `ddf-common-limit/src/main/java/com/ddf/boot/common/limit/ratelimit/handler/RateLimitAspect.java`
 
@@ -1166,6 +1177,7 @@ git commit -m "feat: publish RateLimitTriggeredEvent on rate limit"
 ## Task 5.1: 定义 CaptchaProducer SPI 并替换 switch 分发
 
 **Files:**
+
 - Create: `ddf-common-captcha/src/main/java/com/ddf/common/captcha/producer/CaptchaProducer.java`
 - Modify: `ddf-common-captcha/src/main/java/com/ddf/common/captcha/helper/CaptchaHelper.java`
 
@@ -1335,6 +1347,7 @@ git commit -m "feat: extract CaptchaProducer SPI for captcha type dispatch"
 ## Task 5.2: 校验成功/失败事件
 
 **Files:**
+
 - Create: `ddf-common-captcha/src/main/java/com/ddf/common/captcha/event/CaptchaVerifyEvent.java`
 - Modify: `ddf-common-captcha/src/main/java/com/ddf/common/captcha/helper/CaptchaHelper.java`
 
@@ -1414,6 +1427,7 @@ git commit -m "feat: publish CaptchaVerifyEvent on captcha check"
 ## Task 6.1: 抽象 IDGen 策略注册与按 key 分发
 
 **Files:**
+
 - Create: `ddf-common-ids-service/src/main/java/com/ddf/common/ids/service/service/IdGenRegistry.java`
 - Modify: `ddf-common-ids-service/src/main/java/com/ddf/common/ids/service/api/impl/IdsApiImpl.java`
 - Modify: `ddf-common-ids-service/src/main/java/com/ddf/common/ids/service/config/IdsServiceAutoConfiguration.java`

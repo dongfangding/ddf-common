@@ -26,8 +26,8 @@ class TextCaptchaProducerTest {
     @Test
     @DisplayName("getCaptchaType 返回 TEXT")
     void shouldReturnTextCaptchaType() {
-        TextCaptchaProducer producer = new TextCaptchaProducer(
-                mock(DefaultKaptcha.class), mock(CaptchaProperties.class), mock(CaptchaCacheService.class));
+        TextCaptchaProducer producer = new TextCaptchaProducer(mock(DefaultKaptcha.class),
+                mock(CaptchaProperties.class), mock(CaptchaCacheService.class));
 
         assertThat(producer.getCaptchaType()).isEqualTo(CaptchaType.TEXT);
     }

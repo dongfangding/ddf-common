@@ -6,20 +6,20 @@
 
 ## 核心类
 
-| 类路径                                                   | 功能                    |
-|-------------------------------------------------------|-----------------------|
-| `com.ddf.boot.common.core.config.GlobalProperties`    | 全局配置属性                |
-| `com.ddf.boot.common.core.config.GlobalApiConfig`     | API 基础配置              |
-| `com.ddf.boot.common.core.util.SecureUtil`            | 加密工具类（AES/RSA/BCrypt） |
-| `com.ddf.boot.common.core.util.IdsUtil`               | ID 生成工具               |
-| `com.ddf.boot.common.core.helper.ThreadBuilderHelper` | 线程池构建器                |
-| `com.ddf.boot.common.core.helper.SpringContextHolder` | Spring 上下文持有者         |
-| `com.ddf.boot.common.core.authentication.TokenGenerator` | Token 生成/校验策略接口 |
-| `com.ddf.boot.common.core.authentication.DefaultTokenGenerator` | 默认 Token 生成实现 |
-| `com.ddf.boot.common.core.authentication.TokenUtil` | Token 工具类（已弃用） |
-| `com.ddf.boot.common.core.event.LoginSuccessEvent` | 登录成功事件 |
-| `com.ddf.boot.common.core.event.TokenRefreshEvent` | token 刷新事件 |
-| `com.ddf.boot.common.core.event.LoginFailureEvent` | 登录失败事件 |
+| 类路径                                                             | 功能                    |
+|-----------------------------------------------------------------|-----------------------|
+| `com.ddf.boot.common.core.config.GlobalProperties`              | 全局配置属性                |
+| `com.ddf.boot.common.core.config.GlobalApiConfig`               | API 基础配置              |
+| `com.ddf.boot.common.core.util.SecureUtil`                      | 加密工具类（AES/RSA/BCrypt） |
+| `com.ddf.boot.common.core.util.IdsUtil`                         | ID 生成工具               |
+| `com.ddf.boot.common.core.helper.ThreadBuilderHelper`           | 线程池构建器                |
+| `com.ddf.boot.common.core.helper.SpringContextHolder`           | Spring 上下文持有者         |
+| `com.ddf.boot.common.core.authentication.TokenGenerator`        | Token 生成/校验策略接口       |
+| `com.ddf.boot.common.core.authentication.DefaultTokenGenerator` | 默认 Token 生成实现         |
+| `com.ddf.boot.common.core.authentication.TokenUtil`             | Token 工具类（已弃用）        |
+| `com.ddf.boot.common.core.event.LoginSuccessEvent`              | 登录成功事件                |
+| `com.ddf.boot.common.core.event.TokenRefreshEvent`              | token 刷新事件            |
+| `com.ddf.boot.common.core.event.LoginFailureEvent`              | 登录失败事件                |
 
 ## 使用说明
 
@@ -118,11 +118,11 @@ public class MyTokenGenerator implements TokenGenerator {
 
 ### 认证事件
 
-| 事件类（`com.ddf.boot.common.core.event` 包） | 触发时机        | 关键字段              |
-|-------------------------------------|-------------|-------------------|
-| `LoginSuccessEvent`                 | 登录成功/生成 token | `userClaim`       |
-| `TokenRefreshEvent`                 | token 刷新     | `userId`          |
-| `LoginFailureEvent`                 | 认证失败        | `token`、`errorCode` |
+| 事件类（`com.ddf.boot.common.core.event` 包） | 触发时机          | 关键字段                |
+|-----------------------------------------|---------------|---------------------|
+| `LoginSuccessEvent`                     | 登录成功/生成 token | `userClaim`         |
+| `TokenRefreshEvent`                     | token 刷新      | `userId`            |
+| `LoginFailureEvent`                     | 认证失败          | `token`、`errorCode` |
 
 ```java
 @EventListener

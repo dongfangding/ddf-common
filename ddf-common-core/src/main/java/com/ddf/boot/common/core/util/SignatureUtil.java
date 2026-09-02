@@ -197,8 +197,7 @@ public class SignatureUtil {
         // 时间戳参数超过一定间隔（下界/上界），视作重放
         long now = System.currentTimeMillis();
         long timeoutMillis = TimeUnit.SECONDS.toMillis(nonceTimeoutSeconds);
-        if (Objects.isNull(data.getNonceTimestamp())
-                || data.getNonceTimestamp() < now - timeoutMillis
+        if (Objects.isNull(data.getNonceTimestamp()) || data.getNonceTimestamp() < now - timeoutMillis
                 || data.getNonceTimestamp() > now + timeoutMillis) {
             throw new BusinessException(BaseErrorCallbackCode.SIGN_TIMESTAMP_ERROR);
         }

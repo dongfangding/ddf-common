@@ -1,5 +1,8 @@
 package com.ddf.boot.common.api.util;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -16,14 +19,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
-
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.NumberUtil;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DateUtils {
@@ -78,9 +76,7 @@ public class DateUtils {
      * @param month 月格式化形式，格式为yyyyMM
      */
     public static Long getMonthFirstSecondsByDayFormatter(Integer month) {
-        return LocalDate.parse(month + "01", DAY_INTEGER_FORMATTER)
-                .atStartOfDay(GLOBAL_ZONE_ID)
-                .toEpochSecond();
+        return LocalDate.parse(month + "01", DAY_INTEGER_FORMATTER).atStartOfDay(GLOBAL_ZONE_ID).toEpochSecond();
     }
 
     /**
@@ -100,10 +96,8 @@ public class DateUtils {
      * @param monthDay 天格式化形式，格式为yyyyMMdd
      */
     public static Long getDayLastSecondsByDayFormatter(Integer monthDay) {
-        return LocalDate.parse(String.valueOf(monthDay), DAY_INTEGER_FORMATTER)
-                .atTime(LocalTime.MAX)
-                .atZone(GLOBAL_ZONE_ID)
-                .toEpochSecond();
+        return LocalDate.parse(String.valueOf(monthDay), DAY_INTEGER_FORMATTER).atTime(LocalTime.MAX).atZone(
+                GLOBAL_ZONE_ID).toEpochSecond();
     }
 
     /**
@@ -204,8 +198,7 @@ public class DateUtils {
     public static long getMillionsOfHourMinute(Date date) {
         final Calendar instance = Calendar.getInstance(TimeZone.getTimeZone(GLOBAL_ZONE_ID));
         instance.setTime(date);
-        return instance.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000L
-                + instance.get(Calendar.MINUTE) * 60 * 1000L;
+        return instance.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000L + instance.get(Calendar.MINUTE) * 60 * 1000L;
     }
 
     /**
@@ -420,7 +413,8 @@ public class DateUtils {
      * @param calibration 0 当前小时, -1 前一小时, 1 后一小时
      */
     public static Integer currentYearMonthDayHour(int calibration) {
-        return Integer.parseInt(HOUR_INTEGER_FORMATTER.format(LocalDateTime.now(GLOBAL_ZONE_ID).plusHours(calibration)));
+        return Integer.parseInt(
+                HOUR_INTEGER_FORMATTER.format(LocalDateTime.now(GLOBAL_ZONE_ID).plusHours(calibration)));
     }
 
     /**
@@ -458,32 +452,30 @@ public class DateUtils {
      * 根据秒时间戳格式化为 yyyyMMdd 整数
      */
     public static Integer formatYearMonthDayBySeconds(Long seconds) {
-        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(
-                LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID)));
+        return Integer.parseInt(
+                DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID)));
     }
 
     /**
      * 根据秒时间戳格式化为 yyyyMMdd 字符串
      */
     public static String formatYmdBySeconds(Long seconds) {
-        return DAY_INTEGER_FORMATTER.format(
-                LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID));
+        return DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID));
     }
 
     /**
      * 根据毫秒时间戳格式化为 yyyyMMdd 整数
      */
     public static Integer formatYearMonthDayByMillis(Long milli) {
-        return Integer.parseInt(DAY_INTEGER_FORMATTER.format(
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), GLOBAL_ZONE_ID)));
+        return Integer.parseInt(
+                DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), GLOBAL_ZONE_ID)));
     }
 
     /**
      * 根据毫秒时间戳格式化为 yyyyMMdd 字符串
      */
     public static String formatYmdByMilli(Long milli) {
-        return DAY_INTEGER_FORMATTER.format(
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), GLOBAL_ZONE_ID));
+        return DAY_INTEGER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), GLOBAL_ZONE_ID));
     }
 
     /**
@@ -499,7 +491,8 @@ public class DateUtils {
      * @param calibration 0 当月, -1 上月, 1 下月
      */
     public static Integer currentYearMonth(int calibration) {
-        return Integer.parseInt(MONTH_INTEGER_FORMATTER.format(LocalDateTime.now(GLOBAL_ZONE_ID).plusMonths(calibration)));
+        return Integer.parseInt(
+                MONTH_INTEGER_FORMATTER.format(LocalDateTime.now(GLOBAL_ZONE_ID).plusMonths(calibration)));
     }
 
     /**
@@ -549,15 +542,15 @@ public class DateUtils {
      * 将秒时间戳标准数字格式化输出
      */
     public static String standardNumberFormatSeconds(Long seconds) {
-        return STANDARD_NUMBER_FORMATTER.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID));
+        return STANDARD_NUMBER_FORMATTER.format(
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), GLOBAL_ZONE_ID));
     }
 
     /**
      * 使用全局默认时区格式化 Date
      */
     public static String formatDate(Date date, String format) {
-        return LocalDateTime.ofInstant(date.toInstant(), GLOBAL_ZONE_ID)
-                .format(DateTimeFormatter.ofPattern(format));
+        return LocalDateTime.ofInstant(date.toInstant(), GLOBAL_ZONE_ID).format(DateTimeFormatter.ofPattern(format));
     }
 
     /**
@@ -599,17 +592,15 @@ public class DateUtils {
      * 获取前后指定小时的秒时间戳
      */
     public static long assignDateSeconds(int day, int hour) {
-        return LocalDateTime.of(LocalDate.now(GLOBAL_ZONE_ID).plusDays(day), LocalTime.of(hour, 0))
-                .atZone(GLOBAL_ZONE_ID)
-                .toEpochSecond();
+        return LocalDateTime.of(LocalDate.now(GLOBAL_ZONE_ID).plusDays(day), LocalTime.of(hour, 0)).atZone(
+                GLOBAL_ZONE_ID).toEpochSecond();
     }
 
     /**
      * 今天日期往后推 N 天，按指定格式返回
      */
     public static String getDateFormatByPlus(int num, String pattern) {
-        return LocalDateTime.now(GLOBAL_ZONE_ID).plusDays(num)
-                .format(DateTimeFormatter.ofPattern(pattern));
+        return LocalDateTime.now(GLOBAL_ZONE_ID).plusDays(num).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**

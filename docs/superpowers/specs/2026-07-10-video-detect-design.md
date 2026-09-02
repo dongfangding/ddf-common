@@ -20,6 +20,7 @@
 ### 避免重复
 
 由于采用"逐个子目录独立扫描 + 首次命中即终止"策略，天然避免重复：
+
 - 不同子目录互不干扰
 - 同一子树内不会做多余扫描
 
@@ -53,8 +54,8 @@
 ### 新增文件
 
 - `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/VideoDetectPanel.java`
-  - 继承 `VBox`，遵循现有 Panel 模式
-  - 包含扫描逻辑，不单独抽取 Service
+    - 继承 `VBox`，遵循现有 Panel 模式
+    - 包含扫描逻辑，不单独抽取 Service
 
 ### 修改文件
 

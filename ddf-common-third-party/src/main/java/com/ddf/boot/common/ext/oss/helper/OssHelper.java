@@ -20,7 +20,6 @@ import com.ddf.boot.common.ext.oss.config.StsTokenResponse;
 import com.ddf.boot.common.ext.oss.dto.StsOssTransfer;
 import com.google.common.collect.Lists;
 import jakarta.annotation.PostConstruct;
-import java.io.File;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -216,8 +215,8 @@ public class OssHelper {
         if (StringUtils.isBlank(value)) {
             throw new IllegalArgumentException(name + " 不能为空");
         }
-        if (value.contains("/") || value.contains("*") || value.contains("?") || value.contains("\\")
-                || value.contains("..")) {
+        if (value.contains("/") || value.contains("*") || value.contains("?") || value.contains("\\") || value.contains(
+                "..")) {
             throw new IllegalArgumentException(name + " 包含非法字符");
         }
     }

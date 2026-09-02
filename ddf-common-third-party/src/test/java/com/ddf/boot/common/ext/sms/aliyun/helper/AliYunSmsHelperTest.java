@@ -1,13 +1,13 @@
 package com.ddf.boot.common.ext.sms.aliyun.helper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.ddf.boot.common.ext.sms.aliyun.config.AliYunSmsProperties;
 import com.ddf.boot.common.ext.sms.aliyun.domain.TemplateParamObj;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * AliYunSmsHelper 测试

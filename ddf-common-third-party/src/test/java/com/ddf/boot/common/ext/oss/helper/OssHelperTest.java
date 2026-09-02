@@ -1,9 +1,5 @@
 package com.ddf.boot.common.ext.oss.helper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.mock;
-
 import com.aliyun.oss.OSS;
 import com.aliyuncs.IAcsClient;
 import com.ddf.boot.common.ext.oss.config.BucketProperty;
@@ -11,6 +7,10 @@ import com.ddf.boot.common.ext.oss.config.OssProperties;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
 
 /**
  * OssHelper 测试

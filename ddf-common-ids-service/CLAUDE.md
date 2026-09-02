@@ -6,14 +6,14 @@
 
 ## 核心类
 
-| 类路径                                                                  | 功能           |
-|----------------------------------------------------------------------|--------------|
-| `com.ddf.common.ids.service.api.IdsApi`                              | ID 生成 API 接口 |
-| `com.ddf.common.ids.service.service.IDGen`                           | ID 生成器顶层接口  |
-| `com.ddf.common.ids.service.service.IdGenRegistry`                   | ID 生成策略注册表  |
+| 类路径                                                                    | 功能           |
+|------------------------------------------------------------------------|--------------|
+| `com.ddf.common.ids.service.api.IdsApi`                                | ID 生成 API 接口 |
+| `com.ddf.common.ids.service.service.IDGen`                             | ID 生成器顶层接口   |
+| `com.ddf.common.ids.service.service.IdGenRegistry`                     | ID 生成策略注册表   |
 | `com.ddf.common.ids.service.service.impl.snowflake.SnowflakeIDGenImpl` | 雪花算法实现       |
 | `com.ddf.common.ids.service.service.impl.segment.SegmentIDGenImpl`     | 号段模式实现       |
-| `com.ddf.common.ids.service.config.properties.IdsProperties`         | 配置属性         |
+| `com.ddf.common.ids.service.config.properties.IdsProperties`           | 配置属性         |
 
 ## 使用说明
 

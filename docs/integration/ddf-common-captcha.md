@@ -4,14 +4,14 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 统一入口 | 生成 / 校验 / 二次校验 | `helper.CaptchaHelper` |
-| 生成策略 SPI | 按 `CaptchaType` 分发到 `Map<CaptchaType, CaptchaProducer>` | `producer.CaptchaProducer` |
-| 图形字符验证码 | `TEXT` 类型默认实现 | `producer.TextCaptchaProducer` |
-| 数学 / 滑动 / 点选 | 数学表达式、滑块、点选文字 | `CaptchaHelper.generateMath()` / `generateAjCaptcha()` |
-| 校验事件 | 校验成功 / 失败时发布 | `event.CaptchaVerifyEvent` |
-| 配置属性 | 缓存类型、有效期、Kaptcha 样式 | `properties.CaptchaProperties` |
+| 能力           | 说明                                                      | 关键类 / 入口                                               |
+|--------------|---------------------------------------------------------|--------------------------------------------------------|
+| 统一入口         | 生成 / 校验 / 二次校验                                          | `helper.CaptchaHelper`                                 |
+| 生成策略 SPI     | 按 `CaptchaType` 分发到 `Map<CaptchaType, CaptchaProducer>` | `producer.CaptchaProducer`                             |
+| 图形字符验证码      | `TEXT` 类型默认实现                                           | `producer.TextCaptchaProducer`                         |
+| 数学 / 滑动 / 点选 | 数学表达式、滑块、点选文字                                           | `CaptchaHelper.generateMath()` / `generateAjCaptcha()` |
+| 校验事件         | 校验成功 / 失败时发布                                            | `event.CaptchaVerifyEvent`                             |
+| 配置属性         | 缓存类型、有效期、Kaptcha 样式                                     | `properties.CaptchaProperties`                         |
 
 ## 接入方式
 

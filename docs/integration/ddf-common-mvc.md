@@ -4,15 +4,15 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 全局异常处理 | 捕获未处理异常，统一返回 `ResponseData`，支持 i18n 与扩展 | `exception200.AbstractExceptionHandler` |
-| 异常扩展接口 | 通知 / 接管 / 映射自定义异常 | `exception200.ExceptionHandlerMapping` |
-| 请求体缓存 | 包装请求体支持重复读取（验签等场景） | `filter.CachingRequestBodyFilter` |
-| 请求验签 | 方法级 `@RequestSign` 验签 + 防重放 | `requestsign.RequestSignAccessFilterChain` |
-| 权限菜单扫描 | 从注解扫描菜单/按钮权限树 | `permissionscan.PermissionMenuScanner` |
-| 日志切面 | 控制层方法日志、慢方法回调 | `logaccess.EnableLogAspect` |
-| 常用装配 | 事务/AOP/异步/定时/缓存、默认线程池 | `config.CoreWebConfig` |
+| 能力     | 说明                                      | 关键类 / 入口                                   |
+|--------|-----------------------------------------|--------------------------------------------|
+| 全局异常处理 | 捕获未处理异常，统一返回 `ResponseData`，支持 i18n 与扩展 | `exception200.AbstractExceptionHandler`    |
+| 异常扩展接口 | 通知 / 接管 / 映射自定义异常                       | `exception200.ExceptionHandlerMapping`     |
+| 请求体缓存  | 包装请求体支持重复读取（验签等场景）                      | `filter.CachingRequestBodyFilter`          |
+| 请求验签   | 方法级 `@RequestSign` 验签 + 防重放             | `requestsign.RequestSignAccessFilterChain` |
+| 权限菜单扫描 | 从注解扫描菜单/按钮权限树                           | `permissionscan.PermissionMenuScanner`     |
+| 日志切面   | 控制层方法日志、慢方法回调                           | `logaccess.EnableLogAspect`                |
+| 常用装配   | 事务/AOP/异步/定时/缓存、默认线程池                   | `config.CoreWebConfig`                     |
 
 ## 接入方式
 

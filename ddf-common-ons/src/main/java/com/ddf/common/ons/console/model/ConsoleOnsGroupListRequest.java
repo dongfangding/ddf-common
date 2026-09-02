@@ -1,7 +1,6 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsGroupListRequest;
-import com.ddf.common.ons.console.config.EnvClientProperties;
 import com.ddf.common.ons.console.constant.GroupTypeEnum;
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,9 +25,7 @@ public class ConsoleOnsGroupListRequest implements UserRequest, Serializable {
     private String currentUser;
 
     /**
-     * 环境key
-     *
-     * @see com.ddf.common.ons.console.config.EnvClientProperties#getClients()
+     * 环境key，对应 {@code EnvClientProperties#getClients()} 中的 key
      */
     private String env;
 

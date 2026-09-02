@@ -1,10 +1,5 @@
 package com.ddf.boot.common.limit.repeatable.validator;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ddf.boot.common.limit.repeatable.annotation.Repeatable;
 import com.ddf.boot.common.limit.repeatable.config.RepeatableProperties;
 import java.lang.reflect.Method;
@@ -12,6 +7,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * LocalRepeatableValidator 测试

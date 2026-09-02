@@ -1,16 +1,19 @@
 package com.ddf.boot.common.script.file.dedup.ui;
 
+import java.io.File;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
-
-import java.io.File;
 
 public class VideoArchivePanel extends VBox {
 
@@ -27,7 +30,8 @@ public class VideoArchivePanel extends VBox {
         Label title = new Label("监控视频文件归档");
         title.setFont(Font.font(null, FontWeight.BOLD, 16));
 
-        Label desc = new Label("适用于文件名格式 video_编号_0_10_日期_日期的文件。按 _ 分割取第5段作为日期，归入 月/日/ 目录。日期校验：年份 >= 2000，月份 01-12。");
+        Label desc = new Label(
+                "适用于文件名格式 video_编号_0_10_日期_日期的文件。按 _ 分割取第5段作为日期，归入 月/日/ 目录。日期校验：年份 >= 2000，月份 01-12。");
         desc.setWrapText(true);
         desc.setFont(Font.font(null, 12));
 
@@ -76,8 +80,7 @@ public class VideoArchivePanel extends VBox {
 
         new Thread(() -> {
             try {
-                com.ddf.boot.common.script.file.FileRestore.packageMonitorVideo2(
-                        new String[]{srcText}, outText);
+                com.ddf.boot.common.script.file.FileRestore.packageMonitorVideo2(new String[] {srcText}, outText);
                 Platform.runLater(() -> {
                     statusLabel.setText("归档完成");
                     progressBar.setProgress(1);

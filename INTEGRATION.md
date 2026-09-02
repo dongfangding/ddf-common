@@ -10,11 +10,11 @@
 
 ### 选择 starter
 
-| 场景 | 选用 |
-|------|------|
-| 纯 Web / 不接 DB / 不接治理 | `ddf-common-starter-web` |
-| 常规业务（Web + MySQL + 治理） | `ddf-common-starter-default` |
-| 需自定义组合 | 按需拼装 `starter-web` + `data-mysql-starter` + `governance-starter` 等 |
+| 场景                     | 选用                                                                 |
+|------------------------|--------------------------------------------------------------------|
+| 纯 Web / 不接 DB / 不接治理   | `ddf-common-starter-web`                                           |
+| 常规业务（Web + MySQL + 治理） | `ddf-common-starter-default`                                       |
+| 需自定义组合                 | 按需拼装 `starter-web` + `data-mysql-starter` + `governance-starter` 等 |
 
 ```xml
 <dependency>
@@ -44,15 +44,15 @@
 
 ## 2. 模块接入指南索引
 
-| 模块 | 定位 | 核心扩展点 |
-|------|------|-----------|
-| [ddf-common-core](./docs/integration/ddf-common-core.md) | 轻量公共能力：加密、ID、线程池、Spring 支撑 | `TokenGenerator` 策略、`TokenCache`、认证事件 |
-| [ddf-common-mvc](./docs/integration/ddf-common-mvc.md) | Web 层横切治理：异常、请求体缓存、验签、权限扫描 | `AbstractExceptionHandler` 继承、`ExceptionHandlerMapping` |
-| [ddf-common-authentication](./docs/integration/ddf-common-authentication.md) | JWT 认证/授权 | `UserClaimService`（必实现）、`TokenGenerator`、`TokenCustomizeCheckService`、认证事件 |
-| [ddf-common-alarm](./docs/integration/ddf-common-alarm.md) | 统一告警（钉钉/Lark） | `AlarmChannel` SPI、`AlarmFrequencyControl` |
-| [ddf-common-limit](./docs/integration/ddf-common-limit.md) | 接口限流 + 防重复提交 | `RateLimitKeyGenerator`、`RateLimitAlgorithm`、`RateLimitTriggeredEvent` |
-| [ddf-common-captcha](./docs/integration/ddf-common-captcha.md) | 图形/数学/滑动/点选验证码 | `CaptchaProducer` 类型分发 SPI、`CaptchaVerifyEvent` |
-| [ddf-common-ids-service](./docs/integration/ddf-common-ids-service.md) | 分布式 ID（雪花 + 号段） | `IDGen` 策略注册、`IdGenRegistry` |
+| 模块                                                                           | 定位                         | 核心扩展点                                                                      |
+|------------------------------------------------------------------------------|----------------------------|----------------------------------------------------------------------------|
+| [ddf-common-core](./docs/integration/ddf-common-core.md)                     | 轻量公共能力：加密、ID、线程池、Spring 支撑 | `TokenGenerator` 策略、`TokenCache`、认证事件                                      |
+| [ddf-common-mvc](./docs/integration/ddf-common-mvc.md)                       | Web 层横切治理：异常、请求体缓存、验签、权限扫描 | `AbstractExceptionHandler` 继承、`ExceptionHandlerMapping`                    |
+| [ddf-common-authentication](./docs/integration/ddf-common-authentication.md) | JWT 认证/授权                  | `UserClaimService`（必实现）、`TokenGenerator`、`TokenCustomizeCheckService`、认证事件 |
+| [ddf-common-alarm](./docs/integration/ddf-common-alarm.md)                   | 统一告警（钉钉/Lark）              | `AlarmChannel` SPI、`AlarmFrequencyControl`                                 |
+| [ddf-common-limit](./docs/integration/ddf-common-limit.md)                   | 接口限流 + 防重复提交               | `RateLimitKeyGenerator`、`RateLimitAlgorithm`、`RateLimitTriggeredEvent`     |
+| [ddf-common-captcha](./docs/integration/ddf-common-captcha.md)               | 图形/数学/滑动/点选验证码             | `CaptchaProducer` 类型分发 SPI、`CaptchaVerifyEvent`                            |
+| [ddf-common-ids-service](./docs/integration/ddf-common-ids-service.md)       | 分布式 ID（雪花 + 号段）            | `IDGen` 策略注册、`IdGenRegistry`                                               |
 
 其它模块（redis、distributed-lock、sharding、rocketmq、websocket、s3 等）的接入说明暂见各模块根目录的 `CLAUDE.md`，后续按需补充到本指南。
 

@@ -33,8 +33,8 @@ public class CompletableFutureHelper<T> {
      * 用来处理超时移除CompletableFuture对象的定时线程池（共享、daemon）
      */
     private static final ScheduledThreadPoolExecutor TIMEOUT_SCHEDULER = new ScheduledThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(),
-            ThreadFactoryBuilder.create().setNamePrefix("completable-helper-pool-").setDaemon(true).build());
+            Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder.create().setNamePrefix(
+            "completable-helper-pool-").setDaemon(true).build());
 
 
     /**
@@ -52,8 +52,7 @@ public class CompletableFutureHelper<T> {
         TIMEOUT_SCHEDULER.schedule(() -> {
             // 使用 compute 原子地检查并移除，避免 requestId.intern() 污染字符串常量池
             completableFutureMap.compute(requestId, (key, future) -> {
-                if (future != null && !future.isDone() && !future.isCancelled()
-                        && !future.isCompletedExceptionally()) {
+                if (future != null && !future.isDone() && !future.isCancelled() && !future.isCompletedExceptionally()) {
                     log.info("[{}]将[{}]回调设置为超时，移除回调对象, ", Thread.currentThread().getName(), key);
                     future.completeExceptionally(new CallbackTimeoutException(key));
                 }

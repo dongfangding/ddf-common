@@ -78,7 +78,8 @@ public class RedisCustomizeAutoConfiguration implements RedissonAutoConfiguratio
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
-        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(buildSafeObjectMapper());
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(
+                buildSafeObjectMapper());
         template.setDefaultSerializer(jsonSerializer);
         template.setStringSerializer(new StringRedisSerializer());
         template.setKeySerializer(new StringRedisSerializer());

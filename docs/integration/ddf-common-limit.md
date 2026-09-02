@@ -4,16 +4,16 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 限流开启 | 注解开启切面与全局属性 | `ratelimit.annotation.EnableRateLimit` |
-| 限流注解 | 方法 / 类级限流，支持 SpEL 条件 | `ratelimit.annotation.RateLimit` |
-| 多规则限流 | 同一方法多条限流规则 | `ratelimit.annotation.MultiRateLimit` |
-| 忽略限流 | 方法级跳过限流 | `ratelimit.annotation.RateLimitIgnore` |
-| Key 生成策略 | 控制限流粒度（全局 / 身份 / IP） | `ratelimit.keygenerator.RateLimitKeyGenerator` |
-| 限流算法 | 可插拔算法，默认令牌桶 | `ratelimit.algorithm.RateLimitAlgorithm` / `TokenBucketRateLimitAlgorithm` |
-| 限流事件 | 触发限流时发布 | `ratelimit.event.RateLimitTriggeredEvent` |
-| 防重复提交 | 基于注解的防重 | `repeatable.annotation.Repeatable` / `EnableRepeatable` |
+| 能力       | 说明                   | 关键类 / 入口                                                                   |
+|----------|----------------------|----------------------------------------------------------------------------|
+| 限流开启     | 注解开启切面与全局属性          | `ratelimit.annotation.EnableRateLimit`                                     |
+| 限流注解     | 方法 / 类级限流，支持 SpEL 条件 | `ratelimit.annotation.RateLimit`                                           |
+| 多规则限流    | 同一方法多条限流规则           | `ratelimit.annotation.MultiRateLimit`                                      |
+| 忽略限流     | 方法级跳过限流              | `ratelimit.annotation.RateLimitIgnore`                                     |
+| Key 生成策略 | 控制限流粒度（全局 / 身份 / IP） | `ratelimit.keygenerator.RateLimitKeyGenerator`                             |
+| 限流算法     | 可插拔算法，默认令牌桶          | `ratelimit.algorithm.RateLimitAlgorithm` / `TokenBucketRateLimitAlgorithm` |
+| 限流事件     | 触发限流时发布              | `ratelimit.event.RateLimitTriggeredEvent`                                  |
+| 防重复提交    | 基于注解的防重              | `repeatable.annotation.Repeatable` / `EnableRepeatable`                    |
 
 ## 接入方式
 
@@ -91,12 +91,12 @@ public ResponseData<String> publicApi() {
 
 本模块限流参数**全部来自注解属性**，不提供 `@ConfigurationProperties` YAML 前缀。全局默认值在 `@EnableRateLimit` 上声明：
 
-| `@EnableRateLimit` 属性 | 默认值 | 说明 |
-|------|------|------|
-| `keyGenerator` | `globalRateLimitKeyGenerator` | 全局默认 Key 生成器 Bean 名 |
-| `cloudRefresh` | `false` | 是否启用动态刷新（配合 `RateLimitPropertiesCollect`） |
-| `max` | `0` | 全局默认令牌桶上限，`0` 表示不控制 |
-| `rate` | `0` | 全局默认恢复速率（个/秒），`0` 表示不控制 |
+| `@EnableRateLimit` 属性 | 默认值                           | 说明                                        |
+|-----------------------|-------------------------------|-------------------------------------------|
+| `keyGenerator`        | `globalRateLimitKeyGenerator` | 全局默认 Key 生成器 Bean 名                       |
+| `cloudRefresh`        | `false`                       | 是否启用动态刷新（配合 `RateLimitPropertiesCollect`） |
+| `max`                 | `0`                           | 全局默认令牌桶上限，`0` 表示不控制                       |
+| `rate`                | `0`                           | 全局默认恢复速率（个/秒），`0` 表示不控制                   |
 
 ## 扩展点
 

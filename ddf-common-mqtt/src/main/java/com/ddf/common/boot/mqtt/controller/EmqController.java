@@ -87,11 +87,10 @@ public class EmqController {
             final String clientIdPrefix = client.getClientIdPrefix();
 
             // 服务端用户认证：clientId 前缀、用户名、密码都必须配置且全部匹配，禁止仅凭可伪造的 clientId 前缀或空凭证放行
-            if (StringUtils.isNotBlank(clientIdPrefix) && StringUtils.isNotBlank(username)
-                    && StringUtils.isNotBlank(password) && request.getClientId() != null
-                    && request.getClientId().startsWith(clientIdPrefix)
-                    && Objects.equals(username, request.getUsername())
-                    && Objects.equals(password, request.getPassword())) {
+            if (StringUtils.isNotBlank(clientIdPrefix) && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(
+                    password) && request.getClientId() != null && request.getClientId().startsWith(clientIdPrefix)
+                    && Objects.equals(username, request.getUsername()) && Objects.equals(password,
+                    request.getPassword())) {
                 EmqHttpResponseUtil.success(response, "服务端连接认证通过");
                 return;
             }
@@ -130,9 +129,8 @@ public class EmqController {
         final String clientIdPrefix = client.getClientIdPrefix();
         final String reqClientId = request.getClientId();
         // 前缀或请求 clientId 为空时拒绝；superuser 认证不能仅凭可伪造的 clientId 前缀，需同时校验用户名（EMQ 的 super 请求不携带密码）
-        if (StringUtils.isBlank(clientIdPrefix) || StringUtils.isBlank(reqClientId)
-                || !reqClientId.startsWith(clientIdPrefix)
-                || !Objects.equals(client.getUsername(), request.getUsername())) {
+        if (StringUtils.isBlank(clientIdPrefix) || StringUtils.isBlank(reqClientId) || !reqClientId.startsWith(
+                clientIdPrefix) || !Objects.equals(client.getUsername(), request.getUsername())) {
             EmqHttpResponseUtil.error(response, "超级用户ACL未认证通过");
             return;
         }

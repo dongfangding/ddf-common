@@ -14,7 +14,6 @@ import com.ddf.boot.common.api.model.captcha.response.CaptchaCheckResult;
 import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.core.util.IdsUtil;
-import com.ddf.boot.common.core.util.PreconditionUtil;
 import com.ddf.common.captcha.constants.CaptchaErrorCode;
 import com.ddf.common.captcha.event.CaptchaVerifyEvent;
 import com.ddf.common.captcha.producer.CaptchaProducer;
@@ -61,8 +60,8 @@ public class CaptchaHelper {
      */
     private static final String CAPTCHA_SUCCESS_CODE = "0000";
 
-    public CaptchaHelper(DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties,
-            CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
+    public CaptchaHelper(DefaultKaptcha mathKaptcha, CaptchaProperties captchaProperties, CaptchaService captchaService,
+            CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
             Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
         this.mathKaptcha = mathKaptcha;
         this.captchaProperties = captchaProperties;
@@ -164,7 +163,8 @@ public class CaptchaHelper {
     public CaptchaCheckResult check(CaptchaCheckRequest request) {
         try {
             final CaptchaType captchaType = request.getCaptchaType();
-            if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE, captchaType)) {
+            if (Objects.equal(CaptchaType.CLICK_WORDS, captchaType) || Objects.equal(CaptchaType.PIC_SLIDE,
+                    captchaType)) {
                 final CaptchaVO vo = new CaptchaVO();
                 vo.setToken(request.getUuid());
                 vo.setPointJson(request.getVerifyCode());
@@ -181,8 +181,7 @@ public class CaptchaHelper {
             } else {
                 // TEXT/MATH：从缓存取出答案比对，比对后删除防重放
                 final String cachedAnswer = captchaCacheService.get(request.getUuid());
-                if (StringUtils.isBlank(cachedAnswer)
-                        || !cachedAnswer.equalsIgnoreCase(request.getVerifyCode())) {
+                if (StringUtils.isBlank(cachedAnswer) || !cachedAnswer.equalsIgnoreCase(request.getVerifyCode())) {
                     throw new BusinessException(CaptchaErrorCode.VERIFY_CODE_NOT_MAPPING);
                 }
                 captchaCacheService.delete(request.getUuid());
@@ -190,7 +189,10 @@ public class CaptchaHelper {
             final String captchaVerification = IdsUtil.getUniqueId();
             cacheAdapter.setCaptchaVerification(request.getUuid(), captchaVerification);
             applicationEventPublisher.publishEvent(new CaptchaVerifyEvent(this, request.getUuid(), true));
-            return CaptchaCheckResult.builder().uuid(request.getUuid()).captchaVerification(captchaVerification).build();
+            return CaptchaCheckResult.builder()
+                    .uuid(request.getUuid())
+                    .captchaVerification(captchaVerification)
+                    .build();
         } catch (BusinessException e) {
             applicationEventPublisher.publishEvent(new CaptchaVerifyEvent(this, request.getUuid(), false));
             throw e;

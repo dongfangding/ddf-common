@@ -13,6 +13,7 @@
 ### Task 1: 创建 SafeMoveService 安全移动服务
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/SafeMoveService.java`
 
 - [ ] **Step 1: 创建 SafeMoveService**
@@ -56,6 +57,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat(toolbox): add SafeMoveSe
 ### Task 2: DedupService 改用 SafeMoveService
 
 **Files:**
+
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupService.java`
 
 - [ ] **Step 1: 替换所有 Files.move 为 SafeMoveService.move**
@@ -116,6 +118,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "refactor(toolbox): use SafeMo
 ### Task 3: 重构 DedupApplication 主布局 + 提取 DedupPanel
 
 **Files:**
+
 - Create: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/DedupPanel.java`
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/DedupApplication.java`
 
@@ -521,6 +524,7 @@ Note: 此步骤会因 Task 4-6 的 Panel 类尚未创建而失败。需要先创
 先创建占位 Panel 类：
 
 **PhotoArchivePanel.java:**
+
 ```java
 package com.ddf.boot.common.script.file.dedup.ui;
 
@@ -535,6 +539,7 @@ public class PhotoArchivePanel extends VBox {
 ```
 
 **VideoArchivePanel.java:**
+
 ```java
 package com.ddf.boot.common.script.file.dedup.ui;
 
@@ -549,6 +554,7 @@ public class VideoArchivePanel extends VBox {
 ```
 
 **FolderCompressPanel.java:**
+
 ```java
 package com.ddf.boot.common.script.file.dedup.ui;
 
@@ -582,6 +588,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "refactor(toolbox): extract De
 ### Task 4: 实现 PhotoArchivePanel（按拍摄时间归档）
 
 **Files:**
+
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/PhotoArchivePanel.java`
 
 - [ ] **Step 1: 实现完整 PhotoArchivePanel**
@@ -735,6 +742,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat(toolbox): implement Phot
 ### Task 5: 实现 VideoArchivePanel（监控视频文件归档）
 
 **Files:**
+
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/VideoArchivePanel.java`
 
 - [ ] **Step 1: 实现完整 VideoArchivePanel**
@@ -891,6 +899,7 @@ git -C /mnt/d/IdeaWorkspaces/ddf-common commit -m "feat(toolbox): implement Vide
 ### Task 6: 实现 FolderCompressPanel（监控录像目录压缩）
 
 **Files:**
+
 - Modify: `ddf-common-script/src/main/java/com/ddf/boot/common/script/file/dedup/ui/FolderCompressPanel.java`
 
 - [ ] **Step 1: 实现完整 FolderCompressPanel**

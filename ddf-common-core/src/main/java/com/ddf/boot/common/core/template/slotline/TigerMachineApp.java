@@ -459,8 +459,8 @@ public class TigerMachineApp {
             if (isFree) {
                 freeSpins = 5;
             } else {
-                Map<Integer, Integer> s2f = Map.of(6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14,
-                        350, 15, 500);
+                Map<Integer, Integer> s2f = Map.of(6, 5, 7, 10, 8, 15, 9, 20, 10, 40, 11, 80, 12, 150, 13, 250, 14, 350,
+                        15, 500);
                 freeSpins = s2f.getOrDefault(scatterCount, 0);
             }
         }

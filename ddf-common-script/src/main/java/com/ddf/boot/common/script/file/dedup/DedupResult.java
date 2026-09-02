@@ -18,14 +18,29 @@ public class DedupResult {
         this.keptIndex = 0;
     }
 
-    public String fileName() { return fileName; }
-    public String hash() { return hash; }
-    public List<Path> files() { return files; }
+    public String fileName() {
+        return fileName;
+    }
 
-    public int getKeptIndex() { return keptIndex; }
-    public void setKeptIndex(int keptIndex) { this.keptIndex = keptIndex; }
+    public String hash() {
+        return hash;
+    }
 
-    public Path kept() { return files.get(keptIndex); }
+    public List<Path> files() {
+        return files;
+    }
+
+    public int getKeptIndex() {
+        return keptIndex;
+    }
+
+    public void setKeptIndex(int keptIndex) {
+        this.keptIndex = keptIndex;
+    }
+
+    public Path kept() {
+        return files.get(keptIndex);
+    }
 
     public List<Path> duplicates() {
         List<Path> result = new ArrayList<>(files);

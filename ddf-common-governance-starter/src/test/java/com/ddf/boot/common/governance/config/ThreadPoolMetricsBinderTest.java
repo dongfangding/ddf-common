@@ -1,8 +1,5 @@
 package com.ddf.boot.common.governance.config;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * ThreadPoolMetricsBinder 测试

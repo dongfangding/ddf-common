@@ -1,7 +1,5 @@
 package com.ddf.boot.common.core.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.ddf.boot.common.core.config.CoreAutoConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,14 +14,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.SimpleThreadScope;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * {@link SecureUtil} AES 加解密测试。
- *
  * <p>AES 已改为 CBC 模式 + 随机 IV。带 key 的方法（{@code aesEncryptHexWithKey} /
  * {@code aesDecryptStrWithKey}）不依赖 Spring，可直接测试；不带 key 的方法
  * （{@code aesEncryptHex} / {@code aesDecryptStr}）通过 {@code GlobalProperties.aesSecret}
  * 读取密钥。</p>
- *
  * <p>{@code SecureUtil} 在类加载时通过 {@code SpringContextHolder} 静态读取
  * {@code GlobalProperties}，且该静态字段 {@code static final} 仅初始化一次。因此依赖
  * Spring 的不带 key 测试必须最先执行（{@link Order} 保证），确保静态初始化时上下文已就绪
@@ -37,10 +35,10 @@ class SecureUtilTest {
     private static final String DATA = "snowball";
     private static final String AES_SECRET = "0123456789abcdef0123456789abcdef";
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(CoreAutoConfiguration.class))
-            .withUserConfiguration(RefreshScopeTestConfiguration.class)
-            .withPropertyValues("customizer.infra.global-properties.aes-secret=" + AES_SECRET);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(CoreAutoConfiguration.class)).withUserConfiguration(
+            RefreshScopeTestConfiguration.class).withPropertyValues(
+            "customizer.infra.global-properties.aes-secret=" + AES_SECRET);
 
     @Test
     @Order(1)
@@ -55,8 +53,8 @@ class SecureUtilTest {
     @Order(2)
     @DisplayName("带 key 的 AES 加解密往返（无需 Spring）")
     void aesEncryptAndDecryptWithKey() {
-        assertThat(SecureUtil.aesDecryptStrWithKey(SecureUtil.aesEncryptHexWithKey(DATA, AES_SECRET), AES_SECRET))
-                .isEqualTo(DATA);
+        assertThat(SecureUtil.aesDecryptStrWithKey(SecureUtil.aesEncryptHexWithKey(DATA, AES_SECRET),
+                AES_SECRET)).isEqualTo(DATA);
     }
 
     @AfterEach

@@ -260,7 +260,8 @@ public class AuthenticateTokenFilter implements HandlerInterceptor {
     private UserClaim checkAndParseAuthInfo(HttpServletRequest request, String tokenHeader) {
         String tokenPrefix = authenticateProperties.getTokenPrefix();
         String token = tokenHeader;
-        if (StringUtils.isNotBlank(tokenPrefix) && StringUtils.isNotBlank(tokenHeader) && tokenHeader.startsWith(tokenPrefix)) {
+        if (StringUtils.isNotBlank(tokenPrefix) && StringUtils.isNotBlank(tokenHeader) && tokenHeader.startsWith(
+                tokenPrefix)) {
             token = tokenHeader.substring(tokenPrefix.length());
         }
 

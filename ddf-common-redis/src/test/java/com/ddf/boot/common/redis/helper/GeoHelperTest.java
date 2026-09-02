@@ -1,11 +1,5 @@
 package com.ddf.boot.common.redis.helper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.ddf.boot.common.redis.request.GeoCoordinateSearchRequest;
 import com.ddf.boot.common.redis.request.GeoMemberSearchRequest;
 import java.util.List;
@@ -18,6 +12,12 @@ import org.redisson.api.GeoPosition;
 import org.redisson.api.GeoUnit;
 import org.redisson.api.RGeo;
 import org.redisson.api.RedissonClient;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * GeoHelper 测试

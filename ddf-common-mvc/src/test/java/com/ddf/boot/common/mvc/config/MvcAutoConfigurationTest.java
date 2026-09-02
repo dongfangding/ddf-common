@@ -1,9 +1,5 @@
 package com.ddf.boot.common.mvc.config;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import com.ddf.boot.common.core.config.GlobalProperties;
 import com.ddf.boot.common.mvc.exception200.CommonExceptionAdvice;
 import com.ddf.boot.common.mvc.permissionscan.PermissionMenuScanner;
@@ -12,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * MvcAutoConfiguration 测试

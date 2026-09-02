@@ -1,9 +1,5 @@
 package com.ddf.boot.common.s3.helper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.ddf.boot.common.s3.api.S3Api;
 import com.ddf.boot.common.s3.config.S3BucketProperty;
 import com.ddf.boot.common.s3.config.S3Properties;
@@ -13,6 +9,10 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * S3Helper 行为测试

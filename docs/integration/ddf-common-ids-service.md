@@ -4,14 +4,14 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 统一 API | 单个 / 批量 / 组合 / 解析 ID | `api.IdsApi` |
-| 生成器接口 | 顶层策略，`supportsKey()` 区分 key-based / keyless | `service.IDGen` |
-| 策略注册表 | 收集 key-based 实现并按 key 分发 | `service.IdGenRegistry` |
-| 雪花算法 | Zookeeper 分配 workerId，keyless | `service.impl.snowflake.SnowflakeIDGenImpl` |
-| 号段模式 | 双 Segment 缓存 + 数据库分配，key-based | `service.impl.segment.SegmentIDGenImpl` |
-| 配置属性 | 雪花 / 号段开关与参数 | `config.properties.IdsProperties` |
+| 能力     | 说明                                          | 关键类 / 入口                                    |
+|--------|---------------------------------------------|---------------------------------------------|
+| 统一 API | 单个 / 批量 / 组合 / 解析 ID                        | `api.IdsApi`                                |
+| 生成器接口  | 顶层策略，`supportsKey()` 区分 key-based / keyless | `service.IDGen`                             |
+| 策略注册表  | 收集 key-based 实现并按 key 分发                    | `service.IdGenRegistry`                     |
+| 雪花算法   | Zookeeper 分配 workerId，keyless               | `service.impl.snowflake.SnowflakeIDGenImpl` |
+| 号段模式   | 双 Segment 缓存 + 数据库分配，key-based              | `service.impl.segment.SegmentIDGenImpl`     |
+| 配置属性   | 雪花 / 号段开关与参数                                | `config.properties.IdsProperties`           |
 
 ## 接入方式
 
@@ -104,10 +104,10 @@ public class RedisIDGen implements IDGen {
 
 `IdGenRegistry` 提供三个方法：
 
-| 方法 | 说明 |
-|------|------|
-| `get(String key)` | 遍历 key-based 实现，返回第一个非空 `Result` |
-| `list(String key, int number)` | 遍历 key-based 实现，批量生成 |
+| 方法                                   | 说明                                        |
+|--------------------------------------|-------------------------------------------|
+| `get(String key)`                    | 遍历 key-based 实现，返回第一个非空 `Result`          |
+| `list(String key, int number)`       | 遍历 key-based 实现，批量生成                      |
 | `<T extends IDGen> T find(Class<T>)` | 按类型查找实现（如 `find(SegmentIDGenImpl.class)`） |
 
 ## 注意事项

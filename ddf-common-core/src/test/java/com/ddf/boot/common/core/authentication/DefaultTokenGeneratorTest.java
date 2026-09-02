@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * {@link DefaultTokenGenerator} 的 createToken -> checkToken 往返测试。
- *
  * <p>说明：{@code SecureUtil} 在类加载时通过 {@code SpringContextHolder} 静态读取
  * {@code GlobalProperties} 以初始化 RSA/AES 密钥，因此需要在 ApplicationContextRunner 中
  * 显式注册 {@code refresh} scope（{@code GlobalProperties} 标注了 {@code @RefreshScope}），
@@ -34,13 +33,12 @@ class DefaultTokenGeneratorTest {
         RSA_PUBLIC_KEY = rsa.getPublicKeyBase64();
     }
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(CoreAutoConfiguration.class))
-            .withUserConfiguration(RefreshScopeTestConfiguration.class)
-            .withPropertyValues(
-                    "customizer.infra.global-properties.aes-secret=" + AES_SECRET,
-                    "customizer.infra.global-properties.rsa-private-key=" + RSA_PRIVATE_KEY,
-                    "customizer.infra.global-properties.rsa-public-key=" + RSA_PUBLIC_KEY);
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
+            AutoConfigurations.of(CoreAutoConfiguration.class)).withUserConfiguration(
+            RefreshScopeTestConfiguration.class).withPropertyValues(
+            "customizer.infra.global-properties.aes-secret=" + AES_SECRET,
+            "customizer.infra.global-properties.rsa-private-key=" + RSA_PRIVATE_KEY,
+            "customizer.infra.global-properties.rsa-public-key=" + RSA_PUBLIC_KEY);
 
     @AfterEach
     void cleanSpringUtil() {

@@ -6,13 +6,13 @@
 
 ## 核心类
 
-| 类路径                                                                  | 功能          |
-|----------------------------------------------------------------------|-------------|
-| `com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter`  | Token 认证过滤器 |
-| `com.ddf.boot.common.authentication.util.UserContextUtil`            | 用户上下文工具     |
+| 类路径                                                                  | 功能              |
+|----------------------------------------------------------------------|-----------------|
+| `com.ddf.boot.common.authentication.filter.AuthenticateTokenFilter`  | Token 认证过滤器     |
+| `com.ddf.boot.common.authentication.util.UserContextUtil`            | 用户上下文工具         |
 | `com.ddf.boot.common.core.authentication.TokenGenerator`             | Token 生成/校验策略接口 |
-| `com.ddf.boot.common.core.authentication.TokenUtil`                  | Token 工具类（已弃用） |
-| `com.ddf.boot.common.authentication.config.AuthenticationProperties` | 配置属性        |
+| `com.ddf.boot.common.core.authentication.TokenUtil`                  | Token 工具类（已弃用）  |
+| `com.ddf.boot.common.authentication.config.AuthenticationProperties` | 配置属性            |
 
 ## 使用说明
 
@@ -133,11 +133,11 @@ public class MyTokenGenerator implements TokenGenerator {
 
 模块在登录/生成 token、刷新、失败时发布 Spring 事件，接入方用 `@EventListener` 订阅：
 
-| 事件类（`com.ddf.boot.common.core.event` 包） | 触发时机        | 关键字段              |
-|-------------------------------------|-------------|-------------------|
-| `LoginSuccessEvent`                 | 登录成功/生成 token | `userClaim`       |
-| `TokenRefreshEvent`                 | token 刷新     | `userId`          |
-| `LoginFailureEvent`                 | 认证失败        | `token`、`errorCode` |
+| 事件类（`com.ddf.boot.common.core.event` 包） | 触发时机          | 关键字段                |
+|-----------------------------------------|---------------|---------------------|
+| `LoginSuccessEvent`                     | 登录成功/生成 token | `userClaim`         |
+| `TokenRefreshEvent`                     | token 刷新      | `userId`            |
+| `LoginFailureEvent`                     | 认证失败          | `token`、`errorCode` |
 
 ```java
 @EventListener

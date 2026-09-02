@@ -13,8 +13,8 @@ public class RedisAlarmFrequencyControl implements AlarmFrequencyControl {
 
     @Override
     public boolean tryAcquire(String alarmKey) {
-        Boolean ok = stringRedisTemplate.opsForValue()
-                .setIfAbsent("alarm:frequency:" + alarmKey, "1", Duration.ofMinutes(5));
+        Boolean ok = stringRedisTemplate.opsForValue().setIfAbsent("alarm:frequency:" + alarmKey, "1",
+                Duration.ofMinutes(5));
         return Boolean.TRUE.equals(ok);
     }
 }

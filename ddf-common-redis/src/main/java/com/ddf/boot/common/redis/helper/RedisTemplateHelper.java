@@ -184,8 +184,8 @@ public class RedisTemplateHelper {
             throw new IllegalArgumentException("令牌桶恢复速率参数异常, rate = " + rate);
         }
         final String result = String.valueOf(stringRedisTemplate.execute(RedisLuaScript.TOKEN_BUCKET_RATE_LIMIT,
-                Collections.singletonList(request.getKey()), String.valueOf(max),
-                String.valueOf(rate), String.valueOf(System.currentTimeMillis())));
+                Collections.singletonList(request.getKey()), String.valueOf(max), String.valueOf(rate),
+                String.valueOf(System.currentTimeMillis())));
         return Objects.equals("1", result);
     }
 

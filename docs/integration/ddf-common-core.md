@@ -4,15 +4,15 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 加密工具 | AES / RSA / BCrypt 加密、解密、密码散列 | `com.ddf.boot.common.core.util.SecureUtil` |
-| ID 生成 | 雪花算法（可配 workerId/dataCenterId） | `com.ddf.boot.common.core.util.IdsUtil` |
-| 线程池构建 | 统一构造、优雅关闭、运行状态监控 | `com.ddf.boot.common.core.helper.ThreadBuilderHelper` |
-| Spring 上下文持有 | 静态获取 Bean / ApplicationContext | `com.ddf.boot.common.core.helper.SpringContextHolder` |
-| 全局配置属性 | 雪花参数、RSA/AES/签名密钥等 | `com.ddf.boot.common.core.config.GlobalProperties` |
-| Token 生成策略 | Token 生成/解析/校验/刷新的策略接口 | `com.ddf.boot.common.core.authentication.TokenGenerator` |
-| 认证事件 | 登录成功 / Token 刷新 / 登录失败事件 | `com.ddf.boot.common.core.event.*` |
+| 能力           | 说明                             | 关键类 / 入口                                                 |
+|--------------|--------------------------------|----------------------------------------------------------|
+| 加密工具         | AES / RSA / BCrypt 加密、解密、密码散列  | `com.ddf.boot.common.core.util.SecureUtil`               |
+| ID 生成        | 雪花算法（可配 workerId/dataCenterId） | `com.ddf.boot.common.core.util.IdsUtil`                  |
+| 线程池构建        | 统一构造、优雅关闭、运行状态监控               | `com.ddf.boot.common.core.helper.ThreadBuilderHelper`    |
+| Spring 上下文持有 | 静态获取 Bean / ApplicationContext | `com.ddf.boot.common.core.helper.SpringContextHolder`    |
+| 全局配置属性       | 雪花参数、RSA/AES/签名密钥等             | `com.ddf.boot.common.core.config.GlobalProperties`       |
+| Token 生成策略   | Token 生成/解析/校验/刷新的策略接口         | `com.ddf.boot.common.core.authentication.TokenGenerator` |
+| 认证事件         | 登录成功 / Token 刷新 / 登录失败事件       | `com.ddf.boot.common.core.event.*`                       |
 
 ## 接入方式
 
@@ -126,11 +126,11 @@ public interface TokenCache {
 
 `DefaultTokenGenerator` 在生成/刷新 Token 时发布 Spring 事件，接入方用 `@EventListener` 订阅：
 
-| 事件类（`com.ddf.boot.common.core.event`） | 触发时机 | 关键字段 |
-|------|------|------|
-| `LoginSuccessEvent` | 生成 token 成功 | `getUserClaim()` |
-| `TokenRefreshEvent` | token 刷新 | `getUserId()` |
-| `LoginFailureEvent` | 认证失败 | `getToken()`、`getErrorCode()` |
+| 事件类（`com.ddf.boot.common.core.event`） | 触发时机        | 关键字段                          |
+|---------------------------------------|-------------|-------------------------------|
+| `LoginSuccessEvent`                   | 生成 token 成功 | `getUserClaim()`              |
+| `TokenRefreshEvent`                   | token 刷新    | `getUserId()`                 |
+| `LoginFailureEvent`                   | 认证失败        | `getToken()`、`getErrorCode()` |
 
 ```java
 @EventListener

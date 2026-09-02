@@ -161,7 +161,8 @@ public abstract class EnhanceMessageHandler<T> implements RocketMQListener<Messa
                 handleRetry(message);
             } else {
                 // 不抛异常且不重试时，异常被吞并默认 ACK，会导致消息静默丢失，显式记录错误以便监控告警
-                log.error("[{}] 消息id:{}消费异常且未开启重试，消息将被默认ACK，存在丢失风险", TAG, message.getMessageId());
+                log.error("[{}] 消息id:{}消费异常且未开启重试，消息将被默认ACK，存在丢失风险", TAG,
+                        message.getMessageId());
             }
         }
     }

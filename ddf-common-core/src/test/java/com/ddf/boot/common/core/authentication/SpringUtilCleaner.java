@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 /**
  * 测试辅助：清理 hutool {@code SpringUtil} 的静态上下文。
- *
  * <p>加载 {@code CoreAutoConfiguration}（间接经由 {@code SpringContextHolder} 的
  * {@code @EnableSpringUtil}）后，hutool 的 {@code SpringUtil} 会持有当前 Spring 上下文的静态引用。
  * {@code ApplicationContextRunner} 在回调结束后会关闭上下文，但该静态引用不会被自动清除，

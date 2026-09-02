@@ -31,7 +31,7 @@ import java.util.Set;
 public class FileRestore {
     /**
      * @param args [0]功能标识 [1]源目录(逗号分隔多个) [2]输出目录
-     *             功能标识: month(按月份归档), video(监控视频归档), compress(目录压缩)
+     * 功能标识: month(按月份归档), video(监控视频归档), compress(目录压缩)
      */
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -55,8 +55,8 @@ public class FileRestore {
         }
     }
 
-    private static final DateTimeFormatter MONTH_FMT = DateTimeFormatter.ofPattern("yyyyMM")
-            .withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter MONTH_FMT = DateTimeFormatter.ofPattern("yyyyMM").withZone(
+            ZoneId.systemDefault());
 
     /**
      * 按拍摄时间将文件归档到月份目录。
@@ -183,7 +183,8 @@ public class FileRestore {
             try {
                 Files.createDirectories(invalidManifest.getParent());
                 Files.write(invalidManifest, result.invalidDateNames);
-                System.err.println("已记录 " + result.invalidDateNames.size() + " 个日期不合理文件到: " + invalidManifest);
+                System.err.println(
+                        "已记录 " + result.invalidDateNames.size() + " 个日期不合理文件到: " + invalidManifest);
             } catch (IOException e) {
                 System.err.println("WARN: 写入日期不合理文件清单失败: " + e.getMessage());
             }
@@ -208,14 +209,37 @@ public class FileRestore {
         final java.util.LinkedHashSet<String> matchedMonths = new java.util.LinkedHashSet<>();
         final java.util.List<String> invalidDateNames = new java.util.ArrayList<>();
 
-        public int getTotalFiles() { return totalFiles; }
-        public int getMatchedFiles() { return matchedFiles; }
-        public int getUnmatchedFiles() { return unmatchedFiles; }
-        public int getClipFiles() { return clipFiles; }
-        public int getShareFiles() { return shareFiles; }
-        public int getRecordFiles() { return recordFiles; }
-        public int getImageFiles() { return imageFiles; }
-        public int getInvalidDateFiles() { return invalidDateFiles; }
+        public int getTotalFiles() {
+            return totalFiles;
+        }
+
+        public int getMatchedFiles() {
+            return matchedFiles;
+        }
+
+        public int getUnmatchedFiles() {
+            return unmatchedFiles;
+        }
+
+        public int getClipFiles() {
+            return clipFiles;
+        }
+
+        public int getShareFiles() {
+            return shareFiles;
+        }
+
+        public int getRecordFiles() {
+            return recordFiles;
+        }
+
+        public int getImageFiles() {
+            return imageFiles;
+        }
+
+        public int getInvalidDateFiles() {
+            return invalidDateFiles;
+        }
 
         public String toReport() {
             StringBuilder sb = new StringBuilder();
@@ -321,7 +345,9 @@ public class FileRestore {
 
     private static boolean isImageByExtension(String fileName) {
         int dot = fileName.lastIndexOf('.');
-        if (dot < 0) return false;
+        if (dot < 0) {
+            return false;
+        }
         return IMAGE_EXTENSIONS.contains(fileName.substring(dot + 1).toLowerCase());
     }
 

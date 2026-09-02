@@ -56,9 +56,9 @@ public class FileUploadHelper {
     /**
      * 允许透传存储的安全 Content-Type 白名单，拒绝 HTML / 可执行 / SVG 等可导致存储型 XSS 的类型。
      */
-    private static final Set<String> SAFE_CONTENT_TYPES = Set.of("image/jpeg", "image/png", "image/gif",
-            "image/webp", "image/bmp", "video/mp4", "video/x-msvideo", "video/quicktime", "video/x-ms-wmv",
-            "video/x-flv", "video/x-matroska", "application/pdf", "application/octet-stream");
+    private static final Set<String> SAFE_CONTENT_TYPES = Set.of("image/jpeg", "image/png", "image/gif", "image/webp",
+            "image/bmp", "video/mp4", "video/x-msvideo", "video/quicktime", "video/x-ms-wmv", "video/x-flv",
+            "video/x-matroska", "application/pdf", "application/octet-stream");
 
     private final S3Api s3Api;
     private final S3Properties s3Properties;

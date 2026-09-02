@@ -12,8 +12,8 @@ import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,8 +28,7 @@ public class DedupService {
     public List<DedupResult> scan(Path scanDir, Consumer<Double> onProgress) throws IOException {
         List<Path> allFiles;
         try (Stream<Path> stream = Files.walk(scanDir)) {
-            allFiles = stream
-                    .filter(Files::isRegularFile)
+            allFiles = stream.filter(Files::isRegularFile)
                     .sorted(Comparator.comparing(p -> p.getFileName().toString()))
                     .collect(Collectors.toList());
         }
@@ -52,20 +51,12 @@ public class DedupService {
             onProgress.accept((double) processed / total);
         }
 
-        return hashGroups.entrySet().stream()
-                .filter(e -> e.getValue().size() > 1)
-                .map(e -> {
-                    List<Path> sorted = e.getValue().stream()
-                            .sorted(Comparator.comparing(
-                                    (Path p) -> hasBrackets(p.getFileName().toString())))
-                            .collect(Collectors.toList());
-                    return new DedupResult(
-                            sorted.get(0).getFileName().toString(),
-                            e.getKey(),
-                            sorted);
-                })
-                .sorted(Comparator.comparing(DedupResult::fileName))
-                .collect(Collectors.toList());
+        return hashGroups.entrySet().stream().filter(e -> e.getValue().size() > 1).map(e -> {
+            List<Path> sorted = e.getValue().stream().sorted(
+                    Comparator.comparing((Path p) -> hasBrackets(p.getFileName().toString()))).collect(
+                    Collectors.toList());
+            return new DedupResult(sorted.get(0).getFileName().toString(), e.getKey(), sorted);
+        }).sorted(Comparator.comparing(DedupResult::fileName)).collect(Collectors.toList());
     }
 
     public int moveDuplicates(DedupResult result, Path outputDir) throws IOException {

@@ -1,7 +1,6 @@
 package com.ddf.common.boot.mqtt.config.properties;
 
 import cn.hutool.core.net.NetUtil;
-import com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum;
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import java.io.Serializable;
 import java.util.List;
@@ -74,9 +73,7 @@ public class EmqConnectionProperties {
         private static final long serialVersionUID = 1516322558409231083L;
 
         /**
-         * 协议
-         *
-         * @see com.ddf.common.boot.mqtt.enume.MQTTProtocolEnum#getProtocol()
+         * 协议，参见 {@code MQTTProtocolEnum#getProtocol()}
          */
         private String protocol;
 

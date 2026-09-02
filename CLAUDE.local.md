@@ -6,6 +6,7 @@
 `game/pom.xml` 中 `<relativePath/>` 为空，不会向上查找本地目录，因此**必须先将依赖的 parent POM 安装到本地 Maven 仓库**，否则直接在 `game/` 下执行 `mvn` 会报 `Non-resolvable parent POM`。
 
 **Settings 文件**：本项目使用非默认的 Maven settings，所有 `mvn` 命令都必须指定：
+
 ```bash
 -s /mnt/d/develop_tools/apache-maven-3.9.9/conf/settings-snowball-wsl.xml
 ```

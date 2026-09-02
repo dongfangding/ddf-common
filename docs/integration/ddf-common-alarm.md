@@ -4,15 +4,15 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| 渠道策略 SPI | 渠道抽象，注册 Bean 即被 `List<AlarmChannel>` 聚合分发 | `channel.AlarmChannel` |
-| 钉钉渠道 | 钉钉机器人（markdown 渲染），支持加签 | `channel.DingTalkAlarmChannel` |
-| Lark 渠道 | Lark 机器人（富文本卡片渲染），支持加签 | `channel.LarkAlarmChannel` |
-| 频率控制 | 静默窗口防告警风暴（默认 Redis 5 分钟） | `channel.AlarmFrequencyControl` / `RedisAlarmFrequencyControl` |
-| 结构化消息 | 标题 + 有序内容行，各渠道自行渲染 | `model.AlarmMessage` |
-| 异常自动告警 | 监听 `GlobalExceptionEvent` 自动按渠道分发 | `notify.CodeExceptionNotify` |
-| 配置属性 | 钉钉 / Lark / 异常告警开关 | `config.DingTalkProperties` / `LarkProperties` / `ExceptionAlarmProperties` |
+| 能力       | 说明                                        | 关键类 / 入口                                                                    |
+|----------|-------------------------------------------|-----------------------------------------------------------------------------|
+| 渠道策略 SPI | 渠道抽象，注册 Bean 即被 `List<AlarmChannel>` 聚合分发 | `channel.AlarmChannel`                                                      |
+| 钉钉渠道     | 钉钉机器人（markdown 渲染），支持加签                   | `channel.DingTalkAlarmChannel`                                              |
+| Lark 渠道  | Lark 机器人（富文本卡片渲染），支持加签                    | `channel.LarkAlarmChannel`                                                  |
+| 频率控制     | 静默窗口防告警风暴（默认 Redis 5 分钟）                  | `channel.AlarmFrequencyControl` / `RedisAlarmFrequencyControl`              |
+| 结构化消息    | 标题 + 有序内容行，各渠道自行渲染                        | `model.AlarmMessage`                                                        |
+| 异常自动告警   | 监听 `GlobalExceptionEvent` 自动按渠道分发         | `notify.CodeExceptionNotify`                                                |
+| 配置属性     | 钉钉 / Lark / 异常告警开关                        | `config.DingTalkProperties` / `LarkProperties` / `ExceptionAlarmProperties` |
 
 ## 接入方式
 

@@ -8,9 +8,13 @@ import com.ddf.boot.common.api.model.captcha.response.CaptchaResult;
  */
 public interface CaptchaProducer {
 
-    /** 支持的验证码类型 */
+    /**
+     * 支持的验证码类型
+     */
     CaptchaType getCaptchaType();
 
-    /** 生成验证码（自包含缓存写入） */
+    /**
+     * 生成验证码（自包含缓存写入）
+     */
     CaptchaResult generate();
 }

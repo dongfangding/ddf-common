@@ -1,12 +1,12 @@
 package com.ddf.boot.common.limit.config;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.ddf.boot.common.limit.LimitAutoConfiguration;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * LimitAutoConfiguration 结构测试

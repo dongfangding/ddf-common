@@ -22,8 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthenticationAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
-            AutoConfigurations.of(AuthenticationAutoConfiguration.class, CoreAutoConfiguration.class)).withUserConfiguration(
-            AuthenticationTestConfiguration.class);
+                    AutoConfigurations.of(AuthenticationAutoConfiguration.class, CoreAutoConfiguration.class))
+            .withUserConfiguration(AuthenticationTestConfiguration.class);
 
     @Test
     void shouldRegisterAuthenticationBeansWhenEnabled() {

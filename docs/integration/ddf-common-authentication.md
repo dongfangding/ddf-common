@@ -4,15 +4,15 @@
 
 ## 核心能力
 
-| 能力 | 说明 | 关键类 / 入口 |
-|------|------|--------------|
-| Token 认证拦截 | 解析请求头 Token、验签、构建 `RequestContext` | `filter.AuthenticateTokenFilter` |
-| 用户上下文 | `ThreadLocal` 保存用户与请求信息 | `com.ddf.boot.common.api.util.UserContextUtil` |
-| 配置属性 | Token/签名/忽略路径等配置 | `config.AuthenticationProperties` |
-| Token 生成策略 | 生成/校验/刷新（可替换） | `core.authentication.TokenGenerator` |
-| 用户信息加载 | 从 DB 加载最新用户信息（必须实现） | `interfaces.UserClaimService` |
-| 自定义校验 | 通用校验基础上的业务校验（可替换） | `interfaces.TokenCustomizeCheckService` |
-| Token 缓存 | Redis 缓存 Token（可替换） | `core.authentication.TokenCache` |
+| 能力         | 说明                                 | 关键类 / 入口                                       |
+|------------|------------------------------------|------------------------------------------------|
+| Token 认证拦截 | 解析请求头 Token、验签、构建 `RequestContext` | `filter.AuthenticateTokenFilter`               |
+| 用户上下文      | `ThreadLocal` 保存用户与请求信息            | `com.ddf.boot.common.api.util.UserContextUtil` |
+| 配置属性       | Token/签名/忽略路径等配置                   | `config.AuthenticationProperties`              |
+| Token 生成策略 | 生成/校验/刷新（可替换）                      | `core.authentication.TokenGenerator`           |
+| 用户信息加载     | 从 DB 加载最新用户信息（必须实现）                | `interfaces.UserClaimService`                  |
+| 自定义校验      | 通用校验基础上的业务校验（可替换）                  | `interfaces.TokenCustomizeCheckService`        |
+| Token 缓存   | Redis 缓存 Token（可替换）                | `core.authentication.TokenCache`               |
 
 ## 接入方式
 
@@ -147,11 +147,11 @@ public class MyTokenCache implements TokenCache {
 
 ### 5. 认证事件订阅
 
-| 事件类（`com.ddf.boot.common.core.event`） | 触发时机 | 关键字段 |
-|------|------|------|
-| `LoginSuccessEvent` | 生成 token 成功 | `getUserClaim()` |
-| `TokenRefreshEvent` | token 刷新 | `getUserId()` |
-| `LoginFailureEvent` | 认证失败 | `getToken()`、`getErrorCode()` |
+| 事件类（`com.ddf.boot.common.core.event`） | 触发时机        | 关键字段                          |
+|---------------------------------------|-------------|-------------------------------|
+| `LoginSuccessEvent`                   | 生成 token 成功 | `getUserClaim()`              |
+| `TokenRefreshEvent`                   | token 刷新    | `getUserId()`                 |
+| `LoginFailureEvent`                   | 认证失败        | `getToken()`、`getErrorCode()` |
 
 ```java
 @EventListener

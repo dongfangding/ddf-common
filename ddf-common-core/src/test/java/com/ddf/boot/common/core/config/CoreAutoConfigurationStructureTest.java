@@ -1,7 +1,6 @@
 package com.ddf.boot.common.core.config;
 
 import com.ddf.boot.common.core.helper.EnvironmentHelper;
-import com.ddf.boot.common.core.config.CoreAutoConfiguration;
 import com.ddf.boot.common.core.promise.CompletableFutureHelper;
 import com.ddf.boot.common.core.promise.DeferredHelper;
 import java.lang.annotation.Annotation;

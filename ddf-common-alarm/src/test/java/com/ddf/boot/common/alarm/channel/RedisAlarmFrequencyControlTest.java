@@ -33,8 +33,8 @@ class RedisAlarmFrequencyControlTest {
 
     @Test
     void shouldAcquireWhenKeyNotPresent() {
-        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5))))
-                .thenReturn(true);
+        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5)))).thenReturn(
+                true);
 
         boolean result = newControl().tryAcquire("demo");
 
@@ -43,8 +43,8 @@ class RedisAlarmFrequencyControlTest {
 
     @Test
     void shouldRejectWhenKeyAlreadyInWindow() {
-        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5))))
-                .thenReturn(false);
+        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5)))).thenReturn(
+                false);
 
         boolean result = newControl().tryAcquire("demo");
 
@@ -53,8 +53,8 @@ class RedisAlarmFrequencyControlTest {
 
     @Test
     void shouldRejectWhenSetIfAbsentReturnsNull() {
-        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5))))
-                .thenReturn(null);
+        when(valueOperations.setIfAbsent(eq("alarm:frequency:demo"), eq("1"), eq(Duration.ofMinutes(5)))).thenReturn(
+                null);
 
         boolean result = newControl().tryAcquire("demo");
 

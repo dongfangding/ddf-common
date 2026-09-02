@@ -1,6 +1,5 @@
 package com.ddf.common.boot.mqttclient.model.support.body;
 
-import com.ddf.common.boot.mqtt.model.request.InnerMqttMessageRequest;
 import java.io.Serializable;
 
 /**
@@ -15,7 +14,7 @@ import java.io.Serializable;
  * topic定义成各种对象的目的是不需要应用方关注具体的topic的路径，而是让使用方知道topic的类型，然后通过topic的类型
  * 对应的参数组装成topic， 这样使用的时候传递的不是具体的topic，而是topic类型和对应类型所需要的组成参数
  * 还需要知道sessionType和formatType的作用
- * {@link InnerMqttMessageRequest#getBody()}
+ * {@code InnerMqttMessageRequest#getBody()}
  * 所有要放入body中的数据必须通过这个接口标记，方便追溯或者一些通用处理功能
  * @since 2022/03/20 13:11
  */

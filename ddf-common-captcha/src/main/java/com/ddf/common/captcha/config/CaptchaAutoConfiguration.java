@@ -111,8 +111,8 @@ public class CaptchaAutoConfiguration {
     public CaptchaHelper captchaHelper(@Qualifier(CaptchaConst.KAPTCHA_MATH) DefaultKaptcha mathKaptcha,
             CaptchaService captchaService, CaptchaCacheService captchaCacheService, CacheAdapter cacheAdapter,
             Map<CaptchaType, CaptchaProducer> captchaProducerMap, ApplicationEventPublisher applicationEventPublisher) {
-        return new CaptchaHelper(mathKaptcha, properties, captchaService, captchaCacheService,
-                cacheAdapter, captchaProducerMap, applicationEventPublisher);
+        return new CaptchaHelper(mathKaptcha, properties, captchaService, captchaCacheService, cacheAdapter,
+                captchaProducerMap, applicationEventPublisher);
     }
 
     /**

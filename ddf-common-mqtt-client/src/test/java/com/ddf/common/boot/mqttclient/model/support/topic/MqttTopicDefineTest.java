@@ -1,11 +1,11 @@
 package com.ddf.common.boot.mqttclient.model.support.topic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.ddf.common.boot.mqtt.support.GlobalStorage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * MQTT topic 定义测试

@@ -75,8 +75,8 @@ public class DefaultTokenGenerator implements TokenGenerator {
                 final String cacheToken = tokenCache.getToken(userId);
                 PreconditionUtil.checkArgument(StrUtil.isNotBlank(cacheToken),
                         new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
-                PreconditionUtil.checkArgument(MessageDigest.isEqual(
-                                cacheToken.getBytes(StandardCharsets.UTF_8), token.getBytes(StandardCharsets.UTF_8)),
+                PreconditionUtil.checkArgument(MessageDigest.isEqual(cacheToken.getBytes(StandardCharsets.UTF_8),
+                                token.getBytes(StandardCharsets.UTF_8)),
                         new UnauthorizedException(CoreExceptionCode.TOKEN_EXPIRED));
             }
             return AuthenticateCheckResult.of(authenticateToken, userClaim);

@@ -1,16 +1,20 @@
 package com.ddf.boot.common.script.file.dedup.ui;
 
+import java.io.File;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
-
-import java.io.File;
 
 public class PhotoArchivePanel extends VBox {
 
@@ -27,18 +31,14 @@ public class PhotoArchivePanel extends VBox {
         Label title = new Label("按拍摄时间归档");
         title.setFont(Font.font(null, FontWeight.BOLD, 16));
 
-        Label desc = new Label("按拍摄时间（月份）归档，不支持的文件归入 not_vid 目录。\n"
-                + "支持从文件名解析的格式：\n"
-                + "  • VID20250101...         → 第4-9位为月份（yyyyMM）\n"
-                + "  • VID_20250101...        → 第5-10位为月份\n"
-                + "  • VID_20250101_120000_00_001.mp4 → 第5-10位为月份\n"
-                + "  • VID_20250101_120000.mp4 → 第5-10位为月份\n"
+        Label desc = new Label("按拍摄时间（月份）归档，不支持的文件归入 not_vid 目录。\n" + "支持从文件名解析的格式：\n"
+                + "  • VID20250101...         → 第4-9位为月份（yyyyMM）\n" + "  • VID_20250101...        → 第5-10位为月份\n"
+                + "  • VID_20250101_120000_00_001.mp4 → 第5-10位为月份\n" + "  • VID_20250101_120000.mp4 → 第5-10位为月份\n"
                 + "  • VID20250101120000.mp4   → 第4-9位为月份\n"
                 + "  • PRO_VID_20250101_120000_00_001.mp4 → 第9-14位为月份\n"
                 + "  • 20240824165007_000205.MP4  → 第1-8位为月份\n"
                 + "  • Record_2024-08-28-19-08-36.mp4 → 归入对应月份下的\"录屏\"子目录\n"
-                + "  • 图片（jpg/jpeg/png/gif/bmp）→ 归入\"图片\"子目录\n"
-                + "  • DJI_*                  → 读取文件实际创建时间\n"
+                + "  • 图片（jpg/jpeg/png/gif/bmp）→ 归入\"图片\"子目录\n" + "  • DJI_*                  → 读取文件实际创建时间\n"
                 + "  • lv_0_20230902212343.mp4 → 归入\"剪辑\"子目录\n"
                 + "  • TG-2024-05-02-142222410.mp4 → 归入\"剪辑\"子目录\n"
                 + "  • share_1cd17aed...mp4    → 归入\"网络分享\"子目录\n"
@@ -93,7 +93,7 @@ public class PhotoArchivePanel extends VBox {
             try {
                 com.ddf.boot.common.script.file.FileRestore.ArchiveResult result =
                         com.ddf.boot.common.script.file.FileRestore.computerReadAndMoveFileToMonth(
-                                new String[]{srcText}, outText);
+                                new String[] {srcText}, outText);
                 Platform.runLater(() -> {
                     progressBar.setProgress(1);
                     startButton.setDisable(false);

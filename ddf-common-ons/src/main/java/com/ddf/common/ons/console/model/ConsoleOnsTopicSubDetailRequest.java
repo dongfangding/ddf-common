@@ -1,7 +1,6 @@
 package com.ddf.common.ons.console.model;
 
 import com.aliyun.ons20190214.models.OnsTopicSubDetailRequest;
-import com.ddf.common.ons.console.config.EnvClientProperties;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -21,9 +20,7 @@ public class ConsoleOnsTopicSubDetailRequest implements UserRequest {
     private String currentUser;
 
     /**
-     * 环境key
-     *
-     * @see EnvClientProperties#getClients()
+     * 环境key，对应 {@code EnvClientProperties#getClients()} 中的 key
      */
     @NotBlank(message = "环境key不能为空")
     private String env;

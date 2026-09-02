@@ -149,8 +149,8 @@ public class TableScan {
         return nextMonthNotExistTables;
     }
 
-    private void createMissingTables(String url, String databaseName, String currentMonthSuffix,
-            String nextMonthSuffix, List<String> nextMonthNotExistTables) {
+    private void createMissingTables(String url, String databaseName, String currentMonthSuffix, String nextMonthSuffix,
+            List<String> nextMonthNotExistTables) {
         try (Connection conn = dataSource.getConnection()) {
             for (String table : nextMonthNotExistTables) {
                 createMissingTable(conn, url, databaseName, table, currentMonthSuffix, nextMonthSuffix);
@@ -165,8 +165,7 @@ public class TableScan {
         String sql = "SHOW CREATE TABLE " + table;
         log.info("分表扫描告警-查询表结构语句, table = {}, sql = {}", table, sql);
         String createTableSql;
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (!rs.next()) {
                 log.info("分表扫描告警-查询表结构失败, table = {}, sql = {}", table, sql);
                 return;
@@ -193,8 +192,7 @@ public class TableScan {
         info.setNextMonthTableName(nextMonthTableName);
         info.setCreateTableSql(createTableSql);
         sql = "SHOW CREATE TABLE " + nextMonthTableName;
-        try (PreparedStatement ps2 = conn.prepareStatement(sql);
-                ResultSet rs2 = ps2.executeQuery()) {
+        try (PreparedStatement ps2 = conn.prepareStatement(sql); ResultSet rs2 = ps2.executeQuery()) {
             if (rs2.next()) {
                 info.setShowCreateTableSql(rs2.getString(2));
             } else {

@@ -41,7 +41,8 @@ public class DingTalkUtil {
      */
     public static void sendMarkdownMsgToAllWithLimit(String secret, String accessToken, String title, String content) {
         final DingTalkProperties dingTalkProperties = SpringContextHolder.getBeanWithStatic(DingTalkProperties.class);
-        final RedisTemplateHelper redisTemplateHelper = SpringContextHolder.getBeanWithStatic(RedisTemplateHelper.class);
+        final RedisTemplateHelper redisTemplateHelper = SpringContextHolder.getBeanWithStatic(
+                RedisTemplateHelper.class);
         if (!ObjectUtils.allNotNull(dingTalkProperties, redisTemplateHelper)) {
             log.error("钉钉机器人发送消息失败， 钉钉配置或redis配置未初始化");
             return;

@@ -291,8 +291,8 @@ public class BCrypt {
      *
      * @param s S参数
      * @param maxolen maxolen参数
-     * @throws IllegalArgumentException if maxolen is invalid
      * @return an array containing the decoded bytes
+     * @throws IllegalArgumentException if maxolen is invalid
      */
     static byte[] decode_base64(String s, int maxolen) throws IllegalArgumentException {
         StringBuilder rs = new StringBuilder();
@@ -697,8 +697,8 @@ public class BCrypt {
      * hashing to apply - the work factor therefore increases as
      * 2**log_rounds.
      * @param random random参数
-     * @throws IllegalArgumentException if prefix or log_rounds is invalid
      * @return an encoded salt value
+     * @throws IllegalArgumentException if prefix or log_rounds is invalid
      */
     public static String gensalt(String prefix, int log_rounds, SecureRandom random) throws IllegalArgumentException {
         StringBuilder rs = new StringBuilder();
@@ -732,8 +732,8 @@ public class BCrypt {
      * @param log_rounds LOGrounds参数
      * hashing to apply - the work factor therefore increases as
      * 2**log_rounds.
-     * @throws IllegalArgumentException if prefix or log_rounds is invalid
      * @return an encoded salt value
+     * @throws IllegalArgumentException if prefix or log_rounds is invalid
      */
     public static String gensalt(String prefix, int log_rounds) throws IllegalArgumentException {
         return gensalt(prefix, log_rounds, new SecureRandom());
@@ -746,8 +746,8 @@ public class BCrypt {
      * hashing to apply - the work factor therefore increases as
      * 2**log_rounds.
      * @param random random参数
-     * @throws IllegalArgumentException if log_rounds is invalid
      * @return an encoded salt value
+     * @throws IllegalArgumentException if log_rounds is invalid
      */
     public static String gensalt(int log_rounds, SecureRandom random) throws IllegalArgumentException {
         return gensalt("$2a", log_rounds, random);
@@ -759,8 +759,8 @@ public class BCrypt {
      * @param log_rounds LOGrounds参数
      * hashing to apply - the work factor therefore increases as
      * 2**log_rounds.
-     * @throws IllegalArgumentException if log_rounds is invalid
      * @return an encoded salt value
+     * @throws IllegalArgumentException if log_rounds is invalid
      */
     public static String gensalt(int log_rounds) throws IllegalArgumentException {
         return gensalt(log_rounds, new SecureRandom());

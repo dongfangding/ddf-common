@@ -2,24 +2,34 @@ package com.ddf.boot.common.script.file.dedup.ui;
 
 import com.ddf.boot.common.script.file.dedup.DedupResult;
 import com.ddf.boot.common.script.file.dedup.DedupService;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.DirectoryChooser;
-
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.DirectoryChooser;
 
 public class DedupPanel extends VBox {
 
@@ -172,11 +182,10 @@ public class DedupPanel extends VBox {
 
         new Thread(() -> {
             try {
-                List<DedupResult> found = service.scan(scanDir,
-                        p -> Platform.runLater(() -> {
-                            progressBar.setProgress(p);
-                            statusLabel.setText(String.format("扫描中... %.0f%%", p * 100));
-                        }));
+                List<DedupResult> found = service.scan(scanDir, p -> Platform.runLater(() -> {
+                    progressBar.setProgress(p);
+                    statusLabel.setText(String.format("扫描中... %.0f%%", p * 100));
+                }));
                 Platform.runLater(() -> {
                     results.setAll(found);
                     int totalDups = found.stream().mapToInt(r -> r.duplicates().size()).sum();

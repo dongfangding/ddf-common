@@ -5,6 +5,8 @@ package com.ddf.boot.common.alarm.channel;
  */
 public interface AlarmFrequencyControl {
 
-    /** 是否允许发送本次告警（在静默窗口内返回 false） */
+    /**
+     * 是否允许发送本次告警（在静默窗口内返回 false）
+     */
     boolean tryAcquire(String alarmKey);
 }

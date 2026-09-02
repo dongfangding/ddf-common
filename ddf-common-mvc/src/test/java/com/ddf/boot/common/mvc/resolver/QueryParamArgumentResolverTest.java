@@ -1,9 +1,5 @@
 package com.ddf.boot.common.mvc.resolver;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.ddf.boot.common.api.model.common.dto.QueryParam;
 import com.ddf.boot.common.core.util.ContextKey;
 import java.lang.reflect.Method;
@@ -14,6 +10,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * QueryParamArgumentResolver 测试

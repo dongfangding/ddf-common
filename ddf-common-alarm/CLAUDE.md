@@ -6,16 +6,16 @@
 
 ## 核心类
 
-| 类路径                                                           | 功能                    |
-|---------------------------------------------------------------|-----------------------|
-| `com.ddf.boot.common.alarm.channel.AlarmChannel`              | 告警渠道策略接口             |
-| `com.ddf.boot.common.alarm.channel.DingTalkAlarmChannel`      | 钉钉渠道实现                |
-| `com.ddf.boot.common.alarm.channel.LarkAlarmChannel`          | Lark 渠道实现              |
-| `com.ddf.boot.common.alarm.channel.AlarmFrequencyControl`     | 告警频率控制接口             |
-| `com.ddf.boot.common.alarm.channel.RedisAlarmFrequencyControl` | 默认频率控制（Redis 5 分钟静默） |
-| `com.ddf.boot.common.alarm.model.AlarmMessage`                | 结构化告警消息（title + lines） |
-| `com.ddf.boot.common.alarm.config.ExceptionAlarmProperties`   | 异常告警配置属性             |
-| `com.ddf.boot.common.alarm.enums.AlarmRedisKeyEnum`           | Redis Key 定义           |
+| 类路径                                                            | 功能                     |
+|----------------------------------------------------------------|------------------------|
+| `com.ddf.boot.common.alarm.channel.AlarmChannel`               | 告警渠道策略接口               |
+| `com.ddf.boot.common.alarm.channel.DingTalkAlarmChannel`       | 钉钉渠道实现                 |
+| `com.ddf.boot.common.alarm.channel.LarkAlarmChannel`           | Lark 渠道实现              |
+| `com.ddf.boot.common.alarm.channel.AlarmFrequencyControl`      | 告警频率控制接口               |
+| `com.ddf.boot.common.alarm.channel.RedisAlarmFrequencyControl` | 默认频率控制（Redis 5 分钟静默）   |
+| `com.ddf.boot.common.alarm.model.AlarmMessage`                 | 结构化告警消息（title + lines） |
+| `com.ddf.boot.common.alarm.config.ExceptionAlarmProperties`    | 异常告警配置属性               |
+| `com.ddf.boot.common.alarm.enums.AlarmRedisKeyEnum`            | Redis Key 定义           |
 
 ## 使用说明
 

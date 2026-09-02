@@ -62,23 +62,17 @@ public class PermissionMenuScanner {
         if (StringUtils.isNotBlank(classPermissionMenuCode)) {
             putMenuIfAbsent(menus, buildMenu(
                     StringUtils.defaultIfBlank(classPermissionMenu.parentCode(), classPermissionMenu.parentName()),
-                    classPermissionMenu.parentName(),
-                    classPermissionMenu.type(),
-                    classPermissionMenu.name(),
-                    classPermissionMenuCode,
-                    classPermissionMenu.sort(),
-                    classPermissionMenu.permission(),
-                    classPermissionMenu.componentName(),
-                    classPermissionMenu.componentPath()));
+                    classPermissionMenu.parentName(), classPermissionMenu.type(), classPermissionMenu.name(),
+                    classPermissionMenuCode, classPermissionMenu.sort(), classPermissionMenu.permission(),
+                    classPermissionMenu.componentName(), classPermissionMenu.componentPath()));
         }
         final String classPermissionMenuParentCode = StringUtils.defaultIfBlank(classPermissionMenu.parentCode(),
                 classPermissionMenu.parentName());
         if (StringUtils.isNotBlank(classPermissionMenuParentCode)) {
             // 类上的父类菜单，暂时属性太少，没有办法处理父类的父类，直接默认一级菜单了
-            putMenuIfAbsent(menus, buildMenu("", "", classPermissionMenu.parentType(),
-                    classPermissionMenu.parentName(), classPermissionMenuParentCode, 1,
-                    classPermissionMenu.permission(), classPermissionMenu.componentName(),
-                    classPermissionMenu.componentPath()));
+            putMenuIfAbsent(menus, buildMenu("", "", classPermissionMenu.parentType(), classPermissionMenu.parentName(),
+                    classPermissionMenuParentCode, 1, classPermissionMenu.permission(),
+                    classPermissionMenu.componentName(), classPermissionMenu.componentPath()));
         }
     }
 
@@ -113,13 +107,8 @@ public class PermissionMenuScanner {
         // 暂时属性太少，一直嵌套的父级没办法支持
         putMenuIfAbsent(menus, buildMenu(
                 StringUtils.defaultIfBlank(currentPermissionMenu.parentCode(), currentPermissionMenu.parentName()),
-                currentPermissionMenu.parentName(),
-                currentPermissionMenu.type(),
-                parentName,
-                parentCode,
-                currentPermissionMenu.sort(),
-                currentPermissionMenu.permission(),
-                currentPermissionMenu.componentName(),
+                currentPermissionMenu.parentName(), currentPermissionMenu.type(), parentName, parentCode,
+                currentPermissionMenu.sort(), currentPermissionMenu.permission(), currentPermissionMenu.componentName(),
                 currentPermissionMenu.componentPath()));
     }
 
@@ -133,9 +122,8 @@ public class PermissionMenuScanner {
             return;
         }
         // 暂时属性太少，一直嵌套的父级没办法支持
-        putMenuIfAbsent(menus, buildMenu("", "", currentPermissionMenu.parentType(),
-                currentPermissionMenu.parentName(), grandParentCode, 1,
-                currentPermissionMenu.permission(), currentPermissionMenu.componentName(),
+        putMenuIfAbsent(menus, buildMenu("", "", currentPermissionMenu.parentType(), currentPermissionMenu.parentName(),
+                grandParentCode, 1, currentPermissionMenu.permission(), currentPermissionMenu.componentName(),
                 currentPermissionMenu.componentPath()));
     }
 

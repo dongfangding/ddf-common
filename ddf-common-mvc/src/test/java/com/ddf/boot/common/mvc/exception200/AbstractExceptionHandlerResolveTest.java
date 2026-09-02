@@ -1,12 +1,8 @@
 package com.ddf.boot.common.mvc.exception200;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.ddf.boot.common.api.exception.BadRequestException;
 import com.ddf.boot.common.api.exception.BaseCallbackCode;
 import com.ddf.boot.common.api.exception.BaseErrorCallbackCode;
-import com.ddf.boot.common.api.exception.BusinessException;
 import jakarta.validation.constraints.NotBlank;
 import java.sql.SQLIntegrityConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +11,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * AbstractExceptionHandler.resolveExceptionMessage 测试

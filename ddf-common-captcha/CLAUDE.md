@@ -6,15 +6,15 @@
 
 ## 核心类
 
-| 类路径                                                                 | 功能     |
-|---------------------------------------------------------------------|--------|
-| `com.ddf.common.captcha.helper.CaptchaHelper`                       | 验证码工具类 |
-| `com.ddf.common.captcha.properties.CaptchaProperties`               | 配置属性   |
+| 类路径                                                                 | 功能        |
+|---------------------------------------------------------------------|-----------|
+| `com.ddf.common.captcha.helper.CaptchaHelper`                       | 验证码工具类    |
+| `com.ddf.common.captcha.properties.CaptchaProperties`               | 配置属性      |
 | `com.ddf.common.captcha.producer.CaptchaProducer`                   | 验证码生成策略接口 |
-| `com.ddf.common.captcha.producer.TextCaptchaProducer`               | 图形字符验证码实现   |
+| `com.ddf.common.captcha.producer.TextCaptchaProducer`               | 图形字符验证码实现 |
 | `com.ddf.common.captcha.event.CaptchaVerifyEvent`                   | 验证码校验事件   |
-| `com.ddf.boot.common.api.model.captcha.request.CaptchaRequest`      | 验证码请求  |
-| `com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest` | 校验请求   |
+| `com.ddf.boot.common.api.model.captcha.request.CaptchaRequest`      | 验证码请求     |
+| `com.ddf.boot.common.api.model.captcha.request.CaptchaCheckRequest` | 校验请求      |
 
 ## 使用说明
 
