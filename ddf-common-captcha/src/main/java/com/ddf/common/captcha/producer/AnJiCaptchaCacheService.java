@@ -15,6 +15,10 @@ public class AnJiCaptchaCacheService implements CaptchaCacheService {
 
     private final RedisCommandHelper redisCommandHelper;
 
+    public AnJiCaptchaCacheService() {
+        redisCommandHelper = null;
+    }
+
     public AnJiCaptchaCacheService(RedisCommandHelper redisCommandHelper) {
         this.redisCommandHelper = redisCommandHelper;
     }
