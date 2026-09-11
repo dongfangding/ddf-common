@@ -1,6 +1,5 @@
 package com.ddf.boot.common.stomp.model.req;
 
-import com.ddf.boot.common.stomp.model.dto.StompMessagePayload;
 import lombok.Data;
 
 /**
@@ -31,5 +30,5 @@ public class StompMessageRequest<T> {
     /**
      * 业务层自己组装的对象
      */
-    private StompMessagePayload<T> data;
+    private T data;
 }

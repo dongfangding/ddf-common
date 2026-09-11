@@ -1,4 +1,4 @@
-package com.ddf.boot.common.stomp.model.dto;
+package com.ddf.boot.common.redis.request;
 
 import java.io.Serializable;
 import lombok.Data;

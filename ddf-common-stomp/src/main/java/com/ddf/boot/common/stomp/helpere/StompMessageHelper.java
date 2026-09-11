@@ -2,7 +2,7 @@ package com.ddf.boot.common.stomp.helpere;
 
 import com.ddf.boot.common.api.util.JsonUtil;
 import com.ddf.boot.common.redis.ext.RedisTopic;
-import com.ddf.boot.common.stomp.model.dto.RedisBroadcastMsg;
+import com.ddf.boot.common.redis.request.RedisBroadcastMsg;
 import com.ddf.boot.common.stomp.model.dto.StompMessageProtocol;
 import com.ddf.boot.common.stomp.model.req.StompMessageRequest;
 import java.net.Inet4Address;
@@ -74,21 +74,22 @@ public class StompMessageHelper {
             msg.setDelegateHost(Inet4Address.getLocalHost().getHostAddress());
             msg.setExcludeDelegate(true);
             msg.setMsg(payload);
-            redisTopic.publish(payload);
+            redisTopic.publish(msg);
         } catch (Exception e) {
             log.error("Redis broadcast failed for topic [{}]", topic, e);
         }
     }
 
-    private <T> void broadcastMsg(String topic, RedisBroadcastMsg requestMsg) {
+    private <T> void broadcastMsg(CharSequence channel, RedisBroadcastMsg requestMsg) {
         try {
+            log.error("Redis broadcast failed for topic [{}]， msg： {}", channel, requestMsg);
             final String host = requestMsg.getDelegateHost();
             final boolean isExcludeDelegate = requestMsg.isExcludeDelegate();
-            if (isExcludeDelegate && host.equals(Inet4Address.getLocalHost().getHostAddress())) {
+            if (!isExcludeDelegate || !host.equals(Inet4Address.getLocalHost().getHostAddress())) {
                 push(JsonUtil.toBean(requestMsg.getMsg(), StompMessageRequest.class));
             }
         } catch (Exception e) {
-            log.error("Redis broadcast failed for topic [{}]", topic, e);
+            log.error("Redis broadcast failed for topic [{}]", channel, e);
         }
     }
 }

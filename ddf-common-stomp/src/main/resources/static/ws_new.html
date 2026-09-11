@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOMP WebSocket Multi-Topic Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        :root {
+            --bg-deep: #020617;
+            --bg-base: #0F172A;
+            --bg-elevated: #1E293B;
+            --bg-hover: #334155;
+            --surface: rgba(255, 255, 255, 0.04);
+            --border: #334155;
+            --border-strong: #475569;
+            --fg: #F8FAFC;
+            --fg-muted: #94A3B8;
+            --fg-dim: #64748B;
+            --primary: #38BDF8;
+            --primary-glow: rgba(56, 189, 248, 0.35);
+            --accent: #22C55E;
+            --accent-glow: rgba(34, 197, 94, 0.35);
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --danger-glow: rgba(239, 68, 68, 0.35);
+            --ring: 0 0 0 3px rgba(56, 189, 248, 0.35);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 14px;
+            --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 16px rgba(0,0,0,0.25);
+            --shadow-elev: 0 8px 32px rgba(0,0,0,0.35);
+            --font-sans: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'Fira Code', 'SF Mono', Consolas, Monaco, monospace;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 0%, rgba(56,189,248,0.06), transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(34,197,94,0.05), transparent 60%),
+                var(--bg-base);
+            color: var(--fg);
+            min-height: 100vh;
+        }
+
+        /* ====== Layout ====== */
+        .app {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+        .app-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .app-logo svg { width: 20px; height: 20px; color: var(--bg-deep); }
+
+        .app-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--fg-muted);
+            font-size: 12px;
+        }
+        .meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .meta-item kbd {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 2px 6px;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            background: var(--bg-elevated);
+            color: var(--fg-muted);
+        }
+
+        /* ====== Panel ====== */
+        .panel {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-card);
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .panel-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--fg-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .panel-title svg { width: 14px; height: 14px; color: var(--primary); }
+        .panel-actions { display: flex; gap: 8px; }
+
+        /* ====== Form ====== */
+        .field-grid {
+            display: grid;
+            grid-template-columns: 90px 1fr 180px;
+            gap: 12px 14px;
+            align-items: center;
+        }
+        .field-label {
+            font-size: 13px;
+            color: var(--fg-muted);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .field-label .hint {
+            color: var(--fg-dim);
+            font-weight: 400;
+            font-size: 11px;
+        }
+        .input-wrap { position: relative; }
+        input[type="text"] {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
+            outline: none;
+        }
+        input[type="text"]::placeholder { color: var(--fg-dim); }
+        input[type="text"]:hover { border-color: var(--border-strong); }
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: var(--ring);
+        }
+
+        .btn-group { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+
+        /* ====== Buttons ====== */
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            background: transparent;
+            color: var(--fg);
+            transition: all 150ms var(--ease);
+            white-space: nowrap;
+        }
+        button:focus-visible { outline: none; box-shadow: var(--ring); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+        button svg { width: 14px; height: 14px; }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-deep);
+        }
+        .btn-primary:hover { background: #7DD3FC; box-shadow: 0 0 16px var(--primary-glow); }
+        .btn-success {
+            background: var(--accent);
+            color: var(--bg-deep);
+        }
+        .btn-success:hover { background: #4ADE80; box-shadow: 0 0 16px var(--accent-glow); }
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--fg);
+            border-color: var(--border-strong);
+        }
+        .btn-secondary:hover { background: #475569; }
+        .btn-ghost {
+            background: transparent;
+            color: var(--fg-muted);
+            border-color: var(--border);
+        }
+        .btn-ghost:hover { background: var(--surface); color: var(--fg); border-color: var(--border-strong); }
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+
+        .btn-icon {
+            padding: 6px;
+            width: 30px;
+            height: 30px;
+        }
+
+        /* ====== Status ====== */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+        .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 8px currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .status-connected {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--accent);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        .status-disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* ====== Connection Toolbar ====== */
+        .conn-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ====== Topic Cards ====== */
+        .topic-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: border-color 200ms var(--ease), transform 200ms var(--ease);
+        }
+        .topic-card:hover { border-color: var(--border-strong); }
+        .topic-card.subscribed {
+            border-color: rgba(34, 197, 94, 0.4);
+            box-shadow: var(--shadow-card), 0 0 0 1px rgba(34, 197, 94, 0.2);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+        .topic-card.subscribed .topic-header { background: rgba(34, 197, 94, 0.06); }
+
+        .topic-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        .topic-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+            color: var(--fg-muted);
+            flex-shrink: 0;
+        }
+        .topic-card.subscribed .topic-icon {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent);
+        }
+        .topic-icon svg { width: 14px; height: 14px; }
+
+        .topic-name {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--fg);
+            word-break: break-all;
+        }
+
+        .topic-stats {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: var(--bg-base);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--fg-muted);
+        }
+        .topic-stats .count {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .topic-card.subscribed .topic-stats .count { color: var(--accent); }
+
+        .topic-actions { display: inline-flex; gap: 4px; flex-shrink: 0; align-items: center; }
+        .toggle-sub {
+            min-width: 96px;
+            height: 30px;
+            padding: 0 12px;
+            font-size: 12px;
+        }
+
+        /* ====== Topic Body ====== */
+        .topic-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: var(--bg-base);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+        .topic-filter {
+            flex: 1;
+            max-width: 320px;
+        }
+        .topic-filter input {
+            padding: 6px 10px 6px 30px;
+            font-size: 12px;
+        }
+        .topic-filter-wrap { position: relative; }
+        .topic-filter-wrap svg {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            color: var(--fg-dim);
+        }
+
+        .topic-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--fg-dim);
+            font-family: var(--font-mono);
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            color: var(--fg-muted);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 150ms var(--ease);
+        }
+        .toggle-switch:hover { border-color: var(--border-strong); color: var(--fg); }
+        .toggle-switch.on {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: var(--accent);
+        }
+        .toggle-switch .track {
+            width: 22px;
+            height: 12px;
+            border-radius: 6px;
+            background: var(--bg-hover);
+            position: relative;
+            transition: background 150ms var(--ease);
+        }
+        .toggle-switch.on .track { background: var(--accent); }
+        .toggle-switch .knob {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--fg);
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 150ms var(--ease);
+        }
+        .toggle-switch.on .knob { transform: translateX(10px); background: var(--bg-deep); }
+
+        /* ====== Messages ====== */
+        .topic-body {
+            max-height: 380px;
+            overflow-y: auto;
+            background: var(--bg-base);
+        }
+        .topic-body::-webkit-scrollbar { width: 8px; height: 8px; }
+        .topic-body::-webkit-scrollbar-track { background: transparent; }
+        .topic-body::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+        .topic-body::-webkit-scrollbar-thumb:hover { background: var(--fg-dim); }
+
+        .msg-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-item {
+            display: grid;
+            grid-template-columns: 180px 1fr auto;
+            gap: 12px;
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            align-items: start;
+            transition: background 100ms var(--ease);
+        }
+        .msg-item:hover { background: var(--surface); }
+        .msg-item:last-child { border-bottom: none; }
+        .msg-time {
+            color: var(--fg-dim);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .msg-body {
+            color: var(--fg);
+            word-break: break-all;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .msg-body .json-key { color: #7DD3FC; }
+        .msg-body .json-string { color: #86EFAC; }
+        .msg-body .json-number { color: #FCD34D; }
+        .msg-body .json-bool { color: #F0ABFC; }
+        .msg-body .json-null { color: var(--fg-dim); }
+
+        .msg-copy {
+            opacity: 0;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--fg-dim);
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 150ms var(--ease);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .msg-item:hover .msg-copy { opacity: 1; }
+        .msg-copy:hover { background: var(--bg-hover); color: var(--primary); border-color: var(--border-strong); }
+        .msg-copy svg { width: 12px; height: 12px; }
+        .msg-copy.copied { color: var(--accent); }
+
+        .msg-empty {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--fg-dim);
+            font-size: 13px;
+        }
+        .msg-empty svg {
+            width: 32px;
+            height: 32px;
+            color: var(--border-strong);
+            margin-bottom: 8px;
+        }
+
+        /* ====== Empty state ====== */
+        .empty-state {
+            background: var(--bg-elevated);
+            border: 1px dashed var(--border-strong);
+            border-radius: var(--radius-lg);
+            padding: 64px 24px;
+            text-align: center;
+            color: var(--fg-muted);
+        }
+        .empty-state svg { width: 48px; height: 48px; color: var(--border-strong); margin-bottom: 16px; }
+        .empty-state h3 { margin: 0 0 8px; font-size: 16px; color: var(--fg); font-weight: 500; }
+        .empty-state p { margin: 0; font-size: 13px; }
+
+        /* ====== Toast ====== */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-elev);
+            font-size: 13px;
+            color: var(--fg);
+            animation: slideIn 200ms var(--ease);
+            pointer-events: auto;
+            min-width: 240px;
+        }
+        .toast.success { border-color: rgba(34,197,94,0.4); }
+        .toast.success svg { color: var(--accent); }
+        .toast.error { border-color: rgba(239,68,68,0.4); }
+        .toast.error svg { color: var(--danger); }
+        .toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .toast.fadeout { animation: slideOut 200ms var(--ease) forwards; }
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* ====== Responsive ====== */
+        @media (max-width: 768px) {
+            .app { padding: 16px; }
+            .field-grid { grid-template-columns: 1fr; }
+            .field-label { font-size: 11px; }
+            .msg-item { grid-template-columns: 1fr auto; }
+            .msg-time { grid-column: 1 / -1; font-size: 10px; }
+            .app-meta { display: none; }
+            .topic-toolbar { flex-direction: column; align-items: stretch; }
+            .topic-filter { max-width: 100%; }
+        }
+
+        /* ====== Reduced Motion ====== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+            .status-badge .dot { animation: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- Header -->
+    <div class="app-header">
+        <h1 class="app-title">
+            <div class="app-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg>
+            </div>
+            STOMP WebSocket Manager
+        </h1>
+        <div class="app-meta">
+            <span class="meta-item"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> Connect</span>
+            <span class="meta-item"><kbd>Ctrl</kbd>+<kbd>K</kbd> Add topic</span>
+        </div>
+    </div>
+
+    <!-- Connection Panel -->
+    <div class="panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                Connection
+            </div>
+            <span id="connStatus" class="status-badge status-disconnected">
+                <span class="dot"></span>
+                <span id="connStatusText">Disconnected</span>
+            </span>
+        </div>
+
+        <div class="field-grid">
+            <label class="field-label" for="wsUrlInput">
+                WS URL
+                <span class="hint">/ws endpoint</span>
+            </label>
+            <input type="text" id="wsUrlInput" value="ws://localhost:8083/capable-admin/ws" autocomplete="off">
+            <div></div>
+
+            <label class="field-label" for="imTokenInput">im_token</label>
+            <div class="input-wrap">
+                <input type="text" id="imTokenInput" placeholder="Paste your im_token here..." autocomplete="off">
+            </div>
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="saveToken()" title="Save token to localStorage">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Save
+                </button>
+                <button class="btn-danger" onclick="clearToken()" title="Remove saved token">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"></path></svg>
+                    Clear
+                </button>
+            </div>
+
+            <label class="field-label" for="newTopicInput">Topic</label>
+            <div class="input-wrap">
+                <input type="text" id="newTopicInput" placeholder="/topic/your-topic (Ctrl+K)" autocomplete="off">
+            </div>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="addTopic()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add Topic
+                </button>
+            </div>
+        </div>
+
+        <div class="conn-bar">
+            <div class="btn-group">
+                <button class="btn-success" id="connectBtn" onclick="connect()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>
+                    Connect
+                </button>
+                <button class="btn-secondary" id="disconnectBtn" onclick="disconnect()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    Disconnect
+                </button>
+            </div>
+            <div class="btn-group">
+                <button class="btn-ghost" onclick="subscribeAll()" title="Subscribe to all topics">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Subscribe All
+                </button>
+                <button class="btn-ghost" onclick="unsubscribeAll()">
+                    Unsubscribe All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topics Container -->
+    <div id="topicContainer"></div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        <h3>No topics yet</h3>
+        <p>Add a topic above and click Subscribe to start receiving messages.</p>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+    // ========== Icons ==========
+    const ICONS = {
+        topic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>',
+        copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+        check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+        trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"></path></svg>',
+        clear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>',
+        search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+        bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>',
+        x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+    };
+
+    // ========== Toast ==========
+    function toast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        const icon = type === 'success' ? ICONS.check : type === 'error' ? ICONS.x : ICONS.bell;
+        el.innerHTML = `${icon}<span></span>`;
+        el.querySelector('span').textContent = message;
+        container.appendChild(el);
+        setTimeout(() => {
+            el.classList.add('fadeout');
+            setTimeout(() => el.remove(), 200);
+        }, 3000);
+    }
+
+    // ========== StompClient ==========
+    class StompClient {
+        constructor({url, debug = false, reconnectDelay = 5000, heartbeat = '30000,60000'}) {
+            this.url = url;
+            this.debug = debug;
+            this.reconnectDelay = reconnectDelay;
+            this.heartbeat = heartbeat;
+            this.stompClient = null;
+            this.subscriptions = [];
+            this.isConnected = false;
+            this._onMessage = null;
+            this._token = null;
+            this._subscriptionHandles = new Map();
+        }
+
+        set onMessage(callback) { this._onMessage = callback; }
+
+        connect(token = null) {
+            this._token = token;
+            const socket = new WebSocket(this.url);
+            this.stompClient = Stomp.over(socket);
+            if (!this.debug) this.stompClient.debug = null;
+
+            const headers = { "heart-beat": this.heartbeat };
+            if (token) headers["im_token"] = token;
+
+            this.stompClient.connect(headers, (frame) => {
+                this.isConnected = true;
+                console.log('Connected:', frame);
+                this.subscriptions.forEach(dest => this._doSubscribe(dest));
+            }, (error) => {
+                console.error("Connection error:", error);
+                this.isConnected = false;
+                setTimeout(() => this.connect(this._token), this.reconnectDelay);
+            });
+        }
+
+        _doSubscribe(destination) {
+            if (this._subscriptionHandles.has(destination)) return;
+            if (!this.stompClient || !this.isConnected) return;
+            const sub = this.stompClient.subscribe(destination, (msg) => {
+                if (this._onMessage) this._onMessage(destination, msg.body);
+            });
+            this._subscriptionHandles.set(destination, sub);
+        }
+
+        subscribe(destination) {
+            if (!this.subscriptions.includes(destination)) this.subscriptions.push(destination);
+            this._doSubscribe(destination);
+        }
+
+        unsubscribe(destination) {
+            const sub = this._subscriptionHandles.get(destination);
+            if (sub) {
+                try { sub.unsubscribe(); } catch (e) { console.warn(e); }
+                this._subscriptionHandles.delete(destination);
+            }
+        }
+
+        removeSubscription(destination) {
+            this.unsubscribe(destination);
+            const idx = this.subscriptions.indexOf(destination);
+            if (idx >= 0) this.subscriptions.splice(idx, 1);
+        }
+
+        disconnect() {
+            if (this.stompClient && this.isConnected) {
+                this._subscriptionHandles.clear();
+                this.stompClient.disconnect(() => {
+                    console.log("Disconnected");
+                    this.isConnected = false;
+                });
+            }
+        }
+    }
+
+    // ========== State ==========
+    const wsUrl = document.getElementById("wsUrlInput").value;
+    const client = new StompClient({ url: wsUrl, debug: false, reconnectDelay: 5000 });
+    const topics = new Map(); // name -> { name, subscribed, messages: [], filter: '', autoScroll: true }
+
+    client.onMessage = function(destination, body) {
+        const topic = topics.get(destination);
+        if (!topic) return;
+        topic.messages.unshift({ time: formatDate(new Date()), body });
+        renderTopicMessages(destination);
+    };
+
+    // ========== Utils ==========
+    function formatDate(date) {
+        const d = new Date(date);
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+    function pad(n) { return n.toString().padStart(2, '0'); }
+    function cssId(name) { return name.replace(/[^a-zA-Z0-9_-]/g, '_'); }
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+    function tryJsonHighlight(body) {
+        const trimmed = body.trim();
+        if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+            try {
+                JSON.parse(trimmed);
+                return escapeHtml(trimmed).replace(
+                    /("(?:\\.|[^"\\])*")(\s*:)?|(\b(?:true|false|null)\b)|(-?\d+(?:\.\d+)?)/g,
+                    (match, str, colon, bool, num) => {
+                        if (str) {
+                            if (colon) return `<span class="json-key">${str}</span>${colon}`;
+                            return `<span class="json-string">${str}</span>`;
+                        }
+                        if (bool) return `<span class="json-bool">${bool}</span>`;
+                        if (num) return `<span class="json-number">${num}</span>`;
+                        return match;
+                    }
+                );
+            } catch (e) { /* not valid JSON */ }
+        }
+        return escapeHtml(body);
+    }
+
+    // ========== Connection ==========
+    function connect() {
+        const url = document.getElementById("wsUrlInput").value.trim();
+        client.url = url;
+        const tokenInput = document.getElementById("imTokenInput").value.trim();
+        const token = tokenInput || localStorage.getItem("im_token") || prompt("Enter your im_token:");
+        if (!token) { toast("Token is required to connect.", "error"); return; }
+        localStorage.setItem("im_token", token);
+        document.getElementById("imTokenInput").value = token;
+
+        client.connect(token);
+        updateConnStatus(true);
+        toast("Connecting...", "info");
+
+        // Auto-subscribe all existing topics
+        topics.forEach((topic, name) => {
+            if (!topic.subscribed) {
+                client.subscribe(name);
+                topic.subscribed = true;
+                updateTopicHeader(name);
+            }
+        });
+    }
+
+    function disconnect() {
+        client.disconnect();
+        updateConnStatus(false);
+        topics.forEach((_, name) => {
+            topics.get(name).subscribed = false;
+            updateTopicHeader(name);
+        });
+        toast("Disconnected", "info");
+    }
+
+    function updateConnStatus(connected) {
+        const status = document.getElementById("connStatus");
+        const statusText = document.getElementById("connStatusText");
+        const connectBtn = document.getElementById("connectBtn");
+        const disconnectBtn = document.getElementById("disconnectBtn");
+        if (connected) {
+            status.className = "status-badge status-connected";
+            statusText.textContent = "Connected";
+            connectBtn.disabled = true;
+            disconnectBtn.disabled = false;
+        } else {
+            status.className = "status-badge status-disconnected";
+            statusText.textContent = "Disconnected";
+            connectBtn.disabled = false;
+            disconnectBtn.disabled = true;
+        }
+    }
+
+    // ========== Token ==========
+    function saveToken() {
+        const token = document.getElementById("imTokenInput").value.trim();
+        if (!token) { toast("Token is empty.", "error"); return; }
+        localStorage.setItem("im_token", token);
+        toast("Token saved to localStorage", "success");
+    }
+
+    function clearToken() {
+        if (!confirm("Clear the saved im_token from localStorage?")) return;
+        localStorage.removeItem("im_token");
+        document.getElementById("imTokenInput").value = "";
+        toast("Token cleared", "success");
+    }
+
+    // ========== Topic Management ==========
+    function addTopic() {
+        const input = document.getElementById("newTopicInput");
+        const name = input.value.trim();
+        if (!name) { toast("Please enter a topic name.", "error"); return; }
+        if (topics.has(name)) { toast(`Topic "${name}" already exists.`, "error"); return; }
+
+        topics.set(name, { name, subscribed: false, messages: [], filter: '', autoScroll: true });
+        input.value = "";
+        renderTopic(name);
+        updateEmptyState();
+
+        if (client.isConnected) {
+            subscribeTopic(name);
+        } else {
+            toast(`Topic "${name}" added. Click Connect to start receiving.`, "info");
+        }
+    }
+
+    function removeTopic(name) {
+        if (!confirm(`Remove topic "${name}" and unsubscribe it?`)) return;
+        client.removeSubscription(name);
+        topics.delete(name);
+        const card = document.getElementById(`topic-card-${cssId(name)}`);
+        if (card) card.remove();
+        updateEmptyState();
+        toast(`Topic "${name}" removed`, "info");
+    }
+
+    function subscribeTopic(name) {
+        client.subscribe(name);
+        const topic = topics.get(name);
+        if (topic) topic.subscribed = true;
+        updateTopicHeader(name);
+        toast(`Subscribed to ${name}`, "success");
+    }
+
+    function unsubscribeTopic(name) {
+        client.unsubscribe(name);
+        const topic = topics.get(name);
+        if (topic) topic.subscribed = false;
+        updateTopicHeader(name);
+        toast(`Unsubscribed from ${name}`, "info");
+    }
+
+    function clearTopicMessages(name) {
+        const topic = topics.get(name);
+        if (!topic || topic.messages.length === 0) return;
+        if (!confirm(`Clear all ${topic.messages.length} messages of "${name}"?`)) return;
+        topic.messages = [];
+        renderTopicMessages(name);
+        toast("Messages cleared", "success");
+    }
+
+    function toggleSubscribe(name) {
+        const topic = topics.get(name);
+        if (!topic) return;
+        if (!client.isConnected && !topic.subscribed) { toast("Please connect first.", "error"); return; }
+        if (topic.subscribed) unsubscribeTopic(name);
+        else subscribeTopic(name);
+    }
+
+    function subscribeAll() {
+        if (!client.isConnected) { toast("Please connect first.", "error"); return; }
+        topics.forEach((_, name) => subscribeTopic(name));
+    }
+
+    function unsubscribeAll() {
+        topics.forEach((_, name) => unsubscribeTopic(name));
+    }
+
+    function setTopicFilter(name, value) {
+        const topic = topics.get(name);
+        if (topic) {
+            topic.filter = value.toLowerCase();
+            renderTopicMessages(name);
+        }
+    }
+
+    function toggleAutoScroll(name) {
+        const topic = topics.get(name);
+        if (topic) {
+            topic.autoScroll = !topic.autoScroll;
+            updateTopicToolbar(name);
+        }
+    }
+
+    function copyMessage(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            btn.classList.add('copied');
+            const original = btn.innerHTML;
+            btn.innerHTML = ICONS.check;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = original;
+            }, 1200);
+        }).catch(() => toast("Failed to copy", "error"));
+    }
+
+    // ========== Render ==========
+    function updateEmptyState() {
+        document.getElementById("emptyState").style.display = topics.size === 0 ? "block" : "none";
+    }
+
+    function renderTopic(name) {
+        const container = document.getElementById("topicContainer");
+        const id = cssId(name);
+
+        const card = document.createElement("div");
+        card.id = `topic-card-${id}`;
+        card.className = "topic-card";
+        card.innerHTML = `
+            <div class="topic-header">
+                <div class="topic-title">
+                    <div class="topic-icon"></div>
+                    <span class="topic-name"></span>
+                    <span class="topic-stats"><span class="count">0</span> msgs</span>
+                </div>
+                <div class="topic-actions">
+                    <button class="btn-ghost toggle-sub" title="Subscribe / Unsubscribe">
+                        <span class="toggle-switch-label">Subscribe</span>
+                    </button>
+                    <button class="btn-icon btn-ghost clear-msgs" title="Clear messages">
+                        ${ICONS.clear}
+                    </button>
+                    <button class="btn-icon btn-danger del-topic" title="Remove topic">
+                        ${ICONS.trash}
+                    </button>
+                </div>
+            </div>
+            <div class="topic-toolbar">
+                <div class="topic-filter">
+                    <div class="topic-filter-wrap">
+                        ${ICONS.search}
+                        <input type="text" class="filter-input" placeholder="Filter messages..." autocomplete="off">
+                    </div>
+                </div>
+                <div class="topic-meta">
+                    <span class="visible-count">0 visible</span>
+                    <button class="toggle-switch auto-scroll-btn" title="Auto-scroll to newest">
+                        <span class="track"><span class="knob"></span></span>
+                        <span class="auto-scroll-label">Auto</span>
+                    </button>
+                </div>
+            </div>
+            <div class="topic-body">
+                <div class="msg-list"></div>
+                <div class="msg-empty">
+                    ${ICONS.bell}
+                    <div>No messages yet</div>
+                </div>
+            </div>
+        `;
+        card.querySelector(".topic-icon").innerHTML = ICONS.topic;
+        card.querySelector(".topic-name").textContent = name;
+        card.querySelector(".toggle-sub").onclick = () => toggleSubscribe(name);
+        card.querySelector(".clear-msgs").onclick = () => clearTopicMessages(name);
+        card.querySelector(".del-topic").onclick = () => removeTopic(name);
+        card.querySelector(".filter-input").oninput = (e) => setTopicFilter(name, e.target.value);
+        card.querySelector(".auto-scroll-btn").onclick = () => toggleAutoScroll(name);
+
+        container.appendChild(card);
+        updateTopicHeader(name);
+        updateTopicToolbar(name);
+        renderTopicMessages(name);
+    }
+
+    function updateTopicHeader(name) {
+        const topic = topics.get(name);
+        if (!topic) return;
+        const card = document.getElementById(`topic-card-${cssId(name)}`);
+        if (!card) return;
+
+        const toggleBtn = card.querySelector(".toggle-sub");
+        const toggleLabel = card.querySelector(".toggle-switch-label");
+        const countEl = card.querySelector(".topic-stats .count");
+
+        countEl.textContent = topic.messages.length;
+
+        if (topic.subscribed) {
+            card.classList.add("subscribed");
+            toggleLabel.textContent = "Unsubscribe";
+        } else {
+            card.classList.remove("subscribed");
+            toggleLabel.textContent = "Subscribe";
+        }
+    }
+
+    function updateTopicToolbar(name) {
+        const topic = topics.get(name);
+        if (!topic) return;
+        const card = document.getElementById(`topic-card-${cssId(name)}`);
+        if (!card) return;
+        const autoScrollBtn = card.querySelector(".auto-scroll-btn");
+        if (topic.autoScroll) autoScrollBtn.classList.add("on");
+        else autoScrollBtn.classList.remove("on");
+    }
+
+    function renderTopicMessages(name) {
+        const topic = topics.get(name);
+        if (!topic) return;
+        const card = document.getElementById(`topic-card-${cssId(name)}`);
+        if (!card) return;
+        const list = card.querySelector(".msg-list");
+        const empty = card.querySelector(".msg-empty");
+        const visibleCountEl = card.querySelector(".visible-count");
+
+        const filtered = topic.filter
+            ? topic.messages.filter(m => m.body.toLowerCase().includes(topic.filter))
+            : topic.messages;
+
+        visibleCountEl.textContent = `${filtered.length} visible`;
+
+        if (filtered.length === 0) {
+            list.innerHTML = "";
+            empty.style.display = "block";
+            empty.querySelector("div").textContent = topic.messages.length === 0
+                ? "No messages yet"
+                : "No matches for current filter";
+        } else {
+            empty.style.display = "none";
+            const html = filtered.map(m => {
+                const highlighted = tryJsonHighlight(m.body);
+                return `<div class="msg-item">
+                    <div class="msg-time"></div>
+                    <div class="msg-body">${highlighted}</div>
+                    <button class="msg-copy" title="Copy message"></button>
+                </div>`;
+            }).join('');
+            list.innerHTML = html;
+            list.querySelectorAll(".msg-item").forEach((item, i) => {
+                const msg = filtered[i];
+                item.querySelector(".msg-time").textContent = msg.time;
+                const copyBtn = item.querySelector(".msg-copy");
+                copyBtn.innerHTML = ICONS.copy;
+                copyBtn.onclick = () => copyMessage(msg.body, copyBtn);
+            });
+        }
+
+        if (topic.autoScroll && filtered.length > 0) {
+            const body = card.querySelector(".topic-body");
+            body.scrollTop = 0; // since newest is at top
+        }
+    }
+
+    // ========== Keyboard Shortcuts ==========
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            if (client.isConnected) disconnect();
+            else connect();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById("newTopicInput").focus();
+        }
+    });
+
+    // ========== Init ==========
+    updateEmptyState();
+    const savedToken = localStorage.getItem("im_token");
+    if (savedToken) document.getElementById("imTokenInput").value = savedToken;
+</script>
+</body>
+</html>
