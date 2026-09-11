@@ -82,7 +82,7 @@ public class StompMessageHelper {
 
     private <T> void broadcastMsg(CharSequence channel, RedisBroadcastMsg requestMsg) {
         try {
-            log.error("Redis broadcast failed for topic [{}]， msg： {}", channel, requestMsg);
+            log.info("Redis broadcast received for topic [{}]， msg： {}", channel, requestMsg);
             final String host = requestMsg.getDelegateHost();
             final boolean isExcludeDelegate = requestMsg.isExcludeDelegate();
             if (!isExcludeDelegate || !host.equals(Inet4Address.getLocalHost().getHostAddress())) {
