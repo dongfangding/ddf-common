@@ -14,11 +14,6 @@
     <name>ddf-common-script</name>
     <description>Internal scripts and offline utility tools used by the project.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
 
     <dependencies>

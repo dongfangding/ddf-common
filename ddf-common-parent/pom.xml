@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.dongfangding</groupId>
+    <artifactId>ddf-common-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+    <name>ddf-common-parent</name>
+    <description>ddf-common 构建父 pom：聚合根与 BOM 的共享元数据和 release 发布配置的单一来源。</description>
+    <url>https://github.com/dongfangding/ddf-common</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>snowball</id>
+            <name>snowball</name>
+            <email>dongfang.ding1@gmail.com</email>
+            <organization>snowball</organization>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/dongfangding/ddf-common</url>
+        <connection>scm:git:git://github.com/dongfangding/ddf-common.git</connection>
+        <developerConnection>scm:git:ssh://github.com/dongfangding/ddf-common.git</developerConnection>
+    </scm>
+
+    <properties>
+        <!-- Project revision -->
+        <revision>boot3.5-2026.1-SNAPSHOT</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- 本项目的 Spring Boot 基线版本，全仓库唯一来源（编译期 processor、BOM 导入、根 pom 的打包插件共用） -->
+        <spring-boot.version>3.5.9</spring-boot.version>
+        <!-- 日常构建插件版本（编译使用；其余日常构建插件版本在根 pom） -->
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <!-- 发布插件版本（release profile 使用） -->
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+    </properties>
+
+    <!-- 推送到私服，需要配置快照和release仓库地址，推送到中央仓库，保留一个空标签就可 -->
+    <distributionManagement>
+
+    </distributionManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- 统一编译配置：-parameters 保留参数名；lombok / spring-boot-configuration-processor
+                     以编译期 processor 参与、不进运行时依赖。放在 parent 的 pluginManagement，
+                     挂本 parent 的外部项目无需声明即获得与本仓库一致的编译行为 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <parameters>true</parameters>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <release>${java.version}</release>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                            <path>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                                <version>${spring-boot.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- CI 友好版本号（${revision}）必须在每次构建都物化：否则 install 到本地仓库的 pom
+                 会带字面量 ${revision}，消费方解析 parent/import 时直接失败。因此 flatten 放在主构建，
+                 仅 release profile 启用是不够的 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- 默认不启动发布插件，当需要的时候，激活这个profile -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <source>${maven.compiler.source}</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 用于发布到maven中央仓库的插件， 对文件进行gpg签名。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 用于发布到maven中央仓库的插件，将文件推送到中央仓库，使用该插件，不需要在distributionManagement中配置仓库地址。如果要deploy到私服， 自己的项目里不要引用这个 -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <!-- publishingServerId里的值要对应本地settings.xml中的server认证信息的id， 用户名和密码要真实到中央仓库账号注册过 -->
+                            <publishingServerId>snowball</publishingServerId>
+                            <!-- 自动发布， 否则就要登录账号收到点击发布 -->
+                            <autoPublish>false</autoPublish>
+                            <excludeArtifacts>
+                                <!-- 排除的Artifact，这些模块不发布到中央仓库 -->
+                                <excludeArtifact>ddf-common-script</excludeArtifact>
+                                <excludeArtifact>ddf-common-netty-broker</excludeArtifact>
+                            </excludeArtifacts>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -1,5 +1,6 @@
 package com.ddf.boot.common.stomp.model.req;
 
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class StompMessageRequest<T> {
     /**
      * 发往的目的地
      */
-    private String topic;
+    private List<String> topics;
 
     /**
      * 消息标题

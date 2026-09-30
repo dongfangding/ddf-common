@@ -15,11 +15,6 @@
     <name>ddf-common-core</name>
     <description>Core support module for shared utilities, configuration, cache, and common infrastructure helpers.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <build>
         <finalName>ddf-common-core</finalName>

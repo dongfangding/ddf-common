@@ -15,11 +15,6 @@
     <name>ddf-common-authentication</name>
     <description>Authentication support module with token validation and web filter integration.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

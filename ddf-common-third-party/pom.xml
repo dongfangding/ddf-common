@@ -15,9 +15,6 @@
     <name>ddf-common-third-party</name>
     <description>Third-party integration module for services such as OSS and SMS.</description>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
         <aliyun-sms.version>4.5.3</aliyun-sms.version>
     </properties>

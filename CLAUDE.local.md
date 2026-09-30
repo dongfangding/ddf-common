@@ -44,3 +44,14 @@ mvn -s /mnt/d/develop_tools/apache-maven-3.9.9/conf/settings-snowball-wsl.xml te
 mvn -s /mnt/d/develop_tools/apache-maven-3.9.9/conf/settings-snowball-wsl.xml test -Dtest=PlinkoServiceTest#testPlay
 
 ```
+
+## WSL 环境注意事项（ddf-common 本仓库）
+
+- `apache-maven-3.9.9/conf/settings.xml` 中 `localRepository` 配置为 Windows 路径 `D:\maven_repository`，**在 WSL 下会被当作相对路径**，导致依赖重新下载到项目目录下的 `D:\maven_repository\` 垃圾目录、编译 classpath 全部失效。在 WSL 中构建本仓库必须显式指定：
+
+```bash
+mvn clean install -DskipTests -Dmaven.repo.local=/mnt/d/maven_repository
+```
+
+- 若发现项目目录下出现 `D:\maven_repository` 目录，直接删除即可。
+- 仓库使用 CI 友好版本号 `${revision}`，`flatten-maven-plugin` 已绑定在主构建（见 ddf-common-parent），install 的 pom 自动物化版本，消费方解析 parent/import 不会遇到字面量 `${revision}`。

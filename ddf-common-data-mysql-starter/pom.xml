@@ -15,11 +15,6 @@
     <name>ddf-common-data-mysql-starter</name>
     <description>Data infrastructure starter for JDBC, MySQL, and Druid.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

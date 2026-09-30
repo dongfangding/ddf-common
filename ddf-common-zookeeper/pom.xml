@@ -15,12 +15,6 @@
     <name>ddf-common-zookeeper</name>
     <description>Zookeeper utility and monitoring support module.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <curator.version>5.1.0</curator.version>
-    </properties>
 
 
     <dependencies>

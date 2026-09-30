@@ -285,6 +285,7 @@ Related documents:
 - `docs/versioning-and-release-policy.md`
 - `docs/public-module-policy.md`
 - `docs/release-readiness.md`
+- `docs/pom-architecture.md`
 - `CHANGELOG.md`
 
 ## Build Commands

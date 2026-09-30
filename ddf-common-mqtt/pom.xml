@@ -15,10 +15,7 @@
     <name>ddf-common-mqtt</name>
     <description>MQTT client integration module with publishing and connection support.</description>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <paho.version>1.2.9</paho.version>
+        <paho.version>1.2.5</paho.version>
     </properties>
 
     <dependencies>
@@ -43,7 +40,7 @@
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
-            <version>1.2.5</version>
+            <version>${paho.version}</version>
         </dependency>
 
         <dependency>

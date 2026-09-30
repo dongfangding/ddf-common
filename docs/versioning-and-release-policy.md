@@ -4,7 +4,7 @@
 
 ## Version Strategy
 
-The repository currently uses the root `revision` property to control all module versions.
+The repository currently uses the `revision` property in `ddf-common-parent` to control all module versions (single source of truth, inherited by the aggregator root and every module).
 
 Recommended release conventions:
 
@@ -14,9 +14,9 @@ Recommended release conventions:
 
 Examples:
 
-- `boot3.5-2026.1-SNAPSHOT-SNAPSHOT`
 - `boot3.5-2026.1-SNAPSHOT`
-- `boot3.5-2026.1-SNAPSHOT.1`
+- `boot3.5-2026.1`
+- `boot3.5-2026.1.1`
 
 ## Release Rules
 

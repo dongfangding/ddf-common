@@ -14,12 +14,6 @@
     <name>ddf-common-mqtt-client</name>
     <description>Higher-level MQTT client module built on top of the base MQTT integration.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <paho.version>1.2.5</paho.version>
-    </properties>
 
     <dependencies>
         <dependency>

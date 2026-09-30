@@ -6,6 +6,7 @@ import com.ddf.boot.common.redis.request.RedisBroadcastMsg;
 import com.ddf.boot.common.stomp.model.dto.StompMessageProtocol;
 import com.ddf.boot.common.stomp.model.req.StompMessageRequest;
 import java.net.Inet4Address;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -30,7 +31,8 @@ public class StompMessageHelper {
         this.messagingTemplate = messagingTemplate;
         this.redissonClient = redissonClient;
         redisTopic = RedisTopic.newInstance("stomp:broadcast", redissonClient);
-        redisTopic.addListener(RedisBroadcastMsg.class, (channel, message) -> broadcastMsg(channel.toString(), message));
+        redisTopic.addListener(RedisBroadcastMsg.class,
+                (channel, message) -> broadcastMsg(channel.toString(), message));
     }
 
     /**
@@ -41,14 +43,17 @@ public class StompMessageHelper {
     public <T> void sendMessage(StompMessageRequest<T> request) {
         push(request);
         // 基于Redis Pub/Sub广播到其他实例
-        broadcastViaRedis(request.getTopic(), JsonUtil.toJson(request));
+        broadcastViaRedis(JsonUtil.toJson(request));
     }
 
 
     private <T> void push(StompMessageRequest<T> request) {
         final String payload = buildPayload(request);
         // WebSocket推送到本实例连接的客户端
-        messagingTemplate.convertAndSend(request.getTopic(), payload);
+        final List<String> topics = request.getTopics();
+        for (String topic : topics) {
+            messagingTemplate.convertAndSend(topic, payload);
+        }
     }
 
     /**
@@ -65,7 +70,7 @@ public class StompMessageHelper {
     /**
      * 通过Redis Pub/Sub广播消息，用于多实例环境下将消息同步到其他节点的WebSocket连接
      */
-    private void broadcastViaRedis(String topic, String payload) {
+    private void broadcastViaRedis(String payload) {
         if (redissonClient == null) {
             return;
         }
@@ -76,7 +81,7 @@ public class StompMessageHelper {
             msg.setMsg(payload);
             redisTopic.publish(msg);
         } catch (Exception e) {
-            log.error("Redis broadcast failed for topic [{}]", topic, e);
+            log.error("Redis broadcast failed.. payload = {}", payload, e);
         }
     }
 

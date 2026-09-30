@@ -13,11 +13,6 @@
     <name>ddf-common-canal</name>
     <description>Canal subscription and message dispatch support module.</description>
     <version>${revision}</version>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

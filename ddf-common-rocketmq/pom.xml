@@ -14,11 +14,6 @@
     <name>ddf-common-rocketmq</name>
     <version>${revision}</version>
     <description>RocketMQ integration module with enhanced producer and message support.</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

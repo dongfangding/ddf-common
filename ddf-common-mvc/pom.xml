@@ -15,11 +15,6 @@
     <name>ddf-common-mvc</name>
     <description>Spring MVC core module for response wrapping, exception handling, and web filters.</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

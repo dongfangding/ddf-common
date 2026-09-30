@@ -16,9 +16,6 @@
     <description>Alarm integrations for exception, log, and rule-based notifications.</description>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <alibaba-dingtalk.version>2.0.0</alibaba-dingtalk.version>
     </properties>
 
