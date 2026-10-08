@@ -129,7 +129,7 @@
     <!-- 默认不启动发布插件，当需要的时候，激活这个profile -->
     <profiles>
         <profile>
-            <id>release</id>
+            <id>central</id>
             <build>
                 <plugins>
                     <!-- 源码 -->
