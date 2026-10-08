@@ -36,14 +36,15 @@
 
     <properties>
         <!-- Project revision -->
-        <revision>boot3.5-2026.1.RELEASE</revision>
+        <revision>boot3.5-2026.2-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <!-- 本项目的 Spring Boot 基线版本，全仓库唯一来源（编译期 processor、BOM 导入、根 pom 的打包插件共用） -->
-        <spring-boot.version>3.5.9</spring-boot.version>
+        <!-- 本项目的 Spring Boot 基线版本，全仓库唯一来源（编译期 processor、BOM 导入、根 pom 的打包插件共用）。
+             3.5.16 为 3.5 线收官版（2025-05 首发，OSS 支持已于 2026 年中结束）；下一迭代评估升 Boot 4 线 -->
+        <spring-boot.version>3.5.16</spring-boot.version>
         <!-- 日常构建插件版本（编译使用；其余日常构建插件版本在根 pom） -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
@@ -140,7 +141,7 @@
                             <execution>
                                 <!-- 构建id， 取个标识名字而已。绑定在verify阶段，而不是package， 这样日常构建不会生成 -->
                                 <id>attach-sources</id>
-                                <phase>install</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
@@ -160,7 +161,7 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
-                                <phase>install</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>

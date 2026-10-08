@@ -83,7 +83,7 @@ class WebUtilTest {
     void shouldReadBodyFromCachingWrapper() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(request);
+        ContentCachingRequestWrapper wrapper = new ContentCachingRequestWrapper(request, 0);
         byte[] body = "{\"name\":\"codex\"}".getBytes(StandardCharsets.UTF_8);
         wrapper.getContentAsByteArray();
         try {
