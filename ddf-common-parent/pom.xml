@@ -36,7 +36,7 @@
 
     <properties>
         <!-- Project revision -->
-        <revision>boot3.5-2026.1-SNAPSHOT</revision>
+        <revision>boot3.5-2026.1.RELEASE</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
@@ -46,6 +46,7 @@
         <spring-boot.version>3.5.9</spring-boot.version>
         <!-- 日常构建插件版本（编译使用；其余日常构建插件版本在根 pom） -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <!-- 发布插件版本（release profile 使用） -->
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
@@ -130,6 +131,23 @@
             <id>release</id>
             <build>
                 <plugins>
+                    <!-- 源码 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <!-- 构建id， 取个标识名字而已。绑定在verify阶段，而不是package， 这样日常构建不会生成 -->
+                                <id>attach-sources</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <!-- Javadoc -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -142,6 +160,7 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -180,6 +199,12 @@
                                 <!-- 排除的Artifact，这些模块不发布到中央仓库 -->
                                 <excludeArtifact>ddf-common-script</excludeArtifact>
                                 <excludeArtifact>ddf-common-netty-broker</excludeArtifact>
+                                <excludeArtifact>ddf-common-zookeeper</excludeArtifact>
+                                <excludeArtifact>ddf-common-third-party</excludeArtifact>
+                                <excludeArtifact>ddf-common-vps</excludeArtifact>
+                                <excludeArtifact>ddf-common-es</excludeArtifact>
+                                <excludeArtifact>ddf-common-mongo</excludeArtifact>
+                                <excludeArtifact>ddf-common-websocket</excludeArtifact>
                             </excludeArtifacts>
                         </configuration>
                     </plugin>

@@ -24,7 +24,6 @@
         <maven.enforcer.plugin.version>3.5.0</maven.enforcer.plugin.version>
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
-        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.archetype.plugin.version>3.3.0</maven.archetype.plugin.version>
         <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
         <maven.jar.plugin.version>3.4.1</maven.jar.plugin.version>
@@ -189,21 +188,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven.enforcer.plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven.source.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
 
                 <plugin>
