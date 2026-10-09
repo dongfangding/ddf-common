@@ -36,7 +36,7 @@
 
     <properties>
         <!-- Project revision -->
-        <revision>boot3.5-2026.2-SNAPSHOT</revision>
+        <revision>boot3.5.16-2026.1.RELEASE</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
