@@ -41,7 +41,7 @@
         <!-- 和Spring Cloud Alibaba的BOM保持一致开始 -->
         <fastjson2.version>2.0.58</fastjson2.version>
         <druid.version>1.2.27</druid.version>
-        <guava.version>33.4.8-jre</guava.version>
+        <guava.version>33.7.1-jre</guava.version>
         <!-- 和Spring Cloud Alibaba的BOM保持一致结束 -->
         <msgpack.version>0.9.3</msgpack.version>
         <commons-io.version>2.18.0</commons-io.version>
